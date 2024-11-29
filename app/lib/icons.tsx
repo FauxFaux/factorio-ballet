@@ -15,7 +15,7 @@ export const RecipeIcon = (props: {
       className="icon-sprite"
       title={props.alt}
       style={{
-        backgroundImage: `url("/sets/space-age/icons.webp")`,
+        backgroundImage: `url("/assets/sets/space-age/icons.webp")`,
         backgroundPosition: `-${found[0]}px -${found[1]}px`,
       }}
     />
@@ -37,7 +37,7 @@ export const CraftIcon = (props: {
       className="icon-sprite"
       title={props.alt}
       style={{
-        backgroundImage: `url("/sets/space-age/icons.webp")`,
+        backgroundImage: `url("/assets/sets/space-age/icons.webp")`,
         backgroundPosition: `-${found[0]}px -${found[1]}px`,
       }}
     />

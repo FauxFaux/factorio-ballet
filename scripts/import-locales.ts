@@ -21,7 +21,7 @@ async function main() {
   }
 
   await writeFile(
-    'public/sets/space-age/locales.json',
+    'public/assets/sets/space-age/locales.json',
     JSON.stringify(locales),
     'utf-8',
   );

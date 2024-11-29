@@ -14,7 +14,7 @@ import { mallAssembler } from '~/lib/bp';
 import { encode } from '~/lib/bp/blueprints';
 
 async function load<T>(setId: string, thing: string) {
-  const resp = await fetch(`/sets/${setId}/${thing}.json`);
+  const resp = await fetch(`/assets/sets/${setId}/${thing}.json`);
   return (await resp.json()) as T;
 }
 
