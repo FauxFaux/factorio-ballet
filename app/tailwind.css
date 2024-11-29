@@ -6,3 +6,12 @@ html,
 body {
   color-scheme: dark;
 }
+
+.icon-sprite {
+  width: 32px;
+  height: 32px;
+  scale: 0.7;
+  border: 0;
+  display: inline-block;
+  vertical-align: middle;
+}

@@ -1,7 +1,7 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction } from '@remix-run/node';
 
 export const meta: MetaFunction = () => {
-  return [{ title: "ballet" }];
+  return [{ title: 'ballet' }];
 };
 
 export default function Index() {
