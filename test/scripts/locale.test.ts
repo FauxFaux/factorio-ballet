@@ -1,0 +1,84 @@
+import { describe, expect, it } from 'vitest';
+import { resolveLocale } from '../../scripts/locale.ts';
+import type { RLocale } from '../../scripts/raw-validators.ts';
+
+const locales: Record<string, RLocale> = {
+  recipe: {
+    names: { 'wooden-chest': 'Wooden chest', 'iron-plate': 'Iron plate' },
+    descriptions: undefined,
+  },
+  item: {
+    names: { 'iron-plate': 'Iron plate', 'copper-plate': 'Copper plate' },
+    descriptions: { 'iron-plate': 'A plate made of iron.' },
+  },
+  fluid: { names: { water: 'Water' }, descriptions: undefined },
+};
+
+describe('resolveLocale', () => {
+  it('resolves undefined ls via recipe fallback', () => {
+    expect(resolveLocale(undefined, 'wooden-chest', locales)).toBe('Wooden chest');
+  });
+
+  it('returns undefined when fallback id is not in recipe locale', () => {
+    expect(resolveLocale(undefined, 'nonexistent', locales)).toBeUndefined();
+  });
+
+  it('returns a plain string literal unchanged', () => {
+    expect(resolveLocale('Hard-coded name', 'any', locales)).toBe('Hard-coded name');
+  });
+
+  it('resolves a recipe-name key', () => {
+    expect(resolveLocale(['recipe-name.wooden-chest'], 'any', locales)).toBe('Wooden chest');
+  });
+
+  it('resolves an item-name key', () => {
+    expect(resolveLocale(['item-name.iron-plate'], 'any', locales)).toBe('Iron plate');
+  });
+
+  it('resolves a fluid-name key', () => {
+    expect(resolveLocale(['fluid-name.water'], 'any', locales)).toBe('Water');
+  });
+
+  it('concatenates "" elements into a single string', () => {
+    expect(resolveLocale(['', ['recipe-name.wooden-chest'], ' MK2'], 'any', locales)).toBe(
+      'Wooden chest MK2',
+    );
+  });
+
+  it('concatenates plain string elements in ""', () => {
+    expect(resolveLocale(['', 'prefix: ', ['item-name.iron-plate']], 'any', locales)).toBe(
+      'prefix: Iron plate',
+    );
+  });
+
+  it('returns undefined for "" when an inner element cannot be resolved', () => {
+    expect(
+      resolveLocale(['', ['recipe-name.nonexistent'], ' MK2'], 'any', locales),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined for "?" fallback key', () => {
+    expect(
+      resolveLocale(['?', ['recipe-name.wooden-chest'], 'fallback'], 'any', locales),
+    ).toBeUndefined();
+  });
+
+  it('returns undefined when the key has no dot (e.g. parameter-x)', () => {
+    expect(resolveLocale(['parameter-x', '0'], 'any', locales)).toBeUndefined();
+  });
+
+  it('returns undefined when the subId is not in the locale', () => {
+    expect(resolveLocale(['item-name.nonexistent'], 'any', locales)).toBeUndefined();
+  });
+
+  it('returns undefined when the locale file key is not loaded', () => {
+    expect(resolveLocale(['entity-name.iron-chest'], 'any', locales)).toBeUndefined();
+  });
+
+  it('treats "Something went wrong" sentinel as unresolved', () => {
+    const withSentinel: Record<string, RLocale> = {
+      item: { names: { 'angels-void': 'Something went wrong' }, descriptions: undefined },
+    };
+    expect(resolveLocale(['item-name.angels-void'], 'any', withSentinel)).toBeUndefined();
+  });
+});

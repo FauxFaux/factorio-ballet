@@ -1,7 +1,7 @@
-type ResourceId = `item:${string}` | `fluid:${string}`;
+export type ResourceId = `item:${string}` | `fluid:${string}`;
 
 export interface Recipe {
-  human: string;
+  human?: string;
   ingredients: Ingredient[];
   products: Product[];
   duration: number;

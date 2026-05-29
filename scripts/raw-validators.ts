@@ -37,3 +37,10 @@ export const RProduct = z.strictObject({
 });
 
 export type RProduct = z.infer<typeof RProduct>;
+
+export const RLocale = z.strictObject({
+  names: z.record(z.string(), z.string()),
+  descriptions: z.optional(z.record(z.string(), z.string())),
+});
+
+export type RLocale = z.infer<typeof RLocale>;
