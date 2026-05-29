@@ -13,13 +13,15 @@
   "dependencies": {
     "fflate": "^0.8",
     "preact": "^10",
-    "serialize-error": "^13"
+    "serialize-error": "^13",
+    "zod": "^4"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2",
     "@types/node": "^24",
     "eslint": "^9",
     "eslint-config-preact": "^2",
+    "factorio-raw-types": "^0.3",
     "oxfmt": "^0.52",
     "typescript": "~6",
     "typescript-eslint": "^8",
