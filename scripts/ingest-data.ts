@@ -31,14 +31,14 @@ async function main() {
   const resources: Record<ResourceId, { human?: string; stackSize?: number }> = {};
   for (const [itemId, item] of Object.entries(v.item)) {
     resources[`item:${itemId}`] = {
-      human: resolveLocale(item.localised_name, itemId, locales),
+      human: resolveLocale(item.localised_name, itemId, locales, 'item'),
       stackSize: item.stack_size,
     };
   }
 
   for (const [fluidId, fluid] of Object.entries(v.fluid)) {
     resources[`fluid:${fluidId}`] = {
-      human: resolveLocale(fluid.localised_name, fluidId, locales),
+      human: resolveLocale(fluid.localised_name, fluidId, locales, 'fluid'),
     };
   }
 
@@ -51,7 +51,7 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
 
   const recipes: Record<string, Recipe> = Object.fromEntries(
     Object.entries(v).map(([id, r]) => {
-      const human = resolveLocale(r.localised_name, id, locales);
+      const human = resolveLocale(r.localised_name, id, locales, 'recipe');
       if (human !== undefined) {
         hits++;
       } else {
