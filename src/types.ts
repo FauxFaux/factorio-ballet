@@ -1,3 +1,8 @@
+export interface StaticData {
+  recipes: Record<string, Recipe>;
+  resources: Record<ResourceId, Resource>;
+}
+
 export type ResourceId = `item:${string}` | `fluid:${string}`;
 
 export interface Recipe {
@@ -28,3 +33,7 @@ export type IngredientTemperature =
   | { min: number; max: number }
   | { min: number }
   | { max: number };
+
+interface Resource {
+  human?: string;
+}

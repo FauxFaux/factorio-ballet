@@ -49,7 +49,7 @@ export function resolveLocale(
   if (dot === -1) return undefined;
 
   const category = key.slice(0, dot); // e.g. "item-name"
-  const subId = key.slice(dot + 1);   // e.g. "angels-void"
+  const subId = key.slice(dot + 1); // e.g. "angels-void"
 
   const localeKey = category.replace(/-(name|description)$/, '');
 

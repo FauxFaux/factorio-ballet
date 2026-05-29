@@ -45,3 +45,38 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+/* ItemList / placeholder resource icons — real sprites come later. */
+.item-list input {
+  font: inherit;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 6px 10px;
+  width: 100%;
+  max-width: 24rem;
+}
+
+.item-list table {
+  border-collapse: collapse;
+}
+
+.resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resource-icon {
+  display: inline-block;
+  width: 1.2em;
+  height: 1.2em;
+  border-radius: 3px;
+  background: var(--border);
+}
+
+.resource-icon-fluid {
+  border-radius: 50%;
+  background: var(--accent);
+}

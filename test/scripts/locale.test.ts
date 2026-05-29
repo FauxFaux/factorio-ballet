@@ -28,7 +28,9 @@ describe('resolveLocale', () => {
   });
 
   it('resolves a recipe-name key', () => {
-    expect(resolveLocale(['recipe-name.wooden-chest'], 'any', locales, 'recipe')).toBe('Wooden chest');
+    expect(resolveLocale(['recipe-name.wooden-chest'], 'any', locales, 'recipe')).toBe(
+      'Wooden chest',
+    );
   });
 
   it('resolves an item-name key', () => {
@@ -40,15 +42,15 @@ describe('resolveLocale', () => {
   });
 
   it('concatenates "" elements into a single string', () => {
-    expect(resolveLocale(['', ['recipe-name.wooden-chest'], ' MK2'], 'any', locales, 'recipe')).toBe(
-      'Wooden chest MK2',
-    );
+    expect(
+      resolveLocale(['', ['recipe-name.wooden-chest'], ' MK2'], 'any', locales, 'recipe'),
+    ).toBe('Wooden chest MK2');
   });
 
   it('concatenates plain string elements in ""', () => {
-    expect(resolveLocale(['', 'prefix: ', ['item-name.iron-plate']], 'any', locales, 'recipe')).toBe(
-      'prefix: Iron plate',
-    );
+    expect(
+      resolveLocale(['', 'prefix: ', ['item-name.iron-plate']], 'any', locales, 'recipe'),
+    ).toBe('prefix: Iron plate');
   });
 
   it('returns undefined for "" when an inner element cannot be resolved', () => {
@@ -85,7 +87,7 @@ describe('resolveLocale', () => {
   it('treats all "Unknown X" sentinels as unresolved', () => {
     const withSentinels: Record<string, RLocale> = {
       fluid: {
-        names: { 'foo': 'Unknown fluid', 'bar': 'Unknown' },
+        names: { foo: 'Unknown fluid', bar: 'Unknown' },
         descriptions: undefined,
       },
     };
@@ -99,8 +101,8 @@ describe('resolveLocale', () => {
 
   it('does not return a sentinel from the fallback path', () => {
     const mixed: Record<string, RLocale> = {
-      recipe: { names: { 'chrome': 'Something went wrong' }, descriptions: undefined },
-      fluid:  { names: { 'chrome': 'Molten chrome' }, descriptions: undefined },
+      recipe: { names: { chrome: 'Something went wrong' }, descriptions: undefined },
+      fluid: { names: { chrome: 'Molten chrome' }, descriptions: undefined },
     };
     expect(resolveLocale(undefined, 'chrome', mixed, 'fluid')).toBe('Molten chrome');
     expect(resolveLocale(undefined, 'chrome', mixed, 'recipe')).toBeUndefined();

@@ -11,6 +11,7 @@ import type {
   Product,
   Recipe,
   ResourceId,
+  StaticData,
 } from '../src/types.ts';
 
 async function main() {
@@ -42,7 +43,8 @@ async function main() {
     };
   }
 
-  await fs.writeFile('static.json', JSON.stringify({ recipes, resources }));
+  const staticData: StaticData = { recipes, resources };
+  await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
