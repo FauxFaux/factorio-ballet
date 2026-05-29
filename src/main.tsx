@@ -1,5 +1,5 @@
 import { render } from 'preact';
 import './index.css';
-import { App } from './app.tsx';
+import { UrlHandler } from './url-handler.tsx';
 
-render(<App />, document.getElementById('app')!);
+render(<UrlHandler />, document.getElementById('app')!);
