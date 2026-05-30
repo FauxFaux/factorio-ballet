@@ -7,9 +7,9 @@ import type { Recipe } from '../../src/types.ts';
 describe('productRate (expected value)', () => {
   it('takes a fixed amount at its probability', () => {
     expect(productRate({ resource: 'item:x', amount: { fixed: 3 }, probability: 1 })).toBe(3);
-    expect(productRate({ resource: 'item:x', amount: { fixed: 1 }, probability: 0.007 })).toBeCloseTo(
-      0.007,
-    );
+    expect(
+      productRate({ resource: 'item:x', amount: { fixed: 1 }, probability: 0.007 }),
+    ).toBeCloseTo(0.007);
   });
 
   it('uses the midpoint of a ranged amount', () => {
@@ -56,7 +56,9 @@ describe('processRates', () => {
       ],
       duration: 1,
     };
-    const rates = processRates(ap(recipe, { multipliers: { outputs: 1.1 }, unmod: ['item:catalyst'] }));
+    const rates = processRates(
+      ap(recipe, { multipliers: { outputs: 1.1 }, unmod: ['item:catalyst'] }),
+    );
     expect(rates.get('item:normal')).toBeCloseTo(1.1); // productivity applies
     expect(rates.get('item:catalyst')).toBe(1); // unmodifiable: multiplier skipped
   });

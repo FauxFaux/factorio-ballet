@@ -3,9 +3,7 @@ import { rref } from '../../src/solver/matrix.ts';
 
 const closeTo = (m: number[][], expected: number[][]) => {
   expect(m.length).toBe(expected.length);
-  m.forEach((row, r) =>
-    row.forEach((v, c) => expect(v).toBeCloseTo(expected[r][c], 9)),
-  );
+  m.forEach((row, r) => row.forEach((v, c) => expect(v).toBeCloseTo(expected[r][c], 9)));
 };
 
 describe('rref', () => {

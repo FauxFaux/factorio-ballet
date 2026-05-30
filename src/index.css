@@ -70,13 +70,11 @@ code {
 
 .resource-icon {
   display: inline-block;
-  width: 1.2em;
-  height: 1.2em;
-  border-radius: 3px;
-  background: var(--border);
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
 }
 
-.resource-icon-fluid {
-  border-radius: 50%;
-  background: var(--accent);
+.resource-is-id {
+  font-family: var(--mono);
 }

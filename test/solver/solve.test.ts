@@ -33,7 +33,9 @@ describe('solve', () => {
   it('solves the ALGORITHM.md worked example', () => {
     const sol = expectOk(
       solve({
-        processes: [proc('make_a', [ing('item:part_1', 5), ing('item:part_2', 2)], [prod('item:part_3', 5)])],
+        processes: [
+          proc('make_a', [ing('item:part_1', 5), ing('item:part_2', 2)], [prod('item:part_3', 5)]),
+        ],
         requirements: [{ resource: 'item:part_3', amount: 7 }],
         io: ['item:part_1', 'item:part_2'],
       }),
@@ -71,7 +73,9 @@ describe('solve', () => {
     // 10 rock → 2 iron-ore + 6 rock. Rock is imported (and partly self-supplied).
     const sol = expectOk(
       solve({
-        processes: [proc('grind', [ing('item:rock', 10)], [prod('item:iron-ore', 2), prod('item:rock', 6)])],
+        processes: [
+          proc('grind', [ing('item:rock', 10)], [prod('item:iron-ore', 2), prod('item:rock', 6)]),
+        ],
         requirements: [{ resource: 'item:iron-ore', amount: 2 }],
         io: ['item:rock'],
       }),

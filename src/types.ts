@@ -36,4 +36,5 @@ export type IngredientTemperature =
 
 interface Resource {
   human?: string;
+  stackSize?: number;
 }
