@@ -1,0 +1,57 @@
+import { useMemo, useState } from 'preact/hooks';
+import { resourceName, staticData } from '../data.ts';
+import type { ResourceId } from '../types.ts';
+import { ResourceWithIcon } from './resource.tsx';
+
+function smatch(haystack: string, search: string): boolean {
+  return haystack.toLowerCase().includes(search.toLowerCase());
+}
+
+const LIMIT = 200;
+
+/** A searchable list of every known resource (item or fluid). */
+export function ItemList() {
+  const [search, setSearch] = useState('');
+
+  const all = useMemo(
+    () =>
+      (Object.keys(staticData.resources) as ResourceId[])
+        .map((id) => ({ id, name: resourceName(id) }))
+        .sort((a, b) => a.name.localeCompare(b.name)),
+    [],
+  );
+
+  const found = useMemo(
+    () => (search ? all.filter(({ id, name }) => smatch(name, search) || smatch(id, search)) : all),
+    [all, search],
+  );
+
+  return (
+    <div class="item-list">
+      <p>
+        <input
+          type="text"
+          value={search}
+          onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
+          placeholder="Search items and fluids..."
+        />
+      </p>
+      <table>
+        <tbody>
+          {found.slice(0, LIMIT).map(({ id }) => (
+            <tr key={id}>
+              <td>
+                <ResourceWithIcon id={id} />
+              </td>
+            </tr>
+          ))}
+          {found.length > LIMIT ? (
+            <tr>
+              <td>…and {found.length - LIMIT} more</td>
+            </tr>
+          ) : null}
+        </tbody>
+      </table>
+    </div>
+  );
+}
