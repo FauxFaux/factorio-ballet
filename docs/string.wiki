@@ -1,0 +1,239 @@
+{{Languages}}Mods should define human readable names for prototypes that they add. They can also define descriptions for items or custom strings for usage in GUIs etc. This is called '''localisation'''.
+
+== File format ==
+Translations are stored as .cfg files, with the following format:
+
+<pre>welcome-message=Hello world
+[category]
+title=Category related title
+# Comment
+; Another comment</pre>
+Any whitespace after or before <code>=</code> is included in the key or string, so <code>title =Category related title</code> will give an unknown key error if you are looking for the <code>title</code> key, since it is the <code>title&nbsp;</code> key.
+
+<code>category</code> can be one of the existing locale categories, which permits implicit search mechanisms to find translations, but may also be another key, such as <code>[my-mod-messages]</code>. These are accessible the same as other translations, e.g. <code>{"my-mod-messages.hello"}</code>
+
+These files are located within the language code of the language in the locale folder of the mod, so as an English example <code>__mod__/locale/en/any_name_here.cfg</code>. There can be more than 1 file per language, all of them will be read.
+
+== Localising simple strings ==
+The simplest localisation is of items, entities etc. If we say the item is <code>iron-plate</code>, the game will then search all loaded locale files for <code>item-name.iron-plate</code> and <code>item-description.iron-plate</code>, which in the locale file looks like this:
+
+<pre>[item-name]
+iron-plate=Iron plate
+[item-description]
+iron-plate=A plate made of iron.</pre>
+If found in the locale, the label is set to this string. If not found, the game will instead show: <code>Unknown key: &quot;item-name.iron-plate&quot;</code>
+
+In script, the localised string is formatted as <code>{&quot;category.name&quot;}</code>, so <code>game.print({&quot;item-name.iron-plate&quot;})</code> prints ''Iron plate''.
+
+It is possible to use [[rich text]] features in the localised text if the location where the text is shown supports it, e.g. in the chat, prototype names and prototype tooltips.
+
+<code>\n</code> can be used for line breaks if the location where the text is shown supports multiline text.
+
+The list of all localization categories used by the base game is:
+
+{| class="mw-collapsible mw-collapsed wikitable"
+|-
+!Localization categories 
+|-
+|<code>[achievement-description]</code>
+|-
+|<code>[achievement-name]</code>
+|-
+|<code>[ammo-category-name]</code>
+|-
+|<code>[autoplace-control-names]</code>
+|-
+|<code>[controls]</code>
+|-
+|<code>[damage-type-name]</code>
+|-
+|<code>[decorative-name]</code>
+|-
+|<code>[entity-description]</code>
+|-
+|<code>[entity-name]</code>
+|-
+|<code>[equipment-name]</code>
+|-
+|<code>[fluid-name]</code>
+|-
+|<code>[fuel-category-name]</code>
+|-
+|<code>[item-description]</code>
+|-
+|<code>[item-group-name]</code>
+|-
+|<code>[item-limitation]</code>
+|-
+|<code>[item-name]</code>
+|-
+|<code>[map-gen-preset-description]</code>
+|-
+|<code>[map-gen-preset-name]</code>
+|-
+|<code>[mod-description]</code>
+|-
+|<code>[mod-name]</code>
+|-
+|<code>[modifier-description]
+|-
+|<code>[programmable-speaker-instrument]</code>
+|-
+|<code>[programmable-speaker-note]</code>
+|-
+|<code>[recipe-name]</code>
+|-
+|<code>[shortcut-name]</code>
+|-
+|<code>[story]</code>
+|-
+|<code>[string-mod-setting]</code>
+|-
+|<code>[technology-description]</code>
+|-
+|<code>[technology-name]</code>
+|-
+|<code>[tile-name]</code>
+|-
+|<code>[tips-and-tricks-item-description]</code>
+|-
+|<code>[tips-and-tricks-item-name]</code>
+|-
+|<code>[virtual-signal-description]</code>
+|-
+|<code>[virtual-signal-name]</code>
+|}
+
+== Localising with parameters ==
+For more complex strings, localisation parameters can be used. For instance we want to show ''Time left: 10 minutes.''
+
+So a key with a placeholder is defined, which is replaced by the first parameter after the locale key.:
+
+<pre>time-left=Time left: __1__ minutes.</pre>
+So it is used like this:
+
+<syntaxhighlight lang="lua">game.print({"time-left", 10})</syntaxhighlight>
+It also works with multiple parameters:
+
+<syntaxhighlight lang="lua">game.print({"time-left", 10, 45})</syntaxhighlight>
+<pre>time-left=Time left: __1__ minutes and __2__ seconds.</pre>
+Which results in ''Time left: 10 minutes and 45 seconds.''
+
+=== Built-in parameters ===
+For some situations, we use localisation to show control schemes. For instance we want to say:
+
+<pre>technology-prompt=Use T to open the technology screen</pre>
+However the player may have rebound the key, but we can’t figure out which key as it would not be deterministic. So instead we use the built-in replacement functionality
+
+<pre>technology-prompt=Use __CONTROL__open-technology-gui__ to open the technology screen.</pre>
+We can also use this for items and entities:
+
+<pre>big-iron-plate=Big __ITEM__iron-plate__</pre>
+<pre>tiny-gun-turret=Tiny __ENTITY__gun-turret__</pre>
+
+==== List of built-in parameters ====
+<code>name</code> is the name of an internal game control or a prototype name, depending on context. <code>n</code> can be 1 or 2, it's used in parameters that control [[#Localising_alternate_input_names|alternate input names]]. For a list of internal game control names, see [https://lua-api.factorio.com/latest/types/LinkedGameControl.html CustomInputPrototype::linked_game_control].
+* <code>__CONTROL__name__</code> - The combination of modifiers and input, such as "Control + Alt + Left-click", or "Not set".
+* <code>__CONTROL_MODIFIER__name__</code> - The modifiers, such as "ControlShift", or, "No modifier selected."
+* <code>__CONTROL_STYLE_BEGIN__</code>
+* <code>__CONTROL_STYLE_END__</code>
+* <code>__CONTROL_LEFT_CLICK__</code> is replaced with <code>control-keys.mouse-button-1</code> or <code>control-keys.controller-b</code>[https://crowdin.com/project/factorio/discussions/214]
+* <code>__CONTROL_RIGHT_CLICK__</code> is replaced with <code>control-keys.mouse-button-2</code> or <code>control-keys.controller-x</code>
+* <code>__CONTROL_KEY_SHIFT__</code> is replaced with <code>control-keys.shift</code> or <code>control-keys.controller-leftshoulder</code>
+* <code>__CONTROL_KEY_CTRL__</code> is replaced with <code>control-keys.control</code> or <code>control-keys.controller-rightshoulder</code>
+* <code>__ALT_CONTROL_LEFT_CLICK__n__</code> is replaced with <code>control-keys.mouse-button-1-alt-n</code> or <code>control-keys.controller-button-alt-n</code> (with parameter <code>control-keys.controller-b</code>)
+* <code>__ALT_CONTROL_RIGHT_CLICK__n__</code> is replaced with <code>control-keys.mouse-button-2-alt-n</code> or <code>control-keys.controller-button-alt-n</code> (with parameter <code>control-keys.controller-x</code>)
+* <code>__ALT_CONTROL__n__name__</code>
+* <code>__CONTROL_MOVE__</code> - The Movement keys, squished together. Example: "WASD", from a conventional QWERTY English keyboard.
+* <code>__REMARK_COLOR_BEGIN__</code>
+* <code>__REMARK_COLOR_END__</code>
+* <code>__ENTITY__name__</code> - The localised name of the [https://lua-api.factorio.com/latest/prototypes/EntityPrototype.html EntityPrototype] subclass.
+* <code>__FLUID__name__</code> - The localised name of the [https://lua-api.factorio.com/latest/prototypes/FluidPrototype.html FluidPrototype].
+* <code>__ITEM__name__</code> - The localised name of the [https://lua-api.factorio.com/latest/prototypes/ItemPrototype.html ItemPrototype] or subclass.
+* <code>__PLANET__name__</code> - The localised name of the [https://lua-api.factorio.com/latest/prototypes/SpaceLocationPrototype.html SpaceLocationPrototype] or subclass.
+* <code>__TILE__name__</code> - The localised name of the [https://lua-api.factorio.com/latest/prototypes/TilePrototype.html TilePrototype].
+
+=== Plurals ===
+Pluralization can be used in any string that uses a parameter (e.g. __1__) that is numeric, so something like an amount of minutes. It can be used multiple times per string.
+
+<pre>format-days=__1__ __plural_for_parameter__1__{1=day|rest=days}__</pre>
+This results in "1 day" and "2 days" / "500 days" etc.
+
+The number after <code>__plural_for_parameter__</code> denotes which parameter is used to determine the plural. This is the parameter 1 in the above example. Anything inside the {} is used to make the plural. Each plural form is separated by a |.
+The text in front of the = determines for what the plural form is used. Options for this are:
+* A simple number, e.g. "1". 
+* Multiple numbers, e.g. "2,3,4".
+* What the number ends with, e.g. "ends in 11" or "ends in 1"
+* Multiple ends with, e.g. "ends in 1,ends in 2,ends in 12".
+* "decimal" for any number with a fractional part. 
+* "rest" to give the default plural.
+
+For negative numbers the plural is picked as if the number was positive, so a plural like <code>__plural_for_parameter__1__{1=day|rest=days}__</code> will result in "-1 day" for -1.<br>
+For numbers with a SI prefix the plural is picked as if the number was fully written out, so a plural like <code>__plural_for_parameter__1__{1=day|1000=eons|rest=days}__</code> will result in "1k eons" for 1k.
+
+Plural forms may be empty or contain other keys such as __1__ or spaces. This allows rather large plural forms:
+
+<pre>__plural_for_parameter__1__{1=__1__ player is|rest=__1__ players are}__ connecting</pre>
+
+The system picks the first fitting plural that it encounters when multiple would fit:
+<pre>__plural_for_parameter__1__{ends in 12=option 1|ends in 2=option 2|rest=option 3}__</pre>
+This will result in "option 1" for 12 and in "option 2" for 22 and in "option 3" for numbers not ending with 2.
+
+The parameter used for pluralisation does not need to be present in the string. For example, a parameter could represent the number of list items present in another parameter:
+<pre>
+I like __plural_for_parameter__1__{1=only one thing:|rest=these things:} __2__
+</pre>
+Can result in "I like only one thing: trains", or in "I like these things: trains and turtles".
+
+=== Concatenating localised strings ===
+The special locale key: <code>&quot;&quot;</code> is used to concatenate, as the table format does not support concatenation:
+
+<syntaxhighlight lang="lua">game.print({"", {"item-name.iron-plate"}, ": ", 60})</syntaxhighlight>
+Will result in: ''Iron plate: 60''
+
+=== Localising alternate input names ===
+
+In the introduction campaign, a special locale system is used for informing players how to do certain actions with their mouse.
+The normal form is to use eg:
+<pre>how-to-build=Use __CONTROL__build__ to place a building</pre>
+which results in "Use Left mouse button to place a building". A more natural phrasing would be "Left-click to place a building", which can be achieved by using the following:
+<pre>how-to-build=__ALT_CONTROL__1__build__ to place a building</pre>
+
+These "alt" versions are controlled by a few special locale keys, mouse-button-X-alt-1 and mouse-button-X-alt-2. In English, form 1 produces eg "Left-click", and form 2 produces eg "Left-clicking".  Only two alt forms ("1" and "2") are available at the moment, but if this a problem for some languages, more forms may be added in the future.
+Extra mouse buttons, mouse scroll and keyboard keys are handled through the mouse-button-n-alt-1/2, mouse-wheel-alt-1/2 and keyboard-alt-1/2 keys, which just take the normal name and prepend something like "Press/Pressing", or "Scroll/Scrolling".
+
+When translating to another language, you can use whatever forms you want here, but the important part is that you are consistent when you use the alt-forms everywhere else. It does not necessarily make sense to just copy the usages of alt forms from the English locale, and for some languages it may be more natural to simply not use this system at all.
+
+== Accessing the localised result in code ==
+While usually unneeded, it is possible to read the resulting localised text in code, for example to search in localised names.
+
+See
+[https://lua-api.factorio.com/latest/classes/LuaPlayer.html#request_translation LuaPlayer::request_translation],
+[https://lua-api.factorio.com/latest/classes/LuaPlayer.html#request_translations LuaPlayer::request_translations] and
+[https://lua-api.factorio.com/latest/events.html#on_string_translated on_string_translated event].
+
+== Default Behavior(s) for finding an Unspecified Localised String ==
+If a localised_string is not defined in the prototype for certain prototype classes, e.g. entity, item, Factorio may have a default search behavior.
+
+Determining an item's localised name:
+Note: the angle brackets are meant to mean a generic term, they are not part of the actual string. Also, place_result and placed_as_equipment_result are strings, and Factorio fetches the matching prototype to examine.
+
+# if localised_name is provided in the item prototype and it is not empty {}, use the provided value
+# else if there is place_result and it has localised_name that is not an empty table: {}, use the localised_name of place_result
+# else if there is place_result with an empty localised_name, use {"entity-name.<entity prototype name>"}
+# else if there is placed_as_equipment_result and it has a localised_name that is not an empty table: {}, use the localised_name of placed_as_equipment_result
+# else if there is placed_as_equipment_result with empty localised_name, use {"equipment-name.<equipment name>"}
+# else use default {"item-name.<item name>"}
+
+Reference: [https://forums.factorio.com/viewtopic.php?p=494243#p494243]
+
+Example: The transport-belt item does not have a localised_name, so 1->2. There is a place result, but not localised_name in the entity prototype. 2->3. The place result lacks a localised_name. Use the localised string {"entity-name.transport-belt"}
+
+Such defaults often include a "leading key" using [<group>-name] or [<group>-description] (such as [recipe-name], [mod-setting-description]). However, each prototype may have a distinct search behavior before using those, based on presence/absence of values in the prototype. [https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html RecipePrototype] for example may use the first product's localised_name, or the main_product's localised_name, or the localised string found in {"recipe-name.<recipe name>"], depending on values provided (and lacking) in the prototype.
+
+== See also ==
+* [https://lua-api.factorio.com/latest/types/LocalisedString.html LocalisedString data stage doc]
+* [https://lua-api.factorio.com/latest/concepts/LocalisedString.html LocalisedString control stage doc]
+
+[[Category:Modding]]
+

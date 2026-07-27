@@ -1,0 +1,597 @@
+<!doctype html>
+<!-- saved from url=(0071)https://lua-api.factorio.com/latest/types/LocalisedString.html#examples -->
+<html data-body_wide="true" data-has_pagefind="true">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LocalisedString - Prototype Docs | Factorio</title>
+    <link
+      href="./LocalisedString - Prototype Docs _ Factorio_files/titillium-web.css"
+      rel="stylesheet"
+    />
+    <link
+      href="./LocalisedString - Prototype Docs _ Factorio_files/roboto-mono.css"
+      rel="stylesheet"
+    />
+    <link
+      href="./LocalisedString - Prototype Docs _ Factorio_files/style.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+    <meta name="viewport" content="width=device-width" />
+    <link
+      rel="shortcut icon"
+      href="https://lua-api.factorio.com/latest/static/favicon-prototype.png"
+    />
+    <script src="./LocalisedString - Prototype Docs _ Factorio_files/script.js"></script>
+    <link
+      href="./LocalisedString - Prototype Docs _ Factorio_files/pagefind-component-ui.css"
+      rel="stylesheet"
+    />
+    <script
+      src="./LocalisedString - Prototype Docs _ Factorio_files/pagefind-component-ui.js"
+      type="module"
+    ></script>
+    <script>
+      (function () {
+        const body_wide = localStorage.getItem("prototype_body_wide");
+        if (body_wide != undefined) {
+          document.documentElement.dataset.body_wide = body_wide;
+        } else {
+          document.documentElement.dataset.body_wide = true;
+        }
+        document.documentElement.dataset.has_pagefind =
+          location.protocol == "https:" || location.protocol == "http:";
+      })();
+    </script>
+  </head>
+  <body class="docs docs-sidebar-shown" data-pf-theme="dark">
+    <div id="top" class="top-bar mb32" data-pagefind-ignore="">
+      <div class="top-bar-inner">
+        <div class="sites links flex flex-items-center" style="width: 100%">
+          <span
+            ><a href="https://factorio.com/" style="color: #7dcaed">Factorio.com</a
+            ><span class="separator">|</span
+            ><a href="https://forums.factorio.com/" style="color: #7dcaed">Forums</a
+            ><span class="separator">|</span
+            ><a href="https://wiki.factorio.com/" style="color: #7dcaed">Wiki</a
+            ><span class="separator">|</span
+            ><a href="https://mods.factorio.com/" style="color: #7dcaed">Mod Portal</a
+            ><span class="separator">|</span
+            ><a href="https://lua-api.factorio.com/latest/index.html" class="sites-current"
+              >API Docs</a
+            ></span
+          >
+          <div class="nav-right">
+            <div class="pagefind" style="display: none">
+              <pagefind-config bundle-path="./" base-url="/2.0.77/" hidden=""></pagefind-config
+              ><pagefind-modal
+                ><dialog class="pf-modal" id="pagefind-modal-ada-eeb" aria-label="search">
+                  <pagefind-modal-header class="pf-modal-header"
+                    ><div class="pf-modal-header-content">
+                      <pagefind-input
+                        ><search
+                          class="pf-input-wrapper"
+                          role="search"
+                          aria-label="Search this site"
+                        >
+                          <label for="pfmod-input-fba-abc" data-pf-sr-hidden="true"
+                            >Search this site</label
+                          ><input
+                            id="pfmod-input-fba-abc"
+                            class="pf-input"
+                            type="search"
+                            autocomplete="off"
+                            autocapitalize="none"
+                            enterkeyhint="search"
+                            placeholder="Search"
+                            aria-describedby="pf-input-hint-caf-bdc"
+                          /><span id="pf-input-hint-caf-bdc" data-pf-sr-hidden="true"
+                            >Results will appear as you type</span
+                          ><button class="pf-input-clear" type="button" data-pf-suppressed="true">
+                            Clear
+                          </button>
+                        </search></pagefind-input
+                      >
+                    </div>
+                    <button type="button" class="pf-modal-close" aria-label="close">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                      >
+                        <path d="M15 5L5 15M5 5l10 10"></path>
+                      </svg></button></pagefind-modal-header
+                  ><pagefind-modal-body class="pf-modal-body" tabindex="-1"
+                    ><pagefind-summary><div class="pf-summary"></div></pagefind-summary
+                    ><pagefind-results
+                      ><ul
+                        class="pf-results"
+                        aria-label="Search results"
+                        aria-busy="false"
+                      ></ul></pagefind-results></pagefind-modal-body
+                  ><pagefind-modal-footer class="pf-modal-footer"
+                    ><pagefind-keyboard-hints
+                      class="pf-keyboard-hints"
+                      aria-hidden="true"
+                    ></pagefind-keyboard-hints
+                  ></pagefind-modal-footer></dialog
+              ></pagefind-modal>
+            </div>
+            <a href="https://lua-api.factorio.com/latest/index-prototype.html" class="sites-current"
+              >Prototype</a
+            ><span class="separator">|</span
+            ><a href="https://lua-api.factorio.com/latest/index-runtime.html">Runtime</a
+            ><span class="separator">|</span
+            ><a href="https://lua-api.factorio.com/latest/index-auxiliary.html">Auxiliary</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="container-inner">
+        <div id="prototype-page"></div>
+        <h1 class="ml8 mr8" style="position: relative" data-pagefind-ignore="">
+          <a href="https://lua-api.factorio.com/latest/index-prototype.html" style="color: #ffe6c0"
+            >Factorio Prototype Docs</a
+          ><a href="https://lua-api.factorio.com/" class="version-link" style="color: #ffe6c0"
+            ><span class="version-string">Version</span> 2.0.77
+            <img
+              src="./LocalisedString - Prototype Docs _ Factorio_files/collapse-symbol.png"
+              class="collapse-icon"
+          /></a>
+        </h1>
+        <div id="docs-layout-panel" class="panel flex-column pb0 overflow-unset">
+          <h1 style="display: none" data-pagefind-meta="title">LocalisedString - Prototype Docs</h1>
+          <div class="flex flex-reverse docs-panes" style="margin-top: -12px">
+            <div class="docs-content flex flex-column">
+              <div class="panel-inset breadcrumbs mb0 p4" data-pagefind-ignore="">
+                <span class="breadcrumbs-text"
+                  ><a href="https://lua-api.factorio.com/latest/index-prototype.html">Home</a> /
+                  <a href="https://lua-api.factorio.com/latest/types.html">Types</a> /
+                  <a href="https://lua-api.factorio.com/latest/types/LocalisedString.html"
+                    >LocalisedString</a
+                  ></span
+                ><a id="page-width-button" class="button square-sm" style="float: right"
+                  >&gt;&lt;</a
+                >
+              </div>
+              <main class="panel-inset-lighter" style="flex-grow: 1">
+                <h2>
+                  <a href="https://lua-api.factorio.com/latest/types/LocalisedString.html"
+                    >LocalisedString</a
+                  >
+                  <span class="white monospace" style="margin-left: 6px">
+                    ::&nbsp;<a href="https://lua-api.factorio.com/latest/types/string.html"
+                      >string</a
+                    >
+                    or array[<a
+                      href="https://lua-api.factorio.com/latest/types/LocalisedString.html"
+                      >LocalisedString</a
+                    >] </span
+                  ><span class="example-link"
+                    ><a
+                      href="https://lua-api.factorio.com/latest/types/LocalisedString.html#examples"
+                      >Example code</a
+                    ></span
+                  >
+                </h2>
+                <div>
+                  <div class="text-next-to-image">
+                    <p>
+                      Localised strings are a way to support translation of in-game text. They offer
+                      a language-independent code representation of the text that should be shown to
+                      players.
+                    </p>
+                    <p>
+                      It is an array where the first element is the key and the remaining elements
+                      are parameters that will be substituted for placeholders in the template
+                      designated by the key.
+                    </p>
+                    <p>
+                      The key identifies the string template. For example,
+                      <code>"gui-alert-tooltip.attack"</code> (for the template
+                      <code>"__1__ objects are being damaged"</code>; see the file
+                      <code>data/core/locale/en.cfg</code>). In the settings and prototype stages,
+                      this key cannot be longer than 200 characters.
+                    </p>
+                    <p>
+                      The template can contain placeholders such as <code>__1__</code> or
+                      <code>__2__</code>. These will be replaced by the respective parameter in the
+                      LocalisedString. The parameters themselves can be other localised strings,
+                      which will be processed recursively in the same fashion. Localised strings can
+                      not be recursed deeper than 20 levels and can not have more than 20
+                      parameters.
+                    </p>
+                    <p>
+                      There are two special flags for the localised string, indicated by the key
+                      being a particular string. First, if the key is the empty string
+                      (<code>""</code>), then all parameters will be concatenated (after processing,
+                      if any are localised strings themselves). Second, if the key is a question
+                      mark (<code>"?"</code>), then the first valid parameter will be used. A
+                      parameter can be invalid if its name doesn't match any string template. If no
+                      parameters are valid, the last one is returned. This is useful to implement a
+                      fallback for missing locale templates.
+                    </p>
+                    <p>
+                      Furthermore, when an API function expects a localised string, it will also
+                      accept a regular string (i.e. not a table) which will not be translated. In
+                      the settings and prototype stages, this string cannot be longer than 200
+                      characters.
+                    </p>
+                    <p>
+                      See
+                      <a href="https://wiki.factorio.com/Tutorial:Localisation"
+                        >Tutorial:Localisation</a
+                      >
+                      for more information.
+                    </p>
+                  </div>
+                </div>
+                <div class="mb12 mt12 target" id="examples">
+                  <h2 class="white">
+                    Examples
+                    <a
+                      href="https://lua-api.factorio.com/latest/types/LocalisedString.html#examples"
+                      class="ml8 link"
+                      ><img
+                        src="./LocalisedString - Prototype Docs _ Factorio_files/link-symbol.png"
+                    /></a>
+                  </h2>
+                  <div class="codehilite" style="background: #263238">
+                    <pre
+                      style="line-height: 125%"
+                    ><span></span><code><span style="color: #546E7A; font-style: italic">-- In the English translation, this will result in "No ammo"; in the Czech translation, it will result in "Bez munice":</span>
+<span style="color: #89DDFF">localised_description</span><span style="color: #EFF"> </span><span style="color: #89DDFF">=</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">"description.no-ammo"</span><span style="color: #89DDFF">}</span>
+<span style="color: #546E7A; font-style: italic">-- The "description.no-ammo" template contains no placeholders, so no further parameters are necessary.</span>
+</code></pre>
+                  </div>
+                  <div class="codehilite" style="background: #263238">
+                    <pre
+                      style="line-height: 125%"
+                    ><span></span><code><span style="color: #546E7A; font-style: italic">-- In the English translation, this will result in "80 hitpoints"; in the Japanese one, it will result in "80 HP":</span>
+<span style="color: #89DDFF">localised_description</span><span style="color: #EFF"> </span><span style="color: #89DDFF">=</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">"description.hitpoints"</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #82AAFF">tostring</span><span style="color: #89DDFF">(</span><span style="color: #F78C6C">80</span><span style="color: #89DDFF">)}</span>
+</code></pre>
+                  </div>
+                  <div class="codehilite" style="background: #263238">
+                    <pre
+                      style="line-height: 125%"
+                    ><span></span><code><span style="color: #546E7A; font-style: italic">-- This will result in "hello" in all translations:</span>
+<span style="color: #89DDFF">localised_description</span><span style="color: #EFF"> </span><span style="color: #89DDFF">=</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">""</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #C3E88D">"hello"</span><span style="color: #89DDFF">}</span>
+</code></pre>
+                  </div>
+                  <div class="codehilite" style="background: #263238">
+                    <pre
+                      style="line-height: 125%"
+                    ><span></span><code><span style="color: #546E7A; font-style: italic">-- This will result in "Iron plate: 60" in the English translation and "Eisenplatte: 60" in the German translation.</span>
+<span style="color: #89DDFF">localised_description</span><span style="color: #EFF"> </span><span style="color: #89DDFF">=</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">""</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">"item-name.iron-plate"</span><span style="color: #89DDFF">},</span><span style="color: #EFF"> </span><span style="color: #C3E88D">": "</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #82AAFF">tostring</span><span style="color: #89DDFF">(</span><span style="color: #F78C6C">60</span><span style="color: #89DDFF">)}</span>
+</code></pre>
+                  </div>
+                  <div class="codehilite" style="background: #263238">
+                    <pre
+                      style="line-height: 125%"
+                    ><span></span><code><span style="color: #546E7A; font-style: italic">-- As an example of a localised string with fallback, consider this:</span>
+<span style="color: #89DDFF">{</span><span style="color: #C3E88D">"?"</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">""</span><span style="color: #89DDFF">,</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">"entity-description.furnace"</span><span style="color: #89DDFF">},</span><span style="color: #EFF"> </span><span style="color: #C3E88D">"</span><span style="color: #EFF">\n</span><span style="color: #C3E88D">"</span><span style="color: #89DDFF">},</span><span style="color: #EFF"> </span><span style="color: #89DDFF">{</span><span style="color: #C3E88D">"item-description.furnace"</span><span style="color: #89DDFF">},</span><span style="color: #EFF"> </span><span style="color: #C3E88D">"optional fallback"</span><span style="color: #89DDFF">}</span>
+<span style="color: #546E7A; font-style: italic">-- If "entity-description.furnace" exists, it is concatenated with "\n" and returned. Otherwise, if</span>
+<span style="color: #546E7A; font-style: italic">-- "item-description.furnace" exists, it is returned as-is. Otherwise, "optional fallback" is returned. If this</span>
+<span style="color: #546E7A; font-style: italic">-- value wasn't specified, the translation result would be "Unknown key: 'item-description.furnace'".</span>
+</code></pre>
+                  </div>
+                </div>
+                <div class="mb12" id="used-in" style="margin-top: 24px">
+                  <hr />
+                  <details open="">
+                    <summary class="white" style="font-size: 120%; font-weight: 900">
+                      Type used in
+                    </summary>
+                    <ul>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/BaseStyleSpecification.html#tooltip"
+                        >
+                          BaseStyleSpecification::tooltip
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/BurnerUsagePrototype.html#empty_slot_caption"
+                        >
+                          BurnerUsagePrototype::empty_slot_caption
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/BurnerUsagePrototype.html#empty_slot_description"
+                        >
+                          BurnerUsagePrototype::empty_slot_description
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/BurnerUsagePrototype.html#no_fuel_status"
+                        >
+                          BurnerUsagePrototype::no_fuel_status
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/UtilityConstants.html#color_filters"
+                        >
+                          ColorFilterData::localised_name
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/CustomTooltipField.html#name"
+                        >
+                          CustomTooltipField::name
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/CustomTooltipField.html#value"
+                        >
+                          CustomTooltipField::value
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/CustomTooltipField.html#quality_values"
+                        >
+                          CustomTooltipField::quality_values
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/FuelCategory.html#fuel_value_type"
+                        >
+                          FuelCategory::fuel_value_type
+                        </a>
+                      </li>
+                      <li>
+                        <a href="https://lua-api.factorio.com/latest/types/LocalisedString.html">
+                          LocalisedString
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/NothingModifier.html#effect_description"
+                        >
+                          NothingModifier::effect_description
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/PrototypeBase.html#localised_name"
+                        >
+                          PrototypeBase::localised_name
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/PrototypeBase.html#localised_description"
+                        >
+                          PrototypeBase::localised_description
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/PrototypeBase.html#factoriopedia_description"
+                        >
+                          PrototypeBase::factoriopedia_description
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#allow_consumption_message"
+                        >
+                          RecipePrototype::allow_consumption_message
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#allow_speed_message"
+                        >
+                          RecipePrototype::allow_speed_message
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#allow_productivity_message"
+                        >
+                          RecipePrototype::allow_productivity_message
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#allow_pollution_message"
+                        >
+                          RecipePrototype::allow_pollution_message
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/prototypes/RecipePrototype.html#allow_quality_message"
+                        >
+                          RecipePrototype::allow_quality_message
+                        </a>
+                      </li>
+                      <li>
+                        <a
+                          href="https://lua-api.factorio.com/latest/types/ScriptedTechnologyTrigger.html#trigger_description"
+                        >
+                          ScriptedTechnologyTrigger::trigger_description
+                        </a>
+                      </li>
+                    </ul>
+                  </details>
+                </div>
+              </main>
+            </div>
+            <div class="docs-sidebar mr12 flex-column fs0" data-pagefind-ignore="">
+              <div class="panel-inset breadcrumbs mb0 p4">
+                <span class="breadcrumbs-text"
+                  ><a
+                    href="https://lua-api.factorio.com/latest/prototypes.html"
+                    class="category-link"
+                    data-view="list-prototypes"
+                    >Prototypes</a
+                  >
+                  -
+                  <a
+                    href="https://lua-api.factorio.com/latest/types.html"
+                    class="category-link"
+                    data-view="list-types"
+                    >Types</a
+                  >
+                  -
+                  <a
+                    href="https://lua-api.factorio.com/latest/defines.html"
+                    class="category-link"
+                    data-view="list-defines"
+                    >Defines</a
+                  >
+                  -
+                  <a
+                    href="https://lua-api.factorio.com/latest/auxiliary/prototype-tree.html"
+                    class="category-link"
+                    >Inheritance</a
+                  ></span
+                ><a id="hide-sidebar-button" class="button square-sm" style="float: right">|&lt;</a>
+              </div>
+              <div class="panel-inset mb0 fs0 p4 flex" style="flex-direction: column">
+                <input
+                  id="ref-search"
+                  type="text"
+                  class="w100p"
+                  placeholder="Filter..."
+                  spellcheck="false"
+                />
+                <div class="flex flex-space-between" style="margin-top: 8px">
+                  <div>
+                    <input type="checkbox" id="search-properties" style="margin-right: 6px" /><label
+                      for="search-properties"
+                    >
+                      Filter properties
+                    </label>
+                  </div>
+                  <a class="filter-search-link" style="display: flex"
+                    ><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/search.svg"
+                      alt=""
+                      class="search-icon"
+                    /><span>Fulltext search</span></a
+                  >
+                </div>
+              </div>
+              <div id="docs-sidebar-list" class="panel-inset-lighter mt0 p2 docs-sidebar-list h100">
+                <h2 class="ml8 mt8 mb0 yellow">
+                  <a class="collapse-link not-selectable" data-view="list-prototypes"
+                    ><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/collapse-symbol.png"
+                      class="collapse-icon"
+                      style="pointer-events: none; display: inline" /><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/expand-symbol.png"
+                      class="expand-icon"
+                      style="pointer-events: none; display: none" /></a
+                  ><a href="https://lua-api.factorio.com/latest/prototypes.html"> Prototypes</a>
+                </h2>
+                <ul class="panel-hole" id="list-prototypes" style="display: block"></ul>
+                <h2 class="ml8 mt8 mb0 yellow">
+                  <a class="collapse-link not-selectable" data-view="list-types"
+                    ><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/collapse-symbol.png"
+                      class="collapse-icon"
+                      style="pointer-events: none; display: inline" /><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/expand-symbol.png"
+                      class="expand-icon"
+                      style="pointer-events: none; display: none" /></a
+                  ><a href="https://lua-api.factorio.com/latest/types.html"> Types</a>
+                </h2>
+                <ul class="panel-hole" id="list-types" style="display: block">
+                  <li>
+                    <a
+                      href="https://lua-api.factorio.com/latest/types/ItemProductPrototype.html"
+                      id="itemproductprototype"
+                      ><span class="yellow strong">ItemProductPrototype</span></a
+                    >
+                  </li>
+                </ul>
+                <h2 class="ml8 mt8 mb0 yellow">
+                  <a class="collapse-link not-selectable" data-view="list-defines"
+                    ><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/collapse-symbol.png"
+                      class="collapse-icon"
+                      style="pointer-events: none; display: inline" /><img
+                      src="./LocalisedString - Prototype Docs _ Factorio_files/expand-symbol.png"
+                      class="expand-icon"
+                      style="pointer-events: none; display: none" /></a
+                  ><a href="https://lua-api.factorio.com/latest/defines.html"> Defines</a>
+                </h2>
+                <ul class="panel-hole" id="list-defines" style="display: block"></ul>
+                <a class="filter-search-link" style="margin-top: 14px; display: flex"
+                  ><img
+                    src="./LocalisedString - Prototype Docs _ Factorio_files/search.svg"
+                    alt=""
+                    class="search-icon"
+                  /><span
+                    >Fulltext search for
+                    <em id="filter-search-link-term">ItemProductPrototype</em></span
+                  ></a
+                >
+              </div>
+            </div>
+            <div class="docs-sidebar-thin mr8 flex-column" style="margin-top: 20px">
+              <a id="show-sidebar-button" class="button square-sm ml0">&gt;|</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer" data-pagefind-ignore="">
+      <div class="panel">
+        <div class="panel-inset m0 text-center">
+          Copyright © Wube Software <span class="separator">|</span
+          ><a href="https://lua-api.factorio.com/latest/license.html">License</a
+          ><span class="separator">|</span
+          ><a href="https://lua-api.factorio.com/latest/static/archive.zip">Download</a
+          ><span class="separator">|</span
+          ><a href="https://forums.factorio.com/viewforum.php?f=233" target="_blank">Feedback</a>
+        </div>
+      </div>
+    </div>
+    <div id="pf-announcer-cbb-efa" data-pagefind-announcer="">
+      <div
+        id="pf-polite-region-cbe-aad"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-pf-sr-hidden=""
+      ></div>
+      <div
+        id="pf-polite-region-bed-dbe"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        data-pf-sr-hidden=""
+      ></div>
+      <div
+        id="pf-assertive-region-cde-eab"
+        role="status"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-pf-sr-hidden=""
+      ></div>
+      <div
+        id="pf-assertive-region-cac-bab"
+        role="status"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-pf-sr-hidden=""
+      ></div>
+    </div>
+  </body>
+</html>
