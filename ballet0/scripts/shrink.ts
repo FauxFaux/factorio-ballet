@@ -50,11 +50,7 @@ async function main() {
 
   const shrunk: Shrunk = { items, recipes, crafting };
 
-  await writeFile(
-    'public/assets/sets/space-age/shrunk-data.json',
-    JSON.stringify(shrunk),
-    'utf-8',
-  );
+  await writeFile('public/assets/sets/space-age/shrunk-data.json', JSON.stringify(shrunk), 'utf-8');
 }
 
 await main();

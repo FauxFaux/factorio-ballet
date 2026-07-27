@@ -5,7 +5,5 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  return (
-    <div className="flex h-screen items-center justify-center">hello world</div>
-  );
+  return <div className="flex h-screen items-center justify-center">hello world</div>;
 }

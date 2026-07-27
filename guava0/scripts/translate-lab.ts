@@ -3,17 +3,8 @@
 import { copyFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { pascalSnakeCase } from 'change-case';
-import {
-  Item,
-  ItemJson,
-  type ModData,
-  ModInfo,
-  RecipeJson,
-} from 'factoriolab/src/app/models';
-import {
-  type ExportNamedDeclaration,
-  type VariableDeclaration,
-} from '@babel/types';
+import { Item, ItemJson, type ModData, ModInfo, RecipeJson } from 'factoriolab/src/app/models';
+import { type ExportNamedDeclaration, type VariableDeclaration } from '@babel/types';
 import { addHook } from 'pirates';
 import * as path from 'node:path';
 import { transformSync } from '@babel/core';
@@ -38,15 +29,12 @@ async function main() {
   }
 
   const sciencePacks = countBy(
-    data.recipes
-      .filter((r) => r.isTechnology)
-      .flatMap((r) => Object.keys(r.in)),
+    data.recipes.filter((r) => r.isTechnology).flatMap((r) => Object.keys(r.in)),
   );
 
   type TechnologyItemId = string;
 
-  const packUnlockedBy: Record<ItemJson['id'], TechnologyItemId | undefined> =
-    {};
+  const packUnlockedBy: Record<ItemJson['id'], TechnologyItemId | undefined> = {};
   for (const pack of Object.keys(sciencePacks)) {
     for (const recp of data.recipes) {
       if (!recp.out[pack]) continue;
@@ -85,9 +73,7 @@ async function main() {
     const reachable = new Set<string>();
     const relevant = techs
       .filter((t) =>
-        (toMakeTech[t.id] ?? []).some(
-          (r) => data.recipes.find((c) => c.id === r)!.in[pack],
-        ),
+        (toMakeTech[t.id] ?? []).some((r) => data.recipes.find((c) => c.id === r)!.in[pack]),
       )
       .map((t) => t.id);
     for (const tech of relevant) {
@@ -99,11 +85,7 @@ async function main() {
   // data.items.filter((i) => i.category === 'science')
 }
 
-function addImplies(
-  to: Set<string>,
-  tech: string,
-  reqs: Record<string, string[]>,
-) {
+function addImplies(to: Set<string>, tech: string, reqs: Record<string, string[]>) {
   if (to.has(tech)) return;
   to.add(tech);
   for (const req of reqs[tech]) {
@@ -168,9 +150,7 @@ async function legacy() {
   const labIds = new Set(Object.values(toLab).filter((id) => id));
   for (const labId of labIds) {
     if (!labId) continue;
-    const lab: ModData = (
-      await import(`factoriolab/src/data/${labId}/data.json`)
-    ).default;
+    const lab: ModData = (await import(`factoriolab/src/data/${labId}/data.json`)).default;
 
     const ourItems = new Set<string>();
     for (const ds of fromLab[labId]) {
@@ -287,17 +267,12 @@ async function legacy() {
         2,
       ),
     );
-    copyFileSync(
-      `node_modules/factoriolab/src/data/${labId}/icons.webp`,
-      `data/${labId}.webp`,
-    );
+    copyFileSync(`node_modules/factoriolab/src/data/${labId}/icons.webp`, `data/${labId}.webp`);
   }
 }
 
 function sortByKeys<T>(obj: Record<string, T>): Record<string, T> {
-  return Object.fromEntries(
-    Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)),
-  );
+  return Object.fromEntries(Object.entries(obj).sort(([a], [b]) => a.localeCompare(b)));
 }
 
 const lcFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);

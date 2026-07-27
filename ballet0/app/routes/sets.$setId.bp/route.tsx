@@ -4,10 +4,7 @@ import { LoaderFunctionArgs } from '@remix-run/router';
 import { Locales } from '~/lib/locale';
 import { CraftIcon, Icons, RecipeIcon } from '~/lib/icons';
 import { IconCopy, IconFlask } from '@tabler/icons-react';
-import {
-  ItemProductPrototype,
-  ProductPrototype,
-} from 'factorio-raw-types/prototypes';
+import { ItemProductPrototype, ProductPrototype } from 'factorio-raw-types/prototypes';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { mallAssembler } from '~/lib/bp';
@@ -37,9 +34,7 @@ export default function Bp() {
       <div className={'flex flex-wrap gap-2'}>
         {Object.entries(ds.shrunk.recipes)
           .filter(([, recp]) => hasIngredients(recp) && !isVoid(recp))
-          .filter(([, recp]) =>
-            madeIn(ds, recp).includes('assembling-machine-2'),
-          )
+          .filter(([, recp]) => madeIn(ds, recp).includes('assembling-machine-2'))
           .sort(([a], [b]) => (costed[a] ?? Infinity) - (costed[b] ?? Infinity))
           .map(([id, recp]) => {
             return <RecipeTile key={id} ds={ds} id={id} recp={recp} />;
@@ -120,12 +115,9 @@ const RecipeTile = ({ ds, id, recp }: { ds: Ds; id: string; recp: Recipe }) => (
         text={encode(
           mallAssembler(
             id,
-            recp.main_product ??
-              (recp.results![0] as ItemProductPrototype).name,
+            recp.main_product ?? (recp.results![0] as ItemProductPrototype).name,
             undefined,
-            Object.fromEntries(
-              (recp.ingredients ?? []).map((ing) => [ing.name, ing.amount]),
-            ),
+            Object.fromEntries((recp.ingredients ?? []).map((ing) => [ing.name, ing.amount])),
           ),
         )}
       />
@@ -145,11 +137,7 @@ const Product = ({ ds, prod }: { ds: Ds; prod: ProductPrototype }) => {
     case 'fluid': {
       const amount = (prod.amount ?? 1) * (prod.probability ?? 1);
       const icon = (
-        <CraftIcon
-          ds={ds}
-          name={prod.name}
-          alt={`${prod.name} @ ${prod.probability}`}
-        />
+        <CraftIcon ds={ds} name={prod.name} alt={`${prod.name} @ ${prod.probability}`} />
       );
       if (amount === 1) return icon;
       return (
@@ -170,15 +158,11 @@ const Product = ({ ds, prod }: { ds: Ds; prod: ProductPrototype }) => {
 
 function madeIn(ds: Ds, recp: Recipe) {
   return Object.entries(ds.shrunk.crafting)
-    .filter(([, c]) =>
-      c.crafting_categories.includes(recp.category ?? 'crafting'),
-    )
+    .filter(([, c]) => c.crafting_categories.includes(recp.category ?? 'crafting'))
     .map(([id]) => id);
 }
 
-function hasIngredients(
-  recp: Recipe,
-): recp is WithRequired<Recipe, 'ingredients'> {
+function hasIngredients(recp: Recipe): recp is WithRequired<Recipe, 'ingredients'> {
   return (recp.ingredients?.length ?? 0) > 0;
 }
 

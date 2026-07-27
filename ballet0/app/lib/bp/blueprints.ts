@@ -51,8 +51,7 @@ export function decode(data: string): Blueprint {
   const un64 = Uint8Array.from(atob(data.slice(1))!, (c) => c.charCodeAt(0));
   const obj = JSON.parse(pako.inflate(un64, { to: 'string' }));
   const keys = Object.keys(obj);
-  if (keys.length !== 1 || keys[0] !== 'blueprint')
-    throw new Error(`invalid top level: ${keys}`);
+  if (keys.length !== 1 || keys[0] !== 'blueprint') throw new Error(`invalid top level: ${keys}`);
   return obj.blueprint as Blueprint;
 }
 

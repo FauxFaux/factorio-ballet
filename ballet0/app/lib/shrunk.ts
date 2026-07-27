@@ -32,10 +32,7 @@ export type Item = Pick<ItemPrototype, (typeof itemKeys)[number]>;
 
 export type Recipe = Pick<RecipePrototype, (typeof recpKeys)[number]>;
 
-export type Crafting = Pick<
-  CraftingMachinePrototype,
-  (typeof craftingKeys)[number]
->;
+export type Crafting = Pick<CraftingMachinePrototype, (typeof craftingKeys)[number]>;
 
 export interface Shrunk {
   items: Record<string, Item>;

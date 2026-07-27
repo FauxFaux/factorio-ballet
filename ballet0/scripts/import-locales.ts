@@ -15,16 +15,10 @@ async function main() {
   for (const entry of await readdir(scriptOutput)) {
     if (!entry.endsWith('-locale.json')) continue;
     const kind = entry.slice(0, -12);
-    locales[kind] = JSON.parse(
-      await readFile(resolve(scriptOutput, entry), 'utf-8'),
-    );
+    locales[kind] = JSON.parse(await readFile(resolve(scriptOutput, entry), 'utf-8'));
   }
 
-  await writeFile(
-    'public/assets/sets/space-age/locales.json',
-    JSON.stringify(locales),
-    'utf-8',
-  );
+  await writeFile('public/assets/sets/space-age/locales.json', JSON.stringify(locales), 'utf-8');
 }
 
 await main();
