@@ -3,8 +3,7 @@
 import { copyFileSync, writeFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { pascalSnakeCase } from 'change-case';
-import { Item, ItemJson, type ModData, ModInfo, RecipeJson } from 'factoriolab/src/app/models';
-import { type ExportNamedDeclaration, type VariableDeclaration } from '@babel/types';
+import { ItemJson, type ModData, ModInfo, RecipeJson } from 'factoriolab/src/app/models';
 import { addHook } from 'pirates';
 import * as path from 'node:path';
 import { transformSync } from '@babel/core';
@@ -126,6 +125,7 @@ function ridiculouslyLoadLab(): ModInfo[] {
     },
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let dataObj: any;
   try {
     dataObj = require('factoriolab/src/data');
@@ -136,7 +136,7 @@ function ridiculouslyLoadLab(): ModInfo[] {
   return dataObj.data.mods;
 }
 
-async function legacy() {
+export async function legacy() {
   const fromLab = Object.entries(toLab).reduce(
     (acc, [id, labId]) => {
       if (!labId) return acc;
@@ -276,17 +276,5 @@ function sortByKeys<T>(obj: Record<string, T>): Record<string, T> {
 }
 
 const lcFirst = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
-
-function isExportNamedDeclaration(
-  node: { type: string } | null | undefined,
-): node is ExportNamedDeclaration {
-  return node?.type === 'ExportNamedDeclaration';
-}
-
-function isVariableDeclaration(
-  node: { type: string } | null | undefined,
-): node is VariableDeclaration {
-  return node?.type === 'VariableDeclaration';
-}
 
 main().catch(console.error);

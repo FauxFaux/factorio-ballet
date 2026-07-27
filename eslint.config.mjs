@@ -1,10 +1,10 @@
-import preact from "eslint-config-preact";
-import js from "@eslint/js";
-import tseslint from "typescript-eslint";
-import { defineConfig } from "eslint/config";
+// @ts-check
+
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import tseslint from 'typescript-eslint';
 
 export default defineConfig(
-  ...preact,
   js.configs.recommended,
   tseslint.configs.recommended,
   {

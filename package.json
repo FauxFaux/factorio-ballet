@@ -18,10 +18,10 @@
     "zod": "^4"
   },
   "devDependencies": {
+    "@eslint/js": "^10",
     "@preact/preset-vite": "^2",
     "@types/node": "^24",
-    "eslint": "^9",
-    "eslint-config-preact": "^2",
+    "eslint": "^10",
     "factorio-raw-types": "^0.3",
     "oxfmt": "^0.52",
     "typescript": "~6",
