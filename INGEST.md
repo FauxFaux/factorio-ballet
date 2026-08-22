@@ -162,3 +162,40 @@ Measured against the Bob's/Angel's pack, for whoever picks this up:
 
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
 module data is what that section will need.
+
+## Progression ("how far through the game is this?")
+
+`scripts/complexity.ts` scores every resource 0–1 for how deep into the tech tree you must be before
+you can first make one. It reads the dump directly (`APP=... node scripts/complexity.ts`), prints a
+landmark table and a histogram, and takes substring filters or `--tech`. Nothing is ingested into
+`static.json` yet.
+
+The model, and the two non-obvious parts of it:
+
+- **A science pack is worth all the science already spent to unlock it**, with automation science as
+  the unit — logistic is 676, chemical 1.3M, space 1.8e13. That is circular (a technology's cost is
+  denominated in packs) but the dependency graph _of packs_ is acyclic, so a fixed point falls out
+  in five passes. The weights come out exponential, matching how the game feels — 2000 automation
+  science is a rounding error next to 400 logistic — and a `log10` at the end turns that back into a
+  readable percentage. 100% is the most expensive technology in the tree.
+- **A resource costs the max of its recipe's unlock cost and each ingredient's own cost**, minimised
+  over the recipes that produce it: a minimax shortest path. The max is the point — a recipe
+  unlocked at 10% whose ingredient only exists at 60% is a 60% recipe.
+
+**Four sources of a resource are not recipes**, and without all four large parts of the graph never
+become reachable at all:
+
+- `minable` / `loot` on naturally placed prototypes — ores, trees (Angel's gardens are trees), fish,
+  biter artifacts.
+- **`offshore-pump`, which conjures `fluid_box.filter` out of the tile it stands on.** This is where
+  water comes from (the vanilla pump names no filter and means water), and it is the _only_ entry to
+  Angel's mud line: `angels-seafloor-pump` is filtered to `angels-water-viscous-mud`, and every mud
+  recipe consumes mud. Miss it and mud, clay, clay bricks, and the tier-2 ore buildings are all
+  unobtainable. Model it as a conversion from the item that places the pump, so the fluid inherits
+  the pump's unlock technology.
+- `rocket_launch_products` — the only source of space science in a pre-Space-Age pack.
+- `burnt_result` — depleted fuel cells.
+
+Unreachable resources then get a second pass pricing them on their unlock technology alone. That
+list is a completeness check, not a feature: with all four sources modelled it is 2 (bob fuel cells
+Angel's replaced), and a long list means another source like the seafloor pump is still missing.
