@@ -21,6 +21,13 @@ export interface Recipe {
    * matters only for which machine the GUI offers first, so we flatten them.
    */
   categories: string[];
+
+  /**
+   * Whether productivity bonuses (from modules or research) apply at all. The game defaults this
+   * to off, and most recipes leave it there — 335 of 2330 in the Bob's/Angel's pack allow it — so
+   * absent means "productivity does nothing here", not "unknown".
+   */
+  allowProductivity?: true;
 }
 
 export interface Ingredient {

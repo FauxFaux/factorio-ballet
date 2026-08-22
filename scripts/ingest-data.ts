@@ -140,6 +140,7 @@ async function main() {
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
   const unnamed: string[] = [];
   let skipped = 0;
+  let productive = 0;
 
   const recipes: Record<string, Recipe> = Object.fromEntries(
     Object.entries(v)
@@ -162,11 +163,21 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
         const duration = r.energy_required ?? 0.5;
         // `crafting` is the game's default for a recipe which names no category.
         const categories = [r.category ?? 'crafting', ...(r.additional_categories ?? [])];
-        return [id, { human, ingredients, products, duration, categories }] as const;
+        // Off by default in the game, and set explicitly false by 17 live recipes here, so the
+        // absent case and the false case mean the same thing; emit the flag only when it is on.
+        const allowProductivity = r.allow_productivity ? (true as const) : undefined;
+        if (allowProductivity) productive++;
+        return [
+          id,
+          { human, ingredients, products, duration, categories, allowProductivity },
+        ] as const;
       }),
   );
 
-  console.log(`Recipes: ${Object.keys(recipes).length} (dropped ${skipped} hidden/parameter)`);
+  console.log(
+    `Recipes: ${Object.keys(recipes).length} (dropped ${skipped} hidden/parameter),` +
+      ` ${productive} allowing productivity`,
+  );
   if (unnamed.length > 0) {
     console.log(`Unnamed recipes: ${unnamed.length}`, unnamed.slice(0, 20));
   }

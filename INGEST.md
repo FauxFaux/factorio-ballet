@@ -152,9 +152,13 @@ Measured against the Bob's/Angel's pack, for whoever picks this up:
 - **`data.raw.beacon`** — `beacon`, `bob-beacon-2`, `bob-beacon-3`, with `module_slots` 2/4/6 and
   `distribution_effectivity` 1.5 throughout. Beacons have no `crafting_categories`, so they are not
   machines under the current model and need their own record.
-- **Recipes** carry `allow_productivity` (420 true of 2621), which gates whether productivity
-  applies at all — a minority of recipes, so a UI that assumes otherwise will overstate throughput
-  badly. `allow_quality` (333) and `allow_decomposition` (669) are also present.
+- **Recipes** carry `allow_productivity`, which gates whether productivity applies at all — a
+  minority of recipes (420 true of 2621 raw; 335 of the 2330 live ones), so a UI that assumes
+  otherwise will overstate throughput badly. This one is ingested, as `Recipe.allowProductivity`,
+  emitted only when true: the game's default is off and the 17 live recipes setting it explicitly
+  false mean the same thing as the 1978 leaving it unset. `allow_quality` (333) and
+  `allow_decomposition` (669) are also present, and are not. Neither is products'
+  `ignored_by_productivity`, which exempts part of a result from the bonus.
 
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
 module data is what that section will need.

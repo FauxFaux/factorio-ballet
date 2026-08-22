@@ -17,6 +17,12 @@ import { ResourceButton, ResourceIcon } from './resource.tsx';
 /** Crafting speed we quote rates at, until we have building data. */
 const CRAFTING_SPEED = 1;
 
+/**
+ * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
+ * keeps the vanilla naming, so tier 1 is unsuffixed and `productivity-module-1` does not exist.
+ */
+const PRODUCTIVITY_MODULE: ResourceId = 'item:productivity-module';
+
 /** Machines with no item of their own to borrow an icon from, and what stands in instead. */
 const MACHINE_ICON_STANDIN: Record<MachineId, ResourceId> = {
   character: 'item:light-armor',
@@ -158,17 +164,44 @@ function MachineRow({ recipe }: { recipe: Recipe }) {
 
   return (
     <div class="recipe-machines">
-      {machines.map(({ id, machine }) => (
-        <span
-          key={id}
-          class="machine"
-          title={`${machineName(id)} (${id}) at ${fmt(machine.speed)}×`}
-        >
-          <span class="machine-icon" style={machineIconStyle(id)} aria-hidden="true" />
-          <span class="machine-speed">{fmt(machine.speed)}×</span>
-        </span>
-      ))}
+      <div class="machine-list">
+        {machines.map(({ id, machine }) => (
+          <span
+            key={id}
+            class="machine"
+            title={`${machineName(id)} (${id}) at ${fmt(machine.speed)}×`}
+          >
+            <span class="machine-icon" style={machineIconStyle(id)} aria-hidden="true" />
+            <span class="machine-speed">{fmt(machine.speed)}×</span>
+          </span>
+        ))}
+      </div>
+      <ProductivityChip allowed={recipe.allowProductivity ?? false} />
     </div>
+  );
+}
+
+/**
+ * Whether productivity bonuses do anything here: the module's icon, ticked when they apply. Most
+ * recipes do not allow them, so the unticked state is the common one.
+ */
+function ProductivityChip({ allowed }: { allowed: boolean }) {
+  return (
+    <span
+      class={allowed ? 'productivity is-allowed' : 'productivity'}
+      title={
+        allowed
+          ? 'Productivity bonuses apply to this recipe'
+          : 'Productivity bonuses do not apply to this recipe'
+      }
+    >
+      <ResourceIcon id={PRODUCTIVITY_MODULE} />
+      {/* Always rendered, hidden rather than dropped when disallowed, so the chip is one width and
+          the machine rows line up down the page. */}
+      <span class="productivity-check" aria-hidden="true">
+        ✔
+      </span>
+    </span>
   );
 }
 

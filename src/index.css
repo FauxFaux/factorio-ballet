@@ -311,14 +311,23 @@ code {
   font-style: italic;
 }
 
+/* The machines wrap in the left column; the right one is reserved for the productivity chip, so
+ * it stays at the right edge however many lines the machines take. */
 .recipe-machines {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.machine-list {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 4px 6px;
-  margin-top: 6px;
-  padding-top: 6px;
-  border-top: 1px solid var(--border);
 }
 
 .recipe-machines-label {
@@ -349,4 +358,29 @@ code {
   font-family: var(--mono);
   font-size: 13px;
   white-space: nowrap;
+}
+
+.productivity {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  cursor: help;
+  /* the unticked state is the majority, so keep it quiet next to the machines */
+  opacity: 0.45;
+}
+
+.productivity.is-allowed {
+  opacity: 1;
+}
+
+.productivity-check {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.productivity:not(.is-allowed) .productivity-check {
+  visibility: hidden;
 }

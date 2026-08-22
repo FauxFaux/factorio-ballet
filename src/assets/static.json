@@ -138,7 +138,8 @@
       "ingredients": [{ "resource": "item:steel-plate", "amount": 1 }],
       "products": [{ "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "night-vision-equipment": {
       "human": "Nightvision",
@@ -410,7 +411,8 @@
       "ingredients": [{ "resource": "item:iron-plate", "amount": 1 }],
       "products": [{ "resource": "item:iron-stick", "amount": { "fixed": 2 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "stone-furnace": {
       "human": "Stone furnace",
@@ -449,7 +451,8 @@
         { "resource": "item:iron-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "electronic-circuit": {
       "human": "Electronic circuit",
@@ -692,7 +695,8 @@
         { "resource": "item:automation-science-pack", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "logistic-science-pack": {
       "human": "Logistic science pack",
@@ -705,7 +709,8 @@
         { "resource": "item:logistic-science-pack", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 6,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "lab": {
       "human": "Lab",
@@ -785,7 +790,8 @@
       ],
       "products": [{ "resource": "item:engine-unit", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 10,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "iron-chest": {
       "human": "Iron chest",
@@ -1097,7 +1103,8 @@
       "ingredients": [{ "resource": "item:stone", "amount": 2 }],
       "products": [{ "resource": "item:stone-brick", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 3.2,
-      "categories": ["smelting"]
+      "categories": ["smelting"],
+      "allowProductivity": true
     },
     "arithmetic-combinator": {
       "human": "Arithmetic combinator",
@@ -1567,7 +1574,8 @@
         { "resource": "item:chemical-science-pack", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 14,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "military-science-pack": {
       "human": "Military science pack",
@@ -1580,7 +1588,8 @@
         { "resource": "item:military-science-pack", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "production-science-pack": {
       "human": "Production science pack",
@@ -1593,7 +1602,8 @@
         { "resource": "item:production-science-pack", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 21,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "utility-science-pack": {
       "human": "Utility science pack",
@@ -1610,7 +1620,8 @@
         { "resource": "item:utility-science-pack", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 35,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "express-underground-belt": {
       "human": "Express underground belt",
@@ -1882,7 +1893,8 @@
         { "resource": "item:electric-engine-unit", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "flying-robot-frame": {
       "human": "Flying robot frame",
@@ -1895,7 +1907,8 @@
         { "resource": "item:flying-robot-frame", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "explosives": {
       "human": "Explosives",
@@ -1906,7 +1919,8 @@
       ],
       "products": [{ "resource": "item:explosives", "amount": { "fixed": 2 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "battery": {
       "human": "Battery",
@@ -1917,7 +1931,8 @@
       ],
       "products": [{ "resource": "item:battery", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "storage-tank": {
       "human": "Storage tank",
@@ -1965,7 +1980,8 @@
         { "resource": "item:low-density-structure", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 15,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "rocket-fuel": {
       "human": "Rocket fuel",
@@ -1988,7 +2004,8 @@
       ],
       "products": [{ "resource": "item:rocket-part", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 3,
-      "categories": ["rocket-building"]
+      "categories": ["rocket-building"],
+      "allowProductivity": true
     },
     "satellite": {
       "human": "Satellite",
@@ -2043,7 +2060,8 @@
         { "resource": "item:angels-uranium-234", "amount": { "fixed": 1 }, "probability": 0.000055 }
       ],
       "duration": 12,
-      "categories": ["centrifuging"]
+      "categories": ["centrifuging"],
+      "allowProductivity": true
     },
     "nuclear-fuel": {
       "human": "Nuclear fuel",
@@ -2053,7 +2071,8 @@
       ],
       "products": [{ "resource": "item:nuclear-fuel", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 90,
-      "categories": ["centrifuging"]
+      "categories": ["centrifuging"],
+      "allowProductivity": true
     },
     "nuclear-fuel-reprocessing": {
       "human": "Uranium fuel reprocessing",
@@ -2063,7 +2082,8 @@
         { "resource": "item:angels-slag", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 120,
-      "categories": ["centrifuging"]
+      "categories": ["centrifuging"],
+      "allowProductivity": true
     },
     "uranium-fuel-cell": {
       "human": "Uranium-235 fuel cell",
@@ -2817,7 +2837,8 @@
       "ingredients": [{ "resource": "item:bob-ruby-ore", "amount": 1 }],
       "products": [{ "resource": "item:bob-ruby-3", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-sapphire-3": {
       "human": "Raw sapphire",
@@ -2826,7 +2847,8 @@
         { "resource": "item:bob-sapphire-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-emerald-3": {
       "human": "Raw emerald",
@@ -2835,7 +2857,8 @@
         { "resource": "item:bob-emerald-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-amethyst-3": {
       "human": "Raw amethyst",
@@ -2844,14 +2867,16 @@
         { "resource": "item:bob-amethyst-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-topaz-3": {
       "human": "Raw topaz",
       "ingredients": [{ "resource": "item:bob-topaz-ore", "amount": 1 }],
       "products": [{ "resource": "item:bob-topaz-3", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-diamond-3": {
       "human": "Raw diamond",
@@ -2860,7 +2885,8 @@
         { "resource": "item:bob-diamond-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-ruby-4": {
       "human": "Cut ruby",
@@ -2871,7 +2897,8 @@
       ],
       "products": [{ "resource": "item:bob-ruby-4", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-sapphire-4": {
       "human": "Cut sapphire",
@@ -2884,7 +2911,8 @@
         { "resource": "item:bob-sapphire-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-emerald-4": {
       "human": "Cut emerald",
@@ -2897,7 +2925,8 @@
         { "resource": "item:bob-emerald-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-amethyst-4": {
       "human": "Cut amethyst",
@@ -2910,7 +2939,8 @@
         { "resource": "item:bob-amethyst-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-topaz-4": {
       "human": "Cut topaz",
@@ -2921,7 +2951,8 @@
       ],
       "products": [{ "resource": "item:bob-topaz-4", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-diamond-4": {
       "human": "Cut diamond",
@@ -2934,7 +2965,8 @@
         { "resource": "item:bob-diamond-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-ruby-5": {
       "human": "Polished ruby",
@@ -3033,7 +3065,8 @@
         { "resource": "fluid:bob-liquid-fuel", "amount": { "fixed": 50 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "bob-silver-oxide": {
       "human": "Silver oxide",
@@ -3045,7 +3078,8 @@
         { "resource": "item:bob-silver-oxide", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["angels-powder-mixing-3"]
+      "categories": ["angels-powder-mixing-3"],
+      "allowProductivity": true
     },
     "bob-silicon-carbide": {
       "human": "Silicon carbide",
@@ -3057,7 +3091,8 @@
         { "resource": "item:bob-silicon-carbide", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 7,
-      "categories": ["angels-chemical-smelting"]
+      "categories": ["angels-chemical-smelting"],
+      "allowProductivity": true
     },
     "bob-silicon-wafer": {
       "human": "Silicon wafer",
@@ -3066,7 +3101,8 @@
         { "resource": "item:bob-silicon-wafer", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "bob-silicon-powder": {
       "human": "Silicon powder",
@@ -3087,7 +3123,8 @@
         { "resource": "item:bob-silicon-nitride", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 7.5,
-      "categories": ["angels-chemical-smelting"]
+      "categories": ["angels-chemical-smelting"],
+      "allowProductivity": true
     },
     "bob-lithium-cobalt-oxide": {
       "human": "Lithium cobalt oxide",
@@ -3099,7 +3136,8 @@
         { "resource": "item:bob-lithium-cobalt-oxide", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 7,
-      "categories": ["angels-chemical-smelting"]
+      "categories": ["angels-chemical-smelting"],
+      "allowProductivity": true
     },
     "bob-gas-canister": {
       "human": "Empty bottle",
@@ -3108,7 +3146,8 @@
         { "resource": "item:bob-gas-canister", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-empty-canister": {
       "human": "Empty canister",
@@ -3120,7 +3159,8 @@
         { "resource": "item:bob-empty-canister", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-polishing-compound": {
       "human": "Polishing compound",
@@ -3132,7 +3172,8 @@
         { "resource": "item:bob-polishing-compound", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "bob-enriched-fuel": {
       "human": "Enriched fuel block",
@@ -3148,7 +3189,8 @@
       "ingredients": [{ "resource": "item:angels-solid-lithium", "amount": 1 }],
       "products": [{ "resource": "item:bob-lithium", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1.6,
-      "categories": ["angels-petrochem-electrolyser"]
+      "categories": ["angels-petrochem-electrolyser"],
+      "allowProductivity": true
     },
     "bob-copper-tungsten-alloy": {
       "human": "Copper tungsten plate",
@@ -3164,7 +3206,8 @@
         }
       ],
       "duration": 8,
-      "categories": ["angels-sintering-4"]
+      "categories": ["angels-sintering-4"],
+      "allowProductivity": true
     },
     "bob-tungsten-carbide": {
       "human": "Tungsten carbide plate",
@@ -3176,7 +3219,8 @@
         { "resource": "item:bob-tungsten-carbide", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 6,
-      "categories": ["angels-sintering-4"]
+      "categories": ["angels-sintering-4"],
+      "allowProductivity": true
     },
     "bob-tungsten-carbide-2": {
       "human": "Tungsten carbide plate",
@@ -3188,7 +3232,8 @@
         { "resource": "item:bob-tungsten-carbide", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 6,
-      "categories": ["angels-sintering-4"]
+      "categories": ["angels-sintering-4"],
+      "allowProductivity": true
     },
     "bob-steel-gear-wheel": {
       "human": "Steel gear wheel",
@@ -3197,7 +3242,8 @@
         { "resource": "item:bob-steel-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-steel-bearing-ball": {
       "human": "Steel bearing ball",
@@ -3206,7 +3252,8 @@
         { "resource": "item:bob-steel-bearing-ball", "amount": { "fixed": 12 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-steel-bearing": {
       "human": "Steel bearing",
@@ -3218,7 +3265,8 @@
         { "resource": "item:bob-steel-bearing", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-brass-gear-wheel": {
       "human": "Brass gear wheel",
@@ -3227,7 +3275,8 @@
         { "resource": "item:bob-brass-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-cobalt-steel-gear-wheel": {
       "human": "Cobalt steel gear wheel",
@@ -3240,7 +3289,8 @@
         }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-cobalt-steel-bearing-ball": {
       "human": "Cobalt steel bearing ball",
@@ -3253,7 +3303,8 @@
         }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-cobalt-steel-bearing": {
       "human": "Cobalt steel bearing",
@@ -3265,7 +3316,8 @@
         { "resource": "item:bob-cobalt-steel-bearing", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-titanium-gear-wheel": {
       "human": "Titanium gear wheel",
@@ -3274,7 +3326,8 @@
         { "resource": "item:bob-titanium-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-titanium-bearing-ball": {
       "human": "Titanium bearing ball",
@@ -3287,7 +3340,8 @@
         }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-titanium-bearing": {
       "human": "Titanium bearing",
@@ -3300,7 +3354,8 @@
         { "resource": "item:bob-titanium-bearing", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-tungsten-gear-wheel": {
       "human": "Tungsten gear wheel",
@@ -3309,7 +3364,8 @@
         { "resource": "item:bob-tungsten-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-nitinol-gear-wheel": {
       "human": "Nitinol gear wheel",
@@ -3318,7 +3374,8 @@
         { "resource": "item:bob-nitinol-gear-wheel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-nitinol-bearing-ball": {
       "human": "Nitinol bearing ball",
@@ -3327,7 +3384,8 @@
         { "resource": "item:bob-nitinol-bearing-ball", "amount": { "fixed": 12 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-nitinol-bearing": {
       "human": "Nitinol bearing",
@@ -3340,7 +3398,8 @@
         { "resource": "item:bob-nitinol-bearing", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-ceramic-bearing-ball": {
       "human": "Ceramic bearing ball",
@@ -3349,7 +3408,8 @@
         { "resource": "item:bob-ceramic-bearing-ball", "amount": { "fixed": 12 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-ceramic-bearing": {
       "human": "Ceramic bearing",
@@ -3362,7 +3422,8 @@
         { "resource": "item:bob-ceramic-bearing", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-lithium-ion-battery": {
       "human": "Lithium-ion battery",
@@ -3376,7 +3437,8 @@
         { "resource": "item:bob-lithium-ion-battery", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "bob-silver-zinc-battery": {
       "human": "Silver zinc battery",
@@ -3390,7 +3452,8 @@
         { "resource": "item:bob-silver-zinc-battery", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "bob-grinding-wheel": {
       "human": "Grinding wheel",
@@ -3402,7 +3465,8 @@
         { "resource": "item:bob-grinding-wheel", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-polishing-wheel": {
       "human": "Polishing wheel",
@@ -3414,7 +3478,8 @@
         { "resource": "item:bob-polishing-wheel", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-advanced-processing-unit": {
       "human": "Advanced processing unit",
@@ -3593,7 +3658,8 @@
         }
       ],
       "duration": 21,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-lab-2": {
       "human": "Lab 2",
@@ -3628,7 +3694,8 @@
         { "resource": "item:bob-alien-science-pack", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-blue": {
       "human": "Blue alien science pack",
@@ -3641,7 +3708,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-orange": {
       "human": "Orange alien science pack",
@@ -3654,7 +3722,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-purple": {
       "human": "Purple alien science pack",
@@ -3667,7 +3736,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-yellow": {
       "human": "Yellow alien science pack",
@@ -3680,7 +3750,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-green": {
       "human": "Green alien science pack",
@@ -3693,7 +3764,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-alien-science-pack-red": {
       "human": "Red alien science pack",
@@ -3706,7 +3778,8 @@
         }
       ],
       "duration": 12,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-lab-alien": {
       "human": "Alien lab",
@@ -3942,7 +4015,8 @@
         { "resource": "item:bob-insulated-cable", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-basic-electronic-components": {
       "human": "Basic electronic components",
@@ -3958,7 +4032,8 @@
         }
       ],
       "duration": 2,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-electronic-components": {
       "human": "Transistors",
@@ -3971,7 +4046,8 @@
         { "resource": "item:bob-electronic-components", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 3.5,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-integrated-electronics": {
       "human": "Integrated electronics",
@@ -3989,7 +4065,8 @@
         }
       ],
       "duration": 5,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-processing-electronics": {
       "human": "CPUs",
@@ -4007,7 +4084,8 @@
         }
       ],
       "duration": 7,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-wooden-board": {
       "human": "Wooden board",
@@ -4054,7 +4132,8 @@
         { "resource": "item:bob-circuit-board", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-superior-circuit-board": {
       "human": "Superior circuit board",
@@ -4072,7 +4151,8 @@
         }
       ],
       "duration": 10,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-multi-layer-circuit-board": {
       "human": "Multi-layer circuit board",
@@ -4090,7 +4170,8 @@
         }
       ],
       "duration": 15,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-flying-robot-frame-2": {
       "human": "Flying robot frame 2",
@@ -4103,7 +4184,8 @@
         { "resource": "item:bob-flying-robot-frame-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-flying-robot-frame-3": {
       "human": "Flying robot frame 3",
@@ -4116,7 +4198,8 @@
         { "resource": "item:bob-flying-robot-frame-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-flying-robot-frame-4": {
       "human": "Flying robot frame 4",
@@ -4129,7 +4212,8 @@
         { "resource": "item:bob-flying-robot-frame-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-brain": {
       "human": "Robot brain 1",
@@ -4143,7 +4227,8 @@
         { "resource": "item:bob-robot-brain", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-2": {
       "human": "Robot brain 2",
@@ -4157,7 +4242,8 @@
         { "resource": "item:bob-robot-brain-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-3": {
       "human": "Robot brain 3",
@@ -4171,7 +4257,8 @@
         { "resource": "item:bob-robot-brain-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 15,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-4": {
       "human": "Robot brain 4",
@@ -4185,7 +4272,8 @@
         { "resource": "item:bob-robot-brain-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-tool-construction": {
       "human": "Construction robot tool 1",
@@ -4202,7 +4290,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-construction-2": {
       "human": "Construction robot tool 2",
@@ -4219,7 +4308,8 @@
         }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-construction-3": {
       "human": "Construction robot tool 3",
@@ -4236,7 +4326,8 @@
         }
       ],
       "duration": 3,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-construction-4": {
       "human": "Construction robot tool 4",
@@ -4253,7 +4344,8 @@
         }
       ],
       "duration": 4,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-logistic": {
       "human": "Logistic robot tool 1",
@@ -4266,7 +4358,8 @@
         { "resource": "item:bob-robot-tool-logistic", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-logistic-2": {
       "human": "Logistic robot tool 2",
@@ -4279,7 +4372,8 @@
         { "resource": "item:bob-robot-tool-logistic-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-logistic-3": {
       "human": "Logistic robot tool 3",
@@ -4292,7 +4386,8 @@
         { "resource": "item:bob-robot-tool-logistic-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-logistic-4": {
       "human": "Logistic robot tool 4",
@@ -4306,7 +4401,8 @@
         { "resource": "item:bob-robot-tool-logistic-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-locomotive-2": {
       "human": "Locomotive MK2",
@@ -4911,7 +5007,8 @@
         { "resource": "item:bob-roboport-antenna-1", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-antenna-2": {
       "human": "Roboport antenna array 2",
@@ -4924,7 +5021,8 @@
         { "resource": "item:bob-roboport-antenna-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-antenna-3": {
       "human": "Roboport antenna array 3",
@@ -4937,7 +5035,8 @@
         { "resource": "item:bob-roboport-antenna-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-antenna-4": {
       "human": "Roboport antenna array 4",
@@ -4951,7 +5050,8 @@
         { "resource": "item:bob-roboport-antenna-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-chargepad-1": {
       "human": "Roboport charging pad 1",
@@ -4964,7 +5064,8 @@
         { "resource": "item:bob-roboport-chargepad-1", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-chargepad-2": {
       "human": "Roboport charging pad 2",
@@ -4977,7 +5078,8 @@
         { "resource": "item:bob-roboport-chargepad-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-chargepad-3": {
       "human": "Roboport charging pad 3",
@@ -4990,7 +5092,8 @@
         { "resource": "item:bob-roboport-chargepad-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-chargepad-4": {
       "human": "Roboport charging pad 4",
@@ -5003,7 +5106,8 @@
         { "resource": "item:bob-roboport-chargepad-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-door-1": {
       "human": "Roboport hatch door 1",
@@ -5015,7 +5119,8 @@
         { "resource": "item:bob-roboport-door-1", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-door-2": {
       "human": "Roboport hatch door 2",
@@ -5028,7 +5133,8 @@
         { "resource": "item:bob-roboport-door-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-door-3": {
       "human": "Roboport hatch door 3",
@@ -5041,7 +5147,8 @@
         { "resource": "item:bob-roboport-door-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-roboport-door-4": {
       "human": "Roboport hatch door 4",
@@ -5054,7 +5161,8 @@
         { "resource": "item:bob-roboport-door-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-basic-transport-belt": {
       "human": "Basic transport belt",
@@ -6924,7 +7032,8 @@
         { "resource": "item:bob-heat-shield-tile", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-sintering-4"]
+      "categories": ["angels-sintering-4"],
+      "allowProductivity": true
     },
     "bob-sodium-cobaltate": {
       "human": "Sodium cobaltate",
@@ -6976,7 +7085,8 @@
         { "resource": "item:bob-petroleum-jelly", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "bob-gun-cotton": {
       "human": "Guncotton",
@@ -6988,7 +7098,8 @@
         { "resource": "item:bob-gun-cotton", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-cordite": {
       "human": "Cordite",
@@ -6999,7 +7110,8 @@
       ],
       "products": [{ "resource": "item:bob-cordite", "amount": { "fixed": 5 }, "probability": 1 }],
       "duration": 10,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-bullet-casing": {
       "human": "Bullet casing",
@@ -7008,14 +7120,16 @@
         { "resource": "item:bob-bullet-casing", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-magazine": {
       "human": "Magazine",
       "ingredients": [{ "resource": "item:steel-plate", "amount": 1 }],
       "products": [{ "resource": "item:bob-magazine", "amount": { "fixed": 2 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-bullet-projectile": {
       "human": "Bullet projectile",
@@ -7027,7 +7141,8 @@
         { "resource": "item:bob-bullet-projectile", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-bullet": {
       "human": "Bullet",
@@ -7050,7 +7165,8 @@
         { "resource": "item:bob-ap-bullet-projectile", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-ap-bullet": {
       "human": "AP bullet",
@@ -7075,7 +7191,8 @@
         { "resource": "item:bob-he-bullet-projectile", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-he-bullet": {
       "human": "HE bullet",
@@ -7104,7 +7221,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-flame-bullet": {
       "human": "Flame bullet",
@@ -7133,7 +7251,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-acid-bullet": {
       "human": "Acid bullet",
@@ -7162,7 +7281,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-poison-bullet": {
       "human": "Poison bullet",
@@ -7191,7 +7311,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-electric-bullet": {
       "human": "Electric bullet",
@@ -7220,7 +7341,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-uranium-bullet": {
       "human": "Uranium bullet",
@@ -7242,14 +7364,16 @@
         { "resource": "item:bob-shotgun-shell-casing", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-shot": {
       "human": "Shotgun pellets",
       "ingredients": [{ "resource": "item:bob-lead-plate", "amount": 1 }],
       "products": [{ "resource": "item:bob-shot", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-laser-rifle-battery-case": {
       "human": "Laser rifle battery case",
@@ -7262,7 +7386,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-rocket-engine": {
       "human": "Rocket engine",
@@ -7271,7 +7396,8 @@
         { "resource": "item:bob-rocket-engine", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-rocket-body": {
       "human": "Rocket body",
@@ -7285,7 +7411,8 @@
         { "resource": "item:bob-rocket-body", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-rocket-warhead": {
       "human": "Rocket warhead",
@@ -7297,7 +7424,8 @@
         { "resource": "item:bob-rocket-warhead", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-piercing-rocket-warhead": {
       "human": "Piercing rocket warhead",
@@ -7313,7 +7441,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-electric-rocket-warhead": {
       "human": "Electric rocket warhead",
@@ -7329,7 +7458,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-explosive-rocket-warhead": {
       "human": "Explosive rocket warhead",
@@ -7345,7 +7475,8 @@
         }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-acid-rocket-warhead": {
       "human": "Acid rocket warhead",
@@ -7357,7 +7488,8 @@
         { "resource": "item:bob-acid-rocket-warhead", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-flame-rocket-warhead": {
       "human": "Flame rocket warhead",
@@ -7369,7 +7501,8 @@
         { "resource": "item:bob-flame-rocket-warhead", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-poison-rocket-warhead": {
       "human": "Poison rocket warhead",
@@ -7381,7 +7514,8 @@
         { "resource": "item:bob-poison-rocket-warhead", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "bob-plasma-bullet-projectile": {
       "human": "Plasma bullet projectile",
@@ -8652,7 +8786,8 @@
         { "resource": "item:bob-robot-brain-combat", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-combat-2": {
       "human": "Combat robot brain 2",
@@ -8665,7 +8800,8 @@
         { "resource": "item:bob-robot-brain-combat-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-combat-3": {
       "human": "Combat robot brain 3",
@@ -8678,7 +8814,8 @@
         { "resource": "item:bob-robot-brain-combat-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 15,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-brain-combat-4": {
       "human": "Combat robot brain 4",
@@ -8691,7 +8828,8 @@
         { "resource": "item:bob-robot-brain-combat-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-robot-tool-combat": {
       "human": "Defender robot weapon",
@@ -8703,7 +8841,8 @@
         { "resource": "item:bob-robot-tool-combat", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-combat-2": {
       "human": "Distractor robot weapon",
@@ -8717,7 +8856,8 @@
         { "resource": "item:bob-robot-tool-combat-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-combat-3": {
       "human": "Destroyer robot weapon",
@@ -8731,7 +8871,8 @@
         { "resource": "item:bob-robot-tool-combat-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-robot-tool-combat-4": {
       "human": "Laser robot weapon",
@@ -8745,7 +8886,8 @@
         { "resource": "item:bob-robot-tool-combat-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-artillery-wagon-2": {
       "human": "Artillery wagon MK2",
@@ -8791,7 +8933,8 @@
         { "resource": "item:bob-mech-leg-segment", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-mech-foot": {
       "human": "Mech foot",
@@ -8803,7 +8946,8 @@
         { "resource": "item:bob-mech-foot", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-mech-hip": {
       "human": "Mech hip",
@@ -8815,7 +8959,8 @@
       ],
       "products": [{ "resource": "item:bob-mech-hip", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-mech-knee": {
       "human": "Mech knee",
@@ -8829,7 +8974,8 @@
         { "resource": "item:bob-mech-knee", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-mech-leg": {
       "human": "Mech leg",
@@ -8855,7 +9001,8 @@
         { "resource": "item:bob-mech-brain", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-mech-frame": {
       "human": "Mech frame",
@@ -8879,7 +9026,8 @@
         { "resource": "item:bob-mech-armor-plate", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["crafting"]
+      "categories": ["crafting"],
+      "allowProductivity": true
     },
     "bob-spidertron-cannon": {
       "human": "Spidertron Cannon",
@@ -9926,7 +10074,8 @@
         { "resource": "item:bob-module-case", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-module-contact": {
       "human": "Module contact",
@@ -9938,7 +10087,8 @@
         { "resource": "item:bob-module-contact", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 5,
-      "categories": ["crafting", "electronics"]
+      "categories": ["crafting", "electronics"],
+      "allowProductivity": true
     },
     "bob-module-circuit-board": {
       "human": "Module main board",
@@ -9952,7 +10102,8 @@
         { "resource": "item:bob-module-circuit-board", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 10,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-module-processor-board": {
       "human": "Basic module board",
@@ -9971,7 +10122,8 @@
         }
       ],
       "duration": 10,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-module-processor-board-2": {
       "human": "Module logic board",
@@ -9990,7 +10142,8 @@
         }
       ],
       "duration": 15,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-module-processor-board-3": {
       "human": "Module processor board",
@@ -10008,7 +10161,8 @@
         }
       ],
       "duration": 20,
-      "categories": ["crafting-with-fluid", "electronics-with-fluid"]
+      "categories": ["crafting-with-fluid", "electronics-with-fluid"],
+      "allowProductivity": true
     },
     "bob-speed-processor": {
       "human": "Speed circuit board",
@@ -12309,7 +12463,8 @@
         { "resource": "item:angels-catalysator-brown", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-catalysator-green": {
       "human": "Crystal catalyst",
@@ -12318,7 +12473,8 @@
         { "resource": "item:angels-catalysator-green", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["angels-crystallizing-2"]
+      "categories": ["angels-crystallizing-2"],
+      "allowProductivity": true
     },
     "angels-catalysator-orange": {
       "human": "Hybrid catalyst",
@@ -12330,7 +12486,8 @@
         { "resource": "item:angels-catalysator-orange", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["angels-crystallizing-3"]
+      "categories": ["angels-crystallizing-3"],
+      "allowProductivity": true
     },
     "angels-slag-processing-1": {
       "human": "Processing mineral sludge into Saphirite ore, and Bobmonium ore",
@@ -12340,7 +12497,8 @@
         { "resource": "item:angels-ore6", "amount": { "fixed": 1 }, "probability": 0.4 }
       ],
       "duration": 8,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-slag-processing-2": {
       "human": "Processing mineral sludge into Jivolite ore, and Crotinnium ore",
@@ -12350,7 +12508,8 @@
         { "resource": "item:angels-ore4", "amount": { "fixed": 1 }, "probability": 0.4 }
       ],
       "duration": 8,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-slag-processing-3": {
       "human": "Processing mineral sludge into Stiratite ore, and Rubyte ore",
@@ -12360,7 +12519,8 @@
         { "resource": "item:angels-ore5", "amount": { "fixed": 1 }, "probability": 0.4 }
       ],
       "duration": 8,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-stone-crushed": {
       "human": "Crushed stone",
@@ -12387,7 +12547,8 @@
         { "resource": "item:copper-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore2-crushed-processing": {
       "human": "Crushed jivolite ore sorting",
@@ -12398,7 +12559,8 @@
         { "resource": "item:copper-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore3-crushed-processing": {
       "human": "Crushed stiratite ore sorting",
@@ -12409,7 +12571,8 @@
         { "resource": "item:iron-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore4-crushed-processing": {
       "human": "Crushed crotinnium ore sorting",
@@ -12420,7 +12583,8 @@
         { "resource": "item:iron-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore5-crushed-processing": {
       "human": "Crushed rubyte ore sorting",
@@ -12431,7 +12595,8 @@
         { "resource": "item:bob-nickel-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore6-crushed-processing": {
       "human": "Crushed bobmonium ore sorting",
@@ -12442,7 +12607,8 @@
         { "resource": "item:bob-quartz", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore-crushed-mix1-processing": {
       "human": "Iron ore",
@@ -12453,7 +12619,8 @@
       ],
       "products": [{ "resource": "item:iron-ore", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore-crushed-mix2-processing": {
       "human": "Copper ore",
@@ -12464,7 +12631,8 @@
       ],
       "products": [{ "resource": "item:copper-ore", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore-crushed-mix3-processing": {
       "human": "Galena (Lead ore)",
@@ -12475,7 +12643,8 @@
       ],
       "products": [{ "resource": "item:bob-lead-ore", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore-crushed-mix4-processing": {
       "human": "Tin ore",
@@ -12486,7 +12655,8 @@
       ],
       "products": [{ "resource": "item:bob-tin-ore", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore8-crushed-processing": {
       "human": "Crushed ferrous mixture sorting",
@@ -12496,7 +12666,8 @@
         { "resource": "item:angels-manganese-ore", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore8-powder-processing": {
       "human": "Ferrous powder sorting",
@@ -12507,7 +12678,8 @@
         { "resource": "item:bob-nickel-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore9-crushed-processing": {
       "human": "Crushed cupric mixture sorting",
@@ -12517,7 +12689,8 @@
         { "resource": "item:bob-tin-ore", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting"]
+      "categories": ["angels-ore-sorting"],
+      "allowProductivity": true
     },
     "angels-ore9-powder-processing": {
       "human": "Cupric powder sorting",
@@ -12528,7 +12701,8 @@
         { "resource": "item:bob-silver-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore1-chunk-processing": {
       "human": "Saphirite chunks sorting",
@@ -12541,7 +12715,8 @@
         { "resource": "item:bob-nickel-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore2-chunk-processing": {
       "human": "Jivolite chunks sorting",
@@ -12554,7 +12729,8 @@
         { "resource": "item:bob-zinc-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore3-chunk-processing": {
       "human": "Stiratite chunks sorting",
@@ -12567,7 +12743,8 @@
         { "resource": "item:bob-tin-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore4-chunk-processing": {
       "human": "Crotinnium chunks sorting",
@@ -12580,7 +12757,8 @@
         { "resource": "item:bob-bauxite-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore5-chunk-processing": {
       "human": "Rubyte chunks sorting",
@@ -12593,7 +12771,8 @@
         { "resource": "item:bob-quartz", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore6-chunk-processing": {
       "human": "Bobmonium chunks sorting",
@@ -12606,7 +12785,8 @@
         { "resource": "item:bob-zinc-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-2"]
+      "categories": ["angels-ore-sorting-2"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix1-processing": {
       "human": "Quartz (Silicon ore)",
@@ -12617,7 +12797,8 @@
       ],
       "products": [{ "resource": "item:bob-quartz", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix2-processing": {
       "human": "Nickel ore",
@@ -12630,7 +12811,8 @@
         { "resource": "item:bob-nickel-ore", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix3-processing": {
       "human": "Bauxite (Aluminium ore)",
@@ -12643,7 +12825,8 @@
         { "resource": "item:bob-bauxite-ore", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix4-processing": {
       "human": "Zinc ore",
@@ -12654,7 +12837,8 @@
       ],
       "products": [{ "resource": "item:bob-zinc-ore", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix5-processing": {
       "human": "Silver ore",
@@ -12667,7 +12851,8 @@
         { "resource": "item:bob-silver-ore", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-chunk-mix6-processing": {
       "human": "Fluorite ore",
@@ -12680,7 +12865,8 @@
         { "resource": "item:angels-fluorite-ore", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore8-dust-processing": {
       "human": "Ferrous dust sorting",
@@ -12692,7 +12878,8 @@
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore9-dust-processing": {
       "human": "Cupric dust sorting",
@@ -12704,7 +12891,8 @@
         { "resource": "item:bob-gold-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore1-crystal-processing": {
       "human": "Saphirite crystals sorting",
@@ -12718,7 +12906,8 @@
         { "resource": "item:bob-rutile-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore2-crystal-processing": {
       "human": "Jivolite crystals sorting",
@@ -12732,7 +12921,8 @@
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore3-crystal-processing": {
       "human": "Stiratite crystals sorting",
@@ -12746,7 +12936,8 @@
         { "resource": "item:uranium-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore4-crystal-processing": {
       "human": "Crotinnium crystals sorting",
@@ -12760,7 +12951,8 @@
         { "resource": "item:bob-rutile-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore5-crystal-processing": {
       "human": "Rubyte crystals sorting",
@@ -12774,7 +12966,8 @@
         { "resource": "item:bob-gold-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore6-crystal-processing": {
       "human": "Bobmonium crystals sorting",
@@ -12788,7 +12981,8 @@
         { "resource": "item:bob-gold-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-3"]
+      "categories": ["angels-ore-sorting-3"],
+      "allowProductivity": true
     },
     "angels-ore-crystal-mix1-processing": {
       "human": "Rutile (Titanium ore)",
@@ -12802,7 +12996,8 @@
         { "resource": "item:bob-rutile-ore", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore-crystal-mix2-processing": {
       "human": "Gold ore",
@@ -12814,7 +13009,8 @@
       ],
       "products": [{ "resource": "item:bob-gold-ore", "amount": { "fixed": 6 }, "probability": 1 }],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore-crystal-mix3-processing": {
       "human": "Cobaltite",
@@ -12828,7 +13024,8 @@
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore-crystal-mix5-processing": {
       "human": "Uranium ore",
@@ -12840,7 +13037,8 @@
       ],
       "products": [{ "resource": "item:uranium-ore", "amount": { "fixed": 3 }, "probability": 1 }],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore8-crystal-processing": {
       "human": "Ferrous crystals sorting",
@@ -12853,7 +13051,8 @@
         { "resource": "item:angels-chrome-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore9-crystal-processing": {
       "human": "Cupric crystals sorting",
@@ -12866,7 +13065,8 @@
         { "resource": "item:angels-platinum-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore-crystal-mix6-processing": {
       "human": "Thorium ore",
@@ -12879,7 +13079,8 @@
         { "resource": "item:bob-thorium-ore", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore1-pure-processing": {
       "human": "Purified saphirite sorting",
@@ -12893,7 +13094,8 @@
         { "resource": "item:bob-tungsten-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore2-pure-processing": {
       "human": "Purified jivolite sorting",
@@ -12907,7 +13109,8 @@
         { "resource": "item:bob-tungsten-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore3-pure-processing": {
       "human": "Purified stiratite sorting",
@@ -12921,7 +13124,8 @@
         { "resource": "item:bob-tungsten-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore4-pure-processing": {
       "human": "Purified crotinnium sorting",
@@ -12935,7 +13139,8 @@
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore5-pure-processing": {
       "human": "Purified rubyte sorting",
@@ -12949,7 +13154,8 @@
         { "resource": "item:uranium-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore6-pure-processing": {
       "human": "Purified bobmonium sorting",
@@ -12963,7 +13169,8 @@
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-ore-sorting-4"]
+      "categories": ["angels-ore-sorting-4"],
+      "allowProductivity": true
     },
     "angels-ore-pure-mix1-processing": {
       "human": "Tungsten ore",
@@ -12977,7 +13184,8 @@
         { "resource": "item:bob-tungsten-ore", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-5"]
+      "categories": ["angels-ore-sorting-5"],
+      "allowProductivity": true
     },
     "angels-ore-pure-mix2-processing": {
       "human": "Platinum ore",
@@ -12991,7 +13199,8 @@
         { "resource": "item:angels-platinum-ore", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 1.5,
-      "categories": ["angels-ore-sorting-5"]
+      "categories": ["angels-ore-sorting-5"],
+      "allowProductivity": true
     },
     "angels-geode-blue-processing": {
       "human": "Blue geode processing",
@@ -13060,7 +13269,8 @@
         { "resource": "item:bob-sapphire-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-ore7-crystallization-2": {
       "human": "Crystallizing to Topaz ore",
@@ -13069,14 +13279,16 @@
         { "resource": "item:bob-topaz-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-ore7-crystallization-3": {
       "human": "Crystallizing to Ruby ore",
       "ingredients": [{ "resource": "fluid:angels-crystal-seedling", "amount": 75 }],
       "products": [{ "resource": "item:bob-ruby-ore", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-ore7-crystallization-4": {
       "human": "Crystallizing to Emerald ore",
@@ -13085,7 +13297,8 @@
         { "resource": "item:bob-emerald-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-ore7-crystallization-5": {
       "human": "Crystallizing to Amethyst ore",
@@ -13094,7 +13307,8 @@
         { "resource": "item:bob-amethyst-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-ore7-crystallization-6": {
       "human": "Crystallizing to Diamond ore",
@@ -13103,7 +13317,8 @@
         { "resource": "item:bob-diamond-ore", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-crystallizing"]
+      "categories": ["angels-crystallizing"],
+      "allowProductivity": true
     },
     "angels-burner-ore-crusher": {
       "human": "Burner ore crusher",
@@ -16222,7 +16437,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-liquifying"]
+      "categories": ["angels-liquifying"],
+      "allowProductivity": true
     },
     "angels-liquid-plastic-2": {
       "human": "Liquid plastic",
@@ -16234,7 +16450,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-liquid-plastic-3": {
       "human": "Liquid plastic",
@@ -16246,7 +16463,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 30 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-solid-resin": {
       "human": "Resin",
@@ -16265,7 +16483,8 @@
         { "resource": "fluid:angels-liquid-resin", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-liquid-resin-2": {
       "human": "Liquid resin",
@@ -16277,7 +16496,8 @@
         { "resource": "fluid:angels-liquid-resin", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-liquid-resin-3": {
       "human": "Liquid resin",
@@ -16289,7 +16509,8 @@
         { "resource": "fluid:angels-liquid-resin", "amount": { "fixed": 40 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-solid-rubber": {
       "human": "Rubber",
@@ -16308,7 +16529,8 @@
         { "resource": "fluid:angels-liquid-rubber", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-solid-fuel-methane": {
       "human": "Solid fuel",
@@ -16478,7 +16700,8 @@
       ],
       "products": [{ "resource": "item:explosives", "amount": { "fixed": 2 }, "probability": 1 }],
       "duration": 2,
-      "categories": ["angels-advanced-chemistry"]
+      "categories": ["angels-advanced-chemistry"],
+      "allowProductivity": true
     },
     "angels-solid-trinitrotoluene": {
       "human": "Explosives",
@@ -16496,7 +16719,8 @@
         }
       ],
       "duration": 2,
-      "categories": ["angels-advanced-chemistry"]
+      "categories": ["angels-advanced-chemistry"],
+      "allowProductivity": true
     },
     "angels-solid-salt-separation": {
       "human": "Molten salt electrolysis",
@@ -17779,7 +18003,8 @@
         { "resource": "item:bob-plutonium-239", "amount": { "fixed": 1 }, "probability": 0.15 }
       ],
       "duration": 20,
-      "categories": ["angels-centrifuging-3"]
+      "categories": ["angels-centrifuging-3"],
+      "allowProductivity": true
     },
     "angels-plutonium-breeding": {
       "human": "Angel's advanced plutonium recovery",
@@ -17810,7 +18035,8 @@
         }
       ],
       "duration": 700,
-      "categories": ["centrifuging"]
+      "categories": ["centrifuging"],
+      "allowProductivity": true
     },
     "angels-advanced-uranium-reprocessing": {
       "human": "Advanced uranium fuel reprocessing",
@@ -17842,7 +18068,8 @@
         { "resource": "item:angels-mixed-oxide-cell", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 80,
-      "categories": ["angels-centrifuging-2"]
+      "categories": ["angels-centrifuging-2"],
+      "allowProductivity": true
     },
     "angels-mixed-oxide-reprocessing": {
       "human": "Mixed-oxide (MOX) fuel cell reprocessing",
@@ -17889,7 +18116,8 @@
         { "resource": "item:angels-thorium-fuel-cell", "amount": { "fixed": 15 }, "probability": 1 }
       ],
       "duration": 500,
-      "categories": ["angels-centrifuging-3"]
+      "categories": ["angels-centrifuging-3"],
+      "allowProductivity": true
     },
     "angels-thorium-fuel-cell-reprocessing": {
       "human": "Thorium fuel cell reprocessing",
@@ -18342,7 +18570,8 @@
         { "resource": "item:bob-brass-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-bronze": {
       "human": "Molten bronze",
@@ -18401,7 +18630,8 @@
         { "resource": "item:bob-bronze-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-cobalt-steel": {
       "human": "Molten cobalt steel",
@@ -18426,7 +18656,8 @@
         { "resource": "item:bob-cobalt-steel-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-3"]
+      "categories": ["angels-casting-3"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-gunmetal": {
       "human": "Molten gunmetal",
@@ -18452,7 +18683,8 @@
         { "resource": "item:bob-gunmetal-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-invar": {
       "human": "Molten invar",
@@ -18477,7 +18709,8 @@
         { "resource": "item:bob-invar-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-nitinol": {
       "human": "Molten nitinol",
@@ -18502,7 +18735,8 @@
         { "resource": "item:bob-nitinol-alloy", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-4"]
+      "categories": ["angels-casting-4"],
+      "allowProductivity": true
     },
     "angels-liquid-molten-solder-2": {
       "human": "Molten solder",
@@ -18587,14 +18821,16 @@
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-solder", "amount": 40 }],
       "products": [{ "resource": "item:bob-solder", "amount": { "fixed": 6 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-solder-2": {
       "human": "Solder",
       "ingredients": [{ "resource": "item:angels-roll-solder", "amount": 4 }],
       "products": [{ "resource": "item:bob-solder", "amount": { "fixed": 12 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-ingot-steel": {
       "human": "Steel ingot",
@@ -18721,14 +18957,16 @@
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-steel", "amount": 40 }],
       "products": [{ "resource": "item:steel-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-plate-steel-2": {
       "human": "Steel plate",
       "ingredients": [{ "resource": "item:angels-roll-steel", "amount": 1 }],
       "products": [{ "resource": "item:steel-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-processed-aluminium": {
       "human": "Processed aluminium",
@@ -18920,7 +19158,8 @@
         { "resource": "item:bob-aluminium-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-plate-aluminium-2": {
       "human": "Aluminium plate",
@@ -18929,7 +19168,8 @@
         { "resource": "item:bob-aluminium-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-processed-chrome": {
       "human": "Processed chrome",
@@ -19304,14 +19544,16 @@
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-copper", "amount": 40 }],
       "products": [{ "resource": "item:copper-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-plate-copper-2": {
       "human": "Copper plate",
       "ingredients": [{ "resource": "item:angels-roll-copper", "amount": 1 }],
       "products": [{ "resource": "item:copper-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-wire-copper-2": {
       "human": "Copper wire",
@@ -19320,7 +19562,8 @@
         { "resource": "item:copper-cable", "amount": { "fixed": 16 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-solid-glass-mixture": {
       "human": "Glass mixture",
@@ -19409,7 +19652,8 @@
         { "resource": "item:angels-coil-glass-fiber", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-strand-casting-2"]
+      "categories": ["angels-strand-casting-2"],
+      "allowProductivity": true
     },
     "angels-coil-glass-fiber-2": {
       "human": "Glass fiber",
@@ -19426,14 +19670,16 @@
         }
       ],
       "duration": 2,
-      "categories": ["angels-strand-casting-3"]
+      "categories": ["angels-strand-casting-3"],
+      "allowProductivity": true
     },
     "angels-plate-glass": {
       "human": "Glass",
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-glass", "amount": 40 }],
       "products": [{ "resource": "item:bob-glass", "amount": { "fixed": 3 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-plate-glass-2": {
       "human": "Glass",
@@ -19446,7 +19692,8 @@
         { "resource": "item:bob-lead-oxide", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 3,
-      "categories": ["angels-casting-3"]
+      "categories": ["angels-casting-3"],
+      "allowProductivity": true
     },
     "angels-plate-glass-3": {
       "human": "Glass",
@@ -19460,7 +19707,8 @@
         { "resource": "item:angels-ingot-tin", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 2,
-      "categories": ["angels-casting-4"]
+      "categories": ["angels-casting-4"],
+      "allowProductivity": true
     },
     "angels-glass-fiber-board": {
       "human": "Fibreglass board",
@@ -19663,7 +19911,8 @@
         { "resource": "item:bob-gold-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-3"]
+      "categories": ["angels-casting-3"],
+      "allowProductivity": true
     },
     "angels-plate-gold-2": {
       "human": "Gold plate",
@@ -19672,7 +19921,8 @@
         { "resource": "item:bob-gold-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-wire-gold": {
       "human": "Gold wire",
@@ -19693,7 +19943,8 @@
         { "resource": "item:bob-gilded-copper-cable", "amount": { "fixed": 16 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-processed-iron": {
       "human": "Processed iron",
@@ -19886,14 +20137,16 @@
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-iron", "amount": 40 }],
       "products": [{ "resource": "item:iron-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-plate-iron-2": {
       "human": "Iron plate",
       "ingredients": [{ "resource": "item:angels-roll-iron", "amount": 1 }],
       "products": [{ "resource": "item:iron-plate", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-processed-lead": {
       "human": "Processed lead",
@@ -20056,7 +20309,8 @@
         { "resource": "item:bob-lead-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-plate-lead-2": {
       "human": "Lead plate",
@@ -20065,7 +20319,8 @@
         { "resource": "item:bob-lead-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-processed-manganese": {
       "human": "Processed manganese",
@@ -20298,7 +20553,8 @@
         { "resource": "item:bob-nickel-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-plate-nickel-2": {
       "human": "Nickel plate",
@@ -20307,7 +20563,8 @@
         { "resource": "item:bob-nickel-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-platinum-ore-processing": {
       "human": "Processed platinum",
@@ -20474,7 +20731,8 @@
         { "resource": "item:angels-plate-platinum", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-4"]
+      "categories": ["angels-casting-4"],
+      "allowProductivity": true
     },
     "angels-plate-platinum-2": {
       "human": "Platinum plate",
@@ -20483,7 +20741,8 @@
         { "resource": "item:angels-plate-platinum", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-wire-platinum": {
       "human": "Platinum wire",
@@ -20504,7 +20763,8 @@
         { "resource": "item:angels-wire-platinum", "amount": { "fixed": 16 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-processed-silica": {
       "human": "Processed silicon",
@@ -20635,7 +20895,8 @@
         { "resource": "item:angels-mono-silicon", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 6,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-mono-silicon-2": {
       "human": "Mono silicon",
@@ -20649,7 +20910,8 @@
         { "resource": "item:angels-quartz-crucible", "amount": { "fixed": 1 }, "probability": 0.8 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-3"]
+      "categories": ["angels-casting-3"],
+      "allowProductivity": true
     },
     "angels-processed-silver": {
       "human": "Processed silver",
@@ -20820,7 +21082,8 @@
         { "resource": "item:bob-silver-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-plate-silver-2": {
       "human": "Silver plate",
@@ -20829,7 +21092,8 @@
         { "resource": "item:bob-silver-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-wire-silver": {
       "human": "Silver wire",
@@ -20850,7 +21114,8 @@
         { "resource": "item:angels-wire-silver", "amount": { "fixed": 16 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-solid-lime": {
       "human": "Lime",
@@ -20911,7 +21176,8 @@
         { "resource": "item:angels-clay-brick", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["smelting"]
+      "categories": ["smelting"],
+      "allowProductivity": true
     },
     "angels-liquid-concrete": {
       "human": "Concrete",
@@ -20945,7 +21211,8 @@
       "ingredients": [{ "resource": "fluid:angels-liquid-concrete", "amount": 40 }],
       "products": [{ "resource": "item:concrete", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 4,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "angels-concrete-brick": {
       "human": "Concrete brick",
@@ -20957,7 +21224,8 @@
         { "resource": "item:angels-concrete-brick", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "angels-reinforced-concrete-brick": {
       "human": "Reinforced concrete brick",
@@ -20974,7 +21242,8 @@
         }
       ],
       "duration": 4,
-      "categories": ["crafting-with-fluid"]
+      "categories": ["crafting-with-fluid"],
+      "allowProductivity": true
     },
     "angels-coolant-cool-steam": {
       "human": "Purified water",
@@ -21229,7 +21498,8 @@
         { "resource": "item:bob-tin-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting"]
+      "categories": ["angels-casting"],
+      "allowProductivity": true
     },
     "angels-plate-tin-2": {
       "human": "Tin plate",
@@ -21238,7 +21508,8 @@
         { "resource": "item:bob-tin-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-wire-tin": {
       "human": "Tinned wire",
@@ -21259,7 +21530,8 @@
         { "resource": "item:bob-tinned-copper-cable", "amount": { "fixed": 16 }, "probability": 1 }
       ],
       "duration": 1,
-      "categories": ["advanced-crafting", "electronics"]
+      "categories": ["advanced-crafting", "electronics"],
+      "allowProductivity": true
     },
     "angels-processed-titanium": {
       "human": "Processed titanium",
@@ -21469,7 +21741,8 @@
         { "resource": "item:bob-titanium-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-3"]
+      "categories": ["angels-casting-3"],
+      "allowProductivity": true
     },
     "angels-plate-titanium-2": {
       "human": "Titanium plate",
@@ -21478,7 +21751,8 @@
         { "resource": "item:bob-titanium-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-processed-tungsten": {
       "human": "Processed tungsten",
@@ -21641,7 +21915,8 @@
         { "resource": "item:bob-tungsten-plate", "amount": { "fixed": 12 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-sintering-4"]
+      "categories": ["angels-sintering-4"],
+      "allowProductivity": true
     },
     "angels-processed-zinc": {
       "human": "Processed zinc",
@@ -21794,7 +22069,8 @@
         { "resource": "item:bob-zinc-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-casting-2"]
+      "categories": ["angels-casting-2"],
+      "allowProductivity": true
     },
     "angels-plate-zinc-2": {
       "human": "Zinc plate",
@@ -21803,7 +22079,8 @@
         { "resource": "item:bob-zinc-plate", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5,
-      "categories": ["advanced-crafting"]
+      "categories": ["advanced-crafting"],
+      "allowProductivity": true
     },
     "angels-ore-processing-machine": {
       "human": "Ore processor 1",
@@ -22369,7 +22646,8 @@
         { "resource": "item:angels-algae-brown", "amount": { "fixed": 40 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-bio-processing-2"]
+      "categories": ["angels-bio-processing-2"],
+      "allowProductivity": true
     },
     "angels-algae-brown-burning": {
       "human": "Lithia salt (lithium chloride)",
@@ -22413,7 +22691,8 @@
         { "resource": "item:angels-algae-brown", "amount": { "fixed": 5 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-bio-processing"]
+      "categories": ["angels-bio-processing"],
+      "allowProductivity": true
     },
     "angels-algae-green": {
       "human": "Green algae",
@@ -22425,7 +22704,8 @@
         { "resource": "item:angels-algae-green", "amount": { "fixed": 50 }, "probability": 1 }
       ],
       "duration": 15,
-      "categories": ["angels-bio-processing-2"]
+      "categories": ["angels-bio-processing-2"],
+      "allowProductivity": true
     },
     "angels-cellulose-fiber": {
       "human": "Cellulose fiber",
@@ -22455,7 +22735,8 @@
         { "resource": "item:angels-algae-blue", "amount": { "fixed": 40 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["angels-bio-processing-4"]
+      "categories": ["angels-bio-processing-4"],
+      "allowProductivity": true
     },
     "angels-blue-cellulose-fiber": {
       "human": "Blue cellulose fiber",
@@ -22489,7 +22770,8 @@
         { "resource": "item:angels-algae-red", "amount": { "fixed": 40 }, "probability": 1 }
       ],
       "duration": 20,
-      "categories": ["angels-bio-processing-3"]
+      "categories": ["angels-bio-processing-3"],
+      "allowProductivity": true
     },
     "angels-red-cellulose-fiber": {
       "human": "Red cellulose fiber",
@@ -22583,7 +22865,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-solid-tree-2": {
       "human": "Tree",
@@ -22597,7 +22880,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-solid-tree-3": {
       "human": "Tree",
@@ -22612,7 +22896,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 8 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-solid-saw": {
       "human": "Timborer's saw blade",
@@ -22765,7 +23050,8 @@
         { "resource": "item:angels-temperate-tree", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-resin": {
       "human": "Raw bio-resin",
@@ -22779,7 +23065,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-resin-2": {
       "human": "Raw bio-resin",
@@ -22794,7 +23081,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-resin-tree": {
       "human": "Raw bio-resin",
@@ -22815,7 +23103,8 @@
         { "resource": "fluid:angels-liquid-resin", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-liquifying"]
+      "categories": ["angels-liquifying"],
+      "allowProductivity": true
     },
     "angels-bio-resin-resin-liquification": {
       "human": "Liquid resin",
@@ -22831,7 +23120,8 @@
         }
       ],
       "duration": 10,
-      "categories": ["angels-liquifying"]
+      "categories": ["angels-liquifying"],
+      "allowProductivity": true
     },
     "angels-bio-resin-wood-reprocessing": {
       "human": "Resin",
@@ -22891,7 +23181,8 @@
         { "resource": "item:angels-swamp-tree", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-plastic": {
       "human": "Raw bio-plastic",
@@ -22905,7 +23196,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-plastic-2": {
       "human": "Raw bio-plastic",
@@ -22920,7 +23212,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-plastic-tree": {
       "human": "Raw bio-plastic",
@@ -22941,7 +23234,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-liquifying"]
+      "categories": ["angels-liquifying"],
+      "allowProductivity": true
     },
     "angels-tree-desert-seed": {
       "human": "Desert tree seed",
@@ -22994,7 +23288,8 @@
         { "resource": "item:angels-desert-tree", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-rubber": {
       "human": "Raw bio-rubber",
@@ -23008,7 +23303,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-rubber-2": {
       "human": "Raw bio-rubber",
@@ -23023,7 +23319,8 @@
         { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-arboretum"]
+      "categories": ["angels-arboretum"],
+      "allowProductivity": true
     },
     "angels-bio-rubber-tree": {
       "human": "Raw bio-rubber",
@@ -23044,7 +23341,8 @@
         { "resource": "fluid:angels-liquid-rubber", "amount": { "fixed": 10 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["angels-liquifying"]
+      "categories": ["angels-liquifying"],
+      "allowProductivity": true
     },
     "angels-cellulose-fiber-raw-wood": {
       "human": "Cellulose fiber from raw wood",
@@ -24559,7 +24857,8 @@
         { "resource": "item:angels-temperate-garden", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-temperate-farming"]
+      "categories": ["angels-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-garden-a": {
       "human": "Temperate seed extraction",
@@ -24645,7 +24944,8 @@
         { "resource": "item:angels-desert-garden", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-desert-farming"]
+      "categories": ["angels-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-garden-a": {
       "human": "Desert seed extraction",
@@ -24695,7 +24995,8 @@
         { "resource": "item:angels-swamp-garden", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-swamp-farming"]
+      "categories": ["angels-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-garden-a": {
       "human": "Swamp seed extraction",
@@ -24850,7 +25151,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-temperate-farming"]
+      "categories": ["angels-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-2": {
       "human": "Tianaton",
@@ -24867,7 +25169,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-temperate-farming"]
+      "categories": ["angels-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-3": {
       "human": "Okarinome",
@@ -24889,7 +25192,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-temperate-farming"]
+      "categories": ["angels-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-4": {
       "human": "Quillnoa",
@@ -24912,7 +25216,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-temperate-farming"]
+      "categories": ["angels-advanced-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-5": {
       "human": "Kendallion",
@@ -24935,7 +25240,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-temperate-farming"]
+      "categories": ["angels-advanced-temperate-farming"],
+      "allowProductivity": true
     },
     "angels-temperate-1-seed": {
       "human": "Wheaton seed",
@@ -25016,7 +25322,8 @@
         { "resource": "item:angels-desert-1", "amount": { "min": 30, "max": 40 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-desert-farming"]
+      "categories": ["angels-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-2": {
       "human": "Primedeadelion",
@@ -25029,7 +25336,8 @@
         { "resource": "item:angels-desert-2", "amount": { "min": 30, "max": 40 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-desert-farming"]
+      "categories": ["angels-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-3": {
       "human": "Nilaubergine",
@@ -25051,7 +25359,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-desert-farming"]
+      "categories": ["angels-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-4": {
       "human": "Zelosquash",
@@ -25074,7 +25383,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-desert-farming"]
+      "categories": ["angels-advanced-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-5": {
       "human": "Arumbiphila",
@@ -25097,7 +25407,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-desert-farming"]
+      "categories": ["angels-advanced-desert-farming"],
+      "allowProductivity": true
     },
     "angels-desert-1-seed": {
       "human": "Binafran seed",
@@ -25166,7 +25477,8 @@
         { "resource": "item:angels-swamp-1", "amount": { "min": 40, "max": 50 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-swamp-farming"]
+      "categories": ["angels-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-2": {
       "human": "Zombieecalyptus",
@@ -25179,7 +25491,8 @@
         { "resource": "item:angels-swamp-2", "amount": { "min": 40, "max": 50 }, "probability": 1 }
       ],
       "duration": 30,
-      "categories": ["angels-swamp-farming"]
+      "categories": ["angels-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-3": {
       "human": "Saundsrcress",
@@ -25197,7 +25510,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-swamp-farming"]
+      "categories": ["angels-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-4": {
       "human": "Nexeflax",
@@ -25216,7 +25530,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-swamp-farming"]
+      "categories": ["angels-advanced-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-5": {
       "human": "Mushredtato",
@@ -25235,7 +25550,8 @@
         }
       ],
       "duration": 30,
-      "categories": ["angels-advanced-swamp-farming"]
+      "categories": ["angels-advanced-swamp-farming"],
+      "allowProductivity": true
     },
     "angels-swamp-1-seed": {
       "human": "Elendilomone seed",
@@ -25815,7 +26131,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 15 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-liquid-propionic-acid": {
       "human": "Propionic acid",
@@ -25851,7 +26168,8 @@
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 25 }, "probability": 1 }
       ],
       "duration": 4,
-      "categories": ["chemistry"]
+      "categories": ["chemistry"],
+      "allowProductivity": true
     },
     "angels-liquid-fish-atmosphere": {
       "human": "Artificial fish water",
@@ -25984,7 +26302,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-fish"]
+      "categories": ["angels-bio-refugium-fish"],
+      "allowProductivity": true
     },
     "angels-alien-fish-1-raw": {
       "human": "Levac fish breeding",
@@ -26007,7 +26326,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-fish"]
+      "categories": ["angels-bio-refugium-fish"],
+      "allowProductivity": true
     },
     "angels-alien-fish-2-raw": {
       "human": "Dorflurp jellyfish breeding",
@@ -26030,7 +26350,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-fish"]
+      "categories": ["angels-bio-refugium-fish"],
+      "allowProductivity": true
     },
     "angels-alien-fish-3-raw": {
       "human": "Santa ray breeding",
@@ -26053,7 +26374,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-fish"]
+      "categories": ["angels-bio-refugium-fish"],
+      "allowProductivity": true
     },
     "angels-fish-butchery-0": {
       "human": "Factorian fish butchering",
@@ -26563,7 +26885,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-bio-puffer-egg-2": {
       "human": "Rancid puffer breeding",
@@ -26603,7 +26926,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-bio-puffer-egg-3": {
       "human": "Blazing puffer breeding",
@@ -26643,7 +26967,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-bio-puffer-egg-4": {
       "human": "Acidic puffer breeding",
@@ -26683,7 +27008,8 @@
         }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-bio-puffer-egg-5": {
       "human": "Corrosive puffer breeding",
@@ -26719,7 +27045,8 @@
         { "resource": "item:angels-bio-puffer-egg-5", "amount": { "fixed": 1 }, "probability": 0.7 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-puffer-breeding-23": {
       "human": "Mixed gaseous puffer breeding",
@@ -26737,7 +27064,8 @@
         { "resource": "item:angels-bio-puffer-egg-1", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-puffer-breeding-12": {
       "human": "Mixed rancid puffer breeding",
@@ -26755,7 +27083,8 @@
         { "resource": "item:angels-bio-puffer-egg-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-puffer-breeding-13": {
       "human": "Mixed blazing puffer breeding",
@@ -26773,7 +27102,8 @@
         { "resource": "item:angels-bio-puffer-egg-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-puffer-breeding-14": {
       "human": "Mixed acidic puffer breeding",
@@ -26791,7 +27121,8 @@
         { "resource": "item:angels-bio-puffer-egg-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-puffer-breeding-15": {
       "human": "Mixed corrosive puffer breeding",
@@ -26809,7 +27140,8 @@
         { "resource": "item:angels-bio-puffer-egg-5", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-puffer"]
+      "categories": ["angels-bio-refugium-puffer"],
+      "allowProductivity": true
     },
     "angels-bio-puffer-1": {
       "human": "Gaseous puffer egg hatching",
@@ -27035,7 +27367,8 @@
         { "resource": "item:angels-biter-small-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-biter"]
+      "categories": ["angels-bio-refugium-biter"],
+      "allowProductivity": true
     },
     "angels-biter-medium-breeding": {
       "human": "Medium biter breeding",
@@ -27059,7 +27392,8 @@
         { "resource": "item:angels-biter-medium-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-biter"]
+      "categories": ["angels-bio-refugium-biter"],
+      "allowProductivity": true
     },
     "angels-biter-big-breeding": {
       "human": "Big biter breeding",
@@ -27079,7 +27413,8 @@
         { "resource": "item:angels-biter-big-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
       ],
       "duration": 60,
-      "categories": ["angels-bio-refugium-biter"]
+      "categories": ["angels-bio-refugium-biter"],
+      "allowProductivity": true
     },
     "angels-biter-small": {
       "human": "Small biter",
