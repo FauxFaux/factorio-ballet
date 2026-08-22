@@ -11455,6 +11455,7 @@
       "duration": 0.5
     },
     "angels-slag-processing-1": {
+      "human": "Processing mineral sludge into Saphirite ore, and Bobmonium ore",
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
       "products": [
         { "resource": "item:angels-ore1", "amount": { "fixed": 1 }, "probability": 0.4 },
@@ -11463,6 +11464,7 @@
       "duration": 8
     },
     "angels-slag-processing-2": {
+      "human": "Processing mineral sludge into Jivolite ore, and Crotinnium ore",
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
       "products": [
         { "resource": "item:angels-ore2", "amount": { "fixed": 1 }, "probability": 0.4 },
@@ -11471,6 +11473,7 @@
       "duration": 8
     },
     "angels-slag-processing-3": {
+      "human": "Processing mineral sludge into Stiratite ore, and Rubyte ore",
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
       "products": [
         { "resource": "item:angels-ore3", "amount": { "fixed": 1 }, "probability": 0.4 },
@@ -11573,7 +11576,7 @@
       "duration": 1
     },
     "angels-ore-crushed-mix3-processing": {
-      "human": "Lead ore",
+      "human": "Galena (Lead ore)",
       "ingredients": [
         { "resource": "item:angels-ore4-crushed", "amount": 2 },
         { "resource": "item:angels-ore5-crushed", "amount": 2 },
@@ -11703,7 +11706,7 @@
       "duration": 1.5
     },
     "angels-ore-chunk-mix1-processing": {
-      "human": "Silicon ore",
+      "human": "Quartz (Silicon ore)",
       "ingredients": [
         { "resource": "item:angels-ore5-chunk", "amount": 2 },
         { "resource": "item:angels-ore6-chunk", "amount": 2 },
@@ -11725,7 +11728,7 @@
       "duration": 1
     },
     "angels-ore-chunk-mix3-processing": {
-      "human": "Aluminium ore",
+      "human": "Bauxite (Aluminium ore)",
       "ingredients": [
         { "resource": "item:angels-ore2-chunk", "amount": 2 },
         { "resource": "item:angels-ore4-chunk", "amount": 2 },
@@ -11871,7 +11874,7 @@
       "duration": 2
     },
     "angels-ore-crystal-mix1-processing": {
-      "human": "Titanium ore",
+      "human": "Rutile (Titanium ore)",
       "ingredients": [
         { "resource": "item:angels-ore1-crystal", "amount": 2 },
         { "resource": "item:angels-ore4-crystal", "amount": 2 },
@@ -11895,7 +11898,7 @@
       "duration": 1.5
     },
     "angels-ore-crystal-mix3-processing": {
-      "human": "Cobalt ore",
+      "human": "Cobaltite",
       "ingredients": [
         { "resource": "item:angels-ore2-crystal", "amount": 2 },
         { "resource": "item:angels-ore4-crystal", "amount": 2 },
@@ -13113,7 +13116,7 @@
       "duration": 5
     },
     "angels-crawler-locomotive": {
-      "human": "Crawler locomotive MK1 MK1",
+      "human": "Crawler locomotive MK1",
       "ingredients": [
         { "resource": "item:locomotive", "amount": 1 },
         { "resource": "item:engine-unit", "amount": 25 },
@@ -13126,7 +13129,7 @@
       "duration": 10
     },
     "angels-crawler-locomotive-2": {
-      "human": "Crawler locomotive MK1 MK2",
+      "human": "Crawler locomotive MK2",
       "ingredients": [
         { "resource": "item:engine-unit", "amount": 30 },
         { "resource": "item:speed-module", "amount": 2 },
@@ -13143,7 +13146,7 @@
       "duration": 10
     },
     "angels-crawler-locomotive-3": {
-      "human": "Crawler locomotive MK1 MK3",
+      "human": "Crawler locomotive MK3",
       "ingredients": [
         { "resource": "item:electric-engine-unit", "amount": 40 },
         { "resource": "item:speed-module-2", "amount": 2 },
@@ -13160,7 +13163,7 @@
       "duration": 10
     },
     "angels-crawler-locomotive-tender": {
-      "human": "Crawler locomotive tender MK1 MK1",
+      "human": "Crawler locomotive tender MK1",
       "ingredients": [
         { "resource": "item:locomotive", "amount": 1 },
         { "resource": "item:engine-unit", "amount": 25 },
@@ -13177,7 +13180,7 @@
       "duration": 10
     },
     "angels-crawler-locomotive-tender-2": {
-      "human": "Crawler locomotive tender MK1 MK2",
+      "human": "Crawler locomotive tender MK2",
       "ingredients": [
         { "resource": "item:engine-unit", "amount": 30 },
         { "resource": "item:speed-module", "amount": 1 },
@@ -13195,7 +13198,7 @@
       "duration": 10
     },
     "angels-crawler-locomotive-tender-3": {
-      "human": "Crawler locomotive tender MK1 MK3",
+      "human": "Crawler locomotive tender MK3",
       "ingredients": [
         { "resource": "item:electric-engine-unit", "amount": 40 },
         { "resource": "item:speed-module-2", "amount": 1 },
@@ -13213,7 +13216,7 @@
       "duration": 10
     },
     "angels-crawler-cargo-wagon": {
-      "human": "Crawler cargo wagon MK1 MK1",
+      "human": "Crawler cargo wagon MK1",
       "ingredients": [
         { "resource": "item:cargo-wagon", "amount": 1 },
         { "resource": "item:electronic-circuit", "amount": 15 },
@@ -13230,7 +13233,7 @@
       "duration": 10
     },
     "angels-crawler-cargo-wagon-2": {
-      "human": "Crawler cargo wagon MK1 MK2",
+      "human": "Crawler cargo wagon MK2",
       "ingredients": [
         { "resource": "item:efficiency-module", "amount": 2 },
         { "resource": "item:iron-chest", "amount": 5 },
@@ -13247,7 +13250,7 @@
       "duration": 10
     },
     "angels-crawler-cargo-wagon-3": {
-      "human": "Crawler cargo wagon MK1 MK3",
+      "human": "Crawler cargo wagon MK3",
       "ingredients": [
         { "resource": "item:efficiency-module-2", "amount": 2 },
         { "resource": "item:iron-chest", "amount": 10 },
@@ -13264,7 +13267,7 @@
       "duration": 10
     },
     "angels-crawler-robot-wagon": {
-      "human": "Crawler robot wagon MK1 MK1",
+      "human": "Crawler robot wagon MK1",
       "ingredients": [
         { "resource": "item:cargo-wagon", "amount": 1 },
         { "resource": "item:electronic-circuit", "amount": 15 },
@@ -13281,7 +13284,7 @@
       "duration": 10
     },
     "angels-crawler-robot-wagon-2": {
-      "human": "Crawler robot wagon MK1 MK2",
+      "human": "Crawler robot wagon MK2",
       "ingredients": [
         { "resource": "item:efficiency-module", "amount": 2 },
         { "resource": "item:iron-chest", "amount": 5 },
@@ -13298,7 +13301,7 @@
       "duration": 10
     },
     "angels-crawler-robot-wagon-3": {
-      "human": "Crawler robot wagon MK1 MK3",
+      "human": "Crawler robot wagon MK3",
       "ingredients": [
         { "resource": "item:efficiency-module-2", "amount": 2 },
         { "resource": "item:steel-chest", "amount": 5 },
@@ -13315,7 +13318,7 @@
       "duration": 10
     },
     "angels-petro-locomotive": {
-      "human": "Petrochemical locomotive MK1 MK1",
+      "human": "Petrochemical locomotive MK1",
       "ingredients": [
         { "resource": "item:locomotive", "amount": 1 },
         { "resource": "item:engine-unit", "amount": 25 },
@@ -13328,7 +13331,7 @@
       "duration": 10
     },
     "angels-petro-locomotive-2": {
-      "human": "Petrochemical locomotive MK1 MK2",
+      "human": "Petrochemical locomotive MK2",
       "ingredients": [
         { "resource": "item:engine-unit", "amount": 30 },
         { "resource": "item:speed-module", "amount": 2 },
@@ -13341,7 +13344,7 @@
       "duration": 10
     },
     "angels-petro-locomotive-3": {
-      "human": "Petrochemical locomotive MK1 MK3",
+      "human": "Petrochemical locomotive MK3",
       "ingredients": [
         { "resource": "item:electric-engine-unit", "amount": 40 },
         { "resource": "item:speed-module-2", "amount": 2 },
@@ -13354,7 +13357,7 @@
       "duration": 10
     },
     "angels-petro-gas-wagon": {
-      "human": "Petrochemical gas wagon MK1 MK1",
+      "human": "Petrochemical gas wagon MK1",
       "ingredients": [
         { "resource": "item:fluid-wagon", "amount": 1 },
         { "resource": "item:electronic-circuit", "amount": 15 },
@@ -13367,7 +13370,7 @@
       "duration": 10
     },
     "angels-petro-gas-wagon-2": {
-      "human": "Petrochemical gas wagon MK1 MK2",
+      "human": "Petrochemical gas wagon MK2",
       "ingredients": [
         { "resource": "item:efficiency-module", "amount": 2 },
         { "resource": "item:angels-storage-tank-1", "amount": 3 },
@@ -13380,7 +13383,7 @@
       "duration": 10
     },
     "angels-petro-gas-wagon-3": {
-      "human": "Petrochemical gas wagon MK1 MK3",
+      "human": "Petrochemical gas wagon MK3",
       "ingredients": [
         { "resource": "item:efficiency-module-2", "amount": 2 },
         { "resource": "item:angels-storage-tank-1", "amount": 6 },
@@ -13393,7 +13396,7 @@
       "duration": 10
     },
     "angels-petro-oil-wagon": {
-      "human": "Petrochemical fluid wagon MK1 MK1",
+      "human": "Petrochemical fluid wagon MK1",
       "ingredients": [
         { "resource": "item:fluid-wagon", "amount": 1 },
         { "resource": "item:electronic-circuit", "amount": 15 },
@@ -13406,7 +13409,7 @@
       "duration": 10
     },
     "angels-petro-oil-wagon-2": {
-      "human": "Petrochemical fluid wagon MK1 MK2",
+      "human": "Petrochemical fluid wagon MK2",
       "ingredients": [
         { "resource": "item:efficiency-module", "amount": 2 },
         { "resource": "item:angels-storage-tank-2", "amount": 3 },
@@ -13419,7 +13422,7 @@
       "duration": 10
     },
     "angels-petro-oil-wagon-3": {
-      "human": "Petrochemical fluid wagon MK1 MK3",
+      "human": "Petrochemical fluid wagon MK3",
       "ingredients": [
         { "resource": "item:efficiency-module-2", "amount": 2 },
         { "resource": "item:angels-storage-tank-2", "amount": 6 },
@@ -13432,7 +13435,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive": {
-      "human": "Smelting locomotive MK1 MK1",
+      "human": "Smelting locomotive MK1",
       "ingredients": [
         { "resource": "item:locomotive", "amount": 1 },
         { "resource": "item:engine-unit", "amount": 25 },
@@ -13449,7 +13452,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive-2": {
-      "human": "Smelting locomotive MK1 MK2",
+      "human": "Smelting locomotive MK2",
       "ingredients": [
         { "resource": "item:engine-unit", "amount": 30 },
         { "resource": "item:speed-module", "amount": 2 },
@@ -13466,7 +13469,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive-3": {
-      "human": "Smelting locomotive MK1 MK3",
+      "human": "Smelting locomotive MK3",
       "ingredients": [
         { "resource": "item:electric-engine-unit", "amount": 40 },
         { "resource": "item:speed-module-2", "amount": 2 },
@@ -13483,7 +13486,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive-tender": {
-      "human": "Smelting locomotive tender MK1 MK1",
+      "human": "Smelting locomotive tender MK1",
       "ingredients": [
         { "resource": "item:locomotive", "amount": 1 },
         { "resource": "item:engine-unit", "amount": 25 },
@@ -13500,7 +13503,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive-tender-2": {
-      "human": "Smelting locomotive tender MK1 MK2",
+      "human": "Smelting locomotive tender MK2",
       "ingredients": [
         { "resource": "item:engine-unit", "amount": 30 },
         { "resource": "item:speed-module", "amount": 1 },
@@ -13518,7 +13521,7 @@
       "duration": 10
     },
     "angels-smelting-locomotive-tender-3": {
-      "human": "Smelting locomotive tender MK1 MK3",
+      "human": "Smelting locomotive tender MK3",
       "ingredients": [
         { "resource": "item:electric-engine-unit", "amount": 40 },
         { "resource": "item:speed-module-2", "amount": 1 },
@@ -13536,7 +13539,7 @@
       "duration": 10
     },
     "angels-smelting-cargo-wagon": {
-      "human": "Smelting cargo wagon MK1 MK1",
+      "human": "Smelting cargo wagon MK1",
       "ingredients": [
         { "resource": "item:cargo-wagon", "amount": 1 },
         { "resource": "item:electronic-circuit", "amount": 15 },
@@ -13553,7 +13556,7 @@
       "duration": 10
     },
     "angels-smelting-cargo-wagon-2": {
-      "human": "Smelting cargo wagon MK1 MK2",
+      "human": "Smelting cargo wagon MK2",
       "ingredients": [
         { "resource": "item:efficiency-module", "amount": 2 },
         { "resource": "item:iron-chest", "amount": 5 },
@@ -13570,7 +13573,7 @@
       "duration": 10
     },
     "angels-smelting-cargo-wagon-3": {
-      "human": "Smelting cargo wagon MK1 MK3",
+      "human": "Smelting cargo wagon MK3",
       "ingredients": [
         { "resource": "item:efficiency-module-2", "amount": 2 },
         { "resource": "item:iron-chest", "amount": 10 },
@@ -13860,6 +13863,7 @@
       "duration": 1
     },
     "angels-liquid-water-semiheavy-1": {
+      "human": "Water enrichment 1 (from 0% to 7.5%)",
       "ingredients": [
         { "resource": "fluid:angels-water-saline", "amount": 60 },
         { "resource": "fluid:angels-water-purified", "amount": 50 },
@@ -13889,6 +13893,7 @@
       "duration": 5
     },
     "angels-liquid-water-semiheavy-2": {
+      "human": "Water enrichment 2 (from 7.5% to 12.5%)",
       "ingredients": [
         { "resource": "fluid:angels-water-saline", "amount": 60 },
         {
@@ -13922,6 +13927,7 @@
       "duration": 5
     },
     "angels-liquid-water-semiheavy-3": {
+      "human": "Water enrichment 3 (from 12.5% to 15%)",
       "ingredients": [
         { "resource": "fluid:angels-water-saline", "amount": 60 },
         {
@@ -13955,6 +13961,7 @@
       "duration": 5
     },
     "angels-water-enriched-cooling-1": {
+      "human": "Enriched water cooling 1",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-1",
@@ -13974,6 +13981,7 @@
       "duration": 4
     },
     "angels-water-enriched-cooling-2": {
+      "human": "Enriched water cooling 2",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-2",
@@ -13993,6 +14001,7 @@
       "duration": 4
     },
     "angels-water-enriched-cooling-3": {
+      "human": "Enriched water cooling 3",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-3",
@@ -21528,6 +21537,7 @@
       "duration": 2
     },
     "angels-liquid-green-liquor": {
+      "human": "Kraft process recovery",
       "ingredients": [{ "resource": "fluid:angels-liquid-black-liquor", "amount": 40 }],
       "products": [
         {
@@ -21873,6 +21883,7 @@
       "duration": 2
     },
     "angels-crystal-powder-splinter-blue": {
+      "human": "Crystal splinter milling",
       "ingredients": [
         { "resource": "item:angels-crystal-splinter-blue-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -21884,6 +21895,7 @@
       "duration": 2
     },
     "angels-crystal-powder-splinter-red": {
+      "human": "Crystal splinter milling",
       "ingredients": [
         { "resource": "item:angels-crystal-splinter-red-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -21895,6 +21907,7 @@
       "duration": 2
     },
     "angels-crystal-powder-splinter-green": {
+      "human": "Crystal splinter milling",
       "ingredients": [
         { "resource": "item:angels-crystal-splinter-green-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22004,6 +22017,7 @@
       "duration": 2
     },
     "angels-crystal-powder-shard-blue": {
+      "human": "Crystal shard milling",
       "ingredients": [
         { "resource": "item:angels-crystal-shard-blue-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22015,6 +22029,7 @@
       "duration": 2
     },
     "angels-crystal-powder-shard-red": {
+      "human": "Crystal shard milling",
       "ingredients": [
         { "resource": "item:angels-crystal-shard-red-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22026,6 +22041,7 @@
       "duration": 2
     },
     "angels-crystal-powder-shard-green": {
+      "human": "Crystal shard milling",
       "ingredients": [
         { "resource": "item:angels-crystal-shard-green-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22131,6 +22147,7 @@
       "duration": 2
     },
     "angels-crystal-powder-full-blue": {
+      "human": "Crystal milling",
       "ingredients": [
         { "resource": "item:angels-crystal-full-blue-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22142,6 +22159,7 @@
       "duration": 2
     },
     "angels-crystal-powder-full-red": {
+      "human": "Crystal milling",
       "ingredients": [
         { "resource": "item:angels-crystal-full-red-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22153,6 +22171,7 @@
       "duration": 2
     },
     "angels-crystal-powder-full-green": {
+      "human": "Crystal milling",
       "ingredients": [
         { "resource": "item:angels-crystal-full-green-cut", "amount": 5 },
         { "resource": "item:angels-milling-drum-lubricated", "amount": 1 }
@@ -22180,6 +22199,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-red": {
+      "human": "Small red alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-red", "amount": 1 }],
       "products": [
         {
@@ -22207,6 +22227,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-yellow": {
+      "human": "Small yellow alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-yellow", "amount": 1 }],
       "products": [
         {
@@ -22234,6 +22255,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-orange": {
+      "human": "Small orange alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-orange", "amount": 1 }],
       "products": [
         {
@@ -22261,6 +22283,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-blue": {
+      "human": "Small blue alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-blue", "amount": 1 }],
       "products": [
         {
@@ -22288,6 +22311,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-purple": {
+      "human": "Small purple alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-purple", "amount": 1 }],
       "products": [
         {
@@ -22315,6 +22339,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact-green": {
+      "human": "Small green alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-green", "amount": 1 }],
       "products": [
         {
@@ -22341,6 +22366,7 @@
       "duration": 5
     },
     "angels-small-alien-artifact": {
+      "human": "Small alien artifact",
       "ingredients": [{ "resource": "item:angels-alien-pre-artifact-base", "amount": 1 }],
       "products": [
         { "resource": "item:bob-small-alien-artifact", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24186,6 +24212,7 @@
       "duration": 60
     },
     "angels-fish-butchery-0": {
+      "human": "Factorian fish butchering",
       "ingredients": [{ "resource": "item:raw-fish", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 0.5 }
@@ -24193,6 +24220,7 @@
       "duration": 7.5
     },
     "angels-fish-butchery-1": {
+      "human": "Levac fish butchering",
       "ingredients": [{ "resource": "item:angels-alien-fish-1-raw", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24200,6 +24228,7 @@
       "duration": 7.5
     },
     "angels-fish-butchery-2": {
+      "human": "Dorflurp jellyfish butchering",
       "ingredients": [{ "resource": "item:angels-alien-fish-2-raw", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24207,6 +24236,7 @@
       "duration": 7.5
     },
     "angels-fish-butchery-3": {
+      "human": "Santa ray butchering",
       "ingredients": [{ "resource": "item:angels-alien-fish-3-raw", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 2 }, "probability": 1 }
@@ -24971,6 +25001,7 @@
       "duration": 30
     },
     "angels-puffer-butchery-1": {
+      "human": "Gaseous puffer butchering",
       "ingredients": [{ "resource": "item:angels-bio-puffer-1", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24978,6 +25009,7 @@
       "duration": 15
     },
     "angels-puffer-butchery-2": {
+      "human": "Rancid puffer butchering",
       "ingredients": [{ "resource": "item:angels-bio-puffer-2", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24985,6 +25017,7 @@
       "duration": 15
     },
     "angels-puffer-butchery-3": {
+      "human": "Blazing puffer butchering",
       "ingredients": [{ "resource": "item:angels-bio-puffer-3", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24992,6 +25025,7 @@
       "duration": 15
     },
     "angels-puffer-butchery-4": {
+      "human": "Acidic puffer butchering",
       "ingredients": [{ "resource": "item:angels-bio-puffer-4", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -24999,6 +25033,7 @@
       "duration": 15
     },
     "angels-puffer-butchery-5": {
+      "human": "Corrosive puffer butchering",
       "ingredients": [{ "resource": "item:angels-bio-puffer-5", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 }
@@ -25240,6 +25275,7 @@
       "duration": 30
     },
     "angels-biter-queen-small-butchering": {
+      "human": "Small biter queen butchering",
       "ingredients": [{ "resource": "item:angels-biter-queen-small", "amount": 1 }],
       "products": [
         {
@@ -25256,6 +25292,7 @@
       "duration": 45
     },
     "angels-biter-small-butchering": {
+      "human": "Small biter butchering",
       "ingredients": [{ "resource": "item:angels-biter-small", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 },
@@ -25268,6 +25305,7 @@
       "duration": 30
     },
     "angels-biter-queen-medium-butchering": {
+      "human": "Medium biter queen butchering",
       "ingredients": [{ "resource": "item:angels-biter-queen-medium", "amount": 1 }],
       "products": [
         {
@@ -25284,6 +25322,7 @@
       "duration": 45
     },
     "angels-biter-medium-butchering": {
+      "human": "Medium biter butchering",
       "ingredients": [{ "resource": "item:angels-biter-medium", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 },
@@ -25296,6 +25335,7 @@
       "duration": 30
     },
     "angels-biter-queen-big-butchering": {
+      "human": "Big biter queen butchering",
       "ingredients": [{ "resource": "item:angels-biter-queen-big", "amount": 1 }],
       "products": [
         {
@@ -25312,6 +25352,7 @@
       "duration": 45
     },
     "angels-biter-big-butchering": {
+      "human": "Big biter butchering",
       "ingredients": [{ "resource": "item:angels-biter-big", "amount": 1 }],
       "products": [
         { "resource": "item:angels-bio-raw-meat", "amount": { "fixed": 1 }, "probability": 1 },
@@ -25389,6 +25430,7 @@
       "duration": 15
     },
     "water-barrel": {
+      "human": "Fill Water barrel",
       "ingredients": [
         { "resource": "fluid:water", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25397,6 +25439,7 @@
       "duration": 0.2
     },
     "empty-water-barrel": {
+      "human": "Empty Water barrel",
       "ingredients": [{ "resource": "item:water-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:water", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25405,6 +25448,7 @@
       "duration": 0.2
     },
     "crude-oil-barrel": {
+      "human": "Fill Crude oil barrel",
       "ingredients": [
         { "resource": "fluid:crude-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25415,6 +25459,7 @@
       "duration": 0.2
     },
     "empty-crude-oil-barrel": {
+      "human": "Empty Crude oil barrel",
       "ingredients": [{ "resource": "item:crude-oil-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:crude-oil", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25423,6 +25468,7 @@
       "duration": 0.2
     },
     "lubricant-barrel": {
+      "human": "Fill Lubricant barrel",
       "ingredients": [
         { "resource": "fluid:lubricant", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25433,6 +25479,7 @@
       "duration": 0.2
     },
     "empty-lubricant-barrel": {
+      "human": "Empty Lubricant barrel",
       "ingredients": [{ "resource": "item:lubricant-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:lubricant", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25441,6 +25488,7 @@
       "duration": 0.2
     },
     "bob-liquid-fuel-barrel": {
+      "human": "Fill Liquid fuel canister",
       "ingredients": [
         { "resource": "fluid:bob-liquid-fuel", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -25451,6 +25499,7 @@
       "duration": 0.2
     },
     "empty-bob-liquid-fuel-barrel": {
+      "human": "Empty Liquid fuel canister",
       "ingredients": [{ "resource": "item:bob-liquid-fuel-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-liquid-fuel", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25459,6 +25508,7 @@
       "duration": 0.2
     },
     "bob-alien-acid-barrel": {
+      "human": "Fill Alien acid fluid canister",
       "ingredients": [
         { "resource": "fluid:bob-alien-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -25469,6 +25519,7 @@
       "duration": 0.2
     },
     "empty-bob-alien-acid-barrel": {
+      "human": "Empty Alien acid fluid canister",
       "ingredients": [{ "resource": "item:bob-alien-acid-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-alien-acid", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25477,6 +25528,7 @@
       "duration": 0.2
     },
     "bob-alien-explosive-barrel": {
+      "human": "Fill Alien explosive fluid canister",
       "ingredients": [
         { "resource": "fluid:bob-alien-explosive", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -25491,6 +25543,7 @@
       "duration": 0.2
     },
     "empty-bob-alien-explosive-barrel": {
+      "human": "Empty Alien explosive fluid canister",
       "ingredients": [{ "resource": "item:bob-alien-explosive-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-alien-explosive", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25499,6 +25552,7 @@
       "duration": 0.2
     },
     "bob-alien-poison-barrel": {
+      "human": "Fill Alien poison fluid canister",
       "ingredients": [
         { "resource": "fluid:bob-alien-poison", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -25509,6 +25563,7 @@
       "duration": 0.2
     },
     "empty-bob-alien-poison-barrel": {
+      "human": "Empty Alien poison fluid canister",
       "ingredients": [{ "resource": "item:bob-alien-poison-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-alien-poison", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25517,6 +25572,7 @@
       "duration": 0.2
     },
     "bob-alien-fire-barrel": {
+      "human": "Fill Alien flame fluid canister",
       "ingredients": [
         { "resource": "fluid:bob-alien-fire", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -25527,6 +25583,7 @@
       "duration": 0.2
     },
     "empty-bob-alien-fire-barrel": {
+      "human": "Empty Alien flame fluid canister",
       "ingredients": [{ "resource": "item:bob-alien-fire-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-alien-fire", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25535,6 +25592,7 @@
       "duration": 0.2
     },
     "bob-nitroglycerin-barrel": {
+      "human": "Fill Nitroglycerin barrel",
       "ingredients": [
         { "resource": "fluid:bob-nitroglycerin", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25545,6 +25603,7 @@
       "duration": 0.2
     },
     "empty-bob-nitroglycerin-barrel": {
+      "human": "Empty Nitroglycerin barrel",
       "ingredients": [{ "resource": "item:bob-nitroglycerin-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-nitroglycerin", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25553,6 +25612,7 @@
       "duration": 0.2
     },
     "angels-thermal-water-barrel": {
+      "human": "Fill Thermal water barrel",
       "ingredients": [
         { "resource": "fluid:angels-thermal-water", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25567,6 +25627,7 @@
       "duration": 0.2
     },
     "empty-angels-thermal-water-barrel": {
+      "human": "Empty Thermal water barrel",
       "ingredients": [{ "resource": "item:angels-thermal-water-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-thermal-water", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25575,6 +25636,7 @@
       "duration": 0.2
     },
     "angels-ore8-sludge-barrel": {
+      "human": "Fill Ferrous sludge barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore8-sludge", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25585,6 +25647,7 @@
       "duration": 0.2
     },
     "empty-angels-ore8-sludge-barrel": {
+      "human": "Empty Ferrous sludge barrel",
       "ingredients": [{ "resource": "item:angels-ore8-sludge-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore8-sludge", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25593,6 +25656,7 @@
       "duration": 0.2
     },
     "angels-ore9-sludge-barrel": {
+      "human": "Fill Cupric sludge barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore9-sludge", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25603,6 +25667,7 @@
       "duration": 0.2
     },
     "empty-angels-ore9-sludge-barrel": {
+      "human": "Empty Cupric sludge barrel",
       "ingredients": [{ "resource": "item:angels-ore9-sludge-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore9-sludge", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25611,6 +25676,7 @@
       "duration": 0.2
     },
     "angels-ore8-solution-barrel": {
+      "human": "Fill Ferrous slurry barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore8-solution", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25625,6 +25691,7 @@
       "duration": 0.2
     },
     "empty-angels-ore8-solution-barrel": {
+      "human": "Empty Ferrous slurry barrel",
       "ingredients": [{ "resource": "item:angels-ore8-solution-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore8-solution", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25633,6 +25700,7 @@
       "duration": 0.2
     },
     "angels-ore8-anode-sludge-barrel": {
+      "human": "Fill Anodized ferrous concentrate barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore8-anode-sludge", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25647,6 +25715,7 @@
       "duration": 0.2
     },
     "empty-angels-ore8-anode-sludge-barrel": {
+      "human": "Empty Anodized ferrous concentrate barrel",
       "ingredients": [{ "resource": "item:angels-ore8-anode-sludge-barrel", "amount": 1 }],
       "products": [
         {
@@ -25659,6 +25728,7 @@
       "duration": 0.2
     },
     "angels-ore8-slime-barrel": {
+      "human": "Fill Ferrous concentrate barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore8-slime", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25669,6 +25739,7 @@
       "duration": 0.2
     },
     "empty-angels-ore8-slime-barrel": {
+      "human": "Empty Ferrous concentrate barrel",
       "ingredients": [{ "resource": "item:angels-ore8-slime-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore8-slime", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25677,6 +25748,7 @@
       "duration": 0.2
     },
     "angels-ore9-solution-barrel": {
+      "human": "Fill Cupric slurry barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore9-solution", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25691,6 +25763,7 @@
       "duration": 0.2
     },
     "empty-angels-ore9-solution-barrel": {
+      "human": "Empty Cupric slurry barrel",
       "ingredients": [{ "resource": "item:angels-ore9-solution-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore9-solution", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25699,6 +25772,7 @@
       "duration": 0.2
     },
     "angels-ore9-anode-sludge-barrel": {
+      "human": "Fill Anodized cupric concentrate barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore9-anode-sludge", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25713,6 +25787,7 @@
       "duration": 0.2
     },
     "empty-angels-ore9-anode-sludge-barrel": {
+      "human": "Empty Anodized cupric concentrate barrel",
       "ingredients": [{ "resource": "item:angels-ore9-anode-sludge-barrel", "amount": 1 }],
       "products": [
         {
@@ -25725,6 +25800,7 @@
       "duration": 0.2
     },
     "angels-ore9-slime-barrel": {
+      "human": "Fill Cupric concentrate barrel",
       "ingredients": [
         { "resource": "fluid:angels-ore9-slime", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25735,6 +25811,7 @@
       "duration": 0.2
     },
     "empty-angels-ore9-slime-barrel": {
+      "human": "Empty Cupric concentrate barrel",
       "ingredients": [{ "resource": "item:angels-ore9-slime-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-ore9-slime", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25743,6 +25820,7 @@
       "duration": 0.2
     },
     "angels-slag-slurry-barrel": {
+      "human": "Fill Slag slurry barrel",
       "ingredients": [
         { "resource": "fluid:angels-slag-slurry", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25753,6 +25831,7 @@
       "duration": 0.2
     },
     "empty-angels-slag-slurry-barrel": {
+      "human": "Empty Slag slurry barrel",
       "ingredients": [{ "resource": "item:angels-slag-slurry-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-slag-slurry", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25761,6 +25840,7 @@
       "duration": 0.2
     },
     "angels-mineral-sludge-barrel": {
+      "human": "Fill Mineral sludge barrel",
       "ingredients": [
         { "resource": "fluid:angels-mineral-sludge", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25775,6 +25855,7 @@
       "duration": 0.2
     },
     "empty-angels-mineral-sludge-barrel": {
+      "human": "Empty Mineral sludge barrel",
       "ingredients": [{ "resource": "item:angels-mineral-sludge-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-mineral-sludge", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25783,6 +25864,7 @@
       "duration": 0.2
     },
     "angels-crystal-slurry-barrel": {
+      "human": "Fill Crystal slurry barrel",
       "ingredients": [
         { "resource": "fluid:angels-crystal-slurry", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25797,6 +25879,7 @@
       "duration": 0.2
     },
     "empty-angels-crystal-slurry-barrel": {
+      "human": "Empty Crystal slurry barrel",
       "ingredients": [{ "resource": "item:angels-crystal-slurry-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-crystal-slurry", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25805,6 +25888,7 @@
       "duration": 0.2
     },
     "angels-crystal-seedling-barrel": {
+      "human": "Fill Crystal seedling barrel",
       "ingredients": [
         { "resource": "fluid:angels-crystal-seedling", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25819,6 +25903,7 @@
       "duration": 0.2
     },
     "empty-angels-crystal-seedling-barrel": {
+      "human": "Empty Crystal seedling barrel",
       "ingredients": [{ "resource": "item:angels-crystal-seedling-barrel", "amount": 1 }],
       "products": [
         {
@@ -25831,6 +25916,7 @@
       "duration": 0.2
     },
     "angels-water-saline-barrel": {
+      "human": "Fill Saline water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-saline", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25845,6 +25931,7 @@
       "duration": 0.2
     },
     "empty-angels-water-saline-barrel": {
+      "human": "Empty Saline water barrel",
       "ingredients": [{ "resource": "item:angels-water-saline-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-saline", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25853,6 +25940,7 @@
       "duration": 0.2
     },
     "angels-water-purified-barrel": {
+      "human": "Fill Purified water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-purified", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25867,6 +25955,7 @@
       "duration": 0.2
     },
     "empty-angels-water-purified-barrel": {
+      "human": "Empty Purified water barrel",
       "ingredients": [{ "resource": "item:angels-water-purified-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-purified", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25875,6 +25964,7 @@
       "duration": 0.2
     },
     "angels-water-yellow-waste-barrel": {
+      "human": "Fill Sulfuric waste water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-yellow-waste", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25889,6 +25979,7 @@
       "duration": 0.2
     },
     "empty-angels-water-yellow-waste-barrel": {
+      "human": "Empty Sulfuric waste water barrel",
       "ingredients": [{ "resource": "item:angels-water-yellow-waste-barrel", "amount": 1 }],
       "products": [
         {
@@ -25901,6 +25992,7 @@
       "duration": 0.2
     },
     "angels-water-red-waste-barrel": {
+      "human": "Fill Nitric waste water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-red-waste", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25915,6 +26007,7 @@
       "duration": 0.2
     },
     "empty-angels-water-red-waste-barrel": {
+      "human": "Empty Nitric waste water barrel",
       "ingredients": [{ "resource": "item:angels-water-red-waste-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-red-waste", "amount": { "fixed": 50 }, "probability": 1 },
@@ -25923,6 +26016,7 @@
       "duration": 0.2
     },
     "angels-water-green-waste-barrel": {
+      "human": "Fill Chloric waste water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-green-waste", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25937,6 +26031,7 @@
       "duration": 0.2
     },
     "empty-angels-water-green-waste-barrel": {
+      "human": "Empty Chloric waste water barrel",
       "ingredients": [{ "resource": "item:angels-water-green-waste-barrel", "amount": 1 }],
       "products": [
         {
@@ -25949,6 +26044,7 @@
       "duration": 0.2
     },
     "angels-water-greenyellow-waste-barrel": {
+      "human": "Fill Fluoric waste water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-greenyellow-waste", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25963,6 +26059,7 @@
       "duration": 0.2
     },
     "empty-angels-water-greenyellow-waste-barrel": {
+      "human": "Empty Fluoric waste water barrel",
       "ingredients": [{ "resource": "item:angels-water-greenyellow-waste-barrel", "amount": 1 }],
       "products": [
         {
@@ -25975,6 +26072,7 @@
       "duration": 0.2
     },
     "angels-water-mineralized-barrel": {
+      "human": "Fill Mineralized water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-mineralized", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -25989,6 +26087,7 @@
       "duration": 0.2
     },
     "empty-angels-water-mineralized-barrel": {
+      "human": "Empty Mineralized water barrel",
       "ingredients": [{ "resource": "item:angels-water-mineralized-barrel", "amount": 1 }],
       "products": [
         {
@@ -26001,6 +26100,7 @@
       "duration": 0.2
     },
     "angels-water-viscous-mud-barrel": {
+      "human": "Fill Viscous mud water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-viscous-mud", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26015,6 +26115,7 @@
       "duration": 0.2
     },
     "empty-angels-water-viscous-mud-barrel": {
+      "human": "Empty Viscous mud water barrel",
       "ingredients": [{ "resource": "item:angels-water-viscous-mud-barrel", "amount": 1 }],
       "products": [
         {
@@ -26027,6 +26128,7 @@
       "duration": 0.2
     },
     "angels-water-heavy-mud-barrel": {
+      "human": "Fill Heavy mud water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-heavy-mud", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26041,6 +26143,7 @@
       "duration": 0.2
     },
     "empty-angels-water-heavy-mud-barrel": {
+      "human": "Empty Heavy mud water barrel",
       "ingredients": [{ "resource": "item:angels-water-heavy-mud-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-heavy-mud", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26049,6 +26152,7 @@
       "duration": 0.2
     },
     "angels-water-concentrated-mud-barrel": {
+      "human": "Fill Concentrated mud water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-concentrated-mud", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26063,6 +26167,7 @@
       "duration": 0.2
     },
     "empty-angels-water-concentrated-mud-barrel": {
+      "human": "Empty Concentrated mud water barrel",
       "ingredients": [{ "resource": "item:angels-water-concentrated-mud-barrel", "amount": 1 }],
       "products": [
         {
@@ -26075,6 +26180,7 @@
       "duration": 0.2
     },
     "angels-water-light-mud-barrel": {
+      "human": "Fill Light mud water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-light-mud", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26089,6 +26195,7 @@
       "duration": 0.2
     },
     "empty-angels-water-light-mud-barrel": {
+      "human": "Empty Light mud water barrel",
       "ingredients": [{ "resource": "item:angels-water-light-mud-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-light-mud", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26097,6 +26204,7 @@
       "duration": 0.2
     },
     "angels-water-thin-mud-barrel": {
+      "human": "Fill Thin mud water barrel",
       "ingredients": [
         { "resource": "fluid:angels-water-thin-mud", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26111,6 +26219,7 @@
       "duration": 0.2
     },
     "empty-angels-water-thin-mud-barrel": {
+      "human": "Empty Thin mud water barrel",
       "ingredients": [{ "resource": "item:angels-water-thin-mud-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-water-thin-mud", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26119,6 +26228,7 @@
       "duration": 0.2
     },
     "angels-gas-compressed-air-barrel": {
+      "human": "Fill Compressed air bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-compressed-air", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26133,6 +26243,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-compressed-air-barrel": {
+      "human": "Empty Compressed air bottle",
       "ingredients": [{ "resource": "item:angels-gas-compressed-air-barrel", "amount": 1 }],
       "products": [
         {
@@ -26145,6 +26256,7 @@
       "duration": 0.2
     },
     "angels-gas-hydrogen-barrel": {
+      "human": "Fill Hydrogen gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-hydrogen", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26159,6 +26271,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-hydrogen-barrel": {
+      "human": "Empty Hydrogen gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-hydrogen-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26167,6 +26280,7 @@
       "duration": 0.2
     },
     "angels-gas-oxygen-barrel": {
+      "human": "Fill Oxygen gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-oxygen", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26177,6 +26291,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-oxygen-barrel": {
+      "human": "Empty Oxygen gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-oxygen-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26185,6 +26300,7 @@
       "duration": 0.2
     },
     "angels-gas-carbon-monoxide-barrel": {
+      "human": "Fill Carbon monoxide bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-carbon-monoxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26199,6 +26315,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-carbon-monoxide-barrel": {
+      "human": "Empty Carbon monoxide bottle",
       "ingredients": [{ "resource": "item:angels-gas-carbon-monoxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -26211,6 +26328,7 @@
       "duration": 0.2
     },
     "angels-gas-carbon-dioxide-barrel": {
+      "human": "Fill Carbon dioxide bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-carbon-dioxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26225,6 +26343,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-carbon-dioxide-barrel": {
+      "human": "Empty Carbon dioxide bottle",
       "ingredients": [{ "resource": "item:angels-gas-carbon-dioxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -26237,6 +26356,7 @@
       "duration": 0.2
     },
     "angels-gas-hydrogen-fluoride-barrel": {
+      "human": "Fill Hydrogen fluoride gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-hydrogen-fluoride", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26251,6 +26371,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-hydrogen-fluoride-barrel": {
+      "human": "Empty Hydrogen fluoride gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-hydrogen-fluoride-barrel", "amount": 1 }],
       "products": [
         {
@@ -26263,6 +26384,7 @@
       "duration": 0.2
     },
     "angels-liquid-hydrofluoric-acid-barrel": {
+      "human": "Fill Hydrofluoric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -26277,6 +26399,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-hydrofluoric-acid-barrel": {
+      "human": "Empty Hydrofluoric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-hydrofluoric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -26289,6 +26412,7 @@
       "duration": 0.2
     },
     "angels-liquid-water-semiheavy-1-barrel": {
+      "human": "Fill 7.5% Semiheavy water barrel",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-1",
@@ -26307,6 +26431,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-water-semiheavy-1-barrel": {
+      "human": "Empty 7.5% Semiheavy water barrel",
       "ingredients": [{ "resource": "item:angels-liquid-water-semiheavy-1-barrel", "amount": 1 }],
       "products": [
         {
@@ -26319,6 +26444,7 @@
       "duration": 0.2
     },
     "angels-liquid-water-semiheavy-2-barrel": {
+      "human": "Fill 12.5% Semiheavy water barrel",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-2",
@@ -26337,6 +26463,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-water-semiheavy-2-barrel": {
+      "human": "Empty 12.5% Semiheavy water barrel",
       "ingredients": [{ "resource": "item:angels-liquid-water-semiheavy-2-barrel", "amount": 1 }],
       "products": [
         {
@@ -26349,6 +26476,7 @@
       "duration": 0.2
     },
     "angels-liquid-water-semiheavy-3-barrel": {
+      "human": "Fill 15% Semiheavy water barrel",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-semiheavy-3",
@@ -26367,6 +26495,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-water-semiheavy-3-barrel": {
+      "human": "Empty 15% Semiheavy water barrel",
       "ingredients": [{ "resource": "item:angels-liquid-water-semiheavy-3-barrel", "amount": 1 }],
       "products": [
         {
@@ -26379,6 +26508,7 @@
       "duration": 0.2
     },
     "angels-liquid-water-heavy-barrel": {
+      "human": "Fill Heavy water barrel",
       "ingredients": [
         {
           "resource": "fluid:angels-liquid-water-heavy",
@@ -26397,6 +26527,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-water-heavy-barrel": {
+      "human": "Empty Heavy water barrel",
       "ingredients": [{ "resource": "item:angels-liquid-water-heavy-barrel", "amount": 1 }],
       "products": [
         {
@@ -26409,6 +26540,7 @@
       "duration": 0.2
     },
     "angels-gas-deuterium-barrel": {
+      "human": "Fill Deuterium gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-deuterium", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26423,6 +26555,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-deuterium-barrel": {
+      "human": "Empty Deuterium gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-deuterium-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-deuterium", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26431,6 +26564,7 @@
       "duration": 0.2
     },
     "angels-gas-methane-barrel": {
+      "human": "Fill Methane gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-methane", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26441,6 +26575,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-methane-barrel": {
+      "human": "Empty Methane gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-methane-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26449,6 +26584,7 @@
       "duration": 0.2
     },
     "angels-gas-ethane-barrel": {
+      "human": "Fill Ethane gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-ethane", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26459,6 +26595,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-ethane-barrel": {
+      "human": "Empty Ethane gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-ethane-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-ethane", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26467,6 +26604,7 @@
       "duration": 0.2
     },
     "angels-gas-butane-barrel": {
+      "human": "Fill Butane gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-butane", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26477,6 +26615,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-butane-barrel": {
+      "human": "Empty Butane gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-butane-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-butane", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26485,6 +26624,7 @@
       "duration": 0.2
     },
     "angels-gas-propene-barrel": {
+      "human": "Fill Propene gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-propene", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26495,6 +26635,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-propene-barrel": {
+      "human": "Empty Propene gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-propene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-propene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26503,6 +26644,7 @@
       "duration": 0.2
     },
     "angels-liquid-naphtha-barrel": {
+      "human": "Fill Naphtha barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-naphtha", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26517,6 +26659,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-naphtha-barrel": {
+      "human": "Empty Naphtha barrel",
       "ingredients": [{ "resource": "item:angels-liquid-naphtha-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26525,6 +26668,7 @@
       "duration": 0.2
     },
     "angels-liquid-mineral-oil-barrel": {
+      "human": "Fill Base mineral oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-mineral-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26539,6 +26683,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-mineral-oil-barrel": {
+      "human": "Empty Base mineral oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-mineral-oil-barrel", "amount": 1 }],
       "products": [
         {
@@ -26551,6 +26696,7 @@
       "duration": 0.2
     },
     "angels-liquid-fuel-oil-barrel": {
+      "human": "Fill Fuel oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-fuel-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26565,6 +26711,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-fuel-oil-barrel": {
+      "human": "Empty Fuel oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-fuel-oil-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26573,6 +26720,7 @@
       "duration": 0.2
     },
     "angels-gas-methanol-barrel": {
+      "human": "Fill Methanol gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-methanol", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26587,6 +26735,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-methanol-barrel": {
+      "human": "Empty Methanol gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-methanol-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-methanol", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26595,6 +26744,7 @@
       "duration": 0.2
     },
     "angels-gas-ethylene-barrel": {
+      "human": "Fill Ethylene gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-ethylene", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26609,6 +26759,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-ethylene-barrel": {
+      "human": "Empty Ethylene gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-ethylene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-ethylene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26617,6 +26768,7 @@
       "duration": 0.2
     },
     "angels-gas-benzene-barrel": {
+      "human": "Fill Benzene gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-benzene", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26627,6 +26779,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-benzene-barrel": {
+      "human": "Empty Benzene gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-benzene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-benzene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26635,6 +26788,7 @@
       "duration": 0.2
     },
     "angels-gas-synthesis-barrel": {
+      "human": "Fill Synthesis gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-synthesis", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26649,6 +26803,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-synthesis-barrel": {
+      "human": "Empty Synthesis gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-synthesis-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-synthesis", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26657,6 +26812,7 @@
       "duration": 0.2
     },
     "angels-liquid-toluene-barrel": {
+      "human": "Fill Toluene liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-toluene", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26671,6 +26827,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-toluene-barrel": {
+      "human": "Empty Toluene liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-toluene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-toluene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26679,6 +26836,7 @@
       "duration": 0.2
     },
     "angels-gas-butadiene-barrel": {
+      "human": "Fill Butadiene gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-butadiene", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26693,6 +26851,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-butadiene-barrel": {
+      "human": "Empty Butadiene gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-butadiene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-butadiene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26701,6 +26860,7 @@
       "duration": 0.2
     },
     "angels-liquid-phenol-barrel": {
+      "human": "Fill Phenol liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-phenol", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26715,6 +26875,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-phenol-barrel": {
+      "human": "Empty Phenol liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-phenol-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-phenol", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26723,6 +26884,7 @@
       "duration": 0.2
     },
     "angels-liquid-ethylbenzene-barrel": {
+      "human": "Fill Ethylbenzene liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-ethylbenzene", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26737,6 +26899,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-ethylbenzene-barrel": {
+      "human": "Empty Ethylbenzene liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-ethylbenzene-barrel", "amount": 1 }],
       "products": [
         {
@@ -26749,6 +26912,7 @@
       "duration": 0.2
     },
     "angels-liquid-styrene-barrel": {
+      "human": "Fill Styrene liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-styrene", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26763,6 +26927,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-styrene-barrel": {
+      "human": "Empty Styrene liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-styrene-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-styrene", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26771,6 +26936,7 @@
       "duration": 0.2
     },
     "angels-gas-formaldehyde-barrel": {
+      "human": "Fill Formaldehyde gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-formaldehyde", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26785,6 +26951,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-formaldehyde-barrel": {
+      "human": "Empty Formaldehyde gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-formaldehyde-barrel", "amount": 1 }],
       "products": [
         {
@@ -26797,6 +26964,7 @@
       "duration": 0.2
     },
     "angels-liquid-polyethylene-barrel": {
+      "human": "Fill Polyethylene liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-polyethylene", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26811,6 +26979,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-polyethylene-barrel": {
+      "human": "Empty Polyethylene liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-polyethylene-barrel", "amount": 1 }],
       "products": [
         {
@@ -26823,6 +26992,7 @@
       "duration": 0.2
     },
     "angels-liquid-glycerol-barrel": {
+      "human": "Fill Glycerol liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-glycerol", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26837,6 +27007,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-glycerol-barrel": {
+      "human": "Empty Glycerol liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-glycerol-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-glycerol", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26845,6 +27016,7 @@
       "duration": 0.2
     },
     "angels-liquid-bisphenol-a-barrel": {
+      "human": "Fill Bisphenol A liquid barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-bisphenol-a", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -26859,6 +27031,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-bisphenol-a-barrel": {
+      "human": "Empty Bisphenol A liquid barrel",
       "ingredients": [{ "resource": "item:angels-liquid-bisphenol-a-barrel", "amount": 1 }],
       "products": [
         {
@@ -26871,6 +27044,7 @@
       "duration": 0.2
     },
     "angels-gas-acetone-barrel": {
+      "human": "Fill Acetone gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-acetone", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26881,6 +27055,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-acetone-barrel": {
+      "human": "Empty Acetone gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-acetone-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-acetone", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26889,6 +27064,7 @@
       "duration": 0.2
     },
     "angels-gas-chlorine-barrel": {
+      "human": "Fill Chlorine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-chlorine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26903,6 +27079,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-chlorine-barrel": {
+      "human": "Empty Chlorine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-chlorine-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-chlorine", "amount": { "fixed": 50 }, "probability": 1 },
@@ -26911,6 +27088,7 @@
       "duration": 0.2
     },
     "angels-gas-hydrogen-chloride-barrel": {
+      "human": "Fill Hydrogen chloride gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26925,6 +27103,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-hydrogen-chloride-barrel": {
+      "human": "Empty Hydrogen chloride gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-hydrogen-chloride-barrel", "amount": 1 }],
       "products": [
         {
@@ -26937,6 +27116,7 @@
       "duration": 0.2
     },
     "angels-liquid-hydrochloric-acid-barrel": {
+      "human": "Fill Hydrochloric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-hydrochloric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -26951,6 +27131,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-hydrochloric-acid-barrel": {
+      "human": "Empty Hydrochloric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-hydrochloric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -26963,6 +27144,7 @@
       "duration": 0.2
     },
     "angels-gas-allylchlorid-barrel": {
+      "human": "Fill Allyl chloride gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-allylchlorid", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -26977,6 +27159,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-allylchlorid-barrel": {
+      "human": "Empty Allyl chloride gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-allylchlorid-barrel", "amount": 1 }],
       "products": [
         {
@@ -26989,6 +27172,7 @@
       "duration": 0.2
     },
     "angels-gas-epichlorohydrin-barrel": {
+      "human": "Fill Epichlorohydrin gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-epichlorohydrin", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27003,6 +27187,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-epichlorohydrin-barrel": {
+      "human": "Empty Epichlorohydrin gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-epichlorohydrin-barrel", "amount": 1 }],
       "products": [
         {
@@ -27015,6 +27200,7 @@
       "duration": 0.2
     },
     "angels-gas-chlor-methane-barrel": {
+      "human": "Fill Chloromethane gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-chlor-methane", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27029,6 +27215,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-chlor-methane-barrel": {
+      "human": "Empty Chloromethane gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-chlor-methane-barrel", "amount": 1 }],
       "products": [
         {
@@ -27041,6 +27228,7 @@
       "duration": 0.2
     },
     "angels-liquid-perchloric-acid-barrel": {
+      "human": "Fill Perchloric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-perchloric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27055,6 +27243,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-perchloric-acid-barrel": {
+      "human": "Empty Perchloric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-perchloric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -27067,6 +27256,7 @@
       "duration": 0.2
     },
     "angels-liquid-ferric-chloride-solution-barrel": {
+      "human": "Fill Ferric chloride solution canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-ferric-chloride-solution", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27081,6 +27271,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-ferric-chloride-solution-barrel": {
+      "human": "Empty Ferric chloride solution canister",
       "ingredients": [
         { "resource": "item:angels-liquid-ferric-chloride-solution-barrel", "amount": 1 }
       ],
@@ -27095,6 +27286,7 @@
       "duration": 0.2
     },
     "angels-liquid-cupric-chloride-solution-barrel": {
+      "human": "Fill Cupric chloride solution canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-cupric-chloride-solution", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27109,6 +27301,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-cupric-chloride-solution-barrel": {
+      "human": "Empty Cupric chloride solution canister",
       "ingredients": [
         { "resource": "item:angels-liquid-cupric-chloride-solution-barrel", "amount": 1 }
       ],
@@ -27123,6 +27316,7 @@
       "duration": 0.2
     },
     "angels-gas-nitrogen-barrel": {
+      "human": "Fill Nitrogen gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-nitrogen", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27137,6 +27331,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-nitrogen-barrel": {
+      "human": "Empty Nitrogen gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-nitrogen-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-nitrogen", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27145,6 +27340,7 @@
       "duration": 0.2
     },
     "angels-gas-ammonia-barrel": {
+      "human": "Fill Ammonia gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-ammonia", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27155,6 +27351,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-ammonia-barrel": {
+      "human": "Empty Ammonia gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-ammonia-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-ammonia", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27163,6 +27360,7 @@
       "duration": 0.2
     },
     "angels-gas-nitrogen-monoxide-barrel": {
+      "human": "Fill Nitrogen monoxide gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-nitrogen-monoxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27177,6 +27375,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-nitrogen-monoxide-barrel": {
+      "human": "Empty Nitrogen monoxide gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-nitrogen-monoxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -27189,6 +27388,7 @@
       "duration": 0.2
     },
     "angels-gas-nitrogen-dioxide-barrel": {
+      "human": "Fill Nitrogen dioxide gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27203,6 +27403,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-nitrogen-dioxide-barrel": {
+      "human": "Empty Nitrogen dioxide gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-nitrogen-dioxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -27215,6 +27416,7 @@
       "duration": 0.2
     },
     "angels-gas-dinitrogen-tetroxide-barrel": {
+      "human": "Fill Dinitrogen tetroxide gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-dinitrogen-tetroxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27229,6 +27431,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-dinitrogen-tetroxide-barrel": {
+      "human": "Empty Dinitrogen tetroxide gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-dinitrogen-tetroxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -27241,6 +27444,7 @@
       "duration": 0.2
     },
     "angels-gas-ammonium-chloride-barrel": {
+      "human": "Fill Ammonium chloride gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-ammonium-chloride", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27255,6 +27459,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-ammonium-chloride-barrel": {
+      "human": "Empty Ammonium chloride gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-ammonium-chloride-barrel", "amount": 1 }],
       "products": [
         {
@@ -27267,6 +27472,7 @@
       "duration": 0.2
     },
     "angels-gas-urea-barrel": {
+      "human": "Fill Urea gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-urea", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27277,6 +27483,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-urea-barrel": {
+      "human": "Empty Urea gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-urea-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-urea", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27285,6 +27492,7 @@
       "duration": 0.2
     },
     "angels-gas-melamine-barrel": {
+      "human": "Fill Melamine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-melamine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27299,6 +27507,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-melamine-barrel": {
+      "human": "Empty Melamine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-melamine-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-melamine", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27307,6 +27516,7 @@
       "duration": 0.2
     },
     "angels-liquid-nitric-acid-barrel": {
+      "human": "Fill Nitric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-nitric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27321,6 +27531,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-nitric-acid-barrel": {
+      "human": "Empty Nitric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-nitric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -27333,6 +27544,7 @@
       "duration": 0.2
     },
     "angels-gas-monochloramine-barrel": {
+      "human": "Fill Monochloramine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-monochloramine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27347,6 +27559,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-monochloramine-barrel": {
+      "human": "Empty Monochloramine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-monochloramine-barrel", "amount": 1 }],
       "products": [
         {
@@ -27359,6 +27572,7 @@
       "duration": 0.2
     },
     "angels-gas-hydrazine-barrel": {
+      "human": "Fill Hydrazine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-hydrazine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27373,6 +27587,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-hydrazine-barrel": {
+      "human": "Empty Hydrazine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-hydrazine-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-hydrazine", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27381,6 +27596,7 @@
       "duration": 0.2
     },
     "angels-gas-methylamine-barrel": {
+      "human": "Fill Methylamine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-methylamine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27395,6 +27611,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-methylamine-barrel": {
+      "human": "Empty Methylamine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-methylamine-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-methylamine", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27403,6 +27620,7 @@
       "duration": 0.2
     },
     "angels-gas-dimethylamine-barrel": {
+      "human": "Fill Dimethylamine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-dimethylamine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27417,6 +27635,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-dimethylamine-barrel": {
+      "human": "Empty Dimethylamine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-dimethylamine-barrel", "amount": 1 }],
       "products": [
         {
@@ -27429,6 +27648,7 @@
       "duration": 0.2
     },
     "angels-gas-dimethylhydrazine-barrel": {
+      "human": "Fill Dimethylhydrazine gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-dimethylhydrazine", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27443,6 +27663,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-dimethylhydrazine-barrel": {
+      "human": "Empty Dimethylhydrazine gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-dimethylhydrazine-barrel", "amount": 1 }],
       "products": [
         {
@@ -27455,6 +27676,7 @@
       "duration": 0.2
     },
     "angels-gas-natural-1-barrel": {
+      "human": "Fill Natural gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-natural-1", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27469,6 +27691,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-natural-1-barrel": {
+      "human": "Empty Natural gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-natural-1-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-natural-1", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27477,6 +27700,7 @@
       "duration": 0.2
     },
     "angels-liquid-multi-phase-oil-barrel": {
+      "human": "Fill Multi-phase oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-multi-phase-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27491,6 +27715,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-multi-phase-oil-barrel": {
+      "human": "Empty Multi-phase oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-multi-phase-oil-barrel", "amount": 1 }],
       "products": [
         {
@@ -27503,6 +27728,7 @@
       "duration": 0.2
     },
     "angels-gas-raw-1-barrel": {
+      "human": "Fill Raw gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-raw-1", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27513,6 +27739,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-raw-1-barrel": {
+      "human": "Empty Raw gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-raw-1-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-raw-1", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27521,6 +27748,7 @@
       "duration": 0.2
     },
     "angels-liquid-condensates-barrel": {
+      "human": "Fill Gas condensates barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-condensates", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27535,6 +27763,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-condensates-barrel": {
+      "human": "Empty Gas condensates barrel",
       "ingredients": [{ "resource": "item:angels-liquid-condensates-barrel", "amount": 1 }],
       "products": [
         {
@@ -27547,6 +27776,7 @@
       "duration": 0.2
     },
     "angels-gas-acid-barrel": {
+      "human": "Fill Acid gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-acid", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27557,6 +27787,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-acid-barrel": {
+      "human": "Empty Acid gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-acid-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27565,6 +27796,7 @@
       "duration": 0.2
     },
     "angels-liquid-ngl-barrel": {
+      "human": "Fill Natural gas liquids barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-ngl", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27575,6 +27807,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-ngl-barrel": {
+      "human": "Empty Natural gas liquids barrel",
       "ingredients": [{ "resource": "item:angels-liquid-ngl-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-ngl", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27583,6 +27816,7 @@
       "duration": 0.2
     },
     "angels-gas-residual-barrel": {
+      "human": "Fill Residual gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-residual", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27597,6 +27831,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-residual-barrel": {
+      "human": "Empty Residual gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-residual-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-residual", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27605,6 +27840,7 @@
       "duration": 0.2
     },
     "angels-liquid-plastic-barrel": {
+      "human": "Fill Liquid plastic barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-plastic", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27619,6 +27855,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-plastic-barrel": {
+      "human": "Empty Liquid plastic barrel",
       "ingredients": [{ "resource": "item:angels-liquid-plastic-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-plastic", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27627,6 +27864,7 @@
       "duration": 0.2
     },
     "angels-liquid-resin-barrel": {
+      "human": "Fill Liquid resin barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-resin", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27641,6 +27879,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-resin-barrel": {
+      "human": "Empty Liquid resin barrel",
       "ingredients": [{ "resource": "item:angels-liquid-resin-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-resin", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27649,6 +27888,7 @@
       "duration": 0.2
     },
     "angels-liquid-rubber-barrel": {
+      "human": "Fill Liquid rubber barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-rubber", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27663,6 +27903,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-rubber-barrel": {
+      "human": "Empty Liquid rubber barrel",
       "ingredients": [{ "resource": "item:angels-liquid-rubber-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-rubber", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27671,6 +27912,7 @@
       "duration": 0.2
     },
     "angels-liquid-aqueous-sodium-hydroxide-barrel": {
+      "human": "Fill Sodium hydroxide solution barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-aqueous-sodium-hydroxide", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27685,6 +27927,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-aqueous-sodium-hydroxide-barrel": {
+      "human": "Empty Sodium hydroxide solution barrel",
       "ingredients": [
         { "resource": "item:angels-liquid-aqueous-sodium-hydroxide-barrel", "amount": 1 }
       ],
@@ -27699,6 +27942,7 @@
       "duration": 0.2
     },
     "angels-gas-hydrogen-sulfide-barrel": {
+      "human": "Fill Hydrogen sulfide gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27713,6 +27957,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-hydrogen-sulfide-barrel": {
+      "human": "Empty Hydrogen sulfide gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-hydrogen-sulfide-barrel", "amount": 1 }],
       "products": [
         {
@@ -27725,6 +27970,7 @@
       "duration": 0.2
     },
     "angels-gas-sulfur-dioxide-barrel": {
+      "human": "Fill Sulfur dioxide gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27739,6 +27985,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-sulfur-dioxide-barrel": {
+      "human": "Empty Sulfur dioxide gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-sulfur-dioxide-barrel", "amount": 1 }],
       "products": [
         {
@@ -27751,6 +27998,7 @@
       "duration": 0.2
     },
     "angels-liquid-sulfuric-acid-barrel": {
+      "human": "Fill Sulfuric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27765,6 +28013,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-sulfuric-acid-barrel": {
+      "human": "Empty Sulfuric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-sulfuric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -27777,6 +28026,7 @@
       "duration": 0.2
     },
     "angels-liquid-chlorauric-acid-barrel": {
+      "human": "Fill Chlorauric acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-chlorauric-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27791,6 +28041,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-chlorauric-acid-barrel": {
+      "human": "Empty Chlorauric acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-chlorauric-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -27803,6 +28054,7 @@
       "duration": 0.2
     },
     "angels-liquid-hexafluorosilicic-acid-barrel": {
+      "human": "Fill Hexafluorosilicic acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-hexafluorosilicic-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27817,6 +28069,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-hexafluorosilicic-acid-barrel": {
+      "human": "Empty Hexafluorosilicic acid canister",
       "ingredients": [
         { "resource": "item:angels-liquid-hexafluorosilicic-acid-barrel", "amount": 1 }
       ],
@@ -27831,6 +28084,7 @@
       "duration": 0.2
     },
     "angels-liquid-hexachloroplatinic-acid-barrel": {
+      "human": "Fill Hexachloroplatinic acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-hexachloroplatinic-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27845,6 +28099,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-hexachloroplatinic-acid-barrel": {
+      "human": "Empty Hexachloroplatinic acid canister",
       "ingredients": [
         { "resource": "item:angels-liquid-hexachloroplatinic-acid-barrel", "amount": 1 }
       ],
@@ -27859,6 +28114,7 @@
       "duration": 0.2
     },
     "angels-liquid-trichlorosilane-barrel": {
+      "human": "Fill Trichlorosilane barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-trichlorosilane", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27873,6 +28129,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-trichlorosilane-barrel": {
+      "human": "Empty Trichlorosilane barrel",
       "ingredients": [{ "resource": "item:angels-liquid-trichlorosilane-barrel", "amount": 1 }],
       "products": [
         {
@@ -27885,6 +28142,7 @@
       "duration": 0.2
     },
     "angels-gas-silane-barrel": {
+      "human": "Fill Silane gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-silane", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27895,6 +28153,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-silane-barrel": {
+      "human": "Empty Silane gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-silane-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-silane", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27903,6 +28162,7 @@
       "duration": 0.2
     },
     "angels-liquid-coolant-barrel": {
+      "human": "Fill Coolant barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-coolant", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27917,6 +28177,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-coolant-barrel": {
+      "human": "Empty Coolant barrel",
       "ingredients": [{ "resource": "item:angels-liquid-coolant-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-coolant", "amount": { "fixed": 50 }, "probability": 1 },
@@ -27925,6 +28186,7 @@
       "duration": 0.2
     },
     "angels-liquid-titanium-tetrachloride-barrel": {
+      "human": "Fill Titanium tetrachloride barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-titanium-tetrachloride", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -27939,6 +28201,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-titanium-tetrachloride-barrel": {
+      "human": "Empty Titanium tetrachloride barrel",
       "ingredients": [
         { "resource": "item:angels-liquid-titanium-tetrachloride-barrel", "amount": 1 }
       ],
@@ -27953,6 +28216,7 @@
       "duration": 0.2
     },
     "angels-liquid-tungstic-acid-barrel": {
+      "human": "Fill Tungstic acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-tungstic-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -27967,6 +28231,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-tungstic-acid-barrel": {
+      "human": "Empty Tungstic acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-tungstic-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -27979,6 +28244,7 @@
       "duration": 0.2
     },
     "angels-gas-tungsten-hexafluoride-barrel": {
+      "human": "Fill Tungsten hexafluoride gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-tungsten-hexafluoride", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -27993,6 +28259,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-tungsten-hexafluoride-barrel": {
+      "human": "Empty Tungsten hexafluoride gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-tungsten-hexafluoride-barrel", "amount": 1 }],
       "products": [
         {
@@ -28005,6 +28272,7 @@
       "duration": 0.2
     },
     "angels-liquid-pulping-liquor-barrel": {
+      "human": "Fill Pulping liquor barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-pulping-liquor", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28019,6 +28287,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-pulping-liquor-barrel": {
+      "human": "Empty Pulping liquor barrel",
       "ingredients": [{ "resource": "item:angels-liquid-pulping-liquor-barrel", "amount": 1 }],
       "products": [
         {
@@ -28031,6 +28300,7 @@
       "duration": 0.2
     },
     "angels-liquid-brown-liquor-barrel": {
+      "human": "Fill Brown liquor barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-brown-liquor", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28045,6 +28315,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-brown-liquor-barrel": {
+      "human": "Empty Brown liquor barrel",
       "ingredients": [{ "resource": "item:angels-liquid-brown-liquor-barrel", "amount": 1 }],
       "products": [
         {
@@ -28057,6 +28328,7 @@
       "duration": 0.2
     },
     "angels-liquid-white-liquor-barrel": {
+      "human": "Fill White liquor barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-white-liquor", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28071,6 +28343,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-white-liquor-barrel": {
+      "human": "Empty White liquor barrel",
       "ingredients": [{ "resource": "item:angels-liquid-white-liquor-barrel", "amount": 1 }],
       "products": [
         {
@@ -28083,6 +28356,7 @@
       "duration": 0.2
     },
     "angels-liquid-black-liquor-barrel": {
+      "human": "Fill Black liquor barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-black-liquor", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28097,6 +28371,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-black-liquor-barrel": {
+      "human": "Empty Black liquor barrel",
       "ingredients": [{ "resource": "item:angels-liquid-black-liquor-barrel", "amount": 1 }],
       "products": [
         {
@@ -28109,6 +28384,7 @@
       "duration": 0.2
     },
     "angels-liquid-green-liquor-barrel": {
+      "human": "Fill Green liquor barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-green-liquor", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28123,6 +28399,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-green-liquor-barrel": {
+      "human": "Empty Green liquor barrel",
       "ingredients": [{ "resource": "item:angels-liquid-green-liquor-barrel", "amount": 1 }],
       "products": [
         {
@@ -28135,6 +28412,7 @@
       "duration": 0.2
     },
     "angels-alien-spores-barrel": {
+      "human": "Fill Alien spores barrel",
       "ingredients": [
         { "resource": "fluid:angels-alien-spores", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28149,6 +28427,7 @@
       "duration": 0.2
     },
     "empty-angels-alien-spores-barrel": {
+      "human": "Empty Alien spores barrel",
       "ingredients": [{ "resource": "item:angels-alien-spores-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-alien-spores", "amount": { "fixed": 50 }, "probability": 1 },
@@ -28157,6 +28436,7 @@
       "duration": 0.2
     },
     "angels-alien-goo-barrel": {
+      "human": "Fill Alien goo barrel",
       "ingredients": [
         { "resource": "fluid:angels-alien-goo", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28167,6 +28447,7 @@
       "duration": 0.2
     },
     "empty-angels-alien-goo-barrel": {
+      "human": "Empty Alien goo barrel",
       "ingredients": [{ "resource": "item:angels-alien-goo-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-alien-goo", "amount": { "fixed": 50 }, "probability": 1 },
@@ -28175,6 +28456,7 @@
       "duration": 0.2
     },
     "angels-liquid-nutrient-pulp-barrel": {
+      "human": "Fill Nutrient pulp barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28189,6 +28471,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-nutrient-pulp-barrel": {
+      "human": "Empty Nutrient pulp barrel",
       "ingredients": [{ "resource": "item:angels-liquid-nutrient-pulp-barrel", "amount": 1 }],
       "products": [
         {
@@ -28201,6 +28484,7 @@
       "duration": 0.2
     },
     "angels-liquid-raw-vegetable-oil-barrel": {
+      "human": "Fill Raw vegetable oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-raw-vegetable-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28215,6 +28499,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-raw-vegetable-oil-barrel": {
+      "human": "Empty Raw vegetable oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-raw-vegetable-oil-barrel", "amount": 1 }],
       "products": [
         {
@@ -28227,6 +28512,7 @@
       "duration": 0.2
     },
     "angels-liquid-vegetable-oil-barrel": {
+      "human": "Fill Vegetable oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-vegetable-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28241,6 +28527,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-vegetable-oil-barrel": {
+      "human": "Empty Vegetable oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-vegetable-oil-barrel", "amount": 1 }],
       "products": [
         {
@@ -28253,6 +28540,7 @@
       "duration": 0.2
     },
     "angels-gas-ethanol-barrel": {
+      "human": "Fill Ethanol gas bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-ethanol", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -28263,6 +28551,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-ethanol-barrel": {
+      "human": "Empty Ethanol gas bottle",
       "ingredients": [{ "resource": "item:angels-gas-ethanol-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-ethanol", "amount": { "fixed": 50 }, "probability": 1 },
@@ -28271,6 +28560,7 @@
       "duration": 0.2
     },
     "angels-liquid-fermentation-raw-barrel": {
+      "human": "Fill Fermentation base barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-fermentation-raw", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28285,6 +28575,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-fermentation-raw-barrel": {
+      "human": "Empty Fermentation base barrel",
       "ingredients": [{ "resource": "item:angels-liquid-fermentation-raw-barrel", "amount": 1 }],
       "products": [
         {
@@ -28297,6 +28588,7 @@
       "duration": 0.2
     },
     "angels-liquid-acetic-acid-barrel": {
+      "human": "Fill Acetic acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-acetic-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -28311,6 +28603,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-acetic-acid-barrel": {
+      "human": "Empty Acetic acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-acetic-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -28323,6 +28616,7 @@
       "duration": 0.2
     },
     "angels-liquid-acetic-anhydride-barrel": {
+      "human": "Fill Acetic anhydride barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-acetic-anhydride", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28337,6 +28631,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-acetic-anhydride-barrel": {
+      "human": "Empty Acetic anhydride barrel",
       "ingredients": [{ "resource": "item:angels-liquid-acetic-anhydride-barrel", "amount": 1 }],
       "products": [
         {
@@ -28349,6 +28644,7 @@
       "duration": 0.2
     },
     "angels-liquid-cellulose-acetate-mixture-barrel": {
+      "human": "Fill Cellulose acetate mixture barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-cellulose-acetate-mixture", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28363,6 +28659,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-cellulose-acetate-mixture-barrel": {
+      "human": "Empty Cellulose acetate mixture barrel",
       "ingredients": [
         { "resource": "item:angels-liquid-cellulose-acetate-mixture-barrel", "amount": 1 }
       ],
@@ -28377,6 +28674,7 @@
       "duration": 0.2
     },
     "angels-liquid-cellulose-acetate-barrel": {
+      "human": "Fill Cellulose acetate barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-cellulose-acetate", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28391,6 +28689,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-cellulose-acetate-barrel": {
+      "human": "Empty Cellulose acetate barrel",
       "ingredients": [{ "resource": "item:angels-liquid-cellulose-acetate-barrel", "amount": 1 }],
       "products": [
         {
@@ -28403,6 +28702,7 @@
       "duration": 0.2
     },
     "angels-liquid-propionic-acid-barrel": {
+      "human": "Fill Propionic acid canister",
       "ingredients": [
         { "resource": "fluid:angels-liquid-propionic-acid", "amount": 50 },
         { "resource": "item:bob-empty-canister", "amount": 1 }
@@ -28417,6 +28717,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-propionic-acid-barrel": {
+      "human": "Empty Propionic acid canister",
       "ingredients": [{ "resource": "item:angels-liquid-propionic-acid-barrel", "amount": 1 }],
       "products": [
         {
@@ -28429,6 +28730,7 @@
       "duration": 0.2
     },
     "angels-liquid-fish-atmosphere-barrel": {
+      "human": "Fill Artificial fish water barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28443,6 +28745,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-fish-atmosphere-barrel": {
+      "human": "Empty Artificial fish water barrel",
       "ingredients": [{ "resource": "item:angels-liquid-fish-atmosphere-barrel", "amount": 1 }],
       "products": [
         {
@@ -28455,6 +28758,7 @@
       "duration": 0.2
     },
     "angels-liquid-polluted-fish-atmosphere-barrel": {
+      "human": "Fill Polluted artificial fish water barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-polluted-fish-atmosphere", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28469,6 +28773,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-polluted-fish-atmosphere-barrel": {
+      "human": "Empty Polluted artificial fish water barrel",
       "ingredients": [
         { "resource": "item:angels-liquid-polluted-fish-atmosphere-barrel", "amount": 1 }
       ],
@@ -28483,6 +28788,7 @@
       "duration": 0.2
     },
     "angels-liquid-raw-fish-oil-barrel": {
+      "human": "Fill Raw fish oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-raw-fish-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28497,6 +28803,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-raw-fish-oil-barrel": {
+      "human": "Empty Raw fish oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-raw-fish-oil-barrel", "amount": 1 }],
       "products": [
         {
@@ -28509,6 +28816,7 @@
       "duration": 0.2
     },
     "angels-liquid-fish-oil-barrel": {
+      "human": "Fill Fish oil barrel",
       "ingredients": [
         { "resource": "fluid:angels-liquid-fish-oil", "amount": 50 },
         { "resource": "item:barrel", "amount": 1 }
@@ -28523,6 +28831,7 @@
       "duration": 0.2
     },
     "empty-angels-liquid-fish-oil-barrel": {
+      "human": "Empty Fish oil barrel",
       "ingredients": [{ "resource": "item:angels-liquid-fish-oil-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-liquid-fish-oil", "amount": { "fixed": 50 }, "probability": 1 },
@@ -28531,6 +28840,7 @@
       "duration": 0.2
     },
     "angels-gas-puffer-atmosphere-barrel": {
+      "human": "Fill Artificial puffer atmosphere bottle",
       "ingredients": [
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 50 },
         { "resource": "item:bob-gas-canister", "amount": 1 }
@@ -28545,6 +28855,7 @@
       "duration": 0.2
     },
     "empty-angels-gas-puffer-atmosphere-barrel": {
+      "human": "Empty Artificial puffer atmosphere bottle",
       "ingredients": [{ "resource": "item:angels-gas-puffer-atmosphere-barrel", "amount": 1 }],
       "products": [
         {
@@ -28557,6 +28868,7 @@
       "duration": 0.2
     },
     "angels-water-void-angels-thermal-water": {
+      "human": "Clarify Thermal water",
       "ingredients": [{ "resource": "fluid:angels-thermal-water", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28564,6 +28876,7 @@
       "duration": 5
     },
     "angels-water-void-angels-mineral-sludge": {
+      "human": "Clarify Mineral sludge",
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28571,6 +28884,7 @@
       "duration": 5
     },
     "angels-water-void-angels-slag-slurry": {
+      "human": "Clarify Slag slurry",
       "ingredients": [{ "resource": "fluid:angels-slag-slurry", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28578,6 +28892,7 @@
       "duration": 5
     },
     "angels-water-void-angels-crystal-slurry": {
+      "human": "Clarify Crystal slurry",
       "ingredients": [{ "resource": "fluid:angels-crystal-slurry", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28585,6 +28900,7 @@
       "duration": 5
     },
     "angels-water-void-angels-crystal-seedling": {
+      "human": "Clarify Crystal seedling",
       "ingredients": [{ "resource": "fluid:angels-crystal-seedling", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28592,6 +28908,7 @@
       "duration": 5
     },
     "angels-water-void-water": {
+      "human": "Clarify Water",
       "ingredients": [{ "resource": "fluid:water", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28599,6 +28916,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-purified": {
+      "human": "Clarify Purified water",
       "ingredients": [{ "resource": "fluid:angels-water-purified", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28606,6 +28924,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-yellow-waste": {
+      "human": "Clarify Sulfuric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-yellow-waste", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28613,6 +28932,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-saline": {
+      "human": "Clarify Saline water",
       "ingredients": [{ "resource": "fluid:angels-water-saline", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28620,6 +28940,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-mineralized": {
+      "human": "Clarify Mineralized water",
       "ingredients": [{ "resource": "fluid:angels-water-mineralized", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28627,6 +28948,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-red-waste": {
+      "human": "Clarify Nitric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-red-waste", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28634,6 +28956,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-green-waste": {
+      "human": "Clarify Chloric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-green-waste", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28641,6 +28964,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-greenyellow-waste": {
+      "human": "Clarify Fluoric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-greenyellow-waste", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28648,6 +28972,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-viscous-mud": {
+      "human": "Clarify Viscous mud water",
       "ingredients": [{ "resource": "fluid:angels-water-viscous-mud", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28655,6 +28980,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-heavy-mud": {
+      "human": "Clarify Heavy mud water",
       "ingredients": [{ "resource": "fluid:angels-water-heavy-mud", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28662,6 +28988,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-concentrated-mud": {
+      "human": "Clarify Concentrated mud water",
       "ingredients": [{ "resource": "fluid:angels-water-concentrated-mud", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28669,6 +28996,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-light-mud": {
+      "human": "Clarify Light mud water",
       "ingredients": [{ "resource": "fluid:angels-water-light-mud", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28676,6 +29004,7 @@
       "duration": 5
     },
     "angels-water-void-angels-water-thin-mud": {
+      "human": "Clarify Thin mud water",
       "ingredients": [{ "resource": "fluid:angels-water-thin-mud", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28683,6 +29012,7 @@
       "duration": 5
     },
     "angels-chemical-void-angels-gas-compressed-air": {
+      "human": "Flare Compressed air",
       "ingredients": [{ "resource": "fluid:angels-gas-compressed-air", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28690,6 +29020,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-hydrogen": {
+      "human": "Flare Hydrogen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28697,6 +29028,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-oxygen": {
+      "human": "Flare Oxygen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-oxygen", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28704,6 +29036,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-carbon-monoxide": {
+      "human": "Flare Carbon monoxide",
       "ingredients": [{ "resource": "fluid:angels-gas-carbon-monoxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28711,6 +29044,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-carbon-dioxide": {
+      "human": "Flare Carbon dioxide",
       "ingredients": [{ "resource": "fluid:angels-gas-carbon-dioxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28718,6 +29052,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-hydrogen-fluoride": {
+      "human": "Flare Hydrogen fluoride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-fluoride", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28725,6 +29060,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-hydrofluoric-acid": {
+      "human": "Flare Hydrofluoric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28732,6 +29068,7 @@
       "duration": 1
     },
     "angels-water-void-angels-liquid-aqueous-sodium-hydroxide": {
+      "human": "Clarify Sodium hydroxide solution",
       "ingredients": [
         { "resource": "fluid:angels-liquid-aqueous-sodium-hydroxide", "amount": 400 }
       ],
@@ -28741,6 +29078,7 @@
       "duration": 5
     },
     "angels-chemical-void-angels-gas-chlorine": {
+      "human": "Flare Chlorine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-chlorine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28748,6 +29086,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-hydrogen-chloride": {
+      "human": "Flare Hydrogen chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28755,6 +29094,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-hydrochloric-acid": {
+      "human": "Flare Hydrochloric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hydrochloric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28762,6 +29102,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-allylchlorid": {
+      "human": "Flare Allyl chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-allylchlorid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28769,6 +29110,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-epichlorohydrin": {
+      "human": "Flare Epichlorohydrin gas",
       "ingredients": [{ "resource": "fluid:angels-gas-epichlorohydrin", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28776,6 +29118,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-chlor-methane": {
+      "human": "Flare Chloromethane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-chlor-methane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28783,6 +29126,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-perchloric-acid": {
+      "human": "Flare Perchloric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-perchloric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28790,6 +29134,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-ferric-chloride-solution": {
+      "human": "Flare Ferric chloride solution",
       "ingredients": [
         { "resource": "fluid:angels-liquid-ferric-chloride-solution", "amount": 100 }
       ],
@@ -28799,6 +29144,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-cupric-chloride-solution": {
+      "human": "Flare Cupric chloride solution",
       "ingredients": [
         { "resource": "fluid:angels-liquid-cupric-chloride-solution", "amount": 100 }
       ],
@@ -28808,6 +29154,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-nitrogen": {
+      "human": "Flare Nitrogen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28815,6 +29162,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-ammonia": {
+      "human": "Flare Ammonia gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ammonia", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28822,6 +29170,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-nitrogen-dioxide": {
+      "human": "Flare Nitrogen dioxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28829,6 +29178,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-dinitrogen-tetroxide": {
+      "human": "Flare Dinitrogen tetroxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dinitrogen-tetroxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28836,6 +29186,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-nitrogen-monoxide": {
+      "human": "Flare Nitrogen monoxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen-monoxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28843,6 +29194,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-ammonium-chloride": {
+      "human": "Flare Ammonium chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ammonium-chloride", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28850,6 +29202,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-urea": {
+      "human": "Flare Urea gas",
       "ingredients": [{ "resource": "fluid:angels-gas-urea", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28857,6 +29210,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-melamine": {
+      "human": "Flare Melamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-melamine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28864,6 +29218,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-nitric-acid": {
+      "human": "Flare Nitric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-nitric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28871,6 +29226,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-monochloramine": {
+      "human": "Flare Monochloramine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-monochloramine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28878,6 +29234,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-hydrazine": {
+      "human": "Flare Hydrazine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrazine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28885,6 +29242,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-methylamine": {
+      "human": "Flare Methylamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methylamine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28892,6 +29250,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-dimethylamine": {
+      "human": "Flare Dimethylamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dimethylamine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28899,6 +29258,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-dimethylhydrazine": {
+      "human": "Flare Dimethylhydrazine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dimethylhydrazine", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28906,6 +29266,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-natural-1": {
+      "human": "Flare Natural gas",
       "ingredients": [{ "resource": "fluid:angels-gas-natural-1", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28913,6 +29274,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-multi-phase-oil": {
+      "human": "Flare Multi-phase oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-multi-phase-oil", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28920,6 +29282,7 @@
       "duration": 1
     },
     "angels-chemical-void-crude-oil": {
+      "human": "Flare Crude oil",
       "ingredients": [{ "resource": "fluid:crude-oil", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28927,6 +29290,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-raw-1": {
+      "human": "Flare Raw gas",
       "ingredients": [{ "resource": "fluid:angels-gas-raw-1", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28934,6 +29298,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-condensates": {
+      "human": "Flare Gas condensates",
       "ingredients": [{ "resource": "fluid:angels-liquid-condensates", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28941,6 +29306,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-ngl": {
+      "human": "Flare Natural gas liquids",
       "ingredients": [{ "resource": "fluid:angels-liquid-ngl", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28948,6 +29314,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-residual": {
+      "human": "Flare Residual gas",
       "ingredients": [{ "resource": "fluid:angels-gas-residual", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28955,6 +29322,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-methane": {
+      "human": "Flare Methane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28962,6 +29330,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-ethane": {
+      "human": "Flare Ethane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28969,6 +29338,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-butane": {
+      "human": "Flare Butane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-butane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28976,6 +29346,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-propene": {
+      "human": "Flare Propene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-propene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28983,6 +29354,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-naphtha": {
+      "human": "Flare Naphtha",
       "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28990,6 +29362,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-mineral-oil": {
+      "human": "Flare Base mineral oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-mineral-oil", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -28997,6 +29370,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-fuel-oil": {
+      "human": "Flare Fuel oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-fuel-oil", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29004,6 +29378,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-methanol": {
+      "human": "Flare Methanol gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methanol", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29011,6 +29386,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-ethylene": {
+      "human": "Flare Ethylene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethylene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29018,6 +29394,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-benzene": {
+      "human": "Flare Benzene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-benzene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29025,6 +29402,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-synthesis": {
+      "human": "Flare Synthesis gas",
       "ingredients": [{ "resource": "fluid:angels-gas-synthesis", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29032,6 +29410,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-butadiene": {
+      "human": "Flare Butadiene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-butadiene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29039,6 +29418,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-phenol": {
+      "human": "Flare Phenol liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-phenol", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29046,6 +29426,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-ethylbenzene": {
+      "human": "Flare Ethylbenzene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-ethylbenzene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29053,6 +29434,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-styrene": {
+      "human": "Flare Styrene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-styrene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29060,6 +29442,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-formaldehyde": {
+      "human": "Flare Formaldehyde gas",
       "ingredients": [{ "resource": "fluid:angels-gas-formaldehyde", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29067,6 +29450,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-polyethylene": {
+      "human": "Flare Polyethylene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-polyethylene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29074,6 +29458,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-glycerol": {
+      "human": "Flare Glycerol liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-glycerol", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29081,6 +29466,7 @@
       "duration": 1
     },
     "angels-chemical-void-lubricant": {
+      "human": "Flare Lubricant",
       "ingredients": [{ "resource": "fluid:lubricant", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29088,6 +29474,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-acetone": {
+      "human": "Flare Acetone gas",
       "ingredients": [{ "resource": "fluid:angels-gas-acetone", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29095,6 +29482,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-toluene": {
+      "human": "Flare Toluene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-toluene", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29102,6 +29490,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-bisphenol-a": {
+      "human": "Flare Bisphenol A liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-bisphenol-a", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29109,6 +29498,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-acid": {
+      "human": "Flare Acid gas",
       "ingredients": [{ "resource": "fluid:angels-gas-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29116,6 +29506,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-hydrogen-sulfide": {
+      "human": "Flare Hydrogen sulfide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29123,6 +29514,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-sulfur-dioxide": {
+      "human": "Flare Sulfur dioxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29130,6 +29522,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-sulfuric-acid": {
+      "human": "Flare Sulfuric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29137,6 +29530,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-chlorauric-acid": {
+      "human": "Flare Chlorauric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-chlorauric-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29144,6 +29538,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-hexachloroplatinic-acid": {
+      "human": "Flare Hexachloroplatinic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hexachloroplatinic-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29151,6 +29546,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-silane": {
+      "human": "Flare Silane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-silane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29158,6 +29554,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-trichlorosilane": {
+      "human": "Flare Trichlorosilane",
       "ingredients": [{ "resource": "fluid:angels-liquid-trichlorosilane", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29165,6 +29562,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-titanium-tetrachloride": {
+      "human": "Flare Titanium tetrachloride",
       "ingredients": [{ "resource": "fluid:angels-liquid-titanium-tetrachloride", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29172,6 +29570,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-tungsten-hexafluoride": {
+      "human": "Flare Tungsten hexafluoride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-tungsten-hexafluoride", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29179,6 +29578,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-hexafluorosilicic-acid": {
+      "human": "Flare Hexafluorosilicic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hexafluorosilicic-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29186,6 +29586,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-liquid-tungstic-acid": {
+      "human": "Flare Tungstic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-tungstic-acid", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29193,6 +29594,7 @@
       "duration": 1
     },
     "angels-water-void-angels-liquid-coolant": {
+      "human": "Clarify Coolant",
       "ingredients": [{ "resource": "fluid:angels-liquid-coolant", "amount": 400 }],
       "products": [
         { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29200,6 +29602,7 @@
       "duration": 5
     },
     "angels-bio-void-wood": {
+      "human": "Compost Wood",
       "ingredients": [{ "resource": "item:wood", "amount": 1 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29207,6 +29610,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-cellulose-fiber": {
+      "human": "Compost Cellulose fiber",
       "ingredients": [{ "resource": "item:angels-cellulose-fiber", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29214,6 +29618,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-algae-green": {
+      "human": "Compost Green algae",
       "ingredients": [{ "resource": "item:angels-algae-green", "amount": 4 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29221,6 +29626,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-algae-brown": {
+      "human": "Compost Brown algae",
       "ingredients": [{ "resource": "item:angels-algae-brown", "amount": 3 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29228,6 +29634,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-algae-red": {
+      "human": "Compost Red algae",
       "ingredients": [{ "resource": "item:angels-algae-red", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29235,6 +29642,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-algae-blue": {
+      "human": "Compost Blue algae",
       "ingredients": [{ "resource": "item:angels-algae-blue", "amount": 1 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29242,6 +29650,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-garden": {
+      "human": "Compost Temperate garden",
       "ingredients": [{ "resource": "item:angels-temperate-garden", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29249,6 +29658,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-garden": {
+      "human": "Compost Desert garden",
       "ingredients": [{ "resource": "item:angels-desert-garden", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29256,6 +29666,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-garden": {
+      "human": "Compost Swamp garden",
       "ingredients": [{ "resource": "item:angels-swamp-garden", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29263,6 +29674,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-1": {
+      "human": "Compost Wheaton",
       "ingredients": [{ "resource": "item:angels-temperate-1", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29270,6 +29682,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-1-seed": {
+      "human": "Compost Wheaton seed",
       "ingredients": [{ "resource": "item:angels-temperate-1-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29277,6 +29690,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-2": {
+      "human": "Compost Tianaton",
       "ingredients": [{ "resource": "item:angels-temperate-2", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29284,6 +29698,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-2-seed": {
+      "human": "Compost Tianaton seed",
       "ingredients": [{ "resource": "item:angels-temperate-2-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29291,6 +29706,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-3": {
+      "human": "Compost Okarinome",
       "ingredients": [{ "resource": "item:angels-temperate-3", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29298,6 +29714,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-3-seed": {
+      "human": "Compost Okarinome seed",
       "ingredients": [{ "resource": "item:angels-temperate-3-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29305,6 +29722,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-3-seed-dormant": {
+      "human": "Compost Dormant okarinome seed",
       "ingredients": [{ "resource": "item:angels-temperate-3-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29312,6 +29730,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-4": {
+      "human": "Compost Quillnoa",
       "ingredients": [{ "resource": "item:angels-temperate-4", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29319,6 +29738,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-4-seed": {
+      "human": "Compost Quillnoa seed",
       "ingredients": [{ "resource": "item:angels-temperate-4-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29326,6 +29746,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-4-seed-dormant": {
+      "human": "Compost Dormant quillnoa seed",
       "ingredients": [{ "resource": "item:angels-temperate-4-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29333,6 +29754,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-5": {
+      "human": "Compost Kendallion",
       "ingredients": [{ "resource": "item:angels-temperate-5", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29340,6 +29762,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-5-seed": {
+      "human": "Compost Kendallion seed",
       "ingredients": [{ "resource": "item:angels-temperate-5-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29347,6 +29770,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-temperate-5-seed-dormant": {
+      "human": "Compost Dormant kendallion seed",
       "ingredients": [{ "resource": "item:angels-temperate-5-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29354,6 +29778,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-1": {
+      "human": "Compost Binafran",
       "ingredients": [{ "resource": "item:angels-desert-1", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29361,6 +29786,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-1-seed": {
+      "human": "Compost Binafran seed",
       "ingredients": [{ "resource": "item:angels-desert-1-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29368,6 +29794,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-2": {
+      "human": "Compost Primedeadelion",
       "ingredients": [{ "resource": "item:angels-desert-2", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29375,6 +29802,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-2-seed": {
+      "human": "Compost Primedeadelion seed",
       "ingredients": [{ "resource": "item:angels-desert-2-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29382,6 +29810,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-3": {
+      "human": "Compost Nilaubergine",
       "ingredients": [{ "resource": "item:angels-desert-3", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29389,6 +29818,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-3-seed": {
+      "human": "Compost Nilaubergine seed",
       "ingredients": [{ "resource": "item:angels-desert-3-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29396,6 +29826,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-3-seed-dormant": {
+      "human": "Compost Dormant nilaubergine seed",
       "ingredients": [{ "resource": "item:angels-desert-3-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29403,6 +29834,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-4": {
+      "human": "Compost Zelosquash",
       "ingredients": [{ "resource": "item:angels-desert-4", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29410,6 +29842,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-4-seed": {
+      "human": "Compost Zelosquash seed",
       "ingredients": [{ "resource": "item:angels-desert-4-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29417,6 +29850,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-4-seed-dormant": {
+      "human": "Compost Dormant zelosquash seed",
       "ingredients": [{ "resource": "item:angels-desert-4-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29424,6 +29858,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-5": {
+      "human": "Compost Arumbiphila",
       "ingredients": [{ "resource": "item:angels-desert-5", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29431,6 +29866,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-5-seed": {
+      "human": "Compost Arumbiphila seed",
       "ingredients": [{ "resource": "item:angels-desert-5-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29438,6 +29874,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-desert-5-seed-dormant": {
+      "human": "Compost Dormant arumbiphila seed",
       "ingredients": [{ "resource": "item:angels-desert-5-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29445,6 +29882,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-1": {
+      "human": "Compost Elendilomone",
       "ingredients": [{ "resource": "item:angels-swamp-1", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29452,6 +29890,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-1-seed": {
+      "human": "Compost Elendilomone seed",
       "ingredients": [{ "resource": "item:angels-swamp-1-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29459,6 +29898,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-2": {
+      "human": "Compost Zombieecalyptus",
       "ingredients": [{ "resource": "item:angels-swamp-2", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29466,6 +29906,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-2-seed": {
+      "human": "Compost Zombieecalyptus seed",
       "ingredients": [{ "resource": "item:angels-swamp-2-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29473,6 +29914,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-3": {
+      "human": "Compost Saundsrcress",
       "ingredients": [{ "resource": "item:angels-swamp-3", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29480,6 +29922,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-3-seed": {
+      "human": "Compost Saundsrcress seed",
       "ingredients": [{ "resource": "item:angels-swamp-3-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29487,6 +29930,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-3-seed-dormant": {
+      "human": "Compost Dormant saundsrcress seed",
       "ingredients": [{ "resource": "item:angels-swamp-3-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29494,6 +29938,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-4": {
+      "human": "Compost Nexeflax",
       "ingredients": [{ "resource": "item:angels-swamp-4", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29501,6 +29946,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-4-seed": {
+      "human": "Compost Nexeflax seed",
       "ingredients": [{ "resource": "item:angels-swamp-4-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29508,6 +29954,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-4-seed-dormant": {
+      "human": "Compost Dormant nexeflax seed",
       "ingredients": [{ "resource": "item:angels-swamp-4-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29515,6 +29962,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-5": {
+      "human": "Compost Mushredtato",
       "ingredients": [{ "resource": "item:angels-swamp-5", "amount": 2 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29522,6 +29970,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-5-seed": {
+      "human": "Compost Mushredtato seed",
       "ingredients": [{ "resource": "item:angels-swamp-5-seed", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29529,6 +29978,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-swamp-5-seed-dormant": {
+      "human": "Compost Dormant mushredtato seed",
       "ingredients": [{ "resource": "item:angels-swamp-5-seed-dormant", "amount": 20 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29536,6 +29986,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-gas-ethanol": {
+      "human": "Flare Ethanol gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethanol", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29543,6 +29994,7 @@
       "duration": 1
     },
     "angels-chemical-void-angels-alien-spores": {
+      "human": "Flare Alien spores",
       "ingredients": [{ "resource": "fluid:angels-alien-spores", "amount": 100 }],
       "products": [
         { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
@@ -29550,6 +30002,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-alien-bacteria": {
+      "human": "Compost Alien bacteria",
       "ingredients": [{ "resource": "item:angels-alien-bacteria", "amount": 1 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29557,6 +30010,7 @@
       "duration": 1
     },
     "angels-bio-void-angels-bio-puffer-egg-shell": {
+      "human": "Compost Puffer egg-shell remains",
       "ingredients": [{ "resource": "item:angels-bio-puffer-egg-shell", "amount": 10 }],
       "products": [
         { "resource": "item:angels-solid-compost", "amount": { "fixed": 1 }, "probability": 1 }
@@ -29694,7 +30148,7 @@
     "item:electric-mining-drill": { "human": "Electric mining drill", "stackSize": 50 },
     "item:burner-inserter": { "human": "Burner inserter", "stackSize": 50 },
     "item:inserter": { "human": "Inserter", "stackSize": 50 },
-    "item:fast-inserter": { "human": "Ultimate inserter", "stackSize": 50 },
+    "item:fast-inserter": { "human": "Express inserter", "stackSize": 50 },
     "item:long-handed-inserter": { "human": "Fast inserter", "stackSize": 50 },
     "item:offshore-pump": { "human": "Offshore pump", "stackSize": 20 },
     "item:pipe": { "human": "Iron pipe", "stackSize": 100 },
@@ -29736,7 +30190,7 @@
     "item:transport-belt": { "human": "Transport belt", "stackSize": 100 },
     "item:fast-transport-belt": { "human": "Fast transport belt", "stackSize": 100 },
     "item:express-transport-belt": { "human": "Express transport belt", "stackSize": 100 },
-    "item:bulk-inserter": { "human": "Ultimate bulk inserter", "stackSize": 50 },
+    "item:bulk-inserter": { "human": "Express bulk inserter", "stackSize": 50 },
     "item:assembling-machine-3": { "human": "Assembling machine 3", "stackSize": 50 },
     "item:underground-belt": { "human": "Underground belt", "stackSize": 50 },
     "item:fast-underground-belt": { "human": "Fast underground belt", "stackSize": 50 },
@@ -29774,7 +30228,7 @@
     "item:nuclear-fuel": { "human": "Nuclear fuel", "stackSize": 2 },
     "item:rocket-part": { "human": "Rocket part", "stackSize": 5 },
     "item:satellite": { "human": "Satellite", "stackSize": 1 },
-    "item:nuclear-reactor": { "stackSize": 10 },
+    "item:nuclear-reactor": { "human": "Uranium reactor", "stackSize": 10 },
     "item:uranium-235": { "human": "Uranium-235", "stackSize": 100 },
     "item:uranium-238": { "human": "Uranium-238", "stackSize": 100 },
     "item:centrifuge": { "human": "Centrifuge", "stackSize": 50 },
@@ -29848,7 +30302,10 @@
     "item:angels-construction-robot": { "human": "Crawler construction robot", "stackSize": 50 },
     "item:angels-cargo-robot": { "human": "Crawler cargo robot 1", "stackSize": 50 },
     "item:angels-cargo-robot-2": { "human": "Crawler cargo robot 2", "stackSize": 50 },
-    "item:angels-cab-energy-interface-mk1": { "stackSize": 50 },
+    "item:angels-cab-energy-interface-mk1": {
+      "human": "C.A.B. energy transfer port MK1",
+      "stackSize": 50
+    },
     "item:angels-burner-generator-vequip": { "human": "Vehicle burner generator", "stackSize": 50 },
     "item:angels-fusion-reactor-vequip": { "human": "Vehicle fusion reactor", "stackSize": 50 },
     "item:angels-repair-roboport-vequip": { "human": "Vehicle repair roboport", "stackSize": 50 },
@@ -30142,8 +30599,8 @@
     "item:bob-ultimate-underground-belt": { "human": "Ultimate underground belt", "stackSize": 50 },
     "item:bob-ultimate-splitter": { "human": "Ultimate splitter", "stackSize": 50 },
     "item:bob-steam-inserter": { "human": "Steam powered inserter", "stackSize": 50 },
-    "item:bob-express-inserter": { "stackSize": 50 },
-    "item:bob-express-bulk-inserter": { "stackSize": 50 },
+    "item:bob-express-inserter": { "human": "Ultimate inserter", "stackSize": 50 },
+    "item:bob-express-bulk-inserter": { "human": "Ultimate bulk inserter", "stackSize": 50 },
     "item:bob-red-bulk-inserter": { "human": "Fast bulk inserter", "stackSize": 50 },
     "item:bob-turbo-inserter": { "human": "Turbo inserter", "stackSize": 50 },
     "item:bob-turbo-bulk-inserter": { "human": "Turbo bulk inserter", "stackSize": 50 },
@@ -30284,8 +30741,8 @@
     "item:bob-fluid-generator-2": { "human": "Fluid burning generator 2", "stackSize": 10 },
     "item:bob-fluid-generator-3": { "human": "Fluid burning generator 3", "stackSize": 10 },
     "item:bob-hydrazine-generator": { "human": "Hydrazine generator", "stackSize": 10 },
-    "item:bob-nuclear-reactor-2": { "stackSize": 10 },
-    "item:bob-nuclear-reactor-3": { "stackSize": 10 },
+    "item:bob-nuclear-reactor-2": { "human": "Thorium reactor", "stackSize": 10 },
+    "item:bob-nuclear-reactor-3": { "human": "Deuterium reactor", "stackSize": 10 },
     "item:bob-heat-shield-tile": { "human": "Heat shielding tile", "stackSize": 100 },
     "item:bob-sodium-cobaltate": { "human": "Sodium cobaltate", "stackSize": 100 },
     "item:bob-rtg": { "human": "Radio thermoelectric generator", "stackSize": 50 },
@@ -31370,141 +31827,309 @@
     "item:angels-biter-small-egg": { "human": "Small biter egg", "stackSize": 200 },
     "item:angels-biter-medium-egg": { "human": "Medium biter egg", "stackSize": 200 },
     "item:angels-biter-big-egg": { "human": "Big biter egg", "stackSize": 200 },
-    "item:water-barrel": { "stackSize": 10 },
-    "item:crude-oil-barrel": { "stackSize": 10 },
-    "item:lubricant-barrel": { "stackSize": 10 },
-    "item:bob-liquid-fuel-barrel": { "stackSize": 10 },
-    "item:bob-alien-acid-barrel": { "stackSize": 10 },
-    "item:bob-alien-explosive-barrel": { "stackSize": 10 },
-    "item:bob-alien-poison-barrel": { "stackSize": 10 },
-    "item:bob-alien-fire-barrel": { "stackSize": 10 },
-    "item:bob-nitroglycerin-barrel": { "stackSize": 10 },
-    "item:angels-thermal-water-barrel": { "stackSize": 10 },
-    "item:angels-ore8-sludge-barrel": { "stackSize": 10 },
-    "item:angels-ore9-sludge-barrel": { "stackSize": 10 },
-    "item:angels-ore8-solution-barrel": { "stackSize": 10 },
-    "item:angels-ore8-anode-sludge-barrel": { "stackSize": 10 },
-    "item:angels-ore8-slime-barrel": { "stackSize": 10 },
-    "item:angels-ore9-solution-barrel": { "stackSize": 10 },
-    "item:angels-ore9-anode-sludge-barrel": { "stackSize": 10 },
-    "item:angels-ore9-slime-barrel": { "stackSize": 10 },
-    "item:angels-slag-slurry-barrel": { "stackSize": 10 },
-    "item:angels-mineral-sludge-barrel": { "stackSize": 10 },
-    "item:angels-crystal-slurry-barrel": { "stackSize": 10 },
-    "item:angels-crystal-seedling-barrel": { "stackSize": 10 },
-    "item:angels-water-saline-barrel": { "stackSize": 10 },
-    "item:angels-water-purified-barrel": { "stackSize": 10 },
-    "item:angels-water-yellow-waste-barrel": { "stackSize": 10 },
-    "item:angels-water-red-waste-barrel": { "stackSize": 10 },
-    "item:angels-water-green-waste-barrel": { "stackSize": 10 },
-    "item:angels-water-greenyellow-waste-barrel": { "stackSize": 10 },
-    "item:angels-water-mineralized-barrel": { "stackSize": 10 },
-    "item:angels-water-viscous-mud-barrel": { "stackSize": 10 },
-    "item:angels-water-heavy-mud-barrel": { "stackSize": 10 },
-    "item:angels-water-concentrated-mud-barrel": { "stackSize": 10 },
-    "item:angels-water-light-mud-barrel": { "stackSize": 10 },
-    "item:angels-water-thin-mud-barrel": { "stackSize": 10 },
-    "item:angels-gas-compressed-air-barrel": { "stackSize": 10 },
-    "item:angels-gas-hydrogen-barrel": { "stackSize": 10 },
-    "item:angels-gas-oxygen-barrel": { "stackSize": 10 },
-    "item:angels-gas-carbon-monoxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-carbon-dioxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-hydrogen-fluoride-barrel": { "stackSize": 10 },
-    "item:angels-liquid-hydrofluoric-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-water-semiheavy-1-barrel": { "stackSize": 10 },
-    "item:angels-liquid-water-semiheavy-2-barrel": { "stackSize": 10 },
-    "item:angels-liquid-water-semiheavy-3-barrel": { "stackSize": 10 },
-    "item:angels-liquid-water-heavy-barrel": { "stackSize": 10 },
-    "item:angels-gas-deuterium-barrel": { "stackSize": 10 },
-    "item:angels-gas-methane-barrel": { "stackSize": 10 },
-    "item:angels-gas-ethane-barrel": { "stackSize": 10 },
-    "item:angels-gas-butane-barrel": { "stackSize": 10 },
-    "item:angels-gas-propene-barrel": { "stackSize": 10 },
-    "item:angels-liquid-naphtha-barrel": { "stackSize": 10 },
-    "item:angels-liquid-mineral-oil-barrel": { "stackSize": 10 },
-    "item:angels-liquid-fuel-oil-barrel": { "stackSize": 10 },
-    "item:angels-gas-methanol-barrel": { "stackSize": 10 },
-    "item:angels-gas-ethylene-barrel": { "stackSize": 10 },
-    "item:angels-gas-benzene-barrel": { "stackSize": 10 },
-    "item:angels-gas-synthesis-barrel": { "stackSize": 10 },
-    "item:angels-liquid-toluene-barrel": { "stackSize": 10 },
-    "item:angels-gas-butadiene-barrel": { "stackSize": 10 },
-    "item:angels-liquid-phenol-barrel": { "stackSize": 10 },
-    "item:angels-liquid-ethylbenzene-barrel": { "stackSize": 10 },
-    "item:angels-liquid-styrene-barrel": { "stackSize": 10 },
-    "item:angels-gas-formaldehyde-barrel": { "stackSize": 10 },
-    "item:angels-liquid-polyethylene-barrel": { "stackSize": 10 },
-    "item:angels-liquid-glycerol-barrel": { "stackSize": 10 },
-    "item:angels-liquid-bisphenol-a-barrel": { "stackSize": 10 },
-    "item:angels-gas-acetone-barrel": { "stackSize": 10 },
-    "item:angels-gas-chlorine-barrel": { "stackSize": 10 },
-    "item:angels-gas-hydrogen-chloride-barrel": { "stackSize": 10 },
-    "item:angels-liquid-hydrochloric-acid-barrel": { "stackSize": 10 },
-    "item:angels-gas-allylchlorid-barrel": { "stackSize": 10 },
-    "item:angels-gas-epichlorohydrin-barrel": { "stackSize": 10 },
-    "item:angels-gas-chlor-methane-barrel": { "stackSize": 10 },
-    "item:angels-liquid-perchloric-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-ferric-chloride-solution-barrel": { "stackSize": 10 },
-    "item:angels-liquid-cupric-chloride-solution-barrel": { "stackSize": 10 },
-    "item:angels-gas-nitrogen-barrel": { "stackSize": 10 },
-    "item:angels-gas-ammonia-barrel": { "stackSize": 10 },
-    "item:angels-gas-nitrogen-monoxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-nitrogen-dioxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-dinitrogen-tetroxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-ammonium-chloride-barrel": { "stackSize": 10 },
-    "item:angels-gas-urea-barrel": { "stackSize": 10 },
-    "item:angels-gas-melamine-barrel": { "stackSize": 10 },
-    "item:angels-liquid-nitric-acid-barrel": { "stackSize": 10 },
-    "item:angels-gas-monochloramine-barrel": { "stackSize": 10 },
-    "item:angels-gas-hydrazine-barrel": { "stackSize": 10 },
-    "item:angels-gas-methylamine-barrel": { "stackSize": 10 },
-    "item:angels-gas-dimethylamine-barrel": { "stackSize": 10 },
-    "item:angels-gas-dimethylhydrazine-barrel": { "stackSize": 10 },
-    "item:angels-gas-natural-1-barrel": { "stackSize": 10 },
-    "item:angels-liquid-multi-phase-oil-barrel": { "stackSize": 10 },
-    "item:angels-gas-raw-1-barrel": { "stackSize": 10 },
-    "item:angels-liquid-condensates-barrel": { "stackSize": 10 },
-    "item:angels-gas-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-ngl-barrel": { "stackSize": 10 },
-    "item:angels-gas-residual-barrel": { "stackSize": 10 },
-    "item:angels-liquid-plastic-barrel": { "stackSize": 10 },
-    "item:angels-liquid-resin-barrel": { "stackSize": 10 },
-    "item:angels-liquid-rubber-barrel": { "stackSize": 10 },
-    "item:angels-liquid-aqueous-sodium-hydroxide-barrel": { "stackSize": 10 },
-    "item:angels-gas-hydrogen-sulfide-barrel": { "stackSize": 10 },
-    "item:angels-gas-sulfur-dioxide-barrel": { "stackSize": 10 },
-    "item:angels-liquid-sulfuric-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-chlorauric-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-hexafluorosilicic-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-hexachloroplatinic-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-trichlorosilane-barrel": { "stackSize": 10 },
-    "item:angels-gas-silane-barrel": { "stackSize": 10 },
-    "item:angels-liquid-coolant-barrel": { "stackSize": 10 },
-    "item:angels-liquid-titanium-tetrachloride-barrel": { "stackSize": 10 },
-    "item:angels-liquid-tungstic-acid-barrel": { "stackSize": 10 },
-    "item:angels-gas-tungsten-hexafluoride-barrel": { "stackSize": 10 },
-    "item:angels-liquid-pulping-liquor-barrel": { "stackSize": 10 },
-    "item:angels-liquid-brown-liquor-barrel": { "stackSize": 10 },
-    "item:angels-liquid-white-liquor-barrel": { "stackSize": 10 },
-    "item:angels-liquid-black-liquor-barrel": { "stackSize": 10 },
-    "item:angels-liquid-green-liquor-barrel": { "stackSize": 10 },
-    "item:angels-alien-spores-barrel": { "stackSize": 10 },
-    "item:angels-alien-goo-barrel": { "stackSize": 10 },
-    "item:angels-liquid-nutrient-pulp-barrel": { "stackSize": 10 },
-    "item:angels-liquid-raw-vegetable-oil-barrel": { "stackSize": 10 },
-    "item:angels-liquid-vegetable-oil-barrel": { "stackSize": 10 },
-    "item:angels-gas-ethanol-barrel": { "stackSize": 10 },
-    "item:angels-liquid-fermentation-raw-barrel": { "stackSize": 10 },
-    "item:angels-liquid-acetic-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-acetic-anhydride-barrel": { "stackSize": 10 },
-    "item:angels-liquid-cellulose-acetate-mixture-barrel": { "stackSize": 10 },
-    "item:angels-liquid-cellulose-acetate-barrel": { "stackSize": 10 },
-    "item:angels-liquid-propionic-acid-barrel": { "stackSize": 10 },
-    "item:angels-liquid-fish-atmosphere-barrel": { "stackSize": 10 },
-    "item:angels-liquid-polluted-fish-atmosphere-barrel": { "stackSize": 10 },
-    "item:angels-liquid-raw-fish-oil-barrel": { "stackSize": 10 },
-    "item:angels-liquid-fish-oil-barrel": { "stackSize": 10 },
-    "item:angels-gas-puffer-atmosphere-barrel": { "stackSize": 10 },
+    "item:water-barrel": { "human": "Water barrel", "stackSize": 10 },
+    "item:crude-oil-barrel": { "human": "Crude oil barrel", "stackSize": 10 },
+    "item:lubricant-barrel": { "human": "Lubricant barrel", "stackSize": 10 },
+    "item:bob-liquid-fuel-barrel": { "human": "Liquid fuel canister", "stackSize": 10 },
+    "item:bob-alien-acid-barrel": { "human": "Alien acid fluid canister", "stackSize": 10 },
+    "item:bob-alien-explosive-barrel": {
+      "human": "Bottled Alien explosive fluid",
+      "stackSize": 10
+    },
+    "item:bob-alien-poison-barrel": { "human": "Bottled Alien poison fluid", "stackSize": 10 },
+    "item:bob-alien-fire-barrel": { "human": "Bottled Alien flame fluid", "stackSize": 10 },
+    "item:bob-nitroglycerin-barrel": { "human": "Nitroglycerin barrel", "stackSize": 10 },
+    "item:angels-thermal-water-barrel": { "human": "Thermal water barrel", "stackSize": 10 },
+    "item:angels-ore8-sludge-barrel": { "human": "Ferrous sludge barrel", "stackSize": 10 },
+    "item:angels-ore9-sludge-barrel": { "human": "Cupric sludge barrel", "stackSize": 10 },
+    "item:angels-ore8-solution-barrel": { "human": "Ferrous slurry barrel", "stackSize": 10 },
+    "item:angels-ore8-anode-sludge-barrel": {
+      "human": "Anodized ferrous concentrate barrel",
+      "stackSize": 10
+    },
+    "item:angels-ore8-slime-barrel": { "human": "Ferrous concentrate barrel", "stackSize": 10 },
+    "item:angels-ore9-solution-barrel": { "human": "Cupric slurry barrel", "stackSize": 10 },
+    "item:angels-ore9-anode-sludge-barrel": {
+      "human": "Anodized cupric concentrate barrel",
+      "stackSize": 10
+    },
+    "item:angels-ore9-slime-barrel": { "human": "Cupric concentrate barrel", "stackSize": 10 },
+    "item:angels-slag-slurry-barrel": { "human": "Slag slurry barrel", "stackSize": 10 },
+    "item:angels-mineral-sludge-barrel": { "human": "Mineral sludge barrel", "stackSize": 10 },
+    "item:angels-crystal-slurry-barrel": { "human": "Crystal slurry barrel", "stackSize": 10 },
+    "item:angels-crystal-seedling-barrel": { "human": "Crystal seedling barrel", "stackSize": 10 },
+    "item:angels-water-saline-barrel": { "human": "Saline water barrel", "stackSize": 10 },
+    "item:angels-water-purified-barrel": { "human": "Purified water barrel", "stackSize": 10 },
+    "item:angels-water-yellow-waste-barrel": {
+      "human": "Sulfuric waste water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-red-waste-barrel": { "human": "Nitric waste water barrel", "stackSize": 10 },
+    "item:angels-water-green-waste-barrel": {
+      "human": "Chloric waste water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-greenyellow-waste-barrel": {
+      "human": "Fluoric waste water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-mineralized-barrel": {
+      "human": "Mineralized water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-viscous-mud-barrel": {
+      "human": "Viscous mud water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-heavy-mud-barrel": { "human": "Heavy mud water barrel", "stackSize": 10 },
+    "item:angels-water-concentrated-mud-barrel": {
+      "human": "Concentrated mud water barrel",
+      "stackSize": 10
+    },
+    "item:angels-water-light-mud-barrel": { "human": "Light mud water barrel", "stackSize": 10 },
+    "item:angels-water-thin-mud-barrel": { "human": "Thin mud water barrel", "stackSize": 10 },
+    "item:angels-gas-compressed-air-barrel": { "human": "Bottled Compressed air", "stackSize": 10 },
+    "item:angels-gas-hydrogen-barrel": { "human": "Bottled Hydrogen gas", "stackSize": 10 },
+    "item:angels-gas-oxygen-barrel": { "human": "Bottled Oxygen gas", "stackSize": 10 },
+    "item:angels-gas-carbon-monoxide-barrel": {
+      "human": "Bottled Carbon monoxide",
+      "stackSize": 10
+    },
+    "item:angels-gas-carbon-dioxide-barrel": { "human": "Bottled Carbon dioxide", "stackSize": 10 },
+    "item:angels-gas-hydrogen-fluoride-barrel": {
+      "human": "Bottled Hydrogen fluoride gas",
+      "stackSize": 10
+    },
+    "item:angels-liquid-hydrofluoric-acid-barrel": {
+      "human": "Hydrofluoric acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-water-semiheavy-1-barrel": {
+      "human": "7.5% Semiheavy water barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-water-semiheavy-2-barrel": {
+      "human": "12.5% Semiheavy water barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-water-semiheavy-3-barrel": {
+      "human": "15% Semiheavy water barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-water-heavy-barrel": { "human": "Heavy water barrel", "stackSize": 10 },
+    "item:angels-gas-deuterium-barrel": { "human": "Bottled Deuterium gas", "stackSize": 10 },
+    "item:angels-gas-methane-barrel": { "human": "Bottled Methane gas", "stackSize": 10 },
+    "item:angels-gas-ethane-barrel": { "human": "Bottled Ethane gas", "stackSize": 10 },
+    "item:angels-gas-butane-barrel": { "human": "Bottled Butane gas", "stackSize": 10 },
+    "item:angels-gas-propene-barrel": { "human": "Bottled Propene gas", "stackSize": 10 },
+    "item:angels-liquid-naphtha-barrel": { "human": "Naphtha barrel", "stackSize": 10 },
+    "item:angels-liquid-mineral-oil-barrel": {
+      "human": "Base mineral oil barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-fuel-oil-barrel": { "human": "Fuel oil barrel", "stackSize": 10 },
+    "item:angels-gas-methanol-barrel": { "human": "Bottled Methanol gas", "stackSize": 10 },
+    "item:angels-gas-ethylene-barrel": { "human": "Bottled Ethylene gas", "stackSize": 10 },
+    "item:angels-gas-benzene-barrel": { "human": "Bottled Benzene gas", "stackSize": 10 },
+    "item:angels-gas-synthesis-barrel": { "human": "Bottled Synthesis gas", "stackSize": 10 },
+    "item:angels-liquid-toluene-barrel": { "human": "Toluene liquid barrel", "stackSize": 10 },
+    "item:angels-gas-butadiene-barrel": { "human": "Bottled Butadiene gas", "stackSize": 10 },
+    "item:angels-liquid-phenol-barrel": { "human": "Phenol liquid barrel", "stackSize": 10 },
+    "item:angels-liquid-ethylbenzene-barrel": {
+      "human": "Ethylbenzene liquid barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-styrene-barrel": { "human": "Styrene liquid barrel", "stackSize": 10 },
+    "item:angels-gas-formaldehyde-barrel": { "human": "Bottled Formaldehyde gas", "stackSize": 10 },
+    "item:angels-liquid-polyethylene-barrel": {
+      "human": "Polyethylene liquid barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-glycerol-barrel": { "human": "Glycerol liquid barrel", "stackSize": 10 },
+    "item:angels-liquid-bisphenol-a-barrel": {
+      "human": "Bisphenol A liquid barrel",
+      "stackSize": 10
+    },
+    "item:angels-gas-acetone-barrel": { "human": "Bottled Acetone gas", "stackSize": 10 },
+    "item:angels-gas-chlorine-barrel": { "human": "Bottled Chlorine gas", "stackSize": 10 },
+    "item:angels-gas-hydrogen-chloride-barrel": {
+      "human": "Bottled Hydrogen chloride gas",
+      "stackSize": 10
+    },
+    "item:angels-liquid-hydrochloric-acid-barrel": {
+      "human": "Hydrochloric acid canister",
+      "stackSize": 10
+    },
+    "item:angels-gas-allylchlorid-barrel": {
+      "human": "Bottled Allyl chloride gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-epichlorohydrin-barrel": {
+      "human": "Bottled Epichlorohydrin gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-chlor-methane-barrel": {
+      "human": "Bottled Chloromethane gas",
+      "stackSize": 10
+    },
+    "item:angels-liquid-perchloric-acid-barrel": {
+      "human": "Perchloric acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-ferric-chloride-solution-barrel": {
+      "human": "Ferric chloride solution canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-cupric-chloride-solution-barrel": {
+      "human": "Cupric chloride solution canister",
+      "stackSize": 10
+    },
+    "item:angels-gas-nitrogen-barrel": { "human": "Bottled Nitrogen gas", "stackSize": 10 },
+    "item:angels-gas-ammonia-barrel": { "human": "Bottled Ammonia gas", "stackSize": 10 },
+    "item:angels-gas-nitrogen-monoxide-barrel": {
+      "human": "Bottled Nitrogen monoxide gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-nitrogen-dioxide-barrel": {
+      "human": "Bottled Nitrogen dioxide gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-dinitrogen-tetroxide-barrel": {
+      "human": "Bottled Dinitrogen tetroxide gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-ammonium-chloride-barrel": {
+      "human": "Bottled Ammonium chloride gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-urea-barrel": { "human": "Bottled Urea gas", "stackSize": 10 },
+    "item:angels-gas-melamine-barrel": { "human": "Bottled Melamine gas", "stackSize": 10 },
+    "item:angels-liquid-nitric-acid-barrel": { "human": "Nitric acid canister", "stackSize": 10 },
+    "item:angels-gas-monochloramine-barrel": {
+      "human": "Bottled Monochloramine gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-hydrazine-barrel": { "human": "Bottled Hydrazine gas", "stackSize": 10 },
+    "item:angels-gas-methylamine-barrel": { "human": "Bottled Methylamine gas", "stackSize": 10 },
+    "item:angels-gas-dimethylamine-barrel": {
+      "human": "Bottled Dimethylamine gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-dimethylhydrazine-barrel": {
+      "human": "Bottled Dimethylhydrazine gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-natural-1-barrel": { "human": "Bottled Natural gas", "stackSize": 10 },
+    "item:angels-liquid-multi-phase-oil-barrel": {
+      "human": "Multi-phase oil barrel",
+      "stackSize": 10
+    },
+    "item:angels-gas-raw-1-barrel": { "human": "Bottled Raw gas", "stackSize": 10 },
+    "item:angels-liquid-condensates-barrel": { "human": "Gas condensates barrel", "stackSize": 10 },
+    "item:angels-gas-acid-barrel": { "human": "Bottled Acid gas", "stackSize": 10 },
+    "item:angels-liquid-ngl-barrel": { "human": "Natural gas liquids barrel", "stackSize": 10 },
+    "item:angels-gas-residual-barrel": { "human": "Bottled Residual gas", "stackSize": 10 },
+    "item:angels-liquid-plastic-barrel": { "human": "Liquid plastic barrel", "stackSize": 10 },
+    "item:angels-liquid-resin-barrel": { "human": "Liquid resin barrel", "stackSize": 10 },
+    "item:angels-liquid-rubber-barrel": { "human": "Liquid rubber barrel", "stackSize": 10 },
+    "item:angels-liquid-aqueous-sodium-hydroxide-barrel": {
+      "human": "Sodium hydroxide solution barrel",
+      "stackSize": 10
+    },
+    "item:angels-gas-hydrogen-sulfide-barrel": {
+      "human": "Bottled Hydrogen sulfide gas",
+      "stackSize": 10
+    },
+    "item:angels-gas-sulfur-dioxide-barrel": {
+      "human": "Bottled Sulfur dioxide gas",
+      "stackSize": 10
+    },
+    "item:angels-liquid-sulfuric-acid-barrel": {
+      "human": "Sulfuric acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-chlorauric-acid-barrel": {
+      "human": "Chlorauric acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-hexafluorosilicic-acid-barrel": {
+      "human": "Hexafluorosilicic acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-hexachloroplatinic-acid-barrel": {
+      "human": "Hexachloroplatinic acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-trichlorosilane-barrel": {
+      "human": "Trichlorosilane barrel",
+      "stackSize": 10
+    },
+    "item:angels-gas-silane-barrel": { "human": "Bottled Silane gas", "stackSize": 10 },
+    "item:angels-liquid-coolant-barrel": { "human": "Coolant barrel", "stackSize": 10 },
+    "item:angels-liquid-titanium-tetrachloride-barrel": {
+      "human": "Titanium tetrachloride barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-tungstic-acid-barrel": {
+      "human": "Tungstic acid canister",
+      "stackSize": 10
+    },
+    "item:angels-gas-tungsten-hexafluoride-barrel": {
+      "human": "Bottled Tungsten hexafluoride gas",
+      "stackSize": 10
+    },
+    "item:angels-liquid-pulping-liquor-barrel": {
+      "human": "Pulping liquor barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-brown-liquor-barrel": { "human": "Brown liquor barrel", "stackSize": 10 },
+    "item:angels-liquid-white-liquor-barrel": { "human": "White liquor barrel", "stackSize": 10 },
+    "item:angels-liquid-black-liquor-barrel": { "human": "Black liquor barrel", "stackSize": 10 },
+    "item:angels-liquid-green-liquor-barrel": { "human": "Green liquor barrel", "stackSize": 10 },
+    "item:angels-alien-spores-barrel": { "human": "Alien spores barrel", "stackSize": 10 },
+    "item:angels-alien-goo-barrel": { "human": "Alien goo barrel", "stackSize": 10 },
+    "item:angels-liquid-nutrient-pulp-barrel": { "human": "Nutrient pulp barrel", "stackSize": 10 },
+    "item:angels-liquid-raw-vegetable-oil-barrel": {
+      "human": "Raw vegetable oil barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-vegetable-oil-barrel": { "human": "Vegetable oil barrel", "stackSize": 10 },
+    "item:angels-gas-ethanol-barrel": { "human": "Bottled Ethanol gas", "stackSize": 10 },
+    "item:angels-liquid-fermentation-raw-barrel": {
+      "human": "Fermentation base barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-acetic-acid-barrel": { "human": "Acetic acid canister", "stackSize": 10 },
+    "item:angels-liquid-acetic-anhydride-barrel": {
+      "human": "Acetic anhydride barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-cellulose-acetate-mixture-barrel": {
+      "human": "Cellulose acetate mixture barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-cellulose-acetate-barrel": {
+      "human": "Cellulose acetate barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-propionic-acid-barrel": {
+      "human": "Propionic acid canister",
+      "stackSize": 10
+    },
+    "item:angels-liquid-fish-atmosphere-barrel": {
+      "human": "Artificial fish water barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-polluted-fish-atmosphere-barrel": {
+      "human": "Polluted artificial fish water barrel",
+      "stackSize": 10
+    },
+    "item:angels-liquid-raw-fish-oil-barrel": { "human": "Raw fish oil barrel", "stackSize": 10 },
+    "item:angels-liquid-fish-oil-barrel": { "human": "Fish oil barrel", "stackSize": 10 },
+    "item:angels-gas-puffer-atmosphere-barrel": {
+      "human": "Bottled Artificial puffer atmosphere",
+      "stackSize": 10
+    },
     "item:car": { "human": "Car", "stackSize": 1 },
     "item:locomotive": { "human": "Locomotive", "stackSize": 10 },
     "item:cargo-wagon": { "human": "Cargo wagon", "stackSize": 10 },
@@ -31534,72 +32159,54 @@
     "item:bob-tankotron": { "human": "Tankotron", "stackSize": 1 },
     "item:bob-logistic-spidertron": { "human": "Logitron", "stackSize": 1 },
     "item:bob-heavy-spidertron": { "human": "Heavy Spidertron", "stackSize": 1 },
-    "item:angels-crawler-locomotive": { "human": "Crawler locomotive MK1 MK1", "stackSize": 5 },
-    "item:angels-crawler-locomotive-2": { "human": "Crawler locomotive MK1 MK2", "stackSize": 5 },
-    "item:angels-crawler-locomotive-3": { "human": "Crawler locomotive MK1 MK3", "stackSize": 5 },
+    "item:angels-crawler-locomotive": { "human": "Crawler locomotive MK1", "stackSize": 5 },
+    "item:angels-crawler-locomotive-2": { "human": "Crawler locomotive MK2", "stackSize": 5 },
+    "item:angels-crawler-locomotive-3": { "human": "Crawler locomotive MK3", "stackSize": 5 },
     "item:angels-crawler-locomotive-tender": {
-      "human": "Crawler locomotive tender MK1 MK1",
+      "human": "Crawler locomotive tender MK1",
       "stackSize": 5
     },
     "item:angels-crawler-locomotive-tender-2": {
-      "human": "Crawler locomotive tender MK1 MK2",
+      "human": "Crawler locomotive tender MK2",
       "stackSize": 5
     },
     "item:angels-crawler-locomotive-tender-3": {
-      "human": "Crawler locomotive tender MK1 MK3",
+      "human": "Crawler locomotive tender MK3",
       "stackSize": 5
     },
-    "item:angels-crawler-cargo-wagon": { "human": "Crawler cargo wagon MK1 MK1", "stackSize": 5 },
-    "item:angels-crawler-cargo-wagon-2": { "human": "Crawler cargo wagon MK1 MK2", "stackSize": 5 },
-    "item:angels-crawler-cargo-wagon-3": { "human": "Crawler cargo wagon MK1 MK3", "stackSize": 5 },
-    "item:angels-crawler-robot-wagon": { "human": "Crawler robot wagon MK1 MK1", "stackSize": 5 },
-    "item:angels-crawler-robot-wagon-2": { "human": "Crawler robot wagon MK1 MK2", "stackSize": 5 },
-    "item:angels-crawler-robot-wagon-3": { "human": "Crawler robot wagon MK1 MK3", "stackSize": 5 },
-    "item:angels-petro-locomotive": { "human": "Petrochemical locomotive MK1 MK1", "stackSize": 5 },
-    "item:angels-petro-locomotive-2": {
-      "human": "Petrochemical locomotive MK1 MK2",
-      "stackSize": 5
-    },
-    "item:angels-petro-locomotive-3": {
-      "human": "Petrochemical locomotive MK1 MK3",
-      "stackSize": 5
-    },
-    "item:angels-petro-gas-wagon": { "human": "Petrochemical gas wagon MK1 MK1", "stackSize": 5 },
-    "item:angels-petro-gas-wagon-2": { "human": "Petrochemical gas wagon MK1 MK2", "stackSize": 5 },
-    "item:angels-petro-gas-wagon-3": { "human": "Petrochemical gas wagon MK1 MK3", "stackSize": 5 },
-    "item:angels-petro-oil-wagon": { "human": "Petrochemical fluid wagon MK1 MK1", "stackSize": 5 },
-    "item:angels-petro-oil-wagon-2": {
-      "human": "Petrochemical fluid wagon MK1 MK2",
-      "stackSize": 5
-    },
-    "item:angels-petro-oil-wagon-3": {
-      "human": "Petrochemical fluid wagon MK1 MK3",
-      "stackSize": 5
-    },
-    "item:angels-smelting-locomotive": { "human": "Smelting locomotive MK1 MK1", "stackSize": 5 },
-    "item:angels-smelting-locomotive-2": { "human": "Smelting locomotive MK1 MK2", "stackSize": 5 },
-    "item:angels-smelting-locomotive-3": { "human": "Smelting locomotive MK1 MK3", "stackSize": 5 },
+    "item:angels-crawler-cargo-wagon": { "human": "Crawler cargo wagon MK1", "stackSize": 5 },
+    "item:angels-crawler-cargo-wagon-2": { "human": "Crawler cargo wagon MK2", "stackSize": 5 },
+    "item:angels-crawler-cargo-wagon-3": { "human": "Crawler cargo wagon MK3", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon": { "human": "Crawler robot wagon MK1", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon-2": { "human": "Crawler robot wagon MK2", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon-3": { "human": "Crawler robot wagon MK3", "stackSize": 5 },
+    "item:angels-petro-locomotive": { "human": "Petrochemical locomotive MK1", "stackSize": 5 },
+    "item:angels-petro-locomotive-2": { "human": "Petrochemical locomotive MK2", "stackSize": 5 },
+    "item:angels-petro-locomotive-3": { "human": "Petrochemical locomotive MK3", "stackSize": 5 },
+    "item:angels-petro-gas-wagon": { "human": "Petrochemical gas wagon MK1", "stackSize": 5 },
+    "item:angels-petro-gas-wagon-2": { "human": "Petrochemical gas wagon MK2", "stackSize": 5 },
+    "item:angels-petro-gas-wagon-3": { "human": "Petrochemical gas wagon MK3", "stackSize": 5 },
+    "item:angels-petro-oil-wagon": { "human": "Petrochemical fluid wagon MK1", "stackSize": 5 },
+    "item:angels-petro-oil-wagon-2": { "human": "Petrochemical fluid wagon MK2", "stackSize": 5 },
+    "item:angels-petro-oil-wagon-3": { "human": "Petrochemical fluid wagon MK3", "stackSize": 5 },
+    "item:angels-smelting-locomotive": { "human": "Smelting locomotive MK1", "stackSize": 5 },
+    "item:angels-smelting-locomotive-2": { "human": "Smelting locomotive MK2", "stackSize": 5 },
+    "item:angels-smelting-locomotive-3": { "human": "Smelting locomotive MK3", "stackSize": 5 },
     "item:angels-smelting-locomotive-tender": {
-      "human": "Smelting locomotive tender MK1 MK1",
+      "human": "Smelting locomotive tender MK1",
       "stackSize": 5
     },
     "item:angels-smelting-locomotive-tender-2": {
-      "human": "Smelting locomotive tender MK1 MK2",
+      "human": "Smelting locomotive tender MK2",
       "stackSize": 5
     },
     "item:angels-smelting-locomotive-tender-3": {
-      "human": "Smelting locomotive tender MK1 MK3",
+      "human": "Smelting locomotive tender MK3",
       "stackSize": 5
     },
-    "item:angels-smelting-cargo-wagon": { "human": "Smelting cargo wagon MK1 MK1", "stackSize": 5 },
-    "item:angels-smelting-cargo-wagon-2": {
-      "human": "Smelting cargo wagon MK1 MK2",
-      "stackSize": 5
-    },
-    "item:angels-smelting-cargo-wagon-3": {
-      "human": "Smelting cargo wagon MK1 MK3",
-      "stackSize": 5
-    },
+    "item:angels-smelting-cargo-wagon": { "human": "Smelting cargo wagon MK1", "stackSize": 5 },
+    "item:angels-smelting-cargo-wagon-2": { "human": "Smelting cargo wagon MK2", "stackSize": 5 },
+    "item:angels-smelting-cargo-wagon-3": { "human": "Smelting cargo wagon MK3", "stackSize": 5 },
     "item:speed-module": { "human": "Speed module", "stackSize": 50 },
     "item:speed-module-2": { "human": "Speed module 2", "stackSize": 50 },
     "item:speed-module-3": { "human": "Speed module 3", "stackSize": 50 },
@@ -31695,16 +32302,16 @@
     "item:bob-alien-science-pack-red": { "human": "Red alien science pack", "stackSize": 200 },
     "item:angels-token-bio": { "human": "Alien plant-life sample", "stackSize": 200 },
     "item:upgrade-planner": { "human": "Upgrade planner", "stackSize": 1 },
-    "fluid:parameter-0": {},
-    "fluid:parameter-1": {},
-    "fluid:parameter-2": {},
-    "fluid:parameter-3": {},
-    "fluid:parameter-4": {},
-    "fluid:parameter-5": {},
-    "fluid:parameter-6": {},
-    "fluid:parameter-7": {},
-    "fluid:parameter-8": {},
-    "fluid:parameter-9": {},
+    "fluid:parameter-0": { "human": "Parameter 0" },
+    "fluid:parameter-1": { "human": "Parameter 1" },
+    "fluid:parameter-2": { "human": "Parameter 2" },
+    "fluid:parameter-3": { "human": "Parameter 3" },
+    "fluid:parameter-4": { "human": "Parameter 4" },
+    "fluid:parameter-5": { "human": "Parameter 5" },
+    "fluid:parameter-6": { "human": "Parameter 6" },
+    "fluid:parameter-7": { "human": "Parameter 7" },
+    "fluid:parameter-8": { "human": "Parameter 8" },
+    "fluid:parameter-9": { "human": "Parameter 9" },
     "fluid:water": { "human": "Water" },
     "fluid:steam": { "human": "Steam" },
     "fluid:crude-oil": { "human": "Crude oil" },
@@ -31747,9 +32354,9 @@
     "fluid:angels-gas-carbon-dioxide": { "human": "Carbon dioxide" },
     "fluid:angels-gas-hydrogen-fluoride": { "human": "Hydrogen fluoride gas" },
     "fluid:angels-liquid-hydrofluoric-acid": { "human": "Hydrofluoric acid" },
-    "fluid:angels-liquid-water-semiheavy-1": {},
-    "fluid:angels-liquid-water-semiheavy-2": {},
-    "fluid:angels-liquid-water-semiheavy-3": {},
+    "fluid:angels-liquid-water-semiheavy-1": { "human": "7.5% Semiheavy water" },
+    "fluid:angels-liquid-water-semiheavy-2": { "human": "12.5% Semiheavy water" },
+    "fluid:angels-liquid-water-semiheavy-3": { "human": "15% Semiheavy water" },
     "fluid:angels-liquid-water-heavy": { "human": "Heavy water" },
     "fluid:angels-gas-deuterium": { "human": "Deuterium gas" },
     "fluid:angels-gas-methane": { "human": "Methane gas" },

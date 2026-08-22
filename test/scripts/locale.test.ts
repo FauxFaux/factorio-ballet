@@ -99,6 +99,45 @@ describe('resolveLocale', () => {
     expect(resolveLocale(undefined, 'water', locales, 'fluid')).toBe('Water');
   });
 
+  it('prefers the dumped resolved name over interpreting ls', () => {
+    // the dump has the game's own resolution, which beats anything we reconstruct
+    const dump: Record<string, RLocale> = {
+      recipe: { names: { 'iron-plate': 'Galena (Lead ore)' }, descriptions: undefined },
+      item: { names: { 'iron-plate': 'Iron plate' }, descriptions: undefined },
+    };
+    expect(resolveLocale(['item-name.iron-plate'], 'iron-plate', dump, 'recipe')).toBe(
+      'Galena (Lead ore)',
+    );
+  });
+
+  it('resolves a parameterised template via the dump', () => {
+    // ["item-name.filled-gas-canister", [...]] is "Bottled __1__"; only the game can expand it
+    const dump: Record<string, RLocale> = {
+      item: {
+        names: { 'angels-gas-nitrogen-barrel': 'Bottled Nitrogen gas' },
+        descriptions: undefined,
+      },
+    };
+    const ls = ['item-name.filled-gas-canister', ['fluid-name.angels-gas-nitrogen']];
+    expect(resolveLocale(ls, 'angels-gas-nitrogen-barrel', dump, 'item')).toBe(
+      'Bottled Nitrogen gas',
+    );
+  });
+
+  it('interprets ls when the dump has no entry for the id', () => {
+    expect(resolveLocale(['recipe-name.wooden-chest'], 'not-dumped', locales, 'recipe')).toBe(
+      'Wooden chest',
+    );
+  });
+
+  it('interprets ls when the dumped entry is a sentinel', () => {
+    const dump: Record<string, RLocale> = {
+      recipe: { names: { thing: 'Unknown recipe' }, descriptions: undefined },
+      item: { names: { 'iron-plate': 'Iron plate' }, descriptions: undefined },
+    };
+    expect(resolveLocale(['item-name.iron-plate'], 'thing', dump, 'recipe')).toBe('Iron plate');
+  });
+
   it('does not return a sentinel from the fallback path', () => {
     const mixed: Record<string, RLocale> = {
       recipe: { names: { chrome: 'Something went wrong' }, descriptions: undefined },

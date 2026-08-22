@@ -21,8 +21,15 @@ export function resolveLocale(
   locales: Record<string, RLocale>,
   fallbackLocale: string,
 ): string | undefined {
-  // undefined: game defaults to <type>-name.<id>
-  if (ls === undefined) return validName(locales[fallbackLocale]?.names[fallbackId]);
+  // The game resolves each prototype's localised_name for us when it writes the *-locale.json
+  // dumps, keyed by prototype id. That covers parameterised templates we cannot expand ourselves
+  // (`["item-name.filled-gas-canister", ["fluid-name.angels-gas-dinitrogen-tetroxide"]]` becomes
+  // "Bottled Dinitrogen tetroxide gas"), so prefer it. Interpreting `ls` by hand is the fallback,
+  // for prototypes the dump has no entry for.
+  const dumped = validName(locales[fallbackLocale]?.names[fallbackId]);
+  if (dumped !== undefined) return dumped;
+
+  if (ls === undefined) return undefined;
 
   if (typeof ls === 'string') return validName(ls);
 
