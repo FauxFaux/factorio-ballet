@@ -36,9 +36,15 @@ game's `script-output/` directory) into `static.json`:
 APP=<factorio-user-dir> node scripts/ingest-data.ts   # reads $APP/script-output/, writes ./static.json
 ```
 
-The result is checked in as `src/assets/static.json` (the script writes minified; `npm run format`
-prettifies it in place). Zod validators for the raw game data live in `scripts/raw-validators.ts`
-(typed against the `factorio-raw-types` package).
+The checked-in `src/assets/static.json` comes from `APP=~/ins/factorio-2-73-ab` (Bob's + Angel's);
+regenerating from any other dump replaces the dataset. The script writes minified, and
+`npm run format` prettifies it in place. Zod validators for the raw game data live in
+`scripts/raw-validators.ts` (typed against the `factorio-raw-types` package).
+
+**Adding a new attribute — read `INGEST.md` first.** It maps the available dumps, how to probe a 59
+MB `data.raw` for which prototypes carry a field, how to verify a regeneration changed only what you
+meant, what can and cannot be done about icons, and a measured field-by-field starting point for
+modules and beacons.
 
 Two things the ingest gets right that are easy to get wrong again:
 
@@ -66,6 +72,8 @@ current:
   cycles, productivity, catalysts).
 - `UI.md` — analysis of the two prior planner UIs (supply-first manifest vs demand-first
   requirements) and the hybrid design this app is building toward.
+- `INGEST.md` — the game data as source material: which dumps exist, how to research `data.raw` for
+  a new attribute, and what the icon spritesheet can and cannot do.
 - `docs/string.wiki` — copy of the Factorio wiki page on the locale/localisation file format.
 
 ## Architecture
@@ -117,8 +125,11 @@ Tests in `test/` mirror the source layout (`test/scripts/`).
 - `../process-mgmt-gui` — the more modern calculator with much less scope: a demand-first
   linear-algebra planner (`src/calc.tsx`, `src/backend/mgmt.ts`) wrapping the `process-mgmt`
   library; analysed in `UI.md §2`.
-- `../factoriolab` and `../factorio-raw-types` — checked out only because they're referenced (as
-  data source and types package respectively).
+- `../factoriolab` — checked out only because it's referenced as a data source.
+- `../factorio-raw-types` — the types package the ingest validates against, and also the only place
+  the icon spritesheet can be rebuilt: `scripts/sprite-sheet.ts` packs `src/assets/icons.avif` +
+  `icons.json` from the game's per-prototype PNGs. Its key scheme has moved on from the one our
+  checked-in sheet uses; see `INGEST.md`.
 
 ## Abandoned attempts kept for scripts
 
