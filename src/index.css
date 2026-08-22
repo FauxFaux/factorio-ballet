@@ -311,6 +311,14 @@ code {
   font-style: italic;
 }
 
+/* While a machine is hovered, the duration and rates are that machine's, not the 1× baseline; the
+ * accent says "these numbers moved". */
+.recipe-card.is-previewing .recipe-duration,
+.recipe-card.is-previewing .flow-rate,
+.recipe-card.is-previewing .flow-chip-rate {
+  color: var(--accent);
+}
+
 /* The machines wrap in the left column; the right one is reserved for the productivity chip, so
  * it stays at the right edge however many lines the machines take. */
 .recipe-machines {
@@ -345,6 +353,11 @@ code {
   border-radius: 4px;
   padding: 1px 4px 1px 1px;
   cursor: help;
+}
+
+/* the machine whose speed the card's numbers are currently quoted at */
+.machine.is-previewing {
+  border-color: var(--accent);
 }
 
 .machine-icon {
