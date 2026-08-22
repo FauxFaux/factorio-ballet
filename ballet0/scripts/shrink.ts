@@ -2,7 +2,7 @@
 
 import { type RawData } from 'factorio-raw-types/prototypes';
 import { readFile, writeFile } from 'node:fs/promises';
-import { _pick } from '~/lib/dash';
+import { _pick } from '../app/lib/dash';
 import {
   type Recipe,
   type Shrunk,
@@ -11,7 +11,7 @@ import {
   Item,
   craftingKeys,
   Crafting,
-} from '~/lib/shrunk';
+} from '../app/lib/shrunk';
 
 async function main() {
   const [, , rawPath, ...rest] = process.argv;
