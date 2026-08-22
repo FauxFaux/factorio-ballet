@@ -79,7 +79,7 @@ async function main() {
       }
       // every item subtype shares the `item-name.` locale namespace
       resources[id] = {
-        human: resolveLocale(item.localised_name, itemId, locales, 'item'),
+        human: resolveLocale(itemId, locales, 'item'),
         stackSize: item.stack_size,
       };
     }
@@ -92,7 +92,7 @@ async function main() {
       continue;
     }
     resources[id] = {
-      human: resolveLocale(fluid.localised_name, fluidId, locales, 'fluid'),
+      human: resolveLocale(fluidId, locales, 'fluid'),
     };
   }
   console.log(`Resources: ${Object.keys(resources).length} (dropped ${dropped} hidden/parameter)`);
@@ -111,9 +111,7 @@ async function main() {
 }
 
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
-  let hits = 0;
-  const misses: Array<{ id: string; ls: unknown }> = [];
-
+  const unnamed: string[] = [];
   let skipped = 0;
 
   const recipes: Record<string, Recipe> = Object.fromEntries(
@@ -126,12 +124,8 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
         return false;
       })
       .map(([id, r]) => {
-        const human = resolveLocale(r.localised_name, id, locales, 'recipe');
-        if (human !== undefined) {
-          hits++;
-        } else {
-          misses.push({ id, ls: r.localised_name });
-        }
+        const human = resolveLocale(id, locales, 'recipe');
+        if (human === undefined) unnamed.push(id);
         const ingredients = arr(r.ingredients ?? [])
           .map((ing) => RIngredient.parse(ing))
           .map(toIng);
@@ -144,18 +138,9 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
   );
 
   console.log(`Recipes: ${Object.keys(recipes).length} (dropped ${skipped} hidden/parameter)`);
-  console.log(`Hits: ${hits} / ${hits + misses.length}`);
-  console.log('Miss samples:');
-  for (const { id, ls } of misses.slice(0, 20)) {
-    console.log(' ', id, JSON.stringify(ls));
+  if (unnamed.length > 0) {
+    console.log(`Unnamed recipes: ${unnamed.length}`, unnamed.slice(0, 20));
   }
-  // Show miss breakdown by localised_name shape
-  const byShape: Record<string, number> = {};
-  for (const { ls } of misses) {
-    const shape = ls === undefined ? 'undefined' : Array.isArray(ls) ? String(ls[0]) : String(ls);
-    byShape[shape] = (byShape[shape] ?? 0) + 1;
-  }
-  console.log('Miss shapes:', byShape);
   return recipes;
 }
 

@@ -1,5 +1,6 @@
 import type { RLocale } from './raw-validators.ts';
 
+/** What the game writes for a prototype whose localised_name it could not resolve. */
 const SENTINELS = new Set([
   'Something went wrong',
   'Unknown entity',
@@ -11,54 +12,21 @@ const SENTINELS = new Set([
   'Unknown signal',
 ]);
 
-function validName(name: string | undefined): string | undefined {
-  return name === undefined || SENTINELS.has(name) ? undefined : name;
-}
-
+/**
+ * The display name for a prototype, or undefined if the game could not produce one.
+ *
+ * The game resolves every prototype's `localised_name` when it writes the `*-locale.json` dumps,
+ * keyed by prototype id, so there is nothing for us to interpret: parameterised templates
+ * (`["item-name.filled-gas-canister", ["fluid-name.angels-gas-dinitrogen-tetroxide"]]` against
+ * `filled-gas-canister=Bottled __1__`) arrive already expanded to "Bottled Dinitrogen tetroxide
+ * gas". We used to reconstruct the string from `localised_name` ourselves; measured against the
+ * dumps that resolved nothing they lacked, missed hundreds they had, and got 37 names wrong.
+ */
 export function resolveLocale(
-  ls: unknown,
-  fallbackId: string,
+  id: string,
   locales: Record<string, RLocale>,
-  fallbackLocale: string,
+  type: string,
 ): string | undefined {
-  // The game resolves each prototype's localised_name for us when it writes the *-locale.json
-  // dumps, keyed by prototype id. That covers parameterised templates we cannot expand ourselves
-  // (`["item-name.filled-gas-canister", ["fluid-name.angels-gas-dinitrogen-tetroxide"]]` becomes
-  // "Bottled Dinitrogen tetroxide gas"), so prefer it. Interpreting `ls` by hand is the fallback,
-  // for prototypes the dump has no entry for.
-  const dumped = validName(locales[fallbackLocale]?.names[fallbackId]);
-  if (dumped !== undefined) return dumped;
-
-  if (ls === undefined) return undefined;
-
-  if (typeof ls === 'string') return validName(ls);
-
-  if (!Array.isArray(ls) || ls.length === 0) return undefined;
-
-  const key = ls[0];
-  if (typeof key !== 'string' || key === '?') return undefined;
-
-  if (key === '') {
-    const parts: string[] = [];
-    for (const el of ls.slice(1)) {
-      if (typeof el === 'string') {
-        parts.push(el);
-      } else {
-        const resolved = resolveLocale(el, fallbackId, locales, fallbackLocale);
-        if (resolved === undefined) return undefined;
-        parts.push(resolved);
-      }
-    }
-    return validName(parts.join('')) ?? undefined;
-  }
-
-  const dot = key.indexOf('.');
-  if (dot === -1) return undefined;
-
-  const category = key.slice(0, dot); // e.g. "item-name"
-  const subId = key.slice(dot + 1); // e.g. "angels-void"
-
-  const localeKey = category.replace(/-(name|description)$/, '');
-
-  return validName(locales[localeKey]?.names[subId]);
+  const name = locales[type]?.names[id];
+  return name === undefined || SENTINELS.has(name) ? undefined : name;
 }

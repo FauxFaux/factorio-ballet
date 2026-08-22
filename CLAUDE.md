@@ -36,10 +36,26 @@ game's `script-output/` directory) into `static.json`:
 APP=<factorio-user-dir> node scripts/ingest-data.ts   # reads $APP/script-output/, writes ./static.json
 ```
 
-The result is checked in as `src/assets/static.json`. Zod validators for the raw game data live in
-`scripts/raw-validators.ts` (typed against the `factorio-raw-types` package); locale resolution
-(including `["", ...]` concatenation and `entity-name.` fallback chains) is `scripts/locale.ts`,
-tested in `test/scripts/locale.test.ts`.
+The result is checked in as `src/assets/static.json` (the script writes minified; `npm run format`
+prettifies it in place). Zod validators for the raw game data live in `scripts/raw-validators.ts`
+(typed against the `factorio-raw-types` package).
+
+Two things the ingest gets right that are easy to get wrong again:
+
+- **Names come from the `*-locale.json` dumps, keyed by prototype id** (`scripts/locale.ts`, tested
+  in `test/scripts/locale.test.ts`). The game has already resolved each prototype's
+  `localised_name`, including parameterised templates we cannot expand — e.g. barrel items whose
+  name is `["item-name.filled-gas-canister", ["fluid-name.<fluid>"]]` against bob's
+  `filled-gas-canister=Bottled __1__` arrive as "Bottled Dinitrogen tetroxide gas". Do not
+  reinterpret `localised_name`: that was tried, and it resolved nothing the dumps lacked while
+  getting 37 names wrong. `resolveLocale` only filters the game's "Unknown item" sentinels.
+- **`hidden` prototypes are dead content.** Mods disable things by setting `hidden` rather than
+  deleting them (Angel's `functions.hide` / `OV.disable_recipe`), so e.g. both `angels-solid-rubber`
+  and `bob-rubber` are in the dump when only the latter is real. Hidden recipes and hidden/parameter
+  items and fluids are dropped, except resources a surviving recipe still references (the angels
+  void sinks, `rocket-part`). Note `enabled: false` is _not_ a disable signal — that's just
+  tech-gating. Items live under one `data.raw` key per subtype (`ammo`, `gun`, `module`, ...); the
+  `ITEM_KEYS` list must cover them all or recipes end up referencing resources that do not exist.
 
 ## Read the design docs first
 
