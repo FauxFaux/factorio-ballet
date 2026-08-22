@@ -1,16 +1,5 @@
 {
   "recipes": {
-    "recipe-unknown": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-0": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-1": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-2": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-3": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-4": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-5": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-6": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-7": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-8": { "ingredients": [], "products": [], "duration": 0.5 },
-    "parameter-9": { "ingredients": [], "products": [], "duration": 0.5 },
     "speed-module": {
       "human": "Speed module",
       "ingredients": [
@@ -133,109 +122,6 @@
         { "resource": "item:bulk-inserter", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5
-    },
-    "basic-oil-processing": {
-      "ingredients": [{ "resource": "fluid:crude-oil", "amount": 100 }],
-      "products": [
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 45 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "advanced-oil-processing": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 50 },
-        { "resource": "fluid:crude-oil", "amount": 100 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 25 }, "probability": 1 },
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 45 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 55 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "coal-liquefaction": {
-      "ingredients": [
-        { "resource": "item:coal", "amount": 10 },
-        { "resource": "fluid:angels-liquid-naphtha", "amount": 25 },
-        { "resource": "fluid:steam", "amount": 50 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 90 }, "probability": 1 },
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "heavy-oil-cracking": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 30 },
-        { "resource": "fluid:angels-liquid-naphtha", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 30 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "light-oil-cracking": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 30 },
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": 30 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 20 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "sulfuric-acid": {
-      "ingredients": [
-        { "resource": "item:sulfur", "amount": 5 },
-        { "resource": "item:iron-plate", "amount": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": 100 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-sulfuric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "plastic-bar": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-methane", "amount": 20 },
-        { "resource": "item:coal", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:plastic-bar", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 1
-    },
-    "solid-fuel-from-light-oil": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-fuel-oil", "amount": 10 }],
-      "products": [{ "resource": "item:solid-fuel", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
-    "solid-fuel-from-petroleum-gas": {
-      "ingredients": [{ "resource": "fluid:angels-gas-methane", "amount": 20 }],
-      "products": [{ "resource": "item:solid-fuel", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
-    "solid-fuel-from-heavy-oil": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 20 }],
-      "products": [{ "resource": "item:solid-fuel", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
-    "sulfur": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 30 },
-        { "resource": "fluid:angels-gas-methane", "amount": 30 }
-      ],
-      "products": [{ "resource": "item:sulfur", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 1
-    },
-    "lubricant": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 10 }],
-      "products": [{ "resource": "fluid:lubricant", "amount": { "fixed": 10 }, "probability": 1 }],
-      "duration": 1
     },
     "barrel": {
       "human": "Barrel",
@@ -660,15 +546,6 @@
       ],
       "duration": 0.5
     },
-    "pistol": {
-      "human": "Pistol",
-      "ingredients": [
-        { "resource": "item:copper-plate", "amount": 5 },
-        { "resource": "item:iron-plate", "amount": 5 }
-      ],
-      "products": [{ "resource": "item:pistol", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 5
-    },
     "submachine-gun": {
       "human": "Submachine gun",
       "ingredients": [
@@ -824,18 +701,6 @@
       "products": [
         { "resource": "item:underground-belt", "amount": { "fixed": 2 }, "probability": 1 }
       ],
-      "duration": 1
-    },
-    "loader": {
-      "human": "Loader",
-      "ingredients": [
-        { "resource": "item:inserter", "amount": 5 },
-        { "resource": "item:electronic-circuit", "amount": 5 },
-        { "resource": "item:iron-gear-wheel", "amount": 5 },
-        { "resource": "item:iron-plate", "amount": 5 },
-        { "resource": "item:transport-belt", "amount": 5 }
-      ],
-      "products": [{ "resource": "item:loader", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1
     },
     "car": {
@@ -1140,14 +1005,6 @@
       "ingredients": [{ "resource": "item:stone", "amount": 2 }],
       "products": [{ "resource": "item:stone-brick", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 3.2
-    },
-    "steel-plate": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 5 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 50 }
-      ],
-      "products": [{ "resource": "item:steel-plate", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 16
     },
     "arithmetic-combinator": {
       "human": "Arithmetic combinator",
@@ -1634,26 +1491,6 @@
       ],
       "duration": 2
     },
-    "fast-loader": {
-      "human": "Fast loader",
-      "ingredients": [
-        { "resource": "item:fast-transport-belt", "amount": 5 },
-        { "resource": "item:loader", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:fast-loader", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 3
-    },
-    "express-loader": {
-      "human": "Express loader",
-      "ingredients": [
-        { "resource": "item:express-transport-belt", "amount": 5 },
-        { "resource": "item:fast-loader", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:express-loader", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 10
-    },
     "express-splitter": {
       "human": "Express splitter",
       "ingredients": [
@@ -2039,17 +1876,6 @@
         { "resource": "item:angels-uranium-234", "amount": { "fixed": 1 }, "probability": 0.000055 }
       ],
       "duration": 12
-    },
-    "kovarex-enrichment-process": {
-      "ingredients": [
-        { "resource": "item:uranium-235", "amount": 40 },
-        { "resource": "item:uranium-238", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "item:uranium-235", "amount": { "fixed": 41 }, "probability": 1 },
-        { "resource": "item:uranium-238", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 60
     },
     "nuclear-fuel": {
       "human": "Nuclear fuel",
@@ -2607,22 +2433,6 @@
       ],
       "duration": 10
     },
-    "angels-rocket-defense-equipment-vequip": {
-      "human": "Vehicle rocket defense",
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 20 },
-        { "resource": "item:steel-plate", "amount": 20 },
-        { "resource": "item:advanced-circuit", "amount": 20 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-rocket-defense-equipment-vequip",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 10
-    },
     "rail-support": {
       "human": "Rail support",
       "ingredients": [
@@ -2776,17 +2586,6 @@
         { "resource": "item:bob-artifact-radar", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5
-    },
-    "bob-distillery": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 3 },
-        { "resource": "item:copper-plate", "amount": 3 },
-        { "resource": "item:bob-copper-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:chemical-plant", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3
     },
     "bob-ruby-3": {
       "human": "Raw ruby",
@@ -2968,68 +2767,6 @@
       ],
       "duration": 17.5
     },
-    "bob-pure-water": {
-      "ingredients": [{ "resource": "fluid:water", "amount": 100 }],
-      "products": [
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 100 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-pure-water-from-lithia": {
-      "ingredients": [{ "resource": "fluid:bob-lithia-water", "amount": 100 }],
-      "products": [
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 100 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-liquid-air": {
-      "ingredients": [],
-      "products": [
-        { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 100 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-water-electrolysis": {
-      "ingredients": [{ "resource": "fluid:angels-water-purified", "amount": 10 }],
-      "products": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 12.5 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-nitrogen": {
-      "ingredients": [{ "resource": "fluid:angels-gas-oxygen", "amount": 25 }],
-      "products": [
-        { "resource": "fluid:angels-gas-nitrogen", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-salt-water-electrolysis": {
-      "ingredients": [
-        { "resource": "item:angels-solid-salt", "amount": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": 10 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-sodium-hydroxide",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-chlorine", "amount": { "fixed": 25 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-sodium-hydroxide-sink": {
-      "ingredients": [
-        { "resource": "item:angels-solid-sodium-hydroxide", "amount": 1 },
-        { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 10 },
-        { "resource": "fluid:water", "amount": 5 }
-      ],
-      "products": [{ "resource": "fluid:steam", "amount": { "fixed": 20 }, "probability": 1 }],
-      "duration": 0.1
-    },
     "bob-lithium-perchlorate": {
       "human": "Lithium perchlorate",
       "ingredients": [
@@ -3042,62 +2779,6 @@
       ],
       "duration": 1
     },
-    "bob-nitrogen-dioxide": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen-monoxide", "amount": 20 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 10 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-nitrogen-dioxide",
-          "amount": { "fixed": 20 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-hydrogen-chloride": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-chlorine", "amount": 13 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 10 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-hydrogen-chloride",
-          "amount": { "fixed": 25 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-nitric-acid": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 20 },
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": 20 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-nitric-acid",
-          "amount": { "fixed": 20 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-ferric-chloride-solution": {
-      "ingredients": [
-        { "resource": "item:iron-ore", "amount": 1 },
-        { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 30 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-ferric-chloride-solution",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 2.5
-    },
     "bob-liquid-fuel": {
       "human": "Liquid fuel",
       "ingredients": [
@@ -3108,133 +2789,6 @@
         { "resource": "fluid:bob-liquid-fuel", "amount": { "fixed": 50 }, "probability": 1 }
       ],
       "duration": 1
-    },
-    "bob-sulfuric-acid-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 50 },
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": 50 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-sulfuric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-sulfur-dioxide": {
-      "ingredients": [
-        { "resource": "item:sulfur", "amount": 5 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 50 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-sulfur-dioxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-petroleum-gas-cracking": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 20 },
-        { "resource": "fluid:angels-gas-methane", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 180 }, "probability": 1 }
-      ],
-      "duration": 2.5
-    },
-    "bob-oil-processing": {
-      "ingredients": [{ "resource": "fluid:crude-oil", "amount": 100 }],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 30 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "bob-coal-cracking": {
-      "ingredients": [
-        { "resource": "item:coal", "amount": 3 },
-        { "resource": "fluid:angels-water-purified", "amount": 15 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 12 }, "probability": 1 }
-      ],
-      "duration": 3
-    },
-    "bob-salt": {
-      "ingredients": [{ "resource": "fluid:water", "amount": 25 }],
-      "products": [
-        { "resource": "item:angels-solid-salt", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-lithium-chloride": {
-      "ingredients": [{ "resource": "fluid:bob-lithia-water", "amount": 25 }],
-      "products": [
-        { "resource": "item:angels-solid-lithium", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-sulfur-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 50 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 80 }
-      ],
-      "products": [{ "resource": "item:sulfur", "amount": { "fixed": 5 }, "probability": 1 }],
-      "duration": 1
-    },
-    "bob-calcium-chloride": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 50 },
-        { "resource": "item:angels-solid-limestone", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-calcium-chloride",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 20 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-alumina": {
-      "ingredients": [
-        { "resource": "item:angels-solid-sodium-hydroxide", "amount": 1 },
-        { "resource": "item:bob-bauxite-ore", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:bob-alumina", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 2
-    },
-    "bob-lead-oxide": {
-      "ingredients": [
-        { "resource": "item:bob-lead-ore", "amount": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-lead-oxide", "amount": { "fixed": 1 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-gas-sulfur-dioxide",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "bob-silver-nitrate": {
-      "ingredients": [
-        { "resource": "item:bob-silver-plate", "amount": 1 },
-        { "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-silver-nitrate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
     },
     "bob-silver-oxide": {
       "human": "Silver oxide",
@@ -3247,51 +2801,6 @@
       ],
       "duration": 5
     },
-    "bob-powdered-tungsten": {
-      "ingredients": [
-        { "resource": "item:bob-tungsten-oxide", "amount": 1 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 15 }
-      ],
-      "products": [
-        { "resource": "item:bob-powdered-tungsten", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.5
-    },
-    "bob-cobalt-oxide": {
-      "ingredients": [
-        { "resource": "item:bob-cobalt-ore", "amount": 2 },
-        { "resource": "item:angels-solid-limestone", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-cobalt-oxide", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 7
-    },
-    "bob-cobalt-oxide-from-copper": {
-      "ingredients": [
-        { "resource": "item:copper-ore", "amount": 7 },
-        { "resource": "item:angels-solid-carbon", "amount": 1 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 5 },
-        { "resource": "item:angels-solid-limestone", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:copper-plate", "amount": { "min": 7, "max": 11 }, "probability": 1 },
-        { "resource": "item:bob-cobalt-oxide", "amount": { "min": 1, "max": 3 }, "probability": 1 }
-      ],
-      "duration": 25
-    },
-    "bob-silver-from-lead": {
-      "ingredients": [
-        { "resource": "item:bob-lead-oxide", "amount": 7 },
-        { "resource": "item:angels-solid-carbon", "amount": 3 },
-        { "resource": "item:bob-nickel-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-lead-plate", "amount": { "min": 7, "max": 11 }, "probability": 1 },
-        { "resource": "item:bob-silver-ore", "amount": { "min": 1, "max": 3 }, "probability": 1 }
-      ],
-      "duration": 25
-    },
     "bob-silicon-carbide": {
       "human": "Silicon carbide",
       "ingredients": [
@@ -3302,136 +2811,6 @@
         { "resource": "item:bob-silicon-carbide", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 7
-    },
-    "bob-lead-oxide-2": {
-      "ingredients": [
-        { "resource": "item:bob-lead-ore", "amount": 1 },
-        { "resource": "fluid:water", "amount": 4 }
-      ],
-      "products": [
-        { "resource": "item:bob-lead-oxide", "amount": { "fixed": 1 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-gas-hydrogen-sulfide",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "bob-hydrogen-sulfide": {
-      "ingredients": [
-        { "resource": "item:sulfur", "amount": 5 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 80 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-hydrogen-sulfide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-sulfur-3": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 50 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 25 }
-      ],
-      "products": [{ "resource": "item:sulfur", "amount": { "fixed": 5 }, "probability": 1 }],
-      "duration": 1
-    },
-    "bob-sulfuric-acid-3": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 50 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 100 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-sulfuric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-heavy-water": {
-      "ingredients": [
-        { "resource": "fluid:water", "amount": 100 },
-        { "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-water-heavy",
-          "amount": { "fixed": 0.5 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 99.5 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-heavy-water-electrolysis": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-water-heavy", "amount": 10 }],
-      "products": [
-        { "resource": "fluid:angels-gas-deuterium", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 12.5 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-tungstic-acid": {
-      "ingredients": [
-        { "resource": "item:bob-tungsten-ore", "amount": 2 },
-        { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 50 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-tungstic-acid",
-          "amount": { "fixed": 20 },
-          "probability": 1
-        },
-        {
-          "resource": "item:angels-solid-calcium-chloride",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "bob-tungsten-oxide": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-tungstic-acid", "amount": 10 }],
-      "products": [
-        { "resource": "item:bob-tungsten-oxide", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-carbon": {
-      "ingredients": [
-        { "resource": "fluid:water", "amount": 5 },
-        { "resource": "item:coal", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:angels-solid-carbon", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-resin-wood": {
-      "ingredients": [{ "resource": "item:wood", "amount": 1 }],
-      "products": [{ "resource": "item:bob-resin", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
-    "bob-resin-oil": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 10 }],
-      "products": [{ "resource": "item:bob-resin", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
-    "bob-rubber": {
-      "ingredients": [{ "resource": "item:bob-resin", "amount": 1 }],
-      "products": [{ "resource": "item:bob-rubber", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 3.5
-    },
-    "bob-glass": {
-      "ingredients": [{ "resource": "item:bob-quartz", "amount": 1 }],
-      "products": [{ "resource": "item:bob-glass", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 3.2
     },
     "bob-silicon-wafer": {
       "human": "Silicon wafer",
@@ -3471,11 +2850,6 @@
       ],
       "duration": 7
     },
-    "bob-synthetic-wood": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 10 }],
-      "products": [{ "resource": "item:wood", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 1
-    },
     "bob-gas-canister": {
       "human": "Empty bottle",
       "ingredients": [{ "resource": "item:steel-plate", "amount": 1 }],
@@ -3506,21 +2880,6 @@
       ],
       "duration": 2
     },
-    "bob-carbon-from-wood": {
-      "ingredients": [{ "resource": "item:wood", "amount": 2 }],
-      "products": [
-        { "resource": "item:angels-solid-carbon", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 1.6
-    },
-    "bob-solid-fuel-from-hydrogen": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 175 },
-        { "resource": "item:coal", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:solid-fuel", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 3
-    },
     "bob-enriched-fuel": {
       "human": "Enriched fuel block",
       "ingredients": [{ "resource": "fluid:bob-liquid-fuel", "amount": 100 }],
@@ -3529,149 +2888,11 @@
       ],
       "duration": 12
     },
-    "bob-lead-plate": {
-      "ingredients": [{ "resource": "item:bob-lead-ore", "amount": 1 }],
-      "products": [
-        { "resource": "item:bob-lead-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-silver-plate": {
-      "ingredients": [{ "resource": "item:bob-silver-ore", "amount": 1 }],
-      "products": [
-        { "resource": "item:bob-silver-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-tin-plate": {
-      "ingredients": [{ "resource": "item:bob-tin-ore", "amount": 1 }],
-      "products": [
-        { "resource": "item:bob-tin-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-lead-plate-2": {
-      "ingredients": [
-        { "resource": "item:bob-lead-oxide", "amount": 2 },
-        { "resource": "item:angels-solid-carbon", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-lead-plate", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 6.4
-    },
-    "bob-gold-plate": {
-      "ingredients": [
-        { "resource": "item:bob-gold-ore", "amount": 1 },
-        { "resource": "fluid:angels-gas-chlorine", "amount": 3 }
-      ],
-      "products": [
-        { "resource": "item:bob-gold-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-cobalt-plate": {
-      "ingredients": [
-        { "resource": "item:bob-cobalt-oxide", "amount": 1 },
-        { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-cobalt-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-tungsten-plate": {
-      "ingredients": [
-        { "resource": "item:bob-nickel-plate", "amount": 1 },
-        { "resource": "item:bob-powdered-tungsten", "amount": 4 }
-      ],
-      "products": [
-        { "resource": "item:bob-tungsten-plate", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 16
-    },
-    "bob-zinc-plate": {
-      "ingredients": [
-        { "resource": "item:bob-zinc-ore", "amount": 1 },
-        { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-zinc-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 1.6
-    },
-    "bob-nickel-plate": {
-      "ingredients": [
-        { "resource": "item:bob-nickel-ore", "amount": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 8 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-sulfur-dioxide",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        },
-        { "resource": "item:bob-nickel-plate", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 1.6
-    },
-    "bob-aluminium-plate": {
-      "ingredients": [
-        { "resource": "item:bob-alumina", "amount": 2 },
-        { "resource": "item:angels-solid-carbon", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-aluminium-plate", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-titanium-plate": {
-      "ingredients": [
-        { "resource": "item:angels-solid-calcium-chloride", "amount": 2 },
-        { "resource": "item:angels-solid-carbon", "amount": 1 },
-        { "resource": "item:bob-rutile-ore", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-titanium-plate", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
-    "bob-silicon-plate": {
-      "ingredients": [
-        { "resource": "item:angels-solid-calcium-chloride", "amount": 2 },
-        { "resource": "item:angels-solid-carbon", "amount": 1 },
-        { "resource": "item:bob-quartz", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:angels-mono-silicon", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 3.2
-    },
     "bob-lithium": {
       "human": "Lithium",
       "ingredients": [{ "resource": "item:angels-solid-lithium", "amount": 1 }],
       "products": [{ "resource": "item:bob-lithium", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1.6
-    },
-    "bob-bronze-alloy": {
-      "ingredients": [
-        { "resource": "item:copper-plate", "amount": 3 },
-        { "resource": "item:bob-tin-plate", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-bronze-alloy", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 16
-    },
-    "bob-brass-alloy": {
-      "ingredients": [
-        { "resource": "item:copper-plate", "amount": 3 },
-        { "resource": "item:bob-zinc-plate", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-brass-alloy", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 16
     },
     "bob-copper-tungsten-alloy": {
       "human": "Copper tungsten plate",
@@ -3709,47 +2930,6 @@
         { "resource": "item:bob-tungsten-carbide", "amount": { "fixed": 20 }, "probability": 1 }
       ],
       "duration": 6
-    },
-    "bob-gunmetal-alloy": {
-      "ingredients": [
-        { "resource": "item:copper-plate", "amount": 8 },
-        { "resource": "item:bob-tin-plate", "amount": 1 },
-        { "resource": "item:bob-zinc-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-gunmetal-alloy", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 32
-    },
-    "bob-invar-alloy": {
-      "ingredients": [
-        { "resource": "item:bob-nickel-plate", "amount": 2 },
-        { "resource": "item:iron-plate", "amount": 3 }
-      ],
-      "products": [
-        { "resource": "item:bob-invar-alloy", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 16
-    },
-    "bob-nitinol-alloy": {
-      "ingredients": [
-        { "resource": "item:bob-nickel-plate", "amount": 3 },
-        { "resource": "item:bob-titanium-plate", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-nitinol-alloy", "amount": { "fixed": 5 }, "probability": 1 }
-      ],
-      "duration": 16
-    },
-    "bob-cobalt-steel-alloy": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 14 },
-        { "resource": "item:bob-cobalt-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-cobalt-steel-alloy", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 32
     },
     "bob-steel-gear-wheel": {
       "human": "Steel gear wheel",
@@ -3976,33 +3156,11 @@
       ],
       "duration": 15
     },
-    "bob-electrolyser": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 5 },
-        { "resource": "item:stone-brick", "amount": 5 },
-        { "resource": "item:bob-basic-circuit-board", "amount": 5 },
-        { "resource": "item:bob-stone-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:angels-electrolyser", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
     "bob-stone-mixing-furnace": {
       "human": "Stone filtering furnace",
       "ingredients": [{ "resource": "item:stone", "amount": 5 }],
       "products": [
         { "resource": "item:bob-stone-mixing-furnace", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-stone-chemical-furnace": {
-      "ingredients": [
-        { "resource": "item:stone", "amount": 5 },
-        { "resource": "item:pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:stone-furnace", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.5
     },
@@ -4014,17 +3172,6 @@
       ],
       "products": [
         { "resource": "item:bob-steel-mixing-furnace", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3
-    },
-    "bob-steel-chemical-furnace": {
-      "ingredients": [
-        { "resource": "item:steel-plate", "amount": 6 },
-        { "resource": "item:stone-brick", "amount": 10 },
-        { "resource": "item:bob-steel-pipe", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "item:steel-furnace", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 3
     },
@@ -4043,122 +3190,6 @@
         }
       ],
       "duration": 5
-    },
-    "bob-electric-chemical-furnace": {
-      "ingredients": [
-        { "resource": "item:steel-plate", "amount": 10 },
-        { "resource": "item:stone-brick", "amount": 10 },
-        { "resource": "item:advanced-circuit", "amount": 5 },
-        { "resource": "item:bob-steel-pipe", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "item:electric-furnace", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "bob-air-pump": {
-      "ingredients": [
-        { "resource": "item:iron-gear-wheel", "amount": 2 },
-        { "resource": "item:iron-plate", "amount": 2 },
-        { "resource": "item:electronic-circuit", "amount": 2 },
-        { "resource": "item:bob-copper-pipe", "amount": 2 }
-      ],
-      "products": [{ "resource": "item:bob-air-pump", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 2
-    },
-    "bob-air-pump-2": {
-      "ingredients": [
-        { "resource": "item:bob-air-pump", "amount": 1 },
-        { "resource": "item:steel-plate", "amount": 2 },
-        { "resource": "item:bob-steel-gear-wheel", "amount": 4 },
-        { "resource": "item:advanced-circuit", "amount": 3 },
-        { "resource": "item:bob-bronze-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-air-pump-2", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "bob-air-pump-3": {
-      "ingredients": [
-        { "resource": "item:bob-air-pump-2", "amount": 1 },
-        { "resource": "item:bob-titanium-plate", "amount": 2 },
-        { "resource": "item:bob-titanium-gear-wheel", "amount": 4 },
-        { "resource": "item:bob-titanium-bearing", "amount": 4 },
-        { "resource": "item:processing-unit", "amount": 3 },
-        { "resource": "item:bob-brass-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-air-pump-3", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 7
-    },
-    "bob-air-pump-4": {
-      "ingredients": [
-        { "resource": "item:bob-air-pump-3", "amount": 1 },
-        { "resource": "item:bob-nitinol-alloy", "amount": 2 },
-        { "resource": "item:bob-nitinol-gear-wheel", "amount": 4 },
-        { "resource": "item:bob-nitinol-bearing", "amount": 4 },
-        { "resource": "item:electric-engine-unit", "amount": 1 },
-        { "resource": "item:bob-advanced-processing-unit", "amount": 3 }
-      ],
-      "products": [
-        { "resource": "item:bob-air-pump-4", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 10
-    },
-    "bob-water-pump": {
-      "ingredients": [
-        { "resource": "item:iron-gear-wheel", "amount": 2 },
-        { "resource": "item:iron-plate", "amount": 2 },
-        { "resource": "item:electronic-circuit", "amount": 2 },
-        { "resource": "item:bob-copper-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-pump", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-water-pump-2": {
-      "ingredients": [
-        { "resource": "item:bob-water-pump", "amount": 1 },
-        { "resource": "item:steel-plate", "amount": 2 },
-        { "resource": "item:bob-steel-gear-wheel", "amount": 4 },
-        { "resource": "item:advanced-circuit", "amount": 3 },
-        { "resource": "item:bob-bronze-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-pump-2", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "bob-water-pump-3": {
-      "ingredients": [
-        { "resource": "item:bob-water-pump-2", "amount": 1 },
-        { "resource": "item:bob-titanium-plate", "amount": 2 },
-        { "resource": "item:bob-titanium-gear-wheel", "amount": 4 },
-        { "resource": "item:bob-titanium-bearing", "amount": 4 },
-        { "resource": "item:processing-unit", "amount": 3 },
-        { "resource": "item:bob-brass-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-pump-3", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 7
-    },
-    "bob-water-pump-4": {
-      "ingredients": [
-        { "resource": "item:bob-water-pump-3", "amount": 1 },
-        { "resource": "item:bob-nitinol-alloy", "amount": 2 },
-        { "resource": "item:bob-nitinol-gear-wheel", "amount": 4 },
-        { "resource": "item:bob-nitinol-bearing", "amount": 4 },
-        { "resource": "item:electric-engine-unit", "amount": 1 },
-        { "resource": "item:bob-advanced-processing-unit", "amount": 3 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-pump-4", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 10
     },
     "bob-small-inline-storage-tank": {
       "human": "Small inline storage tank",
@@ -4185,210 +3216,6 @@
         { "resource": "item:bob-small-storage-tank", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2
-    },
-    "bob-void-pump": {
-      "ingredients": [
-        { "resource": "item:iron-gear-wheel", "amount": 2 },
-        { "resource": "item:iron-plate", "amount": 2 },
-        { "resource": "item:electronic-circuit", "amount": 2 },
-        { "resource": "item:bob-copper-pipe", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:bob-void-pump", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "void-bob-oxygen": {
-      "ingredients": [{ "resource": "fluid:angels-gas-oxygen", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-hydrogen": {
-      "ingredients": [{ "resource": "fluid:angels-gas-hydrogen", "amount": 20 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-nitrogen": {
-      "ingredients": [{ "resource": "fluid:angels-gas-nitrogen", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-chlorine": {
-      "ingredients": [{ "resource": "fluid:angels-gas-chlorine", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-hydrogen-chloride": {
-      "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-sulfur-dioxide": {
-      "ingredients": [{ "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-steam": {
-      "ingredients": [{ "resource": "fluid:steam", "amount": 10 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-petroleum-gas": {
-      "ingredients": [{ "resource": "fluid:angels-gas-methane", "amount": 10 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-deuterium": {
-      "ingredients": [{ "resource": "fluid:angels-gas-deuterium", "amount": 20 }],
-      "products": [],
-      "duration": 1
-    },
-    "void-bob-hydrogen-sulfide": {
-      "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "bobingabout-enrichment-process": {
-      "ingredients": [
-        { "resource": "item:bob-plutonium-239", "amount": 40 },
-        { "resource": "item:uranium-238", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "item:bob-plutonium-239", "amount": { "fixed": 41 }, "probability": 1 },
-        { "resource": "item:uranium-238", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 60
-    },
-    "bob-thorium-processing": {
-      "ingredients": [{ "resource": "item:bob-thorium-ore", "amount": 10 }],
-      "products": [
-        { "resource": "item:bob-thorium-232", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 12
-    },
-    "bob-thorium-fuel-cell": {
-      "ingredients": [
-        { "resource": "item:uranium-235", "amount": 1 },
-        { "resource": "item:bob-thorium-232", "amount": 19 },
-        { "resource": "item:bob-empty-nuclear-fuel-cell", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:angels-thorium-fuel-cell", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 10
-    },
-    "bob-thorium-plutonium-fuel-cell": {
-      "ingredients": [
-        { "resource": "item:bob-empty-nuclear-fuel-cell", "amount": 10 },
-        { "resource": "item:bob-plutonium-239", "amount": 1 },
-        { "resource": "item:bob-thorium-232", "amount": 19 }
-      ],
-      "products": [
-        { "resource": "item:angels-thorium-fuel-cell", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 10
-    },
-    "bob-thorium-fuel-reprocessing": {
-      "ingredients": [{ "resource": "item:bob-depleted-thorium-fuel-cell", "amount": 10 }],
-      "products": [
-        { "resource": "item:bob-thorium-232", "amount": { "fixed": 4 }, "probability": 1 },
-        { "resource": "item:uranium-235", "amount": { "fixed": 3 }, "probability": 1 },
-        {
-          "resource": "item:bob-empty-nuclear-fuel-cell",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        },
-        {
-          "resource": "item:angels-muon-fusion-catalyst",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 120
-    },
-    "bob-empty-nuclear-fuel-cell": {
-      "ingredients": [
-        { "resource": "item:steel-plate", "amount": 2 },
-        { "resource": "item:bob-lead-plate", "amount": 5 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-empty-nuclear-fuel-cell",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 2.5
-    },
-    "bob-plutonium-fuel-cell": {
-      "ingredients": [
-        { "resource": "item:bob-empty-nuclear-fuel-cell", "amount": 10 },
-        { "resource": "item:bob-plutonium-239", "amount": 1 },
-        { "resource": "item:uranium-238", "amount": 19 }
-      ],
-      "products": [
-        { "resource": "item:angels-mixed-oxide-cell", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 10
-    },
-    "bob-plutonium-nucleosynthesis": {
-      "ingredients": [
-        { "resource": "item:uranium-235", "amount": 5 },
-        { "resource": "item:uranium-238", "amount": 15 }
-      ],
-      "products": [
-        { "resource": "item:uranium-235", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:uranium-238", "amount": { "fixed": 10 }, "probability": 1 },
-        { "resource": "item:bob-plutonium-239", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 60
-    },
-    "bob-deuterium-fuel-cell": {
-      "ingredients": [
-        { "resource": "item:bob-empty-nuclear-fuel-cell", "amount": 10 },
-        { "resource": "item:angels-muon-fusion-catalyst", "amount": 1 },
-        { "resource": "fluid:angels-gas-deuterium", "amount": 190 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-deuterium-fuel-cell",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 10
-    },
-    "bob-deuterium-fuel-cell-2": {
-      "ingredients": [
-        { "resource": "item:bob-empty-nuclear-fuel-cell", "amount": 10 },
-        { "resource": "item:angels-muon-fusion-catalyst", "amount": 5 },
-        { "resource": "fluid:angels-gas-deuterium", "amount": 250 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-deuterium-fuel-cell-2",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 10
-    },
-    "bob-deuterium-fuel-reprocessing": {
-      "ingredients": [{ "resource": "item:bob-depleted-deuterium-fuel-cell", "amount": 10 }],
-      "products": [
-        {
-          "resource": "item:bob-empty-nuclear-fuel-cell",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        },
-        { "resource": "item:bob-lithium", "amount": { "fixed": 1 }, "probability": 0.1 },
-        {
-          "resource": "item:angels-muon-fusion-catalyst",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 120
     },
     "bob-alien-blue-alloy": {
       "human": "Blue alien alloy",
@@ -4759,20 +3586,6 @@
       ],
       "duration": 2
     },
-    "bob-fluid-chemical-furnace": {
-      "ingredients": [
-        { "resource": "item:steel-furnace", "amount": 1 },
-        { "resource": "item:bob-steel-pipe", "amount": 2 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-fluid-chemical-furnace",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
     "bob-centrifuge-2": {
       "human": "Centrifuge 2",
       "ingredients": [
@@ -4803,37 +3616,6 @@
       ],
       "duration": 4
     },
-    "bob-solder-alloy": {
-      "ingredients": [
-        { "resource": "item:bob-tin-plate", "amount": 9 },
-        { "resource": "item:copper-plate", "amount": 1 },
-        { "resource": "item:bob-silver-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-solder-alloy", "amount": { "fixed": 11 }, "probability": 1 }
-      ],
-      "duration": 7
-    },
-    "bob-solder-alloy-lead": {
-      "ingredients": [
-        { "resource": "item:bob-tin-plate", "amount": 4 },
-        { "resource": "item:bob-lead-plate", "amount": 7 }
-      ],
-      "products": [
-        { "resource": "item:bob-solder-alloy", "amount": { "fixed": 11 }, "probability": 1 }
-      ],
-      "duration": 7
-    },
-    "bob-tinned-copper-cable": {
-      "ingredients": [
-        { "resource": "item:copper-cable", "amount": 3 },
-        { "resource": "item:bob-tin-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-tinned-copper-cable", "amount": { "fixed": 3 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "bob-insulated-cable": {
       "human": "Insulated wire",
       "ingredients": [
@@ -4844,24 +3626,6 @@
         { "resource": "item:bob-insulated-cable", "amount": { "fixed": 2 }, "probability": 1 }
       ],
       "duration": 0.5
-    },
-    "bob-gilded-copper-cable": {
-      "ingredients": [
-        { "resource": "item:copper-cable", "amount": 3 },
-        { "resource": "item:bob-gold-plate", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-gilded-copper-cable", "amount": { "fixed": 3 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-solder": {
-      "ingredients": [
-        { "resource": "item:bob-solder-alloy", "amount": 4 },
-        { "resource": "item:bob-resin", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:bob-solder", "amount": { "fixed": 5 }, "probability": 1 }],
-      "duration": 2
     },
     "bob-basic-electronic-components": {
       "human": "Basic electronic components",
@@ -4943,16 +3707,6 @@
       ],
       "duration": 2
     },
-    "bob-fibreglass-board": {
-      "ingredients": [
-        { "resource": "item:plastic-bar", "amount": 1 },
-        { "resource": "item:bob-glass", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-fibreglass-board", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "bob-basic-circuit-board": {
       "human": "Basic circuit board",
       "ingredients": [
@@ -5010,63 +3764,6 @@
         }
       ],
       "duration": 15
-    },
-    "bob-fertiliser": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-nitric-acid", "amount": 10 },
-        { "resource": "fluid:angels-gas-ammonia", "amount": 10 },
-        { "resource": "fluid:angels-gas-urea", "amount": 20 }
-      ],
-      "products": [
-        { "resource": "item:angels-solid-fertilizer", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 3
-    },
-    "bob-seedling": {
-      "ingredients": [{ "resource": "item:wood", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-tree-seed", "amount": { "min": 1, "max": 9 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-greenhouse": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 5 },
-        { "resource": "item:stone", "amount": 2 },
-        { "resource": "item:bob-glass", "amount": 4 }
-      ],
-      "products": [
-        { "resource": "item:angels-bio-arboretum-1", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "bob-basic-greenhouse-cycle": {
-      "ingredients": [
-        { "resource": "item:angels-tree-seed", "amount": 10 },
-        { "resource": "fluid:water", "amount": 20 }
-      ],
-      "products": [
-        { "resource": "item:wood", "amount": { "min": 10, "max": 20 }, "probability": 1 }
-      ],
-      "duration": 60
-    },
-    "bob-advanced-greenhouse-cycle": {
-      "ingredients": [
-        { "resource": "item:angels-tree-seed", "amount": 10 },
-        { "resource": "fluid:water", "amount": 20 },
-        { "resource": "item:angels-solid-fertilizer", "amount": 5 }
-      ],
-      "products": [
-        { "resource": "item:wood", "amount": { "min": 10, "max": 50 }, "probability": 1 }
-      ],
-      "duration": 45
-    },
-    "bob-wood-pellets": {
-      "ingredients": [{ "resource": "item:wood", "amount": 5 }],
-      "products": [
-        { "resource": "item:angels-wood-pellets", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "bob-flying-robot-frame-2": {
       "human": "Flying robot frame 2",
@@ -5268,34 +3965,6 @@
         { "resource": "item:bob-robot-tool-logistic-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "bob-valve": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 1 },
-        { "resource": "item:pipe", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:bob-valve", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 2
-    },
-    "bob-overflow-valve": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 1 },
-        { "resource": "item:pipe", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-overflow-valve", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-topup-valve": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 1 },
-        { "resource": "item:pipe", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-topup-valve", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
     },
     "bob-locomotive-2": {
       "human": "Locomotive MK2",
@@ -6951,57 +5620,6 @@
       ],
       "duration": 5
     },
-    "bob-water-miner-1": {
-      "ingredients": [
-        { "resource": "item:iron-plate", "amount": 10 },
-        { "resource": "item:iron-gear-wheel", "amount": 10 },
-        { "resource": "item:bob-basic-circuit-board", "amount": 5 },
-        { "resource": "item:bob-copper-pipe", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-miner-1", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-water-miner-2": {
-      "ingredients": [
-        { "resource": "item:bob-water-miner-1", "amount": 1 },
-        { "resource": "item:steel-plate", "amount": 10 },
-        { "resource": "item:electronic-circuit", "amount": 5 },
-        { "resource": "item:bob-steel-gear-wheel", "amount": 10 },
-        { "resource": "item:bob-bronze-pipe", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-miner-2", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-water-miner-3": {
-      "ingredients": [
-        { "resource": "item:bob-water-miner-2", "amount": 1 },
-        { "resource": "item:advanced-circuit", "amount": 5 },
-        { "resource": "item:bob-aluminium-plate", "amount": 10 },
-        { "resource": "item:bob-brass-gear-wheel", "amount": 10 },
-        { "resource": "item:bob-brass-pipe", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-miner-3", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-water-miner-4": {
-      "ingredients": [
-        { "resource": "item:bob-water-miner-3", "amount": 1 },
-        { "resource": "item:processing-unit", "amount": 5 },
-        { "resource": "item:bob-titanium-plate", "amount": 10 },
-        { "resource": "item:bob-titanium-gear-wheel", "amount": 10 },
-        { "resource": "item:bob-titanium-pipe", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "item:bob-water-miner-4", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
     "bob-steam-mining-drill": {
       "human": "Steam powered mining drill",
       "ingredients": [
@@ -7767,78 +6385,6 @@
       ],
       "duration": 16
     },
-    "bob-ammonia": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen", "amount": 10 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 24 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-gas-ammonia", "amount": { "fixed": 20 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-hydrogen-peroxide": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 16 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 20 }
-      ],
-      "products": [
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": { "fixed": 8 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-hydrazine": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ammonia", "amount": 20 },
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": 4 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-gas-hydrazine", "amount": { "fixed": 8 }, "probability": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-dinitrogen-tetroxide": {
-      "ingredients": [{ "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 20 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-dinitrogen-tetroxide",
-          "amount": { "fixed": 8 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "void-bob-ammonia": {
-      "ingredients": [{ "resource": "fluid:angels-gas-ammonia", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "bob-nitric-oxide": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ammonia", "amount": 20 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 25 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-nitrogen-monoxide",
-          "amount": { "fixed": 20 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 12 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-enriched-fuel-from-hydrazine": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrazine", "amount": 100 },
-        { "resource": "item:solid-fuel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-enriched-fuel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 12
-    },
     "bob-heat-shield-tile": {
       "human": "Heat shielding tile",
       "ingredients": [
@@ -7849,156 +6395,6 @@
         { "resource": "item:bob-heat-shield-tile", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 30
-    },
-    "bob-limestone": {
-      "ingredients": [{ "resource": "item:stone", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-solid-limestone", "amount": { "fixed": 1 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-gas-carbon-dioxide",
-          "amount": { "fixed": 25 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "bob-sodium-chlorate": {
-      "ingredients": [
-        { "resource": "item:angels-solid-salt", "amount": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": 30 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-sodium-chlorate",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 60 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-sodium-perchlorate": {
-      "ingredients": [
-        { "resource": "item:angels-solid-sodium-chlorate", "amount": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": 10 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-sodium-perchlorate",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 20 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-carbon-dioxide": {
-      "ingredients": [
-        { "resource": "item:angels-solid-carbon", "amount": 1 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 25 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-carbon-dioxide",
-          "amount": { "fixed": 25 },
-          "probability": 1
-        }
-      ],
-      "duration": 1
-    },
-    "bob-carbon-dioxide-oil-processing": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-carbon-dioxide", "amount": 50 },
-        { "resource": "fluid:crude-oil", "amount": 100 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 60 }, "probability": 1 },
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 40 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 25 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "void-bob-carbon-dioxide": {
-      "ingredients": [{ "resource": "fluid:angels-gas-carbon-dioxide", "amount": 25 }],
-      "products": [],
-      "duration": 1
-    },
-    "bob-brine": {
-      "ingredients": [
-        { "resource": "item:angels-solid-salt", "amount": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": 10 }
-      ],
-      "products": [
-        { "resource": "fluid:angels-water-saline", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "bob-ammoniated-brine": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-saline", "amount": 10 },
-        { "resource": "fluid:angels-gas-ammonia", "amount": 25 }
-      ],
-      "products": [
-        { "resource": "fluid:bob-ammoniated-brine", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-sodium-bicarbonate": {
-      "ingredients": [
-        { "resource": "fluid:bob-ammoniated-brine", "amount": 10 },
-        { "resource": "fluid:angels-gas-carbon-dioxide", "amount": 25 }
-      ],
-      "products": [
-        { "resource": "item:bob-sodium-bicarbonate", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:bob-ammonium-chloride", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-sodium-carbonate": {
-      "ingredients": [{ "resource": "item:bob-sodium-bicarbonate", "amount": 2 }],
-      "products": [
-        {
-          "resource": "item:angels-solid-sodium-carbonate",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        {
-          "resource": "fluid:angels-gas-carbon-dioxide",
-          "amount": { "fixed": 25 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "bob-ammonium-chloride-reprocessing": {
-      "ingredients": [
-        { "resource": "item:bob-ammonium-chloride", "amount": 2 },
-        { "resource": "item:angels-solid-limestone", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-calcium-chloride",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-ammonia", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "bob-brine-electrolysis": {
-      "ingredients": [{ "resource": "fluid:angels-water-saline", "amount": 10 }],
-      "products": [
-        {
-          "resource": "item:angels-solid-sodium-hydroxide",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "fluid:angels-gas-chlorine", "amount": { "fixed": 25 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 1.5
     },
     "bob-sodium-cobaltate": {
       "human": "Sodium cobaltate",
@@ -8027,27 +6423,6 @@
       ],
       "products": [{ "resource": "item:bob-rtg", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 20
-    },
-    "bob-sulfuric-nitric-acid": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 10 },
-        { "resource": "fluid:angels-liquid-nitric-acid", "amount": 10 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:bob-sulfuric-nitric-acid",
-          "amount": { "fixed": 20 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.5
-    },
-    "bob-glycerol": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-fuel-oil", "amount": 10 }],
-      "products": [
-        { "resource": "fluid:angels-liquid-glycerol", "amount": { "fixed": 10 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "bob-nitroglycerin": {
       "human": "Nitroglycerin",
@@ -13079,40 +11454,6 @@
       ],
       "duration": 0.5
     },
-    "angels-iron-pebbles-smelting": {
-      "ingredients": [{ "resource": "item:angels-iron-pebbles", "amount": 4 }],
-      "products": [{ "resource": "item:iron-plate", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 7
-    },
-    "angels-iron-nugget-smelting": {
-      "ingredients": [{ "resource": "item:angels-iron-nugget", "amount": 2 }],
-      "products": [{ "resource": "item:iron-plate", "amount": { "fixed": 3 }, "probability": 1 }],
-      "duration": 7
-    },
-    "angels-iron-pebbles": {
-      "ingredients": [{ "resource": "item:iron-ore", "amount": 2 }],
-      "products": [
-        { "resource": "item:angels-iron-pebbles", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "angels-copper-pebbles-smelting": {
-      "ingredients": [{ "resource": "item:angels-copper-pebbles", "amount": 4 }],
-      "products": [{ "resource": "item:copper-plate", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 7
-    },
-    "angels-copper-nugget-smelting": {
-      "ingredients": [{ "resource": "item:angels-copper-nugget", "amount": 2 }],
-      "products": [{ "resource": "item:copper-plate", "amount": { "fixed": 3 }, "probability": 1 }],
-      "duration": 7
-    },
-    "angels-copper-pebbles": {
-      "ingredients": [{ "resource": "item:copper-ore", "amount": 2 }],
-      "products": [
-        { "resource": "item:angels-copper-pebbles", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
     "angels-slag-processing-1": {
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
       "products": [
@@ -13135,21 +11476,6 @@
         { "resource": "item:angels-ore3", "amount": { "fixed": 1 }, "probability": 0.4 },
         { "resource": "item:angels-ore5", "amount": { "fixed": 1 }, "probability": 0.4 }
       ],
-      "duration": 8
-    },
-    "angels-slag-processing-4": {
-      "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 8
-    },
-    "angels-slag-processing-5": {
-      "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 8
-    },
-    "angels-slag-processing-6": {
-      "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 100 }],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 8
     },
     "angels-stone-crushed": {
@@ -13444,15 +11770,6 @@
       ],
       "duration": 1
     },
-    "angels-ore-chunk-mix7-processing": {
-      "ingredients": [
-        { "resource": "item:angels-ore1-chunk", "amount": 2 },
-        { "resource": "item:angels-ore2-chunk", "amount": 2 },
-        { "resource": "item:angels-catalysator-green", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 1
-    },
     "angels-ore8-dust-processing": {
       "human": "Ferrous dust sorting",
       "ingredients": [{ "resource": "item:angels-ore8-dust", "amount": 8 }],
@@ -13588,16 +11905,6 @@
       "products": [
         { "resource": "item:bob-cobalt-ore", "amount": { "fixed": 6 }, "probability": 1 }
       ],
-      "duration": 1.5
-    },
-    "angels-ore-crystal-mix4-processing": {
-      "ingredients": [
-        { "resource": "item:angels-ore2-crystal", "amount": 2 },
-        { "resource": "item:angels-ore4-crystal", "amount": 2 },
-        { "resource": "item:angels-ore5-crystal", "amount": 2 },
-        { "resource": "item:angels-catalysator-orange", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1.5
     },
     "angels-ore-crystal-mix5-processing": {
@@ -13749,16 +12056,6 @@
       "products": [
         { "resource": "item:angels-platinum-ore", "amount": { "fixed": 3 }, "probability": 1 }
       ],
-      "duration": 1.5
-    },
-    "angels-ore-pure-mix3-processing": {
-      "ingredients": [
-        { "resource": "item:angels-ore2-pure", "amount": 2 },
-        { "resource": "item:angels-ore4-pure", "amount": 2 },
-        { "resource": "item:angels-ore5-pure", "amount": 2 },
-        { "resource": "item:angels-catalysator-orange", "amount": 1 }
-      ],
-      "products": [{ "resource": "item:angels-void", "amount": { "fixed": 1 }, "probability": 1 }],
       "duration": 1.5
     },
     "angels-geode-blue-processing": {
@@ -14547,15 +12844,6 @@
       "products": [
         { "resource": "fluid:angels-water-saline", "amount": { "fixed": 20 }, "probability": 1 },
         { "resource": "fluid:angels-water-purified", "amount": { "fixed": 100 }, "probability": 1 }
-      ],
-      "duration": 1
-    },
-    "angels-thermal-water-purification": {
-      "human": "Thermal water purification",
-      "ingredients": [{ "resource": "fluid:angels-thermal-water", "amount": 50 }],
-      "products": [
-        { "resource": "fluid:angels-mineral-sludge", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 30 }, "probability": 1 }
       ],
       "duration": 1
     },
@@ -16259,26 +14547,6 @@
       ],
       "duration": 2
     },
-    "angels-gas-ethylene-oxide": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ethylene", "amount": 100 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 50 },
-        { "resource": "item:angels-catalyst-metal-green", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-ethylene-oxide",
-          "amount": { "fixed": 100 },
-          "probability": 1
-        },
-        {
-          "resource": "item:angels-catalyst-metal-carrier",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
     "angels-liquid-toluene": {
       "human": "Catalytic synthesis naphtha to toluene",
       "ingredients": [
@@ -16399,20 +14667,6 @@
         {
           "resource": "fluid:angels-gas-hydrogen-fluoride",
           "amount": { "fixed": 20 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
-    "angels-liquid-ethylene-carbonate": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ethylene-oxide", "amount": 100 },
-        { "resource": "fluid:angels-gas-carbon-dioxide", "amount": 100 }
-      ],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-ethylene-carbonate",
-          "amount": { "fixed": 90 },
           "probability": 1
         }
       ],
@@ -18446,26 +16700,6 @@
       ],
       "duration": 800
     },
-    "angels-advanced-deuterium-fuel-cell-reprocessing": {
-      "ingredients": [
-        { "resource": "item:angels-depleted-deuterium-fuel-cell", "amount": 10 },
-        { "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 60 }
-      ],
-      "products": [
-        { "resource": "item:angels-slag", "amount": { "fixed": 5 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-water-greenyellow-waste",
-          "amount": { "fixed": 60 },
-          "probability": 1
-        },
-        {
-          "resource": "item:angels-muon-fusion-catalyst",
-          "amount": { "fixed": 10 },
-          "probability": 1
-        }
-      ],
-      "duration": 800
-    },
     "angels-nuclear-fuel": {
       "human": "Plutonium nuclear fuel",
       "ingredients": [
@@ -18966,27 +17200,6 @@
       ],
       "duration": 4
     },
-    "angels-solder-mixture": {
-      "ingredients": [
-        { "resource": "item:bob-tin-plate", "amount": 2 },
-        { "resource": "item:bob-lead-plate", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:angels-solder-mixture", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "angels-liquid-molten-solder": {
-      "ingredients": [{ "resource": "item:angels-solder-mixture", "amount": 12 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-molten-solder",
-          "amount": { "fixed": 120 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
     "angels-liquid-molten-solder-2": {
       "human": "Molten solder",
       "ingredients": [
@@ -19060,11 +17273,6 @@
       ],
       "duration": 2
     },
-    "angels-solder-mixture-smelting": {
-      "ingredients": [{ "resource": "item:angels-solder-mixture", "amount": 2 }],
-      "products": [{ "resource": "item:bob-solder", "amount": { "fixed": 2 }, "probability": 1 }],
-      "duration": 4
-    },
     "angels-solder": {
       "human": "Solder",
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-solder", "amount": 40 }],
@@ -19087,13 +17295,6 @@
         { "resource": "item:angels-ingot-steel", "amount": { "fixed": 6 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "angels-powder-steel": {
-      "ingredients": [{ "resource": "item:angels-ingot-steel", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-steel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "angels-liquid-molten-steel": {
       "human": "Molten steel",
@@ -19196,31 +17397,6 @@
       ],
       "duration": 2
     },
-    "angels-rod-stack-steel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-steel", "amount": 60 },
-        { "resource": "fluid:water", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-rod-stack-steel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-rod-stack-steel-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-steel", "amount": 110 },
-        { "resource": "fluid:angels-liquid-coolant", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-rod-stack-steel", "amount": { "fixed": 2 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-liquid-coolant-used",
-          "amount": { "fixed": 40 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
     "angels-plate-steel": {
       "human": "Steel plate",
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-steel", "amount": 40 }],
@@ -19231,20 +17407,6 @@
       "human": "Steel plate",
       "ingredients": [{ "resource": "item:angels-roll-steel", "amount": 1 }],
       "products": [{ "resource": "item:steel-plate", "amount": { "fixed": 4 }, "probability": 1 }],
-      "duration": 0.5
-    },
-    "angels-rod-steel": {
-      "ingredients": [{ "resource": "item:steel-plate", "amount": 2 }],
-      "products": [
-        { "resource": "item:angels-rod-steel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "angels-rod-steel-2": {
-      "ingredients": [{ "resource": "item:angels-rod-stack-steel", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-rod-steel", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
       "duration": 0.5
     },
     "angels-processed-aluminium": {
@@ -19346,13 +17508,6 @@
         { "resource": "item:angels-ingot-aluminium", "amount": { "fixed": 24 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "angels-powder-aluminium": {
-      "ingredients": [{ "resource": "item:angels-ingot-aluminium", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-aluminium", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "angels-liquid-molten-aluminium": {
       "human": "Molten aluminium",
@@ -19554,63 +17709,6 @@
       ],
       "duration": 4
     },
-    "angels-powder-chrome": {
-      "ingredients": [{ "resource": "item:angels-ingot-chrome", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-chrome", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "angels-liquid-molten-chrome": {
-      "ingredients": [{ "resource": "item:angels-ingot-chrome", "amount": 12 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-molten-chrome",
-          "amount": { "fixed": 120 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
-    "angels-roll-chrome": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-chrome", "amount": 80 },
-        { "resource": "fluid:water", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-chrome", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-roll-chrome-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-chrome", "amount": 140 },
-        { "resource": "fluid:angels-liquid-coolant", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-chrome", "amount": { "fixed": 4 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-liquid-coolant-used",
-          "amount": { "fixed": 40 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "angels-plate-chrome": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-molten-chrome", "amount": 40 }],
-      "products": [
-        { "resource": "item:angels-plate-chrome", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-plate-chrome-2": {
-      "ingredients": [{ "resource": "item:angels-roll-chrome", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-plate-chrome", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "angels-processed-cobalt": {
       "human": "Processed cobalt",
       "ingredients": [{ "resource": "item:bob-cobalt-ore", "amount": 4 }],
@@ -19702,56 +17800,6 @@
       "ingredients": [{ "resource": "item:angels-ingot-cobalt", "amount": 1 }],
       "products": [
         { "resource": "item:angels-powder-cobalt", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "angels-liquid-molten-cobalt": {
-      "ingredients": [{ "resource": "item:angels-ingot-cobalt", "amount": 12 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-molten-cobalt",
-          "amount": { "fixed": 120 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
-    "angels-roll-cobalt": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-cobalt", "amount": 80 },
-        { "resource": "fluid:water", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-cobalt", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-roll-cobalt-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-cobalt", "amount": 140 },
-        { "resource": "fluid:angels-liquid-coolant", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-cobalt", "amount": { "fixed": 4 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-liquid-coolant-used",
-          "amount": { "fixed": 40 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "angels-plate-cobalt": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-molten-cobalt", "amount": 40 }],
-      "products": [
-        { "resource": "item:angels-plate-cobalt", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-plate-cobalt-2": {
-      "ingredients": [{ "resource": "item:angels-roll-cobalt", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-plate-cobalt", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 0.5
     },
@@ -20422,31 +18470,6 @@
       ],
       "duration": 2
     },
-    "angels-rod-stack-iron": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-iron", "amount": 60 },
-        { "resource": "fluid:water", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-rod-stack-iron", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-rod-stack-iron-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-iron", "amount": 110 },
-        { "resource": "fluid:angels-liquid-coolant", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-rod-stack-iron", "amount": { "fixed": 2 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-liquid-coolant-used",
-          "amount": { "fixed": 40 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
     "angels-plate-iron": {
       "human": "Iron plate",
       "ingredients": [{ "resource": "fluid:angels-liquid-molten-iron", "amount": 40 }],
@@ -20457,16 +18480,6 @@
       "human": "Iron plate",
       "ingredients": [{ "resource": "item:angels-roll-iron", "amount": 1 }],
       "products": [{ "resource": "item:iron-plate", "amount": { "fixed": 4 }, "probability": 1 }],
-      "duration": 0.5
-    },
-    "angels-rod-iron": {
-      "ingredients": [{ "resource": "item:iron-plate", "amount": 2 }],
-      "products": [{ "resource": "item:iron-stick", "amount": { "fixed": 1 }, "probability": 1 }],
-      "duration": 0.5
-    },
-    "angels-rod-iron-2": {
-      "ingredients": [{ "resource": "item:angels-rod-stack-iron", "amount": 1 }],
-      "products": [{ "resource": "item:iron-stick", "amount": { "fixed": 4 }, "probability": 1 }],
       "duration": 0.5
     },
     "angels-processed-lead": {
@@ -20573,13 +18586,6 @@
       ],
       "duration": 6
     },
-    "angels-powder-lead": {
-      "ingredients": [{ "resource": "item:angels-ingot-lead", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-lead", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "angels-liquid-molten-lead": {
       "human": "Molten lead",
       "ingredients": [{ "resource": "item:angels-ingot-lead", "amount": 12 }],
@@ -20655,20 +18661,6 @@
       ],
       "duration": 2
     },
-    "angels-solid-manganese-oxide": {
-      "ingredients": [
-        { "resource": "item:angels-processed-manganese", "amount": 4 },
-        { "resource": "fluid:angels-gas-synthesis", "amount": 60 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-solid-manganese-oxide",
-          "amount": { "fixed": 6 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
     "angels-solid-manganese-oxide-2": {
       "human": "Manganese oxide",
       "ingredients": [
@@ -20734,63 +18726,6 @@
         { "resource": "item:angels-ingot-manganese", "amount": { "fixed": 24 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "angels-powder-manganese": {
-      "ingredients": [{ "resource": "item:angels-ingot-manganese", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-manganese", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
-    "angels-liquid-molten-manganese": {
-      "ingredients": [{ "resource": "item:angels-ingot-manganese", "amount": 12 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-molten-manganese",
-          "amount": { "fixed": 120 },
-          "probability": 1
-        }
-      ],
-      "duration": 4
-    },
-    "angels-roll-manganese": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-manganese", "amount": 80 },
-        { "resource": "fluid:water", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-manganese", "amount": { "fixed": 2 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-roll-manganese-2": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-molten-manganese", "amount": 140 },
-        { "resource": "fluid:angels-liquid-coolant", "amount": 40 }
-      ],
-      "products": [
-        { "resource": "item:angels-roll-manganese", "amount": { "fixed": 4 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-liquid-coolant-used",
-          "amount": { "fixed": 40 },
-          "probability": 1
-        }
-      ],
-      "duration": 2
-    },
-    "angels-plate-manganese": {
-      "ingredients": [{ "resource": "fluid:angels-liquid-molten-manganese", "amount": 40 }],
-      "products": [
-        { "resource": "item:angels-plate-manganese", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-plate-manganese-2": {
-      "ingredients": [{ "resource": "item:angels-roll-manganese", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-plate-manganese", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "angels-processed-nickel": {
       "human": "Processed nickel",
@@ -21002,13 +18937,6 @@
       ],
       "duration": 4
     },
-    "angels-powder-platinum": {
-      "ingredients": [{ "resource": "item:angels-ingot-platinum", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-platinum", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "angels-liquid-molten-platinum": {
       "human": "Molten platinum",
       "ingredients": [{ "resource": "item:angels-ingot-platinum", "amount": 12 }],
@@ -21194,13 +19122,6 @@
       ],
       "duration": 4
     },
-    "angels-powder-silicon": {
-      "ingredients": [{ "resource": "item:angels-ingot-silicon", "amount": 1 }],
-      "products": [
-        { "resource": "item:bob-silicon-powder", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
-    },
     "angels-liquid-molten-silicon": {
       "human": "Molten silicon",
       "ingredients": [{ "resource": "item:angels-ingot-silicon", "amount": 12 }],
@@ -21255,13 +19176,6 @@
         { "resource": "item:angels-quartz-crucible", "amount": { "fixed": 1 }, "probability": 0.8 }
       ],
       "duration": 4
-    },
-    "angels-silicon-wafer": {
-      "ingredients": [{ "resource": "item:angels-mono-silicon", "amount": 1 }],
-      "products": [
-        { "resource": "item:bob-silicon-wafer", "amount": { "min": 1, "max": 5 }, "probability": 1 }
-      ],
-      "duration": 2
     },
     "angels-processed-silver": {
       "human": "Processed silver",
@@ -21343,13 +19257,6 @@
         { "resource": "item:angels-ingot-silver", "amount": { "fixed": 24 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "angels-powder-silver": {
-      "ingredients": [{ "resource": "item:angels-ingot-silver", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-silver", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "angels-liquid-molten-silver": {
       "human": "Molten silver",
@@ -21683,54 +19590,6 @@
       ],
       "duration": 2
     },
-    "angels-casing-resin-mold": {
-      "ingredients": [{ "resource": "item:bob-resin", "amount": 2 }],
-      "products": [
-        { "resource": "item:angels-motor-casing-0", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-mold-expendable": {
-      "ingredients": [
-        { "resource": "item:angels-solid-sand", "amount": 40 },
-        { "resource": "item:angels-motor-casing-0", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:angels-mold-expendable", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-slag", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-mold-non-expendable": {
-      "ingredients": [
-        { "resource": "item:angels-solid-clay", "amount": 50 },
-        { "resource": "item:angels-motor-casing-0", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-mold-non-expendable",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        },
-        { "resource": "item:angels-slag", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 4
-    },
-    "angels-mold-non-expendable-wash": {
-      "ingredients": [
-        { "resource": "item:angels-spent-mold-non-expendable", "amount": 1 },
-        { "resource": "fluid:angels-liquid-nitric-acid", "amount": 20 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-mold-non-expendable",
-          "amount": { "fixed": 1 },
-          "probability": 0.975
-        },
-        { "resource": "fluid:angels-water-red-waste", "amount": { "fixed": 20 }, "probability": 1 }
-      ],
-      "duration": 3
-    },
     "angels-processed-tin": {
       "human": "Processed tin",
       "ingredients": [{ "resource": "item:bob-tin-ore", "amount": 4 }],
@@ -21776,13 +19635,6 @@
         { "resource": "item:angels-ingot-tin", "amount": { "fixed": 24 }, "probability": 1 }
       ],
       "duration": 4
-    },
-    "angels-powder-tin": {
-      "ingredients": [{ "resource": "item:angels-ingot-tin", "amount": 1 }],
-      "products": [
-        { "resource": "item:angels-powder-tin", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.5
     },
     "angels-liquid-molten-tin": {
       "human": "Molten tin",
@@ -22253,21 +20105,6 @@
       "ingredients": [{ "resource": "item:angels-processed-zinc", "amount": 3 }],
       "products": [
         { "resource": "item:angels-pellet-zinc", "amount": { "fixed": 4 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "angels-solid-zinc-oxide": {
-      "ingredients": [
-        { "resource": "item:bob-zinc-ore", "amount": 8 },
-        { "resource": "fluid:angels-gas-oxygen", "amount": 60 }
-      ],
-      "products": [
-        { "resource": "item:angels-solid-zinc-oxide", "amount": { "fixed": 8 }, "probability": 1 },
-        {
-          "resource": "fluid:angels-gas-sulfur-dioxide",
-          "amount": { "fixed": 30 },
-          "probability": 1
-        }
       ],
       "duration": 2
     },
@@ -22810,41 +20647,6 @@
       ],
       "products": [
         { "resource": "item:angels-casting-machine-4", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "angels-sintering-oven": {
-      "ingredients": [
-        { "resource": "item:steel-plate", "amount": 24 },
-        { "resource": "item:electronic-circuit", "amount": 5 },
-        { "resource": "item:angels-clay-brick", "amount": 45 }
-      ],
-      "products": [
-        { "resource": "item:angels-sintering-oven", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "angels-sintering-oven-2": {
-      "ingredients": [
-        { "resource": "item:angels-sintering-oven", "amount": 1 },
-        { "resource": "item:bob-bronze-alloy", "amount": 24 },
-        { "resource": "item:electronic-circuit", "amount": 5 },
-        { "resource": "item:angels-clay-brick", "amount": 45 }
-      ],
-      "products": [
-        { "resource": "item:angels-sintering-oven-2", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 5
-    },
-    "angels-sintering-oven-3": {
-      "ingredients": [
-        { "resource": "item:angels-sintering-oven-2", "amount": 1 },
-        { "resource": "item:bob-aluminium-plate", "amount": 32 },
-        { "resource": "item:advanced-circuit", "amount": 5 },
-        { "resource": "item:angels-concrete-brick", "amount": 45 }
-      ],
-      "products": [
-        { "resource": "item:angels-sintering-oven-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 5
     },
@@ -24965,16 +22767,6 @@
       ],
       "products": [
         { "resource": "item:angels-paste-iron", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 2
-    },
-    "angels-paste-silver": {
-      "ingredients": [
-        { "resource": "item:angels-paste-cellulose", "amount": 1 },
-        { "resource": "item:angels-powder-silver", "amount": 2 }
-      ],
-      "products": [
-        { "resource": "item:angels-paste-silver", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 2
     },
@@ -27612,28 +25404,6 @@
       ],
       "duration": 0.2
     },
-    "sulfuric-acid-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 50 },
-        { "resource": "item:bob-empty-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:sulfuric-acid-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-sulfuric-acid-barrel": {
-      "ingredients": [{ "resource": "item:sulfuric-acid-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-sulfuric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
     "crude-oil-barrel": {
       "ingredients": [
         { "resource": "fluid:crude-oil", "amount": 50 },
@@ -27649,60 +25419,6 @@
       "products": [
         { "resource": "fluid:crude-oil", "amount": { "fixed": 50 }, "probability": 1 },
         { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "heavy-oil-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:heavy-oil-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-heavy-oil-barrel": {
-      "ingredients": [{ "resource": "item:heavy-oil-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-liquid-naphtha", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "light-oil-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:light-oil-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-light-oil-barrel": {
-      "ingredients": [{ "resource": "item:light-oil-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-liquid-fuel-oil", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "petroleum-gas-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-methane", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:petroleum-gas-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-petroleum-gas-barrel": {
-      "ingredients": [{ "resource": "item:petroleum-gas-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-methane", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.2
     },
@@ -27724,236 +25440,6 @@
       ],
       "duration": 0.2
     },
-    "bob-lithia-water-barrel": {
-      "ingredients": [
-        { "resource": "fluid:bob-lithia-water", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-lithia-water-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-lithia-water-barrel": {
-      "ingredients": [{ "resource": "item:bob-lithia-water-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:bob-lithia-water", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-pure-water-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-purified", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-pure-water-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-pure-water-barrel": {
-      "ingredients": [{ "resource": "item:bob-pure-water-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-water-purified", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-hydrogen-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-hydrogen-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-hydrogen-barrel": {
-      "ingredients": [{ "resource": "item:bob-hydrogen-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-oxygen-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-oxygen", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-oxygen-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-oxygen-barrel": {
-      "ingredients": [{ "resource": "item:bob-oxygen-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-nitrogen-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-nitrogen-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-nitrogen-barrel": {
-      "ingredients": [{ "resource": "item:bob-nitrogen-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-nitrogen", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-chlorine-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-chlorine", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-chlorine-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-chlorine-barrel": {
-      "ingredients": [{ "resource": "item:bob-chlorine-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-chlorine", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-hydrogen-chloride-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-hydrogen-chloride-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-hydrogen-chloride-barrel": {
-      "ingredients": [{ "resource": "item:bob-hydrogen-chloride-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-hydrogen-chloride",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-nitrogen-dioxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-nitrogen-dioxide-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-nitrogen-dioxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-nitrogen-dioxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-nitrogen-dioxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-sulfur-dioxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-sulfur-dioxide-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-sulfur-dioxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-sulfur-dioxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-sulfur-dioxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-nitric-acid-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-nitric-acid", "amount": 50 },
-        { "resource": "item:bob-empty-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-nitric-acid-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-nitric-acid-barrel": {
-      "ingredients": [{ "resource": "item:bob-nitric-acid-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-nitric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-ferric-chloride-solution-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-ferric-chloride-solution", "amount": 50 },
-        { "resource": "item:bob-empty-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-ferric-chloride-solution-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-ferric-chloride-solution-barrel": {
-      "ingredients": [{ "resource": "item:bob-ferric-chloride-solution-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-ferric-chloride-solution",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
     "bob-liquid-fuel-barrel": {
       "ingredients": [
         { "resource": "fluid:bob-liquid-fuel", "amount": 50 },
@@ -27968,94 +25454,6 @@
       "ingredients": [{ "resource": "item:bob-liquid-fuel-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-liquid-fuel", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-heavy-water-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-water-heavy", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-heavy-water-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-heavy-water-barrel": {
-      "ingredients": [{ "resource": "item:bob-heavy-water-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-water-heavy",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-deuterium-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-deuterium", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-deuterium-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-deuterium-barrel": {
-      "ingredients": [{ "resource": "item:bob-deuterium-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-deuterium", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-hydrogen-sulfide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-hydrogen-sulfide-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-hydrogen-sulfide-barrel": {
-      "ingredients": [{ "resource": "item:bob-hydrogen-sulfide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-hydrogen-sulfide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-tungstic-acid-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-tungstic-acid", "amount": 50 },
-        { "resource": "item:bob-empty-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-tungstic-acid-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-tungstic-acid-barrel": {
-      "ingredients": [{ "resource": "item:bob-tungstic-acid-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-tungstic-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
         { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.2
@@ -28136,200 +25534,6 @@
       ],
       "duration": 0.2
     },
-    "bob-ammonia-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ammonia", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-ammonia-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-ammonia-barrel": {
-      "ingredients": [{ "resource": "item:bob-ammonia-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-ammonia", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-dinitrogen-tetroxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-dinitrogen-tetroxide", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-dinitrogen-tetroxide-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-dinitrogen-tetroxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-dinitrogen-tetroxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-dinitrogen-tetroxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-hydrazine-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-hydrazine", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-hydrazine-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-hydrazine-barrel": {
-      "ingredients": [{ "resource": "item:bob-hydrazine-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-gas-hydrazine", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-hydrogen-peroxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-hydrogen-peroxide-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-hydrogen-peroxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-hydrogen-peroxide-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:bob-hydrogen-peroxide", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-nitric-oxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-nitrogen-monoxide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-nitric-oxide-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-nitric-oxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-nitric-oxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-nitrogen-monoxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-carbon-dioxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-carbon-dioxide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-carbon-dioxide-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-carbon-dioxide-barrel": {
-      "ingredients": [{ "resource": "item:bob-carbon-dioxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-carbon-dioxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-brine-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-water-saline", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-brine-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-brine-barrel": {
-      "ingredients": [{ "resource": "item:bob-brine-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-water-saline", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-ammoniated-brine-barrel": {
-      "ingredients": [
-        { "resource": "fluid:bob-ammoniated-brine", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-ammoniated-brine-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-ammoniated-brine-barrel": {
-      "ingredients": [{ "resource": "item:bob-ammoniated-brine-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:bob-ammoniated-brine", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-sulfuric-nitric-acid-barrel": {
-      "ingredients": [
-        { "resource": "fluid:bob-sulfuric-nitric-acid", "amount": 50 },
-        { "resource": "item:bob-empty-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:bob-sulfuric-nitric-acid-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-sulfuric-nitric-acid-barrel": {
-      "ingredients": [{ "resource": "item:bob-sulfuric-nitric-acid-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:bob-sulfuric-nitric-acid",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-empty-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
     "bob-nitroglycerin-barrel": {
       "ingredients": [
         { "resource": "fluid:bob-nitroglycerin", "amount": 50 },
@@ -28344,24 +25548,6 @@
       "ingredients": [{ "resource": "item:bob-nitroglycerin-barrel", "amount": 1 }],
       "products": [
         { "resource": "fluid:bob-nitroglycerin", "amount": { "fixed": 50 }, "probability": 1 },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "bob-glycerol-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-glycerol", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        { "resource": "item:bob-glycerol-barrel", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "empty-bob-glycerol-barrel": {
-      "ingredients": [{ "resource": "item:bob-glycerol-barrel", "amount": 1 }],
-      "products": [
-        { "resource": "fluid:angels-liquid-glycerol", "amount": { "fixed": 50 }, "probability": 1 },
         { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.2
@@ -29699,58 +26885,6 @@
       "products": [
         { "resource": "fluid:angels-gas-acetone", "amount": { "fixed": 50 }, "probability": 1 },
         { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "angels-gas-ethylene-oxide-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-gas-ethylene-oxide", "amount": 50 },
-        { "resource": "item:bob-gas-canister", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-gas-ethylene-oxide-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-angels-gas-ethylene-oxide-barrel": {
-      "ingredients": [{ "resource": "item:angels-gas-ethylene-oxide-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-gas-ethylene-oxide",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:bob-gas-canister", "amount": { "fixed": 1 }, "probability": 1 }
-      ],
-      "duration": 0.2
-    },
-    "angels-liquid-ethylene-carbonate-barrel": {
-      "ingredients": [
-        { "resource": "fluid:angels-liquid-ethylene-carbonate", "amount": 50 },
-        { "resource": "item:barrel", "amount": 1 }
-      ],
-      "products": [
-        {
-          "resource": "item:angels-liquid-ethylene-carbonate-barrel",
-          "amount": { "fixed": 1 },
-          "probability": 1
-        }
-      ],
-      "duration": 0.2
-    },
-    "empty-angels-liquid-ethylene-carbonate-barrel": {
-      "ingredients": [{ "resource": "item:angels-liquid-ethylene-carbonate-barrel", "amount": 1 }],
-      "products": [
-        {
-          "resource": "fluid:angels-liquid-ethylene-carbonate",
-          "amount": { "fixed": 50 },
-          "probability": 1
-        },
-        { "resource": "item:barrel", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 0.2
     },
@@ -32431,17 +29565,117 @@
     }
   },
   "resources": {
-    "item:item-unknown": { "stackSize": 1 },
-    "item:parameter-0": { "stackSize": 1 },
-    "item:parameter-1": { "stackSize": 1 },
-    "item:parameter-2": { "stackSize": 1 },
-    "item:parameter-3": { "stackSize": 1 },
-    "item:parameter-4": { "stackSize": 1 },
-    "item:parameter-5": { "stackSize": 1 },
-    "item:parameter-6": { "stackSize": 1 },
-    "item:parameter-7": { "stackSize": 1 },
-    "item:parameter-8": { "stackSize": 1 },
-    "item:parameter-9": { "stackSize": 1 },
+    "item:uranium-rounds-magazine": { "human": "Uranium rounds magazine", "stackSize": 100 },
+    "item:flamethrower-ammo": { "human": "Flamethrower ammo", "stackSize": 100 },
+    "item:rocket": { "human": "Rocket", "stackSize": 100 },
+    "item:explosive-rocket": { "human": "Explosive rocket", "stackSize": 100 },
+    "item:atomic-bomb": { "human": "Atomic bomb", "stackSize": 10 },
+    "item:piercing-shotgun-shell": { "human": "Piercing shotgun shells", "stackSize": 100 },
+    "item:cannon-shell": { "human": "Cannon shell", "stackSize": 100 },
+    "item:explosive-cannon-shell": { "human": "Explosive cannon shell", "stackSize": 100 },
+    "item:uranium-cannon-shell": { "human": "Uranium cannon shell", "stackSize": 100 },
+    "item:explosive-uranium-cannon-shell": {
+      "human": "Explosive uranium cannon shell",
+      "stackSize": 100
+    },
+    "item:artillery-shell": { "human": "Artillery shell", "stackSize": 20 },
+    "item:firearm-magazine": { "human": "Firearm magazine", "stackSize": 100 },
+    "item:piercing-rounds-magazine": { "human": "Piercing rounds magazine", "stackSize": 100 },
+    "item:shotgun-shell": { "human": "Shotgun shells", "stackSize": 100 },
+    "item:angels-cab-deploy-charge": { "human": "C.A.B. deploy charge", "stackSize": 200 },
+    "item:angels-cab-undeploy-charge": { "human": "C.A.B. undeploy charge", "stackSize": 200 },
+    "item:bob-bullet-magazine": { "human": "Ammo magazine", "stackSize": 100 },
+    "item:bob-ap-bullet-magazine": { "human": "AP ammo magazine", "stackSize": 100 },
+    "item:bob-he-bullet-magazine": { "human": "HE ammo magazine", "stackSize": 100 },
+    "item:bob-flame-bullet-magazine": { "human": "Flame ammo magazine", "stackSize": 100 },
+    "item:bob-acid-bullet-magazine": { "human": "Acid ammo magazine", "stackSize": 100 },
+    "item:bob-poison-bullet-magazine": { "human": "Poison ammo magazine", "stackSize": 100 },
+    "item:bob-electric-bullet-magazine": { "human": "Electric ammo magazine", "stackSize": 100 },
+    "item:bob-better-shotgun-shell": { "human": "Better shotgun shells", "stackSize": 100 },
+    "item:bob-shotgun-ap-shell": { "human": "Shotgun AP shells", "stackSize": 100 },
+    "item:bob-shotgun-electric-shell": { "human": "Shotgun electric shells", "stackSize": 100 },
+    "item:bob-shotgun-explosive-shell": { "human": "Shotgun explosive shells", "stackSize": 100 },
+    "item:bob-shotgun-flame-shell": { "human": "Shotgun flame shells", "stackSize": 100 },
+    "item:bob-shotgun-acid-shell": { "human": "Shotgun acid shells", "stackSize": 100 },
+    "item:bob-shotgun-poison-shell": { "human": "Shotgun poison shells", "stackSize": 100 },
+    "item:bob-shotgun-uranium-shell": { "human": "Shotgun uranium shells", "stackSize": 100 },
+    "item:bob-laser-rifle-battery": { "human": "Laser rifle battery", "stackSize": 100 },
+    "item:bob-laser-rifle-battery-ruby": { "human": "Ruby laser rifle battery", "stackSize": 100 },
+    "item:bob-laser-rifle-battery-sapphire": {
+      "human": "Sapphire laser rifle battery",
+      "stackSize": 100
+    },
+    "item:bob-laser-rifle-battery-emerald": {
+      "human": "Emerald laser rifle battery",
+      "stackSize": 100
+    },
+    "item:bob-laser-rifle-battery-amethyst": {
+      "human": "Amethyst laser rifle battery",
+      "stackSize": 100
+    },
+    "item:bob-laser-rifle-battery-topaz": {
+      "human": "Topaz laser rifle battery",
+      "stackSize": 100
+    },
+    "item:bob-laser-rifle-battery-diamond": {
+      "human": "Diamond laser rifle battery",
+      "stackSize": 100
+    },
+    "item:bob-rocket": { "human": "Rocket", "stackSize": 100 },
+    "item:bob-piercing-rocket": { "human": "Piercing rocket", "stackSize": 100 },
+    "item:bob-electric-rocket": { "human": "Electric rocket", "stackSize": 100 },
+    "item:bob-explosive-rocket": { "human": "Explosive rocket", "stackSize": 100 },
+    "item:bob-flame-rocket": { "human": "Flame rocket", "stackSize": 100 },
+    "item:bob-poison-rocket": { "human": "Poison rocket", "stackSize": 100 },
+    "item:bob-acid-rocket": { "human": "Acid rocket", "stackSize": 100 },
+    "item:bob-scatter-cannon-shell": { "human": "Scatter cannon shells", "stackSize": 100 },
+    "item:bob-poison-artillery-shell": { "human": "Poison artillery shell", "stackSize": 20 },
+    "item:bob-fire-artillery-shell": { "human": "Napalm artillery shell", "stackSize": 20 },
+    "item:bob-explosive-artillery-shell": { "human": "Explosive artillery shell", "stackSize": 20 },
+    "item:bob-distractor-artillery-shell": {
+      "human": "Distractor artillery shell",
+      "stackSize": 20
+    },
+    "item:bob-atomic-artillery-shell": { "human": "Atomic artillery shell", "stackSize": 20 },
+    "item:bob-plasma-bullet-magazine": { "human": "Plasma ammo magazine", "stackSize": 100 },
+    "item:bob-shotgun-plasma-shell": { "human": "Shotgun plasma shells", "stackSize": 100 },
+    "item:bob-plasma-rocket": { "human": "Plasma rocket", "stackSize": 100 },
+    "item:modular-armor": { "human": "Modular armor", "stackSize": 1 },
+    "item:power-armor": { "human": "Power armor", "stackSize": 1 },
+    "item:power-armor-mk2": { "human": "Power armor MK2", "stackSize": 1 },
+    "item:light-armor": { "human": "Light armor", "stackSize": 1 },
+    "item:heavy-armor": { "human": "Heavy armor", "stackSize": 1 },
+    "item:bob-power-armor-mk3": { "human": "Power armor MK3", "stackSize": 1 },
+    "item:bob-power-armor-mk4": { "human": "Power armor MK4", "stackSize": 1 },
+    "item:bob-power-armor-mk5": { "human": "Power armor MK5", "stackSize": 1 },
+    "item:blueprint": { "human": "Blueprint", "stackSize": 1 },
+    "item:blueprint-book": { "human": "Blueprint book", "stackSize": 1 },
+    "item:raw-fish": { "human": "Factorian fish", "stackSize": 100 },
+    "item:grenade": { "human": "Grenade", "stackSize": 100 },
+    "item:defender-capsule": { "human": "Defender capsule", "stackSize": 100 },
+    "item:cluster-grenade": { "human": "Cluster grenade", "stackSize": 100 },
+    "item:poison-capsule": { "human": "Poison capsule", "stackSize": 100 },
+    "item:slowdown-capsule": { "human": "Slowdown capsule", "stackSize": 100 },
+    "item:distractor-capsule": { "human": "Distractor capsule", "stackSize": 100 },
+    "item:destroyer-capsule": { "human": "Destroyer capsule", "stackSize": 100 },
+    "item:cliff-explosives": { "human": "Cliff explosives", "stackSize": 20 },
+    "item:discharge-defense-remote": { "human": "Discharge defense remote", "stackSize": 1 },
+    "item:artillery-targeting-remote": { "human": "Artillery targeting remote", "stackSize": 1 },
+    "item:bob-fire-capsule": { "human": "Napalm capsule", "stackSize": 100 },
+    "item:bob-laser-robot-capsule": { "human": "Laser robot capsule", "stackSize": 100 },
+    "item:angels-alien-fish-1-raw": { "human": "Levac fish", "stackSize": 100 },
+    "item:angels-alien-fish-2-raw": { "human": "Dorflurp jellyfish", "stackSize": 100 },
+    "item:angels-alien-fish-3-raw": { "human": "Santa ray", "stackSize": 100 },
+    "item:deconstruction-planner": { "human": "Deconstruction planner", "stackSize": 1 },
+    "item:flamethrower": { "human": "Flamethrower", "stackSize": 5 },
+    "item:rocket-launcher": { "human": "Rocket launcher", "stackSize": 5 },
+    "item:combat-shotgun": { "human": "Combat shotgun", "stackSize": 5 },
+    "item:pistol": { "human": "Pistol", "stackSize": 5 },
+    "item:submachine-gun": { "human": "Submachine gun", "stackSize": 5 },
+    "item:shotgun": { "human": "Shotgun", "stackSize": 5 },
+    "item:bob-rifle": { "human": "Rifle", "stackSize": 5 },
+    "item:bob-sniper-rifle": { "human": "Sniper rifle", "stackSize": 5 },
+    "item:bob-laser-rifle": { "human": "Laser rifle", "stackSize": 5 },
     "item:stone-brick": { "human": "Stone brick", "stackSize": 200 },
     "item:wood": { "human": "Wood", "stackSize": 200 },
     "item:coal": { "human": "Coal", "stackSize": 200 },
@@ -32475,7 +29709,6 @@
     "item:red-wire": { "human": "Red wire", "stackSize": 1 },
     "item:green-wire": { "human": "Green wire", "stackSize": 1 },
     "item:copper-wire": { "human": "Copper wire", "stackSize": 1 },
-    "item:no-item": { "human": "No item", "stackSize": 1 },
     "item:stone-wall": { "human": "Wall", "stackSize": 100 },
     "item:lab": { "human": "Lab", "stackSize": 10 },
     "item:steel-plate": { "human": "Steel plate", "stackSize": 200 },
@@ -32509,12 +29742,8 @@
     "item:fast-underground-belt": { "human": "Fast underground belt", "stackSize": 50 },
     "item:express-underground-belt": { "human": "Express underground belt", "stackSize": 50 },
     "item:splitter": { "human": "Splitter", "stackSize": 50 },
-    "item:lane-splitter": { "human": "Lane splitter", "stackSize": 50 },
     "item:fast-splitter": { "human": "Fast splitter", "stackSize": 50 },
     "item:express-splitter": { "human": "Express splitter", "stackSize": 50 },
-    "item:loader": { "human": "Loader", "stackSize": 50 },
-    "item:fast-loader": { "human": "Fast loader", "stackSize": 50 },
-    "item:express-loader": { "human": "Express loader", "stackSize": 50 },
     "item:advanced-circuit": { "human": "Advanced circuit", "stackSize": 200 },
     "item:processing-unit": { "human": "Processing unit", "stackSize": 200 },
     "item:logistic-robot": { "human": "Logistic robot", "stackSize": 50 },
@@ -32527,7 +29756,6 @@
     "item:rocket-silo": { "human": "Rocket silo", "stackSize": 1 },
     "item:cargo-landing-pad": { "human": "Cargo landing pad", "stackSize": 1 },
     "item:roboport": { "human": "Roboport 1", "stackSize": 10 },
-    "item:coin": { "human": "Coin", "stackSize": 100000 },
     "item:substation": { "human": "Substation", "stackSize": 50 },
     "item:beacon": { "human": "Beacon", "stackSize": 20 },
     "item:storage-tank": { "human": "Storage tank", "stackSize": 50 },
@@ -32546,8 +29774,6 @@
     "item:nuclear-fuel": { "human": "Nuclear fuel", "stackSize": 2 },
     "item:rocket-part": { "human": "Rocket part", "stackSize": 5 },
     "item:satellite": { "human": "Satellite", "stackSize": 1 },
-    "item:electric-energy-interface": { "human": "Electric energy interface", "stackSize": 50 },
-    "item:heat-interface": { "human": "Heat interface", "stackSize": 20 },
     "item:nuclear-reactor": { "stackSize": 10 },
     "item:uranium-235": { "human": "Uranium-235", "stackSize": 100 },
     "item:uranium-238": { "human": "Uranium-238", "stackSize": 100 },
@@ -32557,20 +29783,6 @@
     "item:heat-exchanger": { "human": "Heat exchanger", "stackSize": 50 },
     "item:steam-turbine": { "human": "Steam turbine", "stackSize": 10 },
     "item:heat-pipe": { "human": "Heat pipe", "stackSize": 50 },
-    "item:simple-entity-with-force": { "human": "Simple entity with force", "stackSize": 50 },
-    "item:simple-entity-with-owner": { "human": "Simple entity with owner", "stackSize": 50 },
-    "item:infinity-chest": { "human": "Infinity chest", "stackSize": 10 },
-    "item:infinity-cargo-wagon": { "human": "Infinity cargo wagon", "stackSize": 5 },
-    "item:infinity-pipe": { "human": "Infinity pipe", "stackSize": 10 },
-    "item:burner-generator": { "human": "Burner generator", "stackSize": 10 },
-    "item:linked-chest": { "human": "Linked chest", "stackSize": 10 },
-    "item:proxy-container": { "human": "Proxy container", "stackSize": 10 },
-    "item:bottomless-chest": { "human": "Bottomless chest", "stackSize": 10 },
-    "item:linked-belt": { "human": "Linked belt", "stackSize": 10 },
-    "item:one-way-valve": { "human": "One-way valve", "stackSize": 10 },
-    "item:overflow-valve": { "human": "Overflow valve", "stackSize": 10 },
-    "item:top-up-valve": { "human": "Top-up valve", "stackSize": 10 },
-    "item:empty-module-slot": { "human": "Empty module slot", "stackSize": 1 },
     "item:land-mine": { "human": "Land mine", "stackSize": 100 },
     "item:solar-panel-equipment": { "human": "Portable solar panel", "stackSize": 20 },
     "item:fission-reactor-equipment": { "human": "Portable fission reactor", "stackSize": 20 },
@@ -32596,7 +29808,6 @@
     "item:power-switch": { "human": "Power switch", "stackSize": 10 },
     "item:programmable-speaker": { "human": "Programmable speaker", "stackSize": 10 },
     "item:display-panel": { "human": "Display panel", "stackSize": 10 },
-    "item:science": { "human": "Science", "stackSize": 1 },
     "item:aai-loader": { "human": "Loader", "stackSize": 50 },
     "item:aai-fast-loader": { "human": "Fast loader", "stackSize": 50 },
     "item:aai-express-loader": { "human": "Express loader", "stackSize": 50 },
@@ -32649,10 +29860,6 @@
       "human": "Vehicle heavy shield generator",
       "stackSize": 20
     },
-    "item:angels-rocket-defense-equipment-vequip": {
-      "human": "Vehicle rocket defense",
-      "stackSize": 20
-    },
     "item:rail-support": { "human": "Rail support", "stackSize": 20 },
     "item:bob-alien-artifact": { "human": "Alien artifact", "stackSize": 500 },
     "item:bob-small-alien-artifact": { "human": "Small alien artifact", "stackSize": 500 },
@@ -32702,7 +29909,6 @@
     "item:bob-thorium-ore": { "human": "Thorium ore", "stackSize": 200 },
     "item:bob-nickel-ore": { "human": "Nickel ore", "stackSize": 200 },
     "item:bob-cobalt-ore": { "human": "Cobalt ore", "stackSize": 200 },
-    "item:bob-distillery": { "human": "Distillery", "stackSize": 50 },
     "item:bob-ruby-3": { "human": "Raw ruby", "stackSize": 100 },
     "item:bob-sapphire-3": { "human": "Raw sapphire", "stackSize": 100 },
     "item:bob-emerald-3": { "human": "Raw emerald", "stackSize": 100 },
@@ -32721,11 +29927,7 @@
     "item:bob-amethyst-5": { "human": "Polished amethyst", "stackSize": 100 },
     "item:bob-topaz-5": { "human": "Polished topaz", "stackSize": 100 },
     "item:bob-diamond-5": { "human": "Polished diamond", "stackSize": 100 },
-    "item:bob-salt": { "human": "Salt", "stackSize": 100 },
-    "item:bob-lithium-chloride": { "human": "Lithium chloride", "stackSize": 100 },
     "item:bob-lithium-perchlorate": { "human": "Lithium perchlorate", "stackSize": 100 },
-    "item:bob-sodium-hydroxide": { "human": "Sodium hydroxide", "stackSize": 100 },
-    "item:bob-calcium-chloride": { "human": "Calcium chloride", "stackSize": 100 },
     "item:bob-lead-oxide": { "human": "Lead oxide", "stackSize": 100 },
     "item:bob-alumina": { "human": "Alumina", "stackSize": 100 },
     "item:bob-tungsten-oxide": { "human": "Tungsten oxide", "stackSize": 100 },
@@ -32736,7 +29938,6 @@
     "item:bob-silicon-carbide": { "human": "Silicon carbide", "stackSize": 100 },
     "item:bob-silver-nitrate": { "human": "Silver nitrate", "stackSize": 100 },
     "item:bob-silver-oxide": { "human": "Silver oxide", "stackSize": 100 },
-    "item:bob-carbon": { "human": "Carbon", "stackSize": 100 },
     "item:bob-resin": { "human": "Resin", "stackSize": 100 },
     "item:bob-rubber": { "human": "Rubber", "stackSize": 100 },
     "item:bob-glass": { "human": "Glass", "stackSize": 100 },
@@ -32755,9 +29956,7 @@
     "item:bob-aluminium-plate": { "human": "Aluminium plate", "stackSize": 200 },
     "item:bob-titanium-plate": { "human": "Titanium plate", "stackSize": 200 },
     "item:bob-tungsten-plate": { "human": "Tungsten plate", "stackSize": 200 },
-    "item:bob-silicon-plate": { "human": "Silicon plate", "stackSize": 200 },
     "item:bob-lithium": { "human": "Lithium", "stackSize": 200 },
-    "item:bob-cobalt-plate": { "human": "Cobalt plate", "stackSize": 200 },
     "item:bob-bronze-alloy": { "human": "Bronze plate", "stackSize": 200 },
     "item:bob-brass-alloy": { "human": "Brass plate", "stackSize": 200 },
     "item:bob-copper-tungsten-alloy": { "human": "Copper tungsten plate", "stackSize": 200 },
@@ -32790,47 +29989,16 @@
     "item:bob-grinding-wheel": { "human": "Grinding wheel", "stackSize": 100 },
     "item:bob-polishing-wheel": { "human": "Polishing wheel", "stackSize": 100 },
     "item:bob-advanced-processing-unit": { "human": "Advanced processing unit", "stackSize": 200 },
-    "item:bob-electrolyser": { "human": "Electrolyser", "stackSize": 50 },
     "item:bob-stone-mixing-furnace": { "human": "Stone filtering furnace", "stackSize": 50 },
     "item:bob-steel-mixing-furnace": { "human": "Steel filtering furnace", "stackSize": 50 },
     "item:bob-electric-mixing-furnace": {
       "human": "Electric filtering furnace 1",
       "stackSize": 50
     },
-    "item:bob-stone-chemical-furnace": { "human": "Stone chemical furnace", "stackSize": 50 },
-    "item:bob-steel-chemical-furnace": { "human": "Steel chemical furnace", "stackSize": 50 },
-    "item:bob-electric-chemical-furnace": { "human": "Electric chemical furnace", "stackSize": 50 },
-    "item:bob-air-pump": { "human": "Compressor", "stackSize": 50 },
-    "item:bob-air-pump-2": { "human": "Compressor 2", "stackSize": 50 },
-    "item:bob-air-pump-3": { "human": "Compressor 3", "stackSize": 50 },
-    "item:bob-air-pump-4": { "human": "Compressor 4", "stackSize": 50 },
-    "item:bob-water-pump": { "human": "Barrelling pump", "stackSize": 50 },
-    "item:bob-water-pump-2": { "human": "Barrelling pump 2", "stackSize": 50 },
-    "item:bob-water-pump-3": { "human": "Barrelling pump 3", "stackSize": 50 },
-    "item:bob-water-pump-4": { "human": "Barrelling pump 4", "stackSize": 50 },
     "item:bob-small-inline-storage-tank": { "human": "Small inline storage tank", "stackSize": 50 },
     "item:bob-small-storage-tank": { "human": "Small storage tank", "stackSize": 50 },
-    "item:bob-void-pump": { "human": "Gas venting pump", "stackSize": 50 },
     "item:bob-plutonium-239": { "human": "Plutonium-239", "stackSize": 100 },
-    "item:bob-plutonium-fuel-cell": { "human": "Plutonium fuel cell", "stackSize": 50 },
-    "item:bob-empty-nuclear-fuel-cell": { "human": "Empty nuclear fuel cell", "stackSize": 50 },
     "item:bob-thorium-232": { "human": "Thorium-232", "stackSize": 100 },
-    "item:bob-thorium-fuel-cell": { "human": "Thorium fuel cell", "stackSize": 50 },
-    "item:bob-thorium-plutonium-fuel-cell": {
-      "human": "Thorium-plutonium fuel cell",
-      "stackSize": 50
-    },
-    "item:bob-depleted-thorium-fuel-cell": {
-      "human": "Depleted thorium fuel cell",
-      "stackSize": 50
-    },
-    "item:bob-deuterium-fuel-cell": { "human": "Deuterium fuel cell", "stackSize": 50 },
-    "item:bob-depleted-deuterium-fuel-cell": {
-      "human": "Depleted deuterium fuel cell",
-      "stackSize": 50
-    },
-    "item:bob-deuterium-fuel-cell-2": { "human": "Deuterium fuel cell 2", "stackSize": 50 },
-    "item:bob-fusion-catalyst": { "human": "Fusion catalyst", "stackSize": 50 },
     "item:bob-alien-blue-alloy": { "human": "Blue alien alloy", "stackSize": 200 },
     "item:bob-alien-orange-alloy": { "human": "Orange alien alloy", "stackSize": 200 },
     "item:bob-lab-2": { "human": "Lab 2", "stackSize": 10 },
@@ -32865,13 +30033,8 @@
       "human": "Fluid burning filtering furnace",
       "stackSize": 50
     },
-    "item:bob-fluid-chemical-furnace": {
-      "human": "Fluid burning chemical furnace",
-      "stackSize": 50
-    },
     "item:bob-centrifuge-2": { "human": "Centrifuge 2", "stackSize": 50 },
     "item:bob-centrifuge-3": { "human": "Centrifuge 3", "stackSize": 50 },
-    "item:bob-solder-alloy": { "human": "Solder plate", "stackSize": 200 },
     "item:bob-tinned-copper-cable": { "human": "Tinned wire", "stackSize": 200 },
     "item:bob-insulated-cable": { "human": "Insulated wire", "stackSize": 200 },
     "item:bob-gilded-copper-cable": { "human": "Gold wire", "stackSize": 200 },
@@ -32893,10 +30056,6 @@
       "human": "Multi-layer circuit board",
       "stackSize": 200
     },
-    "item:bob-greenhouse": { "human": "Greenhouse", "stackSize": 20 },
-    "item:bob-fertiliser": { "human": "Fertiliser", "stackSize": 100 },
-    "item:bob-seedling": { "human": "Seedling", "stackSize": 200 },
-    "item:bob-wood-pellets": { "human": "Wood fuel pellets", "stackSize": 100 },
     "item:bob-flying-robot-frame-2": { "human": "Flying robot frame 2", "stackSize": 50 },
     "item:bob-flying-robot-frame-3": { "human": "Flying robot frame 3", "stackSize": 50 },
     "item:bob-flying-robot-frame-4": { "human": "Flying robot frame 4", "stackSize": 50 },
@@ -32921,9 +30080,6 @@
     "item:bob-robot-tool-logistic-2": { "human": "Logistic robot tool 2", "stackSize": 100 },
     "item:bob-robot-tool-logistic-3": { "human": "Logistic robot tool 3", "stackSize": 100 },
     "item:bob-robot-tool-logistic-4": { "human": "Logistic robot tool 4", "stackSize": 100 },
-    "item:bob-valve": { "human": "One-way valve", "stackSize": 100 },
-    "item:bob-overflow-valve": { "human": "Overflow valve", "stackSize": 100 },
-    "item:bob-topup-valve": { "human": "Top-up valve", "stackSize": 100 },
     "item:bob-logistic-robot-2": { "human": "Logistic robot 2", "stackSize": 50 },
     "item:bob-logistic-robot-3": { "human": "Logistic robot 3", "stackSize": 50 },
     "item:bob-logistic-robot-4": { "human": "Logistic robot 4", "stackSize": 50 },
@@ -33073,10 +30229,6 @@
     "item:bob-pumpjack-1": { "human": "Pumpjack 2", "stackSize": 20 },
     "item:bob-pumpjack-2": { "human": "Pumpjack 3", "stackSize": 20 },
     "item:bob-pumpjack-3": { "human": "Pumpjack 4", "stackSize": 20 },
-    "item:bob-water-miner-1": { "human": "Water Pumpjack 1", "stackSize": 20 },
-    "item:bob-water-miner-2": { "human": "Water Pumpjack 2", "stackSize": 20 },
-    "item:bob-water-miner-3": { "human": "Water Pumpjack 3", "stackSize": 20 },
-    "item:bob-water-miner-4": { "human": "Water Pumpjack 4", "stackSize": 20 },
     "item:bob-steam-mining-drill": { "human": "Steam powered mining drill", "stackSize": 50 },
     "item:bob-burner-generator": { "human": "Burner electric generator", "stackSize": 10 },
     "item:bob-burner-reactor": { "human": "Burner heat source", "stackSize": 10 },
@@ -33135,12 +30287,6 @@
     "item:bob-nuclear-reactor-2": { "stackSize": 10 },
     "item:bob-nuclear-reactor-3": { "stackSize": 10 },
     "item:bob-heat-shield-tile": { "human": "Heat shielding tile", "stackSize": 100 },
-    "item:bob-limestone": { "human": "Limestone", "stackSize": 100 },
-    "item:bob-sodium-chlorate": { "human": "Sodium chlorate", "stackSize": 100 },
-    "item:bob-sodium-perchlorate": { "human": "Sodium perchlorate", "stackSize": 100 },
-    "item:bob-sodium-carbonate": { "human": "Sodium carbonate", "stackSize": 100 },
-    "item:bob-sodium-bicarbonate": { "human": "Sodium bicarbonate", "stackSize": 100 },
-    "item:bob-ammonium-chloride": { "human": "Ammonium chloride", "stackSize": 100 },
     "item:bob-sodium-cobaltate": { "human": "Sodium cobaltate", "stackSize": 100 },
     "item:bob-rtg": { "human": "Radio thermoelectric generator", "stackSize": 50 },
     "item:bob-petroleum-jelly": { "human": "Petroleum jelly", "stackSize": 100 },
@@ -33689,13 +30835,6 @@
     "item:angels-catalysator-brown": { "human": "Mineral catalyst", "stackSize": 200 },
     "item:angels-catalysator-green": { "human": "Crystal catalyst", "stackSize": 200 },
     "item:angels-catalysator-orange": { "human": "Hybrid catalyst", "stackSize": 200 },
-    "item:angels-void": { "stackSize": 200 },
-    "item:angels-iron-nugget": { "human": "Iron nugget", "stackSize": 200 },
-    "item:angels-iron-pebbles": { "human": "Iron pebbles", "stackSize": 200 },
-    "item:angels-iron-slag": { "human": "Iron slag", "stackSize": 200 },
-    "item:angels-copper-nugget": { "human": "Copper nugget", "stackSize": 200 },
-    "item:angels-copper-pebbles": { "human": "Copper pebbles", "stackSize": 200 },
-    "item:angels-copper-slag": { "human": "Copper slag", "stackSize": 200 },
     "item:angels-solid-mud": { "human": "Mud", "stackSize": 200 },
     "item:angels-solid-limestone": { "human": "Limestone", "stackSize": 200 },
     "item:angels-solid-sand": { "human": "Sand", "stackSize": 200 },
@@ -33755,8 +30894,6 @@
     "item:angels-chemical-void": { "human": "Chemical void", "stackSize": 200 },
     "item:angels-solid-sodium-chlorate": { "human": "Sodium chlorate", "stackSize": 200 },
     "item:angels-solid-sodium-perchlorate": { "human": "Sodium perchlorate", "stackSize": 200 },
-    "item:angels-solid-resin": { "human": "Resin", "stackSize": 200 },
-    "item:angels-solid-rubber": { "human": "Rubber", "stackSize": 200 },
     "item:angels-fluorite-ore": { "human": "Fluorite ore", "stackSize": 200 },
     "item:angels-solid-calcium-chloride": { "human": "Calcium chloride", "stackSize": 200 },
     "item:angels-solid-oil-residual": { "human": "Oil residuals", "stackSize": 200 },
@@ -33786,13 +30923,10 @@
     "item:angels-solid-sodium-sulfate": { "human": "Sodium sulfate", "stackSize": 200 },
     "item:angels-filter-lime": { "human": "Porous lime filter", "stackSize": 200 },
     "item:angels-filter-lime-used": { "human": "Used lime filter", "stackSize": 200 },
-    "item:angels-thorium-ore": { "human": "Thorium ore", "stackSize": 200 },
     "item:angels-uranium-234": { "human": "Uranium-234", "stackSize": 100 },
     "item:angels-neptunium-240": { "human": "Neptunium-240", "stackSize": 100 },
-    "item:angels-plutonium-239": { "human": "Plutonium-239", "stackSize": 100 },
     "item:angels-americium-241": { "human": "Americium-241", "stackSize": 100 },
     "item:angels-curium-245": { "human": "Curium-245", "stackSize": 100 },
-    "item:angels-thorium-232": { "human": "Thorium-232", "stackSize": 100 },
     "item:angels-muon-fusion-catalyst": { "human": "Muon fusion catalyst", "stackSize": 1 },
     "item:angels-nuclear-fuel": { "human": "Plutonium nuclear fuel", "stackSize": 2 },
     "item:angels-nuclear-fuel-2": { "human": "Fusion nuclear fuel", "stackSize": 2 },
@@ -33866,9 +31000,6 @@
     "item:angels-pellet-press-2": { "human": "Pellet press 2", "stackSize": 10 },
     "item:angels-pellet-press-3": { "human": "Pellet press 3", "stackSize": 10 },
     "item:angels-pellet-press-4": { "human": "Pellet press 4", "stackSize": 10 },
-    "item:angels-sintering-oven": { "human": "Sintering oven 1", "stackSize": 10 },
-    "item:angels-sintering-oven-2": { "human": "Sintering oven 2", "stackSize": 10 },
-    "item:angels-sintering-oven-3": { "human": "Sintering oven 3", "stackSize": 10 },
     "item:angels-sintering-oven-4": { "human": "Sintering oven 1", "stackSize": 10 },
     "item:angels-sintering-oven-5": { "human": "Sintering oven 2", "stackSize": 10 },
     "item:angels-strand-casting-machine": { "human": "Strand casting machine 1", "stackSize": 10 },
@@ -33885,25 +31016,15 @@
       "stackSize": 10
     },
     "item:angels-cooling-tower": { "human": "Cooling tower", "stackSize": 10 },
-    "item:angels-solder-mixture": { "human": "Solder mixture", "stackSize": 200 },
     "item:angels-roll-solder": { "human": "Solder coil", "stackSize": 200 },
-    "item:angels-solder": { "human": "Solder", "stackSize": 200 },
     "item:angels-ingot-steel": { "human": "Steel ingot", "stackSize": 200 },
-    "item:angels-powder-steel": { "human": "Steel powder", "stackSize": 200 },
     "item:angels-roll-steel": { "human": "Steel sheet coil", "stackSize": 200 },
-    "item:angels-rod-stack-steel": { "human": "Steel rod stack", "stackSize": 200 },
-    "item:angels-plate-steel": { "human": "Steel plate", "stackSize": 200 },
-    "item:angels-rod-steel": { "human": "Steel rod", "stackSize": 200 },
-    "item:angels-bauxite-ore": { "human": "Aluminium ore", "stackSize": 200 },
     "item:angels-processed-aluminium": { "human": "Processed aluminium", "stackSize": 200 },
     "item:angels-pellet-aluminium": { "human": "Aluminium pellet", "stackSize": 200 },
     "item:angels-solid-sodium-aluminate": { "human": "Sodium aluminate", "stackSize": 200 },
     "item:angels-solid-aluminium-hydroxide": { "human": "Aluminium hydroxide", "stackSize": 200 },
-    "item:angels-solid-aluminium-oxide": { "human": "Alumina", "stackSize": 200 },
     "item:angels-ingot-aluminium": { "human": "Aluminium ingot", "stackSize": 200 },
-    "item:angels-powder-aluminium": { "human": "Aluminium powder", "stackSize": 200 },
     "item:angels-roll-aluminium": { "human": "Aluminium sheet coil", "stackSize": 200 },
-    "item:angels-plate-aluminium": { "human": "Aluminium plate", "stackSize": 200 },
     "item:angels-chrome-ore": { "human": "Chrome ore", "stackSize": 200 },
     "item:angels-processed-chrome": { "human": "Processed chrome", "stackSize": 200 },
     "item:angels-pellet-chrome": { "human": "Chrome pellet", "stackSize": 200 },
@@ -33911,18 +31032,11 @@
     "item:angels-solid-dichromate": { "human": "Dichromate", "stackSize": 200 },
     "item:angels-solid-chrome-oxide": { "human": "Chrome oxide", "stackSize": 200 },
     "item:angels-ingot-chrome": { "human": "Chrome ingot", "stackSize": 200 },
-    "item:angels-powder-chrome": { "human": "Chrome powder", "stackSize": 200 },
-    "item:angels-roll-chrome": { "human": "Chrome sheet coil", "stackSize": 200 },
-    "item:angels-plate-chrome": { "human": "Chrome plate", "stackSize": 200 },
-    "item:angels-cobalt-ore": { "human": "Cobalt ore", "stackSize": 200 },
     "item:angels-processed-cobalt": { "human": "Processed cobalt", "stackSize": 200 },
     "item:angels-pellet-cobalt": { "human": "Cobalt pellet", "stackSize": 200 },
     "item:angels-solid-cobalt-hydroxide": { "human": "Cobalt hydroxide", "stackSize": 200 },
-    "item:angels-solid-cobalt-oxide": { "human": "Cobalt oxide", "stackSize": 200 },
     "item:angels-ingot-cobalt": { "human": "Cobalt ingot", "stackSize": 200 },
     "item:angels-powder-cobalt": { "human": "Cobalt powder", "stackSize": 200 },
-    "item:angels-roll-cobalt": { "human": "Cobalt sheet coil", "stackSize": 200 },
-    "item:angels-plate-cobalt": { "human": "Cobalt plate", "stackSize": 200 },
     "item:angels-processed-copper": { "human": "Processed copper", "stackSize": 200 },
     "item:angels-pellet-copper": { "human": "Copper pellet", "stackSize": 200 },
     "item:angels-anode-copper": { "human": "Copper anode", "stackSize": 200 },
@@ -33932,8 +31046,6 @@
     "item:angels-wire-coil-copper": { "human": "Copper wire coil", "stackSize": 200 },
     "item:angels-solid-glass-mixture": { "human": "Glass mixture", "stackSize": 200 },
     "item:angels-coil-glass-fiber": { "human": "Glass fiber", "stackSize": 200 },
-    "item:angels-plate-glass": { "human": "Glass", "stackSize": 200 },
-    "item:angels-gold-ore": { "human": "Gold ore", "stackSize": 200 },
     "item:angels-processed-gold": { "human": "Processed gold", "stackSize": 200 },
     "item:angels-pellet-gold": { "human": "Gold pellet", "stackSize": 200 },
     "item:angels-solid-sodium-gold-cyanide": { "human": "Sodium gold cyanide", "stackSize": 200 },
@@ -33942,34 +31054,23 @@
     "item:angels-powder-gold": { "human": "Gold powder", "stackSize": 200 },
     "item:angels-roll-gold": { "human": "Gold sheet coil", "stackSize": 200 },
     "item:angels-wire-coil-gold": { "human": "Gold wire coil", "stackSize": 200 },
-    "item:angels-plate-gold": { "human": "Gold plate", "stackSize": 200 },
-    "item:angels-wire-gold": { "human": "Gold wire", "stackSize": 200 },
     "item:angels-processed-iron": { "human": "Processed iron", "stackSize": 200 },
     "item:angels-pellet-iron": { "human": "Iron pellet", "stackSize": 200 },
     "item:angels-solid-iron-hydroxide": { "human": "Iron hydroxide", "stackSize": 200 },
     "item:angels-ingot-iron": { "human": "Iron ingot", "stackSize": 200 },
     "item:angels-powder-iron": { "human": "Iron powder", "stackSize": 200 },
     "item:angels-roll-iron": { "human": "Iron sheet coil", "stackSize": 200 },
-    "item:angels-rod-stack-iron": { "human": "Iron rod stack", "stackSize": 200 },
-    "item:angels-lead-ore": { "human": "Lead ore", "stackSize": 200 },
     "item:angels-processed-lead": { "human": "Processed lead", "stackSize": 200 },
     "item:angels-pellet-lead": { "human": "Lead pellet", "stackSize": 200 },
-    "item:angels-solid-lead-oxide": { "human": "Lead oxide", "stackSize": 200 },
     "item:angels-anode-lead": { "human": "Lead anode", "stackSize": 200 },
     "item:angels-ingot-lead": { "human": "Lead ingot", "stackSize": 200 },
-    "item:angels-powder-lead": { "human": "Lead powder", "stackSize": 200 },
     "item:angels-roll-lead": { "human": "Lead sheet coil", "stackSize": 200 },
-    "item:angels-plate-lead": { "human": "Lead plate", "stackSize": 200 },
     "item:angels-manganese-ore": { "human": "Manganese ore", "stackSize": 200 },
     "item:angels-processed-manganese": { "human": "Processed manganese", "stackSize": 200 },
     "item:angels-pellet-manganese": { "human": "Manganese pellet", "stackSize": 200 },
     "item:angels-solid-manganese-oxide": { "human": "Manganese oxide", "stackSize": 200 },
     "item:angels-cathode-manganese": { "human": "Manganese cathode", "stackSize": 200 },
     "item:angels-ingot-manganese": { "human": "Manganese ingot", "stackSize": 200 },
-    "item:angels-powder-manganese": { "human": "Manganese powder", "stackSize": 200 },
-    "item:angels-roll-manganese": { "human": "Manganese sheet coil", "stackSize": 200 },
-    "item:angels-plate-manganese": { "human": "Manganese plate", "stackSize": 200 },
-    "item:angels-nickel-ore": { "human": "Nickel ore", "stackSize": 200 },
     "item:angels-processed-nickel": { "human": "Processed nickel", "stackSize": 200 },
     "item:angels-pellet-nickel": { "human": "Nickel pellet", "stackSize": 200 },
     "item:angels-cathode-nickel": { "human": "Nickel cathode", "stackSize": 200 },
@@ -33977,7 +31078,6 @@
     "item:angels-ingot-nickel": { "human": "Nickel ingot", "stackSize": 200 },
     "item:angels-powder-nickel": { "human": "Nickel powder", "stackSize": 200 },
     "item:angels-roll-nickel": { "human": "Nickel sheet roll", "stackSize": 200 },
-    "item:angels-plate-nickel": { "human": "Nickel plate", "stackSize": 200 },
     "item:angels-platinum-ore": { "human": "Platinum ore", "stackSize": 200 },
     "item:angels-processed-platinum": { "human": "Processed platinum", "stackSize": 200 },
     "item:angels-pellet-platinum": { "human": "Platinum pellet", "stackSize": 200 },
@@ -33986,34 +31086,26 @@
       "stackSize": 200
     },
     "item:angels-ingot-platinum": { "human": "Platinum ingot", "stackSize": 200 },
-    "item:angels-powder-platinum": { "human": "Platinum powder", "stackSize": 200 },
     "item:angels-roll-platinum": { "human": "Platinum sheet coil", "stackSize": 200 },
     "item:angels-wire-coil-platinum": { "human": "Platinum wire coil", "stackSize": 200 },
     "item:angels-plate-platinum": { "human": "Platinum plate", "stackSize": 200 },
     "item:angels-wire-platinum": { "human": "Platinum wire", "stackSize": 200 },
-    "item:angels-quartz": { "human": "Silicon ore", "stackSize": 200 },
     "item:angels-processed-silica": { "human": "Processed silicon", "stackSize": 200 },
     "item:angels-pellet-silica": { "human": "Silicon pellet", "stackSize": 200 },
     "item:angels-ingot-silicon": { "human": "Silicon ingot", "stackSize": 200 },
-    "item:angels-powder-silicon": { "human": "Silicon powder", "stackSize": 200 },
     "item:angels-mono-silicon-seed": { "human": "Mono silicon seed", "stackSize": 200 },
     "item:angels-quartz-crucible": { "human": "Quartz crucible", "stackSize": 200 },
     "item:angels-mono-silicon": { "human": "Mono silicon", "stackSize": 200 },
-    "item:angels-silicon-wafer": { "human": "Pure silicon wafer", "stackSize": 200 },
-    "item:angels-silver-ore": { "human": "Silver ore", "stackSize": 200 },
     "item:angels-processed-silver": { "human": "Processed silver", "stackSize": 200 },
     "item:angels-pellet-silver": { "human": "Silver pellet", "stackSize": 200 },
-    "item:angels-solid-silver-nitrate": { "human": "Silver nitrate", "stackSize": 200 },
     "item:angels-solid-sodium-silver-cyanide": {
       "human": "Sodium silver cyanide",
       "stackSize": 200
     },
     "item:angels-cathode-silver": { "human": "Silver cathode", "stackSize": 200 },
     "item:angels-ingot-silver": { "human": "Silver ingot", "stackSize": 200 },
-    "item:angels-powder-silver": { "human": "Silver powder", "stackSize": 200 },
     "item:angels-roll-silver": { "human": "Silver sheet coil", "stackSize": 200 },
     "item:angels-wire-coil-silver": { "human": "Silver wire coil", "stackSize": 200 },
-    "item:angels-plate-silver": { "human": "Silver plate", "stackSize": 200 },
     "item:angels-wire-silver": { "human": "Silver wire", "stackSize": 200 },
     "item:angels-solid-lime": { "human": "Lime", "stackSize": 200 },
     "item:angels-solid-cement": { "human": "Cement", "stackSize": 200 },
@@ -34024,39 +31116,24 @@
       "human": "Reinforced concrete brick",
       "stackSize": 200
     },
-    "item:angels-motor-casing-0": { "human": "Resin sculptured motor casing", "stackSize": 200 },
-    "item:angels-mold-expendable": { "human": "Expendable mold", "stackSize": 200 },
-    "item:angels-mold-non-expendable": { "human": "Reusable mold", "stackSize": 200 },
-    "item:angels-spent-mold-non-expendable": { "human": "Fouled reusable mold", "stackSize": 200 },
-    "item:angels-tin-ore": { "human": "Tin ore", "stackSize": 200 },
     "item:angels-processed-tin": { "human": "Processed tin", "stackSize": 200 },
     "item:angels-pellet-tin": { "human": "Tin pellet", "stackSize": 200 },
     "item:angels-ingot-tin": { "human": "Tin ingot", "stackSize": 200 },
-    "item:angels-powder-tin": { "human": "Tin powder", "stackSize": 200 },
     "item:angels-roll-tin": { "human": "Tin sheet coil", "stackSize": 200 },
     "item:angels-wire-coil-tin": { "human": "Tinned wire coil", "stackSize": 200 },
-    "item:angels-plate-tin": { "human": "Tin plate", "stackSize": 200 },
-    "item:angels-wire-tin": { "human": "Tinned wire", "stackSize": 200 },
-    "item:angels-rutile-ore": { "human": "Titanium ore", "stackSize": 200 },
     "item:angels-processed-titanium": { "human": "Processed titanium", "stackSize": 200 },
     "item:angels-pellet-titanium": { "human": "Titanium pellet", "stackSize": 200 },
     "item:angels-sponge-titanium": { "human": "Titanium sponge", "stackSize": 200 },
     "item:angels-ingot-titanium": { "human": "Titanium ingot", "stackSize": 200 },
     "item:angels-powder-titanium": { "human": "Titanium powder", "stackSize": 200 },
     "item:angels-roll-titanium": { "human": "Titanium sheet coil", "stackSize": 200 },
-    "item:angels-plate-titanium": { "human": "Titanium plate", "stackSize": 200 },
-    "item:angels-tungsten-ore": { "human": "Tungsten ore", "stackSize": 200 },
     "item:angels-processed-tungsten": { "human": "Processed tungsten", "stackSize": 200 },
     "item:angels-pellet-tungsten": { "human": "Tungsten pellet", "stackSize": 200 },
-    "item:angels-solid-tungsten-oxide": { "human": "Tungsten oxide", "stackSize": 200 },
     "item:angels-solid-ammonium-paratungstate": {
       "human": "Ammonium paratungstate",
       "stackSize": 200
     },
-    "item:angels-powder-tungsten": { "human": "Tungsten powder", "stackSize": 200 },
     "item:angels-casting-powder-tungsten": { "human": "Tungsten powder mixture", "stackSize": 200 },
-    "item:angels-plate-tungsten": { "human": "Tungsten plate", "stackSize": 200 },
-    "item:angels-zinc-ore": { "human": "Zinc ore", "stackSize": 200 },
     "item:angels-processed-zinc": { "human": "Processed zinc", "stackSize": 200 },
     "item:angels-pellet-zinc": { "human": "Zinc pellet", "stackSize": 200 },
     "item:angels-solid-zinc-oxide": { "human": "Zinc oxide", "stackSize": 200 },
@@ -34064,7 +31141,6 @@
     "item:angels-ingot-zinc": { "human": "Zinc ingot", "stackSize": 200 },
     "item:angels-powder-zinc": { "human": "Zinc powder", "stackSize": 200 },
     "item:angels-roll-zinc": { "human": "Zinc sheet coil", "stackSize": 200 },
-    "item:angels-plate-zinc": { "human": "Zinc plate", "stackSize": 200 },
     "item:angels-algae-farm": { "human": "Algae farm 1", "stackSize": 10 },
     "item:angels-algae-farm-2": { "human": "Algae farm 2", "stackSize": 10 },
     "item:angels-algae-farm-3": { "human": "Algae farm 3", "stackSize": 10 },
@@ -34209,7 +31285,6 @@
     "item:angels-paste-copper": { "human": "Copper paste", "stackSize": 200 },
     "item:angels-paste-gold": { "human": "Gold paste", "stackSize": 200 },
     "item:angels-paste-iron": { "human": "Iron paste", "stackSize": 200 },
-    "item:angels-paste-silver": { "human": "Silver paste", "stackSize": 200 },
     "item:angels-paste-titanium": { "human": "Titanium paste", "stackSize": 200 },
     "item:angels-paste-tungsten": { "human": "Tungsten paste", "stackSize": 200 },
     "item:angels-paste-zinc": { "human": "Zinc paste", "stackSize": 200 },
@@ -34296,43 +31371,14 @@
     "item:angels-biter-medium-egg": { "human": "Medium biter egg", "stackSize": 200 },
     "item:angels-biter-big-egg": { "human": "Big biter egg", "stackSize": 200 },
     "item:water-barrel": { "stackSize": 10 },
-    "item:sulfuric-acid-barrel": { "stackSize": 10 },
     "item:crude-oil-barrel": { "stackSize": 10 },
-    "item:heavy-oil-barrel": { "stackSize": 10 },
-    "item:light-oil-barrel": { "stackSize": 10 },
-    "item:petroleum-gas-barrel": { "stackSize": 10 },
     "item:lubricant-barrel": { "stackSize": 10 },
-    "item:bob-lithia-water-barrel": { "stackSize": 10 },
-    "item:bob-pure-water-barrel": { "stackSize": 10 },
-    "item:bob-hydrogen-barrel": { "stackSize": 10 },
-    "item:bob-oxygen-barrel": { "stackSize": 10 },
-    "item:bob-nitrogen-barrel": { "stackSize": 10 },
-    "item:bob-chlorine-barrel": { "stackSize": 10 },
-    "item:bob-hydrogen-chloride-barrel": { "stackSize": 10 },
-    "item:bob-nitrogen-dioxide-barrel": { "stackSize": 10 },
-    "item:bob-sulfur-dioxide-barrel": { "stackSize": 10 },
-    "item:bob-nitric-acid-barrel": { "stackSize": 10 },
-    "item:bob-ferric-chloride-solution-barrel": { "stackSize": 10 },
     "item:bob-liquid-fuel-barrel": { "stackSize": 10 },
-    "item:bob-heavy-water-barrel": { "stackSize": 10 },
-    "item:bob-deuterium-barrel": { "stackSize": 10 },
-    "item:bob-hydrogen-sulfide-barrel": { "stackSize": 10 },
-    "item:bob-tungstic-acid-barrel": { "stackSize": 10 },
     "item:bob-alien-acid-barrel": { "stackSize": 10 },
     "item:bob-alien-explosive-barrel": { "stackSize": 10 },
     "item:bob-alien-poison-barrel": { "stackSize": 10 },
     "item:bob-alien-fire-barrel": { "stackSize": 10 },
-    "item:bob-ammonia-barrel": { "stackSize": 10 },
-    "item:bob-dinitrogen-tetroxide-barrel": { "stackSize": 10 },
-    "item:bob-hydrazine-barrel": { "stackSize": 10 },
-    "item:bob-hydrogen-peroxide-barrel": { "stackSize": 10 },
-    "item:bob-nitric-oxide-barrel": { "stackSize": 10 },
-    "item:bob-carbon-dioxide-barrel": { "stackSize": 10 },
-    "item:bob-brine-barrel": { "stackSize": 10 },
-    "item:bob-ammoniated-brine-barrel": { "stackSize": 10 },
-    "item:bob-sulfuric-nitric-acid-barrel": { "stackSize": 10 },
     "item:bob-nitroglycerin-barrel": { "stackSize": 10 },
-    "item:bob-glycerol-barrel": { "stackSize": 10 },
     "item:angels-thermal-water-barrel": { "stackSize": 10 },
     "item:angels-ore8-sludge-barrel": { "stackSize": 10 },
     "item:angels-ore9-sludge-barrel": { "stackSize": 10 },
@@ -34391,8 +31437,6 @@
     "item:angels-liquid-glycerol-barrel": { "stackSize": 10 },
     "item:angels-liquid-bisphenol-a-barrel": { "stackSize": 10 },
     "item:angels-gas-acetone-barrel": { "stackSize": 10 },
-    "item:angels-gas-ethylene-oxide-barrel": { "stackSize": 10 },
-    "item:angels-liquid-ethylene-carbonate-barrel": { "stackSize": 10 },
     "item:angels-gas-chlorine-barrel": { "stackSize": 10 },
     "item:angels-gas-hydrogen-chloride-barrel": { "stackSize": 10 },
     "item:angels-liquid-hydrochloric-acid-barrel": { "stackSize": 10 },
@@ -34461,7 +31505,196 @@
     "item:angels-liquid-raw-fish-oil-barrel": { "stackSize": 10 },
     "item:angels-liquid-fish-oil-barrel": { "stackSize": 10 },
     "item:angels-gas-puffer-atmosphere-barrel": { "stackSize": 10 },
-    "fluid:fluid-unknown": {},
+    "item:car": { "human": "Car", "stackSize": 1 },
+    "item:locomotive": { "human": "Locomotive", "stackSize": 10 },
+    "item:cargo-wagon": { "human": "Cargo wagon", "stackSize": 10 },
+    "item:fluid-wagon": { "human": "Fluid wagon", "stackSize": 10 },
+    "item:artillery-wagon": { "human": "Artillery wagon", "stackSize": 5 },
+    "item:tank": { "human": "Tank", "stackSize": 10 },
+    "item:spidertron": { "human": "Spidertron", "stackSize": 1 },
+    "item:angels-cab": { "human": "C.A.B.", "stackSize": 1 },
+    "item:angels-crawler": { "human": "Crawler construction vehicle", "stackSize": 1 },
+    "item:bob-locomotive-2": { "human": "Locomotive MK2", "stackSize": 10 },
+    "item:bob-locomotive-3": { "human": "Locomotive MK3", "stackSize": 10 },
+    "item:bob-armoured-locomotive": { "human": "Armoured locomotive", "stackSize": 10 },
+    "item:bob-armoured-locomotive-2": { "human": "Armoured locomotive MK2", "stackSize": 10 },
+    "item:bob-cargo-wagon-2": { "human": "Cargo wagon MK2", "stackSize": 10 },
+    "item:bob-cargo-wagon-3": { "human": "Cargo wagon MK3", "stackSize": 10 },
+    "item:bob-armoured-cargo-wagon": { "human": "Armoured cargo wagon", "stackSize": 10 },
+    "item:bob-armoured-cargo-wagon-2": { "human": "Armoured cargo wagon MK2", "stackSize": 10 },
+    "item:bob-fluid-wagon-2": { "human": "Fluid wagon MK2", "stackSize": 10 },
+    "item:bob-fluid-wagon-3": { "human": "Fluid wagon MK3", "stackSize": 10 },
+    "item:bob-armoured-fluid-wagon": { "human": "Armoured fluid wagon", "stackSize": 10 },
+    "item:bob-armoured-fluid-wagon-2": { "human": "Armoured fluid wagon MK2", "stackSize": 10 },
+    "item:bob-tank-2": { "human": "Tank MK2", "stackSize": 10 },
+    "item:bob-tank-3": { "human": "Tank MK3", "stackSize": 10 },
+    "item:bob-artillery-wagon-2": { "human": "Artillery wagon MK2", "stackSize": 5 },
+    "item:bob-artillery-wagon-3": { "human": "Artillery wagon MK3", "stackSize": 5 },
+    "item:bob-antron": { "human": "Antron", "stackSize": 1 },
+    "item:bob-tankotron": { "human": "Tankotron", "stackSize": 1 },
+    "item:bob-logistic-spidertron": { "human": "Logitron", "stackSize": 1 },
+    "item:bob-heavy-spidertron": { "human": "Heavy Spidertron", "stackSize": 1 },
+    "item:angels-crawler-locomotive": { "human": "Crawler locomotive MK1 MK1", "stackSize": 5 },
+    "item:angels-crawler-locomotive-2": { "human": "Crawler locomotive MK1 MK2", "stackSize": 5 },
+    "item:angels-crawler-locomotive-3": { "human": "Crawler locomotive MK1 MK3", "stackSize": 5 },
+    "item:angels-crawler-locomotive-tender": {
+      "human": "Crawler locomotive tender MK1 MK1",
+      "stackSize": 5
+    },
+    "item:angels-crawler-locomotive-tender-2": {
+      "human": "Crawler locomotive tender MK1 MK2",
+      "stackSize": 5
+    },
+    "item:angels-crawler-locomotive-tender-3": {
+      "human": "Crawler locomotive tender MK1 MK3",
+      "stackSize": 5
+    },
+    "item:angels-crawler-cargo-wagon": { "human": "Crawler cargo wagon MK1 MK1", "stackSize": 5 },
+    "item:angels-crawler-cargo-wagon-2": { "human": "Crawler cargo wagon MK1 MK2", "stackSize": 5 },
+    "item:angels-crawler-cargo-wagon-3": { "human": "Crawler cargo wagon MK1 MK3", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon": { "human": "Crawler robot wagon MK1 MK1", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon-2": { "human": "Crawler robot wagon MK1 MK2", "stackSize": 5 },
+    "item:angels-crawler-robot-wagon-3": { "human": "Crawler robot wagon MK1 MK3", "stackSize": 5 },
+    "item:angels-petro-locomotive": { "human": "Petrochemical locomotive MK1 MK1", "stackSize": 5 },
+    "item:angels-petro-locomotive-2": {
+      "human": "Petrochemical locomotive MK1 MK2",
+      "stackSize": 5
+    },
+    "item:angels-petro-locomotive-3": {
+      "human": "Petrochemical locomotive MK1 MK3",
+      "stackSize": 5
+    },
+    "item:angels-petro-gas-wagon": { "human": "Petrochemical gas wagon MK1 MK1", "stackSize": 5 },
+    "item:angels-petro-gas-wagon-2": { "human": "Petrochemical gas wagon MK1 MK2", "stackSize": 5 },
+    "item:angels-petro-gas-wagon-3": { "human": "Petrochemical gas wagon MK1 MK3", "stackSize": 5 },
+    "item:angels-petro-oil-wagon": { "human": "Petrochemical fluid wagon MK1 MK1", "stackSize": 5 },
+    "item:angels-petro-oil-wagon-2": {
+      "human": "Petrochemical fluid wagon MK1 MK2",
+      "stackSize": 5
+    },
+    "item:angels-petro-oil-wagon-3": {
+      "human": "Petrochemical fluid wagon MK1 MK3",
+      "stackSize": 5
+    },
+    "item:angels-smelting-locomotive": { "human": "Smelting locomotive MK1 MK1", "stackSize": 5 },
+    "item:angels-smelting-locomotive-2": { "human": "Smelting locomotive MK1 MK2", "stackSize": 5 },
+    "item:angels-smelting-locomotive-3": { "human": "Smelting locomotive MK1 MK3", "stackSize": 5 },
+    "item:angels-smelting-locomotive-tender": {
+      "human": "Smelting locomotive tender MK1 MK1",
+      "stackSize": 5
+    },
+    "item:angels-smelting-locomotive-tender-2": {
+      "human": "Smelting locomotive tender MK1 MK2",
+      "stackSize": 5
+    },
+    "item:angels-smelting-locomotive-tender-3": {
+      "human": "Smelting locomotive tender MK1 MK3",
+      "stackSize": 5
+    },
+    "item:angels-smelting-cargo-wagon": { "human": "Smelting cargo wagon MK1 MK1", "stackSize": 5 },
+    "item:angels-smelting-cargo-wagon-2": {
+      "human": "Smelting cargo wagon MK1 MK2",
+      "stackSize": 5
+    },
+    "item:angels-smelting-cargo-wagon-3": {
+      "human": "Smelting cargo wagon MK1 MK3",
+      "stackSize": 5
+    },
+    "item:speed-module": { "human": "Speed module", "stackSize": 50 },
+    "item:speed-module-2": { "human": "Speed module 2", "stackSize": 50 },
+    "item:speed-module-3": { "human": "Speed module 3", "stackSize": 50 },
+    "item:efficiency-module": { "human": "Efficiency module", "stackSize": 50 },
+    "item:efficiency-module-2": { "human": "Efficiency module 2", "stackSize": 50 },
+    "item:efficiency-module-3": { "human": "Efficiency module 3", "stackSize": 50 },
+    "item:productivity-module": { "human": "Productivity module", "stackSize": 50 },
+    "item:productivity-module-2": { "human": "Productivity module 2", "stackSize": 50 },
+    "item:productivity-module-3": { "human": "Productivity module 3", "stackSize": 50 },
+    "item:bob-speed-module-4": { "human": "Speed module 4", "stackSize": 50 },
+    "item:bob-speed-module-5": { "human": "Speed module 5", "stackSize": 50 },
+    "item:bob-efficiency-module-4": { "human": "Efficiency module 4", "stackSize": 50 },
+    "item:bob-efficiency-module-5": { "human": "Efficiency module 5", "stackSize": 50 },
+    "item:bob-productivity-module-4": { "human": "Productivity module 4", "stackSize": 50 },
+    "item:bob-productivity-module-5": { "human": "Productivity module 5", "stackSize": 50 },
+    "item:bob-pollution-clean-module-1": { "human": "Pollution Cleaning Module", "stackSize": 50 },
+    "item:bob-pollution-clean-module-2": {
+      "human": "Pollution Cleaning Module 2",
+      "stackSize": 50
+    },
+    "item:bob-pollution-clean-module-3": {
+      "human": "Pollution Cleaning Module 3",
+      "stackSize": 50
+    },
+    "item:bob-pollution-clean-module-4": {
+      "human": "Pollution Cleaning Module 4",
+      "stackSize": 50
+    },
+    "item:bob-pollution-clean-module-5": {
+      "human": "Pollution Cleaning Module 5",
+      "stackSize": 50
+    },
+    "item:bob-pollution-create-module-1": {
+      "human": "Pollution Producing Module",
+      "stackSize": 50
+    },
+    "item:bob-pollution-create-module-2": {
+      "human": "Pollution Producing Module 2",
+      "stackSize": 50
+    },
+    "item:bob-pollution-create-module-3": {
+      "human": "Pollution Producing Module 3",
+      "stackSize": 50
+    },
+    "item:bob-pollution-create-module-4": {
+      "human": "Pollution Producing Module 4",
+      "stackSize": 50
+    },
+    "item:bob-pollution-create-module-5": {
+      "human": "Pollution Producing Module 5",
+      "stackSize": 50
+    },
+    "item:angels-bio-yield-module": { "human": "Agriculture module", "stackSize": 50 },
+    "item:angels-bio-yield-module-2": { "human": "Agriculture module 2", "stackSize": 50 },
+    "item:angels-bio-yield-module-3": { "human": "Agriculture module 3", "stackSize": 50 },
+    "item:angels-bio-yield-module-4": { "human": "Agriculture module 4", "stackSize": 50 },
+    "item:angels-bio-yield-module-5": { "human": "Agriculture module 5", "stackSize": 50 },
+    "item:rail": { "human": "Rail", "stackSize": 100 },
+    "item:rail-ramp": { "human": "Rail ramp", "stackSize": 10 },
+    "item:repair-pack": { "human": "Repair pack", "stackSize": 100 },
+    "item:bob-repair-pack-2": { "human": "Repair pack 2", "stackSize": 100 },
+    "item:bob-repair-pack-3": { "human": "Repair pack 3", "stackSize": 100 },
+    "item:bob-repair-pack-4": { "human": "Repair pack 4", "stackSize": 100 },
+    "item:bob-repair-pack-5": { "human": "Repair pack 5", "stackSize": 100 },
+    "item:spidertron-remote": { "human": "Spidertron remote", "stackSize": 1 },
+    "item:automation-science-pack": { "human": "Automation science pack", "stackSize": 200 },
+    "item:logistic-science-pack": { "human": "Logistic science pack", "stackSize": 200 },
+    "item:chemical-science-pack": { "human": "Chemical science pack", "stackSize": 200 },
+    "item:military-science-pack": { "human": "Military science pack", "stackSize": 200 },
+    "item:production-science-pack": { "human": "Production science pack", "stackSize": 200 },
+    "item:utility-science-pack": { "human": "Utility science pack", "stackSize": 200 },
+    "item:space-science-pack": { "human": "Space science pack", "stackSize": 2000 },
+    "item:bob-advanced-logistic-science-pack": {
+      "human": "Transport science pack",
+      "stackSize": 200
+    },
+    "item:bob-science-pack-gold": { "human": "Gold science pack", "stackSize": 200 },
+    "item:bob-alien-science-pack": { "human": "Alien science pack", "stackSize": 200 },
+    "item:bob-alien-science-pack-blue": { "human": "Blue alien science pack", "stackSize": 200 },
+    "item:bob-alien-science-pack-orange": {
+      "human": "Orange alien science pack",
+      "stackSize": 200
+    },
+    "item:bob-alien-science-pack-purple": {
+      "human": "Purple alien science pack",
+      "stackSize": 200
+    },
+    "item:bob-alien-science-pack-yellow": {
+      "human": "Yellow alien science pack",
+      "stackSize": 200
+    },
+    "item:bob-alien-science-pack-green": { "human": "Green alien science pack", "stackSize": 200 },
+    "item:bob-alien-science-pack-red": { "human": "Red alien science pack", "stackSize": 200 },
+    "item:angels-token-bio": { "human": "Alien plant-life sample", "stackSize": 200 },
+    "item:upgrade-planner": { "human": "Upgrade planner", "stackSize": 1 },
     "fluid:parameter-0": {},
     "fluid:parameter-1": {},
     "fluid:parameter-2": {},
@@ -34474,44 +31707,14 @@
     "fluid:parameter-9": {},
     "fluid:water": { "human": "Water" },
     "fluid:steam": { "human": "Steam" },
-    "fluid:sulfuric-acid": { "human": "Sulfuric acid" },
     "fluid:crude-oil": { "human": "Crude oil" },
-    "fluid:heavy-oil": { "human": "Heavy oil" },
-    "fluid:light-oil": { "human": "Light oil" },
-    "fluid:petroleum-gas": { "human": "Petroleum gas" },
     "fluid:lubricant": { "human": "Lubricant" },
-    "fluid:bob-lithia-water": { "human": "Lithia water" },
-    "fluid:bob-pure-water": { "human": "Pure water" },
-    "fluid:bob-liquid-air": { "human": "Compressed air" },
-    "fluid:bob-hydrogen": { "human": "Hydrogen" },
-    "fluid:bob-oxygen": { "human": "Oxygen" },
-    "fluid:bob-nitrogen": { "human": "Nitrogen" },
-    "fluid:bob-chlorine": { "human": "Chlorine" },
-    "fluid:bob-hydrogen-chloride": { "human": "Hydrogen chloride" },
-    "fluid:bob-nitrogen-dioxide": { "human": "Nitrogen dioxide" },
-    "fluid:bob-sulfur-dioxide": { "human": "Sulfur dioxide" },
-    "fluid:bob-nitric-acid": { "human": "Nitric acid" },
-    "fluid:bob-ferric-chloride-solution": { "human": "Ferric chloride solution" },
     "fluid:bob-liquid-fuel": { "human": "Liquid fuel" },
-    "fluid:bob-heavy-water": { "human": "Heavy water" },
-    "fluid:bob-deuterium": { "human": "Deuterium" },
-    "fluid:bob-hydrogen-sulfide": { "human": "Hydrogen sulfide" },
-    "fluid:bob-tungstic-acid": { "human": "Tungstic acid" },
     "fluid:bob-alien-acid": { "human": "Alien acid fluid" },
     "fluid:bob-alien-explosive": { "human": "Alien explosive fluid" },
     "fluid:bob-alien-poison": { "human": "Alien poison fluid" },
     "fluid:bob-alien-fire": { "human": "Alien flame fluid" },
-    "fluid:bob-ammonia": { "human": "Ammonia" },
-    "fluid:bob-dinitrogen-tetroxide": { "human": "Dinitrogen tetroxide" },
-    "fluid:bob-hydrazine": { "human": "Hydrazine" },
-    "fluid:bob-hydrogen-peroxide": { "human": "Hydrogen peroxide" },
-    "fluid:bob-nitric-oxide": { "human": "Nitric oxide" },
-    "fluid:bob-carbon-dioxide": { "human": "Carbon dioxide" },
-    "fluid:bob-brine": { "human": "Brine" },
-    "fluid:bob-ammoniated-brine": { "human": "Ammoniated brine" },
-    "fluid:bob-sulfuric-nitric-acid": { "human": "Sulfuric and Nitric acid mixture" },
     "fluid:bob-nitroglycerin": { "human": "Nitroglycerin" },
-    "fluid:bob-glycerol": { "human": "Glycerol" },
     "fluid:angels-thermal-water": { "human": "Thermal water" },
     "fluid:angels-ore8-sludge": { "human": "Ferrous sludge" },
     "fluid:angels-ore9-sludge": { "human": "Cupric sludge" },
@@ -34570,8 +31773,6 @@
     "fluid:angels-liquid-glycerol": { "human": "Glycerol liquid" },
     "fluid:angels-liquid-bisphenol-a": { "human": "Bisphenol A liquid" },
     "fluid:angels-gas-acetone": { "human": "Acetone gas" },
-    "fluid:angels-gas-ethylene-oxide": { "human": "Ethylene oxide" },
-    "fluid:angels-liquid-ethylene-carbonate": { "human": "Ethylene carbonate" },
     "fluid:angels-gas-chlorine": { "human": "Chlorine gas" },
     "fluid:angels-gas-hydrogen-chloride": { "human": "Hydrogen chloride gas" },
     "fluid:angels-liquid-hydrochloric-acid": { "human": "Hydrochloric acid" },
@@ -34619,8 +31820,6 @@
     "fluid:angels-liquid-molten-solder": { "human": "Molten solder" },
     "fluid:angels-liquid-molten-steel": { "human": "Molten steel" },
     "fluid:angels-liquid-molten-aluminium": { "human": "Molten aluminium" },
-    "fluid:angels-liquid-molten-chrome": { "human": "Molten chrome" },
-    "fluid:angels-liquid-molten-cobalt": { "human": "Molten cobalt" },
     "fluid:angels-liquid-molten-copper": { "human": "Molten copper" },
     "fluid:angels-liquid-molten-glass": { "human": "Molten Glass" },
     "fluid:angels-liquid-chlorauric-acid": { "human": "Chlorauric acid" },
@@ -34628,7 +31827,6 @@
     "fluid:angels-liquid-molten-iron": { "human": "Molten iron" },
     "fluid:angels-liquid-hexafluorosilicic-acid": { "human": "Hexafluorosilicic acid" },
     "fluid:angels-liquid-molten-lead": { "human": "Molten lead" },
-    "fluid:angels-liquid-molten-manganese": { "human": "Molten manganese" },
     "fluid:angels-liquid-molten-nickel": { "human": "Molten nickel" },
     "fluid:angels-liquid-hexachloroplatinic-acid": { "human": "Hexachloroplatinic acid" },
     "fluid:angels-liquid-molten-platinum": { "human": "Molten platinum" },
