@@ -3,6 +3,7 @@ import { resourceName, staticData } from '../data.ts';
 import type { State } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { ResourceButton } from './resource.tsx';
+import { SearchBox } from './search-box.tsx';
 
 function smatch(haystack: string, search: string): boolean {
   return haystack.toLowerCase().includes(search.toLowerCase());
@@ -33,14 +34,7 @@ export function ResourceList({
 
   return (
     <div class="resource-list">
-      <p>
-        <input
-          type="text"
-          value={search}
-          onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
-          placeholder="Search items and fluids..."
-        />
-      </p>
+      <SearchBox search={[search, setSearch]} placeholder="Search items and fluids..." />
       <table>
         <tbody>
           {found.slice(0, LIMIT).map(({ id }) => (

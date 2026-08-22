@@ -73,15 +73,42 @@ code {
   }
 }
 
-.resource-list input,
-.recipe-list input {
+.search-box {
+  position: relative;
+}
+
+.search-box input {
   font: inherit;
   color: var(--text-h);
   background: var(--code-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 6px 10px;
+  padding: 6px 28px 6px 10px;
   width: 100%;
+
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.search-clear {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 6px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--text-h);
+    background: var(--accent-bg);
+  }
 }
 
 .resource-list table {

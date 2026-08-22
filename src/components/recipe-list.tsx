@@ -3,6 +3,7 @@ import { searchRecipes } from '../search.ts';
 import type { State } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { RecipeCard } from './recipe.tsx';
+import { SearchBox } from './search-box.tsx';
 
 const LIMIT = 20;
 
@@ -16,14 +17,10 @@ export function RecipeList({ search: [search, setSearch] }: { search: State<stri
 
   return (
     <div class="recipe-list">
-      <p>
-        <input
-          type="text"
-          value={search}
-          onInput={(e) => setSearch((e.target as HTMLInputElement).value)}
-          placeholder="makes:item:iron-plate, uses:water, circuit..."
-        />
-      </p>
+      <SearchBox
+        search={[search, setSearch]}
+        placeholder="makes:item:iron-plate, uses:water, circuit..."
+      />
       {!search.trim() ? (
         <p class="recipe-hint">Pick a resource, or search for a recipe.</p>
       ) : found.length === 0 ? (
