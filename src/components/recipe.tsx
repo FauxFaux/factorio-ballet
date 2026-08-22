@@ -7,10 +7,12 @@ import type {
   Recipe,
   ResourceId,
 } from '../types.ts';
+import { Fragment } from 'preact';
+import { useState } from 'preact/hooks';
 import { bareName, type RecipeMatch } from '../search.ts';
-import { machineName, machinesFor } from '../data.ts';
+import { machineName, machinesFor, resourceName } from '../data.ts';
 import { iconStyle } from './icon.tsx';
-import { ResourceButton } from './resource.tsx';
+import { ResourceButton, ResourceIcon } from './resource.tsx';
 
 /** Crafting speed we quote rates at, until we have building data. */
 const CRAFTING_SPEED = 1;
@@ -36,7 +38,11 @@ export function RecipeCard({
   match: RecipeMatch;
   onPick: (id: ResourceId) => void;
 }) {
+  const [open, setOpen] = useState(false);
   const crafts = CRAFTING_SPEED / recipe.duration;
+  const ins = recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts));
+  const outs = recipe.products.map((product) => productFlow(product, crafts));
+
   return (
     <div class="recipe-card">
       <div class="recipe-head">
@@ -50,29 +56,96 @@ export function RecipeCard({
         </span>
         <span class="recipe-duration">{fmt(recipe.duration)}s</span>
       </div>
-      <table class="recipe-flows">
-        <tbody>
-          {recipe.ingredients.map((ingredient, i) => (
-            <FlowRow
-              key={`in-${ingredient.resource}-${i}`}
-              dir={i === 0 ? 'in' : undefined}
-              flow={ingredientFlow(ingredient, crafts)}
-              onPick={onPick}
-            />
-          ))}
-          {recipe.products.map((product, i) => (
-            <FlowRow
-              key={`out-${product.resource}-${i}`}
-              dir={i === 0 ? 'out' : undefined}
-              flow={productFlow(product, crafts)}
-              onPick={onPick}
-            />
-          ))}
-        </tbody>
-      </table>
+      <div class="recipe-flows-fold">
+        <button
+          type="button"
+          class="fold-toggle"
+          aria-expanded={open}
+          title={open ? 'Fold the ingredients' : 'Unfold the ingredients'}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? '▾' : '▸'}
+        </button>
+        {open ? (
+          <FlowTable ins={ins} outs={outs} onPick={onPick} />
+        ) : (
+          <FlowSummary ins={ins} outs={outs} />
+        )}
+      </div>
       <MachineRow recipe={recipe} />
     </div>
   );
+}
+
+/** The unfolded form: a row per flow, with amounts per craft and rates per second. */
+function FlowTable({
+  ins,
+  outs,
+  onPick,
+}: {
+  ins: Flow[];
+  outs: Flow[];
+  onPick: (id: ResourceId) => void;
+}) {
+  return (
+    <table class="recipe-flows">
+      <tbody>
+        {ins.map((flow, i) => (
+          <FlowRow
+            key={`in-${flow.resource}-${i}`}
+            dir={i === 0 ? 'in' : undefined}
+            flow={flow}
+            onPick={onPick}
+          />
+        ))}
+        {outs.map((flow, i) => (
+          <FlowRow
+            key={`out-${flow.resource}-${i}`}
+            dir={i === 0 ? 'out' : undefined}
+            flow={flow}
+            onPick={onPick}
+          />
+        ))}
+      </tbody>
+    </table>
+  );
+}
+
+/** The folded form: `2/s [iron] , 8/s [water] → 4/s [plate]`, names and amounts in tooltips. */
+function FlowSummary({ ins, outs }: { ins: Flow[]; outs: Flow[] }) {
+  return (
+    <p class="flow-summary">
+      <FlowChips flows={ins} />
+      <span class="flow-arrow" aria-label="makes">
+        →
+      </span>
+      <FlowChips flows={outs} />
+    </p>
+  );
+}
+
+function FlowChips({ flows }: { flows: Flow[] }) {
+  return (
+    <>
+      {flows.map((flow, i) => (
+        <Fragment key={`${flow.resource}-${i}`}>
+          {i === 0 ? null : <span class="flow-chip-sep">,</span>}
+          <span class="flow-chip" title={flowTitle(flow)}>
+            <span class="flow-chip-rate">
+              {fmt(flow.rate)}
+              <span class="flow-chip-unit">/s</span>
+            </span>
+            <ResourceIcon id={flow.resource} />
+          </span>
+        </Fragment>
+      ))}
+    </>
+  );
+}
+
+function flowTitle(flow: Flow): string {
+  const note = flow.note ? `, ${flow.note}` : '';
+  return `${resourceName(flow.resource)}: ${flow.amount} per craft${note}`;
 }
 
 /**

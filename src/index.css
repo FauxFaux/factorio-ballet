@@ -190,9 +190,38 @@ code {
   font-size: 15px;
 }
 
+.recipe-flows-fold {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* whichever of the table or the summary is showing takes the rest of the row */
+.recipe-flows-fold > :not(.fold-toggle) {
+  flex: 1;
+  min-width: 0;
+}
+
+.fold-toggle {
+  font: inherit;
+  line-height: 32px;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.fold-toggle:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
 .recipe-flows {
   border-collapse: collapse;
-  margin-top: 4px;
   width: 100%;
 }
 
@@ -238,6 +267,43 @@ code {
   font-size: 14px;
   font-family: var(--mono);
   padding-left: 6px;
+}
+
+.flow-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  margin: 0;
+}
+
+.flow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: help;
+}
+
+.flow-chip-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+/* the unit repeats on every chip; the number is the part worth reading */
+.flow-chip-unit {
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* sits tight against the chip it follows, not centred in the flex gap */
+.flow-chip-sep {
+  margin-left: -4px;
+}
+
+.flow-arrow {
+  color: var(--accent);
+  padding: 0 4px;
 }
 
 .recipe-hint {

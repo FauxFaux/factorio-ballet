@@ -6,10 +6,15 @@ export function ResourceWithIcon({ id }: { id: ResourceId }) {
   const resource = staticData.resources[id];
   return (
     <span class="resource" title={`${id} (${resource.stackSize ?? 'fluid'})`}>
-      <span class="resource-icon" style={iconPos(id)} aria-hidden="true" />
+      <ResourceIcon id={id} />
       {resource.human ?? <span class="resource-is-id">{id}</span>}
     </span>
   );
+}
+
+/** Just the sprite for a resource, for places which label it themselves. */
+export function ResourceIcon({ id }: { id: ResourceId }) {
+  return <span class="resource-icon" style={iconPos(id)} aria-hidden="true" />;
 }
 
 /** A resource which, when clicked, searches for the recipes making it. */
