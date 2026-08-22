@@ -46,8 +46,7 @@ code {
   background: var(--code-bg);
 }
 
-/* ItemList / placeholder resource icons — real sprites come later. */
-.item-list input {
+.resource-list input {
   font: inherit;
   color: var(--text-h);
   background: var(--code-bg);
@@ -58,7 +57,7 @@ code {
   max-width: 24rem;
 }
 
-.item-list table {
+.resource-list table {
   border-collapse: collapse;
 }
 

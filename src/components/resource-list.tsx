@@ -10,7 +10,7 @@ function smatch(haystack: string, search: string): boolean {
 const LIMIT = 200;
 
 /** A searchable list of every known resource (item or fluid). */
-export function ItemList() {
+export function ResourceList() {
   const [search, setSearch] = useState('');
 
   const all = useMemo(
@@ -27,7 +27,7 @@ export function ItemList() {
   );
 
   return (
-    <div class="item-list">
+    <div class="resource-list">
       <p>
         <input
           type="text"
