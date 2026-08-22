@@ -4,6 +4,7 @@ import type {
   MachineId,
   Product,
   ProductAmount,
+  Recipe,
   ResourceId,
 } from '../types.ts';
 import { Fragment } from 'preact';
@@ -26,6 +27,15 @@ const PRODUCTIVITY_MODULE: ResourceId = 'item:productivity-module';
 const MACHINE_ICON_STANDIN: Record<MachineId, ResourceId> = {
   character: 'item:light-armor',
 };
+
+/**
+ * Rates this small would read as `0.00`, so a recipe with one anywhere in reach is quoted an extra
+ * digit throughout.
+ */
+const THREE_DP_BELOW = 0.05;
+
+/** Durations are one number in a row of its own, so a plain two decimals is enough. */
+const DURATION_DIGITS = 2;
 
 /** How to render a number whose value depends on the machine previewed. */
 type Fmt = (value: number) => string;
@@ -53,11 +63,13 @@ export function RecipeCard({
   const speed = machines.find(({ id }) => id === preview)?.machine.speed ?? CRAFTING_SPEED;
   const crafts = speed / recipe.duration;
   /* Scaled numbers land on far fewer round values than the 1× baseline does, and {@link fmt}'s
-   * precision moves with the magnitude, so every one of them would change width as you move along
-   * the machine list. Under a preview, fix the decimals instead. */
-  const scaled = preview === undefined ? fmt : (value: number) => value.toFixed(2);
-  const ins = recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts, scaled));
-  const outs = recipe.products.map((product) => productFlow(product, crafts, scaled));
+   * precision moves with the magnitude, so the numbers changed width — and the summary rewrapped —
+   * as the pointer moved along the machine list. Both precisions are decided for the card as a
+   * whole instead, so nothing moves whichever machine is previewed. */
+  const digits = rateDigits(recipe, machines);
+  const rate = (value: number) => value.toFixed(digits);
+  const ins = recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts, rate));
+  const outs = recipe.products.map((product) => productFlow(product, crafts, rate));
 
   return (
     <div class={preview === undefined ? 'recipe-card' : 'recipe-card is-previewing'}>
@@ -70,7 +82,7 @@ export function RecipeCard({
         <span class="recipe-name" title={id}>
           {name}
         </span>
-        <span class="recipe-duration">{scaled(recipe.duration / speed)}s</span>
+        <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
       </div>
       <div class="recipe-flows-fold">
         <button
@@ -263,6 +275,22 @@ function FlowRow({
       <td class="flow-rate">{flow.rate}/s</td>
     </tr>
   );
+}
+
+/**
+ * How many decimals this recipe's rates are quoted at, decided once for the card: three if any flow
+ * could fall below {@link THREE_DP_BELOW} on any machine it can run on — including the 1× baseline —
+ * and two otherwise. Deciding it per number instead let a card wrap to two lines at three decimals
+ * and back to one at two.
+ */
+function rateDigits(recipe: Recipe, machines: MachineMatch[]): number {
+  const slowest = Math.min(CRAFTING_SPEED, ...machines.map(({ machine }) => machine.speed));
+  const amounts = [
+    ...recipe.ingredients.map((ingredient) => ingredient.amount),
+    ...recipe.products.map((product) => averageAmount(product.amount) * product.probability),
+  ].filter((amount) => amount > 0);
+  const smallest = (Math.min(...amounts) * slowest) / recipe.duration;
+  return smallest < THREE_DP_BELOW ? 3 : 2;
 }
 
 function ingredientFlow(ingredient: Ingredient, crafts: number, rate: Fmt): Flow {
