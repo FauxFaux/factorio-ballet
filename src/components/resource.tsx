@@ -1,9 +1,6 @@
 import { staticData } from '../data.ts';
 import type { ResourceId } from '../types.ts';
-import iconsUrl from '../assets/icons.avif';
-import iconsData from '../assets/icons.json';
-
-const icons = iconsData as unknown as Record<string, [number, number]>;
+import { iconStyle } from './icon.tsx';
 
 export function ResourceWithIcon({ id }: { id: ResourceId }) {
   const resource = staticData.resources[id];
@@ -15,11 +12,27 @@ export function ResourceWithIcon({ id }: { id: ResourceId }) {
   );
 }
 
+/** A resource which, when clicked, searches for the recipes making it. */
+export function ResourceButton({
+  id,
+  onPick,
+}: {
+  id: ResourceId;
+  onPick: (id: ResourceId) => void;
+}) {
+  return (
+    <button type="button" class="resource-button" onClick={() => onPick(id)}>
+      <ResourceWithIcon id={id} />
+    </button>
+  );
+}
+
 function iconPos(id: ResourceId): string {
   const colon = id.indexOf(':');
   const kind = id.slice(0, colon);
   const name = id.slice(colon + 1);
-  const pos = icons[`craft:${name}`] ??
-    icons[kind === 'fluid' ? 'craft:fluid-unknown' : 'craft:item-unknown'] ?? [0, 0];
-  return `background: url("${iconsUrl}") -${pos[0]}px -${pos[1]}px no-repeat`;
+  return iconStyle(
+    `craft:${name}`,
+    kind === 'fluid' ? 'craft:fluid-unknown' : 'craft:item-unknown',
+  );
 }

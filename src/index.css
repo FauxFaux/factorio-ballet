@@ -46,7 +46,35 @@ code {
   background: var(--code-bg);
 }
 
-.resource-list input {
+.columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.resource-list {
+  flex: 0 0 24rem;
+  max-width: 24rem;
+}
+
+.recipe-list {
+  flex: 0 1 32rem;
+  min-width: 0;
+  max-width: 32rem;
+}
+
+@media (max-width: 800px) {
+  .columns {
+    flex-direction: column;
+  }
+
+  .resource-list {
+    flex: none;
+  }
+}
+
+.resource-list input,
+.recipe-list input {
   font: inherit;
   color: var(--text-h);
   background: var(--code-bg);
@@ -54,17 +82,36 @@ code {
   border-radius: 4px;
   padding: 6px 10px;
   width: 100%;
-  max-width: 24rem;
 }
 
 .resource-list table {
   border-collapse: collapse;
+  width: 100%;
 }
 
 .resource {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+}
+
+.resource-button {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.resource-button:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
 }
 
 .resource-icon {
@@ -76,4 +123,97 @@ code {
 
 .resource-is-id {
   font-family: var(--mono);
+}
+
+.recipe-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: var(--code-bg);
+}
+
+.recipe-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.recipe-name {
+  color: var(--text-h);
+  font-family: var(--heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe-duration {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+}
+
+.recipe-flows {
+  border-collapse: collapse;
+  margin-top: 4px;
+  width: 100%;
+}
+
+.recipe-flows th {
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-right: 8px;
+  width: 1%;
+  vertical-align: middle;
+}
+
+.recipe-flows .flow-out th {
+  color: var(--accent);
+}
+
+.recipe-flows .flow-out > * {
+  border-top: 1px solid var(--border);
+}
+
+.flow-amount,
+.flow-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.flow-amount {
+  text-align: right;
+  padding-right: 6px;
+}
+
+.flow-rate {
+  text-align: right;
+  color: var(--text-h);
+  padding-left: 12px;
+}
+
+.flow-note {
+  font-size: 14px;
+  font-family: var(--mono);
+  padding-left: 6px;
+}
+
+.recipe-hint {
+  color: var(--text);
+  font-style: italic;
 }

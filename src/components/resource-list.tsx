@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'preact/hooks';
 import { resourceName, staticData } from '../data.ts';
 import type { ResourceId } from '../types.ts';
-import { ResourceWithIcon } from './resource.tsx';
+import { ResourceButton } from './resource.tsx';
 
 function smatch(haystack: string, search: string): boolean {
   return haystack.toLowerCase().includes(search.toLowerCase());
@@ -10,7 +10,7 @@ function smatch(haystack: string, search: string): boolean {
 const LIMIT = 200;
 
 /** A searchable list of every known resource (item or fluid). */
-export function ResourceList() {
+export function ResourceList({ onPick }: { onPick: (id: ResourceId) => void }) {
   const [search, setSearch] = useState('');
 
   const all = useMemo(
@@ -41,7 +41,7 @@ export function ResourceList() {
           {found.slice(0, LIMIT).map(({ id }) => (
             <tr key={id}>
               <td>
-                <ResourceWithIcon id={id} />
+                <ResourceButton id={id} onPick={onPick} />
               </td>
             </tr>
           ))}
