@@ -6,11 +6,15 @@ import { CrashHandler } from './crash-handler.tsx';
 
 export interface UrlState {
   v: 1;
+  /** the ResourceList search box */
+  rs: string;
+  /** the RecipeList search box */
+  cs: string;
 }
 
-const defaultUs: UrlState = { v: 1 };
+const defaultUs: UrlState = { v: 1, rs: '', cs: '' };
 
-const HASH_VERSION = 'g';
+const HASH_VERSION = 'h';
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -105,7 +109,7 @@ function unpackUs(hash: string): UrlState {
   // @ts-expect-error (fromBase64 is missing from Uint8Array typings)
   const data = Uint8Array.fromBase64(encoded, { alphabet: 'base64url' });
   const str = strFromU8(inflateSync(data, { dictionary: urlDictionary }));
-  return JSON.parse(str);
+  return { ...defaultUs, ...JSON.parse(str) };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
