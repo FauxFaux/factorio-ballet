@@ -80,13 +80,16 @@ flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
 ### Data model (`src/types.ts`, `src/data.ts`)
 
-`StaticData = { recipes, resources }`. Resources are keyed by `ResourceId` — the colon scheme
-`item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products` carry
+`StaticData = { recipes, resources, machines }`. Resources are keyed by `ResourceId` — the colon
+scheme `item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products` carry
 `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry optional fluid
-temperatures. There is no building/factory model yet (the `// building details` placeholder) — that
-is the main known gap. `src/data.ts` loads `src/assets/static.json` at module level. Icons render
-from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like `craft:<name>`)
-via `components/resource.tsx`.
+temperatures. Machines are keyed by bare prototype id and carry `crafting_speed` and module slots;
+which machine can run which recipe is the game's category system — `Recipe.categories` flattens the
+prototype's `category` + `additional_categories`, and `machinesFor` in `src/data.ts` indexes
+`Machine.categories` the other way. Modules, beacons, and machine power/pollution are still missing.
+`src/data.ts` loads `src/assets/static.json` at module level. Icons render from a spritesheet
+(`src/assets/icons.avif` + `icons.json` position map, keys like `craft:<name>`) via
+`components/resource.tsx`.
 
 ### Solver
 

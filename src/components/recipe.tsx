@@ -1,16 +1,24 @@
 import type {
   Ingredient,
   IngredientTemperature,
+  MachineId,
   Product,
   ProductAmount,
+  Recipe,
   ResourceId,
 } from '../types.ts';
-import type { RecipeMatch } from '../search.ts';
+import { bareName, type RecipeMatch } from '../search.ts';
+import { machineName, machinesFor } from '../data.ts';
 import { iconStyle } from './icon.tsx';
 import { ResourceButton } from './resource.tsx';
 
 /** Crafting speed we quote rates at, until we have building data. */
 const CRAFTING_SPEED = 1;
+
+/** Machines with no item of their own to borrow an icon from, and what stands in instead. */
+const MACHINE_ICON_STANDIN: Record<MachineId, ResourceId> = {
+  character: 'item:light-armor',
+};
 
 interface Flow {
   resource: ResourceId;
@@ -62,8 +70,41 @@ export function RecipeCard({
           ))}
         </tbody>
       </table>
-      {/* building details: available assemblers and modules, once we ingest them */}
+      <MachineRow recipe={recipe} />
     </div>
+  );
+}
+
+/**
+ * The machines which can run this recipe, each labelled with its crafting speed; the recipe's
+ * rates above are quoted at {@link CRAFTING_SPEED}, so the speed is the multiplier to apply.
+ */
+function MachineRow({ recipe }: { recipe: Recipe }) {
+  const machines = machinesFor(recipe);
+  if (machines.length === 0) return null;
+
+  return (
+    <div class="recipe-machines">
+      {machines.map(({ id, machine }) => (
+        <span
+          key={id}
+          class="machine"
+          title={`${machineName(id)} (${id}) at ${fmt(machine.speed)}×`}
+        >
+          <span class="machine-icon" style={machineIconStyle(id)} aria-hidden="true" />
+          <span class="machine-speed">{fmt(machine.speed)}×</span>
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function machineIconStyle(id: MachineId): string {
+  const standin = MACHINE_ICON_STANDIN[id];
+  return iconStyle(
+    `craft:${id}`,
+    ...(standin ? [`craft:${bareName(standin)}`] : []),
+    'craft:item-unknown',
   );
 }
 

@@ -8,6 +8,8 @@ import { resolveLocale } from './locale.ts';
 import type {
   Ingredient,
   IngredientTemperature,
+  Machine,
+  MachineKind,
   Product,
   Recipe,
   ResourceId,
@@ -42,6 +44,18 @@ const ITEM_KEYS = [
   'upgrade-item',
 ] as const satisfies ReadonlyArray<keyof RawData>;
 
+/**
+ * Everything with `crafting_categories`, i.e. everything which can run a recipe. `character` is
+ * hand crafting, and the only thing covering the mods' manual-only categories. `god-controller`
+ * is the editor's, and is not a real production option.
+ */
+const MACHINE_KEYS = [
+  'assembling-machine',
+  'furnace',
+  'rocket-silo',
+  'character',
+] as const satisfies ReadonlyArray<keyof RawData>;
+
 async function main() {
   const app = process.env.APP;
   const so = resolve(app ?? '.', 'script-output');
@@ -57,6 +71,7 @@ async function main() {
   );
   const v = (await read('data-raw-dump.json')) as RawData;
   const recipes = handleRecipes(v.recipe, locales);
+  const machines = handleMachines(v, locales);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -106,7 +121,19 @@ async function main() {
     console.log(`Dangling resource refs: ${dangling.size}`, [...dangling].slice(0, 20));
   }
 
-  const staticData: StaticData = { recipes, resources };
+  // Every category a live recipe names should be craftable somewhere; anything left over means we
+  // have dropped a machine we should have kept (or kept a recipe we should have dropped).
+  const craftable = new Set(Object.values(machines).flatMap((m) => m.categories));
+  const homeless = new Set(
+    Object.values(recipes)
+      .flatMap((r) => r.categories)
+      .filter((c) => !craftable.has(c)),
+  );
+  if (homeless.size > 0) {
+    console.log(`Recipe categories with no machine: ${homeless.size}`, [...homeless].slice(0, 20));
+  }
+
+  const staticData: StaticData = { recipes, resources, machines };
   await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
@@ -133,7 +160,9 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
           .map((res) => RProduct.parse(res))
           .map(toProd);
         const duration = r.energy_required ?? 0.5;
-        return [id, { human, ingredients, products, duration }] as const;
+        // `crafting` is the game's default for a recipe which names no category.
+        const categories = [r.category ?? 'crafting', ...(r.additional_categories ?? [])];
+        return [id, { human, ingredients, products, duration, categories }] as const;
       }),
   );
 
@@ -142,6 +171,35 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
     console.log(`Unnamed recipes: ${unnamed.length}`, unnamed.slice(0, 20));
   }
   return recipes;
+}
+
+/**
+ * The crafting machines, keyed by prototype id. As with recipes, `hidden` is how the mods disable a
+ * machine without deleting it; dropping those leaves every live recipe's category still covered.
+ */
+function handleMachines(v: RawData, locales: Record<string, RLocale>) {
+  const machines: Record<string, Machine> = {};
+  let skipped = 0;
+
+  for (const key of MACHINE_KEYS) {
+    for (const [id, m] of Object.entries(v[key] ?? {})) {
+      if (m.hidden) {
+        skipped++;
+        continue;
+      }
+      machines[id] = {
+        human: resolveLocale(id, locales, 'entity'),
+        kind: key satisfies MachineKind,
+        categories: m.crafting_categories ?? [],
+        // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
+        speed: 'crafting_speed' in m ? m.crafting_speed : 1,
+        moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
+      };
+    }
+  }
+
+  console.log(`Machines: ${Object.keys(machines).length} (dropped ${skipped} hidden)`);
+  return machines;
 }
 
 function toIng(game: RIngredient): Ingredient {

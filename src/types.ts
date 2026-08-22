@@ -1,9 +1,13 @@
 export interface StaticData {
   recipes: Record<string, Recipe>;
   resources: Record<ResourceId, Resource>;
+  machines: Record<MachineId, Machine>;
 }
 
 export type ResourceId = `item:${string}` | `fluid:${string}`;
+
+/** A crafting machine's prototype id, e.g. `assembling-machine-2`. */
+export type MachineId = string;
 
 export interface Recipe {
   human?: string;
@@ -11,7 +15,12 @@ export interface Recipe {
   products: Product[];
   duration: number;
 
-  // building details
+  /**
+   * The recipe categories this can be crafted in; a machine can run it if it handles any one of
+   * them. The game splits these into a primary `category` and `additional_categories`, which
+   * matters only for which machine the GUI offers first, so we flatten them.
+   */
+  categories: string[];
 }
 
 export interface Ingredient {
@@ -38,3 +47,17 @@ interface Resource {
   human?: string;
   stackSize?: number;
 }
+
+/** Something which can run recipes: an assembler, a furnace, the rocket silo, or the player. */
+export interface Machine {
+  human?: string;
+  /** The prototype type, e.g. `assembling-machine`; `character` is hand crafting. */
+  kind: MachineKind;
+  /** The recipe categories this machine can run. */
+  categories: string[];
+  /** Crafts per second, against a recipe whose duration is one second. */
+  speed: number;
+  moduleSlots?: number;
+}
+
+export type MachineKind = 'assembling-machine' | 'furnace' | 'rocket-silo' | 'character';

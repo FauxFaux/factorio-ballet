@@ -244,3 +244,43 @@ code {
   color: var(--text);
   font-style: italic;
 }
+
+.recipe-machines {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.recipe-machines-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-right: 2px;
+}
+
+.machine {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  cursor: help;
+}
+
+.machine-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.machine-speed {
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
