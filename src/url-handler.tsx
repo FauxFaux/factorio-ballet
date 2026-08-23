@@ -67,7 +67,8 @@ export function UrlHandler() {
       <div style={{ color: 'red' }}>
         <h1>Unrecognised URL</h1>
         <p>
-          The URL has state but no recognised version prefix. Try <a href="/">starting fresh</a>.
+          The URL has state but no recognised version prefix. Try{' '}
+          <a href={window.location.pathname}>starting fresh</a>.
         </p>
       </div>
     );
@@ -79,7 +80,7 @@ export function UrlHandler() {
         <h1>Corrupt URL state</h1>
         <p>{unpackError.message}</p>
         <p>
-          Try <a href="/">starting fresh</a>.
+          Try <a href={window.location.pathname}>starting fresh</a>.
         </p>
         <pre>{unpackError.hash}</pre>
       </div>
