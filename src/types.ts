@@ -75,6 +75,32 @@ export interface Product {
   resource: ResourceId;
   amount: ProductAmount;
   probability: number;
+
+  /**
+   * How much of this, per craft, a productivity bonus is *not* paid on — the game's
+   * `ignored_by_productivity`, and the whole of the catalyst rule as the data states it. A catalyst
+   * is something a recipe borrows rather than makes: the 40 of the 41 uranium-235 kovarex hands
+   * back, the milling drum a powderiser returns. Paying a bonus on it would mint matter out of a
+   * loop, so the game pays only on `amount - ignoredByProductivity`; {@link netRates} does the
+   * same.
+   *
+   * Ingested rather than derived from "the share which is both in and out", because half of the
+   * ones here are not: 109 of the 208 results carrying it name a resource the recipe does not take
+   * at all — the drum goes in lubricated and comes out dry, the catalyst carrier goes in red. Nor
+   * is it bounded by either amount: `angels-fish-keeping-3` returns one fish of the four it takes
+   * and ignores three, so the bonus is paid on nothing.
+   *
+   * That the field is stated wherever it matters is *checked*, not assumed: `checkCatalysts` in the
+   * ingest and `the ingested catalyst shares` in `test/flow.test.ts` both require a product which
+   * is also an ingredient of a recipe allowing productivity to state `min(in, out)`. The 1.1 game
+   * did not work this way — its `catalyst_amount` was derived by the engine, and kovarex states
+   * none in the 1.1 dump despite paying no productivity on the 40 it hands back — so this is a
+   * convention of 2.0's recipes rather than a promise of the format. If the check ever fires, the
+   * share wants deriving in the ingest.
+   *
+   * Absent means productivity is paid on all of it.
+   */
+  ignoredByProductivity?: number;
 }
 
 export type ProductAmount = { fixed: number } | { min: number; max: number };

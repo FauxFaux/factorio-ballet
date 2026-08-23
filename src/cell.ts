@@ -1,6 +1,7 @@
 import { complexityOf, defaultMachine, machinesFor, resourceName, staticData } from './data.ts';
+import { moduleEffects, NO_EFFECTS, type Effects, type ModuleFill } from './flow.ts';
 import type { SearchScope } from './search.ts';
-import type { MachineId, Recipe, ResourceId } from './types.ts';
+import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -29,7 +30,18 @@ export interface CellEntry {
   machine?: MachineId;
   /** How many of that machine. Absent means "not decided" — for the solver to work out. */
   count?: number;
-  // modules, beacons: later
+  /**
+   * What is in the machine's slots, if anything: how many of each module. Absent is an empty
+   * machine, which is {@link NO_EFFECTS} — never a default loadout, because a module is a thing
+   * the user has to have built and put there.
+   *
+   * Kept in the order the user chose them, which is the order they fill the slots in: a loadout
+   * outlives the machine it was chosen for, and {@link moduleEffects} drops whatever no longer
+   * fits from the end rather than scaling everything down. The hash packs cells with the key order
+   * they have, so that survives a reload.
+   */
+  modules?: ModuleFill;
+  // beacons: later
 }
 
 /**
@@ -69,6 +81,43 @@ export function entryMachine(
   progress: number,
 ): MachineId | undefined {
   return entry.machine ?? defaultMachine(machinesFor(recipe), progress)?.id;
+}
+
+/**
+ * What this row's modules do to it: the two multipliers the rates are scaled by, at the machine the
+ * row is running in — which decides both how many slots there are and which effects the machine
+ * bothers to apply, so the same loadout is worth different things in different machines. Take the
+ * machine from {@link entryMachine}, so that an unpinned row's effects move with the slider exactly
+ * as its machine does.
+ */
+export function entryEffects(
+  entry: CellEntry,
+  recipe: Recipe,
+  machine: MachineId | undefined,
+): Effects {
+  const found = machine === undefined ? undefined : staticData.machines[machine];
+  if (!found || !entry.modules) return NO_EFFECTS;
+  return moduleEffects(found, entry.modules, recipe);
+}
+
+/** How many slots a loadout asks for, which is not necessarily how many the machine has. */
+export function slotsUsed(fill: ModuleFill | undefined): number {
+  return Object.values(fill ?? {}).reduce((a, b) => a + b, 0);
+}
+
+/**
+ * The entry with `count` of `module` in its slots; zero or fewer takes it out. A module already in
+ * there keeps its place in the queue for the slots, and a new one joins the back of it.
+ *
+ * Nothing here checks the machine has the slots: which machine a row is in is a separate decision
+ * which the user can change afterwards, so the loadout is what they asked for and
+ * {@link moduleEffects} is where it meets what will fit.
+ */
+export function withModule(entry: CellEntry, module: ModuleId, count: number): CellEntry {
+  const modules = { ...entry.modules };
+  if (count > 0) modules[module] = count;
+  else delete modules[module];
+  return Object.keys(modules).length > 0 ? { ...entry, modules } : { ...entry, modules: undefined };
 }
 
 export function cellTitle(cell: Cell): string {

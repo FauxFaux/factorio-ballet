@@ -26,4 +26,7 @@ Complexities:
 - productivity: some machines can be modified to produce more items; a 10% productivity bonus from a
   machine may change a 1-in, 1-out recipe into a 1-in, 1.1-out.
 - catalysts: if a recipe consumes and produces an item or fluid, productivity bonuses will not
-  apply. The data can, but does not fully, represent all of the catalyst rules. Be afraid.
+  apply. The data can, but does not fully, represent all of the catalyst rules. Be afraid. What it
+  does say is per result — `ignored_by_productivity`, ingested as `Product.ignoredByProductivity` —
+  and it covers the within-one-recipe case, which is what `productAmount` pays the bonus around. A
+  catalyst which goes round a cycle of two recipes is not stated anywhere and is still open.

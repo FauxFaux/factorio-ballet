@@ -119,6 +119,29 @@ describe('moduleEffects', () => {
     expect(effects.productivity).toBeCloseTo(1.12);
   });
 
+  it('takes only as many modules as the machine has slots', () => {
+    // five named, three slots: the loadout outlived a change of machine, and the answer must not
+    expect(moduleEffects(assembler, { 'speed-module-3': 5 }, gears).speed).toBeCloseTo(2.2);
+  });
+
+  it('fills those slots in the order the modules were chosen', () => {
+    // two speed and two productivity into three slots: the last one named is the one left out
+    const effects = moduleEffects(
+      assembler,
+      { 'productivity-module-3': 2, 'speed-module-3': 2 },
+      gears,
+    );
+    expect(effects.productivity).toBeCloseTo(1.24);
+    expect(effects.speed).toBeCloseTo(1.1);
+  });
+
+  it('ignores a module the machine will not take, slot and all', () => {
+    const fill = { 'angels-bio-yield-module-5': 2 };
+    expect(moduleEffects(assembler, fill, gears)).toEqual({ speed: 1, productivity: 1 });
+    // the same two modules in the machine which is their only home
+    expect(moduleEffects(farm, fill, garden)).toEqual({ speed: 1, productivity: 2 });
+  });
+
   it('will not slow a machine below a fifth of its speed', () => {
     // eight bob productivity module 5s is −200%, which the game floors at 20%
     const effects = moduleEffects(

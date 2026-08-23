@@ -3,12 +3,15 @@ import {
   activeAfterRemoval,
   cellInterface,
   cellTitle,
+  entryEffects,
   entryMachine,
   hasRecipe,
   newCell,
   parseCount,
   scopeOf,
+  slotsUsed,
   withEntry,
+  withModule,
   withoutCell,
   withoutEntry,
   withRecipe,
@@ -106,6 +109,61 @@ describe('entryMachine', () => {
   it('stands in the machine suiting the progress when the entry names none', () => {
     expect(entryMachine({ recipe: 'iron-gear-wheel' }, recipe, 0)).toBe('character');
     expect(entryMachine({ recipe: 'iron-gear-wheel' }, recipe, 1)).toBe('bob-assembling-machine-6');
+  });
+});
+
+describe('withModule', () => {
+  const entry = { recipe: 'iron-gear-wheel' };
+
+  it('puts modules in and takes them out again', () => {
+    const one = withModule(entry, 'speed-module-3', 2);
+    expect(one.modules).toEqual({ 'speed-module-3': 2 });
+    expect(entry).toEqual({ recipe: 'iron-gear-wheel' });
+    // an empty loadout is no loadout, so the hash carries nothing for it
+    expect(withModule(one, 'speed-module-3', 0).modules).toBeUndefined();
+  });
+
+  it('keeps a module in its place in the queue for the slots', () => {
+    const both = withModule(withModule(entry, 'speed-module-3', 1), 'productivity-module-3', 1);
+    const more = withModule(both, 'speed-module-3', 2);
+    expect(Object.keys(more.modules!)).toEqual(['speed-module-3', 'productivity-module-3']);
+    expect(slotsUsed(more.modules)).toBe(3);
+  });
+
+  it('counts nothing for no loadout at all', () => {
+    expect(slotsUsed(undefined)).toBe(0);
+  });
+});
+
+describe('entryEffects', () => {
+  const recipe = staticData.recipes['iron-gear-wheel'];
+  const entry = { recipe: 'iron-gear-wheel', modules: { 'productivity-module-3': 3 } };
+
+  it('is what the modules do in the machine the row is in', () => {
+    const effects = entryEffects(entry, recipe, 'assembling-machine-3');
+    expect(effects.productivity).toBeCloseTo(1.36);
+    expect(effects.speed).toBeCloseTo(0.55);
+  });
+
+  it('is worth less in a machine with fewer slots, and nothing in one with none', () => {
+    // the same three modules in an assembling machine 2: two slots, so two of them go in
+    expect(entryEffects(entry, recipe, 'assembling-machine-2').productivity).toBeCloseTo(1.24);
+    // and an assembling machine 1 has no slots at all, as the character has not
+    expect(entryEffects(entry, recipe, 'assembling-machine-1')).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
+    expect(entryEffects(entry, recipe, 'character')).toEqual({ speed: 1, productivity: 1 });
+  });
+
+  it('is 1× for an empty machine, or one the data does not have', () => {
+    const bare = { recipe: 'iron-gear-wheel' };
+    expect(entryEffects(bare, recipe, 'assembling-machine-3')).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
+    expect(entryEffects(entry, recipe, 'no-such-machine')).toEqual({ speed: 1, productivity: 1 });
+    expect(entryEffects(entry, recipe, undefined)).toEqual({ speed: 1, productivity: 1 });
   });
 });
 

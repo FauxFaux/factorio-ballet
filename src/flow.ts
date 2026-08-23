@@ -88,17 +88,28 @@ export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
  *   here). A productivity module's speed penalty applies regardless, so a machine full of them on
  *   an ordinary recipe is strictly slower and no more productive.
  *
+ * And two gates on the fill itself, because a loadout outlives the machine it was chosen for — the
+ * progress slider moves and an unpinned row is suddenly a tier 2 assembler with two slots: a module
+ * the machine's `allowedModuleCategories` refuses counts for nothing, and only as many as there are
+ * slots go in, first named first. Overflow is dropped rather than scaled, so the modules in the
+ * machine are the ones the user chose first and the answer never overstates the machine.
+ *
  * Modules we did not ingest — efficiency, pollution — are not in `staticData.modules` and count for
  * nothing, which is right for both numbers here. Beacons are not modelled at all yet.
  */
 export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
   let speed = 0;
   let productivity = 0;
+  let slots = machine.moduleSlots ?? 0;
   for (const [id, count] of Object.entries(fill)) {
+    if (slots <= 0) break;
     const module = staticData.modules[id];
-    if (!module || !count) continue;
-    speed += (module.speed ?? 0) * count;
-    productivity += (module.productivity ?? 0) * count;
+    if (!module || !(count > 0)) continue;
+    if (!(machine.allowedModuleCategories?.includes(module.category) ?? true)) continue;
+    const fitted = Math.min(count, slots);
+    slots -= fitted;
+    speed += (module.speed ?? 0) * fitted;
+    productivity += (module.productivity ?? 0) * fitted;
   }
 
   if (!allowsEffect(machine, 'speed')) speed = 0;
@@ -113,9 +124,11 @@ export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe
  * edge. This is the unit the solver scales — one row of a cell, at one machine, with one loadout —
  * where {@link recipeFlows} is the same arithmetic kept in stacks and formatted for a card.
  *
- * Netting is where the catalyst problem will land. `productivity` is paid here on the whole of a
- * product, and the game does not pay it on the part of one which came back round as an ingredient;
- * with the multiplier at 1 the two agree, which is every rate this app quotes today.
+ * Netting is where the catalyst rule shows up: a resource on both sides of one recipe is one
+ * number here, and productivity has already been settled per product by {@link productAmount}
+ * before the two sides meet — the bonus is paid on what the recipe makes, never on what it merely
+ * hands back. What the game cannot tell us is the *other* catalyst, the one that goes round a cycle
+ * of two recipes rather than one; a solver which closes cycles will have to think about it again.
  */
 export function netRates(recipe: Recipe, speed: number, effects: Effects): Map<ResourceId, number> {
   const crafts = (speed * effects.speed) / recipe.duration;
@@ -124,10 +137,24 @@ export function netRates(recipe: Recipe, speed: number, effects: Effects): Map<R
     rates.set(resource, (rates.get(resource) ?? 0) + rate);
   for (const { resource, amount } of recipe.ingredients) add(resource, -amount * crafts);
   for (const product of recipe.products) {
-    const expected = averageAmount(product.amount) * product.probability;
-    add(product.resource, expected * effects.productivity * crafts);
+    add(product.resource, productAmount(product, effects.productivity) * crafts);
   }
   return rates;
+}
+
+/**
+ * What one craft yields of one product, on average, at a productivity multiplier: what it rolls,
+ * plus the bonus on the part of it the recipe actually made. `Product.ignoredByProductivity` is the
+ * rest — the catalyst it borrowed — and it can exceed the whole result, which is the game saying
+ * the bonus is paid on nothing at all rather than on a negative amount.
+ *
+ * Chance is on the roll, and the bonus rides on it: a 20% result at +36% productivity is 20% of a
+ * bigger result, not a better chance at the same one.
+ */
+export function productAmount(product: Product, productivity: number): number {
+  const amount = averageAmount(product.amount);
+  const paid = Math.max(0, amount - (product.ignoredByProductivity ?? 0));
+  return (amount + paid * (productivity - 1)) * product.probability;
 }
 
 /**
@@ -167,7 +194,7 @@ export function rateDigits(recipe: Recipe, machines: MachineMatch[]): number {
   const slowest = Math.min(CRAFTING_SPEED, ...machines.map(({ machine }) => machine.speed));
   const amounts = [
     ...recipe.ingredients.map((ingredient) => ingredient.amount),
-    ...recipe.products.map((product) => averageAmount(product.amount) * product.probability),
+    ...recipe.products.map((product) => productAmount(product, 1)),
   ].filter((amount) => amount > 0);
   const smallest = (Math.min(...amounts) * slowest) / recipe.duration;
   return smallest < THREE_DP_BELOW ? 3 : 2;
@@ -183,7 +210,7 @@ function ingredientFlow(ingredient: Ingredient, crafts: number, rate: Fmt): Flow
 }
 
 function productFlow(product: Product, crafts: number, rate: Fmt): Flow {
-  const expected = averageAmount(product.amount) * product.probability;
+  const expected = productAmount(product, 1);
   return {
     resource: product.resource,
     amount: amountLabel(product.amount),

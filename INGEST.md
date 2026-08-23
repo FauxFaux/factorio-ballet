@@ -175,14 +175,40 @@ Modules are ingested; beacons are not. Measured against the Bob's/Angel's pack:
   otherwise will overstate throughput badly. This one is ingested, as `Recipe.allowProductivity`,
   emitted only when true: the game's default is off and the 17 live recipes setting it explicitly
   false mean the same thing as the 1978 leaving it unset. `allow_quality` (333) and
-  `allow_decomposition` (669) are also present, and are not. Neither is products'
-  `ignored_by_productivity`, which exempts part of a result from the bonus.
+  `allow_decomposition` (669) are also present, and are not.
+- **Results** carry `ignored_by_productivity`: how much of that result the bonus is _not_ paid on,
+  which is the catalyst rule and is now ingested as `Product.ignoredByProductivity` (emitted only
+  when non-zero; 208 live results carry it). Its sibling `ignored_by_stats` is a production-graph
+  display flag and is not ingested. `extra_count_fraction`, which would also move a rate, is on no
+  result here.
+- **Do not derive the catalyst share from "the resource is on both sides" — and do not trust the
+  field blindly either.** Both halves of that matter:
+  - Deriving it would miss most of them. 109 of the 208 name a resource the recipe does not take at
+    all, because a catalyst can go in as one thing and come back as another:
+    `angels-milling-drum-lubricated` in and `angels-milling-drum` out, `angels-catalyst-metal-red`
+    in and `angels-catalyst-metal-carrier` out, molten tin in and tin _ingots_ out of
+    `angels-plate-glass-3`. Nor is the share bounded by either amount: `angels-fish-keeping-3` takes
+    four rays, returns one and ignores three, so `productAmount` clamps the paid part at zero.
+  - Trusting it blindly is what 1.1 would have punished. In `../factorio-raw-types/raw-110/`,
+    `kovarex-enrichment-process` and `coal-liquefaction` state **no `catalyst_amount` at all**,
+    though the game pays no productivity on the 40 uranium-235 kovarex hands back: 1.1's engine
+    derived the catalyst from the ingredients, so the data stage said nothing and a calculator had
+    to work it out itself. 2.0 renamed the field and the recipes state it — this pack's kovarex says
+    40 — but that is a convention of the recipes, not a guarantee of the format.
+  - So it is checked, in `checkCatalysts` and again in `test/flow.test.ts` over the shipped file:
+    every product which is also an ingredient of a recipe allowing productivity must state a share
+    equal to `min(in, out)`. 29 pairs here, 0 failures. If a pack ever reports failures, the fix is
+    to derive the share in `toProd`, and that report is the evidence which justifies it. The other
+    78 pairs are on recipes which disallow productivity, so nothing pays a bonus and what the field
+    says cannot matter; eight of those state nothing at all (`angels-heavy-water-cooling` and
+    friends: 200 water in, 200 out), which is exactly the shape that would bite if such a recipe
+    ever allowed productivity.
 - The recipe gate and the machine gate never disagree in this pack: every machine which refuses the
   productivity effect only runs recipes which disallow productivity anyway. `test/modules.test.ts`
   says so, so a future pack breaking that is a failing test rather than a wrong number.
 
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
-arithmetic over this data is `moduleEffects` in `src/flow.ts`.
+arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts`.
 
 ## Progression ("how far through the game is this?")
 

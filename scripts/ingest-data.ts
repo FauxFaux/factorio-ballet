@@ -118,6 +118,7 @@ async function main() {
   }
 
   checkModules(modules, machines, resources);
+  checkCatalysts(recipes);
 
   const sciencePacks = applyComplexity(v, recipes, resources);
 
@@ -257,9 +258,13 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
       }),
   );
 
+  const catalysed = Object.values(recipes).flatMap((r) =>
+    r.products.filter((p) => p.ignoredByProductivity),
+  ).length;
   console.log(
     `Recipes: ${Object.keys(recipes).length} (dropped ${skipped} hidden/parameter),` +
-      ` ${productive} allowing productivity, ${voided} results which are never produced`,
+      ` ${productive} allowing productivity, ${voided} results which are never produced,` +
+      ` ${catalysed} results part catalyst`,
   );
   if (unnamed.length > 0) {
     console.log(`Unnamed recipes: ${unnamed.length}`, unnamed.slice(0, 20));
@@ -377,6 +382,62 @@ function checkModules(
   }
 }
 
+/**
+ * Whether `ignored_by_productivity` can be trusted to state the catalysts by itself.
+ *
+ * It cannot be taken on faith, because the 1.1 game did not work this way: in the `raw-110` sample,
+ * `coal-liquefaction` and `kovarex-enrichment-process` — the textbook catalyst recipes, where the
+ * game demonstrably pays no productivity on the 40 uranium-235 handed back — carry no
+ * `catalyst_amount` at all. 1.1's engine derived it from the ingredients, so a data-stage dump said
+ * nothing and a calculator had to work it out itself. 2.0 renamed the field and, as far as this
+ * pack shows, made it explicit: the same two recipes now state 25 and 40. That is a convention of
+ * the recipes, not a guarantee of the format, so it is checked rather than assumed.
+ *
+ * The check is the one case which would silently overstate throughput: a product which is also an
+ * ingredient, on a recipe which allows productivity, either not stating a catalyst share or
+ * stating one which is not `min(in, out)`. Anything reported here means `productAmount` is paying a
+ * bonus the game does not, and the fix is to derive the share in {@link toProd} — this is the
+ * evidence that would justify it. Pairs on recipes which disallow productivity are counted only:
+ * nothing pays a bonus there, so what the field says cannot matter.
+ */
+function checkCatalysts(recipes: Record<string, Recipe>) {
+  const suspect: string[] = [];
+  let checked = 0;
+  let moot = 0;
+
+  for (const [id, recipe] of Object.entries(recipes)) {
+    const ingredients = new Map(recipe.ingredients.map((i) => [i.resource, i.amount]));
+    for (const product of recipe.products) {
+      const taken = ingredients.get(product.resource);
+      if (taken === undefined) continue;
+      if (!recipe.allowProductivity) {
+        moot++;
+        continue;
+      }
+      checked++;
+      // the most a roll could hand back, so a `{min,max}` result is not flagged for a share which
+      // only some rolls could cover: four of the pairs here are fish, 2 in and 5–10 out
+      const made = 'fixed' in product.amount ? product.amount.fixed : product.amount.max;
+      const expected = Math.min(taken, made);
+      if (product.ignoredByProductivity !== expected) {
+        suspect.push(`${id}/${product.resource} (${product.ignoredByProductivity} ≠ ${expected})`);
+      }
+    }
+  }
+
+  console.log(
+    `Catalysts: ${checked} product-also-ingredient pairs where productivity applies,` +
+      ` ${suspect.length} not stating min(in, out); ${moot} more where productivity cannot apply`,
+  );
+  if (suspect.length > 0) {
+    console.log(
+      'A catalyst share the recipe does not state: productivity is being overpaid on these,' +
+        ' and `toProd` should be deriving it. See `checkCatalysts`.',
+      suspect.slice(0, 20),
+    );
+  }
+}
+
 function toIng(game: RIngredient): Ingredient {
   return {
     resource: `${game.type}:${game.name}`,
@@ -416,6 +477,8 @@ function toProd(game: RProduct): Product {
     // TODO: bad !
     amount: game.amount ? { fixed: game.amount } : { min: game.amount_min!, max: game.amount_max! },
     probability: game.probability ?? 1,
+    // the catalyst share, which zero is not: see `Product.ignoredByProductivity`
+    ignoredByProductivity: game.ignored_by_productivity || undefined,
   };
 }
 

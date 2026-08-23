@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { flowTitle, rateDigits, recipeFlows, speedOf } from '../src/flow.ts';
+import {
+  flowTitle,
+  netRates,
+  NO_EFFECTS,
+  productAmount,
+  rateDigits,
+  recipeFlows,
+  speedOf,
+} from '../src/flow.ts';
 import { machinesFor, staticData, type MachineMatch } from '../src/data.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];
@@ -82,6 +90,117 @@ describe('rateDigits', () => {
     ];
     expect(rateDigits(gears, [])).toBe(2);
     expect(rateDigits(gears, slow)).toBe(3);
+  });
+});
+
+/** One garden in, two out: the second is made, the first is handed straight back. */
+const garden = staticData.recipes['angels-temperate-garden'];
+
+describe('productAmount', () => {
+  const gear = gears.products[0];
+  const [gardens] = garden.products;
+
+  it('is what the recipe rolls, at no productivity', () => {
+    expect(productAmount(gear, 1)).toBe(1);
+    expect(productAmount(gardens, 1)).toBe(2);
+  });
+
+  it('pays the bonus on the whole of a product which borrowed nothing', () => {
+    expect(productAmount(gear, 1.36)).toBeCloseTo(1.36);
+  });
+
+  it('pays it only on the part which is not a catalyst', () => {
+    // two gardens out, one of them the one which went in: +100% is paid on the one it grew
+    expect(productAmount(gardens, 2)).toBe(3);
+    expect(productAmount(gardens, 1.5)).toBe(2.5);
+  });
+
+  it('pays nothing where the catalyst is the whole result and more', () => {
+    // four rays in, one back out, three of them ignored: there is nothing left to pay a bonus on
+    const [ray] = staticData.recipes['angels-fish-keeping-3'].products;
+    expect(ray.ignoredByProductivity).toBe(3);
+    expect(productAmount(ray, 2)).toBe(1);
+  });
+
+  it('rolls the chance on the bigger result rather than on a better chance', () => {
+    const [u235] = staticData.recipes['uranium-processing'].products;
+    expect(productAmount(u235, 1.36)).toBeCloseTo(u235.probability * 1.36);
+  });
+});
+
+/**
+ * The claim `productAmount` rests on: where productivity can be paid on a resource the recipe also
+ * takes, the data says how much of it is a catalyst, so nothing here has to work it out.
+ *
+ * Worth asserting rather than assuming, because the game has not always worked this way. In the 1.1
+ * dump `factorio-raw-types` ships, `kovarex-enrichment-process` states no `catalyst_amount` at all,
+ * though the game of course paid no productivity on the 40 uranium-235 it hands back: 1.1 derived
+ * the catalyst from the ingredients and the dump showed nothing. 2.0's recipes state it — ours
+ * gives kovarex its 40 — and this is where we find out if a pack does not.
+ */
+describe('the ingested catalyst shares', () => {
+  const pairs = Object.entries(staticData.recipes).flatMap(([id, recipe]) => {
+    if (!recipe.allowProductivity) return [];
+    const ingredients = new Map(recipe.ingredients.map((i) => [i.resource, i.amount]));
+    return recipe.products.flatMap((product) => {
+      const taken = ingredients.get(product.resource);
+      if (taken === undefined) return [];
+      const made = 'fixed' in product.amount ? product.amount.fixed : product.amount.max;
+      return [
+        { at: `${id}/${product.resource}`, share: product.ignoredByProductivity, taken, made },
+      ];
+    });
+  });
+
+  it('states one wherever a productivity bonus could be paid on a resource going in', () => {
+    // 29 of them here; a pack which stopped stating them would leave this list empty, not short
+    expect(pairs.length).toBeGreaterThan(20);
+    expect(
+      pairs
+        .filter(({ share, taken, made }) => share !== Math.min(taken, made))
+        .map(({ at, share }) => `${at}: ${share}`),
+    ).toEqual([]);
+  });
+
+  it('states them where no amount of arithmetic over the recipe could find them', () => {
+    // glass takes molten tin and hands back tin *ingots*: a catalyst which changes form on the way
+    // through, so "the resource is on both sides" sees nothing at all here
+    const glass = staticData.recipes['angels-plate-glass-3'];
+    const ingot = glass.products.find(({ resource }) => resource === 'item:angels-ingot-tin');
+    expect(glass.ingredients.map(({ resource }) => resource)).not.toContain(
+      'item:angels-ingot-tin',
+    );
+    expect(ingot?.ignoredByProductivity).toBe(2);
+    // and the bonus is paid on the glass beside it, which the recipe did make
+    expect(productAmount(ingot!, 1.5)).toBe(2);
+    expect(productAmount(glass.products[0], 1.5)).toBe(7.5);
+  });
+});
+
+describe('netRates', () => {
+  it('is per second at the speed given, ingredients negative', () => {
+    // 2 plates for a gear, half a second a craft, and a machine running at 1.25×
+    const rates = netRates(gears, 1.25, NO_EFFECTS);
+    expect(rates.get('item:iron-plate')).toBeCloseTo(-5);
+    expect(rates.get('item:iron-gear-wheel')).toBeCloseTo(2.5);
+  });
+
+  it('leaves ingredients alone when productivity goes up, and crafts fewer when speed goes down', () => {
+    // three productivity module 3s: 1.36× out, 0.55× the crafts
+    const rates = netRates(gears, 1.25, { speed: 0.55, productivity: 1.36 });
+    expect(rates.get('item:iron-plate')).toBeCloseTo(-5 * 0.55);
+    expect(rates.get('item:iron-gear-wheel')).toBeCloseTo(2.5 * 0.55 * 1.36);
+  });
+
+  it('nets a catalyst down to what the recipe actually made', () => {
+    // quoted per craft, so the numbers read as the recipe does: 2 out, 1 in, 1 grown
+    expect(netRates(garden, garden.duration, NO_EFFECTS).get('item:angels-temperate-garden')).toBe(
+      1,
+    );
+    // two bio-yield module 5s is +100%, and the game does not pay it on the garden handed back:
+    // 2 + 1 rather than 2 × 2, so the cell gains two gardens a craft and not three
+    const modded = netRates(garden, garden.duration, { speed: 1, productivity: 2 });
+    expect(modded.get('item:angels-temperate-garden')).toBe(2);
   });
 });
 

@@ -30,6 +30,14 @@ assumed or gave up on is written out under the rows. "Not always possible, and w
 later" is the design, not a gap in it: what the app owes the user there is a sentence saying which
 number to type, and that is what a `SolveNote` is.
 
-Not built: modules on a cell entry, catalysts (a productivity bonus is currently paid on the whole
-of a product), and any notion of a cell's rates being a _target_ — you scale the cell by pinning a
-machine count, not by asking for 9 steel a second.
+A row also carries what is in its machine's slots (`CellEntry.modules`), and the rates it is solved
+at are that loadout's: speed changes how many crafts a machine gets through, productivity changes
+what comes out of them without changing what goes in. The bonus is paid only on the part of a
+product the recipe actually made — `Product.ignoredByProductivity` is the catalyst it borrowed and
+handed back — so a garden which turns one garden into two grows one of them, whatever is in the
+slots.
+
+Not built: the module picker itself, so a loadout only reaches a cell through the URL; beacons; the
+catalyst which goes round a cycle of two recipes rather than one, which needs a solver that closes
+cycles; and any notion of a cell's rates being a _target_ — you scale the cell by pinning a machine
+count, not by asking for 9 steel a second.

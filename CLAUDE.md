@@ -120,17 +120,18 @@ new rule where its markup lives.
 
 `StaticData = { recipes, resources, machines, modules, sciencePacks }`. Resources are keyed by
 `ResourceId` — the colon scheme `item:<name>` | `fluid:<name>` shared with both prior projects.
-`Recipe.products` carry `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry
-optional fluid temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`,
-module slots, and the `item` which places them; which machine can run which recipe is the game's
-category system — `Recipe.categories` flattens the prototype's `category` + `additional_categories`,
-and `machinesFor` in `src/data.ts` indexes `Machine.categories` the other way, slowest first so a
-machine family reads as tiers. Beacons and machine power/pollution are still missing. Recipes and
-resources also carry a `complexity`: how far through the tech tree you must be to have the thing, 0
-at the crash site to 1 at the last technology, derived by `scripts/complexity.ts` (which the ingest
-imports). Search results sort by `relevanceOf`: distance from the header slider's game-progress
-setting, in either direction, which is plain simplest-first at 0%. Machines are ranked the same way,
-by `defaultMachine`, which is where an unpinned `CellEntry.machine` resolves — the game data gives a
+`Recipe.products` carry `probability`, `{fixed}|{min,max}` amounts and the catalyst share
+productivity is not paid on (`ignoredByProductivity`); `Recipe.ingredients` carry optional fluid
+temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
+the `item` which places them; which machine can run which recipe is the game's category system —
+`Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
+in `src/data.ts` indexes `Machine.categories` the other way, slowest first so a machine family reads
+as tiers. Beacons and machine power/pollution are still missing. Recipes and resources also carry a
+`complexity`: how far through the tech tree you must be to have the thing, 0 at the crash site to 1
+at the last technology, derived by `scripts/complexity.ts` (which the ingest imports). Search
+results sort by `relevanceOf`: distance from the header slider's game-progress setting, in either
+direction, which is plain simplest-first at 0%. Machines are ranked the same way, by
+`defaultMachine`, which is where an unpinned `CellEntry.machine` resolves — the game data gives a
 machine no `complexity`, so `MachineMatch.complexity` is that of the item which places it (the same
 walk, so not an approximation), and hand crafting is 0 because you start with the character.
 `sciencePacks` is that walk's own list of research ingredients, cheapest first — the packs are the
@@ -160,6 +161,23 @@ outright (absent means all — that absence is the only home Angel's bio-yield m
 speed modules work in an oil refinery, whose list has no `quality`), and productivity does nothing
 at all unless `Recipe.allowProductivity`, which only 335 of 2330 recipes set. See `INGEST.md`.
 
+What is in a machine is `CellEntry.modules`, a `ModuleFill` of how many of each: the order the user
+chose them in is the order they fill the slots, and `moduleEffects` drops whatever no longer fits
+rather than scaling it, because a loadout outlives the machine it was picked for. `withModule` edits
+one; `entryEffects` resolves one against the row's machine.
+
+**Catalysts** are the other half of productivity, and are ingested rather than derived: a result's
+`ignored_by_productivity` is the share the recipe borrowed rather than made — the 40 of the 41
+uranium-235 kovarex hands back, the milling drum a powderiser returns — and `productAmount` pays the
+bonus on `amount - ignoredByProductivity` only, clamped at zero because the game's number can exceed
+the whole result. 208 results here carry it, and half of them name a resource the recipe never takes
+as an ingredient (the drum goes in lubricated), which is why "the share which is both in and out"
+would be the worse of two readings — but it is a convention of 2.0's recipes and not a promise of
+the format (1.1's engine derived the catalyst and the dump stated nothing), so `checkCatalysts` in
+the ingest and a test over the shipped file both assert that every product-also-ingredient on a
+productivity recipe states `min(in, out)`. What is still not modelled is the catalyst which goes
+round a cycle of two recipes rather than one: that needs a solver which closes cycles.
+
 **Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
 `data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a
 drill. They are ordinary `Recipe`s with invented categories (`synthetic-pump:<fluid>`,
@@ -173,9 +191,10 @@ agree on ids. Rocket launches and burnt fuel are still complexity-only.
 
 A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
 to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
-`{ entries, name? }` and a `CellEntry` is `{ recipe, machine?, count? }` (modules later). The cells
-being planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes
-added from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.
+`{ entries, name? }` and a `CellEntry` is `{ recipe, machine?, count?, modules? }` (beacons later).
+The cells being planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on —
+recipes added from the search go there, and an out-of-range `ci` (which `[]` always is) means none
+is.
 
 `cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
 an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
@@ -217,11 +236,13 @@ absorb the same resource — it will not pick, because that would make the answe
 recipes were added in), `conflict` (one row pulled two ways: scaled to the larger, and the loser
 named), and `stranded` (nothing connects the row to the rest).
 
-Two things deliberately not modelled yet, both with the space left for them: **catalysts** — a
-productivity bonus is paid on the whole of a product in `netRates`, and the game does not pay it on
-the part which came back round as an ingredient — and **modules on a cell entry**, which is the
-`NO_EFFECTS` in `solveCell`'s `rowOf`. `UI.md` describes the wider planner design the solver
-eventually serves.
+A row is solved at the machine it is in and with what is in that machine's slots: `rowOf` reads
+`entryEffects` and hands `netRates` the two multipliers, so an unpinned row's modules move with the
+progress slider exactly as its machine does. Productivity changes what a row is worth without
+changing what it eats, which is a real answer and not a scaling: the same three assemblers of gears
+consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
+not. `UI.md` describes the wider planner design the solver eventually serves; the module picker
+itself is not built yet, so a loadout only reaches a cell through the URL for now.
 
 Tests in `test/` mirror the source layout (`test/scripts/`).
 

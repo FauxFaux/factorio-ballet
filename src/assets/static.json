@@ -2911,7 +2911,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-red", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-red",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -2924,7 +2929,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-orange", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-orange",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -2937,7 +2947,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-yellow", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-yellow",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -2950,7 +2965,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-green", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-green",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -2963,7 +2983,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-blue", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-blue",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -2976,7 +3001,12 @@
         { "resource": "item:bob-alien-artifact", "amount": 5 }
       ],
       "products": [
-        { "resource": "item:bob-alien-artifact-purple", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-alien-artifact-purple",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["crafting"],
@@ -12461,7 +12491,12 @@
       ],
       "products": [
         { "resource": "item:angels-ore8-powder", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -12489,7 +12524,12 @@
       ],
       "products": [
         { "resource": "item:angels-ore9-powder", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -15926,7 +15966,12 @@
         { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 30 }, "probability": 1 },
         { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 40 }, "probability": 1 },
         { "resource": "item:angels-slag", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-petrochem-electrolyser"],
@@ -15952,7 +15997,12 @@
       "products": [
         { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 40 }, "probability": 1 },
         { "resource": "fluid:angels-gas-hydrogen", "amount": { "fixed": 60 }, "probability": 1 },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-petrochem-electrolyser"],
@@ -16091,7 +16141,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -16446,7 +16497,12 @@
       "products": [
         { "resource": "fluid:angels-gas-oxygen", "amount": { "fixed": 40 }, "probability": 1 },
         { "resource": "fluid:angels-gas-deuterium", "amount": { "fixed": 60 }, "probability": 1 },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-petrochem-electrolyser"],
@@ -16769,7 +16825,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -16788,7 +16845,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -16808,7 +16866,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -16896,7 +16955,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -16915,7 +16975,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -16933,7 +16994,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -16955,7 +17017,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -16974,7 +17037,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -16993,7 +17057,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17017,7 +17082,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17039,7 +17105,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17057,7 +17124,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17076,7 +17144,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17113,7 +17182,8 @@
         {
           "resource": "fluid:angels-gas-hydrogen-fluoride",
           "amount": { "fixed": 20 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 20
         }
       ],
       "duration": 4,
@@ -17134,7 +17204,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -17222,7 +17293,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17258,7 +17330,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17341,7 +17414,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17382,7 +17456,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -17458,7 +17533,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -17892,7 +17968,12 @@
       "products": [
         { "resource": "fluid:angels-gas-chlorine", "amount": { "fixed": 200 }, "probability": 1 },
         { "resource": "item:angels-solid-sodium", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-petrochem-electrolyser"],
@@ -17906,7 +17987,12 @@
       ],
       "products": [
         { "resource": "item:angels-solid-sodium", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 },
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
         { "resource": "fluid:angels-water-purified", "amount": { "fixed": 50 }, "probability": 1 }
       ],
       "duration": 2,
@@ -17959,7 +18045,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -18029,7 +18116,12 @@
           "amount": { "fixed": 50 },
           "probability": 1
         },
-        { "resource": "item:angels-electrode-used", "amount": { "fixed": 1 }, "probability": 1 },
+        {
+          "resource": "item:angels-electrode-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
         {
           "resource": "fluid:angels-gas-carbon-dioxide",
           "amount": { "fixed": 50 },
@@ -18107,7 +18199,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -18139,7 +18232,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -18287,7 +18381,12 @@
         { "resource": "fluid:water", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-filter-lime-used", "amount": { "fixed": 1 }, "probability": 1 },
+        {
+          "resource": "item:angels-filter-lime-used",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
         {
           "resource": "fluid:angels-water-yellow-waste",
           "amount": { "fixed": 20 },
@@ -18303,7 +18402,12 @@
       "ingredients": [{ "resource": "item:angels-filter-lime-used", "amount": 1 }],
       "products": [
         { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "item:angels-filter-frame", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-filter-frame",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-liquifying"],
@@ -19230,9 +19334,24 @@
         { "resource": "item:bob-plutonium-239", "amount": 1 }
       ],
       "products": [
-        { "resource": "item:bob-plutonium-239", "amount": { "fixed": 6 }, "probability": 1 },
-        { "resource": "item:uranium-238", "amount": { "fixed": 15 }, "probability": 1 },
-        { "resource": "item:bob-lead-oxide", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:bob-plutonium-239",
+          "amount": { "fixed": 6 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:uranium-238",
+          "amount": { "fixed": 15 },
+          "probability": 1,
+          "ignoredByProductivity": 15
+        },
+        {
+          "resource": "item:bob-lead-oxide",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        }
       ],
       "duration": 210,
       "categories": ["angels-centrifuging-2"],
@@ -19257,9 +19376,24 @@
         { "resource": "item:uranium-238", "amount": 52 }
       ],
       "products": [
-        { "resource": "item:uranium-235", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "item:bob-plutonium-239", "amount": { "fixed": 13 }, "probability": 1 },
-        { "resource": "item:uranium-238", "amount": { "fixed": 43 }, "probability": 1 }
+        {
+          "resource": "item:uranium-235",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:bob-plutonium-239",
+          "amount": { "fixed": 13 },
+          "probability": 1,
+          "ignoredByProductivity": 13
+        },
+        {
+          "resource": "item:uranium-238",
+          "amount": { "fixed": 43 },
+          "probability": 1,
+          "ignoredByProductivity": 43
+        }
       ],
       "duration": 20,
       "categories": ["angels-centrifuging-3"],
@@ -19327,7 +19461,12 @@
         { "resource": "item:angels-americium-241", "amount": { "fixed": 1 }, "probability": 0.95 },
         { "resource": "item:angels-curium-245", "amount": { "fixed": 1 }, "probability": 0.05 },
         { "resource": "item:uranium-238", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-slag", "amount": { "fixed": 5 }, "probability": 1 }
+        {
+          "resource": "item:angels-slag",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        }
       ],
       "duration": 110,
       "categories": ["angels-centrifuging-2"],
@@ -19341,13 +19480,19 @@
       ],
       "products": [
         { "resource": "item:bob-plutonium-239", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "item:angels-slag", "amount": { "fixed": 4 }, "probability": 1 },
+        {
+          "resource": "item:angels-slag",
+          "amount": { "fixed": 4 },
+          "probability": 1,
+          "ignoredByProductivity": 4
+        },
         { "resource": "item:angels-curium-245", "amount": { "fixed": 3 }, "probability": 0.45 },
         { "resource": "item:uranium-235", "amount": { "fixed": 1 }, "probability": 0.2 },
         {
           "resource": "fluid:angels-water-greenyellow-waste",
           "amount": { "fixed": 60 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 60
         }
       ],
       "duration": 260,
@@ -19374,7 +19519,12 @@
       "human": "Thorium fuel cell reprocessing",
       "ingredients": [{ "resource": "item:angels-depleted-thorium-fuel-cell", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-slag", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-slag",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-neptunium-240", "amount": { "fixed": 1 }, "probability": 1 },
         { "resource": "item:bob-thorium-232", "amount": { "fixed": 2 }, "probability": 1 },
         { "resource": "item:angels-uranium-234", "amount": { "fixed": 1 }, "probability": 0.05 },
@@ -19391,18 +19541,25 @@
         { "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 60 }
       ],
       "products": [
-        { "resource": "item:angels-slag", "amount": { "fixed": 10 }, "probability": 1 },
+        {
+          "resource": "item:angels-slag",
+          "amount": { "fixed": 10 },
+          "probability": 1,
+          "ignoredByProductivity": 10
+        },
         { "resource": "item:angels-neptunium-240", "amount": { "fixed": 3 }, "probability": 1 },
         { "resource": "item:angels-uranium-234", "amount": { "fixed": 2 }, "probability": 0.05 },
         {
           "resource": "fluid:angels-water-greenyellow-waste",
           "amount": { "fixed": 60 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 60
         },
         {
           "resource": "item:angels-muon-fusion-catalyst",
           "amount": { "fixed": 1 },
-          "probability": 0.13333333333333333
+          "probability": 0.13333333333333333,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 800,
@@ -19435,12 +19592,14 @@
         {
           "resource": "item:angels-muon-fusion-catalyst",
           "amount": { "fixed": 4 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 4
         },
         {
           "resource": "item:angels-muon-fusion-catalyst",
           "amount": { "fixed": 1 },
-          "probability": 0.95
+          "probability": 0.95,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 800,
@@ -20621,8 +20780,18 @@
         { "resource": "item:angels-ingot-chrome", "amount": 6 }
       ],
       "products": [
-        { "resource": "item:angels-ingot-chrome", "amount": { "fixed": 24 }, "probability": 1 },
-        { "resource": "item:angels-solid-chrome-oxide", "amount": { "fixed": 6 }, "probability": 1 }
+        {
+          "resource": "item:angels-ingot-chrome",
+          "amount": { "fixed": 24 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        },
+        {
+          "resource": "item:angels-solid-chrome-oxide",
+          "amount": { "fixed": 6 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        }
       ],
       "duration": 4,
       "categories": ["angels-blast-smelting-4"],
@@ -21056,7 +21225,12 @@
       ],
       "products": [
         { "resource": "item:bob-glass", "amount": { "fixed": 4 }, "probability": 1 },
-        { "resource": "item:bob-lead-oxide", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:bob-lead-oxide",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        }
       ],
       "duration": 3,
       "categories": ["angels-casting-3"],
@@ -21072,7 +21246,12 @@
       ],
       "products": [
         { "resource": "item:bob-glass", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-ingot-tin", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-ingot-tin",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        }
       ],
       "duration": 2,
       "categories": ["angels-casting-4"],
@@ -21398,7 +21577,12 @@
         { "resource": "item:angels-solid-coke", "amount": 2 }
       ],
       "products": [
-        { "resource": "item:angels-ingot-iron", "amount": { "fixed": 6 }, "probability": 1 },
+        {
+          "resource": "item:angels-ingot-iron",
+          "amount": { "fixed": 6 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        },
         {
           "resource": "fluid:angels-gas-carbon-dioxide",
           "amount": { "fixed": 20 },
@@ -21920,7 +22104,12 @@
         { "resource": "item:angels-ingot-nickel", "amount": 6 }
       ],
       "products": [
-        { "resource": "item:angels-ingot-nickel", "amount": { "fixed": 24 }, "probability": 1 }
+        {
+          "resource": "item:angels-ingot-nickel",
+          "amount": { "fixed": 24 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        }
       ],
       "duration": 4,
       "categories": ["angels-blast-smelting-4"],
@@ -22292,7 +22481,12 @@
         { "resource": "item:angels-ingot-silicon", "amount": 6 }
       ],
       "products": [
-        { "resource": "item:angels-ingot-silicon", "amount": { "fixed": 24 }, "probability": 1 }
+        {
+          "resource": "item:angels-ingot-silicon",
+          "amount": { "fixed": 24 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        }
       ],
       "duration": 4,
       "categories": ["angels-chemical-smelting-2"],
@@ -22305,7 +22499,12 @@
         { "resource": "item:angels-ingot-silicon", "amount": 6 }
       ],
       "products": [
-        { "resource": "item:angels-ingot-silicon", "amount": { "fixed": 24 }, "probability": 1 }
+        {
+          "resource": "item:angels-ingot-silicon",
+          "amount": { "fixed": 24 },
+          "probability": 1,
+          "ignoredByProductivity": 6
+        }
       ],
       "duration": 4,
       "categories": ["angels-chemical-smelting-3"],
@@ -22371,7 +22570,12 @@
       ],
       "products": [
         { "resource": "item:angels-mono-silicon", "amount": { "fixed": 6 }, "probability": 1 },
-        { "resource": "item:angels-quartz-crucible", "amount": { "fixed": 1 }, "probability": 0.8 }
+        {
+          "resource": "item:angels-quartz-crucible",
+          "amount": { "fixed": 1 },
+          "probability": 0.8,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 4,
       "categories": ["angels-casting-3"],
@@ -24562,7 +24766,12 @@
       ],
       "products": [
         { "resource": "item:wood", "amount": { "min": 6, "max": 8 }, "probability": 1 },
-        { "resource": "item:angels-solid-saw", "amount": { "fixed": 1 }, "probability": 0.9 }
+        {
+          "resource": "item:angels-solid-saw",
+          "amount": { "fixed": 1 },
+          "probability": 0.9,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["advanced-crafting"],
@@ -24579,7 +24788,8 @@
         {
           "resource": "item:angels-solid-crystal-tipped-saw",
           "amount": { "fixed": 1 },
-          "probability": 0.95
+          "probability": 0.95,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -24597,7 +24807,8 @@
         {
           "resource": "item:angels-solid-crystal-full-saw",
           "amount": { "fixed": 1 },
-          "probability": 0.99
+          "probability": 0.99,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -24683,7 +24894,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-resin", "amount": { "fixed": 4 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -24700,7 +24916,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-resin", "amount": { "fixed": 7 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -24824,7 +25045,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-plastic", "amount": { "fixed": 4 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -24841,7 +25067,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-plastic", "amount": { "fixed": 7 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -24939,7 +25170,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-rubber", "amount": { "fixed": 4 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -24956,7 +25192,12 @@
       ],
       "products": [
         { "resource": "item:angels-bio-rubber", "amount": { "fixed": 7 }, "probability": 1 },
-        { "resource": "item:angels-solid-tree", "amount": { "fixed": 3 }, "probability": 1 }
+        {
+          "resource": "item:angels-solid-tree",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        }
       ],
       "duration": 30,
       "categories": ["angels-arboretum"],
@@ -25405,7 +25646,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 20 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -25465,7 +25711,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25488,7 +25735,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25511,7 +25759,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25544,7 +25793,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -25558,7 +25812,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -25572,7 +25831,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 5 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-1"],
@@ -25619,7 +25883,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25638,7 +25903,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25661,7 +25927,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25694,7 +25961,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 10 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-2"],
@@ -25708,7 +25980,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 10 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-2"],
@@ -25722,7 +25999,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 10 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-2"],
@@ -25765,7 +26047,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25784,7 +26067,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25807,7 +26091,8 @@
         {
           "resource": "item:angels-crystal-grindstone",
           "amount": { "fixed": 1 },
-          "probability": 0.6666666666666666
+          "probability": 0.6666666666666666,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 2,
@@ -25840,7 +26125,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 15 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-3"],
@@ -25854,7 +26144,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 15 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-3"],
@@ -25868,7 +26163,12 @@
       ],
       "products": [
         { "resource": "item:angels-crystal-powder", "amount": { "fixed": 15 }, "probability": 1 },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 2,
       "categories": ["angels-powderizing-3"],
@@ -26597,7 +26897,12 @@
         { "resource": "fluid:angels-water-mineralized", "amount": 50 }
       ],
       "products": [
-        { "resource": "item:angels-temperate-garden", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-temperate-garden",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 60,
       "categories": ["angels-temperate-farming"],
@@ -26688,7 +26993,12 @@
         { "resource": "fluid:angels-water-mineralized", "amount": 50 }
       ],
       "products": [
-        { "resource": "item:angels-desert-garden", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-desert-garden",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 60,
       "categories": ["angels-desert-farming"],
@@ -26743,7 +27053,12 @@
         { "resource": "fluid:angels-water-mineralized", "amount": 50 }
       ],
       "products": [
-        { "resource": "item:angels-swamp-garden", "amount": { "fixed": 2 }, "probability": 1 }
+        {
+          "resource": "item:angels-swamp-garden",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 60,
       "categories": ["angels-swamp-farming"],
@@ -26952,7 +27267,8 @@
         {
           "resource": "item:angels-temperate-3-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -26977,7 +27293,8 @@
         {
           "resource": "item:angels-temperate-4-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27002,7 +27319,8 @@
         {
           "resource": "item:angels-temperate-5-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27042,7 +27360,12 @@
       "human": "Okarinome seed",
       "ingredients": [{ "resource": "item:angels-temperate-3-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-temperate-3-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-temperate-3-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         {
           "resource": "item:angels-temperate-3-seed",
           "amount": { "fixed": 1 },
@@ -27057,7 +27380,12 @@
       "human": "Quillnoa seed",
       "ingredients": [{ "resource": "item:angels-temperate-4-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-temperate-4-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-temperate-4-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         {
           "resource": "item:angels-temperate-4-seed",
           "amount": { "fixed": 1 },
@@ -27072,7 +27400,12 @@
       "human": "Kendallion seed",
       "ingredients": [{ "resource": "item:angels-temperate-5-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-temperate-5-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-temperate-5-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         {
           "resource": "item:angels-temperate-5-seed",
           "amount": { "fixed": 1 },
@@ -27129,7 +27462,8 @@
         {
           "resource": "item:angels-desert-3-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27154,7 +27488,8 @@
         {
           "resource": "item:angels-desert-4-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27179,7 +27514,8 @@
         {
           "resource": "item:angels-desert-5-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27219,7 +27555,12 @@
       "human": "Nilaubergine seed",
       "ingredients": [{ "resource": "item:angels-desert-3-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-desert-3-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-desert-3-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-desert-3-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27230,7 +27571,12 @@
       "human": "Zelosquash seed",
       "ingredients": [{ "resource": "item:angels-desert-4-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-desert-4-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-desert-4-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-desert-4-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27241,7 +27587,12 @@
       "human": "Arumbiphila seed",
       "ingredients": [{ "resource": "item:angels-desert-5-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-desert-5-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-desert-5-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-desert-5-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27290,7 +27641,8 @@
         {
           "resource": "item:angels-swamp-3-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27311,7 +27663,8 @@
         {
           "resource": "item:angels-swamp-4-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27332,7 +27685,8 @@
         {
           "resource": "item:angels-swamp-5-seed-dormant",
           "amount": { "fixed": 5 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 5
         }
       ],
       "duration": 30,
@@ -27372,7 +27726,12 @@
       "human": "Saundsrcress seed",
       "ingredients": [{ "resource": "item:angels-swamp-3-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-swamp-3-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-swamp-3-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-swamp-3-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27383,7 +27742,12 @@
       "human": "Nexeflax seed",
       "ingredients": [{ "resource": "item:angels-swamp-4-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-swamp-4-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-swamp-4-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-swamp-4-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27394,7 +27758,12 @@
       "human": "Mushredtato seed",
       "ingredients": [{ "resource": "item:angels-swamp-5-seed-dormant", "amount": 5 }],
       "products": [
-        { "resource": "item:angels-swamp-5-seed", "amount": { "fixed": 5 }, "probability": 1 },
+        {
+          "resource": "item:angels-swamp-5-seed",
+          "amount": { "fixed": 5 },
+          "probability": 1,
+          "ignoredByProductivity": 5
+        },
         { "resource": "item:angels-swamp-5-seed", "amount": { "fixed": 1 }, "probability": 0.05 }
       ],
       "duration": 0.5,
@@ -27742,7 +28111,12 @@
           "amount": { "fixed": 40 },
           "probability": 1
         },
-        { "resource": "item:angels-filter-frame", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-filter-frame",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 4,
       "categories": ["angels-filtering"],
@@ -27769,7 +28143,8 @@
         {
           "resource": "item:angels-filter-ceramic-used",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -27886,7 +28261,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -27983,7 +28359,8 @@
         {
           "resource": "item:angels-catalyst-metal-carrier",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 4,
@@ -28047,8 +28424,18 @@
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:raw-fish", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "item:raw-fish", "amount": { "fixed": 1 }, "probability": 0.5 },
+        {
+          "resource": "item:raw-fish",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "item:raw-fish",
+          "amount": { "fixed": 1 },
+          "probability": 0.5,
+          "ignoredByProductivity": 1
+        },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
           "amount": { "fixed": 100 },
@@ -28067,11 +28454,17 @@
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-alien-fish-1-raw", "amount": { "fixed": 3 }, "probability": 1 },
+        {
+          "resource": "item:angels-alien-fish-1-raw",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
         {
           "resource": "item:angels-alien-fish-1-raw",
           "amount": { "fixed": 1 },
-          "probability": 0.85
+          "probability": 0.85,
+          "ignoredByProductivity": 1
         },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
@@ -28091,11 +28484,17 @@
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-alien-fish-2-raw", "amount": { "fixed": 3 }, "probability": 1 },
+        {
+          "resource": "item:angels-alien-fish-2-raw",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
         {
           "resource": "item:angels-alien-fish-2-raw",
           "amount": { "fixed": 1 },
-          "probability": 0.85
+          "probability": 0.85,
+          "ignoredByProductivity": 1
         },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
@@ -28115,7 +28514,12 @@
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-alien-fish-3-raw", "amount": { "fixed": 1 }, "probability": 1 },
+        {
+          "resource": "item:angels-alien-fish-3-raw",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
           "amount": { "fixed": 100 },
@@ -28134,7 +28538,12 @@
         { "resource": "fluid:angels-liquid-fish-atmosphere", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:raw-fish", "amount": { "min": 2, "max": 4 }, "probability": 1 },
+        {
+          "resource": "item:raw-fish",
+          "amount": { "min": 2, "max": 4 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
           "amount": { "fixed": 100 },
@@ -28158,7 +28567,8 @@
         {
           "resource": "item:angels-alien-fish-1-raw",
           "amount": { "min": 5, "max": 10 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 2
         },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
@@ -28183,7 +28593,8 @@
         {
           "resource": "item:angels-alien-fish-2-raw",
           "amount": { "min": 5, "max": 10 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 2
         },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
@@ -28208,7 +28619,8 @@
         {
           "resource": "item:angels-alien-fish-3-raw",
           "amount": { "min": 5, "max": 10 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 2
         },
         {
           "resource": "fluid:angels-liquid-polluted-fish-atmosphere",
@@ -28353,7 +28765,12 @@
           "amount": { "fixed": 100 },
           "probability": 1
         },
-        { "resource": "item:angels-filter-frame", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-filter-frame",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 8,
       "categories": ["angels-filtering"],
@@ -28380,7 +28797,8 @@
         {
           "resource": "item:angels-filter-ceramic-used",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         }
       ],
       "duration": 8,
@@ -28482,7 +28900,12 @@
           "amount": { "fixed": 2 },
           "probability": 1
         },
-        { "resource": "item:angels-milling-drum", "amount": { "fixed": 1 }, "probability": 1 }
+        {
+          "resource": "item:angels-milling-drum",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        }
       ],
       "duration": 1,
       "categories": ["angels-powderizing-2"],
@@ -28497,9 +28920,24 @@
         { "resource": "fluid:angels-gas-compressed-air", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 220 }, "probability": 1 }
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 220 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        }
       ],
       "duration": 15,
       "categories": ["angels-bio-refugium-puffer"],
@@ -28514,9 +28952,24 @@
         { "resource": "fluid:angels-gas-ammonia", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "fluid:angels-gas-raw-1", "amount": { "fixed": 200 }, "probability": 1 }
       ],
       "duration": 15,
@@ -28532,9 +28985,24 @@
         { "resource": "fluid:angels-gas-carbon-monoxide", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "fluid:angels-gas-urea", "amount": { "fixed": 200 }, "probability": 1 }
       ],
       "duration": 15,
@@ -28550,9 +29018,24 @@
         { "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "fluid:angels-gas-synthesis", "amount": { "fixed": 200 }, "probability": 1 }
       ],
       "duration": 15,
@@ -28568,9 +29051,24 @@
         { "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "fluid:angels-gas-hydrazine", "amount": { "fixed": 200 }, "probability": 1 }
       ],
       "duration": 15,
@@ -28587,15 +29085,36 @@
         { "resource": "fluid:angels-gas-acid", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-bio-puffer-2",
           "amount": { "fixed": 1 },
-          "probability": 0.9800000000000001
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 0.99 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 0.9800000000000001,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "fluid:angels-gas-puffer-atmosphere",
           "amount": { "fixed": 100 },
@@ -28616,15 +29135,36 @@
         { "resource": "fluid:angels-water-yellow-waste", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-bio-puffer-1",
           "amount": { "fixed": 1 },
-          "probability": 0.9800000000000001
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 0.99 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.9800000000000001,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "fluid:angels-gas-hydrogen-sulfide",
           "amount": { "fixed": 100 },
@@ -28645,15 +29185,36 @@
         { "resource": "fluid:angels-water-red-waste", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-bio-puffer-1",
           "amount": { "fixed": 1 },
-          "probability": 0.9800000000000001
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 0.99 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.9800000000000001,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "fluid:angels-gas-ammonia", "amount": { "fixed": 100 }, "probability": 1 }
       ],
       "duration": 15,
@@ -28670,15 +29231,36 @@
         { "resource": "fluid:angels-water-greenyellow-waste", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-bio-puffer-1",
           "amount": { "fixed": 1 },
-          "probability": 0.9800000000000001
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 1 }, "probability": 0.99 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.9800000000000001,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "fluid:angels-gas-hydrogen-fluoride",
           "amount": { "fixed": 100 },
@@ -28699,15 +29281,36 @@
         { "resource": "fluid:angels-water-green-waste", "amount": 100 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-bio-puffer-1",
           "amount": { "fixed": 1 },
-          "probability": 0.9800000000000001
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 1 }, "probability": 1 },
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 1 }, "probability": 0.99 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.9800000000000001,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 1 },
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "fluid:angels-gas-hydrogen-chloride",
           "amount": { "fixed": 100 },
@@ -28727,8 +29330,18 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "item:angels-bio-puffer-egg-1",
           "amount": { "fixed": 1 },
@@ -28769,8 +29382,18 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "item:angels-bio-puffer-egg-1",
           "amount": { "fixed": 1 },
@@ -28811,8 +29434,18 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "item:angels-bio-puffer-egg-1",
           "amount": { "fixed": 1 },
@@ -28853,8 +29486,18 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "item:angels-bio-puffer-egg-1",
           "amount": { "fixed": 1 },
@@ -28895,8 +29538,18 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 2 }, "probability": 1 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 2 },
+          "probability": 1,
+          "ignoredByProductivity": 2
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         {
           "resource": "item:angels-bio-puffer-egg-1",
           "amount": { "fixed": 1 },
@@ -28934,9 +29587,24 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 0.95 },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 0.9 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 0.95,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 0.9,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "item:angels-bio-puffer-egg-1", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
@@ -28954,9 +29622,24 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 0.9 },
-        { "resource": "item:angels-bio-puffer-2", "amount": { "fixed": 1 }, "probability": 0.85 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.9,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-2",
+          "amount": { "fixed": 1 },
+          "probability": 0.85,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "item:angels-bio-puffer-egg-2", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
@@ -28974,9 +29657,24 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 0.85 },
-        { "resource": "item:angels-bio-puffer-3", "amount": { "fixed": 1 }, "probability": 0.8 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.85,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-3",
+          "amount": { "fixed": 1 },
+          "probability": 0.8,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "item:angels-bio-puffer-egg-3", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
@@ -28994,9 +29692,24 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 0.8 },
-        { "resource": "item:angels-bio-puffer-4", "amount": { "fixed": 1 }, "probability": 0.75 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.8,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-4",
+          "amount": { "fixed": 1 },
+          "probability": 0.75,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "item:angels-bio-puffer-egg-4", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
@@ -29014,9 +29727,24 @@
         { "resource": "fluid:angels-gas-puffer-atmosphere", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-bio-puffer-1", "amount": { "fixed": 1 }, "probability": 0.75 },
-        { "resource": "item:angels-bio-puffer-5", "amount": { "fixed": 1 }, "probability": 0.7 },
-        { "resource": "fluid:angels-gas-acid", "amount": { "fixed": 20 }, "probability": 1 },
+        {
+          "resource": "item:angels-bio-puffer-1",
+          "amount": { "fixed": 1 },
+          "probability": 0.75,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-bio-puffer-5",
+          "amount": { "fixed": 1 },
+          "probability": 0.7,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "fluid:angels-gas-acid",
+          "amount": { "fixed": 20 },
+          "probability": 1,
+          "ignoredByProductivity": 20
+        },
         { "resource": "item:angels-bio-puffer-egg-5", "amount": { "fixed": 1 }, "probability": 1 }
       ],
       "duration": 60,
@@ -29254,11 +29982,17 @@
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-biter-queen-small", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-biter-queen-small",
           "amount": { "fixed": 1 },
-          "probability": 0.99
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-biter-queen-small",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
         },
         { "resource": "item:angels-biter-small-egg", "amount": { "fixed": 1 }, "probability": 1 },
         { "resource": "item:angels-biter-small-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
@@ -29279,12 +30013,14 @@
         {
           "resource": "item:angels-biter-queen-medium",
           "amount": { "fixed": 1 },
-          "probability": 1
+          "probability": 1,
+          "ignoredByProductivity": 1
         },
         {
           "resource": "item:angels-biter-queen-medium",
           "amount": { "fixed": 1 },
-          "probability": 0.99
+          "probability": 0.99,
+          "ignoredByProductivity": 1
         },
         { "resource": "item:angels-biter-medium-egg", "amount": { "fixed": 1 }, "probability": 1 },
         { "resource": "item:angels-biter-medium-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
@@ -29302,11 +30038,17 @@
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 60 }
       ],
       "products": [
-        { "resource": "item:angels-biter-queen-big", "amount": { "fixed": 1 }, "probability": 1 },
         {
           "resource": "item:angels-biter-queen-big",
           "amount": { "fixed": 1 },
-          "probability": 0.99
+          "probability": 1,
+          "ignoredByProductivity": 1
+        },
+        {
+          "resource": "item:angels-biter-queen-big",
+          "amount": { "fixed": 1 },
+          "probability": 0.99,
+          "ignoredByProductivity": 1
         },
         { "resource": "item:angels-biter-big-egg", "amount": { "fixed": 1 }, "probability": 1 },
         { "resource": "item:angels-biter-big-egg", "amount": { "fixed": 1 }, "probability": 0.5 }
@@ -29377,8 +30119,18 @@
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 20 }
       ],
       "products": [
-        { "resource": "item:angels-biter-small", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-biter-small", "amount": { "fixed": 1 }, "probability": 0.9 },
+        {
+          "resource": "item:angels-biter-small",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-biter-small",
+          "amount": { "fixed": 1 },
+          "probability": 0.9,
+          "ignoredByProductivity": 1
+        },
         {
           "resource": "item:angels-crystal-splinter-raw",
           "amount": { "fixed": 4 },
@@ -29397,8 +30149,18 @@
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 40 }
       ],
       "products": [
-        { "resource": "item:angels-biter-medium", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-biter-medium", "amount": { "fixed": 1 }, "probability": 0.85 },
+        {
+          "resource": "item:angels-biter-medium",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-biter-medium",
+          "amount": { "fixed": 1 },
+          "probability": 0.85,
+          "ignoredByProductivity": 1
+        },
         { "resource": "item:angels-crystal-shard-raw", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 30,
@@ -29413,8 +30175,18 @@
         { "resource": "fluid:angels-liquid-nutrient-pulp", "amount": 60 }
       ],
       "products": [
-        { "resource": "item:angels-biter-big", "amount": { "fixed": 3 }, "probability": 1 },
-        { "resource": "item:angels-biter-big", "amount": { "fixed": 1 }, "probability": 0.75 },
+        {
+          "resource": "item:angels-biter-big",
+          "amount": { "fixed": 3 },
+          "probability": 1,
+          "ignoredByProductivity": 3
+        },
+        {
+          "resource": "item:angels-biter-big",
+          "amount": { "fixed": 1 },
+          "probability": 0.75,
+          "ignoredByProductivity": 1
+        },
         { "resource": "item:angels-crystal-full-raw", "amount": { "fixed": 4 }, "probability": 1 }
       ],
       "duration": 30,

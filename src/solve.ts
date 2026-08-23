@@ -1,6 +1,6 @@
-import { entryMachine, entryRecipe, type Cell, type CellEntry } from './cell.ts';
+import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from './cell.ts';
 import { machinesFor, recipeName, resourceName } from './data.ts';
-import { netRates, NO_EFFECTS, speedOf } from './flow.ts';
+import { netRates, speedOf } from './flow.ts';
 import { fmt } from './ts.ts';
 import type { ResourceId } from './types.ts';
 
@@ -45,7 +45,7 @@ export type SolveNote =
 
 /** One row of a cell, reduced to the only thing the arithmetic cares about. */
 export interface SolveRow {
-  /** Net rates per second for a single machine; {@link netRates}. */
+  /** Net rates per second for a single machine, modules and all; {@link netRates}. */
   rates: Map<ResourceId, number>;
   /** Pinned by the user. A solver must never change one: it is the question, not the answer. */
   count?: number;
@@ -88,8 +88,9 @@ export const SOLVERS: Solver[] = [dumbSolver];
 export const defaultSolver = dumbSolver;
 
 /**
- * The cell's rows, at the machines they are running in, handed to a solver. The machine is
- * `entryMachine`'s, so an unpinned one moves with the progress slider and so does the answer.
+ * The cell's rows, at the machines they are running in and with whatever is in their slots, handed
+ * to a solver. The machine is `entryMachine`'s, so an unpinned one moves with the progress slider —
+ * and so, therefore, do the modules' effects and the whole answer.
  */
 export function solveCell(cell: Cell, progress: number, solver: Solver = defaultSolver): Solution {
   return solver.solve(cell.entries.map((entry) => rowOf(entry, progress)));
@@ -99,10 +100,12 @@ function rowOf(entry: CellEntry, progress: number): SolveRow {
   const recipe = entryRecipe(entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
-  const machines = machinesFor(recipe);
-  const speed = speedOf(machines, entryMachine(entry, recipe, progress));
-  /* Modules go in a `CellEntry` next; `moduleEffects(machine, fill, recipe)` replaces this. */
-  return { rates: netRates(recipe, speed, NO_EFFECTS), count: entry.count };
+  const machine = entryMachine(entry, recipe, progress);
+  const speed = speedOf(machinesFor(recipe), machine);
+  return {
+    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine)),
+    count: entry.count,
+  };
 }
 
 /** The first thing the solver had to say about a row, if it had anything. */

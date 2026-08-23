@@ -147,6 +147,39 @@ describe('solveCell', () => {
     expect(answer.complete).toBe(true);
   });
 
+  /** The gear row, in a machine which has slots, so the loadout has somewhere to go. */
+  const gearRow = (modules?: Record<string, number>) => ({
+    recipe: 'iron-gear-wheel',
+    machine: 'assembling-machine-3',
+    modules,
+  });
+
+  it('runs a row at the rates its modules give it', () => {
+    // three productivity module 3s: 1.36 gears where there was one, at 0.55× the crafts
+    const bare = solveCell({ entries: [{ ...gearRow(), count: 1 }] }, 0).balance;
+    const modded = solveCell(
+      { entries: [{ ...gearRow({ 'productivity-module-3': 3 }), count: 1 }] },
+      0,
+    ).balance;
+    expect(modded.get('item:iron-plate')).toBeCloseTo(bare.get('item:iron-plate')! * 0.55, 9);
+    expect(modded.get('item:iron-gear-wheel')).toBeCloseTo(
+      bare.get('item:iron-gear-wheel')! * 0.55 * 1.36,
+      9,
+    );
+    // which is the point of them: more gears out of the same two plates
+    expect(modded.get('item:iron-gear-wheel')! / -modded.get('item:iron-plate')!).toBeCloseTo(
+      1.36 / 2,
+      9,
+    );
+  });
+
+  it('counts the machines the modules make necessary', () => {
+    const against = (modules?: Record<string, number>) =>
+      solveCell({ entries: [{ recipe: 'iron-plate', count: 3 }, gearRow(modules)] }, 0).counts[1]!;
+    // the same plates to eat, and each assembler now eats them at 0.55×: more assemblers
+    expect(against({ 'productivity-module-3': 3 })).toBeCloseTo(against() / 0.55, 9);
+  });
+
   it('strands a recipe the data no longer has', () => {
     const cell: Cell = {
       entries: [{ recipe: 'iron-plate', count: 1 }, { recipe: 'no-such-recipe' }],
