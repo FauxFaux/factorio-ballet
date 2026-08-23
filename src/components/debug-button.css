@@ -1,0 +1,45 @@
+/* Taken out of the flow, as the module picker's is: opening it must not move the page under it. */
+.debug-button {
+  position: relative;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.debug-button > button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 18px;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.debug-button > button:hover {
+  background: var(--accent-bg);
+}
+
+.debug-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.debug-menu textarea {
+  display: block;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  resize: both;
+}
