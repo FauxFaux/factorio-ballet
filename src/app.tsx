@@ -4,6 +4,7 @@ import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.t
 import { field, type State } from './ts.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell.tsx';
+import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
 import { ResourceList } from './components/resource-list.tsx';
@@ -38,6 +39,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
       <header class="app-head">
         <h1>faucalc</h1>
         <ProgressSlider progress={gp} />
+        <ModuleBar modules={field(uss, 'mo')} progress={progress} />
       </header>
       <CellList
         cells={field(uss, 'cl')}

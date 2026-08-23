@@ -202,10 +202,106 @@ export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
     if (!faster && !moreOut) continue;
     out.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
   }
-  return out.sort(
-    (a, b) =>
-      complexityOf(a) - complexityOf(b) ||
-      a.module.tier - b.module.tier ||
-      a.id.localeCompare(b.id),
+  return out.sort(cheapestModule);
+}
+
+/**
+ * A module category as the app offers it: the game's `module-category` id, and a name for it. The
+ * ids are the game's; the names are ours, because a `module-category` prototype carries no
+ * `localised_name` to ingest and `angels-bio-yield` is not what anyone calls the modules that go in
+ * a farm.
+ */
+export interface ModuleCategory {
+  id: string;
+  human: string;
+  /** The effect the category is *for*, and so the one a picker quotes; see {@link headlineEffect}. */
+  effect: 'speed' | 'productivity';
+}
+
+/**
+ * The three families this pack has, in the order a picker should show them. Productivity modules
+ * also change speed and bio-yield modules do not, but what you pick either of them *for* is the
+ * yield, which is why the effect is stated here rather than guessed from the module.
+ */
+const KNOWN_CATEGORIES: ModuleCategory[] = [
+  { id: 'speed', human: 'speed', effect: 'speed' },
+  { id: 'productivity', human: 'productivity', effect: 'productivity' },
+  { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
+];
+
+/** Cheapest first, then up the tiers, then by id: the order every list of modules comes out in. */
+const cheapestModule = (a: ModuleMatch, b: ModuleMatch): number =>
+  complexityOf(a) - complexityOf(b) || a.module.tier - b.module.tier || a.id.localeCompare(b.id);
+
+/** Every module there is, grouped by category and cheapest first, built once. */
+const byModuleCategory = ((): Map<string, ModuleMatch[]> => {
+  const index = new Map<string, ModuleMatch[]>();
+  for (const [id, module] of Object.entries(staticData.modules)) {
+    let list = index.get(module.category);
+    if (!list) index.set(module.category, (list = []));
+    list.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
+  }
+  for (const list of index.values()) list.sort(cheapestModule);
+  return index;
+})();
+
+/**
+ * The categories there are actually modules for: the known three first and in their order, then
+ * anything else the dataset has, under its bare id. A regenerated dump with a fourth family in it
+ * should grow a picker rather than quietly lose the modules — and it names its own effect, so an
+ * unknown category is quoted by whichever of the two its modules add to.
+ */
+export const moduleCategories: ModuleCategory[] = [
+  ...KNOWN_CATEGORIES.filter(({ id }) => byModuleCategory.has(id)),
+  ...[...byModuleCategory]
+    .filter(([id]) => !KNOWN_CATEGORIES.some((known) => known.id === id))
+    .map(([id, modules]) => ({
+      id,
+      human: id,
+      effect: modules.some(({ module }) => (module.productivity ?? 0) > 0)
+        ? ('productivity' as const)
+        : ('speed' as const),
+    })),
+];
+
+/** The modules in one category, cheapest first — all of them, whatever machine or recipe. */
+export function modulesIn(category: string): ModuleMatch[] {
+  return byModuleCategory.get(category) ?? [];
+}
+
+/** What a module does, by the effect its category is picked for: the number a picker shows. */
+export function headlineEffect(category: ModuleCategory, module: Module): number {
+  return module[category.effect] ?? 0;
+}
+
+/**
+ * Which module in a category to assume when nobody has chosen one, by the same rule as
+ * {@link defaultMachine}: the one nearest `progress`, since a tier-1 speed module is as wrong at
+ * space science as a tier 5 is on red. Note this names a module at 0% too — the crash site has no
+ * modules at all, but "none" is not one of the choices here, it is leaving the slots empty.
+ *
+ * Ties go to the higher tier, then to the id, so the answer is stable.
+ */
+export function defaultModule(modules: ModuleMatch[], progress: number): ModuleMatch | undefined {
+  let best: ModuleMatch | undefined;
+  for (const match of modules) {
+    if (!best || compareModules(match, best, progress) < 0) best = match;
+  }
+  return best;
+}
+
+/** Nearest `progress` first, then the higher tier, then by id; {@link compareMachines} for modules. */
+function compareModules(a: ModuleMatch, b: ModuleMatch, progress: number): number {
+  return (
+    relevanceOf(a, progress) - relevanceOf(b, progress) ||
+    b.module.tier - a.module.tier ||
+    a.id.localeCompare(b.id)
   );
 }
+
+/**
+ * Which module the user wants reached for in each category, keyed by {@link ModuleCategory}`.id`.
+ * A category nobody has decided is absent rather than held at a default, so it follows the progress
+ * slider through {@link defaultModule} exactly as an unpinned machine follows it.
+ */
+export type ModuleChoice = Record<string, ModuleId>;

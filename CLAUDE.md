@@ -103,7 +103,7 @@ current:
 `main.tsx` → `UrlHandler` → `CrashHandler` → `App`. All UI state lives in `UrlState` and is packed
 into the URL hash (`url-handler.tsx`): JSON with sorted keys → deflate (with a dictionary derived
 from the default state, duplicated in-file "for stability reasons") → base64url, prefixed with a
-version letter (`HASH_VERSION = 'j'`). The dictionary is derived from the default state, so **adding
+version letter (`HASH_VERSION = 'k'`). The dictionary is derived from the default state, so **adding
 a field to `UrlState` invalidates every existing hash** — bump the version letter whenever the state
 shape changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
@@ -165,6 +165,15 @@ What is in a machine is `CellEntry.modules`, a `ModuleFill` of how many of each:
 chose them in is the order they fill the slots, and `moduleEffects` drops whatever no longer fits
 rather than scaling it, because a loadout outlives the machine it was picked for. `withModule` edits
 one; `entryEffects` resolves one against the row's machine.
+
+Which _tier_ is meant by "a speed module" is a fact about the save rather than about any one
+machine, so it is one setting in the header rather than a repeated choice: `moduleCategories` is the
+families the dataset has — `speed`, `productivity` and `angels-bio-yield`, which the UI calls
+"agricultural" because a `module-category` prototype has no name to ingest — and `ModuleBar`
+(`components/module.tsx`) is a `ModulePicker` for each, sitting right of the progress slider it
+defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category, and a category
+nobody has picked is _absent_ rather than held at a default, so `defaultModule` follows the slider
+for it exactly as `defaultMachine` does for a machine. Nothing reads `mo` yet: the cell rows will.
 
 **Catalysts** are the other half of productivity, and are ingested rather than derived: a result's
 `ignored_by_productivity` is the share the recipe borrowed rather than made — the 40 of the 41
@@ -241,8 +250,9 @@ A row is solved at the machine it is in and with what is in that machine's slots
 progress slider exactly as its machine does. Productivity changes what a row is worth without
 changing what it eats, which is a real answer and not a scaling: the same three assemblers of gears
 consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
-not. `UI.md` describes the wider planner design the solver eventually serves; the module picker
-itself is not built yet, so a loadout only reaches a cell through the URL for now.
+not. `UI.md` describes the wider planner design the solver eventually serves; the header's
+`ModuleBar` only states a preference, so a cell's own loadout still only reaches it through the URL
+for now.
 
 Tests in `test/` mirror the source layout (`test/scripts/`).
 

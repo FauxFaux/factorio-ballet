@@ -3,6 +3,7 @@ import { debounce } from './ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from './app.tsx';
 import type { Cell } from './cell.ts';
+import type { ModuleChoice } from './data.ts';
 import { CrashHandler } from './crash-handler.tsx';
 
 export interface UrlState {
@@ -20,11 +21,17 @@ export interface UrlState {
    * `@in`/`@out` queries mean its edges. Out of range — which `[]` always is — means none is.
    */
   ci: number;
+  /**
+   * which module tier is meant by "a speed module", per module category; see `ModuleChoice`. A
+   * category nobody has picked is absent, and follows `gp` instead. Nothing consumes this yet — the
+   * cell rows will.
+   */
+  mo: ModuleChoice;
 }
 
-const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0 };
+const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 
-const HASH_VERSION = 'j';
+const HASH_VERSION = 'k';
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);

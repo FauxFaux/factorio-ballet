@@ -1,0 +1,112 @@
+/* The families of modules, across the header: one picker each, reading as one control. */
+.module-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.module {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.module:hover {
+  background: var(--accent-bg);
+}
+
+/* the module the user chose, rather than the one the progress slider is standing in with */
+.module.is-active {
+  border-color: var(--accent);
+}
+
+.module-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* Room for the widest there is — `−15%`, four characters — so a picker does not change width as
+   the tier changes and shove its neighbours along the header. */
+.module-effect {
+  font-family: var(--mono);
+  font-size: 13px;
+  min-width: 4ch;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.module-caret {
+  font-size: 11px;
+  line-height: 1;
+  padding-left: 2px;
+}
+
+/* Taken out of the flow, as the machine picker's is: opening it must not move the page under it. */
+.module-picker {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.module-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 0;
+  display: grid;
+  /* one row per tier, three columns: icon, effect, name — the effect column is fixed so the
+     numbers line up down the list rather than following the icons */
+  grid-template-columns: auto 3.5rem 1fr;
+  gap: 2px 10px;
+  max-height: 60vh;
+  min-width: max-content;
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.module-option {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  /* the column gaps come from the parent grid, which subgrid inherits along with its tracks */
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px 4px 4px;
+  cursor: pointer;
+}
+
+.module-option:hover {
+  background: var(--accent-bg);
+}
+
+.module-option.is-chosen {
+  color: var(--accent);
+}
+
+.module-option-effect {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.module-option-name {
+  white-space: nowrap;
+}

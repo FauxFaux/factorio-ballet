@@ -1,6 +1,6 @@
 import './machine.css';
 import { machineName, type MachineMatch } from '../data.ts';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useMenu } from './menu.ts';
 import { fmt } from '../ts.ts';
 import type { Machine, MachineId } from '../types.ts';
 import { machineIconStyle } from './icon.tsx';
@@ -73,20 +73,7 @@ export function MachinePicker({
   pinned: boolean;
   onChoose: (id: MachineId | undefined) => void;
 }) {
-  const [open, setOpen] = useState(false);
-  const box = useRef<HTMLDivElement>(null);
-
-  /* Clicking anywhere else closes the menu, including on another cell's picker — the listener is
-   * mounted only while this one is open, so the click which opens a second menu closes the first
-   * without either of them knowing about the other. */
-  useEffect(() => {
-    if (!open) return;
-    const outside = (event: PointerEvent) => {
-      if (!box.current?.contains(event.target as Node)) setOpen(false);
-    };
-    document.addEventListener('pointerdown', outside);
-    return () => document.removeEventListener('pointerdown', outside);
-  }, [open]);
+  const { open, setOpen, box } = useMenu();
 
   if (machines.length === 0) return null;
 
@@ -101,13 +88,7 @@ export function MachinePicker({
   };
 
   return (
-    <div
-      class="machine-picker"
-      ref={box}
-      onKeyDown={(event) => {
-        if (event.key === 'Escape') setOpen(false);
-      }}
-    >
+    <div class="machine-picker" ref={box}>
       <button
         type="button"
         class={pinned ? 'machine is-active' : 'machine'}

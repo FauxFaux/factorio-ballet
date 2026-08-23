@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { allowsEffect, modulesFor, staticData } from '../src/data.ts';
+import {
+  allowsEffect,
+  defaultModule,
+  moduleCategories,
+  modulesFor,
+  modulesIn,
+  staticData,
+} from '../src/data.ts';
 import { fillSlots, moduleEffects } from '../src/flow.ts';
 
 /** Allows productivity; runs in an assembler. */
@@ -150,5 +157,36 @@ describe('moduleEffects', () => {
       staticData.recipes['synthetic:mining-coal'],
     );
     expect(effects.speed).toBe(0.2);
+  });
+});
+
+describe('the module families', () => {
+  it('is the three the pack has, in the order the header shows them', () => {
+    expect(moduleCategories).toEqual([
+      { id: 'speed', human: 'speed', effect: 'speed' },
+      { id: 'productivity', human: 'productivity', effect: 'productivity' },
+      { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
+    ]);
+  });
+
+  it('lists a family cheapest first, whatever machine or recipe', () => {
+    // every tier, unlike `modulesFor`: which of them a machine would take is a later question
+    expect(modulesIn('speed').map(({ id }) => id)).toEqual([
+      'speed-module',
+      'speed-module-2',
+      'speed-module-3',
+      'bob-speed-module-4',
+      'bob-speed-module-5',
+    ]);
+    expect(modulesIn('no-such-category')).toEqual([]);
+  });
+
+  it('defaults to the tier nearest the progress slider', () => {
+    const at = (progress: number) => defaultModule(modulesIn('productivity'), progress)?.id;
+    // tier 1 is 0.36 and the crash site has no modules at all, but "none" is not one of the
+    // choices here — leaving the slots empty is
+    expect(at(0)).toBe('productivity-module');
+    expect(at(0.5)).toBe('productivity-module-2');
+    expect(at(1)).toBe('bob-productivity-module-5');
   });
 });
