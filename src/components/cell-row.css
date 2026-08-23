@@ -48,3 +48,51 @@
   opacity: 1;
   font-style: italic;
 }
+
+/* The speed-module request: an icon of what is being asked for, the count, and the beacons it
+   came to. One control, so it is boxed like one and the input inside it carries no border. */
+.cell-speed {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  cursor: help;
+}
+
+/* the same 32px box the module pickers use, so a row's icons line up with the header's */
+.cell-speed-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.cell-speed-count {
+  width: 3rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 15px;
+  text-align: right;
+  color: var(--text-h);
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* what filling the machine's slots comes to, in the placeholder: the same "not your number, but
+   what would happen" the count box draws that way */
+.cell-speed-count.is-derived::placeholder {
+  color: var(--text);
+  opacity: 1;
+  font-style: italic;
+}
+
+.cell-beacons {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+}

@@ -1,4 +1,5 @@
 import type {
+  Beacon,
   Effect,
   Machine,
   MachineId,
@@ -287,6 +288,37 @@ export function headlineEffect(category: ModuleCategory, module: Module): number
  */
 export function defaultModule(modules: ModuleMatch[], progress: number): ModuleMatch | undefined {
   return modules.findLast((match) => complexityOf(match) <= progress);
+}
+
+/**
+ * The beacon a cell row builds when its speed modules overflow the machine: the vanilla two-slot
+ * one, because it is the one every pack has and the one a factory is actually tiled with.
+ *
+ * Not a choice yet, and deliberately not one that follows the progress slider: a bigger beacon is
+ * fewer beacons for the same modules and so a *better* transmission strength, which would make the
+ * answer jump about as the slider moved past `bob-beacon-2`. When the row grows a beacon picker
+ * this is where its default belongs; until then it is the conservative reading — the most beacons
+ * a request needs, and so the worst discount.
+ */
+export const rowBeacon: Beacon | undefined =
+  staticData.beacons['beacon'] ?? Object.values(staticData.beacons ?? {})[0];
+
+/** The module family a cell row's speed count spends; see `CellEntry.speedModules`. */
+export const SPEED_CATEGORY = 'speed';
+
+/**
+ * Which module a family means right now: the one the header pinned, or — where it pinned nothing —
+ * whatever {@link defaultModule} makes of where the player is. `undefined` either way for none,
+ * which is both what `null` means and what the early game defaults to.
+ */
+export function chosenModule(
+  choice: ModuleChoice,
+  category: string,
+  progress: number,
+): ModuleId | undefined {
+  const picked = choice[category];
+  if (picked !== undefined) return picked ?? undefined;
+  return defaultModule(modulesIn(category), progress)?.id;
 }
 
 /**

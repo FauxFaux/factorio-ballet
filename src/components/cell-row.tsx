@@ -1,11 +1,19 @@
 import './cell-row.css';
 import { useState } from 'preact/hooks';
-import { entryMachine, entryRecipe, parseCount, type CellEntry } from '../cell.ts';
-import { machinesFor } from '../data.ts';
+import {
+  entryMachine,
+  entryRecipe,
+  entryRun,
+  parseCount,
+  parseModules,
+  type CellEntry,
+} from '../cell.ts';
+import { machinesFor, rowBeacon } from '../data.ts';
+import type { Boost, Effects } from '../flow.ts';
 import { isProblem, noteText, type SolveNote } from '../solve.ts';
 import { fmt } from '../ts.ts';
-import type { Recipe } from '../types.ts';
-import { recipeIconStyle } from './icon.tsx';
+import type { MachineId, ModuleId, Recipe } from '../types.ts';
+import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachinePicker } from './machine.tsx';
 
 /**
@@ -18,6 +26,7 @@ export function CellRow({
   count,
   note,
   progress,
+  speedModule,
   onChange,
   onRemove,
 }: {
@@ -26,6 +35,8 @@ export function CellRow({
   count: number | undefined;
   note: SolveNote | undefined;
   progress: number;
+  /** Which module the header means by "a speed module"; see `CellEntry.speedModules`. */
+  speedModule?: ModuleId;
   onChange: (entry: CellEntry) => void;
   onRemove: () => void;
 }) {
@@ -43,7 +54,16 @@ export function CellRow({
         {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
       </span>
       {recipe ? (
-        <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
+        <>
+          <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
+          <SpeedBox
+            entry={entry}
+            recipe={recipe}
+            machine={entryMachine(entry, recipe, progress)}
+            speedModule={speedModule}
+            onChange={onChange}
+          />
+        </>
       ) : null}
       {note && isProblem(note) ? (
         <span class="cell-warn" title={noteText(note)} role="img" aria-label="Not worked out">
@@ -86,6 +106,90 @@ function CellMachines({
       pinned={entry.machine !== undefined}
       onChoose={(machine) => onChange({ ...entry, machine })}
     />
+  );
+}
+
+/**
+ * How many speed modules this row is to feel — the machine's own slots first, and beacons for
+ * whatever is left over, which is why one number can ask for more than the machine holds. Blank is
+ * auto: fill the slots, build no beacons, and the placeholder says how many that is.
+ *
+ * Which module those are is the header's business and not the row's, so this box is a count and
+ * never a picker; with no speed module chosen — the whole early game — the count buys nothing, and
+ * the tooltip says so rather than the box disappearing under the user.
+ */
+function SpeedBox({
+  entry,
+  recipe,
+  machine,
+  speedModule,
+  onChange,
+}: {
+  entry: CellEntry;
+  recipe: Recipe;
+  machine: MachineId | undefined;
+  speedModule?: ModuleId;
+  onChange: (entry: CellEntry) => void;
+}) {
+  /* As `CountBox`'s: the box holds what is being typed, so a half-typed number is not rounded out
+     from under the caret. */
+  const [draft, setDraft] = useState<string | undefined>(undefined);
+  const { effects, boost } = entryRun(entry, recipe, machine, speedModule);
+  const auto = entry.speedModules === undefined;
+
+  return (
+    <span class="cell-speed" title={speedTitle(boost, effects)}>
+      <span
+        class="cell-speed-icon"
+        style={boost.module ? resourceIconStyle(`item:${boost.module}`) : undefined}
+        aria-hidden="true"
+      />
+      <input
+        class={auto ? 'cell-speed-count is-derived' : 'cell-speed-count'}
+        type="number"
+        min={0}
+        step={1}
+        value={draft ?? entry.speedModules ?? ''}
+        /* What "auto" comes to, in the placeholder for the same reason the solver's count is:
+           it is what would happen, not what was asked for. */
+        placeholder={auto ? fmt(boost.wanted) : ''}
+        aria-label="Speed modules"
+        onInput={(e) => {
+          const raw = (e.target as HTMLInputElement).value;
+          setDraft(raw);
+          onChange({ ...entry, speedModules: parseModules(raw) });
+        }}
+        onBlur={() => setDraft(undefined)}
+      />
+      {boost.beacons > 0 ? (
+        <span class="cell-beacons">
+          <span
+            class="cell-speed-icon"
+            style={rowBeacon?.item ? resourceIconStyle(`item:${rowBeacon.item}`) : undefined}
+            aria-hidden="true"
+          />
+          ×{boost.beacons}
+        </span>
+      ) : null}
+    </span>
+  );
+}
+
+/** The whole of what the speed box did, as a sentence: where the modules went and what came of it. */
+function speedTitle(boost: Boost, effects: Effects): string {
+  if (!boost.module) {
+    return 'Speed modules for this row. None is chosen in the header, so nothing here is modded yet.';
+  }
+  const beacons =
+    boost.beacons === 0
+      ? 'no beacons'
+      : `${fmt(boost.inBeacons)} over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
+        ` at ${fmt(boost.transmission * 100)}% each`;
+  const lost = boost.wanted - boost.inMachine - boost.inBeacons;
+  const nowhere = lost > 0 ? `, ${fmt(lost)} with nowhere to go` : '';
+  return (
+    `${fmt(boost.wanted)} speed modules: ${fmt(boost.inMachine)} in the machine, ${beacons}${nowhere}` +
+    ` — ×${fmt(effects.speed)} speed. Blank fills the machine and builds no beacons.`
   );
 }
 

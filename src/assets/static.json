@@ -45087,6 +45087,29 @@
     "angels-bio-yield-module-4": { "category": "angels-bio-yield", "tier": 4, "productivity": 0.4 },
     "angels-bio-yield-module-5": { "category": "angels-bio-yield", "tier": 5, "productivity": 0.5 }
   },
+  "beacons": {
+    "beacon": {
+      "human": "Beacon",
+      "item": "beacon",
+      "moduleSlots": 2,
+      "distributionEffectivity": 1.5,
+      "allowedEffects": ["consumption", "speed", "pollution"]
+    },
+    "bob-beacon-2": {
+      "human": "Beacon 2",
+      "item": "bob-beacon-2",
+      "moduleSlots": 4,
+      "distributionEffectivity": 1.5,
+      "allowedEffects": ["consumption", "speed", "pollution"]
+    },
+    "bob-beacon-3": {
+      "human": "Beacon 3",
+      "item": "bob-beacon-3",
+      "moduleSlots": 6,
+      "distributionEffectivity": 1.5,
+      "allowedEffects": ["consumption", "speed", "pollution"]
+    }
+  },
   "sciencePacks": [
     "item:automation-science-pack",
     "item:logistic-science-pack",

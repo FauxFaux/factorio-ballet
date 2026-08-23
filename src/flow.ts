@@ -2,6 +2,7 @@ import type { MachineMatch } from './data.ts';
 import { allowsEffect, resourceName, staticData } from './data.ts';
 import { fmt } from './ts.ts';
 import type {
+  Beacon,
   Ingredient,
   IngredientTemperature,
   Machine,
@@ -95,27 +96,172 @@ export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
  * machine are the ones the user chose first and the answer never overstates the machine.
  *
  * Modules we did not ingest — efficiency, pollution — are not in `staticData.modules` and count for
- * nothing, which is right for both numbers here. Beacons are not modelled at all yet.
+ * nothing, which is right for both numbers here. Beacons are {@link boostedEffects}, which is this
+ * with a {@link Boost} added to the speed side.
  */
 export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
+  return withBoost(machine, recipe, slotEffects(machine, fill), 0);
+}
+
+/** What one loadout adds up to in the machine's own slots, before either of the machine's gates. */
+function slotEffects(machine: Machine, fill: ModuleFill): Slots {
   let speed = 0;
   let productivity = 0;
-  let slots = machine.moduleSlots ?? 0;
+  let free = machine.moduleSlots ?? 0;
   for (const [id, count] of Object.entries(fill)) {
-    if (slots <= 0) break;
+    if (free <= 0) break;
     const module = staticData.modules[id];
     if (!module || !(count > 0)) continue;
-    if (!(machine.allowedModuleCategories?.includes(module.category) ?? true)) continue;
-    const fitted = Math.min(count, slots);
-    slots -= fitted;
+    if (!takesCategory(machine, module.category)) continue;
+    const fitted = Math.min(count, free);
+    free -= fitted;
     speed += (module.speed ?? 0) * fitted;
     productivity += (module.productivity ?? 0) * fitted;
   }
+  return { speed, productivity, free };
+}
+
+/** The sums from a machine's slots, and how many of them nothing has claimed. */
+interface Slots {
+  speed: number;
+  productivity: number;
+  /** Slots left for {@link speedBoost} to put its speed modules in. */
+  free: number;
+}
+
+/**
+ * The machine's own gates, applied to what is in it plus whatever the beacons around it add.
+ * Everything both {@link moduleEffects} and {@link boostedEffects} return comes through here, so
+ * the two cannot disagree about which effects a machine bothers with — including the beacons',
+ * which a machine ignoring the speed effect ignores exactly as it ignores a speed module in its
+ * own slots.
+ */
+function withBoost(machine: Machine, recipe: Recipe, slots: Slots, beaconSpeed: number): Effects {
+  let speed = slots.speed + beaconSpeed;
+  let productivity = slots.productivity;
 
   if (!allowsEffect(machine, 'speed')) speed = 0;
   if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
 
   return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
+}
+
+/** Whether a machine or a beacon will take a module of this category at all; absent means all. */
+function takesCategory(holder: Machine | Beacon, category: string): boolean {
+  return holder.allowedModuleCategories?.includes(category) ?? true;
+}
+
+/**
+ * A row's request for speed modules, laid out over the machine and the beacons it took to hold the
+ * rest. The user states one number — how many speed modules they want this machine feeling — and
+ * this is where that becomes a factory: the machine's own slots first, because they are free, and
+ * then beacons, which are not.
+ *
+ * The beacon arithmetic is `docs/beacons.wiki`'s: each of `n` beacons transmits
+ * `distributionEffectivity / sqrt(n)` of what is in it, so `n` full beacons come to `1.5 × sqrt(n)`
+ * times one beacon's contents and the returns diminish from the second one on. That the game's own
+ * `profile` table says the same is checked by the ingest, not assumed.
+ *
+ * Everything is one kind of beacon and one kind of module, because a cell row is not a floor plan:
+ * where the beacons are, which machines they overlap and whether the last one is worth building are
+ * questions this app cannot see. What it can do is not overstate the answer, so the last beacon is
+ * built whether or not it is full — 5 modules over 2-slot beacons is three beacons and the penalty
+ * of three, not of two and a half.
+ */
+export interface Boost {
+  /** The module being asked for; absent when none is chosen, or nothing here would take it. */
+  module?: ModuleId;
+  /** How many the user asked for, whether or not anything could hold them. */
+  wanted: number;
+  /** How many went into the machine's own free slots. */
+  inMachine: number;
+  /** How many went into beacons. */
+  inBeacons: number;
+  /** How many beacons that took, each holding as many as it can before the next one is built. */
+  beacons: number;
+  /** What one module in one of those beacons is worth against one in the machine. */
+  transmission: number;
+  /** The speed fraction the lot of it adds: 1.2 is "+120%", before the machine's own gates. */
+  speed: number;
+}
+
+/** Nothing asked for and nothing to show for it. */
+export const NO_BOOST: Boost = {
+  wanted: 0,
+  inMachine: 0,
+  inBeacons: 0,
+  beacons: 0,
+  transmission: 0,
+  speed: 0,
+};
+
+/**
+ * How a row's `wanted` speed modules are laid out; see {@link Boost}. `wanted` absent is the
+ * default — as many as the machine's spare slots hold and no beacons, which is the loadout you
+ * would build without thinking about it.
+ *
+ * Three ways of asking for something which cannot happen, all of which end up quoting less rather
+ * than more: a machine with no slots at all receives nothing, from a beacon either (the game's
+ * rule, and the reason a pump cannot be beaconed); a machine which refuses the module's category
+ * holds none of them itself, though beacons will still reach it, because a beacon's own whitelist
+ * is what governs what goes in a beacon; and a beacon which will not take the module leaves the
+ * overflow nowhere to go, so it is dropped rather than pretended into the machine.
+ */
+export function speedBoost(
+  machine: Machine,
+  free: number,
+  module: ModuleId | undefined,
+  wanted: number | undefined,
+  beacon: Beacon | undefined,
+): Boost {
+  const found = module === undefined ? undefined : staticData.modules[module];
+  const effect = found?.speed ?? 0;
+  /* Not "no slots left": no slots at all. A beacon transmits to machines which take modules, so a
+   * machine which takes none is out of reach of both halves of this. */
+  if (!module || !found || !machine.moduleSlots) return NO_BOOST;
+
+  const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
+  const asked = wanted ?? slots;
+  const inMachine = Math.min(asked, slots);
+  const spare = asked - inMachine;
+
+  /* What the beacon will hold of this, which is its own two questions and not the machine's: a
+     beacon which refuses the category takes none, and one whose `allowedEffects` leaves out the
+     effect would transmit nothing even if it did. */
+  const holds =
+    beacon &&
+    beacon.moduleSlots > 0 &&
+    takesCategory(beacon, found.category) &&
+    (beacon.allowedEffects?.includes('speed') ?? true)
+      ? beacon.moduleSlots
+      : 0;
+  const inBeacons = holds ? spare : 0;
+  const beacons = holds ? Math.ceil(inBeacons / holds) : 0;
+  const transmission = beacons ? (beacon?.distributionEffectivity ?? 0) / Math.sqrt(beacons) : 0;
+
+  return {
+    module,
+    wanted: asked,
+    inMachine,
+    inBeacons,
+    beacons,
+    transmission,
+    speed: (inMachine + inBeacons * transmission) * effect,
+  };
+}
+
+/** A machine running a recipe with `fill` in its slots and `boost`'s speed modules on top. */
+export function boostedEffects(
+  machine: Machine,
+  fill: ModuleFill | undefined,
+  recipe: Recipe,
+  module: ModuleId | undefined,
+  wanted: number | undefined,
+  beacon: Beacon | undefined,
+): { effects: Effects; boost: Boost } {
+  const slots = slotEffects(machine, fill ?? {});
+  const boost = speedBoost(machine, slots.free, module, wanted, beacon);
+  return { effects: withBoost(machine, recipe, slots, boost.speed), boost };
 }
 
 /**

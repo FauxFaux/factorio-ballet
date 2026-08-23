@@ -1,0 +1,199 @@
+import { describe, expect, it } from 'vitest';
+import { entryEffects, entryRun, parseModules, type Cell } from '../src/cell.ts';
+import { chosenModule, rowBeacon, SPEED_CATEGORY, staticData } from '../src/data.ts';
+import { boostedEffects, speedBoost } from '../src/flow.ts';
+import { solveCell } from '../src/solve.ts';
+import type { Machine } from '../src/types.ts';
+
+const gears = staticData.recipes['iron-gear-wheel'];
+/** Two module slots, which is the machine the worked example in `docs/beacons.wiki` terms uses. */
+const two = staticData.machines['assembling-machine-2'];
+const three = staticData.machines['assembling-machine-3'];
+const character = staticData.machines['character'];
+
+/** +40% each, and the tier the whole file quotes. */
+const SPEED_3 = 'speed-module-3';
+
+const boost = (machine: Machine, wanted: number | undefined, free = machine.moduleSlots ?? 0) =>
+  speedBoost(machine, free, SPEED_3, wanted, rowBeacon);
+
+describe('the ingested beacons', () => {
+  it('is the three the pack has, with their slots and their transmission', () => {
+    expect(Object.keys(staticData.beacons)).toEqual(['beacon', 'bob-beacon-2', 'bob-beacon-3']);
+    expect(staticData.beacons['beacon']).toEqual({
+      human: 'Beacon',
+      item: 'beacon',
+      moduleSlots: 2,
+      distributionEffectivity: 1.5,
+      // the game's own way of saying productivity modules do not go in a beacon
+      allowedEffects: ['consumption', 'speed', 'pollution'],
+    });
+    expect(staticData.beacons['bob-beacon-3'].moduleSlots).toBe(6);
+  });
+
+  it('builds the vanilla one, whose item is in the data to draw it with', () => {
+    expect(rowBeacon).toBe(staticData.beacons['beacon']);
+    expect(staticData.resources[`item:${rowBeacon!.item}`]?.human).toBe('Beacon');
+  });
+});
+
+describe('speedBoost', () => {
+  it('fills the machine and builds nothing when nobody asked for more', () => {
+    const auto = boost(three, undefined);
+    expect(auto).toMatchObject({ wanted: 3, inMachine: 3, inBeacons: 0, beacons: 0 });
+    expect(auto.speed).toBeCloseTo(1.2);
+  });
+
+  /* The worked example: eight asked for, a machine which holds two, and two-slot beacons. */
+  it('beacons whatever the machine cannot hold', () => {
+    const eight = boost(two, 8);
+    expect(eight).toMatchObject({ wanted: 8, inMachine: 2, inBeacons: 6, beacons: 3 });
+    // 1.5 / sqrt(3) each, so the three of them come to 1.5 × sqrt(3) = 2.598 beacons' worth
+    expect(eight.transmission).toBeCloseTo(0.866);
+    expect(eight.beacons * eight.transmission).toBeCloseTo(2.598);
+    // (2 in the machine + 6 at 0.866) × 40%
+    expect(eight.speed).toBeCloseTo(2.8785);
+  });
+
+  it('builds the last beacon whether or not it is full', () => {
+    // five over two-slot beacons is three beacons and the penalty of three, not of two and a half
+    const seven = boost(two, 7);
+    expect(seven).toMatchObject({ inMachine: 2, inBeacons: 5, beacons: 3 });
+    expect(seven.transmission).toBeCloseTo(0.866);
+  });
+
+  /**
+   * The diminishing returns, against the table in `docs/beacons.wiki`: what `n` beacons transmit
+   * between them, which is `1.5 × sqrt(n)` and never `1.5 × n`.
+   */
+  it('agrees with the wiki on what a beacon is worth', () => {
+    const totals = [1, 2, 3, 4, 5, 6, 7, 8].map((n) => {
+      const asked = boost(two, 2 + 2 * n);
+      expect(asked.beacons).toBe(n);
+      return Number((asked.beacons * asked.transmission).toFixed(4));
+    });
+    expect(totals).toEqual([1.5, 2.1213, 2.5981, 3.0, 3.3541, 3.6742, 3.9686, 4.2426]);
+  });
+
+  it('is nothing at all with no module chosen', () => {
+    expect(speedBoost(three, 3, undefined, 8, rowBeacon).speed).toBe(0);
+    expect(speedBoost(three, 3, 'no-such-module', 8, rowBeacon).speed).toBe(0);
+  });
+
+  it('reaches no machine which takes no modules', () => {
+    // the game's rule, and the reason a pump or a hand cannot be beaconed however many you build
+    expect(boost(character, 8)).toMatchObject({ inMachine: 0, inBeacons: 0, beacons: 0, speed: 0 });
+  });
+
+  it('leaves the slots the loadout already took', () => {
+    // two of the three slots are full of something else, so only one speed module goes in
+    expect(boost(three, undefined, 1)).toMatchObject({ wanted: 1, inMachine: 1, beacons: 0 });
+    expect(boost(three, 5, 1)).toMatchObject({ inMachine: 1, inBeacons: 4, beacons: 2 });
+  });
+
+  /**
+   * The two whitelists are asked different questions: what the *machine* takes decides what goes
+   * in its slots, and what the *beacon* takes decides what goes in the beacon. Neither machine
+   * here is in this pack — every machine which names a list names speed — but the distinction is
+   * the game's, so it is worth holding on to.
+   */
+  it('beacons a machine which will not take the module itself', () => {
+    const picky: Machine = { ...three, allowedModuleCategories: ['productivity'] };
+    expect(boost(picky, 4)).toMatchObject({ inMachine: 0, inBeacons: 4, beacons: 2 });
+    expect(boost(picky, undefined)).toMatchObject({ wanted: 0, speed: 0 });
+  });
+
+  it('drops what a beacon will not hold rather than putting it in the machine', () => {
+    const picky = { ...rowBeacon!, allowedModuleCategories: ['productivity'] };
+    const dropped = speedBoost(two, 2, SPEED_3, 8, picky);
+    expect(dropped).toMatchObject({ wanted: 8, inMachine: 2, inBeacons: 0, beacons: 0 });
+    expect(dropped.speed).toBeCloseTo(0.8);
+    // and the same for a beacon which takes the module but transmits no speed
+    const quiet = { ...rowBeacon!, allowedEffects: ['consumption' as const] };
+    expect(speedBoost(two, 2, SPEED_3, 8, quiet)).toMatchObject({ inBeacons: 0, beacons: 0 });
+  });
+});
+
+describe('boostedEffects', () => {
+  it('multiplies the machine, and leaves what comes out of it alone', () => {
+    const { effects } = boostedEffects(two, undefined, gears, SPEED_3, 8, rowBeacon);
+    expect(effects.speed).toBeCloseTo(3.8785);
+    expect(effects.productivity).toBe(1);
+  });
+
+  it('adds to whatever is in the slots already', () => {
+    // one productivity module 3 in an assembling machine 3 leaves two slots for speed modules
+    const { effects, boost: laid } = boostedEffects(
+      three,
+      { 'productivity-module-3': 1 },
+      gears,
+      SPEED_3,
+      undefined,
+      rowBeacon,
+    );
+    expect(laid).toMatchObject({ inMachine: 2, beacons: 0 });
+    expect(effects.speed).toBeCloseTo(1.65);
+    expect(effects.productivity).toBeCloseTo(1.12);
+  });
+
+  it('is ignored by a machine which ignores the speed effect', () => {
+    // no machine in this pack does, so this is the gate rather than a case from the data
+    const deaf: Machine = { ...two, allowedEffects: ['productivity'] };
+    expect(boostedEffects(deaf, undefined, gears, SPEED_3, 8, rowBeacon).effects.speed).toBe(1);
+  });
+});
+
+describe('a cell row with beacons', () => {
+  const entry = { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2', speedModules: 8 };
+
+  it("is the row's own count of the header's module", () => {
+    expect(entryRun(entry, gears, entry.machine, SPEED_3).boost).toMatchObject({
+      module: SPEED_3,
+      inMachine: 2,
+      beacons: 3,
+    });
+    // and nothing at all until the header names one
+    expect(entryEffects(entry, gears, entry.machine)).toEqual({ speed: 1, productivity: 1 });
+  });
+
+  it('fills the machine when the row asks for nothing', () => {
+    const auto = { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2' };
+    expect(entryRun(auto, gears, auto.machine, SPEED_3).effects.speed).toBeCloseTo(1.8);
+  });
+
+  it('scales what the rest of the cell has to keep up with', () => {
+    const cell = (speedModules?: number): Cell => ({
+      entries: [{ ...entry, speedModules, count: 1 }, { recipe: 'iron-plate' }],
+    });
+    const plates = (c: Cell) => solveCell(c, 0, SPEED_3).counts[1]!;
+    // a machine going 2.16× as fast eats its ingredients 2.16× as fast, and the row feeding it
+    // has to be that much bigger: 3.8785 / 1.8, the beaconed row against the auto one
+    expect(plates(cell(8)) / plates(cell(undefined))).toBeCloseTo(2.1547);
+    // with no speed module chosen at all, the count is the unmodded one
+    expect(solveCell(cell(8), 0).counts[1]).toBeCloseTo(plates(cell(0)));
+  });
+});
+
+describe('parseModules', () => {
+  it('is a whole number of modules, or auto', () => {
+    expect(parseModules('4')).toBe(4);
+    // nothing you can build: a fraction of a module, or fewer than none
+    expect(parseModules('4.7')).toBe(4);
+    expect(parseModules('-2')).toBe(0);
+    expect(parseModules('')).toBeUndefined();
+    expect(parseModules('lots')).toBeUndefined();
+  });
+});
+
+describe('chosenModule', () => {
+  it("is the header's pick, whatever the progress", () => {
+    expect(chosenModule({ speed: SPEED_3 }, SPEED_CATEGORY, 0)).toBe(SPEED_3);
+    // `null` is a choice of its own, and the choice is none
+    expect(chosenModule({ speed: null }, SPEED_CATEGORY, 1)).toBeUndefined();
+  });
+
+  it('follows the slider where the header picked nothing', () => {
+    expect(chosenModule({}, SPEED_CATEGORY, 0)).toBeUndefined();
+    expect(chosenModule({}, SPEED_CATEGORY, 1)).toBe('bob-speed-module-5');
+  });
+});

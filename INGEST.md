@@ -137,7 +137,7 @@ console.log(Object.keys(d.module).filter((n) => !icons["craft:" + n]));
 
 ## Notes for modules and beacons
 
-Modules are ingested; beacons are not. Measured against the Bob's/Angel's pack:
+Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 
 - **`data.raw.module`** — 30 prototypes, none hidden. Carries `category` (a `module-category` id),
   `tier`, and `effect` as a record of `speed` / `productivity` / `consumption` / `pollution` /
@@ -169,7 +169,19 @@ Modules are ingested; beacons are not. Measured against the Bob's/Angel's pack:
   malus — go in all of them, exactly as they do in the game.
 - **`data.raw.beacon`** — `beacon`, `bob-beacon-2`, `bob-beacon-3`, with `module_slots` 2/4/6 and
   `distribution_effectivity` 1.5 throughout. Beacons have no `crafting_categories`, so they are not
-  machines under the current model and need their own record. Not ingested.
+  machines under the current model and have their own record: `StaticData.beacons`, keyed by
+  prototype id, with the slots, the effectivity, the placing item and the same two absent-means-all
+  restriction lists a machine carries. Every one of them allows `speed` and not `productivity`,
+  which is the game's rule about what goes in a beacon, as data rather than as an app's assumption.
+- **`profile` is the transmission penalty, and it is not ingested — it is checked.** 2.0 does not
+  compute `1 / sqrt(n)`: each beacon carries a 100-entry `profile` whose `n`th value is what each of
+  `n` beacons transmits, and the app applies the square root the wiki describes
+  (`docs/beacons.wiki`). All three beacons here ship the vanilla profile, which _is_ that square
+  root to 4dp, so `checkBeacons` asserts the two agree rather than shipping 300 numbers to
+  interpolate between. A mod with a flatter profile would make us overstate a beaconed row, so the
+  check is the thing that has to fire, not the field that has to exist. `beacon_counter` (`total` /
+  `same_type`) and the quality bonus fields are not modelled at all: this app has no floor plan to
+  count beacons on and no quality mode.
 - **Recipes** carry `allow_productivity`, which gates whether productivity applies at all — a
   minority of recipes (420 true of 2621 raw; 335 of the 2330 live ones), so a UI that assumes
   otherwise will overstate throughput badly. This one is ingested, as `Recipe.allowProductivity`,

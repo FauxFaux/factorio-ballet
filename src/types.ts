@@ -12,6 +12,13 @@ export interface StaticData {
   modules: Record<ModuleId, Module>;
 
   /**
+   * The beacons: the other place a speed module can go. Keyed by bare prototype id, as machines
+   * are — a beacon is not a `Machine` because it runs no recipes, and the only thing this app
+   * wants from it is how many modules it holds and how much of them the machine next door gets.
+   */
+  beacons: Record<BeaconId, Beacon>;
+
+  /**
    * Every item some technology asks for as a research ingredient, cheapest `complexity` first. They
    * are the only readable landmarks on the complexity scale — "past yellow science" is how a player
    * describes a save, where "58%" means nothing — so the app labels its progress slider with them.
@@ -27,6 +34,9 @@ export type MachineId = string;
 
 /** A module's prototype id, e.g. `speed-module-3`; the same id as the item you craft. */
 export type ModuleId = string;
+
+/** A beacon's prototype id, e.g. `bob-beacon-2`. */
+export type BeaconId = string;
 
 export interface Recipe {
   human?: string;
@@ -195,4 +205,39 @@ export interface Module {
   speed?: number;
   /** Added to everything the recipe produces, and only where `Recipe.allowProductivity` says so. */
   productivity?: number;
+}
+
+/**
+ * A beacon: module slots which do nothing to the beacon and everything to the machines around it.
+ * It runs no recipes, so it is not a {@link Machine}; what it is instead is a way of getting more
+ * modules onto a machine than the machine has slots for, at a discount which gets worse the more
+ * beacons you build.
+ *
+ * The discount is {@link distributionEffectivity} divided by the square root of how many beacons
+ * reach the machine, applied to each module in each of them — so `n` beacons holding the same
+ * modules come to `dist × sqrt(n)` times one beacon's worth, and the second beacon is worth 41% of
+ * the first. See `speedBoost` in `src/flow.ts`, and `docs/beacons.wiki`.
+ *
+ * What is not modelled is where anything is: a beacon reaches a 9×9 square in the game, and this
+ * app has no floor plan, so "how many beacons reach this machine" is a number the user states
+ * rather than one that follows from a layout.
+ */
+export interface Beacon {
+  human?: string;
+  /** The item which places it; bare prototype id, as `Machine.item` is. */
+  item?: string;
+  moduleSlots: number;
+  /**
+   * The share of a module's effect this beacon transmits before the count penalty: 1.5 for every
+   * beacon in this pack, and the reason one beacon beats a slot in the machine.
+   */
+  distributionEffectivity: number;
+  /**
+   * As `Machine.allowedEffects`, and absent means all of them. Every beacon here allows `speed`,
+   * `consumption` and `pollution` — which is the game's rule that productivity modules do not go
+   * in a beacon, stated as data rather than assumed by the app.
+   */
+  allowedEffects?: Effect[];
+  /** As `Machine.allowedModuleCategories`: refuses the module outright, and absent means all. */
+  allowedModuleCategories?: string[];
 }

@@ -10,6 +10,7 @@ import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
 import { placingItems, syntheticRecipes } from './synthetic.ts';
 import type {
+  Beacon,
   Ingredient,
   IngredientTemperature,
   Machine,
@@ -55,6 +56,7 @@ async function main() {
   const machines = handleMachines(v, locales);
   addSynthetic(v, recipes, machines, locales);
   const modules = handleModules(v);
+  const beacons = handleBeacons(v, locales);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -118,11 +120,12 @@ async function main() {
   }
 
   checkModules(modules, machines, resources);
+  checkBeacons(beacons, v);
   checkCatalysts(recipes);
 
   const sciencePacks = applyComplexity(v, recipes, resources);
 
-  const staticData: StaticData = { recipes, resources, machines, modules, sciencePacks };
+  const staticData: StaticData = { recipes, resources, machines, modules, beacons, sciencePacks };
   await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
@@ -349,6 +352,62 @@ function handleModules(v: RawData): Record<string, Module> {
       ` (dropped ${skipped} with no speed or productivity effect)`,
   );
   return modules;
+}
+
+/**
+ * The beacons, keyed by prototype id. A beacon runs no recipes — it has no `crafting_categories` at
+ * all — so it is not a `Machine`, and the two numbers which make it worth ingesting are the module
+ * slots and the `distribution_effectivity`. Hidden is dropped, as everywhere else.
+ */
+function handleBeacons(v: RawData, locales: Record<string, RLocale>): Record<string, Beacon> {
+  const beacons: Record<string, Beacon> = {};
+  const placedBy = placingItems(v);
+  let skipped = 0;
+
+  for (const [id, b] of Object.entries(v.beacon ?? {})) {
+    if (b.hidden) {
+      skipped++;
+      continue;
+    }
+    beacons[id] = {
+      human: resolveLocale(id, locales, 'entity'),
+      item: placedBy.get(id),
+      moduleSlots: b.module_slots,
+      distributionEffectivity: b.distribution_effectivity,
+      // both absent-means-everything, as on a machine; see `Machine.allowedEffects`
+      allowedEffects: effectLimits(b.allowed_effects),
+      allowedModuleCategories: b.allowed_module_categories,
+    };
+  }
+
+  console.log(`Beacons: ${Object.keys(beacons).length} (dropped ${skipped} hidden)`);
+  return beacons;
+}
+
+/**
+ * Whether the app is entitled to the `dist / sqrt(n)` formula it applies to beacons.
+ *
+ * 2.0 does not compute that: it looks the penalty up in the beacon's `profile`, a list whose `n`th
+ * entry is what each of `n` beacons transmits. The square root is what the vanilla profile happens
+ * to contain, and `docs/beacons.wiki` documents the game in those terms, so `speedBoost` uses the
+ * formula and this checks the dump agrees rather than ingesting 100 numbers per beacon to
+ * interpolate. A beacon with a flatter profile — a mod could ship one, and quality items already
+ * lengthen the list — would be transmitting less than we would quote, so the failure is loud.
+ *
+ * A beacon with no profile at all is the game's own default, which is the same square root.
+ */
+function checkBeacons(beacons: Record<string, Beacon>, v: RawData) {
+  const off: string[] = [];
+  for (const id of Object.keys(beacons)) {
+    const profile = v.beacon[id]?.profile;
+    if (!profile) continue;
+    for (const [i, share] of profile.entries()) {
+      if (Math.abs(share - 1 / Math.sqrt(i + 1)) > 5e-4) off.push(`${id}[${i + 1}]=${share}`);
+    }
+  }
+  if (off.length > 0) {
+    console.log(`Beacon profiles which are not 1/sqrt(n): ${off.length}`, off.slice(0, 20));
+  }
 }
 
 /**

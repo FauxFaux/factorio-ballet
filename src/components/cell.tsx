@@ -4,7 +4,7 @@ import { cellInterface, cellTitle, withEntry, withoutEntry, type Cell } from '..
 import { resourceName } from '../data.ts';
 import { isProblem, noteFor, noteLine, solveCell, type Solution } from '../solve.ts';
 import { fmt, type State } from '../ts.ts';
-import type { ResourceId } from '../types.ts';
+import type { ModuleId, ResourceId } from '../types.ts';
 import { CellRow } from './cell-row.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
@@ -20,6 +20,7 @@ export function CellBox({
   cell: [cell, setCell],
   active,
   progress,
+  speedModule,
   onActivate,
   onRemove,
   onSearch,
@@ -27,12 +28,17 @@ export function CellBox({
   cell: State<Cell>;
   active: boolean;
   progress: number;
+  /** Which module the header means by "a speed module"; see `CellEntry.speedModules`. */
+  speedModule?: ModuleId;
   onActivate: () => void;
   onRemove: () => void;
   onSearch: (search: string) => void;
 }) {
   const iface = useMemo(() => cellInterface(cell), [cell]);
-  const solution = useMemo(() => solveCell(cell, progress), [cell, progress]);
+  const solution = useMemo(
+    () => solveCell(cell, progress, speedModule),
+    [cell, progress, speedModule],
+  );
 
   return (
     <section class={active ? 'cell is-active' : 'cell'}>
@@ -72,6 +78,7 @@ export function CellBox({
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
                 progress={progress}
+                speedModule={speedModule}
                 onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                 onRemove={() => setCell((prev) => withoutEntry(prev, i))}
               />

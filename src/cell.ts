@@ -1,5 +1,19 @@
-import { complexityOf, defaultMachine, machinesFor, resourceName, staticData } from './data.ts';
-import { moduleEffects, NO_EFFECTS, type Effects, type ModuleFill } from './flow.ts';
+import {
+  complexityOf,
+  defaultMachine,
+  machinesFor,
+  resourceName,
+  rowBeacon,
+  staticData,
+} from './data.ts';
+import {
+  boostedEffects,
+  NO_BOOST,
+  NO_EFFECTS,
+  type Boost,
+  type Effects,
+  type ModuleFill,
+} from './flow.ts';
 import type { SearchScope } from './search.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
 
@@ -36,12 +50,24 @@ export interface CellEntry {
    * the user has to have built and put there.
    *
    * Kept in the order the user chose them, which is the order they fill the slots in: a loadout
-   * outlives the machine it was chosen for, and {@link moduleEffects} drops whatever no longer
+   * outlives the machine it was chosen for, and `moduleEffects` drops whatever no longer
    * fits from the end rather than scaling everything down. The hash packs cells with the key order
    * they have, so that survives a reload.
    */
   modules?: ModuleFill;
-  // beacons: later
+
+  /**
+   * How many speed modules this row is to feel, wherever they have to go to get there: the
+   * machine's spare slots first, and then as many beacons as the rest of them take. Absent is
+   * auto — fill the machine and build no beacons — which is the loadout you would put in without
+   * thinking about it, and is nothing at all until the header names a speed module to fill it
+   * with. See {@link speedBoost}.
+   *
+   * A count and not a loadout, because beacons are not a thing you can pick per slot: what the
+   * user knows is "I want this smelter going four times as fast", and how many beacons that is is
+   * the answer rather than the question.
+   */
+  speedModules?: number;
 }
 
 /**
@@ -94,10 +120,35 @@ export function entryEffects(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
+  speed?: ModuleId,
 ): Effects {
+  return entryRun(entry, recipe, machine, speed).effects;
+}
+
+/** What a row is running at, and the modules and beacons it took; see {@link entryRun}. */
+export interface EntryRun {
+  effects: Effects;
+  boost: Boost;
+}
+
+/**
+ * A row resolved: the two multipliers the solver scales its rates by, and the {@link Boost} which
+ * is how the row's `speedModules` were laid out to get them. Both come out of one pass, because
+ * the beacons and the slots share the machine — how many modules the machine holds itself decides
+ * how many are left to beacon.
+ *
+ * `speed` is which module the header means by "a speed module"; the row states how many, never
+ * which, so a save that upgrades to speed module 3 upgrades every row at once.
+ */
+export function entryRun(
+  entry: CellEntry,
+  recipe: Recipe,
+  machine: MachineId | undefined,
+  speed?: ModuleId,
+): EntryRun {
   const found = machine === undefined ? undefined : staticData.machines[machine];
-  if (!found || !entry.modules) return NO_EFFECTS;
-  return moduleEffects(found, entry.modules, recipe);
+  if (!found) return { effects: NO_EFFECTS, boost: NO_BOOST };
+  return boostedEffects(found, entry.modules, recipe, speed, entry.speedModules, rowBeacon);
 }
 
 /** How many slots a loadout asks for, which is not necessarily how many the machine has. */
@@ -110,8 +161,8 @@ export function slotsUsed(fill: ModuleFill | undefined): number {
  * there keeps its place in the queue for the slots, and a new one joins the back of it.
  *
  * Nothing here checks the machine has the slots: which machine a row is in is a separate decision
- * which the user can change afterwards, so the loadout is what they asked for and
- * {@link moduleEffects} is where it meets what will fit.
+ * which the user can change afterwards, so the loadout is what they asked for and `moduleEffects`
+ * in `src/flow.ts` is where it meets what will fit.
  */
 export function withModule(entry: CellEntry, module: ModuleId, count: number): CellEntry {
   const modules = { ...entry.modules };
@@ -153,6 +204,16 @@ export function withoutEntry(cell: Cell, index: number): Cell {
 export function parseCount(raw: string): number | undefined {
   const count = Number(raw);
   return raw && Number.isFinite(count) ? count : undefined;
+}
+
+/**
+ * How many modules were asked for, off the box they were typed into. Whole and not negative, which
+ * a count of machines is not: half a module is not a thing you can build, and the empty box is
+ * "auto" exactly as it is for a count.
+ */
+export function parseModules(raw: string): number | undefined {
+  const count = Number(raw);
+  return raw && Number.isFinite(count) ? Math.max(0, Math.floor(count)) : undefined;
 }
 
 export function withoutCell(list: Cell[], index: number): Cell[] {
