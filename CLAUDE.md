@@ -71,10 +71,17 @@ Two things the ingest gets right that are easy to get wrong again:
 - **`hidden` prototypes are dead content.** Mods disable things by setting `hidden` rather than
   deleting them (Angel's `functions.hide` / `OV.disable_recipe`), so e.g. both `angels-solid-rubber`
   and `bob-rubber` are in the dump when only the latter is real. Hidden recipes and hidden/parameter
-  items and fluids are dropped, except resources a surviving recipe still references (the angels
-  void sinks, `rocket-part`). Note `enabled: false` is _not_ a disable signal — that's just
-  tech-gating. Items live under one `data.raw` key per subtype (`ammo`, `gun`, `module`, ...); the
-  `ITEM_KEYS` list must cover them all or recipes end up referencing resources that do not exist.
+  items and fluids are dropped, except resources a surviving recipe still references
+  (`rocket-part`). Note `enabled: false` is _not_ a disable signal — that's just tech-gating. Items
+  live under one `data.raw` key per subtype (`ammo`, `gun`, `module`, ...); the `ITEM_KEYS` list
+  must cover them all or recipes end up referencing resources that do not exist.
+- **A result with `probability: 0` is not a product** (`isProduced`, applied by both the ingest and
+  `scripts/complexity.ts`). Angel's void sinks name a hidden marker item — `angels-water-void`,
+  `angels-chemical-void` — as their sole result and then never roll it, which is the game's way of
+  writing "and nothing comes out"; those 93 recipes are the only place in the dump the field is
+  zero. Dropping the result leaves a clarifier as a recipe with no products, which is what it is: a
+  sink. The markers were the reason the hidden-item rule above needed a void exception, and they are
+  gone from `resources` now that nothing references them.
 
 ## Read the design docs first
 

@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
 import type { RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
-import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
+import { arr, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
@@ -56,8 +56,9 @@ async function main() {
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
-  // handful of hidden items are nonetheless live because surviving recipes reference them (the
-  // angels void sinks, `rocket-part`), so keep anything a surviving recipe mentions.
+  // handful of hidden items are nonetheless live because surviving recipes reference them
+  // (`rocket-part`), so keep anything a surviving recipe mentions. The void markers used to be
+  // kept by this too, until `isProduced` stopped counting a never-rolled result as a reference.
   const referenced = new Set<ResourceId>();
   for (const recipe of Object.values(recipes)) {
     for (const { resource } of recipe.ingredients) referenced.add(resource);
@@ -211,6 +212,7 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
   const unnamed: string[] = [];
   let skipped = 0;
   let productive = 0;
+  let voided = 0;
 
   const recipes: Record<string, Recipe> = Object.fromEntries(
     Object.entries(v)
@@ -229,6 +231,11 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
           .map(toIng);
         const products = arr(r.results ?? [])
           .map((res) => RProduct.parse(res))
+          .filter((res) => {
+            if (isProduced(res)) return true;
+            voided++;
+            return false;
+          })
           .map(toProd);
         const duration = r.energy_required ?? 0.5;
         // `crafting` is the game's default for a recipe which names no category.
@@ -246,7 +253,7 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
 
   console.log(
     `Recipes: ${Object.keys(recipes).length} (dropped ${skipped} hidden/parameter),` +
-      ` ${productive} allowing productivity`,
+      ` ${productive} allowing productivity, ${voided} results which are never produced`,
   );
   if (unnamed.length > 0) {
     console.log(`Unnamed recipes: ${unnamed.length}`, unnamed.slice(0, 20));

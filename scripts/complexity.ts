@@ -33,7 +33,7 @@ import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
 import type { RawData, TechnologyPrototype } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
-import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
+import { arr, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import { syntheticRecipes } from './synthetic.ts';
 import { entriesOf, valuesOf } from '../src/ts.ts';
@@ -260,7 +260,12 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
     out.set(id, {
       free: r.enabled !== false,
       ingredients: arr(r.ingredients ?? []).map((i) => rid(RIngredient.parse(i))),
-      products: arr(r.results ?? []).map((p) => rid(RProduct.parse(p))),
+      // A result the game never rolls buys you nothing, so it offers nothing to the walk either;
+      // this is the same rule the ingest applies, so the two agree on what a product is.
+      products: arr(r.results ?? [])
+        .map((p) => RProduct.parse(p))
+        .filter(isProduced)
+        .map(rid),
     });
   }
 

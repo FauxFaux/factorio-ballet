@@ -38,6 +38,17 @@ export const RProduct = z.strictObject({
 
 export type RProduct = z.infer<typeof RProduct>;
 
+/**
+ * Whether a result is actually produced. `probability: 0` is how the game writes "and nothing comes
+ * out": the angels void sinks name a hidden marker item (`angels-water-void`,
+ * `angels-chemical-void`) so the recipe has a result at all, then never roll it. Those 93 recipes
+ * are the only place in the dump the field is zero, and the marker is their sole result, so a
+ * clarifier is honestly a recipe with no products — a sink. Zero *amounts* are not used this way.
+ */
+export function isProduced(p: RProduct): boolean {
+  return p.probability !== 0;
+}
+
 export const RLocale = z.strictObject({
   names: z.record(z.string(), z.string()),
   descriptions: z.optional(z.record(z.string(), z.string())),

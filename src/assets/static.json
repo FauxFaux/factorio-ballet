@@ -33579,9 +33579,7 @@
     "angels-water-void-angels-thermal-water": {
       "human": "Clarify Thermal water",
       "ingredients": [{ "resource": "fluid:angels-thermal-water", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0
@@ -33589,9 +33587,7 @@
     "angels-water-void-angels-mineral-sludge": {
       "human": "Clarify Mineral sludge",
       "ingredients": [{ "resource": "fluid:angels-mineral-sludge", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3301
@@ -33599,9 +33595,7 @@
     "angels-water-void-angels-slag-slurry": {
       "human": "Clarify Slag slurry",
       "ingredients": [{ "resource": "fluid:angels-slag-slurry", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3301
@@ -33609,9 +33603,7 @@
     "angels-water-void-angels-crystal-slurry": {
       "human": "Clarify Crystal slurry",
       "ingredients": [{ "resource": "fluid:angels-crystal-slurry", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3411
@@ -33619,9 +33611,7 @@
     "angels-water-void-angels-crystal-seedling": {
       "human": "Clarify Crystal seedling",
       "ingredients": [{ "resource": "fluid:angels-crystal-seedling", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3435
@@ -33629,9 +33619,7 @@
     "angels-water-void-water": {
       "human": "Clarify Water",
       "ingredients": [{ "resource": "fluid:water", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0
@@ -33639,9 +33627,7 @@
     "angels-water-void-angels-water-purified": {
       "human": "Clarify Purified water",
       "ingredients": [{ "resource": "fluid:angels-water-purified", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.1284
@@ -33649,9 +33635,7 @@
     "angels-water-void-angels-water-yellow-waste": {
       "human": "Clarify Sulfuric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-yellow-waste", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3163
@@ -33659,9 +33643,7 @@
     "angels-water-void-angels-water-saline": {
       "human": "Clarify Saline water",
       "ingredients": [{ "resource": "fluid:angels-water-saline", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33669,9 +33651,7 @@
     "angels-water-void-angels-water-mineralized": {
       "human": "Clarify Mineralized water",
       "ingredients": [{ "resource": "fluid:angels-water-mineralized", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.1376
@@ -33679,9 +33659,7 @@
     "angels-water-void-angels-water-red-waste": {
       "human": "Clarify Nitric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-red-waste", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3362
@@ -33689,9 +33667,7 @@
     "angels-water-void-angels-water-green-waste": {
       "human": "Clarify Chloric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-green-waste", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3362
@@ -33699,9 +33675,7 @@
     "angels-water-void-angels-water-greenyellow-waste": {
       "human": "Clarify Fluoric waste water",
       "ingredients": [{ "resource": "fluid:angels-water-greenyellow-waste", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.3362
@@ -33709,9 +33683,7 @@
     "angels-water-void-angels-water-viscous-mud": {
       "human": "Clarify Viscous mud water",
       "ingredients": [{ "resource": "fluid:angels-water-viscous-mud", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33719,9 +33691,7 @@
     "angels-water-void-angels-water-heavy-mud": {
       "human": "Clarify Heavy mud water",
       "ingredients": [{ "resource": "fluid:angels-water-heavy-mud", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33729,9 +33699,7 @@
     "angels-water-void-angels-water-concentrated-mud": {
       "human": "Clarify Concentrated mud water",
       "ingredients": [{ "resource": "fluid:angels-water-concentrated-mud", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33739,9 +33707,7 @@
     "angels-water-void-angels-water-light-mud": {
       "human": "Clarify Light mud water",
       "ingredients": [{ "resource": "fluid:angels-water-light-mud", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33749,9 +33715,7 @@
     "angels-water-void-angels-water-thin-mud": {
       "human": "Clarify Thin mud water",
       "ingredients": [{ "resource": "fluid:angels-water-thin-mud", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.079
@@ -33759,9 +33723,7 @@
     "angels-chemical-void-angels-gas-compressed-air": {
       "human": "Flare Compressed air",
       "ingredients": [{ "resource": "fluid:angels-gas-compressed-air", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1423
@@ -33769,9 +33731,7 @@
     "angels-chemical-void-angels-gas-hydrogen": {
       "human": "Flare Hydrogen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1066
@@ -33779,9 +33739,7 @@
     "angels-chemical-void-angels-gas-oxygen": {
       "human": "Flare Oxygen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-oxygen", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1066
@@ -33789,9 +33747,7 @@
     "angels-chemical-void-angels-gas-carbon-monoxide": {
       "human": "Flare Carbon monoxide",
       "ingredients": [{ "resource": "fluid:angels-gas-carbon-monoxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1363
@@ -33799,9 +33755,7 @@
     "angels-chemical-void-angels-gas-carbon-dioxide": {
       "human": "Flare Carbon dioxide",
       "ingredients": [{ "resource": "fluid:angels-gas-carbon-dioxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1066
@@ -33809,9 +33763,7 @@
     "angels-chemical-void-angels-gas-hydrogen-fluoride": {
       "human": "Flare Hydrogen fluoride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-fluoride", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3362
@@ -33819,9 +33771,7 @@
     "angels-chemical-void-angels-liquid-hydrofluoric-acid": {
       "human": "Flare Hydrofluoric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3362
@@ -33831,9 +33781,7 @@
       "ingredients": [
         { "resource": "fluid:angels-liquid-aqueous-sodium-hydroxide", "amount": 400 }
       ],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.4844
@@ -33841,9 +33789,7 @@
     "angels-chemical-void-angels-gas-chlorine": {
       "human": "Flare Chlorine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-chlorine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3163
@@ -33851,9 +33797,7 @@
     "angels-chemical-void-angels-gas-hydrogen-chloride": {
       "human": "Flare Hydrogen chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-chloride", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3163
@@ -33861,9 +33805,7 @@
     "angels-chemical-void-angels-liquid-hydrochloric-acid": {
       "human": "Flare Hydrochloric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hydrochloric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3163
@@ -33871,9 +33813,7 @@
     "angels-chemical-void-angels-gas-allylchlorid": {
       "human": "Flare Allyl chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-allylchlorid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.349
@@ -33881,9 +33821,7 @@
     "angels-chemical-void-angels-gas-epichlorohydrin": {
       "human": "Flare Epichlorohydrin gas",
       "ingredients": [{ "resource": "fluid:angels-gas-epichlorohydrin", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.349
@@ -33891,9 +33829,7 @@
     "angels-chemical-void-angels-gas-chlor-methane": {
       "human": "Flare Chloromethane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-chlor-methane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.349
@@ -33901,9 +33837,7 @@
     "angels-chemical-void-angels-liquid-perchloric-acid": {
       "human": "Flare Perchloric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-perchloric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.535
@@ -33913,9 +33847,7 @@
       "ingredients": [
         { "resource": "fluid:angels-liquid-ferric-chloride-solution", "amount": 100 }
       ],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3163
@@ -33925,9 +33857,7 @@
       "ingredients": [
         { "resource": "fluid:angels-liquid-cupric-chloride-solution", "amount": 100 }
       ],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3163
@@ -33935,9 +33865,7 @@
     "angels-chemical-void-angels-gas-nitrogen": {
       "human": "Flare Nitrogen gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1423
@@ -33945,9 +33873,7 @@
     "angels-chemical-void-angels-gas-ammonia": {
       "human": "Flare Ammonia gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ammonia", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.34
@@ -33955,9 +33881,7 @@
     "angels-chemical-void-angels-gas-nitrogen-dioxide": {
       "human": "Flare Nitrogen dioxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen-dioxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.34
@@ -33965,9 +33889,7 @@
     "angels-chemical-void-angels-gas-dinitrogen-tetroxide": {
       "human": "Flare Dinitrogen tetroxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dinitrogen-tetroxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7354
@@ -33975,9 +33897,7 @@
     "angels-chemical-void-angels-gas-nitrogen-monoxide": {
       "human": "Flare Nitrogen monoxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-nitrogen-monoxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.34
@@ -33985,9 +33905,7 @@
     "angels-chemical-void-angels-gas-ammonium-chloride": {
       "human": "Flare Ammonium chloride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ammonium-chloride", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7354
@@ -33995,9 +33913,7 @@
     "angels-chemical-void-angels-gas-urea": {
       "human": "Flare Urea gas",
       "ingredients": [{ "resource": "fluid:angels-gas-urea", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.34
@@ -34005,9 +33921,7 @@
     "angels-chemical-void-angels-gas-melamine": {
       "human": "Flare Melamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-melamine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5319
@@ -34015,9 +33929,7 @@
     "angels-chemical-void-angels-liquid-nitric-acid": {
       "human": "Flare Nitric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-nitric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.34
@@ -34025,9 +33937,7 @@
     "angels-chemical-void-angels-gas-monochloramine": {
       "human": "Flare Monochloramine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-monochloramine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5319
@@ -34035,9 +33945,7 @@
     "angels-chemical-void-angels-gas-hydrazine": {
       "human": "Flare Hydrazine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrazine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5319
@@ -34045,9 +33953,7 @@
     "angels-chemical-void-angels-gas-methylamine": {
       "human": "Flare Methylamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methylamine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7354
@@ -34055,9 +33961,7 @@
     "angels-chemical-void-angels-gas-dimethylamine": {
       "human": "Flare Dimethylamine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dimethylamine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7354
@@ -34065,9 +33969,7 @@
     "angels-chemical-void-angels-gas-dimethylhydrazine": {
       "human": "Flare Dimethylhydrazine gas",
       "ingredients": [{ "resource": "fluid:angels-gas-dimethylhydrazine", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7354
@@ -34075,9 +33977,7 @@
     "angels-chemical-void-angels-gas-natural-1": {
       "human": "Flare Natural gas",
       "ingredients": [{ "resource": "fluid:angels-gas-natural-1", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0
@@ -34085,9 +33985,7 @@
     "angels-chemical-void-angels-liquid-multi-phase-oil": {
       "human": "Flare Multi-phase oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-multi-phase-oil", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0
@@ -34095,9 +33993,7 @@
     "angels-chemical-void-crude-oil": {
       "human": "Flare Crude oil",
       "ingredients": [{ "resource": "fluid:crude-oil", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.324
@@ -34105,9 +34001,7 @@
     "angels-chemical-void-angels-gas-raw-1": {
       "human": "Flare Raw gas",
       "ingredients": [{ "resource": "fluid:angels-gas-raw-1", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.324
@@ -34115,9 +34009,7 @@
     "angels-chemical-void-angels-liquid-condensates": {
       "human": "Flare Gas condensates",
       "ingredients": [{ "resource": "fluid:angels-liquid-condensates", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.324
@@ -34125,9 +34017,7 @@
     "angels-chemical-void-angels-liquid-ngl": {
       "human": "Flare Natural gas liquids",
       "ingredients": [{ "resource": "fluid:angels-liquid-ngl", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34135,9 +34025,7 @@
     "angels-chemical-void-angels-gas-residual": {
       "human": "Flare Residual gas",
       "ingredients": [{ "resource": "fluid:angels-gas-residual", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3471
@@ -34145,9 +34033,7 @@
     "angels-chemical-void-angels-gas-methane": {
       "human": "Flare Methane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34155,9 +34041,7 @@
     "angels-chemical-void-angels-gas-ethane": {
       "human": "Flare Ethane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34165,9 +34049,7 @@
     "angels-chemical-void-angels-gas-butane": {
       "human": "Flare Butane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-butane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34175,9 +34057,7 @@
     "angels-chemical-void-angels-gas-propene": {
       "human": "Flare Propene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-propene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3471
@@ -34185,9 +34065,7 @@
     "angels-chemical-void-angels-liquid-naphtha": {
       "human": "Flare Naphtha",
       "ingredients": [{ "resource": "fluid:angels-liquid-naphtha", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34195,9 +34073,7 @@
     "angels-chemical-void-angels-liquid-mineral-oil": {
       "human": "Flare Base mineral oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-mineral-oil", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34205,9 +34081,7 @@
     "angels-chemical-void-angels-liquid-fuel-oil": {
       "human": "Flare Fuel oil",
       "ingredients": [{ "resource": "fluid:angels-liquid-fuel-oil", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34215,9 +34089,7 @@
     "angels-chemical-void-angels-gas-methanol": {
       "human": "Flare Methanol gas",
       "ingredients": [{ "resource": "fluid:angels-gas-methanol", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1376
@@ -34225,9 +34097,7 @@
     "angels-chemical-void-angels-gas-ethylene": {
       "human": "Flare Ethylene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethylene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3471
@@ -34235,9 +34105,7 @@
     "angels-chemical-void-angels-gas-benzene": {
       "human": "Flare Benzene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-benzene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3471
@@ -34245,9 +34113,7 @@
     "angels-chemical-void-angels-gas-synthesis": {
       "human": "Flare Synthesis gas",
       "ingredients": [{ "resource": "fluid:angels-gas-synthesis", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3809
@@ -34255,9 +34121,7 @@
     "angels-chemical-void-angels-gas-butadiene": {
       "human": "Flare Butadiene gas",
       "ingredients": [{ "resource": "fluid:angels-gas-butadiene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3471
@@ -34265,9 +34129,7 @@
     "angels-chemical-void-angels-liquid-phenol": {
       "human": "Flare Phenol liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-phenol", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7311
@@ -34275,9 +34137,7 @@
     "angels-chemical-void-angels-liquid-ethylbenzene": {
       "human": "Flare Ethylbenzene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-ethylbenzene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.4949
@@ -34285,9 +34145,7 @@
     "angels-chemical-void-angels-liquid-styrene": {
       "human": "Flare Styrene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-styrene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.4949
@@ -34295,9 +34153,7 @@
     "angels-chemical-void-angels-gas-formaldehyde": {
       "human": "Flare Formaldehyde gas",
       "ingredients": [{ "resource": "fluid:angels-gas-formaldehyde", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3382
@@ -34305,9 +34161,7 @@
     "angels-chemical-void-angels-liquid-polyethylene": {
       "human": "Flare Polyethylene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-polyethylene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5249
@@ -34315,9 +34169,7 @@
     "angels-chemical-void-angels-liquid-glycerol": {
       "human": "Flare Glycerol liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-glycerol", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3809
@@ -34325,9 +34177,7 @@
     "angels-chemical-void-lubricant": {
       "human": "Flare Lubricant",
       "ingredients": [{ "resource": "fluid:lubricant", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3477
@@ -34335,9 +34185,7 @@
     "angels-chemical-void-angels-gas-acetone": {
       "human": "Flare Acetone gas",
       "ingredients": [{ "resource": "fluid:angels-gas-acetone", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3809
@@ -34345,9 +34193,7 @@
     "angels-chemical-void-angels-liquid-toluene": {
       "human": "Flare Toluene liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-toluene", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.508
@@ -34355,9 +34201,7 @@
     "angels-chemical-void-angels-liquid-bisphenol-a": {
       "human": "Flare Bisphenol A liquid",
       "ingredients": [{ "resource": "fluid:angels-liquid-bisphenol-a", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7311
@@ -34365,9 +34209,7 @@
     "angels-chemical-void-angels-gas-acid": {
       "human": "Flare Acid gas",
       "ingredients": [{ "resource": "fluid:angels-gas-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3271
@@ -34375,9 +34217,7 @@
     "angels-chemical-void-angels-gas-hydrogen-sulfide": {
       "human": "Flare Hydrogen sulfide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-hydrogen-sulfide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3449
@@ -34385,9 +34225,7 @@
     "angels-chemical-void-angels-gas-sulfur-dioxide": {
       "human": "Flare Sulfur dioxide gas",
       "ingredients": [{ "resource": "fluid:angels-gas-sulfur-dioxide", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.1412
@@ -34395,9 +34233,7 @@
     "angels-chemical-void-angels-liquid-sulfuric-acid": {
       "human": "Flare Sulfuric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3259
@@ -34405,9 +34241,7 @@
     "angels-chemical-void-angels-liquid-chlorauric-acid": {
       "human": "Flare Chlorauric acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-chlorauric-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.704
@@ -34415,9 +34249,7 @@
     "angels-chemical-void-angels-liquid-hexachloroplatinic-acid": {
       "human": "Flare Hexachloroplatinic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hexachloroplatinic-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.9583
@@ -34425,9 +34257,7 @@
     "angels-chemical-void-angels-gas-silane": {
       "human": "Flare Silane gas",
       "ingredients": [{ "resource": "fluid:angels-gas-silane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.6972
@@ -34435,9 +34265,7 @@
     "angels-chemical-void-angels-liquid-trichlorosilane": {
       "human": "Flare Trichlorosilane",
       "ingredients": [{ "resource": "fluid:angels-liquid-trichlorosilane", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5284
@@ -34445,9 +34273,7 @@
     "angels-chemical-void-angels-liquid-titanium-tetrachloride": {
       "human": "Flare Titanium tetrachloride",
       "ingredients": [{ "resource": "fluid:angels-liquid-titanium-tetrachloride", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5319
@@ -34455,9 +34281,7 @@
     "angels-chemical-void-angels-gas-tungsten-hexafluoride": {
       "human": "Flare Tungsten hexafluoride gas",
       "ingredients": [{ "resource": "fluid:angels-gas-tungsten-hexafluoride", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.7146
@@ -34465,9 +34289,7 @@
     "angels-chemical-void-angels-liquid-hexafluorosilicic-acid": {
       "human": "Flare Hexafluorosilicic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-hexafluorosilicic-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.5284
@@ -34475,9 +34297,7 @@
     "angels-chemical-void-angels-liquid-tungstic-acid": {
       "human": "Flare Tungstic acid",
       "ingredients": [{ "resource": "fluid:angels-liquid-tungstic-acid", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.9583
@@ -34485,9 +34305,7 @@
     "angels-water-void-angels-liquid-coolant": {
       "human": "Clarify Coolant",
       "ingredients": [{ "resource": "fluid:angels-liquid-coolant", "amount": 400 }],
-      "products": [
-        { "resource": "item:angels-water-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 5,
       "categories": ["angels-water-void"],
       "complexity": 0.5327
@@ -34975,9 +34793,7 @@
     "angels-chemical-void-angels-gas-ethanol": {
       "human": "Flare Ethanol gas",
       "ingredients": [{ "resource": "fluid:angels-gas-ethanol", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3809
@@ -34985,9 +34801,7 @@
     "angels-chemical-void-angels-alien-spores": {
       "human": "Flare Alien spores",
       "ingredients": [{ "resource": "fluid:angels-alien-spores", "amount": 100 }],
-      "products": [
-        { "resource": "item:angels-chemical-void", "amount": { "fixed": 1 }, "probability": 0 }
-      ],
+      "products": [],
       "duration": 1,
       "categories": ["angels-chemical-void"],
       "complexity": 0.3639
@@ -38440,7 +38254,6 @@
       "stackSize": 200,
       "complexity": 0.5386
     },
-    "item:angels-water-void": { "human": "Water void", "stackSize": 200, "complexity": 0 },
     "item:angels-electrolyser": {
       "human": "Electrolyser 1",
       "stackSize": 10,
@@ -38636,7 +38449,6 @@
       "stackSize": 10,
       "complexity": 0.7754
     },
-    "item:angels-chemical-void": { "human": "Chemical void", "stackSize": 200, "complexity": 0 },
     "item:angels-solid-sodium-chlorate": {
       "human": "Sodium chlorate",
       "stackSize": 200,

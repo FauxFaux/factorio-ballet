@@ -29,6 +29,16 @@ describe('cellInterface', () => {
     });
   });
 
+  /* A void sink consumes a fluid and produces nothing: the marker item its `results` names is
+   * dropped by the ingest, so there is no fake output on the cell's right-hand side. */
+  it('reads a sink as an input with nothing handed on', () => {
+    expect(cellInterface(newCell('angels-water-void-angels-water-yellow-waste'))).toEqual({
+      inputs: ['fluid:angels-water-yellow-waste'],
+      outputs: [],
+      internal: [],
+    });
+  });
+
   it('takes what one recipe hands the next out of the interface', () => {
     expect(cellInterface(chain)).toEqual({
       inputs: ['item:angels-ore1-crushed'],
