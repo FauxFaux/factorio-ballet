@@ -494,6 +494,71 @@ button.machine:hover {
   white-space: nowrap;
 }
 
+/* The dropdown form: the chosen machine, and the list of the others only while it is open. The
+ * menu is taken out of the flow so opening one does not push the rest of the page about. */
+.machine-picker {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.machine-caret {
+  font-size: 11px;
+  line-height: 1;
+  padding-left: 2px;
+}
+
+.machine-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 0;
+  display: grid;
+  /* one row per machine, three columns: icon, speed, name — the speed column is fixed so the
+     numbers line up down the list rather than following the icons */
+  grid-template-columns: auto 3.5rem 1fr;
+  max-height: 60vh;
+  min-width: max-content;
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.machine-option {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  gap: 0 8px;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 2px 8px 2px 2px;
+  cursor: pointer;
+}
+
+.machine-option:hover {
+  background: var(--accent-bg);
+}
+
+.machine-option.is-chosen {
+  color: var(--accent);
+}
+
+.machine-option-speed {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.machine-option-name {
+  white-space: nowrap;
+}
+
 .productivity {
   display: inline-flex;
   align-items: center;

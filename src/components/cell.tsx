@@ -14,7 +14,7 @@ import { machinesFor, resourceName } from '../data.ts';
 import { atIndex, type State } from '../ts.ts';
 import type { Recipe, ResourceId } from '../types.ts';
 import { recipeIconStyle } from './icon.tsx';
-import { MachineChip } from './machine.tsx';
+import { MachinePicker } from './machine.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
 /**
@@ -265,9 +265,8 @@ function CellRow({
 }
 
 /**
- * The machines which can run this recipe, the chosen one marked. Clicking the chosen one puts the
- * entry back to "whichever", which is not the same as choosing the machine that stands in for it:
- * that one moves if the data or the default does.
+ * Which machine runs this recipe. "Whichever" is a choice of its own, not a synonym for the machine
+ * it currently resolves to: it follows the default, so it moves if the data does.
  */
 function CellMachines({
   entry,
@@ -278,19 +277,13 @@ function CellMachines({
   recipe: Recipe;
   onChange: (entry: CellEntry) => void;
 }) {
-  const chosen = entryMachine(entry, recipe);
   return (
-    <div class="machine-list">
-      {machinesFor(recipe).map(({ id, machine }) => (
-        <MachineChip
-          key={id}
-          id={id}
-          machine={machine}
-          active={id === chosen}
-          onClick={() => onChange({ ...entry, machine: entry.machine === id ? undefined : id })}
-        />
-      ))}
-    </div>
+    <MachinePicker
+      machines={machinesFor(recipe)}
+      chosen={entryMachine(entry, recipe)}
+      pinned={entry.machine !== undefined}
+      onChoose={(machine) => onChange({ ...entry, machine })}
+    />
   );
 }
 

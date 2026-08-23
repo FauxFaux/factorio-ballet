@@ -1,4 +1,5 @@
-import { machineName } from '../data.ts';
+import { machineName, type MachineMatch } from '../data.ts';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { fmt } from '../ts.ts';
 import type { Machine, MachineId } from '../types.ts';
 import { machineIconStyle } from './icon.tsx';
@@ -48,5 +49,120 @@ export function MachineChip({
     <span class={classes} title={label} onMouseEnter={onMouseEnter}>
       {inner}
     </span>
+  );
+}
+
+/**
+ * Which machine runs a recipe, as a dropdown: the one in use, and the whole list only when asked
+ * for. A cell is a list of these down the page, so the horizontal row of every candidate — right
+ * for a search result, which is asking "what could run this?" — was most of the width of a row
+ * spent on choices already made. The menu floats over the page rather than opening into it, so
+ * nothing below a cell moves while you pick.
+ */
+export function MachinePicker({
+  machines,
+  chosen,
+  pinned,
+  onChoose,
+}: {
+  machines: MachineMatch[];
+  /** The machine in use, whether that was chosen or defaulted. */
+  chosen?: MachineId;
+  /** Whether {@link chosen} was the user's choice rather than the default standing in for one. */
+  pinned: boolean;
+  onChoose: (id: MachineId | undefined) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
+
+  /* Clicking anywhere else closes the menu, including on another cell's picker — the listener is
+   * mounted only while this one is open, so the click which opens a second menu closes the first
+   * without either of them knowing about the other. */
+  useEffect(() => {
+    if (!open) return;
+    const outside = (event: PointerEvent) => {
+      if (!box.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', outside);
+    return () => document.removeEventListener('pointerdown', outside);
+  }, [open]);
+
+  if (machines.length === 0) return null;
+
+  const current = machines.find(({ id }) => id === chosen);
+  const label = current
+    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×${pinned ? '' : ', by default'}`
+    : 'No machine can run this';
+
+  const choose = (id: MachineId | undefined) => {
+    onChoose(id);
+    setOpen(false);
+  };
+
+  return (
+    <div
+      class="machine-picker"
+      ref={box}
+      onKeyDown={(event) => {
+        if (event.key === 'Escape') setOpen(false);
+      }}
+    >
+      <button
+        type="button"
+        class={pinned ? 'machine is-active' : 'machine'}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        title={`${label} — click to change`}
+        onClick={() => setOpen(!open)}
+      >
+        {current ? (
+          <>
+            <span
+              class="machine-icon"
+              style={machineIconStyle(current.id, current.machine)}
+              aria-hidden="true"
+            />
+            <span class="machine-speed">{fmt(current.machine.speed)}×</span>
+          </>
+        ) : (
+          <span class="machine-speed">—</span>
+        )}
+        <span class="machine-caret" aria-hidden="true">
+          ▾
+        </span>
+      </button>
+      {open ? (
+        <div class="machine-menu" role="listbox" aria-label="Machine">
+          {/* The default is not the same choice as the machine it currently resolves to: it moves
+              if the data or the default rule does, which is what "whichever" is for. */}
+          <button
+            type="button"
+            class={pinned ? 'machine-option' : 'machine-option is-chosen'}
+            role="option"
+            aria-selected={!pinned}
+            onClick={() => choose(undefined)}
+          >
+            <span class="machine-icon" aria-hidden="true" />
+            <span class="machine-option-speed">—</span>
+            <span class="machine-option-name">whichever</span>
+          </button>
+          {machines.map(({ id, machine }) => (
+            <button
+              key={id}
+              type="button"
+              class={pinned && id === chosen ? 'machine-option is-chosen' : 'machine-option'}
+              role="option"
+              aria-selected={pinned && id === chosen}
+              title={id}
+              onClick={() => choose(id)}
+            >
+              <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
+              <span class="machine-option-speed">{fmt(machine.speed)}×</span>
+              <span class="machine-option-name">{machineName(id)}</span>
+            </button>
+          ))}
+        </div>
+      ) : null}
+    </div>
   );
 }
