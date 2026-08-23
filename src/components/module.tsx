@@ -31,35 +31,36 @@ function effectSummary(category: ModuleCategory, module: Module): string {
  * four tiers is worth none of the header's width until it is asked for.
  *
  * It is a preference and not a loadout: how many of them go in which machine is the cell's
- * business, and this only says which tier is meant by "a speed module".
+ * business, and this only says which tier is meant by "a speed module" — or that none of them is,
+ * which is a choice a player who is not using the family makes once and keeps.
  */
 export function ModulePicker({
   category,
   modules,
+  choice,
   chosen,
-  pinned,
   onChoose,
 }: {
   category: ModuleCategory;
   modules: ModuleMatch[];
-  /** The module in use, whether that was chosen or defaulted. */
+  /** What the user picked: a module, `null` for none, or absent for auto. */
+  choice?: ModuleId | null;
+  /** The module in use, whether that was chosen or defaulted; absent means none is. */
   chosen?: ModuleId;
-  /** Whether {@link chosen} was the user's choice rather than the default standing in for one. */
-  pinned: boolean;
-  onChoose: (id: ModuleId | undefined) => void;
+  onChoose: (id: ModuleId | null | undefined) => void;
 }) {
   const { open, setOpen, box } = useMenu();
 
   if (modules.length === 0) return null;
 
-  const current = modules.find(({ id }) => id === chosen);
-  const label = current
-    ? `${moduleName(current.id)}: ${effectSummary(category, current.module)}${
-        pinned ? '' : ', by default for this progress'
-      }`
-    : `No ${category.human} module`;
+  const pinned = choice !== undefined;
+  const current = chosen ? modules.find(({ id }) => id === chosen) : undefined;
+  const what = current
+    ? `${moduleName(current.id)}: ${effectSummary(category, current.module)}`
+    : `No ${category.human} modules`;
+  const label = pinned ? what : `${what}, by default for this progress`;
 
-  const choose = (id: ModuleId | undefined) => {
+  const choose = (id: ModuleId | null | undefined) => {
     onChoose(id);
     setOpen(false);
   };
@@ -84,7 +85,12 @@ export function ModulePicker({
             <span class="module-effect">{percent(headlineEffect(category, current.module))}</span>
           </>
         ) : (
-          <span class="module-effect">—</span>
+          /* An empty icon box, not no icon: "none" must be the same width as a tier, or picking it
+             shifts every picker to its right along the header. */
+          <>
+            <span class="module-icon" aria-hidden="true" />
+            <span class="module-effect">—</span>
+          </>
         )}
         <span class="module-caret" aria-hidden="true">
           ▾
@@ -99,20 +105,34 @@ export function ModulePicker({
             class={pinned ? 'module-option' : 'module-option is-chosen'}
             role="option"
             aria-selected={!pinned}
-            title={`Whichever ${category.human} module suits how far through the game you are`}
+            title={`Whichever ${category.human} module you could have built by now`}
             onClick={() => choose(undefined)}
           >
             <span class="module-icon" aria-hidden="true" />
             <span class="module-option-effect">—</span>
             <span class="module-option-name">auto</span>
           </button>
+          {/* What "auto" resolves to for the whole early game, and a real choice of its own after
+              that: empty slots, whatever the slider says. */}
+          <button
+            type="button"
+            class={choice === null ? 'module-option is-chosen' : 'module-option'}
+            role="option"
+            aria-selected={choice === null}
+            title={`No ${category.human} modules, however far through the game you are`}
+            onClick={() => choose(null)}
+          >
+            <span class="module-icon" aria-hidden="true" />
+            <span class="module-option-effect">—</span>
+            <span class="module-option-name">none</span>
+          </button>
           {modules.map(({ id, module }) => (
             <button
               key={id}
               type="button"
-              class={pinned && id === chosen ? 'module-option is-chosen' : 'module-option'}
+              class={choice === id ? 'module-option is-chosen' : 'module-option'}
               role="option"
-              aria-selected={pinned && id === chosen}
+              aria-selected={choice === id}
               title={`${id}: ${effectSummary(category, module)}`}
               onClick={() => choose(id)}
             >
@@ -147,21 +167,24 @@ export function ModuleBar({
     <div class="module-bar">
       {moduleCategories.map((category) => {
         const modules = modulesIn(category.id);
-        const picked = chosen[category.id];
+        const choice = category.id in chosen ? chosen[category.id] : undefined;
         return (
           <ModulePicker
             key={category.id}
             category={category}
             modules={modules}
-            chosen={picked ?? defaultModule(modules, progress)?.id}
-            pinned={!!picked}
+            choice={choice}
+            chosen={
+              choice === undefined ? defaultModule(modules, progress)?.id : (choice ?? undefined)
+            }
             onChoose={(id) =>
               setChosen((prev) => {
                 // "auto" is the absence of a choice, so choosing it takes the key back out rather
                 // than storing anything — one less thing in the URL, and one less thing to mean.
+                // `null` is a choice, though, and the one it is is "none".
                 const next = { ...prev };
-                if (id) next[category.id] = id;
-                else delete next[category.id];
+                if (id === undefined) delete next[category.id];
+                else next[category.id] = id;
                 return next;
               })
             }

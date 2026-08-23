@@ -171,9 +171,16 @@ machine, so it is one setting in the header rather than a repeated choice: `modu
 families the dataset has — `speed`, `productivity` and `angels-bio-yield`, which the UI calls
 "agricultural" because a `module-category` prototype has no name to ingest — and `ModuleBar`
 (`components/module.tsx`) is a `ModulePicker` for each, sitting right of the progress slider it
-defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category, and a category
-nobody has picked is _absent_ rather than held at a default, so `defaultModule` follows the slider
-for it exactly as `defaultMachine` does for a machine. Nothing reads `mo` yet: the cell rows will.
+defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category with three
+states which are all different: a module id, `null` for none, and _absent_ for auto, which follows
+the slider through `defaultModule`. Nothing reads `mo` yet: the cell rows will.
+
+`defaultModule` is deliberately **not** `defaultMachine`'s nearest-`progress` rule — it is the best
+tier you could already have built, and none until that is nothing. The difference is that none
+exists: a machine has to be _some_ machine, so nearest is the best a default can do there, whereas
+naming a tier-1 speed module at 20% progress overstates a factory with no modules in it at all. None
+is a complexity of zero — you have empty slots at the crash site — so it holds until the family is
+unlocked, and it is pinnable too, for the player who is not using that family at all.
 
 **Catalysts** are the other half of productivity, and are ingested rather than derived: a result's
 `ignored_by_productivity` is the share the recipe borrowed rather than made — the 40 of the 41

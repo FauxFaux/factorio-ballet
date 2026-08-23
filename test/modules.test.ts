@@ -181,11 +181,14 @@ describe('the module families', () => {
     expect(modulesIn('no-such-category')).toEqual([]);
   });
 
-  it('defaults to the tier nearest the progress slider', () => {
+  it('defaults to the best tier the progress slider has unlocked', () => {
     const at = (progress: number) => defaultModule(modulesIn('productivity'), progress)?.id;
-    // tier 1 is 0.36 and the crash site has no modules at all, but "none" is not one of the
-    // choices here — leaving the slots empty is
-    expect(at(0)).toBe('productivity-module');
+    // none until tier 1 is actually craftable, which is 0.3556 in this pack: unlike a machine, a
+    // module has an honest answer to fall back to, and empty slots is it
+    expect(at(0)).toBeUndefined();
+    expect(at(0.35)).toBeUndefined();
+    expect(at(0.36)).toBe('productivity-module');
+    // 0.4954, and tier 3 is 0.6727 — the best one you have, not the nearest one there is
     expect(at(0.5)).toBe('productivity-module-2');
     expect(at(1)).toBe('bob-productivity-module-5');
   });

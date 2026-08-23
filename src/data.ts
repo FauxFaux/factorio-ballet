@@ -275,33 +275,24 @@ export function headlineEffect(category: ModuleCategory, module: Module): number
 }
 
 /**
- * Which module in a category to assume when nobody has chosen one, by the same rule as
- * {@link defaultMachine}: the one nearest `progress`, since a tier-1 speed module is as wrong at
- * space science as a tier 5 is on red. Note this names a module at 0% too — the crash site has no
- * modules at all, but "none" is not one of the choices here, it is leaving the slots empty.
+ * Which module in a category to assume when nobody has chosen one: the best you could already have
+ * built, and `undefined` — none, empty slots — while that is nothing. That is not
+ * {@link defaultMachine}'s nearest-`progress` rule, and the difference is none: a machine has to be
+ * *some* machine, so nearest is the best a default can do there, while a tier-1 speed module you
+ * cannot craft yet has an honest answer to fall back to. "None" is a complexity of zero — you have
+ * empty slots at the crash site — so it wins for as long as no real module is unlocked.
  *
- * Ties go to the higher tier, then to the id, so the answer is stable.
+ * Takes the cheapest-first list {@link modulesIn} returns: the last module in it you can reach is
+ * the best one you can reach, and one nothing unlocks (complexity `Infinity`) is never reached.
  */
 export function defaultModule(modules: ModuleMatch[], progress: number): ModuleMatch | undefined {
-  let best: ModuleMatch | undefined;
-  for (const match of modules) {
-    if (!best || compareModules(match, best, progress) < 0) best = match;
-  }
-  return best;
-}
-
-/** Nearest `progress` first, then the higher tier, then by id; {@link compareMachines} for modules. */
-function compareModules(a: ModuleMatch, b: ModuleMatch, progress: number): number {
-  return (
-    relevanceOf(a, progress) - relevanceOf(b, progress) ||
-    b.module.tier - a.module.tier ||
-    a.id.localeCompare(b.id)
-  );
+  return modules.findLast((match) => complexityOf(match) <= progress);
 }
 
 /**
  * Which module the user wants reached for in each category, keyed by {@link ModuleCategory}`.id`.
- * A category nobody has decided is absent rather than held at a default, so it follows the progress
- * slider through {@link defaultModule} exactly as an unpinned machine follows it.
+ * Three states, and they are all different: a module id, `null` for none — no modules of this
+ * family, whatever the progress — and absent for a category nobody has decided, which follows the
+ * progress slider through {@link defaultModule}.
  */
-export type ModuleChoice = Record<string, ModuleId>;
+export type ModuleChoice = Record<string, ModuleId | null>;
