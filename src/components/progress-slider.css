@@ -1,0 +1,60 @@
+.progress-slider {
+  flex: 0 1 26rem;
+  min-width: 14rem;
+}
+
+.progress-slider input {
+  display: block;
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+/* The pack icons mark where on the track each one sits, so they have to line up with the thumb —
+ * and the thumb's centre stops half its own width short of each end of the input. */
+.progress-packs {
+  position: relative;
+  height: 24px;
+  margin: 2px 8px 0;
+}
+
+.progress-pack {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  /* the sprite is scaled from this box's content origin, so size the content to the scaled sprite
+   * exactly and let the padding be the only thing between it and the border */
+  box-sizing: content-box;
+  width: 16px;
+  height: 16px;
+  padding: 3px;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.progress-pack:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+/* the pack the slider is sitting on, if any: the one you would name this progress after */
+.progress-pack.is-here {
+  border-color: var(--accent);
+}
+
+/* The spritesheet is a 32px grid and `iconStyle` positions it in those units, so the only way to
+ * shrink a sprite is to scale the box it is painted in — seven packs do not fit across at 32px.
+ *
+ * Scaled from the corner, not the centre: a 32px child cannot be centred in a 16px box, because
+ * an overflowing item resolves to the start edge rather than overhanging symmetrically. From
+ * `top left` the scaled sprite lands on the content box exactly, whatever the box is. */
+.progress-pack-icon {
+  display: block;
+  width: 32px;
+  height: 32px;
+  transform: scale(0.5);
+  transform-origin: top left;
+}

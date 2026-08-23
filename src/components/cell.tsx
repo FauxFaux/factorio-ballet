@@ -1,3 +1,4 @@
+import './cell.css';
 import { useMemo, useState } from 'preact/hooks';
 import {
   cellInterface,

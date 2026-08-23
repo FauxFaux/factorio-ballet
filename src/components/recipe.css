@@ -1,0 +1,264 @@
+.recipe-card {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: var(--code-bg);
+}
+
+.recipe-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.recipe-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.recipe-name {
+  color: var(--text-h);
+  font-family: var(--heading);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recipe-duration {
+  margin-left: auto;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  font-size: 15px;
+}
+
+/* A card the game has no recipe for: a pump or a drill working the ground it stands on. The dashed
+ * edge and the tag are the whole distinction, so keep them together — the numbers below are real
+ * either way. At 1px the dashes all but vanish against the card, so this one is 2px, with a pixel
+ * off the padding to keep the contents lined up with every other card down the page. */
+.recipe-card.is-synthetic {
+  border-style: dashed;
+  border-width: 2px;
+  padding: 7px 11px;
+}
+
+.recipe-synthetic {
+  flex-shrink: 0;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
+.recipe-flows-fold {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+/* whichever of the table or the summary is showing takes the rest of the row */
+.recipe-flows-fold > :not(.fold-toggle) {
+  flex: 1;
+  min-width: 0;
+}
+
+.fold-toggle {
+  font: inherit;
+  line-height: 32px;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0 4px;
+  cursor: pointer;
+}
+
+.fold-toggle:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.recipe-flows {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.recipe-flows th {
+  text-align: left;
+  font-weight: normal;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-right: 8px;
+  width: 1%;
+  vertical-align: middle;
+}
+
+.recipe-flows .flow-out th {
+  color: var(--accent);
+}
+
+.recipe-flows .flow-out > * {
+  border-top: 1px solid var(--border);
+}
+
+.flow-amount,
+.flow-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  white-space: nowrap;
+  width: 1%;
+}
+
+.flow-amount {
+  text-align: right;
+  padding-right: 6px;
+}
+
+.flow-rate {
+  text-align: right;
+  color: var(--text-h);
+  padding-left: 12px;
+}
+
+.flow-note {
+  font-size: 14px;
+  font-family: var(--mono);
+  padding-left: 6px;
+}
+
+.flow-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 4px;
+  margin: 0;
+}
+
+.flow-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: help;
+}
+
+.flow-chip-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text-h);
+}
+
+/* the unit repeats on every chip; the number is the part worth reading */
+.flow-chip-unit {
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* sits tight against the chip it follows, not centred in the flex gap */
+.flow-chip-sep {
+  margin-left: -4px;
+}
+
+.flow-arrow {
+  color: var(--accent);
+  padding: 0 4px;
+}
+
+/* While a machine is hovered, the duration and rates are that machine's, not the 1× baseline; the
+ * accent says "these numbers moved". */
+.recipe-card.is-previewing .recipe-duration,
+.recipe-card.is-previewing .flow-rate,
+.recipe-card.is-previewing .flow-chip-rate {
+  color: var(--accent);
+}
+
+/* The machines wrap in the left column; the right one is reserved for the productivity chip, so
+ * it stays at the right edge however many lines the machines take. */
+.recipe-machines {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.machine-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+}
+
+.recipe-machines-label {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding-right: 2px;
+}
+
+.productivity {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  cursor: help;
+  /* the unticked state is the majority, so keep it quiet next to the machines */
+  opacity: 0.45;
+}
+
+.productivity.is-allowed {
+  opacity: 1;
+}
+
+.productivity-check {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.productivity:not(.is-allowed) .productivity-check {
+  visibility: hidden;
+}
+
+/* the one control on a search result: put this recipe in the cell being worked on */
+.recipe-add {
+  flex-shrink: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.recipe-add:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.recipe-add.is-in-cell {
+  color: var(--accent);
+  border-color: transparent;
+  cursor: default;
+}
+
+.recipe-hint {
+  color: var(--text);
+  font-style: italic;
+}

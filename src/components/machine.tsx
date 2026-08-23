@@ -1,3 +1,4 @@
+import './machine.css';
 import { machineName, type MachineMatch } from '../data.ts';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { fmt } from '../ts.ts';

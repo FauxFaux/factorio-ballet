@@ -1,3 +1,4 @@
+import './search-box.css';
 import type { ComponentChildren } from 'preact';
 import type { State } from '../ts.ts';
 

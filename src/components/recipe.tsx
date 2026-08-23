@@ -1,3 +1,4 @@
+import './recipe.css';
 import type {
   Ingredient,
   IngredientTemperature,

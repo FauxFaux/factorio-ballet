@@ -1,0 +1,40 @@
+.resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.resource-button {
+  display: block;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 2px 6px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.resource-button:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.resource-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.resource-is-id {
+  font-family: var(--mono);
+}
+
+.resource-list table {
+  border-collapse: collapse;
+  width: 100%;
+}

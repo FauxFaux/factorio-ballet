@@ -1,3 +1,4 @@
+import './progress-slider.css';
 import { type Landmark, packLandmarks, resourceName } from '../data.ts';
 import { bareName } from '../search.ts';
 import type { State } from '../ts.ts';

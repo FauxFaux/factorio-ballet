@@ -1,0 +1,38 @@
+.app-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0 32px;
+  margin: 0.67em 0;
+}
+
+.app-head h1 {
+  margin: 0;
+}
+
+.columns {
+  display: flex;
+  align-items: flex-start;
+  gap: 48px;
+}
+
+.resource-list {
+  flex: 0 0 24rem;
+  max-width: 24rem;
+}
+
+.recipe-list {
+  flex: 0 1 32rem;
+  min-width: 0;
+  max-width: 32rem;
+}
+
+@media (max-width: 800px) {
+  .columns {
+    flex-direction: column;
+  }
+
+  .resource-list {
+    flex: none;
+  }
+}

@@ -1,0 +1,114 @@
+.machine {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+  cursor: help;
+}
+
+/* the machine standing for the numbers on show: hovered on a card, chosen in a cell */
+.machine.is-active {
+  border-color: var(--accent);
+}
+
+/* a chip which is a choice, rather than a list of what could run the recipe */
+button.machine {
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+button.machine:hover {
+  background: var(--accent-bg);
+}
+
+.machine-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.machine-speed {
+  font-family: var(--mono);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* The dropdown form: the chosen machine, and the list of the others only while it is open. The
+ * menu is taken out of the flow so opening one does not push the rest of the page about. */
+.machine-picker {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* Room for the widest speed there is — `1.75×`, or four digits — so the rows of a cell do not step
+   in and out as the machine changes. */
+.machine-picker .machine-speed {
+  min-width: 5ch;
+  text-align: right;
+}
+
+.machine-caret {
+  font-size: 11px;
+  line-height: 1;
+  padding-left: 2px;
+}
+
+.machine-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 0;
+  display: grid;
+  /* one row per machine, three columns: icon, speed, name — the speed column is fixed so the
+     numbers line up down the list rather than following the icons */
+  grid-template-columns: auto 3.5rem 1fr;
+  gap: 2px 10px;
+  max-height: 60vh;
+  min-width: max-content;
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.machine-option {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  align-items: center;
+  /* the column gaps come from the parent grid, which subgrid inherits along with its tracks */
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  padding: 4px 12px 4px 4px;
+  cursor: pointer;
+}
+
+.machine-option:hover {
+  background: var(--accent-bg);
+}
+
+.machine-option.is-chosen {
+  color: var(--accent);
+}
+
+.machine-option-speed {
+  font-family: var(--mono);
+  font-size: 13px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.machine-option-name {
+  white-space: nowrap;
+}

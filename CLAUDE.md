@@ -107,6 +107,15 @@ version letter (`HASH_VERSION = 'j'`). The dictionary is derived from the defaul
 a field to `UrlState` invalidates every existing hash** — bump the version letter whenever the state
 shape changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
+Styles are plain CSS, one file per component, imported by the component itself
+(`components/cell.tsx` → `components/cell.css`) — Vite concatenates them into one bundle in import
+order. `index.css` is globals only: the `:root` custom properties, `#app`, `code`. `app.css` is the
+shell — the header and the two-column layout, including the widths of `.resource-list` and
+`.recipe-list`, which belong with the media query that overrides them rather than with the lists.
+There is no scoping, so the class names stay prefixed by component and a couple are shared across
+files (`.recipe-hint`, `.search-btn`); every file is loaded on every page, so that works, but put a
+new rule where its markup lives.
+
 ### Data model (`src/types.ts`, `src/data.ts`)
 
 `StaticData = { recipes, resources, machines, sciencePacks }`. Resources are keyed by `ResourceId` —

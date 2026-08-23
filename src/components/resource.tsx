@@ -1,3 +1,4 @@
+import './resource.css';
 import { staticData } from '../data.ts';
 import type { ResourceId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';

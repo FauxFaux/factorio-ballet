@@ -1,3 +1,4 @@
+import './app.css';
 import { useMemo } from 'preact/hooks';
 import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.ts';
 import { field, type State } from './ts.ts';
