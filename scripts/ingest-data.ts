@@ -3,7 +3,7 @@
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
 import type { RawData } from 'factorio-raw-types/prototypes';
-import { ITEM_KEYS } from './raw-keys.ts';
+import { BELT_KEYS, ITEM_KEYS } from './raw-keys.ts';
 import { arr, effectLimits, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
@@ -11,6 +11,7 @@ import { analyse } from './complexity.ts';
 import { placingItems, syntheticRecipes } from './synthetic.ts';
 import type {
   Beacon,
+  Belt,
   Ingredient,
   IngredientTemperature,
   Machine,
@@ -57,6 +58,7 @@ async function main() {
   addSynthetic(v, recipes, machines, locales);
   const modules = handleModules(v);
   const beacons = handleBeacons(v, locales);
+  const belts = handleBelts(v, locales);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -121,11 +123,20 @@ async function main() {
 
   checkModules(modules, machines, resources);
   checkBeacons(beacons, v);
+  checkBelts(belts, v, resources);
   checkCatalysts(recipes);
 
   const sciencePacks = applyComplexity(v, recipes, resources);
 
-  const staticData: StaticData = { recipes, resources, machines, modules, beacons, sciencePacks };
+  const staticData: StaticData = {
+    recipes,
+    resources,
+    machines,
+    modules,
+    beacons,
+    belts,
+    sciencePacks,
+  };
   await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
@@ -407,6 +418,83 @@ function checkBeacons(beacons: Record<string, Beacon>, v: RawData) {
   }
   if (off.length > 0) {
     console.log(`Beacon profiles which are not 1/sqrt(n): ${off.length}`, off.slice(0, 20));
+  }
+}
+
+/**
+ * Ticks per second, and how many items fit along a tile of one lane: the game states a belt's
+ * `speed` in tiles per tick, and the app wants items per second. An item occupies a quarter of a
+ * tile along the lane it is on, and a belt has two of them.
+ */
+const TICKS_PER_SECOND = 60;
+const ITEMS_PER_TILE = 4;
+const BELT_LANES = 2;
+
+/**
+ * The transport belts, keyed by prototype id. Undergrounds, splitters, loaders and linked belts are
+ * `speed` too, and are deliberately not here: they are the same tier's number written out again
+ * (see `checkBelts`), and none of them is a thing a plan is measured against.
+ *
+ * Hidden is dropped as everywhere else, though no transport belt in this pack is hidden — the
+ * hidden belt-shaped prototypes are the three vanilla loaders and the two script-only entities
+ * (`linked-belt`, `lane-splitter`), which are not transport belts to begin with.
+ */
+function handleBelts(v: RawData, locales: Record<string, RLocale>): Record<string, Belt> {
+  const belts: Record<string, Belt> = {};
+  const placedBy = placingItems(v);
+  const round = (x: number) => Math.round(x * 1e4) / 1e4;
+  let skipped = 0;
+
+  for (const [id, b] of Object.entries(v['transport-belt'] ?? {})) {
+    if (b.hidden) {
+      skipped++;
+      continue;
+    }
+    belts[id] = {
+      human: resolveLocale(id, locales, 'entity'),
+      item: placedBy.get(id),
+      itemsPerSecond: round(b.speed * TICKS_PER_SECOND * ITEMS_PER_TILE * BELT_LANES),
+    };
+  }
+
+  console.log(`Belts: ${Object.keys(belts).length} (dropped ${skipped} hidden)`);
+  return belts;
+}
+
+/**
+ * The two things ingesting only `transport-belt` assumes.
+ *
+ * A belt with no placing item would be half a building, as an unplaceable pump is in
+ * `scripts/synthetic.ts` — and it would have no name, icon or complexity either, since all three
+ * live on the item. None here: every belt is placed by an item of its own id.
+ *
+ * The other is that a tier is one number. `underground-belt`, `splitter`, `loader`, `loader-1x1`,
+ * `linked-belt` and `lane-splitter` each state their own `speed`, and a pack could make a splitter
+ * slower than the belt feeding it — 2.0's own lane splitter is the shape of a prototype that might.
+ * Every one of the 25 here matches a belt exactly, so quoting the belt covers the line; a report
+ * from this means throughput has a second number and `Belt` needs revisiting.
+ */
+function checkBelts(
+  belts: Record<string, Belt>,
+  v: RawData,
+  resources: Record<ResourceId, Resource>,
+) {
+  const itemless = Object.entries(belts).filter(
+    ([, b]) => b.item === undefined || !(`item:${b.item}` in resources),
+  );
+  if (itemless.length > 0) {
+    console.log(`Belts with no item: ${itemless.length}`, itemless.map(([id]) => id).slice(0, 20));
+  }
+
+  const speeds = new Set(Object.values(v['transport-belt'] ?? {}).map((b) => b.speed));
+  const odd: string[] = [];
+  for (const key of BELT_KEYS) {
+    for (const [id, b] of entriesOf(v[key] ?? {})) {
+      if (!speeds.has(b.speed)) odd.push(`${id}=${b.speed}`);
+    }
+  }
+  if (odd.length > 0) {
+    console.log(`Belt-shaped entities running at no belt's speed: ${odd.length}`, odd.slice(0, 20));
   }
 }
 

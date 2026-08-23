@@ -45110,6 +45110,34 @@
       "allowedEffects": ["consumption", "speed", "pollution"]
     }
   },
+  "belts": {
+    "transport-belt": { "human": "Transport belt", "item": "transport-belt", "itemsPerSecond": 15 },
+    "fast-transport-belt": {
+      "human": "Fast transport belt",
+      "item": "fast-transport-belt",
+      "itemsPerSecond": 30
+    },
+    "express-transport-belt": {
+      "human": "Express transport belt",
+      "item": "express-transport-belt",
+      "itemsPerSecond": 45
+    },
+    "bob-basic-transport-belt": {
+      "human": "Basic transport belt",
+      "item": "bob-basic-transport-belt",
+      "itemsPerSecond": 7.5
+    },
+    "bob-turbo-transport-belt": {
+      "human": "Turbo transport belt",
+      "item": "bob-turbo-transport-belt",
+      "itemsPerSecond": 60
+    },
+    "bob-ultimate-transport-belt": {
+      "human": "Ultimate transport belt",
+      "item": "bob-ultimate-transport-belt",
+      "itemsPerSecond": 75
+    }
+  },
   "sciencePacks": [
     "item:automation-science-pack",
     "item:logistic-science-pack",

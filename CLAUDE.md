@@ -120,9 +120,9 @@ new rule where its markup lives.
 
 ### Data model (`src/types.ts`, `src/data.ts`)
 
-`StaticData = { recipes, resources, machines, modules, beacons, sciencePacks }`. Resources are keyed
-by `ResourceId` — the colon scheme `item:<name>` | `fluid:<name>` shared with both prior projects.
-`Recipe.products` carry `probability`, `{fixed}|{min,max}` amounts and the catalyst share
+`StaticData = { recipes, resources, machines, modules, beacons, belts, sciencePacks }`. Resources
+are keyed by `ResourceId` — the colon scheme `item:<name>` | `fluid:<name>` shared with both prior
+projects. `Recipe.products` carry `probability`, `{fixed}|{min,max}` amounts and the catalyst share
 productivity is not paid on (`ignoredByProductivity`); `Recipe.ingredients` carry optional fluid
 temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
 the `item` which places them; which machine can run which recipe is the game's category system —
@@ -205,6 +205,16 @@ exists: a machine has to be _some_ machine, so nearest is the best a default can
 naming a tier-1 speed module at 20% progress overstates a factory with no modules in it at all. None
 is a complexity of zero — you have empty slots at the crash site — so it holds until the family is
 unlocked, and it is pinnable too, for the player who is not using that family at all.
+
+**Belts** are the other constraint on a cell: not how fast it can make something, but how much of it
+can leave. `StaticData.belts` is the six tiers this pack has, keyed by bare prototype id like a
+module — a belt is placed by an item of the same id, so the name, icon, stack size and complexity
+are on `item:<id>` already — and carries one number, `itemsPerSecond`: 15 for the vanilla yellow, 60
+for bob's turbo. The game states `speed` in tiles per tick; items sit a quarter of a tile apart on
+each of two lanes, so items/s is `speed × 60 × 4 × 2`. Only the belt is ingested. Its underground,
+its splitter and the loaders each restate the same speed, and `checkBelts` asserts every one of the
+25 belt-shaped entities here runs at some belt's speed, so a tier stays one number rather than four.
+Nothing consumes this yet.
 
 **Catalysts** are the other half of productivity, and are ingested rather than derived: a result's
 `ignored_by_productivity` is the share the recipe borrowed rather than made — the 40 of the 41

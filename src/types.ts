@@ -19,6 +19,13 @@ export interface StaticData {
   beacons: Record<BeaconId, Beacon>;
 
   /**
+   * The transport belts, keyed by bare prototype id, with how much they carry. A belt runs no
+   * recipes and holds no modules — it is the constraint on getting what a cell makes to wherever
+   * it goes next, which is the number a plan is checked against rather than one it computes.
+   */
+  belts: Record<BeltId, Belt>;
+
+  /**
    * Every item some technology asks for as a research ingredient, cheapest `complexity` first. They
    * are the only readable landmarks on the complexity scale — "past yellow science" is how a player
    * describes a save, where "58%" means nothing — so the app labels its progress slider with them.
@@ -37,6 +44,9 @@ export type ModuleId = string;
 
 /** A beacon's prototype id, e.g. `bob-beacon-2`. */
 export type BeaconId = string;
+
+/** A transport belt's prototype id, e.g. `fast-transport-belt`. */
+export type BeltId = string;
 
 export interface Recipe {
   human?: string;
@@ -240,4 +250,29 @@ export interface Beacon {
   allowedEffects?: Effect[];
   /** As `Machine.allowedModuleCategories`: refuses the module outright, and absent means all. */
   allowedModuleCategories?: string[];
+}
+
+/**
+ * A transport belt: a throughput ceiling with a name. Keyed by bare prototype id, which is also the
+ * id of the item you place it from — so the name, the icon, the stack size and the complexity are
+ * on the `item:<id>` resource already, exactly as they are for a {@link Module}.
+ *
+ * Only the belt itself is ingested. Its underground and its splitter carry their own copy of the
+ * same `speed` in the game data, and in this pack every one of them agrees with the belt it belongs
+ * to — `checkBelts` in the ingest says so — so a tier is one number rather than four.
+ */
+export interface Belt {
+  human?: string;
+  /** The item which places it; bare prototype id, as `Machine.item` is. */
+  item?: string;
+  /**
+   * What a fully compressed belt carries, in items per second, both lanes together: 15 for the
+   * vanilla yellow belt, 60 for bob's turbo.
+   *
+   * The game states `speed` in tiles per tick instead. Items sit a quarter of a tile apart along a
+   * lane, and a belt has two lanes, so the conversion is `speed × 60 × 4 × 2` — see `BELT_LANES`
+   * and friends in `scripts/ingest-data.ts`. Fluid does not travel this way and a barrel is an
+   * item like any other, so this is the only rate a belt has.
+   */
+  itemsPerSecond: number;
 }

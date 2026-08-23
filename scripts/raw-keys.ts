@@ -38,3 +38,18 @@ export const ITEM_KEYS = [
   'tool',
   'upgrade-item',
 ] as const satisfies ReadonlyArray<keyof RawData>;
+
+/**
+ * Everything the game gives a belt's `speed` to. Only `transport-belt` is ingested; the rest are
+ * here for `checkBelts`, which asserts each of them runs at some belt's speed — a tier writes its
+ * throughput out once per prototype shape, and this app quotes the belt for the lot.
+ */
+export const BELT_KEYS = [
+  'transport-belt',
+  'underground-belt',
+  'splitter',
+  'loader',
+  'loader-1x1',
+  'linked-belt',
+  'lane-splitter',
+] as const satisfies ReadonlyArray<keyof RawData>;

@@ -219,6 +219,28 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
   productivity effect only runs recipes which disallow productivity anyway. `test/modules.test.ts`
   says so, so a future pack breaking that is a failing test rather than a wrong number.
 
+## Notes for belts
+
+- **`data.raw['transport-belt']`** — 6 prototypes, none hidden, each placed by an item of its own
+  id, all six covered by the spritesheet as `craft:<name>`. `speed` is **tiles per tick**: an item
+  occupies a quarter of a tile along the lane it is on and a belt has two lanes, so items per second
+  is `speed × 60 × 4 × 2` — yellow's `0.03125` is 15/s, bob's turbo `0.125` is 60/s. That is the
+  only number ingested (`StaticData.belts`, `Belt.itemsPerSecond`); a belt has nothing else the app
+  wants, and it is an entity placed by an item, so the name, icon, stack size and complexity are
+  already on the item.
+- **Six other prototype types state a belt `speed`**: `underground-belt`, `splitter`, `loader`,
+  `loader-1x1`, `linked-belt` and `lane-splitter` (25 prototypes between them here, `BELT_KEYS` in
+  `scripts/raw-keys.ts`). They are the same tier's number written out per entity shape, so none of
+  them is ingested — but nothing in the format says a mod could not slow a splitter below the belt
+  feeding it, so `checkBelts` asserts every one of them matches some belt's speed. 0 off here.
+  Angel's/Bob's adds a full basic/turbo/ultimate set of each, plus AAI's six `loader-1x1`s; the
+  three vanilla `loader`s, `linked-belt` and `lane-splitter` are hidden, which is the game's own
+  script-only content rather than a mod disabling anything.
+- Belt throughput in the game is a lane-level thing — a belt half-fed carries half as much, and
+  sideloading and undergrounds are where a real line loses its compression. `itemsPerSecond` is the
+  fully compressed figure, which is the one a plan is checked against. Fluids do not travel this way
+  at all; a barrel is an item like any other.
+
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
 arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts`.
 
