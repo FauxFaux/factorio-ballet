@@ -42,6 +42,26 @@ export function resolveResources(query: string): Set<ResourceId> {
   return new Set(ids.filter((id) => smatch(id, q) || smatch(resourceName(id), q)));
 }
 
+/**
+ * The other direction of a search that is exactly one `makes:`/`uses:` term, e.g.
+ * `uses:item:foo` -> `makes:item:foo`; `null` if there's no single term to flip.
+ */
+export function flipDirection(search: string): string | null {
+  const word = search.trim();
+  if (/\s/.test(word)) return null;
+  const colon = word.indexOf(':');
+  const rest = word.slice(colon + 1);
+  if (!rest) return null;
+  switch (word.slice(0, colon).toLowerCase()) {
+    case 'uses':
+      return `makes:${rest}`;
+    case 'makes':
+      return `uses:${rest}`;
+    default:
+      return null;
+  }
+}
+
 /** Split a search string into terms; whitespace separates, and all terms must match. */
 export function parseSearch(search: string): Term[] {
   return search

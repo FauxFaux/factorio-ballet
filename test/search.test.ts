@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseSearch, resolveResources, searchRecipes } from '../src/search.ts';
+import { flipDirection, parseSearch, resolveResources, searchRecipes } from '../src/search.ts';
 
 describe('resolveResources', () => {
   it('takes an exact resource id alone', () => {
@@ -23,6 +23,20 @@ describe('resolveResources', () => {
   it('finds nothing for nothing', () => {
     expect(resolveResources('')).toEqual(new Set());
     expect(resolveResources('definitely-not-a-resource')).toEqual(new Set());
+  });
+});
+
+describe('flipDirection', () => {
+  it('flips a lone makes:/uses: term', () => {
+    expect(flipDirection('uses:item:foo')).toEqual('makes:item:foo');
+    expect(flipDirection(' makes:item:foo ')).toEqual('uses:item:foo');
+  });
+
+  it('has nothing to flip without exactly one directed term', () => {
+    expect(flipDirection('')).toBeNull();
+    expect(flipDirection('item:foo')).toBeNull();
+    expect(flipDirection('makes:')).toBeNull();
+    expect(flipDirection('makes:water circuit')).toBeNull();
   });
 });
 

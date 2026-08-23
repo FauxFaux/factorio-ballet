@@ -83,7 +83,7 @@ code {
   background: var(--code-bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 6px 28px 6px 10px;
+  padding: 6px 10px;
   width: 100%;
 
   &::-webkit-search-cancel-button {
@@ -91,11 +91,25 @@ code {
   }
 }
 
-.search-clear {
+/* leave the buttons, which sit over the right of the input, somewhere to be */
+.search-box:has(.search-btn) input {
+  padding-right: 30px;
+}
+
+.search-box:has(.search-btn + .search-btn) input {
+  padding-right: 56px;
+}
+
+.search-buttons {
   position: absolute;
   top: 50%;
   right: 6px;
   transform: translateY(-50%);
+  display: flex;
+  gap: 2px;
+}
+
+.search-btn {
   font: inherit;
   line-height: 1;
   color: var(--text);
