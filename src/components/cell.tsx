@@ -24,10 +24,13 @@ import { ResourceButton, ResourceIcon } from './resource.tsx';
 export function CellList({
   cells,
   active,
+  progress,
   setSearch,
 }: {
   cells: State<Cell[]>;
   active: State<number>;
+  /** Where the player is through the game, which decides the machine a recipe defaults to. */
+  progress: number;
   setSearch: (search: string) => void;
 }) {
   const [list, setList] = cells;
@@ -64,6 +67,7 @@ export function CellList({
           key={i}
           cell={atIndex(cells, i)}
           active={i === current}
+          progress={progress}
           onActivate={() => setCurrent(i)}
           onRemove={() => remove(i)}
           /* Searching from a cell means working on it: the `@in`/`@out` queries read the cell being
@@ -86,12 +90,14 @@ export function CellList({
 function CellBox({
   cell: [cell, setCell],
   active,
+  progress,
   onActivate,
   onRemove,
   onSearch,
 }: {
   cell: State<Cell>;
   active: boolean;
+  progress: number;
   onActivate: () => void;
   onRemove: () => void;
   onSearch: (search: string) => void;
@@ -133,6 +139,7 @@ function CellBox({
               <CellRow
                 key={entry.recipe}
                 entry={entry}
+                progress={progress}
                 onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                 onRemove={() => setCell((prev) => withoutEntry(prev, i))}
               />
@@ -209,10 +216,12 @@ function CellSide({
 /** One recipe of a cell, and the machine chosen to run it. */
 function CellRow({
   entry,
+  progress,
   onChange,
   onRemove,
 }: {
   entry: CellEntry;
+  progress: number;
   onChange: (entry: CellEntry) => void;
   onRemove: () => void;
 }) {
@@ -233,7 +242,9 @@ function CellRow({
         {recipe?.human ?? entry.recipe}
         {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
       </span>
-      {recipe ? <CellMachines entry={entry} recipe={recipe} onChange={onChange} /> : null}
+      {recipe ? (
+        <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
+      ) : null}
       <input
         class="cell-count"
         type="number"
@@ -266,21 +277,23 @@ function CellRow({
 
 /**
  * Which machine runs this recipe. "Whichever" is a choice of its own, not a synonym for the machine
- * it currently resolves to: it follows the default, so it moves if the data does.
+ * it currently resolves to: it follows the progress slider, so it moves as the slider does.
  */
 function CellMachines({
   entry,
   recipe,
+  progress,
   onChange,
 }: {
   entry: CellEntry;
   recipe: Recipe;
+  progress: number;
   onChange: (entry: CellEntry) => void;
 }) {
   return (
     <MachinePicker
       machines={machinesFor(recipe)}
-      chosen={entryMachine(entry, recipe)}
+      chosen={entryMachine(entry, recipe, progress)}
       pinned={entry.machine !== undefined}
       onChoose={(machine) => onChange({ ...entry, machine })}
     />

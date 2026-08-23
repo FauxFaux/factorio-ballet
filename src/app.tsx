@@ -38,7 +38,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
         <h1>faucalc</h1>
         <ProgressSlider progress={gp} />
       </header>
-      <CellList cells={field(uss, 'cl')} active={field(uss, 'ci')} setSearch={recipeSearch[1]} />
+      <CellList
+        cells={field(uss, 'cl')}
+        active={field(uss, 'ci')}
+        progress={progress}
+        setSearch={recipeSearch[1]}
+      />
       <div class="columns">
         <ResourceList
           search={field(uss, 'rs')}

@@ -1,4 +1,4 @@
-import { complexityOf, machinesFor, resourceName, staticData } from './data.ts';
+import { complexityOf, defaultMachine, machinesFor, resourceName, staticData } from './data.ts';
 import type { SearchScope } from './search.ts';
 import type { MachineId, Recipe, ResourceId } from './types.ts';
 
@@ -59,12 +59,16 @@ export function entryRecipe(entry: CellEntry): Recipe | undefined {
 }
 
 /**
- * The machine an entry runs in: the one it names, or — when it names none — the first machine which
- * can run the recipe, which `machinesFor` orders slowest first. That default is a display
- * convenience, not a choice; nothing writes it back.
+ * The machine an entry runs in: the one it names, or — when it names none — whichever machine
+ * `defaultMachine` says suits `progress`, the player's way through the game. That default is a
+ * display convenience, not a choice: nothing writes it back, and it moves as the slider does.
  */
-export function entryMachine(entry: CellEntry, recipe: Recipe): MachineId | undefined {
-  return entry.machine ?? machinesFor(recipe)[0]?.id;
+export function entryMachine(
+  entry: CellEntry,
+  recipe: Recipe,
+  progress: number,
+): MachineId | undefined {
+  return entry.machine ?? defaultMachine(machinesFor(recipe), progress)?.id;
 }
 
 export function cellTitle(cell: Cell): string {

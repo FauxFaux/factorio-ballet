@@ -108,17 +108,21 @@ carry `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry 
 temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
 the `item` which places them; which machine can run which recipe is the game's category system —
 `Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
-in `src/data.ts` indexes `Machine.categories` the other way. Modules, beacons, and machine
-power/pollution are still missing. Recipes and resources also carry a `complexity`: how far through
-the tech tree you must be to have the thing, 0 at the crash site to 1 at the last technology,
-derived by `scripts/complexity.ts` (which the ingest imports). Search results sort by `relevanceOf`:
-distance from the header slider's game-progress setting, in either direction, which is plain
-simplest-first at 0%. `sciencePacks` is that walk's own list of research ingredients, cheapest first
-— the packs are the only readable landmarks on the complexity scale, so the slider is labelled with
-their icons instead of numbers (`components/progress-slider.tsx`, thinned by `packLandmarks` because
-ten of Bob's packs land between 53% and 58%). `src/data.ts` loads `src/assets/static.json` at module
-level. Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys
-like `craft:<name>`) via `components/resource.tsx`.
+in `src/data.ts` indexes `Machine.categories` the other way, slowest first so a machine family reads
+as tiers. Modules, beacons, and machine power/pollution are still missing. Recipes and resources
+also carry a `complexity`: how far through the tech tree you must be to have the thing, 0 at the
+crash site to 1 at the last technology, derived by `scripts/complexity.ts` (which the ingest
+imports). Search results sort by `relevanceOf`: distance from the header slider's game-progress
+setting, in either direction, which is plain simplest-first at 0%. Machines are ranked the same way,
+by `defaultMachine`, which is where an unpinned `CellEntry.machine` resolves — the game data gives a
+machine no `complexity`, so `MachineMatch.complexity` is that of the item which places it (the same
+walk, so not an approximation), and hand crafting is 0 because you start with the character.
+`sciencePacks` is that walk's own list of research ingredients, cheapest first — the packs are the
+only readable landmarks on the complexity scale, so the slider is labelled with their icons instead
+of numbers (`components/progress-slider.tsx`, thinned by `packLandmarks` because ten of Bob's packs
+land between 53% and 58%). `src/data.ts` loads `src/assets/static.json` at module level. Icons
+render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
+`craft:<name>`) via `components/resource.tsx`.
 
 **Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
 `data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a
@@ -142,7 +146,11 @@ an `output`, and both is `internal`. Nothing scales the recipes against each oth
 solver's job, and `CellEntry.count` is where its answer (or the user's pin) will go — so an
 unbalanced internal resource reads as "the cell handles this itself". `CellBox` lays a cell out as a
 sankey diagram's shape without the sankey: inputs left, outputs right, recipes and their machines
-between.
+between. A row's machine is a `MachinePicker` — a dropdown, because a cell is a column of rows and
+the choice has been made; the search results keep the horizontal `MachineChip` row, where listing
+every candidate and hovering for its numbers is the point. "Whichever" is a real option in it rather
+than the absence of one: it means `entryMachine`'s default, so it walks up the tiers as the progress
+slider moves.
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`

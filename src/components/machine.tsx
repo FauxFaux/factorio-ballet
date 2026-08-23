@@ -91,7 +91,7 @@ export function MachinePicker({
 
   const current = machines.find(({ id }) => id === chosen);
   const label = current
-    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×${pinned ? '' : ', by default'}`
+    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×${pinned ? '' : ', by default for this progress'}`
     : 'No machine can run this';
 
   const choose = (id: MachineId | undefined) => {
@@ -133,13 +133,14 @@ export function MachinePicker({
       </button>
       {open ? (
         <div class="machine-menu" role="listbox" aria-label="Machine">
-          {/* The default is not the same choice as the machine it currently resolves to: it moves
-              if the data or the default rule does, which is what "whichever" is for. */}
+          {/* The default is not the same choice as the machine it currently resolves to: it
+              follows the progress slider, which is what "whichever" is for. */}
           <button
             type="button"
             class={pinned ? 'machine-option' : 'machine-option is-chosen'}
             role="option"
             aria-selected={!pinned}
+            title="Whichever machine suits how far through the game you are"
             onClick={() => choose(undefined)}
           >
             <span class="machine-icon" aria-hidden="true" />

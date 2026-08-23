@@ -11,8 +11,7 @@ import {
   withRecipe,
   type Cell,
 } from '../src/cell.ts';
-import { machinesFor } from '../src/data.ts';
-import { staticData } from '../src/data.ts';
+import { complexityOf, defaultMachine, machinesFor, staticData } from '../src/data.ts';
 
 /** Ore crushed -> plate -> gear: two recipes which chain, so the middle one goes internal. */
 const chain: Cell = { entries: [{ recipe: 'iron-plate' }, { recipe: 'iron-gear-wheel' }] };
@@ -85,14 +84,56 @@ describe('entries', () => {
 describe('entryMachine', () => {
   const recipe = staticData.recipes['iron-gear-wheel'];
 
-  it('is the machine the entry names', () => {
-    expect(entryMachine({ recipe: 'iron-gear-wheel', machine: 'character' }, recipe)).toBe(
-      'character',
-    );
+  it('is the machine the entry names, wherever the player is', () => {
+    const entry = { recipe: 'iron-gear-wheel', machine: 'character' };
+    expect(entryMachine(entry, recipe, 0)).toBe('character');
+    expect(entryMachine(entry, recipe, 1)).toBe('character');
   });
 
-  it('stands in the first machine which could run it when the entry names none', () => {
-    expect(entryMachine({ recipe: 'iron-gear-wheel' }, recipe)).toBe(machinesFor(recipe)[0].id);
+  it('stands in the machine suiting the progress when the entry names none', () => {
+    expect(entryMachine({ recipe: 'iron-gear-wheel' }, recipe, 0)).toBe('character');
+    expect(entryMachine({ recipe: 'iron-gear-wheel' }, recipe, 1)).toBe('bob-assembling-machine-6');
+  });
+});
+
+describe('defaultMachine', () => {
+  const machines = machinesFor(staticData.recipes['iron-gear-wheel']);
+
+  it('walks up the assemblers as the game goes on', () => {
+    // hand crafting at the crash site, and this pack's top tier by the end
+    expect([0, 0.25, 0.5, 0.62, 0.9].map((p) => defaultMachine(machines, p)?.id)).toEqual([
+      'character',
+      'assembling-machine-2',
+      'assembling-machine-3',
+      'bob-assembling-machine-4',
+      'bob-assembling-machine-6',
+    ]);
+  });
+
+  it('never goes backwards', () => {
+    const walk = [...Array(21).keys()].map((i) => complexityOf(defaultMachine(machines, i / 20)!));
+    expect(walk).toEqual([...walk].sort((a, b) => a - b));
+  });
+
+  it('is nearer the progress than any other candidate', () => {
+    for (const progress of [0, 0.3, 0.62, 0.9]) {
+      const best = defaultMachine(machines, progress);
+      const distance = Math.abs(complexityOf(best!) - progress);
+      for (const other of machines) {
+        expect(
+          Math.abs(complexityOf(other) - progress),
+          `${other.id} at ${progress}`,
+        ).toBeGreaterThanOrEqual(distance);
+      }
+    }
+  });
+
+  it('gives hand crafting the complexity of the crash site', () => {
+    expect(machines.find(({ id }) => id === 'character')?.complexity).toBe(0);
+  });
+
+  it('has nothing to offer for a recipe no machine can run', () => {
+    expect(defaultMachine([], 0.5)).toBeUndefined();
   });
 });
 
