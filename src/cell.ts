@@ -196,6 +196,15 @@ export function withoutEntry(cell: Cell, index: number): Cell {
   return { ...cell, entries: cell.entries.filter((_, i) => i !== index) };
 }
 
+/** The cell with `entries[from]` moved to sit at `to`, shifting whatever was between them. */
+export function moveEntry(cell: Cell, from: number, to: number): Cell {
+  if (from === to) return cell;
+  const entries = [...cell.entries];
+  const [moved] = entries.splice(from, 1);
+  entries.splice(to, 0, moved);
+  return { ...cell, entries };
+}
+
 /**
  * How many of the entry's machine, read off what was typed into the count box. Anything which is
  * not a number — including the empty box — is "not decided", which is what `CellEntry.count`'s

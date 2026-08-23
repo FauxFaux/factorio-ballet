@@ -1,6 +1,13 @@
 import './cell.css';
-import { useMemo } from 'preact/hooks';
-import { cellInterface, cellTitle, withEntry, withoutEntry, type Cell } from '../cell.ts';
+import { useMemo, useState } from 'preact/hooks';
+import {
+  cellInterface,
+  cellTitle,
+  moveEntry,
+  withEntry,
+  withoutEntry,
+  type Cell,
+} from '../cell.ts';
 import { resourceName } from '../data.ts';
 import { isProblem, noteFor, noteLine, solveCell, type Solution } from '../solve.ts';
 import { fmt, type State } from '../ts.ts';
@@ -39,6 +46,10 @@ export function CellBox({
     () => solveCell(cell, progress, speedModule),
     [cell, progress, speedModule],
   );
+  /** The row being dragged, by index; `null` when no drag is in progress. */
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  /** Which side of which row the dragged one would land on, for the drop-line indicator. */
+  const [dropHint, setDropHint] = useState<{ index: number; before: boolean } | null>(null);
 
   return (
     <section class={active ? 'cell is-active' : 'cell'}>
@@ -79,6 +90,27 @@ export function CellBox({
                 note={noteFor(solution, i)}
                 progress={progress}
                 speedModule={speedModule}
+                dragging={dragIndex === i}
+                dropBefore={dropHint?.index === i && dropHint.before}
+                dropAfter={dropHint?.index === i && !dropHint.before}
+                onDragStart={() => setDragIndex(i)}
+                onDragEnd={() => {
+                  setDragIndex(null);
+                  setDropHint(null);
+                }}
+                onDragOver={(e: DragEvent) => {
+                  e.preventDefault();
+                  setDropHint({ index: i, before: rowDropBefore(i, e) });
+                }}
+                onDrop={(e: DragEvent) => {
+                  if (dragIndex !== null) {
+                    const insertion = rowDropBefore(i, e) ? i : i + 1;
+                    const to = dragIndex < insertion ? insertion - 1 : insertion;
+                    if (to !== dragIndex) setCell((prev) => moveEntry(prev, dragIndex, to));
+                  }
+                  setDragIndex(null);
+                  setDropHint(null);
+                }}
                 onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                 onRemove={() => setCell((prev) => withoutEntry(prev, i))}
               />
@@ -91,6 +123,20 @@ export function CellBox({
       </div>
     </section>
   );
+}
+
+/**
+ * Whether dragging over row `i` means "drop before it" rather than "after it". Every position
+ * between two rows is reachable as "after" the earlier one, so only row 0 needs the split — landing
+ * before it is the one place with no earlier row to be "after" of. Every other row answers `false`
+ * unconditionally, which is the point: a threshold splitting a single row's own height is what was
+ * flickering (and occasionally swallowing the drop) right on the line between two rows, so no other
+ * row gets one.
+ */
+function rowDropBefore(i: number, e: DragEvent): boolean {
+  if (i !== 0) return false;
+  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+  return e.clientY < rect.top + rect.height / 2;
 }
 
 /** The label, tooltip and search each side of a cell gets; the two sides are mirror images. */

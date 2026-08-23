@@ -27,6 +27,13 @@ export function CellRow({
   note,
   progress,
   speedModule,
+  dragging,
+  dropBefore,
+  dropAfter,
+  onDragStart,
+  onDragEnd,
+  onDragOver,
+  onDrop,
   onChange,
   onRemove,
 }: {
@@ -37,13 +44,51 @@ export function CellRow({
   progress: number;
   /** Which module the header means by "a speed module"; see `CellEntry.speedModules`. */
   speedModule?: ModuleId;
+  /** Whether this is the row currently being dragged, for the fade the rest of the list gets. */
+  dragging: boolean;
+  /** Whether the dragged row would land just above or below this one. */
+  dropBefore: boolean;
+  dropAfter: boolean;
+  onDragStart: () => void;
+  onDragEnd: () => void;
+  onDragOver: (e: DragEvent) => void;
+  onDrop: (e: DragEvent) => void;
   onChange: (entry: CellEntry) => void;
   onRemove: () => void;
 }) {
   const recipe = entryRecipe(entry);
+  const rowClass = [
+    'cell-recipe',
+    dragging && 'is-dragging',
+    dropBefore && 'drop-before',
+    dropAfter && 'drop-after',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return (
-    <div class="cell-recipe">
+    <div
+      class={rowClass}
+      onDragOver={onDragOver}
+      onDrop={(e) => {
+        e.preventDefault();
+        onDrop(e);
+      }}
+    >
+      <span
+        class="cell-drag-handle"
+        draggable
+        title="Drag to reorder"
+        aria-label="Reorder this recipe"
+        onDragStart={(e) => {
+          e.dataTransfer?.setData('text/plain', '');
+          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
+          onDragStart();
+        }}
+        onDragEnd={onDragEnd}
+      >
+        ≡
+      </span>
       <span
         class="recipe-icon"
         style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
