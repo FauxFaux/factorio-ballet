@@ -118,16 +118,16 @@ new rule where its markup lives.
 
 ### Data model (`src/types.ts`, `src/data.ts`)
 
-`StaticData = { recipes, resources, machines, sciencePacks }`. Resources are keyed by `ResourceId` —
-the colon scheme `item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products`
-carry `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry optional fluid
-temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
-the `item` which places them; which machine can run which recipe is the game's category system —
-`Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
-in `src/data.ts` indexes `Machine.categories` the other way, slowest first so a machine family reads
-as tiers. Modules, beacons, and machine power/pollution are still missing. Recipes and resources
-also carry a `complexity`: how far through the tech tree you must be to have the thing, 0 at the
-crash site to 1 at the last technology, derived by `scripts/complexity.ts` (which the ingest
+`StaticData = { recipes, resources, machines, modules, sciencePacks }`. Resources are keyed by
+`ResourceId` — the colon scheme `item:<name>` | `fluid:<name>` shared with both prior projects.
+`Recipe.products` carry `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry
+optional fluid temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`,
+module slots, and the `item` which places them; which machine can run which recipe is the game's
+category system — `Recipe.categories` flattens the prototype's `category` + `additional_categories`,
+and `machinesFor` in `src/data.ts` indexes `Machine.categories` the other way, slowest first so a
+machine family reads as tiers. Beacons and machine power/pollution are still missing. Recipes and
+resources also carry a `complexity`: how far through the tech tree you must be to have the thing, 0
+at the crash site to 1 at the last technology, derived by `scripts/complexity.ts` (which the ingest
 imports). Search results sort by `relevanceOf`: distance from the header slider's game-progress
 setting, in either direction, which is plain simplest-first at 0%. Machines are ranked the same way,
 by `defaultMachine`, which is where an unpinned `CellEntry.machine` resolves — the game data gives a
@@ -144,6 +144,21 @@ render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, 
 at a given machine's speed, and the decimal precision, decided once per recipe over every machine it
 could run in so the numbers do not change width as the pointer moves along the machine list. No
 scaling of one recipe against another — that is the solver's, and it is not here.
+
+**Modules** are the 15 of the pack's 30 which change speed or productivity; efficiency and pollution
+modules are not ingested, because there is no power or pollution model for them to pay into.
+`StaticData.modules` is keyed by bare prototype id — a module is an item, so its name, icon, stack
+size and complexity are already on the `item:<id>` resource, and `Module` carries only `category`,
+`tier` and the two effects. Effects are the fraction added _per module_ and are linear in the number
+of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³. `moduleEffects` (`src/flow.ts`)
+does that sum and returns the two multipliers, one on the machine's speed and one on everything the
+recipe produces; `fillSlots` is the "and what if I fill all three slots with these" case.
+`modulesFor` (`src/data.ts`) is which modules a machine will take on a recipe, and is where the
+three ways of overstating throughput live: `Machine.allowedModuleCategories` refuses a module
+outright (absent means all — that absence is the only home Angel's bio-yield modules have),
+`Machine.allowedEffects` ignores the effects it omits rather than refusing the module (which is why
+speed modules work in an oil refinery, whose list has no `quality`), and productivity does nothing
+at all unless `Recipe.allowProductivity`, which only 335 of 2330 recipes set. See `INGEST.md`.
 
 **Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
 `data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a

@@ -22,7 +22,7 @@ specific pack:
 
 Identify a pack from `$APP/mods/mod-list.json`. Confirm you regenerated from the right one by the
 counts the script prints — the checked-in file is `Recipes: 2330`, `Machines: 161`,
-`Resources: 1763`.
+`Resources: 1761`, `Modules: 15`.
 
 ## What a `script-output/` holds
 
@@ -64,8 +64,9 @@ for (const [key, protos] of Object.entries(d)) {
 **Probe the value distribution before you add a schema field.** `AssemblingMachinePrototype`
 documents `ingredient_count`, but no machine in the Bob's/Angel's pack sets it, so `Machine` does
 not carry it. Conversely, a field being unused _here_ does not mean it is unused generally — module
-`limitation` is empty in this pack but is how vanilla restricts productivity modules. Prefer a
-comment noting the case over silently assuming it away.
+`limitation` is empty in this pack but is how 1.1 restricted productivity modules to intermediates
+(see [modules](#notes-for-modules-and-beacons)). Prefer a comment noting the case over silently
+assuming it away.
 
 **Beware the difference between "set" and "true".** 442 recipes set `allow_productivity`; only 420
 set it to `true`.
@@ -88,9 +89,11 @@ console.log(
 ```
 
 Every cross-reference the ingest introduces should print a completeness check, so a wrong assumption
-shows up as a number rather than a missing icon three screens later. There are two so far: dangling
-resource refs (catches an `ITEM_KEYS` gap) and recipe categories with no machine (catches over-eager
-`hidden` filtering). Add the equivalent for whatever you introduce.
+shows up as a number rather than a missing icon three screens later. There are four so far: dangling
+resource refs (catches an `ITEM_KEYS` gap), recipe categories with no machine (catches over-eager
+`hidden` filtering), modules with no item, and modules no machine will take (catches reading
+`allowed_module_categories` as a list to enumerate rather than a restriction). Each prints nothing
+when it is happy. Add the equivalent for whatever you introduce.
 
 ## Icons
 
@@ -134,24 +137,39 @@ console.log(Object.keys(d.module).filter((n) => !icons["craft:" + n]));
 
 ## Notes for modules and beacons
 
-Measured against the Bob's/Angel's pack, for whoever picks this up:
+Modules are ingested; beacons are not. Measured against the Bob's/Angel's pack:
 
 - **`data.raw.module`** — 30 prototypes, none hidden. Carries `category` (a `module-category` id),
   `tier`, and `effect` as a record of `speed` / `productivity` / `consumption` / `pollution` /
-  `quality` multipliers (e.g. speed module 3 is `{speed: 0.4, consumption: 0.7, quality: -0.3}`).
-  `limitation` / `limitation_blacklist` — the per-recipe whitelist — are unused in this pack but not
-  in vanilla. `maximum_productivity` appears on no recipe here.
-- Modules are items, so they are already in `resources` with names, stack sizes, and icons. A
-  `Module` record should key off the same bare prototype name, not a new id scheme.
+  `quality` multipliers (e.g. speed module 3 is `{speed: 0.4, consumption: 0.7, quality: -0.3}`). 15
+  of them change speed or productivity and are kept as `StaticData.modules` with those two numbers;
+  the other 15 are the efficiency and pollution families, which this app has no power or pollution
+  model to spend on. The effect values arrive with the mods' float noise (`0.30000000000000004`) and
+  are rounded to 4dp like everything else.
+- `limitation` / `limitation_blacklist` — the per-recipe whitelist, and how 1.1 kept productivity
+  modules on intermediates — are unused in this pack, and 2.0 moved that decision to the recipe as
+  `allow_productivity`. `factorio-raw-types` does not declare them either, so they are not ingested;
+  a pack which used them would need `Module`'s doc comment revisited. `maximum_productivity` appears
+  on no recipe here, so the game's +300% cap is never the binding one and is not modelled.
+- Modules are items, so they are already in `resources` with names, stack sizes, and icons — and
+  `Module` is keyed by that same bare prototype name, carrying nothing the item already has. The
+  ingest checks every module has its item. The spritesheet covers all 30 as `craft:<name>`, so a
+  module picker can show icons today.
 - **`data.raw['module-category']`** — `productivity`, `speed`, `efficiency`, `pollution-clean`,
-  `pollution-create`, `god`, `angels-bio-yield`.
-- **Machines** already carry `moduleSlots`. Still un-ingested: `allowed_effects` (158/165
-  assemblers), `allowed_module_categories` (153/165), and `effect_receiver` (only 2 — a per-machine
-  base effect, not a module thing). Missing means "no restriction", so read them as optional, not as
-  empty.
+  `pollution-create`, `god`, `angels-bio-yield`. Nothing has category `god` here.
+- **Machines** carry `moduleSlots`, and now `allowedEffects` / `allowedModuleCategories`. Both are
+  **absent for "no restriction"**, and the second one is why: no machine's whitelist names
+  `angels-bio-yield`, and the twelve Angel's farms which name no whitelist are the only place those
+  five modules can go. Miss that and a third of the modules we keep are dead. Still un-ingested:
+  `effect_receiver` (5 machines, a per-machine base effect rather than a module thing — and the four
+  setting `uses_module_effects: false` have no module slots to ignore anyway).
+- The two restrictions do not work the same way. `allowed_module_categories` refuses the module;
+  `allowed_effects` **ignores the effects not in it** and takes the module regardless. That has to
+  be so: 143 machines allow productivity but not quality, and speed modules — which carry a quality
+  malus — go in all of them, exactly as they do in the game.
 - **`data.raw.beacon`** — `beacon`, `bob-beacon-2`, `bob-beacon-3`, with `module_slots` 2/4/6 and
   `distribution_effectivity` 1.5 throughout. Beacons have no `crafting_categories`, so they are not
-  machines under the current model and need their own record.
+  machines under the current model and need their own record. Not ingested.
 - **Recipes** carry `allow_productivity`, which gates whether productivity applies at all — a
   minority of recipes (420 true of 2621 raw; 335 of the 2330 live ones), so a UI that assumes
   otherwise will overstate throughput badly. This one is ingested, as `Recipe.allowProductivity`,
@@ -159,9 +177,12 @@ Measured against the Bob's/Angel's pack, for whoever picks this up:
   false mean the same thing as the 1978 leaving it unset. `allow_quality` (333) and
   `allow_decomposition` (669) are also present, and are not. Neither is products'
   `ignored_by_productivity`, which exempts part of a result from the bonus.
+- The recipe gate and the machine gate never disagree in this pack: every machine which refuses the
+  productivity effect only runs recipes which disallow productivity anyway. `test/modules.test.ts`
+  says so, so a future pack breaking that is a failing test rather than a wrong number.
 
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
-module data is what that section will need.
+arithmetic over this data is `moduleEffects` in `src/flow.ts`.
 
 ## Progression ("how far through the game is this?")
 

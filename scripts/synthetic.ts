@@ -18,9 +18,9 @@
 
 import type { RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
-import { arr, RProduct, type RIngredient } from './raw-validators.ts';
+import { arr, effectLimits, RProduct, type RIngredient } from './raw-validators.ts';
 import { entriesOf } from '../src/ts.ts';
-import type { MachineKind } from '../src/types.ts';
+import type { Effect, MachineKind } from '../src/types.ts';
 
 /** `pumping_speed` is per tick; every rate in our model is per second. */
 const TICKS = 60;
@@ -45,6 +45,9 @@ export interface SyntheticMachine {
   /** Crafts per second of a one-second recipe, as `Machine.speed`. */
   speed: number;
   moduleSlots?: number;
+  /** As `Machine.allowedEffects` / `Machine.allowedModuleCategories`: absent means no restriction. */
+  allowedEffects?: Effect[];
+  allowedModuleCategories?: string[];
 }
 
 export interface SyntheticRecipe {
@@ -145,6 +148,8 @@ function* mining(raw: RawData, placedBy: Map<string, string>): Generator<Synthet
         kind: 'mining-drill',
         speed: drill.mining_speed,
         moduleSlots: drill.module_slots,
+        allowedEffects: effectLimits(drill.allowed_effects),
+        allowedModuleCategories: drill.allowed_module_categories,
       });
     }
   }

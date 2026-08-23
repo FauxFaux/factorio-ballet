@@ -1,10 +1,12 @@
 import type { MachineMatch } from './data.ts';
-import { resourceName } from './data.ts';
+import { allowsEffect, resourceName, staticData } from './data.ts';
 import { fmt } from './ts.ts';
 import type {
   Ingredient,
   IngredientTemperature,
+  Machine,
   MachineId,
+  ModuleId,
   Product,
   ProductAmount,
   Recipe,
@@ -40,6 +42,68 @@ type Fmt = (value: number) => string;
 /** The speed to quote a recipe at in a given machine, or {@link CRAFTING_SPEED} for no machine. */
 export function speedOf(machines: MachineMatch[], id: MachineId | undefined): number {
   return machines.find((match) => match.id === id)?.machine.speed ?? CRAFTING_SPEED;
+}
+
+/**
+ * What the modules in a machine do to it: two multipliers, one on how fast it goes and one on how
+ * much comes out. Both are 1 when the slots are empty, so an unmodded machine is {@link NO_EFFECTS}
+ * and every rate in {@link recipeFlows} is already quoted at it.
+ */
+export interface Effects {
+  /** Multiplier on `Machine.speed`: three speed module 3s in an assembler is 2.2. */
+  speed: number;
+  /** Multiplier on everything the recipe produces, ingredients unchanged. That is the whole point. */
+  productivity: number;
+}
+
+/** An unmodded machine. */
+export const NO_EFFECTS: Effects = { speed: 1, productivity: 1 };
+
+/**
+ * However negative the modules get, the game will not run a machine slower than a fifth of its
+ * rated speed. Reachable here: five bob productivity module 5s is −125%.
+ */
+const MIN_SPEED = 0.2;
+
+/** What is in a machine's slots: how many of each module, as `modulesFor` names them. */
+export type ModuleFill = Record<ModuleId, number>;
+
+/** Every slot of a machine filled with the one module — the loadout worth quoting first. */
+export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
+  return machine.moduleSlots ? { [module]: machine.moduleSlots } : {};
+}
+
+/**
+ * What a machine's modules add up to. Effects are linear in the number of modules and in nothing
+ * else — a 10% speed module in two slots is +20%, not 1.1², so three `speed-module-3` come to
+ * 1 + 3 × 0.4 = 2.2× and three `productivity-module-3` to +36% output at 0.55× the speed.
+ *
+ * Two gates, both of which silently make the answer smaller, and neither of which is optional:
+ *
+ * - a machine only applies the effects in `Machine.allowedEffects`, and ignores the rest rather
+ *   than refusing the module — which is why a speed module works in an oil refinery despite the
+ *   refinery not allowing the quality malus that comes with it;
+ * - productivity does nothing at all unless the *recipe* allows it, and most do not (335 of 2330
+ *   here). A productivity module's speed penalty applies regardless, so a machine full of them on
+ *   an ordinary recipe is strictly slower and no more productive.
+ *
+ * Modules we did not ingest — efficiency, pollution — are not in `staticData.modules` and count for
+ * nothing, which is right for both numbers here. Beacons are not modelled at all yet.
+ */
+export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
+  let speed = 0;
+  let productivity = 0;
+  for (const [id, count] of Object.entries(fill)) {
+    const module = staticData.modules[id];
+    if (!module || !count) continue;
+    speed += (module.speed ?? 0) * count;
+    productivity += (module.productivity ?? 0) * count;
+  }
+
+  if (!allowsEffect(machine, 'speed')) speed = 0;
+  if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
+
+  return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
 }
 
 /**

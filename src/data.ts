@@ -1,4 +1,13 @@
-import type { Machine, MachineId, Recipe, ResourceId, StaticData } from './types.ts';
+import type {
+  Effect,
+  Machine,
+  MachineId,
+  Module,
+  ModuleId,
+  Recipe,
+  ResourceId,
+  StaticData,
+} from './types.ts';
 import staticDataJson from './assets/static.json';
 
 export const staticData = staticDataJson as StaticData;
@@ -62,6 +71,11 @@ export const packLandmarks: Landmark[] = (() => {
   }
   return out;
 })();
+
+/** The display name for a module: the item's, because a module is the item you craft. */
+export function moduleName(id: ModuleId): string {
+  return resourceName(`item:${id}`);
+}
 
 /** The display name for a machine, falling back to its id. */
 export function machineName(id: MachineId): string {
@@ -140,5 +154,58 @@ function compareMachines(a: MachineMatch, b: MachineMatch, progress: number): nu
     relevanceOf(a, progress) - relevanceOf(b, progress) ||
     b.machine.speed - a.machine.speed ||
     a.id.localeCompare(b.id)
+  );
+}
+
+/**
+ * Whether a machine applies one of the module effects. Absent means no restriction — see
+ * `Machine.allowedEffects`, and note that the game ignores a disallowed effect rather than refusing
+ * the module carrying it.
+ */
+export function allowsEffect(machine: Machine, effect: Effect): boolean {
+  return machine.allowedEffects?.includes(effect) ?? true;
+}
+
+export interface ModuleMatch {
+  id: ModuleId;
+  module: Module;
+  /** The complexity of the module's item, which is the module's; as `MachineMatch.complexity`. */
+  complexity?: number;
+}
+
+/**
+ * The modules which would do something in this machine on this recipe, cheapest first.
+ *
+ * Three gates, and each one of them is a way to overstate throughput by a lot if it is skipped:
+ * the machine must have slots at all, it must take the module's category, and at least one of the
+ * two effects we model has to survive both `Machine.allowedEffects` and — for productivity —
+ * `Recipe.allowProductivity`, which only 335 of the 2330 recipes here set. A productivity module
+ * on a recipe which does not allow it is not a worse choice but a purely negative one — its speed
+ * malus and nothing else — so it is not offered at all.
+ *
+ * Cheapest first rather than by tier: the tiers of one family come out in order anyway, because a
+ * module is unlocked by the research which makes it, and the families interleave the way the
+ * search results do.
+ */
+export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
+  if (!machine.moduleSlots) return [];
+  const out: ModuleMatch[] = [];
+  for (const [id, module] of Object.entries(staticData.modules)) {
+    if (!(machine.allowedModuleCategories?.includes(module.category) ?? true)) continue;
+    // a *bonus* which survives, not merely an effect: a productivity module's speed is negative,
+    // so on a recipe which does not allow productivity it is the only thing left of it
+    const faster = (module.speed ?? 0) > 0 && allowsEffect(machine, 'speed');
+    const moreOut =
+      (module.productivity ?? 0) > 0 &&
+      allowsEffect(machine, 'productivity') &&
+      recipe.allowProductivity;
+    if (!faster && !moreOut) continue;
+    out.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
+  }
+  return out.sort(
+    (a, b) =>
+      complexityOf(a) - complexityOf(b) ||
+      a.module.tier - b.module.tier ||
+      a.id.localeCompare(b.id),
   );
 }

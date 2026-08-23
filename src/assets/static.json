@@ -41278,7 +41278,16 @@
       "kind": "assembling-machine",
       "item": "assembling-machine-1",
       "categories": ["crafting", "basic-crafting", "advanced-crafting"],
-      "speed": 0.5
+      "speed": 0.5,
+      "allowedEffects": ["speed", "consumption", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "assembling-machine-2": {
       "human": "Assembling machine 2",
@@ -41286,7 +41295,16 @@
       "item": "assembling-machine-2",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "assembling-machine-3": {
       "human": "Assembling machine 3",
@@ -41294,7 +41312,16 @@
       "item": "assembling-machine-3",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 1.25,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "oil-refinery": {
       "human": "Oil refinery",
@@ -41302,7 +41329,16 @@
       "item": "oil-refinery",
       "categories": ["oil-processing"],
       "speed": 1,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "chemical-plant": {
       "human": "Chemical plant 1",
@@ -41310,7 +41346,16 @@
       "item": "chemical-plant",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 1.75,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "centrifuge": {
       "human": "Centrifuge",
@@ -41318,21 +41363,46 @@
       "item": "centrifuge",
       "categories": ["centrifuging"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-stone-mixing-furnace": {
       "human": "Stone filtering furnace",
       "kind": "assembling-machine",
       "item": "bob-stone-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
-      "speed": 1
+      "speed": 1,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-steel-mixing-furnace": {
       "human": "Steel filtering furnace",
       "kind": "assembling-machine",
       "item": "bob-steel-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
-      "speed": 2
+      "speed": 2,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electric-mixing-furnace": {
       "human": "Electric filtering furnace 1",
@@ -41340,7 +41410,16 @@
       "item": "bob-electric-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-assembling-machine-4": {
       "human": "Assembling machine 4",
@@ -41348,7 +41427,16 @@
       "item": "bob-assembling-machine-4",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 2,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-assembling-machine-5": {
       "human": "Assembling machine 5",
@@ -41356,7 +41444,16 @@
       "item": "bob-assembling-machine-5",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 2.75,
-      "moduleSlots": 5
+      "moduleSlots": 5,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-assembling-machine-6": {
       "human": "Assembling machine 6",
@@ -41364,7 +41461,16 @@
       "item": "bob-assembling-machine-6",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 3.5,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electronics-machine-1": {
       "human": "Electronics assembling machine 1",
@@ -41372,7 +41478,16 @@
       "item": "bob-electronics-machine-1",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electronics-machine-2": {
       "human": "Electronics assembling machine 2",
@@ -41380,7 +41495,16 @@
       "item": "bob-electronics-machine-2",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 2.25,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electronics-machine-3": {
       "human": "Electronics assembling machine 3",
@@ -41388,7 +41512,16 @@
       "item": "bob-electronics-machine-3",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 4,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electric-chemical-mixing-furnace": {
       "human": "Electric filtering furnace 2",
@@ -41396,7 +41529,16 @@
       "item": "bob-electric-chemical-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "speed": 3,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electric-chemical-mixing-furnace-2": {
       "human": "Electric filtering furnace 3",
@@ -41404,14 +41546,31 @@
       "item": "bob-electric-chemical-mixing-furnace-2",
       "categories": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "speed": 4,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-fluid-mixing-furnace": {
       "human": "Fluid burning filtering furnace",
       "kind": "assembling-machine",
       "item": "bob-fluid-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
-      "speed": 2
+      "speed": 2,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-centrifuge-2": {
       "human": "Centrifuge 2",
@@ -41419,7 +41578,16 @@
       "item": "bob-centrifuge-2",
       "categories": ["centrifuging", "angels-centrifuging-2"],
       "speed": 2.25,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-centrifuge-3": {
       "human": "Centrifuge 3",
@@ -41427,14 +41595,31 @@
       "item": "bob-centrifuge-3",
       "categories": ["centrifuging", "angels-centrifuging-2", "angels-centrifuging-3"],
       "speed": 3.5,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-burner-ore-crusher": {
       "human": "Burner ore crusher",
       "kind": "assembling-machine",
       "item": "angels-burner-ore-crusher",
       "categories": ["angels-ore-refining-t1"],
-      "speed": 1
+      "speed": 1,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-crusher": {
       "human": "Ore crusher 1",
@@ -41442,7 +41627,16 @@
       "item": "angels-ore-crusher",
       "categories": ["angels-ore-refining-t1"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-crusher-2": {
       "human": "Ore crusher 2",
@@ -41450,7 +41644,16 @@
       "item": "angels-ore-crusher-2",
       "categories": ["angels-ore-refining-t1"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-crusher-3": {
       "human": "Ore crusher 3",
@@ -41458,7 +41661,16 @@
       "item": "angels-ore-crusher-3",
       "categories": ["angels-ore-refining-t1"],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-sorting-facility": {
       "human": "Ore sorting facility 1",
@@ -41466,7 +41678,16 @@
       "item": "angels-ore-sorting-facility",
       "categories": ["angels-ore-sorting"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-sorting-facility-2": {
       "human": "Ore sorting facility 2",
@@ -41474,7 +41695,16 @@
       "item": "angels-ore-sorting-facility-2",
       "categories": ["angels-ore-sorting", "angels-ore-sorting-2"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-sorting-facility-3": {
       "human": "Ore sorting facility 3",
@@ -41482,7 +41712,16 @@
       "item": "angels-ore-sorting-facility-3",
       "categories": ["angels-ore-sorting", "angels-ore-sorting-2", "angels-ore-sorting-3"],
       "speed": 1,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-sorting-facility-4": {
       "human": "Ore sorting facility 4",
@@ -41495,7 +41734,16 @@
         "angels-ore-sorting-4"
       ],
       "speed": 1.5,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-sorting-facility-5": {
       "human": "Ore sorting facility 5",
@@ -41509,7 +41757,16 @@
         "angels-ore-sorting-5"
       ],
       "speed": 2,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-floatation-cell": {
       "human": "Flotation cell 1",
@@ -41517,7 +41774,16 @@
       "item": "angels-ore-floatation-cell",
       "categories": ["angels-ore-refining-t2"],
       "speed": 0.75,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-floatation-cell-2": {
       "human": "Flotation cell 2",
@@ -41525,7 +41791,16 @@
       "item": "angels-ore-floatation-cell-2",
       "categories": ["angels-ore-refining-t2"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-floatation-cell-3": {
       "human": "Flotation cell 3",
@@ -41533,7 +41808,16 @@
       "item": "angels-ore-floatation-cell-3",
       "categories": ["angels-ore-refining-t2"],
       "speed": 1.5,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-leaching-plant": {
       "human": "Leaching plant 1",
@@ -41541,7 +41825,16 @@
       "item": "angels-ore-leaching-plant",
       "categories": ["angels-ore-refining-t3"],
       "speed": 0.75,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-leaching-plant-2": {
       "human": "Leaching plant 2",
@@ -41549,7 +41842,16 @@
       "item": "angels-ore-leaching-plant-2",
       "categories": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-leaching-plant-3": {
       "human": "Leaching plant 3",
@@ -41557,7 +41859,16 @@
       "item": "angels-ore-leaching-plant-3",
       "categories": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "speed": 1.5,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-refinery": {
       "human": "Ore refinery 1",
@@ -41565,7 +41876,16 @@
       "item": "angels-ore-refinery",
       "categories": ["angels-ore-refining-t4"],
       "speed": 0.75,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-refinery-2": {
       "human": "Ore refinery 2",
@@ -41573,7 +41893,16 @@
       "item": "angels-ore-refinery-2",
       "categories": ["angels-ore-refining-t4"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powderizer": {
       "human": "Powderizer 1",
@@ -41581,7 +41910,16 @@
       "item": "angels-powderizer",
       "categories": ["angels-powderizing-1"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powderizer-2": {
       "human": "Powderizer 2",
@@ -41589,7 +41927,16 @@
       "item": "angels-powderizer-2",
       "categories": ["angels-powderizing-1", "angels-powderizing-2"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powderizer-3": {
       "human": "Powderizer 3",
@@ -41597,7 +41944,16 @@
       "item": "angels-powderizer-3",
       "categories": ["angels-powderizing-1", "angels-powderizing-2", "angels-powderizing-3"],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electro-whinning-cell": {
       "human": "Electrowinning cell 1",
@@ -41605,7 +41961,16 @@
       "item": "angels-electro-whinning-cell",
       "categories": ["angels-ore-refining-t3-5"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electro-whinning-cell-2": {
       "human": "Electrowinning cell 2",
@@ -41613,7 +41978,16 @@
       "item": "angels-electro-whinning-cell-2",
       "categories": ["angels-ore-refining-t3-5"],
       "speed": 1.5,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-crystallizer": {
       "human": "Crystallizer 1",
@@ -41621,7 +41995,16 @@
       "item": "angels-crystallizer",
       "categories": ["angels-crystallizing"],
       "speed": 1.5,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-crystallizer-2": {
       "human": "Crystallizer 2",
@@ -41629,7 +42012,16 @@
       "item": "angels-crystallizer-2",
       "categories": ["angels-crystallizing", "angels-crystallizing-2"],
       "speed": 2,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-crystallizer-3": {
       "human": "Crystallizer 3",
@@ -41637,7 +42029,16 @@
       "item": "angels-crystallizer-3",
       "categories": ["angels-crystallizing", "angels-crystallizing-2", "angels-crystallizing-3"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-filtration-unit": {
       "human": "Filtration unit 1",
@@ -41645,7 +42046,16 @@
       "item": "angels-filtration-unit",
       "categories": ["angels-filtering"],
       "speed": 1.5,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-filtration-unit-2": {
       "human": "Filtration unit 2",
@@ -41653,7 +42063,16 @@
       "item": "angels-filtration-unit-2",
       "categories": ["angels-filtering", "angels-filtering-2"],
       "speed": 2,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-filtration-unit-3": {
       "human": "Filtration unit 3",
@@ -41661,7 +42080,16 @@
       "item": "angels-filtration-unit-3",
       "categories": ["angels-filtering", "angels-filtering-2", "angels-filtering-3"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-liquifier": {
       "human": "Liquefier 1",
@@ -41669,7 +42097,16 @@
       "item": "angels-liquifier",
       "categories": ["angels-liquifying"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-liquifier-2": {
       "human": "Liquefier 2",
@@ -41677,7 +42114,16 @@
       "item": "angels-liquifier-2",
       "categories": ["angels-liquifying"],
       "speed": 2.25,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-liquifier-3": {
       "human": "Liquefier 3",
@@ -41685,7 +42131,16 @@
       "item": "angels-liquifier-3",
       "categories": ["angels-liquifying"],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-liquifier-4": {
       "human": "Liquefier 4",
@@ -41693,7 +42148,16 @@
       "item": "angels-liquifier-4",
       "categories": ["angels-liquifying"],
       "speed": 3.75,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-hydro-plant": {
       "human": "Hydro plant 1",
@@ -41701,7 +42165,16 @@
       "item": "angels-hydro-plant",
       "categories": ["angels-water-treatment"],
       "speed": 1,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-hydro-plant-2": {
       "human": "Hydro plant 2",
@@ -41709,7 +42182,16 @@
       "item": "angels-hydro-plant-2",
       "categories": ["angels-water-treatment"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-hydro-plant-3": {
       "human": "Hydro plant 3",
@@ -41717,7 +42199,16 @@
       "item": "angels-hydro-plant-3",
       "categories": ["angels-water-treatment"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-salination-plant": {
       "human": "Salination plant 1",
@@ -41725,7 +42216,16 @@
       "item": "angels-salination-plant",
       "categories": ["angels-salination-plant"],
       "speed": 1,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-salination-plant-2": {
       "human": "Salination plant 2",
@@ -41733,7 +42233,16 @@
       "item": "angels-salination-plant-2",
       "categories": ["angels-salination-plant"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-washing-plant": {
       "human": "Washing plant 1",
@@ -41741,7 +42250,16 @@
       "item": "angels-washing-plant",
       "categories": ["angels-washing-plant"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-washing-plant-2": {
       "human": "Washing plant 2",
@@ -41749,7 +42267,16 @@
       "item": "angels-washing-plant-2",
       "categories": ["angels-washing-plant"],
       "speed": 2.25,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-barreling-pump": {
       "human": "Barreling pump",
@@ -41757,7 +42284,16 @@
       "item": "angels-barreling-pump",
       "categories": ["angels-barreling-pump"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electrolyser": {
       "human": "Electrolyser 1",
@@ -41765,7 +42301,16 @@
       "item": "angels-electrolyser",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electrolyser-2": {
       "human": "Electrolyser 2",
@@ -41773,7 +42318,16 @@
       "item": "angels-electrolyser-2",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electrolyser-3": {
       "human": "Electrolyser 3",
@@ -41781,7 +42335,16 @@
       "item": "angels-electrolyser-3",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electrolyser-4": {
       "human": "Electrolyser 4",
@@ -41789,7 +42352,16 @@
       "item": "angels-electrolyser-4",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-air-filter": {
       "human": "Air filter 1",
@@ -41797,7 +42369,16 @@
       "item": "angels-air-filter",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-air-filter-2": {
       "human": "Air filter 2",
@@ -41805,7 +42386,16 @@
       "item": "angels-air-filter-2",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-air-filter-3": {
       "human": "Air filter 3",
@@ -41813,7 +42403,16 @@
       "item": "angels-air-filter-3",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 2.25,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-plant-2": {
       "human": "Chemical plant 2",
@@ -41821,7 +42420,16 @@
       "item": "angels-chemical-plant-2",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 2.25,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-plant-3": {
       "human": "Chemical plant 3",
@@ -41829,7 +42437,16 @@
       "item": "angels-chemical-plant-3",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 2.75,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-plant-4": {
       "human": "Chemical plant 4",
@@ -41837,7 +42454,16 @@
       "item": "angels-chemical-plant-4",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 3.25,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-advanced-chemical-plant": {
       "human": "Advanced chemical plant 1",
@@ -41845,7 +42471,16 @@
       "item": "angels-advanced-chemical-plant",
       "categories": ["angels-advanced-chemistry"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-advanced-chemical-plant-2": {
       "human": "Advanced chemical plant 2",
@@ -41853,7 +42488,16 @@
       "item": "angels-advanced-chemical-plant-2",
       "categories": ["angels-advanced-chemistry"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-small": {
       "human": "Gas refinery 1",
@@ -41861,7 +42505,16 @@
       "item": "angels-gas-refinery-small",
       "categories": ["angels-gas-refining"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-small-2": {
       "human": "Gas refinery 2",
@@ -41869,7 +42522,16 @@
       "item": "angels-gas-refinery-small-2",
       "categories": ["angels-gas-refining"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-small-3": {
       "human": "Gas refinery 3",
@@ -41877,7 +42539,16 @@
       "item": "angels-gas-refinery-small-3",
       "categories": ["angels-gas-refining"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-small-4": {
       "human": "Gas refinery 4",
@@ -41885,7 +42556,16 @@
       "item": "angels-gas-refinery-small-4",
       "categories": ["angels-gas-refining"],
       "speed": 3,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery": {
       "human": "Advanced gas refinery 1",
@@ -41893,7 +42573,16 @@
       "item": "angels-gas-refinery",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-2": {
       "human": "Advanced gas refinery 2",
@@ -41901,7 +42590,16 @@
       "item": "angels-gas-refinery-2",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-3": {
       "human": "Advanced gas refinery 3",
@@ -41909,7 +42607,16 @@
       "item": "angels-gas-refinery-3",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-gas-refinery-4": {
       "human": "Advanced gas refinery 4",
@@ -41917,7 +42624,16 @@
       "item": "angels-gas-refinery-4",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-separator": {
       "human": "Oil & gas separator 1",
@@ -41925,7 +42641,16 @@
       "item": "angels-separator",
       "categories": ["angels-petrochem-separation"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-separator-2": {
       "human": "Oil & gas separator 2",
@@ -41933,7 +42658,16 @@
       "item": "angels-separator-2",
       "categories": ["angels-petrochem-separation"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-separator-3": {
       "human": "Oil & gas separator 3",
@@ -41941,7 +42675,16 @@
       "item": "angels-separator-3",
       "categories": ["angels-petrochem-separation"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-separator-4": {
       "human": "Oil & gas separator 4",
@@ -41949,7 +42692,16 @@
       "item": "angels-separator-4",
       "categories": ["angels-petrochem-separation"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-oil-refinery-2": {
       "human": "Oil refinery 2",
@@ -41957,7 +42709,16 @@
       "item": "angels-oil-refinery-2",
       "categories": ["oil-processing"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-oil-refinery-3": {
       "human": "Oil refinery 3",
@@ -41965,7 +42726,16 @@
       "item": "angels-oil-refinery-3",
       "categories": ["oil-processing"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-oil-refinery-4": {
       "human": "Oil refinery 4",
@@ -41973,7 +42743,16 @@
       "item": "angels-oil-refinery-4",
       "categories": ["oil-processing"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-steam-cracker": {
       "human": "Steam cracker 1",
@@ -41981,7 +42760,16 @@
       "item": "angels-steam-cracker",
       "categories": ["angels-steam-cracking"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-steam-cracker-2": {
       "human": "Steam cracker 2",
@@ -41989,7 +42777,16 @@
       "item": "angels-steam-cracker-2",
       "categories": ["angels-steam-cracking"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-steam-cracker-3": {
       "human": "Steam cracker 3",
@@ -41997,7 +42794,16 @@
       "item": "angels-steam-cracker-3",
       "categories": ["angels-steam-cracking"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-steam-cracker-4": {
       "human": "Steam cracker 4",
@@ -42005,7 +42811,16 @@
       "item": "angels-steam-cracker-4",
       "categories": ["angels-steam-cracking"],
       "speed": 2.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electric-boiler": {
       "human": "Electric boiler 1",
@@ -42013,7 +42828,16 @@
       "item": "angels-electric-boiler",
       "categories": ["angels-petrochem-boiler"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electric-boiler-2": {
       "human": "Electric boiler 2",
@@ -42021,7 +42845,16 @@
       "item": "angels-electric-boiler-2",
       "categories": ["angels-petrochem-boiler"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-electric-boiler-3": {
       "human": "Electric boiler 3",
@@ -42029,7 +42862,16 @@
       "item": "angels-electric-boiler-3",
       "categories": ["angels-petrochem-boiler"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-induction-furnace": {
       "human": "Induction furnace 1",
@@ -42037,7 +42879,16 @@
       "item": "angels-induction-furnace",
       "categories": ["angels-induction-smelting"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-induction-furnace-2": {
       "human": "Induction furnace 2",
@@ -42045,7 +42896,16 @@
       "item": "angels-induction-furnace-2",
       "categories": ["angels-induction-smelting", "angels-induction-smelting-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-induction-furnace-3": {
       "human": "Induction furnace 3",
@@ -42057,7 +42917,16 @@
         "angels-induction-smelting-3"
       ],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-induction-furnace-4": {
       "human": "Induction furnace 4",
@@ -42070,7 +42939,16 @@
         "angels-induction-smelting-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-blast-furnace": {
       "human": "Blast furnace 1",
@@ -42078,7 +42956,16 @@
       "item": "angels-blast-furnace",
       "categories": ["angels-blast-smelting"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-blast-furnace-2": {
       "human": "Blast furnace 2",
@@ -42086,7 +42973,16 @@
       "item": "angels-blast-furnace-2",
       "categories": ["angels-blast-smelting", "angels-blast-smelting-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-blast-furnace-3": {
       "human": "Blast furnace 3",
@@ -42094,7 +42990,16 @@
       "item": "angels-blast-furnace-3",
       "categories": ["angels-blast-smelting", "angels-blast-smelting-2", "angels-blast-smelting-3"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-blast-furnace-4": {
       "human": "Blast furnace 4",
@@ -42107,7 +43012,16 @@
         "angels-blast-smelting-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-furnace": {
       "human": "Chemical furnace 1",
@@ -42115,7 +43029,16 @@
       "item": "angels-chemical-furnace",
       "categories": ["angels-chemical-smelting"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-furnace-2": {
       "human": "Chemical furnace 2",
@@ -42123,7 +43046,16 @@
       "item": "angels-chemical-furnace-2",
       "categories": ["angels-chemical-smelting", "angels-chemical-smelting-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-furnace-3": {
       "human": "Chemical furnace 3",
@@ -42135,7 +43067,16 @@
         "angels-chemical-smelting-3"
       ],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-chemical-furnace-4": {
       "human": "Chemical furnace 4",
@@ -42148,7 +43089,16 @@
         "angels-chemical-smelting-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-casting-machine": {
       "human": "Casting machine 1",
@@ -42156,7 +43106,16 @@
       "item": "angels-casting-machine",
       "categories": ["angels-casting"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-casting-machine-2": {
       "human": "Casting machine 2",
@@ -42164,7 +43123,16 @@
       "item": "angels-casting-machine-2",
       "categories": ["angels-casting", "angels-casting-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-casting-machine-3": {
       "human": "Casting machine 3",
@@ -42172,7 +43140,16 @@
       "item": "angels-casting-machine-3",
       "categories": ["angels-casting", "angels-casting-2", "angels-casting-3"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-casting-machine-4": {
       "human": "Casting machine 4",
@@ -42180,7 +43157,16 @@
       "item": "angels-casting-machine-4",
       "categories": ["angels-casting", "angels-casting-2", "angels-casting-3", "angels-casting-4"],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powder-mixer": {
       "human": "Powder mixer 1",
@@ -42188,7 +43174,16 @@
       "item": "angels-powder-mixer",
       "categories": ["angels-powder-mixing"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powder-mixer-2": {
       "human": "Powder mixer 2",
@@ -42196,7 +43191,16 @@
       "item": "angels-powder-mixer-2",
       "categories": ["angels-powder-mixing", "angels-powder-mixing-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powder-mixer-3": {
       "human": "Powder mixer 3",
@@ -42204,7 +43208,16 @@
       "item": "angels-powder-mixer-3",
       "categories": ["angels-powder-mixing", "angels-powder-mixing-2", "angels-powder-mixing-3"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-powder-mixer-4": {
       "human": "Powder mixer 4",
@@ -42217,7 +43230,16 @@
         "angels-powder-mixing-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-processing-machine": {
       "human": "Ore processor 1",
@@ -42225,7 +43247,16 @@
       "item": "angels-ore-processing-machine",
       "categories": ["angels-ore-processing"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-processing-machine-2": {
       "human": "Ore processor 2",
@@ -42233,7 +43264,16 @@
       "item": "angels-ore-processing-machine-2",
       "categories": ["angels-ore-processing", "angels-ore-processing-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-processing-machine-3": {
       "human": "Ore processor 3",
@@ -42241,7 +43281,16 @@
       "item": "angels-ore-processing-machine-3",
       "categories": ["angels-ore-processing", "angels-ore-processing-2", "angels-ore-processing-3"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-ore-processing-machine-4": {
       "human": "Ore processor 4",
@@ -42254,7 +43303,16 @@
         "angels-ore-processing-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-pellet-press": {
       "human": "Pellet press 1",
@@ -42262,7 +43320,16 @@
       "item": "angels-pellet-press",
       "categories": ["angels-pellet-pressing"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-pellet-press-2": {
       "human": "Pellet press 2",
@@ -42270,7 +43337,16 @@
       "item": "angels-pellet-press-2",
       "categories": ["angels-pellet-pressing", "angels-pellet-pressing-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-pellet-press-3": {
       "human": "Pellet press 3",
@@ -42282,7 +43358,16 @@
         "angels-pellet-pressing-3"
       ],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-pellet-press-4": {
       "human": "Pellet press 4",
@@ -42295,7 +43380,16 @@
         "angels-pellet-pressing-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-sintering-oven-4": {
       "human": "Sintering oven 1",
@@ -42308,7 +43402,16 @@
         "angels-sintering-4"
       ],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-sintering-oven-5": {
       "human": "Sintering oven 2",
@@ -42322,7 +43425,16 @@
         "angels-sintering-5"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-strand-casting-machine": {
       "human": "Strand casting machine 1",
@@ -42330,7 +43442,16 @@
       "item": "angels-strand-casting-machine",
       "categories": ["angels-strand-casting"],
       "speed": 1,
-      "moduleSlots": 0
+      "moduleSlots": 0,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-strand-casting-machine-2": {
       "human": "Strand casting machine 2",
@@ -42338,7 +43459,16 @@
       "item": "angels-strand-casting-machine-2",
       "categories": ["angels-strand-casting", "angels-strand-casting-2"],
       "speed": 1.5,
-      "moduleSlots": 1
+      "moduleSlots": 1,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-strand-casting-machine-3": {
       "human": "Strand casting machine 3",
@@ -42346,7 +43476,16 @@
       "item": "angels-strand-casting-machine-3",
       "categories": ["angels-strand-casting", "angels-strand-casting-2", "angels-strand-casting-3"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-strand-casting-machine-4": {
       "human": "Strand casting machine 4",
@@ -42359,7 +43498,16 @@
         "angels-strand-casting-4"
       ],
       "speed": 3,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-cooling-tower": {
       "human": "Cooling tower",
@@ -42367,7 +43515,16 @@
       "item": "angels-cooling-tower",
       "categories": ["angels-cooling"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-algae-farm": {
       "human": "Algae farm 1",
@@ -42375,7 +43532,8 @@
       "item": "angels-algae-farm",
       "categories": ["angels-bio-processing"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-algae-farm-2": {
       "human": "Algae farm 2",
@@ -42383,7 +43541,8 @@
       "item": "angels-algae-farm-2",
       "categories": ["angels-bio-processing", "angels-bio-processing-2"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-algae-farm-3": {
       "human": "Algae farm 3",
@@ -42391,7 +43550,8 @@
       "item": "angels-algae-farm-3",
       "categories": ["angels-bio-processing", "angels-bio-processing-2", "angels-bio-processing-3"],
       "speed": 1.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-algae-farm-4": {
       "human": "Algae farm 4",
@@ -42404,7 +43564,8 @@
         "angels-bio-processing-4"
       ],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-crop-farm": {
       "human": "Basic farm",
@@ -42417,7 +43578,8 @@
         "angels-basic-farming"
       ],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-temperate-farm": {
       "human": "Temperate-environment farm",
@@ -42425,7 +43587,8 @@
       "item": "angels-temperate-farm",
       "categories": ["angels-temperate-farming", "angels-advanced-temperate-farming"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-desert-farm": {
       "human": "Desert-environment farm",
@@ -42433,7 +43596,8 @@
       "item": "angels-desert-farm",
       "categories": ["angels-desert-farming", "angels-advanced-desert-farming"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-swamp-farm": {
       "human": "Swamp-environment farm",
@@ -42441,7 +43605,8 @@
       "item": "angels-swamp-farm",
       "categories": ["angels-swamp-farming", "angels-advanced-swamp-farming"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-seed-extractor": {
       "human": "Seed extractor",
@@ -42449,7 +43614,16 @@
       "item": "angels-seed-extractor",
       "categories": ["angels-seed-extractor"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-press": {
       "human": "Oil press",
@@ -42457,7 +43631,16 @@
       "item": "angels-bio-press",
       "categories": ["angels-bio-pressing"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-processor": {
       "human": "Bioprocessor",
@@ -42465,7 +43648,16 @@
       "item": "angels-bio-processor",
       "categories": ["angels-bio-processor"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-nutrient-extractor": {
       "human": "Nutrient extractor",
@@ -42473,7 +43665,16 @@
       "item": "angels-nutrient-extractor",
       "categories": ["angels-nutrient-extractor"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-generator-temperate-1": {
       "human": "Temperate tree seed generator",
@@ -42481,7 +43682,16 @@
       "item": "angels-bio-generator-temperate-1",
       "categories": ["angels-tree-temperate", "angels-tree"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-generator-swamp-1": {
       "human": "Swamp tree seed generator",
@@ -42489,7 +43699,16 @@
       "item": "angels-bio-generator-swamp-1",
       "categories": ["angels-tree-swamp", "angels-tree"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-generator-desert-1": {
       "human": "Desert tree seed generator",
@@ -42497,7 +43716,16 @@
       "item": "angels-bio-generator-desert-1",
       "categories": ["angels-tree-desert", "angels-tree"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-arboretum-1": {
       "human": "Arboretum",
@@ -42505,7 +43733,8 @@
       "item": "angels-bio-arboretum-1",
       "categories": ["angels-arboretum"],
       "speed": 0.5,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-bio-refugium-fish": {
       "human": "Fish tank",
@@ -42513,7 +43742,8 @@
       "item": "angels-bio-refugium-fish",
       "categories": ["angels-bio-refugium-fish"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-bio-refugium-puffer": {
       "human": "Puffer refugium",
@@ -42521,7 +43751,8 @@
       "item": "angels-bio-refugium-puffer",
       "categories": ["angels-bio-refugium-puffer"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "angels-bio-refugium-biter": {
       "human": "Biter refugium",
@@ -42529,14 +43760,24 @@
       "item": "angels-bio-refugium-biter",
       "categories": ["angels-bio-refugium-biter"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"]
     },
     "stone-furnace": {
       "human": "Stone furnace",
       "kind": "furnace",
       "item": "stone-furnace",
       "categories": ["smelting"],
-      "speed": 1
+      "speed": 1,
+      "allowedEffects": ["speed", "consumption", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "electric-furnace": {
       "human": "Electric furnace",
@@ -42544,14 +43785,32 @@
       "item": "electric-furnace",
       "categories": ["smelting"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "steel-furnace": {
       "human": "Steel furnace",
       "kind": "furnace",
       "item": "steel-furnace",
       "categories": ["smelting"],
-      "speed": 2
+      "speed": 2,
+      "allowedEffects": ["speed", "consumption", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electric-furnace-2": {
       "human": "Electric furnace 2",
@@ -42559,7 +43818,16 @@
       "item": "bob-electric-furnace-2",
       "categories": ["smelting"],
       "speed": 3,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-electric-furnace-3": {
       "human": "Electric furnace 3",
@@ -42567,14 +43835,32 @@
       "item": "bob-electric-furnace-3",
       "categories": ["smelting"],
       "speed": 4,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-fluid-furnace": {
       "human": "Fluid burning furnace",
       "kind": "furnace",
       "item": "bob-fluid-furnace",
       "categories": ["smelting"],
-      "speed": 2
+      "speed": 2,
+      "allowedEffects": ["speed", "consumption", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-clarifier": {
       "human": "Clarifier",
@@ -42582,7 +43868,16 @@
       "item": "angels-clarifier",
       "categories": ["angels-water-void"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-flare-stack": {
       "human": "Flare stack",
@@ -42590,7 +43885,16 @@
       "item": "angels-flare-stack",
       "categories": ["angels-chemical-void"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-composter": {
       "human": "Composter",
@@ -42598,7 +43902,16 @@
       "item": "angels-composter",
       "categories": ["angels-bio-void"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-hatchery": {
       "human": "Hatchery",
@@ -42606,7 +43919,16 @@
       "item": "angels-bio-hatchery",
       "categories": ["angels-bio-hatchery"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-bio-butchery": {
       "human": "Butchery",
@@ -42614,7 +43936,16 @@
       "item": "angels-bio-butchery",
       "categories": ["angels-bio-butchery"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "rocket-silo": {
       "human": "Rocket silo",
@@ -42622,7 +43953,16 @@
       "item": "rocket-silo",
       "categories": ["rocket-building"],
       "speed": 1,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedEffects": ["consumption", "speed", "productivity", "pollution"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "character": {
       "human": "Character",
@@ -42664,14 +44004,31 @@
       "item": "electric-mining-drill",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 0.5,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "burner-mining-drill": {
       "human": "Burner mining drill",
       "kind": "mining-drill",
       "item": "burner-mining-drill",
       "categories": ["synthetic-mine:basic-solid"],
-      "speed": 0.25
+      "speed": 0.25,
+      "allowedEffects": [],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-mining-drill-1": {
       "human": "Electric mining drill 2",
@@ -42679,7 +44036,15 @@
       "item": "bob-mining-drill-1",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 1,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-mining-drill-2": {
       "human": "Electric mining drill 3",
@@ -42687,7 +44052,15 @@
       "item": "bob-mining-drill-2",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 2,
-      "moduleSlots": 5
+      "moduleSlots": 5,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-mining-drill-3": {
       "human": "Electric mining drill 4",
@@ -42695,7 +44068,15 @@
       "item": "bob-mining-drill-3",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 4,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-mining-drill-4": {
       "human": "Electric mining drill 5",
@@ -42703,7 +44084,15 @@
       "item": "bob-mining-drill-4",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 8,
-      "moduleSlots": 8
+      "moduleSlots": 8,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-area-mining-drill-1": {
       "human": "Electric large area mining drill 1",
@@ -42711,7 +44100,15 @@
       "item": "bob-area-mining-drill-1",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 0.75,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-area-mining-drill-2": {
       "human": "Electric large area mining drill 2",
@@ -42719,7 +44116,15 @@
       "item": "bob-area-mining-drill-2",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 1.25,
-      "moduleSlots": 5
+      "moduleSlots": 5,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-area-mining-drill-3": {
       "human": "Electric large area mining drill 3",
@@ -42727,7 +44132,15 @@
       "item": "bob-area-mining-drill-3",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 2,
-      "moduleSlots": 6
+      "moduleSlots": 6,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-area-mining-drill-4": {
       "human": "Electric large area mining drill 4",
@@ -42735,14 +44148,31 @@
       "item": "bob-area-mining-drill-4",
       "categories": ["synthetic-mine:basic-solid"],
       "speed": 3.25,
-      "moduleSlots": 8
+      "moduleSlots": 8,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-steam-mining-drill": {
       "human": "Steam powered mining drill",
       "kind": "mining-drill",
       "item": "bob-steam-mining-drill",
       "categories": ["synthetic-mine:basic-solid"],
-      "speed": 2
+      "speed": 2,
+      "allowedEffects": [],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "pumpjack": {
       "human": "Pumpjack",
@@ -42750,7 +44180,15 @@
       "item": "pumpjack",
       "categories": ["synthetic-mine:basic-fluid"],
       "speed": 1,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-pumpjack-1": {
       "human": "Pumpjack 2",
@@ -42758,7 +44196,15 @@
       "item": "bob-pumpjack-1",
       "categories": ["synthetic-mine:basic-fluid"],
       "speed": 2,
-      "moduleSlots": 3
+      "moduleSlots": 3,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-pumpjack-2": {
       "human": "Pumpjack 3",
@@ -42766,7 +44212,15 @@
       "item": "bob-pumpjack-2",
       "categories": ["synthetic-mine:basic-fluid"],
       "speed": 3,
-      "moduleSlots": 4
+      "moduleSlots": 4,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "bob-pumpjack-3": {
       "human": "Pumpjack 4",
@@ -42774,7 +44228,15 @@
       "item": "bob-pumpjack-3",
       "categories": ["synthetic-mine:basic-fluid"],
       "speed": 5,
-      "moduleSlots": 5
+      "moduleSlots": 5,
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-thermal-bore": {
       "human": "Thermal water bore",
@@ -42782,7 +44244,16 @@
       "item": "angels-thermal-bore",
       "categories": ["synthetic-mine:angels-fissure"],
       "speed": 0.75,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     },
     "angels-thermal-extractor": {
       "human": "Thermal water extractor",
@@ -42790,8 +44261,59 @@
       "item": "angels-thermal-extractor",
       "categories": ["synthetic-mine:angels-fissure"],
       "speed": 2,
-      "moduleSlots": 2
+      "moduleSlots": 2,
+      "allowedEffects": ["consumption", "speed", "pollution", "productivity"],
+      "allowedModuleCategories": [
+        "productivity",
+        "speed",
+        "efficiency",
+        "pollution-clean",
+        "pollution-create",
+        "god"
+      ]
     }
+  },
+  "modules": {
+    "speed-module": { "category": "speed", "tier": 1, "speed": 0.2 },
+    "speed-module-2": { "category": "speed", "tier": 2, "speed": 0.3 },
+    "speed-module-3": { "category": "speed", "tier": 3, "speed": 0.4 },
+    "productivity-module": {
+      "category": "productivity",
+      "tier": 1,
+      "speed": -0.05,
+      "productivity": 0.04
+    },
+    "productivity-module-2": {
+      "category": "productivity",
+      "tier": 2,
+      "speed": -0.1,
+      "productivity": 0.08
+    },
+    "productivity-module-3": {
+      "category": "productivity",
+      "tier": 3,
+      "speed": -0.15,
+      "productivity": 0.12
+    },
+    "bob-speed-module-4": { "category": "speed", "tier": 4, "speed": 0.5 },
+    "bob-speed-module-5": { "category": "speed", "tier": 5, "speed": 0.6 },
+    "bob-productivity-module-4": {
+      "category": "productivity",
+      "tier": 4,
+      "speed": -0.2,
+      "productivity": 0.16
+    },
+    "bob-productivity-module-5": {
+      "category": "productivity",
+      "tier": 5,
+      "speed": -0.25,
+      "productivity": 0.2
+    },
+    "angels-bio-yield-module": { "category": "angels-bio-yield", "tier": 1, "productivity": 0.1 },
+    "angels-bio-yield-module-2": { "category": "angels-bio-yield", "tier": 2, "productivity": 0.2 },
+    "angels-bio-yield-module-3": { "category": "angels-bio-yield", "tier": 3, "productivity": 0.3 },
+    "angels-bio-yield-module-4": { "category": "angels-bio-yield", "tier": 4, "productivity": 0.4 },
+    "angels-bio-yield-module-5": { "category": "angels-bio-yield", "tier": 5, "productivity": 0.5 }
   },
   "sciencePacks": [
     "item:automation-science-pack",

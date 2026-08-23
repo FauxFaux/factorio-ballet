@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
 import type { RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
-import { arr, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
+import { arr, effectLimits, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
@@ -14,6 +14,7 @@ import type {
   IngredientTemperature,
   Machine,
   MachineKind,
+  Module,
   Product,
   Recipe,
   Resource,
@@ -53,6 +54,7 @@ async function main() {
   const recipes = handleRecipes(v.recipe, locales);
   const machines = handleMachines(v, locales);
   addSynthetic(v, recipes, machines, locales);
+  const modules = handleModules(v);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -115,9 +117,11 @@ async function main() {
     console.log(`Recipe categories with no machine: ${homeless.size}`, [...homeless].slice(0, 20));
   }
 
+  checkModules(modules, machines, resources);
+
   const sciencePacks = applyComplexity(v, recipes, resources);
 
-  const staticData: StaticData = { recipes, resources, machines, sciencePacks };
+  const staticData: StaticData = { recipes, resources, machines, modules, sciencePacks };
   await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
@@ -201,6 +205,8 @@ function addSynthetic(
         categories: [s.category],
         speed: m.speed,
         moduleSlots: m.moduleSlots,
+        allowedEffects: m.allowedEffects,
+        allowedModuleCategories: m.allowedModuleCategories,
       };
     }
   }
@@ -284,12 +290,91 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
         speed: 'crafting_speed' in m ? (m.crafting_speed ?? 1) : 1,
         moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
+        // both absent-means-everything; see `Machine.allowedEffects`
+        allowedEffects: 'allowed_effects' in m ? effectLimits(m.allowed_effects) : undefined,
+        allowedModuleCategories:
+          'allowed_module_categories' in m ? m.allowed_module_categories : undefined,
       };
     }
   }
 
   console.log(`Machines: ${Object.keys(machines).length} (dropped ${skipped} hidden)`);
   return machines;
+}
+
+/**
+ * The modules, keyed by prototype id — which is also the id of the item, since a module *is* an
+ * item and is already in `resources` with its name, icon and complexity.
+ *
+ * Only the ones which change throughput are kept: a module with neither a speed nor a productivity
+ * effect is an efficiency or pollution module, and this app models neither power nor smoke, so
+ * carrying it would be offering the user a choice with no consequence. Of the effects we do keep,
+ * `consumption`, `pollution` and `quality` go the same way.
+ *
+ * Effect values arrive with the float noise of the mod's own arithmetic (speed module 2 is
+ * `0.30000000000000004`), so they are rounded like every other number here.
+ */
+function handleModules(v: RawData): Record<string, Module> {
+  const modules: Record<string, Module> = {};
+  const round = (x: number) => Math.round(x * 1e4) / 1e4;
+  let skipped = 0;
+
+  for (const [id, m] of Object.entries(v.module)) {
+    // consistent with everything else, though no module in this pack is hidden
+    if (m.hidden) {
+      skipped++;
+      continue;
+    }
+    const speed = m.effect?.speed;
+    const productivity = m.effect?.productivity;
+    if (!speed && !productivity) {
+      skipped++;
+      continue;
+    }
+    modules[id] = {
+      category: m.category,
+      tier: m.tier,
+      speed: speed === undefined ? undefined : round(speed),
+      productivity: productivity === undefined ? undefined : round(productivity),
+    };
+  }
+
+  console.log(
+    `Modules: ${Object.keys(modules).length}` +
+      ` (dropped ${skipped} with no speed or productivity effect)`,
+  );
+  return modules;
+}
+
+/**
+ * The two cross-references modules introduce, as numbers rather than as a blank dropdown later.
+ *
+ * A module with no item means `ITEM_KEYS` lost `module`, or the hidden filter ate one. A module no
+ * machine will take means the reading of `allowed_module_categories` is wrong — the field is a
+ * whitelist and *absent* means all, which is the whole reason Angel's bio-yield modules have
+ * somewhere to go: no machine's list names their category, and the twelve farms name no list.
+ */
+function checkModules(
+  modules: Record<string, Module>,
+  machines: Record<string, Machine>,
+  resources: Record<ResourceId, Resource>,
+) {
+  const itemless = Object.keys(modules).filter((id) => !(`item:${id}` in resources));
+  if (itemless.length > 0) {
+    console.log(`Modules with no item: ${itemless.length}`, itemless.slice(0, 20));
+  }
+
+  const slotted = Object.values(machines).filter((m) => (m.moduleSlots ?? 0) > 0);
+  const homeless = Object.entries(modules).filter(
+    ([, module]) =>
+      !slotted.some((m) => m.allowedModuleCategories?.includes(module.category) ?? true),
+  );
+  if (homeless.length > 0) {
+    console.log(
+      `Modules no machine will take: ${homeless.length}`,
+      homeless.map(([id]) => id).slice(0, 20),
+    );
+  }
 }
 
 function toIng(game: RIngredient): Ingredient {

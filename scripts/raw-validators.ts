@@ -1,7 +1,22 @@
 import * as z from 'zod/mini';
+import type { EffectTypeLimitation } from 'factorio-raw-types/prototypes';
+import type { Effect } from '../src/types.ts';
 
 export function arr<T>(v: T[]): T[] {
   return Object.keys(v).length === 0 ? [] : v;
+}
+
+/**
+ * A machine's `allowed_effects` as a list. The game's `EffectTypeLimitation` is either one effect
+ * or several, and Lua's empty table arrives as `{}` — which is how the two burner drills say "and
+ * no effects at all", so `arr` turning it into `[]` is the meaning, not a repair.
+ *
+ * Absent stays absent, because absent means the opposite: no restriction. See
+ * `Machine.allowedEffects`.
+ */
+export function effectLimits(v: EffectTypeLimitation | undefined): Effect[] | undefined {
+  if (v === undefined) return undefined;
+  return typeof v === 'string' ? [v] : arr(v);
 }
 
 const resourceType = z.union([z.literal('item'), z.literal('fluid')]);

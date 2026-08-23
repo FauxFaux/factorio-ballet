@@ -4,6 +4,14 @@ export interface StaticData {
   machines: Record<MachineId, Machine>;
 
   /**
+   * The modules worth modelling: every one which changes how fast a machine runs or how much comes
+   * out of it. Efficiency and pollution modules are dropped, because nothing here costs power or
+   * makes smoke yet. Keyed by bare prototype id, which is also the id of the item you craft — a
+   * module is an item, so its name, stack size and complexity are already in `resources`.
+   */
+  modules: Record<ModuleId, Module>;
+
+  /**
    * Every item some technology asks for as a research ingredient, cheapest `complexity` first. They
    * are the only readable landmarks on the complexity scale — "past yellow science" is how a player
    * describes a save, where "58%" means nothing — so the app labels its progress slider with them.
@@ -16,6 +24,9 @@ export type ResourceId = `item:${string}` | `fluid:${string}`;
 
 /** A crafting machine's prototype id, e.g. `assembling-machine-2`. */
 export type MachineId = string;
+
+/** A module's prototype id, e.g. `speed-module-3`; the same id as the item you craft. */
+export type ModuleId = string;
 
 export interface Recipe {
   human?: string;
@@ -96,6 +107,27 @@ export interface Machine {
   /** Crafts per second, against a recipe whose duration is one second. */
   speed: number;
   moduleSlots?: number;
+
+  /**
+   * Which module effects this machine actually applies, from the game's `allowed_effects`. **Absent
+   * means all of them** — 22 of the 182 here say nothing, the mining drills among them — so this
+   * is a restriction to check for, never a list to enumerate from.
+   *
+   * The game ignores a disallowed effect rather than refusing the module: a speed module's quality
+   * malus is not in an oil refinery's list, and speed modules go in refineries all the same. So an
+   * effect missing here zeroes that one number, and leaves the module's other effects alone.
+   */
+  allowedEffects?: Effect[];
+
+  /**
+   * Which `Module.category` values this machine will take, from the game's
+   * `allowed_module_categories`; absent means all. Unlike {@link allowedEffects} this one does
+   * refuse the module outright. Every machine here which names a list names the same six
+   * categories, all of them except `angels-bio-yield`; the seventeen which name none are Angel's
+   * twelve farms and bio buildings — the only home those modules have — and the slotless character
+   * and pumps.
+   */
+  allowedModuleCategories?: string[];
 }
 
 export type MachineKind =
@@ -105,3 +137,36 @@ export type MachineKind =
   | 'character'
   | 'mining-drill'
   | 'offshore-pump';
+
+/**
+ * One of the five things a module does to the machine it sits in. We model the two which change
+ * throughput; `consumption` and `pollution` are the costs of doing so, and `quality` is a game mode
+ * this app does not have.
+ */
+export type Effect = 'speed' | 'productivity' | 'consumption' | 'pollution' | 'quality';
+
+/**
+ * A module, as far as throughput is concerned. Modules are items, so the name, the icon, the stack
+ * size and the complexity are all on the `item:<id>` resource already; what is here is only what
+ * putting one in a machine does.
+ *
+ * Both effects are the fraction added per module, and they add up across the slots: a machine with
+ * three `speed-module-3` (`speed: 0.4`) in it runs at 1 + 3 × 0.4 = 2.2×. See `moduleEffects` in
+ * `src/flow.ts` for the arithmetic, and the two gates on it.
+ *
+ * The game also lets a module name the recipes it is allowed on (`limitation`), which is how 1.1
+ * kept productivity modules on intermediates. 2.0 moved that decision to the recipe, as
+ * `Recipe.allowProductivity`, and no module in this pack sets `limitation` at all — so it is not
+ * ingested, and a pack which used it would need this comment revisited rather than a new field
+ * quietly doing nothing.
+ */
+export interface Module {
+  /** A `module-category` id — `speed`, `productivity`, `angels-bio-yield`. Machines whitelist these. */
+  category: string;
+  /** The game's own tier number, 1–5 here. Within a category it is the upgrade order. */
+  tier: number;
+  /** Added to the machine's speed. Negative on productivity modules, which is the trade. */
+  speed?: number;
+  /** Added to everything the recipe produces, and only where `Recipe.allowProductivity` says so. */
+  productivity?: number;
+}
