@@ -4,17 +4,10 @@ import type { RawData } from 'factorio-raw-types/prototypes';
  * Key lists for walking `data.raw` a family at a time, `satisfies`-checked so a typo or a renamed
  * prototype type is a compile error.
  *
- * Beware the trap at the use site: `Object.entries(raw[key] ?? {})` over a list of keys hands you
- * `any`, because `Object.values`/`entries` cannot infer one element type from a union of unrelated
- * tables and falls back to its `(o: {}) => any[]` overload. Nothing warns you — the loop body just
- * stops being checked. Assign the table to its shared base type first, which costs a line and no
- * assertion:
- *
- * ```ts
- * for (const key of ITEM_KEYS) {
- *   const items: Record<string, ItemPrototype> = raw[key] ?? {};
- *   for (const [id, item] of Object.entries(items)) ...
- * ```
+ * Walk them with `valuesOf` / `entriesOf` from `src/ts.ts`, not the built-ins: `Object.values`
+ * cannot infer one element type from a union of unrelated tables and quietly falls back to its
+ * `(o: {}) => any[]` overload, so the loop body stops being type-checked with nothing to warn you.
+ * The helpers give you the union of prototypes instead.
  */
 
 /**

@@ -31,16 +31,11 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type {
-  EntityPrototype,
-  EntityWithHealthPrototype,
-  ItemPrototype,
-  RawData,
-  TechnologyPrototype,
-} from 'factorio-raw-types/prototypes';
+import type { RawData, TechnologyPrototype } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
+import { entriesOf, valuesOf } from '../src/ts.ts';
 import type { ResourceId } from '../src/types.ts';
 
 /** The unit of account: everything else is priced in automation science packs. */
@@ -255,11 +250,9 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
   }
 
   // Launching, burning and building are item properties, so only the item subtypes are worth
-  // walking — every one of them extends `ItemPrototype` and so carries all three fields. The
-  // annotation is what keeps them typed: see `ITEM_KEYS`.
+  // walking — every one of them extends `ItemPrototype` and so carries all three fields.
   for (const key of ITEM_KEYS) {
-    const items: Record<string, ItemPrototype> = raw[key] ?? {};
-    for (const [id, item] of Object.entries(items)) {
+    for (const [id, item] of entriesOf(raw[key] ?? {})) {
       const launched = arr(item.rocket_launch_products ?? []);
       if (launched.length) {
         // You cannot launch without a silo, and the silo eats rocket parts; naming both as
@@ -323,16 +316,14 @@ function recipeUnlocks(raw: RawData): Map<string, string[]> {
 function naturalSources(raw: RawData): Set<ResourceId> {
   const out = new Set<ResourceId>();
   for (const key of NATURAL_KEYS) {
-    const entities: Record<string, EntityPrototype> = raw[key] ?? {};
-    for (const p of Object.values(entities)) {
+    for (const p of valuesOf(raw[key] ?? {})) {
       if (!p.autoplace || !p.minable) continue;
       for (const r of arr(p.minable.results ?? [])) out.add(rid(r));
       if (p.minable.result) out.add(`item:${p.minable.result}`);
     }
   }
   for (const key of LOOT_KEYS) {
-    const entities: Record<string, EntityWithHealthPrototype> = raw[key] ?? {};
-    for (const p of Object.values(entities)) {
+    for (const p of valuesOf(raw[key] ?? {})) {
       for (const l of arr(p.loot ?? [])) out.add(`item:${l.item}`);
     }
   }

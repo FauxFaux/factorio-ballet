@@ -15,6 +15,22 @@ export const debounce = <F extends (...args: Parameters<F>) => ReturnType<F>>(
 export type Setter<S> = Dispatch<StateUpdater<S>>;
 export type State<T> = [T, Setter<T>];
 
+/**
+ * `Object.values` / `Object.entries` with the element type kept. Both lie a little — a runtime
+ * object can carry keys its type does not mention, and `Object.keys` stringifies numeric ones —
+ * which is the usual price for these helpers.
+ *
+ * The reason to reach for them: over a *union* of object types the built-ins give up silently.
+ * `Object.values` cannot infer one element type from `Record<string, A> | Record<string, B>`, so
+ * overload resolution falls through to `(o: {}) => any[]` and the loop body stops being checked
+ * with nothing to warn you. That bites whenever a list of `keyof RawData` is walked in a loop
+ * (`scripts/raw-keys.ts`); these resolve to `A | B` instead.
+ */
+export const valuesOf = Object.values as <T extends object>(obj: T) => Array<T[keyof T]>;
+export const entriesOf = Object.entries as <T extends object>(
+  obj: T,
+) => Array<[keyof T, T[keyof T]]>;
+
 /** A `State` for one key of a larger state object, writing back through its setter. */
 export function field<T, K extends keyof T>([value, setValue]: State<T>, key: K): State<T[K]> {
   return [

@@ -2,16 +2,11 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type {
-  double,
-  ItemPrototype,
-  ItemStackIndex,
-  RawData,
-  RecipeCategoryID,
-} from 'factorio-raw-types/prototypes';
+import type { RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
+import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
 import type {
   Ingredient,
@@ -70,8 +65,7 @@ async function main() {
   const resources: Record<ResourceId, Resource> = {};
   let dropped = 0;
   for (const key of ITEM_KEYS) {
-    const items: Record<string, ItemPrototype> = v[key] ?? {};
-    for (const [itemId, item] of Object.entries(items)) {
+    for (const [itemId, item] of entriesOf(v[key] ?? {})) {
       const id = `item:${itemId}` as const;
       if ((item.hidden || item.parameter) && !referenced.has(id)) {
         dropped++;
@@ -208,20 +202,7 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
   let skipped = 0;
 
   for (const key of MACHINE_KEYS) {
-    // `character` is not a `CraftingMachinePrototype`, so there is no shared base type to name
-    // here; spelling out what the loop needs types the tables just as well. Without an annotation
-    // `Object.entries` over a union of unrelated tables silently degrades to `any` — see
-    // `raw-keys.ts`.
-    const kind: Record<
-      string,
-      {
-        hidden?: boolean;
-        crafting_categories?: RecipeCategoryID[];
-        crafting_speed?: double;
-        module_slots?: ItemStackIndex;
-      }
-    > = v[key] ?? {};
-    for (const [id, m] of Object.entries(kind)) {
+    for (const [id, m] of entriesOf(v[key] ?? {})) {
       if (m.hidden) {
         skipped++;
         continue;
@@ -231,8 +212,8 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         kind: key satisfies MachineKind,
         categories: m.crafting_categories ?? [],
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
-        speed: m.crafting_speed ?? 1,
-        moduleSlots: m.module_slots,
+        speed: 'crafting_speed' in m ? (m.crafting_speed ?? 1) : 1,
+        moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
       };
     }
   }
