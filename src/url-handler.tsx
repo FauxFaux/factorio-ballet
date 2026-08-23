@@ -109,8 +109,71 @@ export function UrlHandler() {
   );
 }
 
-// duplicated for stability reasons
-const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(defaultUs)));
+const referenceState: UrlState = {
+  v: 1,
+  rs: 'silicon',
+  cs: 'makes:item:copper-plate',
+  gp: 69,
+  cl: [
+    {
+      entries: [
+        {
+          recipe: 'bob-processing-electronics',
+          count: 25,
+        },
+        {
+          recipe: 'angels-wire-platinum',
+          speedModules: 2,
+        },
+        {
+          recipe: 'copper-cable',
+        },
+        {
+          recipe: 'bob-silicon-wafer',
+        },
+        {
+          recipe: 'angels-mono-silicon',
+          machine: 'angels-casting-machine-3',
+        },
+        {
+          recipe: 'angels-mono-silicon-seed',
+        },
+        {
+          recipe: 'bob-silicon-nitride',
+        },
+        {
+          recipe: 'bob-silicon-powder',
+        },
+        {
+          recipe: 'angels-liquid-molten-silicon',
+          count: 4,
+        },
+        {
+          recipe: 'angels-gas-compressed-air',
+          machine: 'angels-air-filter-2',
+        },
+        {
+          recipe: 'angels-air-separation',
+          machine: 'angels-chemical-plant-2',
+        },
+        {
+          recipe: 'angels-chemical-void-angels-gas-oxygen',
+        },
+      ],
+    },
+    {
+      entries: [],
+    },
+  ],
+  ci: 1,
+  mo: {
+    speed: 'speed-module-3',
+    productivity: 'productivity-module',
+    'angels-bio-yield': 'angels-bio-yield-module-5',
+  },
+};
+
+const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));
 
 function packUs(us: UrlState): string {
   const json = JSON.stringify(shallowSortKeys(us));
