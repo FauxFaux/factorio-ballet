@@ -1,4 +1,4 @@
-import { resourceName, staticData } from './data.ts';
+import { complexityOf, resourceName, staticData } from './data.ts';
 import type { Recipe, ResourceId } from './types.ts';
 
 export interface RecipeMatch {
@@ -69,7 +69,7 @@ function matches(term: Term, id: string, recipe: Recipe, name: string): boolean 
   }
 }
 
-/** Every recipe matching all the terms of `search`, ordered by display name. */
+/** Every recipe matching all the terms of `search`, simplest first; see `complexityOf`. */
 export function searchRecipes(search: string): RecipeMatch[] {
   const terms = parseSearch(search);
   if (!terms.length) return [];
@@ -79,5 +79,10 @@ export function searchRecipes(search: string): RecipeMatch[] {
     const name = recipe.human ?? id;
     if (terms.every((term) => matches(term, id, recipe, name))) found.push({ id, recipe, name });
   }
-  return found.sort((a, b) => a.name.localeCompare(b.name) || a.id.localeCompare(b.id));
+  return found.sort(
+    (a, b) =>
+      complexityOf(a.recipe) - complexityOf(b.recipe) ||
+      a.name.localeCompare(b.name) ||
+      a.id.localeCompare(b.id),
+  );
 }

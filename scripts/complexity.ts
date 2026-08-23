@@ -31,7 +31,14 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type { RawData, TechnologyPrototype } from 'factorio-raw-types/prototypes';
+import type {
+  EntityPrototype,
+  EntityWithHealthPrototype,
+  ItemPrototype,
+  RawData,
+  TechnologyPrototype,
+} from 'factorio-raw-types/prototypes';
+import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import type { ResourceId } from '../src/types.ts';
@@ -44,10 +51,25 @@ const UNIT_PACK = 'automation-science-pack';
  * ores, trees (Angel's gardens are trees), fish, rocks. Deliberately not every `minable` — most
  * things with a `minable` are buildings, and "mine the assembler you placed" is not a source.
  */
-const NATURAL_KEYS = ['tree', 'fish', 'simple-entity', 'resource', 'cliff', 'plant'];
+const NATURAL_KEYS = [
+  'tree',
+  'fish',
+  'simple-entity',
+  'resource',
+  'cliff',
+  'plant',
+] as const satisfies ReadonlyArray<keyof RawData>;
 
 /** Prototype types whose `loot` drops when you kill one: bob's alien artifacts. */
-const LOOT_KEYS = ['unit', 'turret', 'unit-spawner'];
+const LOOT_KEYS = ['unit', 'turret', 'unit-spawner'] as const satisfies ReadonlyArray<
+  keyof RawData
+>;
+
+/**
+ * Ingredients, products and `minable` results all carry the game's own `type` discriminant, which
+ * is exactly the left half of a `ResourceId` — so this needs no assertion.
+ */
+const rid = (x: { type: 'item' | 'fluid'; name: string }): ResourceId => `${x.type}:${x.name}`;
 
 interface Rec {
   /** available without research */
@@ -82,7 +104,10 @@ async function main() {
     await Promise.all(
       (await fs.readdir(so))
         .filter((f) => f.endsWith('-locale.json'))
-        .map(async (f) => [f.replace(/-locale\.json$/, ''), RLocale.parse(await read(f))]),
+        .map(async (f): Promise<[string, RLocale]> => [
+          f.replace(/-locale\.json$/, ''),
+          RLocale.parse(await read(f)),
+        ]),
     ),
   );
 
@@ -135,17 +160,18 @@ export function analyse(raw: RawData) {
   const recipes = collectRecipes(raw);
   const unlocks = recipeUnlocks(raw);
   const natural = naturalSources(raw);
-  const techs = raw.technology as Record<string, TechnologyPrototype>;
+  const techs = raw.technology;
 
   let weights = new Map<string, number>([[UNIT_PACK, 1]]);
   let costs = new Map<ResourceId, number>();
   let techCost = new Map<string, number>();
+  let unlockCost = new Map<string, number>();
   let fallback: ResourceId[] = [];
 
   // Fixed point over the pack weights: five passes in the Bob's/Angel's pack, one per pack tier.
   for (let pass = 0; pass < 20; pass++) {
     techCost = technologyCosts(techs, weights);
-    const unlockCost = new Map<string, number>();
+    unlockCost = new Map<string, number>();
     for (const [id, r] of recipes) {
       // A synthetic recipe has no technology of its own; what gates it is its ingredients (you
       // need the silo before you can launch a satellite).
@@ -185,9 +211,23 @@ export function analyse(raw: RawData) {
   const progress = new Map<ResourceId, number>();
   for (const [id, cost] of costs) progress.set(id, Math.log10(1 + cost) / scale);
 
+  // A recipe costs what running it costs: its own unlock, and having every ingredient to hand.
+  // That is the same max the walk takes, but pinned to *this* recipe rather than the cheapest one
+  // producing each of its products, so a late alternative recipe reads as late.
+  const recipeCost = new Map<string, number>();
+  const recipeProgress = new Map<string, number>();
+  for (const [id, r] of recipes) {
+    let c = unlockCost.get(id) ?? Infinity;
+    for (const i of r.ingredients) c = Math.max(c, costs.get(i) ?? Infinity);
+    recipeCost.set(id, c);
+    if (isFinite(c)) recipeProgress.set(id, Math.log10(1 + c) / scale);
+  }
+
   return {
     costs,
     progress,
+    recipeCost,
+    recipeProgress,
     depths: chainDepths(recipes, natural),
     weights,
     techCost,
@@ -203,7 +243,6 @@ export function analyse(raw: RawData) {
  */
 function collectRecipes(raw: RawData): Map<string, Rec> {
   const out = new Map<string, Rec>();
-  const rid = (x: { type: string; name: string }) => `${x.type}:${x.name}` as ResourceId;
   const placedBy = new Map<string, string>();
 
   for (const [id, r] of Object.entries(raw.recipe)) {
@@ -215,11 +254,13 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
     });
   }
 
-  for (const protos of Object.values(raw as unknown as Record<string, unknown>)) {
-    if (!protos || typeof protos !== 'object') continue;
-    for (const [id, p] of Object.entries(protos as Record<string, Record<string, unknown>>)) {
-      if (!p || typeof p !== 'object') continue;
-      const launched = arr((p.rocket_launch_products ?? []) as { type: string; name: string }[]);
+  // Launching, burning and building are item properties, so only the item subtypes are worth
+  // walking — every one of them extends `ItemPrototype` and so carries all three fields. The
+  // annotation is what keeps them typed: see `ITEM_KEYS`.
+  for (const key of ITEM_KEYS) {
+    const items: Record<string, ItemPrototype> = raw[key] ?? {};
+    for (const [id, item] of Object.entries(items)) {
+      const launched = arr(item.rocket_launch_products ?? []);
       if (launched.length) {
         // You cannot launch without a silo, and the silo eats rocket parts; naming both as
         // ingredients gates the launch on the whole rocket chain without modelling it.
@@ -230,16 +271,16 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
           products: launched.map(rid),
         });
       }
-      if (typeof p.burnt_result === 'string') {
+      if (item.burnt_result) {
         out.set(`burn:${id}`, {
           free: false,
           synthetic: true,
           ingredients: [`item:${id}`],
-          products: [`item:${p.burnt_result}` as ResourceId],
+          products: [`item:${item.burnt_result}`],
         });
       }
-      if (typeof p.place_result === 'string' && !placedBy.has(p.place_result)) {
-        placedBy.set(p.place_result, id);
+      if (item.place_result && !placedBy.has(item.place_result)) {
+        placedBy.set(item.place_result, id);
       }
     }
   }
@@ -252,7 +293,7 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
   for (const [id, pump] of Object.entries(raw['offshore-pump'] ?? {})) {
     const item = placedBy.get(id);
     if (pump.hidden || !item) continue;
-    const fluid = (pump.fluid_box as { filter?: string } | undefined)?.filter ?? 'water';
+    const fluid = pump.fluid_box.filter ?? 'water';
     out.set(`pump:${id}`, {
       free: false,
       synthetic: true,
@@ -281,20 +322,18 @@ function recipeUnlocks(raw: RawData): Map<string, string[]> {
 /** Everything the world hands you with no recipe: ores, wood, gardens, fish, biter loot. */
 function naturalSources(raw: RawData): Set<ResourceId> {
   const out = new Set<ResourceId>();
-  const record = raw as unknown as Record<string, Record<string, Record<string, never>>>;
   for (const key of NATURAL_KEYS) {
-    for (const p of Object.values(record[key] ?? {})) {
-      const minable = p.minable as { results?: unknown[]; result?: string } | undefined;
-      if (!p.autoplace || !minable) continue;
-      for (const r of arr((minable.results ?? []) as { type: string; name: string }[])) {
-        out.add(`${r.type}:${r.name}` as ResourceId);
-      }
-      if (minable.result) out.add(`item:${minable.result}`);
+    const entities: Record<string, EntityPrototype> = raw[key] ?? {};
+    for (const p of Object.values(entities)) {
+      if (!p.autoplace || !p.minable) continue;
+      for (const r of arr(p.minable.results ?? [])) out.add(rid(r));
+      if (p.minable.result) out.add(`item:${p.minable.result}`);
     }
   }
   for (const key of LOOT_KEYS) {
-    for (const p of Object.values(record[key] ?? {})) {
-      for (const l of arr((p.loot ?? []) as { item: string }[])) out.add(`item:${l.item}`);
+    const entities: Record<string, EntityWithHealthPrototype> = raw[key] ?? {};
+    for (const p of Object.values(entities)) {
+      for (const l of arr(p.loot ?? [])) out.add(`item:${l.item}`);
     }
   }
   return out;
@@ -304,9 +343,7 @@ function naturalSources(raw: RawData): Set<ResourceId> {
 function sciencePacks(techs: Record<string, TechnologyPrototype>): Set<string> {
   const out = new Set<string>();
   for (const tech of Object.values(techs)) {
-    for (const i of arr(tech.unit?.ingredients ?? [])) {
-      out.add(Array.isArray(i) ? i[0] : (i as { name: string }).name);
-    }
+    for (const [pack] of arr(tech.unit?.ingredients ?? [])) out.add(pack);
   }
   return out;
 }
@@ -319,14 +356,12 @@ function technologyCosts(
   const own = new Map<string, number>();
   for (const [name, tech] of Object.entries(techs)) {
     let cost = 0;
-    // No `unit` is a 2.0 trigger technology (craft 50 iron plates); a non-numeric `count` is
-    // infinite research with a level formula. Neither costs science we can attribute.
-    if (tech.unit && typeof tech.unit.count === 'number') {
-      for (const i of arr(tech.unit.ingredients)) {
-        const [pack, amount] = Array.isArray(i)
-          ? i
-          : [(i as { name: string }).name, (i as { amount: number }).amount];
-        cost += amount * tech.unit.count * (weights.get(pack) ?? 1);
+    // No `unit` is a 2.0 trigger technology (craft 50 iron plates); a `count_formula` in place of a
+    // `count` is infinite research, priced per level. Neither costs science we can attribute.
+    const unit = tech.unit;
+    if (unit?.count !== undefined) {
+      for (const [pack, amount] of arr(unit.ingredients)) {
+        cost += amount * unit.count * (weights.get(pack) ?? 1);
       }
     }
     own.set(name, cost);
@@ -483,7 +518,7 @@ function chainDepths(recipes: Map<string, Rec>, natural: Set<ResourceId>): Map<R
 
 function histogram(costs: number[], scale: number) {
   const finite = costs.filter(isFinite);
-  const buckets = new Array(10).fill(0);
+  const buckets: number[] = new Array<number>(10).fill(0);
   for (const c of finite) {
     buckets[Math.min(9, Math.floor((Math.log10(1 + c) / scale) * 10))]++;
   }

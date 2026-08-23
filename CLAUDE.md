@@ -95,9 +95,11 @@ temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`
 which machine can run which recipe is the game's category system — `Recipe.categories` flattens the
 prototype's `category` + `additional_categories`, and `machinesFor` in `src/data.ts` indexes
 `Machine.categories` the other way. Modules, beacons, and machine power/pollution are still missing.
-`src/data.ts` loads `src/assets/static.json` at module level. Icons render from a spritesheet
-(`src/assets/icons.avif` + `icons.json` position map, keys like `craft:<name>`) via
-`components/resource.tsx`.
+Recipes and resources also carry a `complexity`: how far through the tech tree you must be to have
+the thing, 0 at the crash site to 1 at the last technology, derived by `scripts/complexity.ts`
+(which the ingest imports) and used to sort search results simplest first. `src/data.ts` loads
+`src/assets/static.json` at module level. Icons render from a spritesheet (`src/assets/icons.avif` +
+`icons.json` position map, keys like `craft:<name>`) via `components/resource.tsx`.
 
 ### Solver
 

@@ -2,9 +2,17 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type { RawData } from 'factorio-raw-types/prototypes';
+import type {
+  double,
+  ItemPrototype,
+  ItemStackIndex,
+  RawData,
+  RecipeCategoryID,
+} from 'factorio-raw-types/prototypes';
+import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
+import { analyse } from './complexity.ts';
 import type {
   Ingredient,
   IngredientTemperature,
@@ -12,37 +20,10 @@ import type {
   MachineKind,
   Product,
   Recipe,
+  Resource,
   ResourceId,
   StaticData,
 } from '../src/types.ts';
-
-/**
- * `data.raw` splits items over one key per subtype, so a recipe's `type: "item"` reference may
- * resolve to any of these. They all extend `ItemPrototype`, hence share `stack_size` / `hidden`.
- */
-const ITEM_KEYS = [
-  'ammo',
-  'armor',
-  'blueprint',
-  'blueprint-book',
-  'capsule',
-  'copy-paste-tool',
-  'deconstruction-item',
-  'gun',
-  'item',
-  'item-with-entity-data',
-  'item-with-inventory',
-  'item-with-label',
-  'item-with-tags',
-  'module',
-  'rail-planner',
-  'repair-tool',
-  'selection-tool',
-  'space-platform-starter-pack',
-  'spidertron-remote',
-  'tool',
-  'upgrade-item',
-] as const satisfies ReadonlyArray<keyof RawData>;
 
 /**
  * Everything with `crafting_categories`, i.e. everything which can run a recipe. `character` is
@@ -66,7 +47,10 @@ async function main() {
     .then((files) => files.filter((f) => f.endsWith('-locale.json')));
   const locales: Record<string, RLocale> = Object.fromEntries(
     await Promise.all(
-      localeFiles.map(async (f) => [f.replace(/-locale\.json$/, ''), RLocale.parse(await read(f))]),
+      localeFiles.map(async (f): Promise<[string, RLocale]> => [
+        f.replace(/-locale\.json$/, ''),
+        RLocale.parse(await read(f)),
+      ]),
     ),
   );
   const v = (await read('data-raw-dump.json')) as RawData;
@@ -83,10 +67,11 @@ async function main() {
     for (const { resource } of recipe.products) referenced.add(resource);
   }
 
-  const resources: Record<ResourceId, { human?: string; stackSize?: number }> = {};
+  const resources: Record<ResourceId, Resource> = {};
   let dropped = 0;
   for (const key of ITEM_KEYS) {
-    for (const [itemId, item] of Object.entries(v[key] ?? {})) {
+    const items: Record<string, ItemPrototype> = v[key] ?? {};
+    for (const [itemId, item] of Object.entries(items)) {
       const id = `item:${itemId}` as const;
       if ((item.hidden || item.parameter) && !referenced.has(id)) {
         dropped++;
@@ -133,8 +118,38 @@ async function main() {
     console.log(`Recipe categories with no machine: ${homeless.size}`, [...homeless].slice(0, 20));
   }
 
+  applyComplexity(v, recipes, resources);
+
   const staticData: StaticData = { recipes, resources, machines };
   await fs.writeFile('static.json', JSON.stringify(staticData));
+}
+
+/**
+ * How far through the tech tree each recipe and resource sits, from `scripts/complexity.ts`; see
+ * `Recipe.complexity`. Rounded hard, because four decimals is already finer than the model is
+ * meaningful to, and the field lands on every one of ~7000 entries.
+ */
+function applyComplexity(
+  v: RawData,
+  recipes: Record<string, Recipe>,
+  resources: Record<ResourceId, Resource>,
+) {
+  const { progress, recipeProgress } = analyse(v);
+  const round = (x: number) => Math.round(x * 1e4) / 1e4;
+  let unreachable = 0;
+
+  for (const [id, recipe] of Object.entries(recipes)) {
+    const p = recipeProgress.get(id);
+    if (p === undefined) unreachable++;
+    else recipe.complexity = round(p);
+  }
+  for (const [id, resource] of Object.entries(resources) as [ResourceId, Resource][]) {
+    const p = progress.get(id);
+    if (p === undefined) unreachable++;
+    else resource.complexity = round(p);
+  }
+
+  console.log(`Complexity: ${unreachable} recipes/resources have no route to them`);
 }
 
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
@@ -193,7 +208,20 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
   let skipped = 0;
 
   for (const key of MACHINE_KEYS) {
-    for (const [id, m] of Object.entries(v[key] ?? {})) {
+    // `character` is not a `CraftingMachinePrototype`, so there is no shared base type to name
+    // here; spelling out what the loop needs types the tables just as well. Without an annotation
+    // `Object.entries` over a union of unrelated tables silently degrades to `any` — see
+    // `raw-keys.ts`.
+    const kind: Record<
+      string,
+      {
+        hidden?: boolean;
+        crafting_categories?: RecipeCategoryID[];
+        crafting_speed?: double;
+        module_slots?: ItemStackIndex;
+      }
+    > = v[key] ?? {};
+    for (const [id, m] of Object.entries(kind)) {
       if (m.hidden) {
         skipped++;
         continue;
@@ -203,8 +231,8 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         kind: key satisfies MachineKind,
         categories: m.crafting_categories ?? [],
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
-        speed: 'crafting_speed' in m ? m.crafting_speed : 1,
-        moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
+        speed: m.crafting_speed ?? 1,
+        moduleSlots: m.module_slots,
       };
     }
   }

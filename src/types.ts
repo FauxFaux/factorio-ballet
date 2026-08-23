@@ -28,6 +28,14 @@ export interface Recipe {
    * absent means "productivity does nothing here", not "unknown".
    */
   allowProductivity?: true;
+
+  /**
+   * How far through the tech tree you have to be to run this: 0 at the crash site, 1 at the most
+   * expensive technology in the pack. `scripts/complexity.ts` derives it, taking the max of the
+   * recipe's own unlock cost and the cost of having each ingredient. Absent means unreachable —
+   * nothing unlocks it, or every route to an ingredient is a closed cycle — which sorts last.
+   */
+  complexity?: number;
 }
 
 export interface Ingredient {
@@ -50,9 +58,11 @@ export type IngredientTemperature =
   | { min: number }
   | { max: number };
 
-interface Resource {
+export interface Resource {
   human?: string;
   stackSize?: number;
+  /** As `Recipe.complexity`, over the cheapest recipe which produces this; 0 for an ore. */
+  complexity?: number;
 }
 
 /** Something which can run recipes: an assembler, a furnace, the rocket silo, or the player. */

@@ -1,7 +1,7 @@
 import { useMemo } from 'preact/hooks';
-import { resourceName, staticData } from '../data.ts';
+import { complexityOf, resourceName, staticData } from '../data.ts';
 import type { State } from '../ts.ts';
-import type { ResourceId } from '../types.ts';
+import type { Resource, ResourceId } from '../types.ts';
 import { ResourceButton } from './resource.tsx';
 import { SearchBox } from './search-box.tsx';
 
@@ -11,7 +11,7 @@ function smatch(haystack: string, search: string): boolean {
 
 const LIMIT = 200;
 
-/** A searchable list of every known resource (item or fluid). */
+/** A searchable list of every known resource (item or fluid), simplest first. */
 export function ResourceList({
   search: [search, setSearch],
   onPick,
@@ -21,9 +21,13 @@ export function ResourceList({
 }) {
   const all = useMemo(
     () =>
-      (Object.keys(staticData.resources) as ResourceId[])
-        .map((id) => ({ id, name: resourceName(id) }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
+      (Object.entries(staticData.resources) as [ResourceId, Resource][])
+        .map(([id, resource]) => ({
+          id,
+          name: resourceName(id),
+          complexity: complexityOf(resource),
+        }))
+        .sort((a, b) => a.complexity - b.complexity || a.name.localeCompare(b.name)),
     [],
   );
 
