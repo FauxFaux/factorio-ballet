@@ -8,13 +8,14 @@ import {
   parseModules,
   type CellEntry,
 } from '../cell.ts';
-import { machinesFor, rowBeacon } from '../data.ts';
+import { machinesFor, modulesIn, rowBeacon, SPEED_CATEGORY } from '../data.ts';
 import type { Boost, Effects } from '../flow.ts';
 import { isProblem, noteText, type SolveNote } from '../solve.ts';
 import { fmt } from '../ts.ts';
 import type { MachineId, ModuleId, Recipe } from '../types.ts';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachinePicker } from './machine.tsx';
+import { UnlitIcon } from './module.tsx';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -184,11 +185,18 @@ function SpeedBox({
 
   return (
     <span class="cell-speed" title={speedTitle(boost, effects)}>
-      <span
-        class="cell-speed-icon"
-        style={boost.module ? resourceIconStyle(`item:${boost.module}`) : undefined}
-        aria-hidden="true"
-      />
+      {/* No speed module chosen in the header is the early game's answer and not a missing one,
+          so the box says which family it is spending and that the family is off, exactly as the
+          picker up there does. */}
+      {boost.module ? (
+        <span
+          class="cell-speed-icon"
+          style={resourceIconStyle(`item:${boost.module}`)}
+          aria-hidden="true"
+        />
+      ) : (
+        <UnlitIcon modules={modulesIn(SPEED_CATEGORY)} class="cell-speed-icon" />
+      )}
       <input
         class={auto ? 'cell-speed-count is-derived' : 'cell-speed-count'}
         type="number"

@@ -6,7 +6,7 @@ import { field, type State } from './ts.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
-import { ModuleBar } from './components/module.tsx';
+import { ModuleBar, UnlitFilter } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
 import { ResourceList } from './components/resource-list.tsx';
@@ -42,6 +42,9 @@ export function App({ uss }: { uss: State<UrlState> }) {
 
   return (
     <main>
+      {/* a `filter: url()` is looked up by id across the whole document, and both the header's
+          pickers and the cells' speed boxes wear this one, so it is defined once here */}
+      <UnlitFilter />
       <header class="app-head">
         <h1>faucalc</h1>
         <ProgressSlider progress={gp} />

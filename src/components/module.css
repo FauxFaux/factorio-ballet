@@ -34,6 +34,20 @@
   flex-shrink: 0;
 }
 
+/* "None" wearing the tier-1 module's artwork with its lights put out; see `UnlitFilter`. Shared
+   with `.cell-speed-icon` in cell-row.css, which has the same nothing to say. */
+.is-unlit {
+  filter: url("#module-unlit");
+}
+
+/* The filter itself, which draws nothing: an inline SVG is 300×150 unless it is told otherwise, and
+   out of the flow as well so that it cannot space the bar out even at nothing wide. */
+.module-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
 /* Room for the widest there is — `−15%`, four characters — so a picker does not change width as
    the tier changes and shove its neighbours along the header. */
 .module-effect {
