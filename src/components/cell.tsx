@@ -276,8 +276,8 @@ function CellRow({
 }
 
 /**
- * Which machine runs this recipe. "Whichever" is a choice of its own, not a synonym for the machine
- * it currently resolves to: it follows the progress slider, so it moves as the slider does.
+ * Which machine runs this recipe. "Auto" is a choice of its own, not a synonym for the machine it
+ * currently resolves to: it follows the progress slider, so it moves as the slider does.
  */
 function CellMachines({
   entry,

@@ -148,9 +148,9 @@ unbalanced internal resource reads as "the cell handles this itself". `CellBox` 
 sankey diagram's shape without the sankey: inputs left, outputs right, recipes and their machines
 between. A row's machine is a `MachinePicker` — a dropdown, because a cell is a column of rows and
 the choice has been made; the search results keep the horizontal `MachineChip` row, where listing
-every candidate and hovering for its numbers is the point. "Whichever" is a real option in it rather
-than the absence of one: it means `entryMachine`'s default, so it walks up the tiers as the progress
-slider moves.
+every candidate and hovering for its numbers is the point. "Auto" is a real option in it rather than
+the absence of one — named as `CellEntry.count`'s placeholder is, and meaning the same thing: it is
+`entryMachine`'s default, so it walks up the tiers as the progress slider moves.
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`

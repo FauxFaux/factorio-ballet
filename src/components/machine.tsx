@@ -133,8 +133,9 @@ export function MachinePicker({
       </button>
       {open ? (
         <div class="machine-menu" role="listbox" aria-label="Machine">
-          {/* The default is not the same choice as the machine it currently resolves to: it
-              follows the progress slider, which is what "whichever" is for. */}
+          {/* Not the same choice as the machine it currently resolves to: it follows the progress
+              slider, which is what "auto" is for. Named as the count box's placeholder is, since
+              both mean the same thing — nobody has decided, so something else will. */}
           <button
             type="button"
             class={pinned ? 'machine-option' : 'machine-option is-chosen'}
@@ -145,7 +146,7 @@ export function MachinePicker({
           >
             <span class="machine-icon" aria-hidden="true" />
             <span class="machine-option-speed">—</span>
-            <span class="machine-option-name">whichever</span>
+            <span class="machine-option-name">auto</span>
           </button>
           {machines.map(({ id, machine }) => (
             <button
