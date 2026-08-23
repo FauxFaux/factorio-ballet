@@ -1,0 +1,16 @@
+/* The cell being worked on gets the accent border: it is where a `+` on a search result puts the
+ * recipe, and what the search's `@in`/`@out` queries are asking about. */
+.cells {
+  margin: 0 0 24px;
+}
+
+.cells-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cells-head h2 {
+  margin: 0.4em 0;
+  font-size: 20px;
+}

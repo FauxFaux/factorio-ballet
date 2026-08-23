@@ -1,0 +1,50 @@
+.cell-recipe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 4px 0;
+}
+
+.cell-recipe + .cell-recipe {
+  border-top: 1px solid var(--border);
+}
+
+.cell-recipe-name {
+  flex: 1 1 8rem;
+  min-width: 0;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-unknown {
+  color: var(--text);
+  font-style: italic;
+}
+
+.cell-warn {
+  cursor: help;
+  line-height: 1;
+}
+
+.cell-count {
+  width: 4.5rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 15px;
+  text-align: right;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* the solver's own count, in the placeholder rather than the value: not the user's number */
+.cell-count.is-derived::placeholder {
+  color: var(--text);
+  opacity: 1;
+  font-style: italic;
+}

@@ -1,20 +1,6 @@
-/* The cell being worked on gets the accent border: it is where a `+` on a search result puts the
- * recipe, and what the search's `@in`/`@out` queries are asking about. */
-.cells {
-  margin: 0 0 24px;
-}
-
-.cells-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.cells-head h2 {
-  margin: 0.4em 0;
-  font-size: 20px;
-}
-
+/* `.cell-btn` and `.cell-remove` are the cell's buttons wherever they are: the list's `+ cell`, a
+ * cell's own header and edges, and a row's `×`. They live here because the cell is the middle of
+ * those three and the shape is one decision, not three. */
 .cell-btn {
   font: inherit;
   line-height: 1;
@@ -31,6 +17,10 @@
   color: var(--text-h);
   background: var(--accent-bg);
   border-color: var(--accent-border);
+}
+
+.cell-remove {
+  margin-left: auto;
 }
 
 .cell {
@@ -79,10 +69,6 @@
   white-space: nowrap;
 }
 
-.cell-remove {
-  margin-left: auto;
-}
-
 /* inputs, work, outputs: a sankey diagram's shape without the sankey */
 .cell-body {
   display: grid;
@@ -122,32 +108,6 @@
   font-style: italic;
 }
 
-.cell-recipe {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 4px 8px;
-  padding: 4px 0;
-}
-
-.cell-recipe + .cell-recipe {
-  border-top: 1px solid var(--border);
-}
-
-.cell-recipe-name {
-  flex: 1 1 8rem;
-  min-width: 0;
-  color: var(--text-h);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cell-unknown {
-  color: var(--text);
-  font-style: italic;
-}
-
 /* the resource button and its rate: the rate stays put while the button takes the width */
 .cell-flow {
   display: flex;
@@ -175,24 +135,6 @@
   cursor: help;
 }
 
-.cell-warn {
-  cursor: help;
-  line-height: 1;
-}
-
-.cell-count {
-  width: 4.5rem;
-  font: inherit;
-  font-family: var(--mono);
-  font-size: 15px;
-  text-align: right;
-  color: var(--text-h);
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 2px 4px;
-}
-
 .cell-internal {
   display: flex;
   flex-wrap: wrap;
@@ -205,13 +147,6 @@
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: help;
-}
-
-/* the solver's own count, in the placeholder rather than the value: not the user's number */
-.cell-count.is-derived::placeholder {
-  color: var(--text);
-  opacity: 1;
-  font-style: italic;
 }
 
 .cell-internal-chip {

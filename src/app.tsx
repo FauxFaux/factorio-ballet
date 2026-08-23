@@ -3,7 +3,7 @@ import { useMemo } from 'preact/hooks';
 import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.ts';
 import { field, type State } from './ts.ts';
 import type { UrlState } from './url-handler.tsx';
-import { CellList } from './components/cell.tsx';
+import { CellList } from './components/cell-list.tsx';
 import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
