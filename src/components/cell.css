@@ -148,6 +148,38 @@
   font-style: italic;
 }
 
+/* the resource button and its rate: the rate stays put while the button takes the width */
+.cell-flow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cell-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+/* the unit repeats down the column; the number is the part worth reading */
+.cell-rate-unit {
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* a rate totalled over only the rows which have a count is a number you cannot act on yet */
+.cell-rate.is-partial {
+  color: var(--text);
+  cursor: help;
+}
+
+.cell-warn {
+  cursor: help;
+  line-height: 1;
+}
+
 .cell-count {
   width: 4.5rem;
   font: inherit;
@@ -175,8 +207,41 @@
   cursor: help;
 }
 
+/* the solver's own count, in the placeholder rather than the value: not the user's number */
+.cell-count.is-derived::placeholder {
+  color: var(--text);
+  opacity: 1;
+  font-style: italic;
+}
+
 .cell-internal-chip {
   display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* an internal resource which did not come out level, so it is on its way to being an edge */
+.cell-leftover {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--accent);
+}
+
+.cell-notes {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 6px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.cell-note {
+  margin: 2px 0;
+}
+
+.cell-note.is-problem::before {
+  content: "⚠ ";
 }
 
 @media (max-width: 800px) {

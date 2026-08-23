@@ -15,8 +15,9 @@ import type {
 
 /**
  * What one resource does in one recipe, ready to render: how much per craft, and how fast at the
- * speed it is being quoted at. The arithmetic between a `Recipe` and a card, and nothing else — no
- * cell, no solver, no scaling of one recipe against another.
+ * speed it is being quoted at. This file is one recipe in one machine and no more — {@link netRates}
+ * is the same arithmetic in the form the solver scales, but the scaling of one recipe against
+ * another is `solve.ts`, not here.
  */
 export interface Flow {
   resource: ResourceId;
@@ -104,6 +105,29 @@ export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe
   if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
 
   return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
+}
+
+/**
+ * Signed net rates per second for one machine running this recipe: an ingredient negative, a
+ * product positive, and a resource on both sides netted down to what actually crosses the machine's
+ * edge. This is the unit the solver scales — one row of a cell, at one machine, with one loadout —
+ * where {@link recipeFlows} is the same arithmetic kept in stacks and formatted for a card.
+ *
+ * Netting is where the catalyst problem will land. `productivity` is paid here on the whole of a
+ * product, and the game does not pay it on the part of one which came back round as an ingredient;
+ * with the multiplier at 1 the two agree, which is every rate this app quotes today.
+ */
+export function netRates(recipe: Recipe, speed: number, effects: Effects): Map<ResourceId, number> {
+  const crafts = (speed * effects.speed) / recipe.duration;
+  const rates = new Map<ResourceId, number>();
+  const add = (resource: ResourceId, rate: number) =>
+    rates.set(resource, (rates.get(resource) ?? 0) + rate);
+  for (const { resource, amount } of recipe.ingredients) add(resource, -amount * crafts);
+  for (const product of recipe.products) {
+    const expected = averageAmount(product.amount) * product.probability;
+    add(product.resource, expected * effects.productivity * crafts);
+  }
+  return rates;
 }
 
 /**

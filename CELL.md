@@ -17,10 +17,19 @@ later.
 ## Where this is now
 
 Built: the data structure (`src/cell.ts`), the cells in `UrlState`, the box which draws one
-(`src/components/cell.tsx`), and the search vocabulary for refining a cell — `makes:@in` /
-`uses:@out` over the cell's own open edges, which is the "adding recipes that makes: or uses: items
-from the input or output set" step above.
+(`src/components/cell.tsx`), the search vocabulary for refining a cell — `makes:@in` / `uses:@out`
+over the cell's own open edges, which is the "adding recipes that makes: or uses: items from the
+input or output set" step above — and the first solver (`src/solve.ts`), which is the "attempt to
+scale one of the recipes to match the other" step.
 
-Not built: any arithmetic. `CellEntry.count` exists and is editable, but nothing scales one recipe
-to match another, so the interface is a set of resources rather than a set of rates, and a resource
-made and used inside the cell counts as internal whether or not the amounts balance.
+That solver is deliberately dumb: it propagates demand out from the rows the user pinned, one row at
+a time, and stops when nothing moves. It does not do cycles, it will not choose between two recipes
+which could both take up the same slack, and it does not have to answer at all — a row it cannot
+work out keeps its `auto`, the rates it does know still show on the cell's edges, and everything it
+assumed or gave up on is written out under the rows. "Not always possible, and will be resolved
+later" is the design, not a gap in it: what the app owes the user there is a sentence saying which
+number to type, and that is what a `SolveNote` is.
+
+Not built: modules on a cell entry, catalysts (a productivity bonus is currently paid on the whole
+of a product), and any notion of a cell's rates being a _target_ — you scale the cell by pinning a
+machine count, not by asking for 9 steel a second.

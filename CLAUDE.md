@@ -178,15 +178,16 @@ being planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being wor
 added from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.
 
 `cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
-an `output`, and both is `internal`. Nothing scales the recipes against each other yet — that is the
-solver's job, and `CellEntry.count` is where its answer (or the user's pin) will go — so an
-unbalanced internal resource reads as "the cell handles this itself". `CellBox` lays a cell out as a
-sankey diagram's shape without the sankey: inputs left, outputs right, recipes and their machines
-between. A row's machine is a `MachinePicker` — a dropdown, because a cell is a column of rows and
-the choice has been made; the search results keep the horizontal `MachineChip` row, where listing
-every candidate and hovering for its numbers is the point. "Auto" is a real option in it rather than
-the absence of one — named as `CellEntry.count`'s placeholder is, and meaning the same thing: it is
-`entryMachine`'s default, so it walks up the tiers as the progress slider moves.
+an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
+must not — the search scopes are built from it — so the rates the solver works out are laid over
+that classification rather than changing it, and an internal resource which does not balance is
+drawn as a leftover on the `internal` row. `CellBox` lays a cell out as a sankey diagram's shape
+without the sankey: inputs left, outputs right, recipes and their machines between. A row's machine
+is a `MachinePicker` — a dropdown, because a cell is a column of rows and the choice has been made;
+the search results keep the horizontal `MachineChip` row, where listing every candidate and hovering
+for its numbers is the point. "Auto" is a real option in it rather than the absence of one — named
+as `CellEntry.count`'s placeholder is, and meaning the same thing: it is `entryMachine`'s default,
+so it walks up the tiers as the progress slider moves.
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`
@@ -194,11 +195,33 @@ is "something which makes anything this cell has to be fed". That is the search 
 up, and the buttons on each side of a cell are how you get it without typing. An `@`-query outside a
 cell matches nothing rather than everything.
 
-### Solver
+### Solver (`src/solve.ts`)
 
-There is no solver in this repo right now — the linear-algebra core was removed and will be
-reintroduced later. `UI.md` describes the planner design it needs to serve; the two prior
-implementations to draw on are `process-mgmt` (via `../process-mgmt-gui`) and proc-rs.
+A solver turns the counts the user pinned into the counts they did not: fifteen steel furnaces, so
+how many coke plants (`FACTORIO.md`). `solveCell` reduces each `CellEntry` to a `SolveRow` — the
+`netRates` of one machine, plus the pinned `count` if there is one — and hands the rows to a
+`Solver`. There is one, `dumbSolver`, and the interface exists because there will be more: the
+linear-algebra core this repo used to carry (`git show c14f792`) handles the cycles this one cannot.
+
+The dumb solver is demand propagation, one row per pass against a freshly totalled balance: seed
+(the pinned rows, or one of the top row if nothing is pinned), find a row which makes what the cell
+is short of or uses what it has spare, scale it, repeat. `rows.length` passes is exactly enough for
+a chain in the worst order, and a cycle simply runs out of rows to scale.
+
+**It is allowed to fail, and the failure is the feature.** A row it cannot work out keeps no count
+and stays `auto`; the rates it does know still total into `Solution.balance` and still read on the
+cell's edges (marked partial). Everything it assumed or gave up on is a `SolveNote` against the row
+it happened to, rendered both as a ⚠ on that row and as a sentence under the cell, each one ending
+in what the user could type to resolve it. The three it raises: `contested` (two rows could both
+absorb the same resource — it will not pick, because that would make the answer depend on the order
+recipes were added in), `conflict` (one row pulled two ways: scaled to the larger, and the loser
+named), and `stranded` (nothing connects the row to the rest).
+
+Two things deliberately not modelled yet, both with the space left for them: **catalysts** — a
+productivity bonus is paid on the whole of a product in `netRates`, and the game does not pay it on
+the part which came back round as an ingredient — and **modules on a cell entry**, which is the
+`NO_EFFECTS` in `solveCell`'s `rowOf`. `UI.md` describes the wider planner design the solver
+eventually serves.
 
 Tests in `test/` mirror the source layout (`test/scripts/`).
 
