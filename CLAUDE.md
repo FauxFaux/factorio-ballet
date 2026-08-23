@@ -96,24 +96,29 @@ current:
 `main.tsx` → `UrlHandler` → `CrashHandler` → `App`. All UI state lives in `UrlState` and is packed
 into the URL hash (`url-handler.tsx`): JSON with sorted keys → deflate (with a dictionary derived
 from the default state, duplicated in-file "for stability reasons") → base64url, prefixed with a
-version letter (`HASH_VERSION = 'g'`). Bumping state shape means handling the version prefix. State
-flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
+version letter (`HASH_VERSION = 'i'`). The dictionary is derived from the default state, so **adding
+a field to `UrlState` invalidates every existing hash** — bump the version letter whenever the state
+shape changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
 ### Data model (`src/types.ts`, `src/data.ts`)
 
-`StaticData = { recipes, resources, machines }`. Resources are keyed by `ResourceId` — the colon
-scheme `item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products` carry
-`probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry optional fluid
+`StaticData = { recipes, resources, machines, sciencePacks }`. Resources are keyed by `ResourceId` —
+the colon scheme `item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products`
+carry `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry optional fluid
 temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
 the `item` which places them; which machine can run which recipe is the game's category system —
 `Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
 in `src/data.ts` indexes `Machine.categories` the other way. Modules, beacons, and machine
 power/pollution are still missing. Recipes and resources also carry a `complexity`: how far through
 the tech tree you must be to have the thing, 0 at the crash site to 1 at the last technology,
-derived by `scripts/complexity.ts` (which the ingest imports) and used to sort search results
-simplest first. `src/data.ts` loads `src/assets/static.json` at module level. Icons render from a
-spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like `craft:<name>`) via
-`components/resource.tsx`.
+derived by `scripts/complexity.ts` (which the ingest imports). Search results sort by `relevanceOf`:
+distance from the header slider's game-progress setting, in either direction, which is plain
+simplest-first at 0%. `sciencePacks` is that walk's own list of research ingredients, cheapest first
+— the packs are the only readable landmarks on the complexity scale, so the slider is labelled with
+their icons instead of numbers (`components/progress-slider.tsx`, thinned by `packLandmarks` because
+ten of Bob's packs land between 53% and 58%). `src/data.ts` loads `src/assets/static.json` at module
+level. Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys
+like `craft:<name>`) via `components/resource.tsx`.
 
 **Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
 `data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a
@@ -138,6 +143,8 @@ Tests in `test/` mirror the source layout (`test/scripts/`).
   `verbatimModuleSyntax` means `import type` where applicable.
 - `erasableSyntaxOnly` — no enums, namespaces, or parameter properties; scripts run directly under
   Node 24's type stripping.
+- **ES2023** target and lib, app and scripts alike, so `findLast`, `at`, `toSorted` and friends are
+  all available without checking.
 - Preact with `react`/`react-dom` aliased to `preact/compat`; JSX uses `class=`, not `className`.
 
 ## Sibling repos (references, not dependencies to modify)

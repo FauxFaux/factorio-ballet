@@ -2,6 +2,14 @@ export interface StaticData {
   recipes: Record<string, Recipe>;
   resources: Record<ResourceId, Resource>;
   machines: Record<MachineId, Machine>;
+
+  /**
+   * Every item some technology asks for as a research ingredient, cheapest `complexity` first. They
+   * are the only readable landmarks on the complexity scale — "past yellow science" is how a player
+   * describes a save, where "58%" means nothing — so the app labels its progress slider with them.
+   * Which items those are is game data, hence a list here rather than a guess in the UI.
+   */
+  sciencePacks: ResourceId[];
 }
 
 export type ResourceId = `item:${string}` | `fluid:${string}`;

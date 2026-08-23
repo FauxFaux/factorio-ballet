@@ -17,6 +17,47 @@ export function complexityOf(of: { complexity?: number }): number {
   return of.complexity ?? Infinity;
 }
 
+/**
+ * Sort key for "closest to where I am in the game": how far a recipe or resource sits from
+ * `progress`, in either direction. Things you passed long ago and things still several tiers away
+ * are both irrelevant to what you are building now, so plain distance is the whole idea; a
+ * `progress` of 0 makes this exactly `complexityOf`.
+ *
+ * Distance is linear because `complexity` is already logarithmic (see `scripts/complexity.ts`), so
+ * a gap of 0.1 means about the same amount of game wherever on the scale you are.
+ */
+export function relevanceOf(of: { complexity?: number }, progress: number): number {
+  return of.complexity === undefined ? Infinity : Math.abs(of.complexity - progress);
+}
+
+/** ~16px of icon on a ~400px track; any closer and two landmarks overlap instead of reading. */
+const MIN_PACK_GAP = 0.04;
+
+/** A science pack and where on the complexity scale it sits: one mark on the progress slider. */
+export interface Landmark {
+  id: ResourceId;
+  complexity: number;
+}
+
+/**
+ * The science packs the progress slider is labelled with: the game's own list, thinned so the icons
+ * do not sit on top of each other. Ten of Bob's packs land between 0.53 and 0.58 — a real wall in
+ * that pack, but ten icons in the width of one — so a pack within `MIN_PACK_GAP` of the last one
+ * kept is dropped. Keeping the cheapest of each cluster is what leaves the survivors the packs
+ * people actually name their progress after.
+ */
+export const packLandmarks: Landmark[] = (() => {
+  const out: Landmark[] = [];
+  for (const id of staticData.sciencePacks) {
+    const complexity = staticData.resources[id]?.complexity;
+    if (complexity === undefined) continue;
+    const last = out[out.length - 1];
+    if (last && complexity - last.complexity < MIN_PACK_GAP) continue;
+    out.push({ id, complexity });
+  }
+  return out;
+})();
+
 /** The display name for a machine, falling back to its id. */
 export function machineName(id: MachineId): string {
   return staticData.machines[id]?.human ?? id;

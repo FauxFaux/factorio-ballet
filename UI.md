@@ -192,6 +192,15 @@ Our `StaticData` (`src/types.ts`) already maps cleanly onto both:
   prior; factorio-loader just lists everything). With our per-resource recipe index we can offer
   "which recipe for X?" before/within the solve.
 - Treat **fluids** uniformly end-to-end (factorio-loader drops them on export).
+- **Game progress as a search input.** Neither prior has anything like it: both rank alternatives by
+  a fixed preference (factorio-loader by what the save actually builds, process-mgmt-gui by a group
+  picker), so both answer "which recipe for X?" the same way at hour 2 and hour 200. The header
+  slider says where you are, and results sort by distance from it in _either_ direction — a gear
+  wheel is as irrelevant at space science as power armour is on green. It rests on `complexity`
+  being logarithmic, so linear distance means the same amount of game anywhere on the scale, and on
+  the science packs being landmarks a player already thinks in ("just past blue"), which is what the
+  slider is labelled with. Sorting by it is the cheap half; the real prize is using it to _pick_ the
+  default recipe per resource once the solver lands, instead of asking.
 
 ### Open questions
 

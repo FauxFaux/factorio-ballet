@@ -9,10 +9,17 @@ const LIMIT = 20;
 
 /**
  * Recipes matching a search: `makes:<resource>`, `uses:<resource>`, or free text against
- * the recipe's name and id. Multiple, space separated terms must all match.
+ * the recipe's name and id. Multiple, space separated terms must all match. `progress` is where the
+ * player is in the tech tree, 0 to 1, which orders the matches; see `relevanceOf`.
  */
-export function RecipeList({ search: [search, setSearch] }: { search: State<string> }) {
-  const found = useMemo(() => searchRecipes(search), [search]);
+export function RecipeList({
+  search: [search, setSearch],
+  progress,
+}: {
+  search: State<string>;
+  progress: number;
+}) {
+  const found = useMemo(() => searchRecipes(search, progress), [search, progress]);
   const onPick = (id: ResourceId) => setSearch(`makes:${id}`);
   const flipped = flipDirection(search);
 

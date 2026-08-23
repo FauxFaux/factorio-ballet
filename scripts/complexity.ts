@@ -225,6 +225,14 @@ export function analyse(raw: RawData) {
     if (isFinite(c)) recipeProgress.set(id, Math.log10(1 + c) / scale);
   }
 
+  // The science packs, cheapest first. They are the landmarks the app labels its progress slider
+  // with, and the ordering only exists here: a pack's own `progress` is what makes it a landmark.
+  const packs = [...sciencePacks(techs)]
+    .map((pack): [ResourceId, number] => [`item:${pack}`, progress.get(`item:${pack}`) ?? Infinity])
+    .filter(([, p]) => isFinite(p))
+    .sort((a, b) => a[1] - b[1])
+    .map(([id]) => id);
+
   return {
     costs,
     progress,
@@ -232,6 +240,7 @@ export function analyse(raw: RawData) {
     recipeProgress,
     depths: chainDepths(recipes, natural),
     weights,
+    packs,
     techCost,
     max,
     fallback,

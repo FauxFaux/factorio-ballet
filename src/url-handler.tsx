@@ -10,11 +10,13 @@ export interface UrlState {
   rs: string;
   /** the RecipeList search box */
   cs: string;
+  /** game progress, as a whole percentage; searches favour results near it. See `relevanceOf`. */
+  gp: number;
 }
 
-const defaultUs: UrlState = { v: 1, rs: '', cs: '' };
+const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0 };
 
-const HASH_VERSION = 'h';
+const HASH_VERSION = 'i';
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);

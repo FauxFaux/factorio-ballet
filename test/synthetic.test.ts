@@ -48,7 +48,7 @@ describe('synthetic recipes', () => {
   });
 
   it('turns up in a search for what it makes', () => {
-    expect(searchRecipes('makes:fluid:water').map((m) => m.id)).toContain(
+    expect(searchRecipes('makes:fluid:water', 0).map((m) => m.id)).toContain(
       'synthetic:pumping-water',
     );
   });

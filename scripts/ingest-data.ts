@@ -114,9 +114,9 @@ async function main() {
     console.log(`Recipe categories with no machine: ${homeless.size}`, [...homeless].slice(0, 20));
   }
 
-  applyComplexity(v, recipes, resources);
+  const sciencePacks = applyComplexity(v, recipes, resources);
 
-  const staticData: StaticData = { recipes, resources, machines };
+  const staticData: StaticData = { recipes, resources, machines, sciencePacks };
   await fs.writeFile('static.json', JSON.stringify(staticData));
 }
 
@@ -124,13 +124,15 @@ async function main() {
  * How far through the tech tree each recipe and resource sits, from `scripts/complexity.ts`; see
  * `Recipe.complexity`. Rounded hard, because four decimals is already finer than the model is
  * meaningful to, and the field lands on every one of ~7000 entries.
+ *
+ * Returns the science packs the same walk found, for `StaticData.sciencePacks`.
  */
 function applyComplexity(
   v: RawData,
   recipes: Record<string, Recipe>,
   resources: Record<ResourceId, Resource>,
-) {
-  const { progress, recipeProgress } = analyse(v);
+): ResourceId[] {
+  const { progress, recipeProgress, packs } = analyse(v);
   const round = (x: number) => Math.round(x * 1e4) / 1e4;
   let unreachable = 0;
 
@@ -146,6 +148,11 @@ function applyComplexity(
   }
 
   console.log(`Complexity: ${unreachable} recipes/resources have no route to them`);
+  console.log(
+    `Science packs: ${packs.length}`,
+    packs.map((id) => resources[id]?.human ?? id),
+  );
+  return packs;
 }
 
 /**

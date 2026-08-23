@@ -42980,5 +42980,24 @@
       "speed": 2,
       "moduleSlots": 2
     }
-  }
+  },
+  "sciencePacks": [
+    "item:automation-science-pack",
+    "item:logistic-science-pack",
+    "item:military-science-pack",
+    "item:angels-token-bio",
+    "item:chemical-science-pack",
+    "item:production-science-pack",
+    "item:bob-advanced-logistic-science-pack",
+    "item:bob-science-pack-gold",
+    "item:bob-alien-science-pack-blue",
+    "item:bob-alien-science-pack-orange",
+    "item:bob-alien-science-pack-purple",
+    "item:bob-alien-science-pack-yellow",
+    "item:bob-alien-science-pack-green",
+    "item:bob-alien-science-pack-red",
+    "item:bob-alien-science-pack",
+    "item:utility-science-pack",
+    "item:space-science-pack"
+  ]
 }

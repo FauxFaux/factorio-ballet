@@ -1,4 +1,4 @@
-import { complexityOf, resourceName, staticData } from './data.ts';
+import { relevanceOf, resourceName, staticData } from './data.ts';
 import type { Recipe, ResourceId } from './types.ts';
 
 export interface RecipeMatch {
@@ -89,8 +89,11 @@ function matches(term: Term, id: string, recipe: Recipe, name: string): boolean 
   }
 }
 
-/** Every recipe matching all the terms of `search`, simplest first; see `complexityOf`. */
-export function searchRecipes(search: string): RecipeMatch[] {
+/**
+ * Every recipe matching all the terms of `search`, nearest the player's `progress` through the tech
+ * tree first; see `relevanceOf`. A `progress` of 0 is plain simplest-first.
+ */
+export function searchRecipes(search: string, progress: number): RecipeMatch[] {
   const terms = parseSearch(search);
   if (!terms.length) return [];
 
@@ -101,7 +104,7 @@ export function searchRecipes(search: string): RecipeMatch[] {
   }
   return found.sort(
     (a, b) =>
-      complexityOf(a.recipe) - complexityOf(b.recipe) ||
+      relevanceOf(a.recipe, progress) - relevanceOf(b.recipe, progress) ||
       a.name.localeCompare(b.name) ||
       a.id.localeCompare(b.id),
   );
