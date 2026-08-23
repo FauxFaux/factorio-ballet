@@ -35,6 +35,7 @@ import type { RawData, TechnologyPrototype } from 'factorio-raw-types/prototypes
 import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
+import { syntheticRecipes } from './synthetic.ts';
 import { entriesOf, valuesOf } from '../src/ts.ts';
 import type { ResourceId } from '../src/types.ts';
 
@@ -69,7 +70,7 @@ const rid = (x: { type: 'item' | 'fluid'; name: string }): ResourceId => `${x.ty
 interface Rec {
   /** available without research */
   free: boolean;
-  /** not a real recipe: a rocket launch or a fuel cell burning down */
+  /** not a real recipe: a pump, a miner, a rocket launch, or a fuel cell burning down */
   synthetic?: boolean;
   ingredients: ResourceId[];
   products: ResourceId[];
@@ -214,7 +215,13 @@ export function analyse(raw: RawData) {
   for (const [id, r] of recipes) {
     let c = unlockCost.get(id) ?? Infinity;
     for (const i of r.ingredients) c = Math.max(c, costs.get(i) ?? Infinity);
-    recipeCost.set(id, c);
+    // A synthetic recipe is split one variant per machine (`synthetic:mining-coal#pumpjack`); as
+    // the app knows it, it is one recipe, and it costs whatever its cheapest machine costs. Real
+    // recipe ids carry no `#`, so this is a plain assignment for them.
+    const key = id.replace(/#.*$/, '');
+    if (c < (recipeCost.get(key) ?? Infinity)) recipeCost.set(key, c);
+  }
+  for (const [id, c] of recipeCost) {
     if (isFinite(c)) recipeProgress.set(id, Math.log10(1 + c) / scale);
   }
 
@@ -232,13 +239,12 @@ export function analyse(raw: RawData) {
 }
 
 /**
- * The live recipes, plus the three things the game does that are conversions but not recipes: an
- * offshore pump making fluid out of nothing, a rocket launch (the only source of space science
- * before Space Age), and a fuel cell burning down to its depleted form.
+ * The live recipes, plus the things the game does that are conversions but not recipes: pumps and
+ * miners (from `scripts/synthetic.ts`, shared with the ingest), a rocket launch (the only source of
+ * space science before Space Age), and a fuel cell burning down to its depleted form.
  */
 function collectRecipes(raw: RawData): Map<string, Rec> {
   const out = new Map<string, Rec>();
-  const placedBy = new Map<string, string>();
 
   for (const [id, r] of Object.entries(raw.recipe)) {
     if (r.hidden || r.parameter) continue; // mods disable content by hiding it, not deleting it
@@ -249,8 +255,8 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
     });
   }
 
-  // Launching, burning and building are item properties, so only the item subtypes are worth
-  // walking — every one of them extends `ItemPrototype` and so carries all three fields.
+  // Launching and burning are item properties, so only the item subtypes are worth walking — every
+  // one of them extends `ItemPrototype` and so carries both fields.
   for (const key of ITEM_KEYS) {
     for (const [id, item] of entriesOf(raw[key] ?? {})) {
       const launched = arr(item.rocket_launch_products ?? []);
@@ -272,27 +278,23 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
           products: [`item:${item.burnt_result}`],
         });
       }
-      if (item.place_result && !placedBy.has(item.place_result)) {
-        placedBy.set(item.place_result, id);
-      }
     }
   }
 
-  // An offshore pump conjures its fluid from the tile it stands on, which no recipe records. It is
-  // where water comes from, and — the reason this matters beyond water — Angel's seafloor pump is
-  // the only entry point to the mud line, whose recipes otherwise all consume mud. The fluid is
-  // `fluid_box.filter`; the vanilla pump names none and means water. Gate it on the pump item, so
-  // the fluid inherits whatever technology unlocks the building.
-  for (const [id, pump] of Object.entries(raw['offshore-pump'] ?? {})) {
-    const item = placedBy.get(id);
-    if (pump.hidden || !item) continue;
-    const fluid = pump.fluid_box.filter ?? 'water';
-    out.set(`pump:${id}`, {
-      free: false,
-      synthetic: true,
-      ingredients: [`item:${item}`],
-      products: [`fluid:${fluid}`],
-    });
+  // Pumps and miners. The shared builder gives one recipe per fluid or ore patch over every machine
+  // which can run it; here each splits back out into one variant per machine, because you need only
+  // *one* pump and the cheapest should win — which is exactly what the minimax below does across
+  // separate recipes producing the same thing. Naming the machine's item as an ingredient gates the
+  // conversion on whatever technology unlocks the building. `analyse` collapses the `#` suffix.
+  for (const synthetic of syntheticRecipes(raw)) {
+    for (const machine of synthetic.machines) {
+      out.set(`${synthetic.id}#${machine.id}`, {
+        free: false,
+        synthetic: true,
+        ingredients: [...synthetic.ingredients.map(rid), `item:${machine.item}`],
+        products: synthetic.products.map(rid),
+      });
+    }
   }
   return out;
 }

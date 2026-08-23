@@ -30,6 +30,14 @@ export interface Recipe {
   allowProductivity?: true;
 
   /**
+   * Not a `data.raw.recipe` at all, but something the game does which behaves like one: an offshore
+   * pump conjuring fluid from the tile it stands on, or a mining drill working an ore patch. Built
+   * by `scripts/synthetic.ts`, and flagged here so the UI can say so rather than passing it off as
+   * a recipe you could look up in the game.
+   */
+  synthetic?: true;
+
+  /**
    * How far through the tech tree you have to be to run this: 0 at the crash site, 1 at the most
    * expensive technology in the pack. `scripts/complexity.ts` derives it, taking the max of the
    * recipe's own unlock cost and the cost of having each ingredient. Absent means unreachable —
@@ -65,11 +73,16 @@ export interface Resource {
   complexity?: number;
 }
 
-/** Something which can run recipes: an assembler, a furnace, the rocket silo, or the player. */
+/**
+ * Something which can run recipes: an assembler, a furnace, the rocket silo, the player, or — for
+ * the synthetic recipes — a mining drill or an offshore pump.
+ */
 export interface Machine {
   human?: string;
   /** The prototype type, e.g. `assembling-machine`; `character` is hand crafting. */
   kind: MachineKind;
+  /** The item which places it, if any; the character has none. Bare prototype id, as items are. */
+  item?: string;
   /** The recipe categories this machine can run. */
   categories: string[];
   /** Crafts per second, against a recipe whose duration is one second. */
@@ -77,4 +90,10 @@ export interface Machine {
   moduleSlots?: number;
 }
 
-export type MachineKind = 'assembling-machine' | 'furnace' | 'rocket-silo' | 'character';
+export type MachineKind =
+  | 'assembling-machine'
+  | 'furnace'
+  | 'rocket-silo'
+  | 'character'
+  | 'mining-drill'
+  | 'offshore-pump';

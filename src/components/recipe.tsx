@@ -1,6 +1,7 @@
 import type {
   Ingredient,
   IngredientTemperature,
+  Machine,
   MachineId,
   Product,
   ProductAmount,
@@ -71,17 +72,18 @@ export function RecipeCard({
   const ins = recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts, rate));
   const outs = recipe.products.map((product) => productFlow(product, crafts, rate));
 
+  const classes = ['recipe-card'];
+  if (preview !== undefined) classes.push('is-previewing');
+  if (recipe.synthetic) classes.push('is-synthetic');
+
   return (
-    <div class={preview === undefined ? 'recipe-card' : 'recipe-card is-previewing'}>
+    <div class={classes.join(' ')}>
       <div class="recipe-head">
-        <span
-          class="recipe-icon"
-          style={iconStyle(`recipe:${id}`, 'recipe:recipe-unknown')}
-          aria-hidden="true"
-        />
+        <span class="recipe-icon" style={recipeIconStyle(id, recipe)} aria-hidden="true" />
         <span class="recipe-name" title={id}>
           {name}
         </span>
+        {recipe.synthetic ? <SyntheticChip /> : null}
         <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
       </div>
       <div class="recipe-flows-fold">
@@ -212,7 +214,7 @@ function MachineRow({
             title={`${machineName(id)} (${id}) at ${fmt(machine.speed)}×`}
             onMouseEnter={() => onPreview(id)}
           >
-            <span class="machine-icon" style={machineIconStyle(id)} aria-hidden="true" />
+            <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
             <span class="machine-speed">{fmt(machine.speed)}×</span>
           </span>
         ))}
@@ -246,10 +248,45 @@ function ProductivityChip({ allowed }: { allowed: boolean }) {
   );
 }
 
-function machineIconStyle(id: MachineId): string {
+/**
+ * A synthetic recipe has no `recipe:` artwork of its own — the game has no recipe to draw — so it
+ * borrows its first product's. Real recipes all have their own key and never reach the fallback.
+ */
+function recipeIconStyle(id: string, recipe: Recipe): string {
+  const product = recipe.products[0]?.resource;
+  return iconStyle(
+    `recipe:${id}`,
+    ...(product ? [`craft:${bareName(product)}`] : []),
+    'recipe:recipe-unknown',
+  );
+}
+
+/**
+ * The spritesheet is keyed by item and recipe, not by entity, so a machine's icon is really its
+ * item's. Those share a name for nearly every machine, but not all — Angel's heavy offshore pump is
+ * the entity `angels-sea-pump-placeable` placed by the item `angels-sea-pump` — hence the second
+ * try. See `INGEST.md`: a regenerated sheet would carry `entity:` keys and settle this properly.
+ */
+/**
+ * Says out loud that this card is not a recipe: nothing in the game's data describes it, and you
+ * will not find it in the crafting menu. See `Recipe.synthetic`.
+ */
+function SyntheticChip() {
+  return (
+    <span
+      class="recipe-synthetic"
+      title="Not a recipe: the game makes this without one, from the ground the machine stands on"
+    >
+      synthetic
+    </span>
+  );
+}
+
+function machineIconStyle(id: MachineId, machine: Machine): string {
   const standin = MACHINE_ICON_STANDIN[id];
   return iconStyle(
     `craft:${id}`,
+    ...(machine.item ? [`craft:${machine.item}`] : []),
     ...(standin ? [`craft:${bareName(standin)}`] : []),
     'craft:item-unknown',
   );

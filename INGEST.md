@@ -165,10 +165,11 @@ module data is what that section will need.
 
 ## Progression ("how far through the game is this?")
 
-`scripts/complexity.ts` scores every resource 0–1 for how deep into the tech tree you must be before
-you can first make one. It reads the dump directly (`APP=... node scripts/complexity.ts`), prints a
-landmark table and a histogram, and takes substring filters or `--tech`. Nothing is ingested into
-`static.json` yet.
+`scripts/complexity.ts` scores every resource and recipe 0–1 for how deep into the tech tree you
+must be before you can first make one. It reads the dump directly
+(`APP=... node scripts/complexity.ts`), prints a landmark table and a histogram, and takes substring
+filters or `--tech`. The ingest imports `analyse` and writes the numbers out as `Recipe.complexity`
+/ `Resource.complexity`.
 
 The model, and the two non-obvious parts of it:
 
@@ -186,7 +187,7 @@ The model, and the two non-obvious parts of it:
 become reachable at all:
 
 - `minable` / `loot` on naturally placed prototypes — ores, trees (Angel's gardens are trees), fish,
-  biter artifacts.
+  biter artifacts. This is the hand-mining route, so it costs nothing.
 - **`offshore-pump`, which conjures `fluid_box.filter` out of the tile it stands on.** This is where
   water comes from (the vanilla pump names no filter and means water), and it is the _only_ entry to
   Angel's mud line: `angels-seafloor-pump` is filtered to `angels-water-viscous-mud`, and every mud
@@ -196,6 +197,39 @@ become reachable at all:
 - `rocket_launch_products` — the only source of space science in a pre-Space-Age pack.
 - `burnt_result` — depleted fuel cells.
 
+The first two are now built by **`scripts/synthetic.ts`** and shared with the ingest; see
+[Synthetic recipes](#synthetic-recipes) for the shape and the rates. The other two stay inside
+`complexity.ts`.
+
 Unreachable resources then get a second pass pricing them on their unlock technology alone. That
 list is a completeness check, not a feature: with all four sources modelled it is 2 (bob fuel cells
 Angel's replaced), and a long list means another source like the seafloor pump is still missing.
+
+## Synthetic recipes
+
+`scripts/synthetic.ts` turns the two machine-shaped non-recipe sources into `Recipe`s and `Machine`s
+so the app can show them: `synthetic:pumping-water` (2 in this pack, one per fluid a pump can carry)
+and `synthetic:mining-coal` (17, one per placed resource patch), over 21 machines. Both
+`ingest-data.ts` and `complexity.ts` call it, which is what keeps their ids in step.
+
+The rate conversions are the fiddly part, and all three follow from `Machine.speed` meaning "crafts
+per second of a one-second recipe":
+
+- **Pumps.** `pumping_speed` is fluid _per tick_, so the recipe is quoted as "one second, 60 fluid"
+  and the speed is `pumping_speed` unchanged. The vanilla pump reads 20× on 60 water, i.e. 1200/s,
+  which is what it does.
+- **Miners.** `mining_speed` per second against `minable.mining_time` seconds is already the model,
+  so both go across as they are. Patch richness is not modelled: a pumpjack's real output scales
+  with the well's yield percentage, and these are the 100% numbers.
+- **`minable.fluid_amount` is stated ten times too large.** The prototype value must be divisible by
+  ten and the game divides it out again, so the `10` on every infinite ore is one acid per ore.
+
+Two exclusions are load-bearing, both about Angel's heavy offshore pump, which is an `offshore-pump`
+you place that swaps itself for a `mining-drill` on a hidden `angels-sea-pump-resource`:
+
+- a pump or drill with **no placing item** is half a building, not a production option;
+- a resource with **no `autoplace`** is a mod's own scaffolding.
+
+Drop either test and that one pump emits its 1500 water/s twice. The completeness check for all this
+is the existing "recipe categories with no machine" line — a synthetic recipe is only emitted when a
+machine can run it, so a category turning up there means the two halves have drifted apart.

@@ -35011,6 +35011,225 @@
       "duration": 1,
       "categories": ["angels-bio-void"],
       "complexity": 0.4953
+    },
+    "synthetic:pumping-water": {
+      "human": "Pumping Water",
+      "ingredients": [],
+      "products": [{ "resource": "fluid:water", "amount": { "fixed": 60 }, "probability": 1 }],
+      "duration": 1,
+      "categories": ["synthetic-pump:water"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:pumping-angels-water-viscous-mud": {
+      "human": "Pumping Viscous mud water",
+      "ingredients": [],
+      "products": [
+        {
+          "resource": "fluid:angels-water-viscous-mud",
+          "amount": { "fixed": 60 },
+          "probability": 1
+        }
+      ],
+      "duration": 1,
+      "categories": ["synthetic-pump:angels-water-viscous-mud"],
+      "synthetic": true,
+      "complexity": 0.079
+    },
+    "synthetic:mining-coal": {
+      "human": "Mining Coal",
+      "ingredients": [],
+      "products": [{ "resource": "item:coal", "amount": { "fixed": 1 }, "probability": 1 }],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-crude-oil": {
+      "human": "Mining Oil well",
+      "ingredients": [],
+      "products": [
+        {
+          "resource": "fluid:angels-liquid-multi-phase-oil",
+          "amount": { "min": 10, "max": 10 },
+          "probability": 1
+        }
+      ],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-fluid"],
+      "synthetic": true,
+      "complexity": 0.324
+    },
+    "synthetic:mining-angels-ore1": {
+      "human": "Mining Saphirite",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore1", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-ore2": {
+      "human": "Mining Jivolite",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore2", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-ore3": {
+      "human": "Mining Stiratite",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore3", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 1.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-ore4": {
+      "human": "Mining Crotinnium",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore4", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-ore5": {
+      "human": "Mining Rubyte",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore5", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-ore6": {
+      "human": "Mining Bobmonium",
+      "ingredients": [],
+      "products": [
+        { "resource": "item:angels-ore6", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-angels-fissure": {
+      "human": "Mining Fissure",
+      "ingredients": [],
+      "products": [
+        {
+          "resource": "fluid:angels-thermal-water",
+          "amount": { "min": 20, "max": 20 },
+          "probability": 1
+        }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:angels-fissure"],
+      "synthetic": true,
+      "complexity": 0.3246
+    },
+    "synthetic:mining-infinite-coal": {
+      "human": "Mining Infinite coal",
+      "ingredients": [{ "resource": "fluid:water", "amount": 1 }],
+      "products": [{ "resource": "item:coal", "amount": { "min": 1, "max": 1 }, "probability": 1 }],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0
+    },
+    "synthetic:mining-infinite-angels-ore1": {
+      "human": "Mining Infinite saphirite",
+      "ingredients": [{ "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore1", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.3259
+    },
+    "synthetic:mining-infinite-angels-ore2": {
+      "human": "Mining Infinite jivolite",
+      "ingredients": [{ "resource": "fluid:angels-liquid-hydrofluoric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore2", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.3362
+    },
+    "synthetic:mining-infinite-angels-ore3": {
+      "human": "Mining Infinite stiratite",
+      "ingredients": [{ "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore3", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 1.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.3259
+    },
+    "synthetic:mining-infinite-angels-ore4": {
+      "human": "Mining Infinite crotinnium",
+      "ingredients": [{ "resource": "fluid:angels-liquid-hydrochloric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore4", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.3163
+    },
+    "synthetic:mining-infinite-angels-ore5": {
+      "human": "Mining Infinite rubyte",
+      "ingredients": [{ "resource": "fluid:angels-liquid-nitric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore5", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.34
+    },
+    "synthetic:mining-infinite-angels-ore6": {
+      "human": "Mining Infinite bobmonium",
+      "ingredients": [{ "resource": "fluid:angels-liquid-sulfuric-acid", "amount": 1 }],
+      "products": [
+        { "resource": "item:angels-ore6", "amount": { "min": 1, "max": 1 }, "probability": 1 }
+      ],
+      "duration": 2.5,
+      "categories": ["synthetic-mine:basic-solid"],
+      "synthetic": true,
+      "complexity": 0.3259
+    },
+    "synthetic:mining-angels-natural-gas": {
+      "human": "Mining Gas well",
+      "ingredients": [],
+      "products": [
+        {
+          "resource": "fluid:angels-gas-natural-1",
+          "amount": { "min": 20, "max": 20 },
+          "probability": 1
+        }
+      ],
+      "duration": 1,
+      "categories": ["synthetic-mine:basic-fluid"],
+      "synthetic": true,
+      "complexity": 0.324
     }
   },
   "resources": {
@@ -41245,12 +41464,14 @@
     "assembling-machine-1": {
       "human": "Assembling machine 1",
       "kind": "assembling-machine",
+      "item": "assembling-machine-1",
       "categories": ["crafting", "basic-crafting", "advanced-crafting"],
       "speed": 0.5
     },
     "assembling-machine-2": {
       "human": "Assembling machine 2",
       "kind": "assembling-machine",
+      "item": "assembling-machine-2",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 0.75,
       "moduleSlots": 2
@@ -41258,6 +41479,7 @@
     "assembling-machine-3": {
       "human": "Assembling machine 3",
       "kind": "assembling-machine",
+      "item": "assembling-machine-3",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 1.25,
       "moduleSlots": 3
@@ -41265,6 +41487,7 @@
     "oil-refinery": {
       "human": "Oil refinery",
       "kind": "assembling-machine",
+      "item": "oil-refinery",
       "categories": ["oil-processing"],
       "speed": 1,
       "moduleSlots": 3
@@ -41272,6 +41495,7 @@
     "chemical-plant": {
       "human": "Chemical plant 1",
       "kind": "assembling-machine",
+      "item": "chemical-plant",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 1.75,
       "moduleSlots": 1
@@ -41279,6 +41503,7 @@
     "centrifuge": {
       "human": "Centrifuge",
       "kind": "assembling-machine",
+      "item": "centrifuge",
       "categories": ["centrifuging"],
       "speed": 1,
       "moduleSlots": 2
@@ -41286,18 +41511,21 @@
     "bob-stone-mixing-furnace": {
       "human": "Stone filtering furnace",
       "kind": "assembling-machine",
+      "item": "bob-stone-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
       "speed": 1
     },
     "bob-steel-mixing-furnace": {
       "human": "Steel filtering furnace",
       "kind": "assembling-machine",
+      "item": "bob-steel-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
       "speed": 2
     },
     "bob-electric-mixing-furnace": {
       "human": "Electric filtering furnace 1",
       "kind": "assembling-machine",
+      "item": "bob-electric-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
       "speed": 2,
       "moduleSlots": 2
@@ -41305,6 +41533,7 @@
     "bob-assembling-machine-4": {
       "human": "Assembling machine 4",
       "kind": "assembling-machine",
+      "item": "bob-assembling-machine-4",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 2,
       "moduleSlots": 4
@@ -41312,6 +41541,7 @@
     "bob-assembling-machine-5": {
       "human": "Assembling machine 5",
       "kind": "assembling-machine",
+      "item": "bob-assembling-machine-5",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 2.75,
       "moduleSlots": 5
@@ -41319,6 +41549,7 @@
     "bob-assembling-machine-6": {
       "human": "Assembling machine 6",
       "kind": "assembling-machine",
+      "item": "bob-assembling-machine-6",
       "categories": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "speed": 3.5,
       "moduleSlots": 6
@@ -41326,6 +41557,7 @@
     "bob-electronics-machine-1": {
       "human": "Electronics assembling machine 1",
       "kind": "assembling-machine",
+      "item": "bob-electronics-machine-1",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 1,
       "moduleSlots": 2
@@ -41333,6 +41565,7 @@
     "bob-electronics-machine-2": {
       "human": "Electronics assembling machine 2",
       "kind": "assembling-machine",
+      "item": "bob-electronics-machine-2",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 2.25,
       "moduleSlots": 4
@@ -41340,6 +41573,7 @@
     "bob-electronics-machine-3": {
       "human": "Electronics assembling machine 3",
       "kind": "assembling-machine",
+      "item": "bob-electronics-machine-3",
       "categories": ["electronics", "electronics-with-fluid"],
       "speed": 4,
       "moduleSlots": 6
@@ -41347,6 +41581,7 @@
     "bob-electric-chemical-mixing-furnace": {
       "human": "Electric filtering furnace 2",
       "kind": "assembling-machine",
+      "item": "bob-electric-chemical-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "speed": 3,
       "moduleSlots": 4
@@ -41354,6 +41589,7 @@
     "bob-electric-chemical-mixing-furnace-2": {
       "human": "Electric filtering furnace 3",
       "kind": "assembling-machine",
+      "item": "bob-electric-chemical-mixing-furnace-2",
       "categories": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "speed": 4,
       "moduleSlots": 6
@@ -41361,12 +41597,14 @@
     "bob-fluid-mixing-furnace": {
       "human": "Fluid burning filtering furnace",
       "kind": "assembling-machine",
+      "item": "bob-fluid-mixing-furnace",
       "categories": ["smelting", "bob-mixing-furnace"],
       "speed": 2
     },
     "bob-centrifuge-2": {
       "human": "Centrifuge 2",
       "kind": "assembling-machine",
+      "item": "bob-centrifuge-2",
       "categories": ["centrifuging", "angels-centrifuging-2"],
       "speed": 2.25,
       "moduleSlots": 4
@@ -41374,6 +41612,7 @@
     "bob-centrifuge-3": {
       "human": "Centrifuge 3",
       "kind": "assembling-machine",
+      "item": "bob-centrifuge-3",
       "categories": ["centrifuging", "angels-centrifuging-2", "angels-centrifuging-3"],
       "speed": 3.5,
       "moduleSlots": 6
@@ -41381,12 +41620,14 @@
     "angels-burner-ore-crusher": {
       "human": "Burner ore crusher",
       "kind": "assembling-machine",
+      "item": "angels-burner-ore-crusher",
       "categories": ["angels-ore-refining-t1"],
       "speed": 1
     },
     "angels-ore-crusher": {
       "human": "Ore crusher 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-crusher",
       "categories": ["angels-ore-refining-t1"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41394,6 +41635,7 @@
     "angels-ore-crusher-2": {
       "human": "Ore crusher 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-crusher-2",
       "categories": ["angels-ore-refining-t1"],
       "speed": 2,
       "moduleSlots": 2
@@ -41401,6 +41643,7 @@
     "angels-ore-crusher-3": {
       "human": "Ore crusher 3",
       "kind": "assembling-machine",
+      "item": "angels-ore-crusher-3",
       "categories": ["angels-ore-refining-t1"],
       "speed": 3,
       "moduleSlots": 3
@@ -41408,6 +41651,7 @@
     "angels-ore-sorting-facility": {
       "human": "Ore sorting facility 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-sorting-facility",
       "categories": ["angels-ore-sorting"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -41415,6 +41659,7 @@
     "angels-ore-sorting-facility-2": {
       "human": "Ore sorting facility 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-sorting-facility-2",
       "categories": ["angels-ore-sorting", "angels-ore-sorting-2"],
       "speed": 0.75,
       "moduleSlots": 2
@@ -41422,6 +41667,7 @@
     "angels-ore-sorting-facility-3": {
       "human": "Ore sorting facility 3",
       "kind": "assembling-machine",
+      "item": "angels-ore-sorting-facility-3",
       "categories": ["angels-ore-sorting", "angels-ore-sorting-2", "angels-ore-sorting-3"],
       "speed": 1,
       "moduleSlots": 3
@@ -41429,6 +41675,7 @@
     "angels-ore-sorting-facility-4": {
       "human": "Ore sorting facility 4",
       "kind": "assembling-machine",
+      "item": "angels-ore-sorting-facility-4",
       "categories": [
         "angels-ore-sorting",
         "angels-ore-sorting-2",
@@ -41441,6 +41688,7 @@
     "angels-ore-sorting-facility-5": {
       "human": "Ore sorting facility 5",
       "kind": "assembling-machine",
+      "item": "angels-ore-sorting-facility-5",
       "categories": [
         "angels-ore-sorting",
         "angels-ore-sorting-2",
@@ -41454,6 +41702,7 @@
     "angels-ore-floatation-cell": {
       "human": "Flotation cell 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-floatation-cell",
       "categories": ["angels-ore-refining-t2"],
       "speed": 0.75,
       "moduleSlots": 1
@@ -41461,6 +41710,7 @@
     "angels-ore-floatation-cell-2": {
       "human": "Flotation cell 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-floatation-cell-2",
       "categories": ["angels-ore-refining-t2"],
       "speed": 1,
       "moduleSlots": 2
@@ -41468,6 +41718,7 @@
     "angels-ore-floatation-cell-3": {
       "human": "Flotation cell 3",
       "kind": "assembling-machine",
+      "item": "angels-ore-floatation-cell-3",
       "categories": ["angels-ore-refining-t2"],
       "speed": 1.5,
       "moduleSlots": 3
@@ -41475,6 +41726,7 @@
     "angels-ore-leaching-plant": {
       "human": "Leaching plant 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-leaching-plant",
       "categories": ["angels-ore-refining-t3"],
       "speed": 0.75,
       "moduleSlots": 1
@@ -41482,6 +41734,7 @@
     "angels-ore-leaching-plant-2": {
       "human": "Leaching plant 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-leaching-plant-2",
       "categories": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "speed": 1,
       "moduleSlots": 2
@@ -41489,6 +41742,7 @@
     "angels-ore-leaching-plant-3": {
       "human": "Leaching plant 3",
       "kind": "assembling-machine",
+      "item": "angels-ore-leaching-plant-3",
       "categories": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "speed": 1.5,
       "moduleSlots": 3
@@ -41496,6 +41750,7 @@
     "angels-ore-refinery": {
       "human": "Ore refinery 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-refinery",
       "categories": ["angels-ore-refining-t4"],
       "speed": 0.75,
       "moduleSlots": 1
@@ -41503,6 +41758,7 @@
     "angels-ore-refinery-2": {
       "human": "Ore refinery 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-refinery-2",
       "categories": ["angels-ore-refining-t4"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41510,6 +41766,7 @@
     "angels-powderizer": {
       "human": "Powderizer 1",
       "kind": "assembling-machine",
+      "item": "angels-powderizer",
       "categories": ["angels-powderizing-1"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41517,6 +41774,7 @@
     "angels-powderizer-2": {
       "human": "Powderizer 2",
       "kind": "assembling-machine",
+      "item": "angels-powderizer-2",
       "categories": ["angels-powderizing-1", "angels-powderizing-2"],
       "speed": 2,
       "moduleSlots": 2
@@ -41524,6 +41782,7 @@
     "angels-powderizer-3": {
       "human": "Powderizer 3",
       "kind": "assembling-machine",
+      "item": "angels-powderizer-3",
       "categories": ["angels-powderizing-1", "angels-powderizing-2", "angels-powderizing-3"],
       "speed": 3,
       "moduleSlots": 3
@@ -41531,6 +41790,7 @@
     "angels-electro-whinning-cell": {
       "human": "Electrowinning cell 1",
       "kind": "assembling-machine",
+      "item": "angels-electro-whinning-cell",
       "categories": ["angels-ore-refining-t3-5"],
       "speed": 1,
       "moduleSlots": 2
@@ -41538,6 +41798,7 @@
     "angels-electro-whinning-cell-2": {
       "human": "Electrowinning cell 2",
       "kind": "assembling-machine",
+      "item": "angels-electro-whinning-cell-2",
       "categories": ["angels-ore-refining-t3-5"],
       "speed": 1.5,
       "moduleSlots": 3
@@ -41545,6 +41806,7 @@
     "angels-crystallizer": {
       "human": "Crystallizer 1",
       "kind": "assembling-machine",
+      "item": "angels-crystallizer",
       "categories": ["angels-crystallizing"],
       "speed": 1.5,
       "moduleSlots": 0
@@ -41552,6 +41814,7 @@
     "angels-crystallizer-2": {
       "human": "Crystallizer 2",
       "kind": "assembling-machine",
+      "item": "angels-crystallizer-2",
       "categories": ["angels-crystallizing", "angels-crystallizing-2"],
       "speed": 2,
       "moduleSlots": 1
@@ -41559,6 +41822,7 @@
     "angels-crystallizer-3": {
       "human": "Crystallizer 3",
       "kind": "assembling-machine",
+      "item": "angels-crystallizer-3",
       "categories": ["angels-crystallizing", "angels-crystallizing-2", "angels-crystallizing-3"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41566,6 +41830,7 @@
     "angels-filtration-unit": {
       "human": "Filtration unit 1",
       "kind": "assembling-machine",
+      "item": "angels-filtration-unit",
       "categories": ["angels-filtering"],
       "speed": 1.5,
       "moduleSlots": 0
@@ -41573,6 +41838,7 @@
     "angels-filtration-unit-2": {
       "human": "Filtration unit 2",
       "kind": "assembling-machine",
+      "item": "angels-filtration-unit-2",
       "categories": ["angels-filtering", "angels-filtering-2"],
       "speed": 2,
       "moduleSlots": 1
@@ -41580,6 +41846,7 @@
     "angels-filtration-unit-3": {
       "human": "Filtration unit 3",
       "kind": "assembling-machine",
+      "item": "angels-filtration-unit-3",
       "categories": ["angels-filtering", "angels-filtering-2", "angels-filtering-3"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41587,6 +41854,7 @@
     "angels-liquifier": {
       "human": "Liquefier 1",
       "kind": "assembling-machine",
+      "item": "angels-liquifier",
       "categories": ["angels-liquifying"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41594,6 +41862,7 @@
     "angels-liquifier-2": {
       "human": "Liquefier 2",
       "kind": "assembling-machine",
+      "item": "angels-liquifier-2",
       "categories": ["angels-liquifying"],
       "speed": 2.25,
       "moduleSlots": 2
@@ -41601,6 +41870,7 @@
     "angels-liquifier-3": {
       "human": "Liquefier 3",
       "kind": "assembling-machine",
+      "item": "angels-liquifier-3",
       "categories": ["angels-liquifying"],
       "speed": 3,
       "moduleSlots": 3
@@ -41608,6 +41878,7 @@
     "angels-liquifier-4": {
       "human": "Liquefier 4",
       "kind": "assembling-machine",
+      "item": "angels-liquifier-4",
       "categories": ["angels-liquifying"],
       "speed": 3.75,
       "moduleSlots": 4
@@ -41615,6 +41886,7 @@
     "angels-hydro-plant": {
       "human": "Hydro plant 1",
       "kind": "assembling-machine",
+      "item": "angels-hydro-plant",
       "categories": ["angels-water-treatment"],
       "speed": 1,
       "moduleSlots": 1
@@ -41622,6 +41894,7 @@
     "angels-hydro-plant-2": {
       "human": "Hydro plant 2",
       "kind": "assembling-machine",
+      "item": "angels-hydro-plant-2",
       "categories": ["angels-water-treatment"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41629,6 +41902,7 @@
     "angels-hydro-plant-3": {
       "human": "Hydro plant 3",
       "kind": "assembling-machine",
+      "item": "angels-hydro-plant-3",
       "categories": ["angels-water-treatment"],
       "speed": 2,
       "moduleSlots": 2
@@ -41636,6 +41910,7 @@
     "angels-salination-plant": {
       "human": "Salination plant 1",
       "kind": "assembling-machine",
+      "item": "angels-salination-plant",
       "categories": ["angels-salination-plant"],
       "speed": 1,
       "moduleSlots": 1
@@ -41643,6 +41918,7 @@
     "angels-salination-plant-2": {
       "human": "Salination plant 2",
       "kind": "assembling-machine",
+      "item": "angels-salination-plant-2",
       "categories": ["angels-salination-plant"],
       "speed": 2,
       "moduleSlots": 2
@@ -41650,6 +41926,7 @@
     "angels-washing-plant": {
       "human": "Washing plant 1",
       "kind": "assembling-machine",
+      "item": "angels-washing-plant",
       "categories": ["angels-washing-plant"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41657,6 +41934,7 @@
     "angels-washing-plant-2": {
       "human": "Washing plant 2",
       "kind": "assembling-machine",
+      "item": "angels-washing-plant-2",
       "categories": ["angels-washing-plant"],
       "speed": 2.25,
       "moduleSlots": 2
@@ -41664,6 +41942,7 @@
     "angels-barreling-pump": {
       "human": "Barreling pump",
       "kind": "assembling-machine",
+      "item": "angels-barreling-pump",
       "categories": ["angels-barreling-pump"],
       "speed": 2,
       "moduleSlots": 2
@@ -41671,6 +41950,7 @@
     "angels-electrolyser": {
       "human": "Electrolyser 1",
       "kind": "assembling-machine",
+      "item": "angels-electrolyser",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 1,
       "moduleSlots": 2
@@ -41678,6 +41958,7 @@
     "angels-electrolyser-2": {
       "human": "Electrolyser 2",
       "kind": "assembling-machine",
+      "item": "angels-electrolyser-2",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41685,6 +41966,7 @@
     "angels-electrolyser-3": {
       "human": "Electrolyser 3",
       "kind": "assembling-machine",
+      "item": "angels-electrolyser-3",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 2,
       "moduleSlots": 2
@@ -41692,6 +41974,7 @@
     "angels-electrolyser-4": {
       "human": "Electrolyser 4",
       "kind": "assembling-machine",
+      "item": "angels-electrolyser-4",
       "categories": ["angels-petrochem-electrolyser"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41699,6 +41982,7 @@
     "angels-air-filter": {
       "human": "Air filter 1",
       "kind": "assembling-machine",
+      "item": "angels-air-filter",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 1,
       "moduleSlots": 0
@@ -41706,6 +41990,7 @@
     "angels-air-filter-2": {
       "human": "Air filter 2",
       "kind": "assembling-machine",
+      "item": "angels-air-filter-2",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41713,6 +41998,7 @@
     "angels-air-filter-3": {
       "human": "Air filter 3",
       "kind": "assembling-machine",
+      "item": "angels-air-filter-3",
       "categories": ["angels-petrochem-air-filtering"],
       "speed": 2.25,
       "moduleSlots": 2
@@ -41720,6 +42006,7 @@
     "angels-chemical-plant-2": {
       "human": "Chemical plant 2",
       "kind": "assembling-machine",
+      "item": "angels-chemical-plant-2",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 2.25,
       "moduleSlots": 2
@@ -41727,6 +42014,7 @@
     "angels-chemical-plant-3": {
       "human": "Chemical plant 3",
       "kind": "assembling-machine",
+      "item": "angels-chemical-plant-3",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 2.75,
       "moduleSlots": 3
@@ -41734,6 +42022,7 @@
     "angels-chemical-plant-4": {
       "human": "Chemical plant 4",
       "kind": "assembling-machine",
+      "item": "angels-chemical-plant-4",
       "categories": ["chemistry", "bob-distillery"],
       "speed": 3.25,
       "moduleSlots": 4
@@ -41741,6 +42030,7 @@
     "angels-advanced-chemical-plant": {
       "human": "Advanced chemical plant 1",
       "kind": "assembling-machine",
+      "item": "angels-advanced-chemical-plant",
       "categories": ["angels-advanced-chemistry"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41748,6 +42038,7 @@
     "angels-advanced-chemical-plant-2": {
       "human": "Advanced chemical plant 2",
       "kind": "assembling-machine",
+      "item": "angels-advanced-chemical-plant-2",
       "categories": ["angels-advanced-chemistry"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41755,6 +42046,7 @@
     "angels-gas-refinery-small": {
       "human": "Gas refinery 1",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-small",
       "categories": ["angels-gas-refining"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41762,6 +42054,7 @@
     "angels-gas-refinery-small-2": {
       "human": "Gas refinery 2",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-small-2",
       "categories": ["angels-gas-refining"],
       "speed": 2,
       "moduleSlots": 2
@@ -41769,6 +42062,7 @@
     "angels-gas-refinery-small-3": {
       "human": "Gas refinery 3",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-small-3",
       "categories": ["angels-gas-refining"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41776,6 +42070,7 @@
     "angels-gas-refinery-small-4": {
       "human": "Gas refinery 4",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-small-4",
       "categories": ["angels-gas-refining"],
       "speed": 3,
       "moduleSlots": 2
@@ -41783,6 +42078,7 @@
     "angels-gas-refinery": {
       "human": "Advanced gas refinery 1",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 1,
       "moduleSlots": 2
@@ -41790,6 +42086,7 @@
     "angels-gas-refinery-2": {
       "human": "Advanced gas refinery 2",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-2",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41797,6 +42094,7 @@
     "angels-gas-refinery-3": {
       "human": "Advanced gas refinery 3",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-3",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 2,
       "moduleSlots": 2
@@ -41804,6 +42102,7 @@
     "angels-gas-refinery-4": {
       "human": "Advanced gas refinery 4",
       "kind": "assembling-machine",
+      "item": "angels-gas-refinery-4",
       "categories": ["angels-advanced-gas-refining"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41811,6 +42110,7 @@
     "angels-separator": {
       "human": "Oil & gas separator 1",
       "kind": "assembling-machine",
+      "item": "angels-separator",
       "categories": ["angels-petrochem-separation"],
       "speed": 1,
       "moduleSlots": 2
@@ -41818,6 +42118,7 @@
     "angels-separator-2": {
       "human": "Oil & gas separator 2",
       "kind": "assembling-machine",
+      "item": "angels-separator-2",
       "categories": ["angels-petrochem-separation"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41825,6 +42126,7 @@
     "angels-separator-3": {
       "human": "Oil & gas separator 3",
       "kind": "assembling-machine",
+      "item": "angels-separator-3",
       "categories": ["angels-petrochem-separation"],
       "speed": 2,
       "moduleSlots": 2
@@ -41832,6 +42134,7 @@
     "angels-separator-4": {
       "human": "Oil & gas separator 4",
       "kind": "assembling-machine",
+      "item": "angels-separator-4",
       "categories": ["angels-petrochem-separation"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41839,6 +42142,7 @@
     "angels-oil-refinery-2": {
       "human": "Oil refinery 2",
       "kind": "assembling-machine",
+      "item": "angels-oil-refinery-2",
       "categories": ["oil-processing"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41846,6 +42150,7 @@
     "angels-oil-refinery-3": {
       "human": "Oil refinery 3",
       "kind": "assembling-machine",
+      "item": "angels-oil-refinery-3",
       "categories": ["oil-processing"],
       "speed": 2,
       "moduleSlots": 2
@@ -41853,6 +42158,7 @@
     "angels-oil-refinery-4": {
       "human": "Oil refinery 4",
       "kind": "assembling-machine",
+      "item": "angels-oil-refinery-4",
       "categories": ["oil-processing"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41860,6 +42166,7 @@
     "angels-steam-cracker": {
       "human": "Steam cracker 1",
       "kind": "assembling-machine",
+      "item": "angels-steam-cracker",
       "categories": ["angels-steam-cracking"],
       "speed": 1,
       "moduleSlots": 2
@@ -41867,6 +42174,7 @@
     "angels-steam-cracker-2": {
       "human": "Steam cracker 2",
       "kind": "assembling-machine",
+      "item": "angels-steam-cracker-2",
       "categories": ["angels-steam-cracking"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -41874,6 +42182,7 @@
     "angels-steam-cracker-3": {
       "human": "Steam cracker 3",
       "kind": "assembling-machine",
+      "item": "angels-steam-cracker-3",
       "categories": ["angels-steam-cracking"],
       "speed": 2,
       "moduleSlots": 2
@@ -41881,6 +42190,7 @@
     "angels-steam-cracker-4": {
       "human": "Steam cracker 4",
       "kind": "assembling-machine",
+      "item": "angels-steam-cracker-4",
       "categories": ["angels-steam-cracking"],
       "speed": 2.5,
       "moduleSlots": 2
@@ -41888,6 +42198,7 @@
     "angels-electric-boiler": {
       "human": "Electric boiler 1",
       "kind": "assembling-machine",
+      "item": "angels-electric-boiler",
       "categories": ["angels-petrochem-boiler"],
       "speed": 1,
       "moduleSlots": 0
@@ -41895,6 +42206,7 @@
     "angels-electric-boiler-2": {
       "human": "Electric boiler 2",
       "kind": "assembling-machine",
+      "item": "angels-electric-boiler-2",
       "categories": ["angels-petrochem-boiler"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41902,6 +42214,7 @@
     "angels-electric-boiler-3": {
       "human": "Electric boiler 3",
       "kind": "assembling-machine",
+      "item": "angels-electric-boiler-3",
       "categories": ["angels-petrochem-boiler"],
       "speed": 2,
       "moduleSlots": 2
@@ -41909,6 +42222,7 @@
     "angels-induction-furnace": {
       "human": "Induction furnace 1",
       "kind": "assembling-machine",
+      "item": "angels-induction-furnace",
       "categories": ["angels-induction-smelting"],
       "speed": 1,
       "moduleSlots": 0
@@ -41916,6 +42230,7 @@
     "angels-induction-furnace-2": {
       "human": "Induction furnace 2",
       "kind": "assembling-machine",
+      "item": "angels-induction-furnace-2",
       "categories": ["angels-induction-smelting", "angels-induction-smelting-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41923,6 +42238,7 @@
     "angels-induction-furnace-3": {
       "human": "Induction furnace 3",
       "kind": "assembling-machine",
+      "item": "angels-induction-furnace-3",
       "categories": [
         "angels-induction-smelting",
         "angels-induction-smelting-2",
@@ -41934,6 +42250,7 @@
     "angels-induction-furnace-4": {
       "human": "Induction furnace 4",
       "kind": "assembling-machine",
+      "item": "angels-induction-furnace-4",
       "categories": [
         "angels-induction-smelting",
         "angels-induction-smelting-2",
@@ -41946,6 +42263,7 @@
     "angels-blast-furnace": {
       "human": "Blast furnace 1",
       "kind": "assembling-machine",
+      "item": "angels-blast-furnace",
       "categories": ["angels-blast-smelting"],
       "speed": 1,
       "moduleSlots": 0
@@ -41953,6 +42271,7 @@
     "angels-blast-furnace-2": {
       "human": "Blast furnace 2",
       "kind": "assembling-machine",
+      "item": "angels-blast-furnace-2",
       "categories": ["angels-blast-smelting", "angels-blast-smelting-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41960,6 +42279,7 @@
     "angels-blast-furnace-3": {
       "human": "Blast furnace 3",
       "kind": "assembling-machine",
+      "item": "angels-blast-furnace-3",
       "categories": ["angels-blast-smelting", "angels-blast-smelting-2", "angels-blast-smelting-3"],
       "speed": 2,
       "moduleSlots": 2
@@ -41967,6 +42287,7 @@
     "angels-blast-furnace-4": {
       "human": "Blast furnace 4",
       "kind": "assembling-machine",
+      "item": "angels-blast-furnace-4",
       "categories": [
         "angels-blast-smelting",
         "angels-blast-smelting-2",
@@ -41979,6 +42300,7 @@
     "angels-chemical-furnace": {
       "human": "Chemical furnace 1",
       "kind": "assembling-machine",
+      "item": "angels-chemical-furnace",
       "categories": ["angels-chemical-smelting"],
       "speed": 1,
       "moduleSlots": 0
@@ -41986,6 +42308,7 @@
     "angels-chemical-furnace-2": {
       "human": "Chemical furnace 2",
       "kind": "assembling-machine",
+      "item": "angels-chemical-furnace-2",
       "categories": ["angels-chemical-smelting", "angels-chemical-smelting-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -41993,6 +42316,7 @@
     "angels-chemical-furnace-3": {
       "human": "Chemical furnace 3",
       "kind": "assembling-machine",
+      "item": "angels-chemical-furnace-3",
       "categories": [
         "angels-chemical-smelting",
         "angels-chemical-smelting-2",
@@ -42004,6 +42328,7 @@
     "angels-chemical-furnace-4": {
       "human": "Chemical furnace 4",
       "kind": "assembling-machine",
+      "item": "angels-chemical-furnace-4",
       "categories": [
         "angels-chemical-smelting",
         "angels-chemical-smelting-2",
@@ -42016,6 +42341,7 @@
     "angels-casting-machine": {
       "human": "Casting machine 1",
       "kind": "assembling-machine",
+      "item": "angels-casting-machine",
       "categories": ["angels-casting"],
       "speed": 1,
       "moduleSlots": 0
@@ -42023,6 +42349,7 @@
     "angels-casting-machine-2": {
       "human": "Casting machine 2",
       "kind": "assembling-machine",
+      "item": "angels-casting-machine-2",
       "categories": ["angels-casting", "angels-casting-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -42030,6 +42357,7 @@
     "angels-casting-machine-3": {
       "human": "Casting machine 3",
       "kind": "assembling-machine",
+      "item": "angels-casting-machine-3",
       "categories": ["angels-casting", "angels-casting-2", "angels-casting-3"],
       "speed": 2,
       "moduleSlots": 2
@@ -42037,6 +42365,7 @@
     "angels-casting-machine-4": {
       "human": "Casting machine 4",
       "kind": "assembling-machine",
+      "item": "angels-casting-machine-4",
       "categories": ["angels-casting", "angels-casting-2", "angels-casting-3", "angels-casting-4"],
       "speed": 3,
       "moduleSlots": 3
@@ -42044,6 +42373,7 @@
     "angels-powder-mixer": {
       "human": "Powder mixer 1",
       "kind": "assembling-machine",
+      "item": "angels-powder-mixer",
       "categories": ["angels-powder-mixing"],
       "speed": 1,
       "moduleSlots": 0
@@ -42051,6 +42381,7 @@
     "angels-powder-mixer-2": {
       "human": "Powder mixer 2",
       "kind": "assembling-machine",
+      "item": "angels-powder-mixer-2",
       "categories": ["angels-powder-mixing", "angels-powder-mixing-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -42058,6 +42389,7 @@
     "angels-powder-mixer-3": {
       "human": "Powder mixer 3",
       "kind": "assembling-machine",
+      "item": "angels-powder-mixer-3",
       "categories": ["angels-powder-mixing", "angels-powder-mixing-2", "angels-powder-mixing-3"],
       "speed": 2,
       "moduleSlots": 2
@@ -42065,6 +42397,7 @@
     "angels-powder-mixer-4": {
       "human": "Powder mixer 4",
       "kind": "assembling-machine",
+      "item": "angels-powder-mixer-4",
       "categories": [
         "angels-powder-mixing",
         "angels-powder-mixing-2",
@@ -42077,6 +42410,7 @@
     "angels-ore-processing-machine": {
       "human": "Ore processor 1",
       "kind": "assembling-machine",
+      "item": "angels-ore-processing-machine",
       "categories": ["angels-ore-processing"],
       "speed": 1,
       "moduleSlots": 0
@@ -42084,6 +42418,7 @@
     "angels-ore-processing-machine-2": {
       "human": "Ore processor 2",
       "kind": "assembling-machine",
+      "item": "angels-ore-processing-machine-2",
       "categories": ["angels-ore-processing", "angels-ore-processing-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -42091,6 +42426,7 @@
     "angels-ore-processing-machine-3": {
       "human": "Ore processor 3",
       "kind": "assembling-machine",
+      "item": "angels-ore-processing-machine-3",
       "categories": ["angels-ore-processing", "angels-ore-processing-2", "angels-ore-processing-3"],
       "speed": 2,
       "moduleSlots": 2
@@ -42098,6 +42434,7 @@
     "angels-ore-processing-machine-4": {
       "human": "Ore processor 4",
       "kind": "assembling-machine",
+      "item": "angels-ore-processing-machine-4",
       "categories": [
         "angels-ore-processing",
         "angels-ore-processing-2",
@@ -42110,6 +42447,7 @@
     "angels-pellet-press": {
       "human": "Pellet press 1",
       "kind": "assembling-machine",
+      "item": "angels-pellet-press",
       "categories": ["angels-pellet-pressing"],
       "speed": 1,
       "moduleSlots": 0
@@ -42117,6 +42455,7 @@
     "angels-pellet-press-2": {
       "human": "Pellet press 2",
       "kind": "assembling-machine",
+      "item": "angels-pellet-press-2",
       "categories": ["angels-pellet-pressing", "angels-pellet-pressing-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -42124,6 +42463,7 @@
     "angels-pellet-press-3": {
       "human": "Pellet press 3",
       "kind": "assembling-machine",
+      "item": "angels-pellet-press-3",
       "categories": [
         "angels-pellet-pressing",
         "angels-pellet-pressing-2",
@@ -42135,6 +42475,7 @@
     "angels-pellet-press-4": {
       "human": "Pellet press 4",
       "kind": "assembling-machine",
+      "item": "angels-pellet-press-4",
       "categories": [
         "angels-pellet-pressing",
         "angels-pellet-pressing-2",
@@ -42147,6 +42488,7 @@
     "angels-sintering-oven-4": {
       "human": "Sintering oven 1",
       "kind": "assembling-machine",
+      "item": "angels-sintering-oven-4",
       "categories": [
         "angels-sintering",
         "angels-sintering-2",
@@ -42159,6 +42501,7 @@
     "angels-sintering-oven-5": {
       "human": "Sintering oven 2",
       "kind": "assembling-machine",
+      "item": "angels-sintering-oven-5",
       "categories": [
         "angels-sintering",
         "angels-sintering-2",
@@ -42172,6 +42515,7 @@
     "angels-strand-casting-machine": {
       "human": "Strand casting machine 1",
       "kind": "assembling-machine",
+      "item": "angels-strand-casting-machine",
       "categories": ["angels-strand-casting"],
       "speed": 1,
       "moduleSlots": 0
@@ -42179,6 +42523,7 @@
     "angels-strand-casting-machine-2": {
       "human": "Strand casting machine 2",
       "kind": "assembling-machine",
+      "item": "angels-strand-casting-machine-2",
       "categories": ["angels-strand-casting", "angels-strand-casting-2"],
       "speed": 1.5,
       "moduleSlots": 1
@@ -42186,6 +42531,7 @@
     "angels-strand-casting-machine-3": {
       "human": "Strand casting machine 3",
       "kind": "assembling-machine",
+      "item": "angels-strand-casting-machine-3",
       "categories": ["angels-strand-casting", "angels-strand-casting-2", "angels-strand-casting-3"],
       "speed": 2,
       "moduleSlots": 2
@@ -42193,6 +42539,7 @@
     "angels-strand-casting-machine-4": {
       "human": "Strand casting machine 4",
       "kind": "assembling-machine",
+      "item": "angels-strand-casting-machine-4",
       "categories": [
         "angels-strand-casting",
         "angels-strand-casting-2",
@@ -42205,6 +42552,7 @@
     "angels-cooling-tower": {
       "human": "Cooling tower",
       "kind": "assembling-machine",
+      "item": "angels-cooling-tower",
       "categories": ["angels-cooling"],
       "speed": 2,
       "moduleSlots": 2
@@ -42212,6 +42560,7 @@
     "angels-algae-farm": {
       "human": "Algae farm 1",
       "kind": "assembling-machine",
+      "item": "angels-algae-farm",
       "categories": ["angels-bio-processing"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -42219,6 +42568,7 @@
     "angels-algae-farm-2": {
       "human": "Algae farm 2",
       "kind": "assembling-machine",
+      "item": "angels-algae-farm-2",
       "categories": ["angels-bio-processing", "angels-bio-processing-2"],
       "speed": 1,
       "moduleSlots": 2
@@ -42226,6 +42576,7 @@
     "angels-algae-farm-3": {
       "human": "Algae farm 3",
       "kind": "assembling-machine",
+      "item": "angels-algae-farm-3",
       "categories": ["angels-bio-processing", "angels-bio-processing-2", "angels-bio-processing-3"],
       "speed": 1.5,
       "moduleSlots": 2
@@ -42233,6 +42584,7 @@
     "angels-algae-farm-4": {
       "human": "Algae farm 4",
       "kind": "assembling-machine",
+      "item": "angels-algae-farm-4",
       "categories": [
         "angels-bio-processing",
         "angels-bio-processing-2",
@@ -42245,6 +42597,7 @@
     "angels-crop-farm": {
       "human": "Basic farm",
       "kind": "assembling-machine",
+      "item": "angels-crop-farm",
       "categories": [
         "angels-temperate-farming",
         "angels-desert-farming",
@@ -42257,6 +42610,7 @@
     "angels-temperate-farm": {
       "human": "Temperate-environment farm",
       "kind": "assembling-machine",
+      "item": "angels-temperate-farm",
       "categories": ["angels-temperate-farming", "angels-advanced-temperate-farming"],
       "speed": 2,
       "moduleSlots": 2
@@ -42264,6 +42618,7 @@
     "angels-desert-farm": {
       "human": "Desert-environment farm",
       "kind": "assembling-machine",
+      "item": "angels-desert-farm",
       "categories": ["angels-desert-farming", "angels-advanced-desert-farming"],
       "speed": 2,
       "moduleSlots": 2
@@ -42271,6 +42626,7 @@
     "angels-swamp-farm": {
       "human": "Swamp-environment farm",
       "kind": "assembling-machine",
+      "item": "angels-swamp-farm",
       "categories": ["angels-swamp-farming", "angels-advanced-swamp-farming"],
       "speed": 2,
       "moduleSlots": 2
@@ -42278,6 +42634,7 @@
     "angels-seed-extractor": {
       "human": "Seed extractor",
       "kind": "assembling-machine",
+      "item": "angels-seed-extractor",
       "categories": ["angels-seed-extractor"],
       "speed": 0.75,
       "moduleSlots": 2
@@ -42285,6 +42642,7 @@
     "angels-bio-press": {
       "human": "Oil press",
       "kind": "assembling-machine",
+      "item": "angels-bio-press",
       "categories": ["angels-bio-pressing"],
       "speed": 1,
       "moduleSlots": 2
@@ -42292,6 +42650,7 @@
     "angels-bio-processor": {
       "human": "Bioprocessor",
       "kind": "assembling-machine",
+      "item": "angels-bio-processor",
       "categories": ["angels-bio-processor"],
       "speed": 1,
       "moduleSlots": 2
@@ -42299,6 +42658,7 @@
     "angels-nutrient-extractor": {
       "human": "Nutrient extractor",
       "kind": "assembling-machine",
+      "item": "angels-nutrient-extractor",
       "categories": ["angels-nutrient-extractor"],
       "speed": 1,
       "moduleSlots": 2
@@ -42306,6 +42666,7 @@
     "angels-bio-generator-temperate-1": {
       "human": "Temperate tree seed generator",
       "kind": "assembling-machine",
+      "item": "angels-bio-generator-temperate-1",
       "categories": ["angels-tree-temperate", "angels-tree"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -42313,6 +42674,7 @@
     "angels-bio-generator-swamp-1": {
       "human": "Swamp tree seed generator",
       "kind": "assembling-machine",
+      "item": "angels-bio-generator-swamp-1",
       "categories": ["angels-tree-swamp", "angels-tree"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -42320,6 +42682,7 @@
     "angels-bio-generator-desert-1": {
       "human": "Desert tree seed generator",
       "kind": "assembling-machine",
+      "item": "angels-bio-generator-desert-1",
       "categories": ["angels-tree-desert", "angels-tree"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -42327,6 +42690,7 @@
     "angels-bio-arboretum-1": {
       "human": "Arboretum",
       "kind": "assembling-machine",
+      "item": "angels-bio-arboretum-1",
       "categories": ["angels-arboretum"],
       "speed": 0.5,
       "moduleSlots": 2
@@ -42334,6 +42698,7 @@
     "angels-bio-refugium-fish": {
       "human": "Fish tank",
       "kind": "assembling-machine",
+      "item": "angels-bio-refugium-fish",
       "categories": ["angels-bio-refugium-fish"],
       "speed": 0.75,
       "moduleSlots": 2
@@ -42341,6 +42706,7 @@
     "angels-bio-refugium-puffer": {
       "human": "Puffer refugium",
       "kind": "assembling-machine",
+      "item": "angels-bio-refugium-puffer",
       "categories": ["angels-bio-refugium-puffer"],
       "speed": 0.75,
       "moduleSlots": 2
@@ -42348,6 +42714,7 @@
     "angels-bio-refugium-biter": {
       "human": "Biter refugium",
       "kind": "assembling-machine",
+      "item": "angels-bio-refugium-biter",
       "categories": ["angels-bio-refugium-biter"],
       "speed": 2,
       "moduleSlots": 2
@@ -42355,12 +42722,14 @@
     "stone-furnace": {
       "human": "Stone furnace",
       "kind": "furnace",
+      "item": "stone-furnace",
       "categories": ["smelting"],
       "speed": 1
     },
     "electric-furnace": {
       "human": "Electric furnace",
       "kind": "furnace",
+      "item": "electric-furnace",
       "categories": ["smelting"],
       "speed": 2,
       "moduleSlots": 2
@@ -42368,12 +42737,14 @@
     "steel-furnace": {
       "human": "Steel furnace",
       "kind": "furnace",
+      "item": "steel-furnace",
       "categories": ["smelting"],
       "speed": 2
     },
     "bob-electric-furnace-2": {
       "human": "Electric furnace 2",
       "kind": "furnace",
+      "item": "bob-electric-furnace-2",
       "categories": ["smelting"],
       "speed": 3,
       "moduleSlots": 4
@@ -42381,6 +42752,7 @@
     "bob-electric-furnace-3": {
       "human": "Electric furnace 3",
       "kind": "furnace",
+      "item": "bob-electric-furnace-3",
       "categories": ["smelting"],
       "speed": 4,
       "moduleSlots": 6
@@ -42388,12 +42760,14 @@
     "bob-fluid-furnace": {
       "human": "Fluid burning furnace",
       "kind": "furnace",
+      "item": "bob-fluid-furnace",
       "categories": ["smelting"],
       "speed": 2
     },
     "angels-clarifier": {
       "human": "Clarifier",
       "kind": "furnace",
+      "item": "angels-clarifier",
       "categories": ["angels-water-void"],
       "speed": 2,
       "moduleSlots": 2
@@ -42401,6 +42775,7 @@
     "angels-flare-stack": {
       "human": "Flare stack",
       "kind": "furnace",
+      "item": "angels-flare-stack",
       "categories": ["angels-chemical-void"],
       "speed": 2,
       "moduleSlots": 2
@@ -42408,6 +42783,7 @@
     "angels-composter": {
       "human": "Composter",
       "kind": "furnace",
+      "item": "angels-composter",
       "categories": ["angels-bio-void"],
       "speed": 2,
       "moduleSlots": 2
@@ -42415,6 +42791,7 @@
     "angels-bio-hatchery": {
       "human": "Hatchery",
       "kind": "furnace",
+      "item": "angels-bio-hatchery",
       "categories": ["angels-bio-hatchery"],
       "speed": 2,
       "moduleSlots": 2
@@ -42422,6 +42799,7 @@
     "angels-bio-butchery": {
       "human": "Butchery",
       "kind": "furnace",
+      "item": "angels-bio-butchery",
       "categories": ["angels-bio-butchery"],
       "speed": 2,
       "moduleSlots": 2
@@ -42429,6 +42807,7 @@
     "rocket-silo": {
       "human": "Rocket silo",
       "kind": "rocket-silo",
+      "item": "rocket-silo",
       "categories": ["rocket-building"],
       "speed": 1,
       "moduleSlots": 4
@@ -42438,6 +42817,168 @@
       "kind": "character",
       "categories": ["crafting", "angels-manual-crafting"],
       "speed": 1
+    },
+    "offshore-pump": {
+      "human": "Offshore pump",
+      "kind": "offshore-pump",
+      "item": "offshore-pump",
+      "categories": ["synthetic-pump:water"],
+      "speed": 20
+    },
+    "angels-ground-water-pump": {
+      "human": "Ground water bore",
+      "kind": "offshore-pump",
+      "item": "angels-ground-water-pump",
+      "categories": ["synthetic-pump:water"],
+      "speed": 1
+    },
+    "angels-sea-pump-placeable": {
+      "human": "Heavy offshore pump",
+      "kind": "offshore-pump",
+      "item": "angels-sea-pump",
+      "categories": ["synthetic-pump:water"],
+      "speed": 25
+    },
+    "angels-seafloor-pump": {
+      "human": "Seafloor pump",
+      "kind": "offshore-pump",
+      "item": "angels-seafloor-pump",
+      "categories": ["synthetic-pump:angels-water-viscous-mud"],
+      "speed": 5
+    },
+    "electric-mining-drill": {
+      "human": "Electric mining drill",
+      "kind": "mining-drill",
+      "item": "electric-mining-drill",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 0.5,
+      "moduleSlots": 3
+    },
+    "burner-mining-drill": {
+      "human": "Burner mining drill",
+      "kind": "mining-drill",
+      "item": "burner-mining-drill",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 0.25
+    },
+    "bob-mining-drill-1": {
+      "human": "Electric mining drill 2",
+      "kind": "mining-drill",
+      "item": "bob-mining-drill-1",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 1,
+      "moduleSlots": 4
+    },
+    "bob-mining-drill-2": {
+      "human": "Electric mining drill 3",
+      "kind": "mining-drill",
+      "item": "bob-mining-drill-2",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 2,
+      "moduleSlots": 5
+    },
+    "bob-mining-drill-3": {
+      "human": "Electric mining drill 4",
+      "kind": "mining-drill",
+      "item": "bob-mining-drill-3",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 4,
+      "moduleSlots": 6
+    },
+    "bob-mining-drill-4": {
+      "human": "Electric mining drill 5",
+      "kind": "mining-drill",
+      "item": "bob-mining-drill-4",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 8,
+      "moduleSlots": 8
+    },
+    "bob-area-mining-drill-1": {
+      "human": "Electric large area mining drill 1",
+      "kind": "mining-drill",
+      "item": "bob-area-mining-drill-1",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 0.75,
+      "moduleSlots": 4
+    },
+    "bob-area-mining-drill-2": {
+      "human": "Electric large area mining drill 2",
+      "kind": "mining-drill",
+      "item": "bob-area-mining-drill-2",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 1.25,
+      "moduleSlots": 5
+    },
+    "bob-area-mining-drill-3": {
+      "human": "Electric large area mining drill 3",
+      "kind": "mining-drill",
+      "item": "bob-area-mining-drill-3",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 2,
+      "moduleSlots": 6
+    },
+    "bob-area-mining-drill-4": {
+      "human": "Electric large area mining drill 4",
+      "kind": "mining-drill",
+      "item": "bob-area-mining-drill-4",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 3.25,
+      "moduleSlots": 8
+    },
+    "bob-steam-mining-drill": {
+      "human": "Steam powered mining drill",
+      "kind": "mining-drill",
+      "item": "bob-steam-mining-drill",
+      "categories": ["synthetic-mine:basic-solid"],
+      "speed": 2
+    },
+    "pumpjack": {
+      "human": "Pumpjack",
+      "kind": "mining-drill",
+      "item": "pumpjack",
+      "categories": ["synthetic-mine:basic-fluid"],
+      "speed": 1,
+      "moduleSlots": 2
+    },
+    "bob-pumpjack-1": {
+      "human": "Pumpjack 2",
+      "kind": "mining-drill",
+      "item": "bob-pumpjack-1",
+      "categories": ["synthetic-mine:basic-fluid"],
+      "speed": 2,
+      "moduleSlots": 3
+    },
+    "bob-pumpjack-2": {
+      "human": "Pumpjack 3",
+      "kind": "mining-drill",
+      "item": "bob-pumpjack-2",
+      "categories": ["synthetic-mine:basic-fluid"],
+      "speed": 3,
+      "moduleSlots": 4
+    },
+    "bob-pumpjack-3": {
+      "human": "Pumpjack 4",
+      "kind": "mining-drill",
+      "item": "bob-pumpjack-3",
+      "categories": ["synthetic-mine:basic-fluid"],
+      "speed": 5,
+      "moduleSlots": 5
+    },
+    "angels-thermal-bore": {
+      "human": "Thermal water bore",
+      "kind": "mining-drill",
+      "item": "angels-thermal-bore",
+      "categories": ["synthetic-mine:angels-fissure"],
+      "speed": 0.75,
+      "moduleSlots": 2
+    },
+    "angels-thermal-extractor": {
+      "human": "Thermal water extractor",
+      "kind": "mining-drill",
+      "item": "angels-thermal-extractor",
+      "categories": ["synthetic-mine:angels-fissure"],
+      "speed": 2,
+      "moduleSlots": 2
     }
   }
 }

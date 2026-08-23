@@ -91,15 +91,25 @@ flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 `StaticData = { recipes, resources, machines }`. Resources are keyed by `ResourceId` — the colon
 scheme `item:<name>` | `fluid:<name>` shared with both prior projects. `Recipe.products` carry
 `probability` and `{fixed}|{min,max}` amounts; `Recipe.ingredients` carry optional fluid
-temperatures. Machines are keyed by bare prototype id and carry `crafting_speed` and module slots;
-which machine can run which recipe is the game's category system — `Recipe.categories` flattens the
-prototype's `category` + `additional_categories`, and `machinesFor` in `src/data.ts` indexes
-`Machine.categories` the other way. Modules, beacons, and machine power/pollution are still missing.
-Recipes and resources also carry a `complexity`: how far through the tech tree you must be to have
-the thing, 0 at the crash site to 1 at the last technology, derived by `scripts/complexity.ts`
-(which the ingest imports) and used to sort search results simplest first. `src/data.ts` loads
-`src/assets/static.json` at module level. Icons render from a spritesheet (`src/assets/icons.avif` +
-`icons.json` position map, keys like `craft:<name>`) via `components/resource.tsx`.
+temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
+the `item` which places them; which machine can run which recipe is the game's category system —
+`Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
+in `src/data.ts` indexes `Machine.categories` the other way. Modules, beacons, and machine
+power/pollution are still missing. Recipes and resources also carry a `complexity`: how far through
+the tech tree you must be to have the thing, 0 at the crash site to 1 at the last technology,
+derived by `scripts/complexity.ts` (which the ingest imports) and used to sort search results
+simplest first. `src/data.ts` loads `src/assets/static.json` at module level. Icons render from a
+spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like `craft:<name>`) via
+`components/resource.tsx`.
+
+**Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
+`data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a
+drill. They are ordinary `Recipe`s with invented categories (`synthetic-pump:<fluid>`,
+`synthetic-mine:<resource-category>`) run by drills and pumps promoted to `Machine`s, so search,
+`machinesFor` and the rate maths need no special case; the flag exists so the UI can mark the card
+rather than pass it off as something you could look up in-game. `scripts/complexity.ts` builds the
+same set — splitting each one per machine, since you only need the cheapest — which is why the two
+agree on ids. Rocket launches and burnt fuel are still complexity-only.
 
 ### Solver
 

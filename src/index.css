@@ -204,6 +204,28 @@ code {
   font-size: 15px;
 }
 
+/* A card the game has no recipe for: a pump or a drill working the ground it stands on. The dashed
+ * edge and the tag are the whole distinction, so keep them together — the numbers below are real
+ * either way. At 1px the dashes all but vanish against the card, so this one is 2px, with a pixel
+ * off the padding to keep the contents lined up with every other card down the page. */
+.recipe-card.is-synthetic {
+  border-style: dashed;
+  border-width: 2px;
+  padding: 7px 11px;
+}
+
+.recipe-synthetic {
+  flex-shrink: 0;
+  border: 1px dashed var(--border);
+  border-radius: 4px;
+  padding: 0 5px;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
 .recipe-flows-fold {
   display: flex;
   align-items: flex-start;

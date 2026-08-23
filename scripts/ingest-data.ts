@@ -8,6 +8,7 @@ import { arr, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
+import { placingItems, syntheticRecipes } from './synthetic.ts';
 import type {
   Ingredient,
   IngredientTemperature,
@@ -51,6 +52,7 @@ async function main() {
   const v = (await read('data-raw-dump.json')) as RawData;
   const recipes = handleRecipes(v.recipe, locales);
   const machines = handleMachines(v, locales);
+  addSynthetic(v, recipes, machines, locales);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -146,6 +148,58 @@ function applyComplexity(
   console.log(`Complexity: ${unreachable} recipes/resources have no route to them`);
 }
 
+/**
+ * The sources which are not recipes — offshore pumps and mining drills — folded in as recipes and
+ * machines like any other, and flagged `synthetic` so the UI can distinguish them. See
+ * `scripts/synthetic.ts` for what they are and where the rates come from; `scripts/complexity.ts`
+ * builds the same set, which is why the two agree on ids.
+ *
+ * The machines are new entries here rather than in `handleMachines`: a drill has no
+ * `crafting_categories`, so its only categories are the ones the synthetic recipes invent, and a
+ * drill covering several resource categories accumulates one per recipe it can run.
+ */
+function addSynthetic(
+  v: RawData,
+  recipes: Record<string, Recipe>,
+  machines: Record<string, Machine>,
+  locales: Record<string, RLocale>,
+) {
+  const synthetic = syntheticRecipes(v);
+  const added = new Set<string>();
+
+  for (const s of synthetic) {
+    recipes[s.id] = {
+      // trimmed: a couple of Angel's names carry a trailing space ("Infinite rubyte ")
+      human:
+        `${s.name.verb} ${resolveLocale(s.name.source, locales, s.name.locale) ?? s.name.source}`.trim(),
+      ingredients: s.ingredients.map(toIng),
+      products: s.products.map(toProd),
+      duration: s.duration,
+      categories: [s.category],
+      synthetic: true,
+    };
+
+    for (const m of s.machines) {
+      const known = machines[m.id];
+      if (known) {
+        if (!known.categories.includes(s.category)) known.categories.push(s.category);
+        continue;
+      }
+      added.add(m.id);
+      machines[m.id] = {
+        human: resolveLocale(m.id, locales, 'entity'),
+        kind: m.kind,
+        item: m.item,
+        categories: [s.category],
+        speed: m.speed,
+        moduleSlots: m.moduleSlots,
+      };
+    }
+  }
+
+  console.log(`Synthetic: ${synthetic.length} recipes over ${added.size} machines`);
+}
+
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
   const unnamed: string[] = [];
   let skipped = 0;
@@ -199,6 +253,7 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
  */
 function handleMachines(v: RawData, locales: Record<string, RLocale>) {
   const machines: Record<string, Machine> = {};
+  const placedBy = placingItems(v);
   let skipped = 0;
 
   for (const key of MACHINE_KEYS) {
@@ -210,6 +265,7 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
       machines[id] = {
         human: resolveLocale(id, locales, 'entity'),
         kind: key satisfies MachineKind,
+        item: placedBy.get(id),
         categories: m.crafting_categories ?? [],
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
         speed: 'crafting_speed' in m ? (m.crafting_speed ?? 1) : 1,
