@@ -96,7 +96,7 @@ current:
 `main.tsx` → `UrlHandler` → `CrashHandler` → `App`. All UI state lives in `UrlState` and is packed
 into the URL hash (`url-handler.tsx`): JSON with sorted keys → deflate (with a dictionary derived
 from the default state, duplicated in-file "for stability reasons") → base64url, prefixed with a
-version letter (`HASH_VERSION = 'i'`). The dictionary is derived from the default state, so **adding
+version letter (`HASH_VERSION = 'j'`). The dictionary is derived from the default state, so **adding
 a field to `UrlState` invalidates every existing hash** — bump the version letter whenever the state
 shape changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
@@ -128,6 +128,27 @@ drill. They are ordinary `Recipe`s with invented categories (`synthetic-pump:<fl
 rather than pass it off as something you could look up in-game. `scripts/complexity.ts` builds the
 same set — splitting each one per machine, since you only need the cheapest — which is why the two
 agree on ids. Rocket launches and burnt fuel are still complexity-only.
+
+### Cells (`src/cell.ts`, `components/cell.tsx`)
+
+A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
+to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
+`{ entries, name? }` and a `CellEntry` is `{ recipe, machine?, count? }` (modules later). The cells
+being planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes
+added from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.
+
+`cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
+an `output`, and both is `internal`. Nothing scales the recipes against each other yet — that is the
+solver's job, and `CellEntry.count` is where its answer (or the user's pin) will go — so an
+unbalanced internal resource reads as "the cell handles this itself". `CellBox` lays a cell out as a
+sankey diagram's shape without the sankey: inputs left, outputs right, recipes and their machines
+between.
+
+The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
+cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`
+is "something which makes anything this cell has to be fed". That is the search for closing a cell
+up, and the buttons on each side of a cell are how you get it without typing. An `@`-query outside a
+cell matches nothing rather than everything.
 
 ### Solver
 

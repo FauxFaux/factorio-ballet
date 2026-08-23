@@ -464,9 +464,21 @@ code {
   cursor: help;
 }
 
-/* the machine whose speed the card's numbers are currently quoted at */
-.machine.is-previewing {
+/* the machine standing for the numbers on show: hovered on a card, chosen in a cell */
+.machine.is-active {
   border-color: var(--accent);
+}
+
+/* a chip which is a choice, rather than a list of what could run the recipe */
+button.machine {
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+button.machine:hover {
+  background: var(--accent-bg);
 }
 
 .machine-icon {
@@ -505,4 +517,224 @@ code {
 
 .productivity:not(.is-allowed) .productivity-check {
   visibility: hidden;
+}
+
+/* The cell being worked on gets the accent border: it is where a `+` on a search result puts the
+ * recipe, and what the search's `@in`/`@out` queries are asking about. */
+.cells {
+  margin: 0 0 24px;
+}
+
+.cells-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cells-head h2 {
+  margin: 0.4em 0;
+  font-size: 20px;
+}
+
+.cell-btn {
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 3px 7px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cell-btn:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.cell {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--code-bg);
+  margin: 0 0 12px;
+  padding: 8px 12px;
+}
+
+.cell.is-active {
+  border-color: var(--accent);
+}
+
+.cell-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.cell-title {
+  font: inherit;
+  font-family: var(--heading);
+  color: var(--text-h);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 1px 6px;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-title:hover {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.cell-size {
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.cell-remove {
+  margin-left: auto;
+}
+
+/* inputs, work, outputs: a sankey diagram's shape without the sankey */
+.cell-body {
+  display: grid;
+  grid-template-columns: minmax(9rem, 1fr) minmax(0, 2.5fr) minmax(9rem, 1fr);
+  gap: 0 12px;
+  align-items: start;
+  margin-top: 6px;
+}
+
+.cell-middle {
+  min-width: 0;
+  padding: 0 12px;
+  border-left: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+}
+
+.cell-side-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
+/* the same accent the recipe card's `out` row gets: outputs are the interesting end */
+.cell-out .cell-side-head {
+  color: var(--accent);
+}
+
+.cell-none {
+  margin: 0;
+  padding: 2px 6px;
+  font-style: italic;
+}
+
+.cell-recipe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 4px 0;
+}
+
+.cell-recipe + .cell-recipe {
+  border-top: 1px solid var(--border);
+}
+
+.cell-recipe-name {
+  flex: 1 1 8rem;
+  min-width: 0;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-unknown {
+  color: var(--text);
+  font-style: italic;
+}
+
+.cell-count {
+  width: 4.5rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 15px;
+  text-align: right;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+.cell-internal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  margin: 6px 0 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
+.cell-internal-chip {
+  display: inline-flex;
+}
+
+/* the one control on a search result: put this recipe in the cell being worked on */
+.recipe-add {
+  flex-shrink: 0;
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+
+.recipe-add:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.recipe-add.is-in-cell {
+  color: var(--accent);
+  border-color: transparent;
+  cursor: default;
+}
+
+@media (max-width: 800px) {
+  .cell-body {
+    grid-template-columns: 1fr;
+  }
+
+  .cell-middle {
+    padding: 6px 0;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
 }

@@ -42,3 +42,31 @@ export function field<T, K extends keyof T>([value, setValue]: State<T>, key: K)
       })),
   ];
 }
+
+/**
+ * A `State` for one element of a state array, writing back through its setter; `field` for a list.
+ * The index is captured, so a setter outlives its element only as far as the render it came from —
+ * which is exactly how long a click handler lives.
+ */
+export function atIndex<T>([value, setValue]: State<T[]>, index: number): State<T> {
+  return [
+    value[index],
+    (update) =>
+      setValue((prev) =>
+        prev.map((item, i) =>
+          i !== index
+            ? item
+            : typeof update === 'function'
+              ? (update as (prev: T) => T)(item)
+              : update,
+        ),
+      ),
+  ];
+}
+
+/** A number with enough precision to be useful, and no more. */
+export function fmt(value: number): string {
+  const digits = value >= 100 ? 0 : value >= 10 ? 1 : value >= 1 ? 2 : 3;
+  const fixed = value.toFixed(digits);
+  return fixed.includes('.') ? fixed.replace(/0+$/, '').replace(/\.$/, '') : fixed;
+}

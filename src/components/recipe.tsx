@@ -1,7 +1,6 @@
 import type {
   Ingredient,
   IngredientTemperature,
-  Machine,
   MachineId,
   Product,
   ProductAmount,
@@ -10,9 +9,11 @@ import type {
 } from '../types.ts';
 import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
-import { bareName, type RecipeMatch } from '../search.ts';
-import { machineName, machinesFor, resourceName, type MachineMatch } from '../data.ts';
-import { iconStyle } from './icon.tsx';
+import type { RecipeMatch } from '../search.ts';
+import { machinesFor, resourceName, type MachineMatch } from '../data.ts';
+import { fmt } from '../ts.ts';
+import { recipeIconStyle } from './icon.tsx';
+import { MachineChip } from './machine.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
 /** Crafting speed we quote rates at, until we have building data. */
@@ -23,11 +24,6 @@ const CRAFTING_SPEED = 1;
  * keeps the vanilla naming, so tier 1 is unsuffixed and `productivity-module-1` does not exist.
  */
 const PRODUCTIVITY_MODULE: ResourceId = 'item:productivity-module';
-
-/** Machines with no item of their own to borrow an icon from, and what stands in instead. */
-const MACHINE_ICON_STANDIN: Record<MachineId, ResourceId> = {
-  character: 'item:light-armor',
-};
 
 /**
  * Rates this small would read as `0.00`, so a recipe with one anywhere in reach is quoted an extra
@@ -53,9 +49,15 @@ interface Flow {
 export function RecipeCard({
   match: { id, recipe, name },
   onPick,
+  onAdd,
+  inCell,
 }: {
   match: RecipeMatch;
   onPick: (id: ResourceId) => void;
+  /** Put this recipe in the cell being worked on; absent when there is nowhere to put it. */
+  onAdd?: () => void;
+  /** Whether that cell already runs it, in which case the button says so instead of repeating it. */
+  inCell?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   /** The machine being hovered, whose speed the card's numbers are quoted at. */
@@ -85,6 +87,7 @@ export function RecipeCard({
         </span>
         {recipe.synthetic ? <SyntheticChip /> : null}
         <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
+        {onAdd ? <AddToCell onAdd={onAdd} inCell={inCell ?? false} /> : null}
       </div>
       <div class="recipe-flows-fold">
         <button
@@ -208,15 +211,13 @@ function MachineRow({
           1× numbers on the way to the next machine. */}
       <div class="machine-list" onMouseLeave={() => onPreview(undefined)}>
         {machines.map(({ id, machine }) => (
-          <span
+          <MachineChip
             key={id}
-            class={id === preview ? 'machine is-previewing' : 'machine'}
-            title={`${machineName(id)} (${id}) at ${fmt(machine.speed)}×`}
+            id={id}
+            machine={machine}
+            active={id === preview}
             onMouseEnter={() => onPreview(id)}
-          >
-            <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
-            <span class="machine-speed">{fmt(machine.speed)}×</span>
-          </span>
+          />
         ))}
       </div>
       <ProductivityChip allowed={allowProductivity} />
@@ -248,25 +249,22 @@ function ProductivityChip({ allowed }: { allowed: boolean }) {
   );
 }
 
-/**
- * A synthetic recipe has no `recipe:` artwork of its own — the game has no recipe to draw — so it
- * borrows its first product's. Real recipes all have their own key and never reach the fallback.
- */
-function recipeIconStyle(id: string, recipe: Recipe): string {
-  const product = recipe.products[0]?.resource;
-  return iconStyle(
-    `recipe:${id}`,
-    ...(product ? [`craft:${bareName(product)}`] : []),
-    'recipe:recipe-unknown',
+/** The one control on a search result: put this recipe in the cell being worked on. */
+function AddToCell({ onAdd, inCell }: { onAdd: () => void; inCell: boolean }) {
+  return (
+    <button
+      type="button"
+      class={inCell ? 'recipe-add is-in-cell' : 'recipe-add'}
+      title={inCell ? 'Already in this cell' : 'Add to this cell'}
+      aria-label={inCell ? 'Already in this cell' : 'Add to this cell'}
+      disabled={inCell}
+      onClick={onAdd}
+    >
+      {inCell ? '✓' : '+'}
+    </button>
   );
 }
 
-/**
- * The spritesheet is keyed by item and recipe, not by entity, so a machine's icon is really its
- * item's. Those share a name for nearly every machine, but not all — Angel's heavy offshore pump is
- * the entity `angels-sea-pump-placeable` placed by the item `angels-sea-pump` — hence the second
- * try. See `INGEST.md`: a regenerated sheet would carry `entity:` keys and settle this properly.
- */
 /**
  * Says out loud that this card is not a recipe: nothing in the game's data describes it, and you
  * will not find it in the crafting menu. See `Recipe.synthetic`.
@@ -279,16 +277,6 @@ function SyntheticChip() {
     >
       synthetic
     </span>
-  );
-}
-
-function machineIconStyle(id: MachineId, machine: Machine): string {
-  const standin = MACHINE_ICON_STANDIN[id];
-  return iconStyle(
-    `craft:${id}`,
-    ...(machine.item ? [`craft:${machine.item}`] : []),
-    ...(standin ? [`craft:${bareName(standin)}`] : []),
-    'craft:item-unknown',
   );
 }
 
@@ -363,11 +351,4 @@ function temperatureNote(temperature: IngredientTemperature): string {
     return `${fmt(temperature.min)}–${fmt(temperature.max)}°C`;
   if ('min' in temperature) return `≥${fmt(temperature.min)}°C`;
   return `≤${fmt(temperature.max)}°C`;
-}
-
-/** A number with enough precision to be useful, and no more. */
-export function fmt(value: number): string {
-  const digits = value >= 100 ? 0 : value >= 10 ? 1 : value >= 1 ? 2 : 3;
-  const fixed = value.toFixed(digits);
-  return fixed.includes('.') ? fixed.replace(/0+$/, '').replace(/\.$/, '') : fixed;
 }

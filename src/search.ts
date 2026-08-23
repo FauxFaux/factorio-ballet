@@ -11,6 +11,31 @@ export type Term =
   | { kind: 'makes' | 'uses'; query: string; resources: Set<ResourceId> }
   | { kind: 'text'; text: string };
 
+/**
+ * The open edges of the cell being edited, so a search can be asked about them rather than about a
+ * named resource: `makes:@in` is "something which makes anything this cell currently has to be fed"
+ * — the search you want while closing a cell up. See `CELL.md`, and {@link SCOPE_QUERIES} for the
+ * vocabulary.
+ */
+export interface SearchScope {
+  in: Set<ResourceId>;
+  out: Set<ResourceId>;
+}
+
+/**
+ * The queries a `makes:`/`uses:` term can name instead of a resource, each a set drawn from the
+ * `SearchScope`. `@` is not a legal character in a prototype id, so this cannot shadow a resource.
+ *
+ * All four combinations mean something: `makes:@in` and `uses:@out` are the two ways to close an
+ * edge, while `makes:@out` finds another producer of something we already make and `uses:@in` finds
+ * the competition for something we are short of.
+ */
+const SCOPE_QUERIES = new Map<string, (scope: SearchScope) => Iterable<ResourceId>>([
+  ['@in', (scope) => scope.in],
+  ['@out', (scope) => scope.out],
+  ['@edge', (scope) => [...scope.in, ...scope.out]],
+]);
+
 function smatch(haystack: string, needle: string): boolean {
   return haystack.toLowerCase().includes(needle);
 }
@@ -24,12 +49,20 @@ export function bareName(id: ResourceId): string {
 }
 
 /**
- * The resources a `makes:`/`uses:` query refers to. Exact ids win outright, then exact
- * names (internal or human), then anything containing the query.
+ * The resources a `makes:`/`uses:` query refers to. An `@`-query names a set from `scope`; for
+ * anything else, exact ids win outright, then exact names (internal or human), then anything
+ * containing the query.
  */
-export function resolveResources(query: string): Set<ResourceId> {
+export function resolveResources(query: string, scope?: SearchScope): Set<ResourceId> {
   const q = query.toLowerCase();
   if (!q) return new Set();
+
+  if (q.startsWith('@')) {
+    const of = SCOPE_QUERIES.get(q);
+    // an unknown `@word`, or one asked outside a cell, matches nothing rather than everything
+    return new Set(of && scope ? of(scope) : []);
+  }
+
   const ids = Object.keys(staticData.resources) as ResourceId[];
 
   if (isResourceId(q) && staticData.resources[q as ResourceId]) return new Set([q as ResourceId]);
@@ -63,7 +96,7 @@ export function flipDirection(search: string): string | null {
 }
 
 /** Split a search string into terms; whitespace separates, and all terms must match. */
-export function parseSearch(search: string): Term[] {
+export function parseSearch(search: string, scope?: SearchScope): Term[] {
   return search
     .split(/\s+/)
     .filter((word) => word)
@@ -72,7 +105,7 @@ export function parseSearch(search: string): Term[] {
       const kind = colon === -1 ? '' : word.slice(0, colon).toLowerCase();
       if (kind === 'makes' || kind === 'uses') {
         const query = word.slice(colon + 1);
-        return { kind, query, resources: resolveResources(query) };
+        return { kind, query, resources: resolveResources(query, scope) };
       }
       return { kind: 'text', text: word.toLowerCase() };
     });
@@ -91,10 +124,15 @@ function matches(term: Term, id: string, recipe: Recipe, name: string): boolean 
 
 /**
  * Every recipe matching all the terms of `search`, nearest the player's `progress` through the tech
- * tree first; see `relevanceOf`. A `progress` of 0 is plain simplest-first.
+ * tree first; see `relevanceOf`. A `progress` of 0 is plain simplest-first. `scope` is the cell the
+ * search is being run from, if any, which `@`-queries resolve against.
  */
-export function searchRecipes(search: string, progress: number): RecipeMatch[] {
-  const terms = parseSearch(search);
+export function searchRecipes(
+  search: string,
+  progress: number,
+  scope?: SearchScope,
+): RecipeMatch[] {
+  const terms = parseSearch(search, scope);
   if (!terms.length) return [];
 
   const found: RecipeMatch[] = [];

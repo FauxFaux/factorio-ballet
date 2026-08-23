@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { flipDirection, parseSearch, resolveResources, searchRecipes } from '../src/search.ts';
+import {
+  flipDirection,
+  parseSearch,
+  resolveResources,
+  searchRecipes,
+  type SearchScope,
+} from '../src/search.ts';
 import { packLandmarks, relevanceOf } from '../src/data.ts';
 
 describe('resolveResources', () => {
@@ -25,7 +31,26 @@ describe('resolveResources', () => {
     expect(resolveResources('')).toEqual(new Set());
     expect(resolveResources('definitely-not-a-resource')).toEqual(new Set());
   });
+
+  it('reads an @-query off the cell being worked on', () => {
+    expect(resolveResources('@in', scope)).toEqual(scope.in);
+    expect(resolveResources('@out', scope)).toEqual(scope.out);
+    expect(resolveResources('@edge', scope)).toEqual(
+      new Set(['item:angels-ore1-crushed', 'item:iron-gear-wheel']),
+    );
+  });
+
+  it('finds nothing for an @-query with no cell, or no such query', () => {
+    expect(resolveResources('@in')).toEqual(new Set());
+    expect(resolveResources('@nonsense', scope)).toEqual(new Set());
+  });
 });
+
+/** As a cell of `iron-plate` + `iron-gear-wheel`; see `cell.test.ts`. */
+const scope: SearchScope = {
+  in: new Set(['item:angels-ore1-crushed']),
+  out: new Set(['item:iron-gear-wheel']),
+};
 
 describe('flipDirection', () => {
   it('flips a lone makes:/uses: term', () => {
@@ -58,6 +83,16 @@ describe('parseSearch', () => {
 });
 
 describe('searchRecipes', () => {
+  it('answers an @-query about the cell it was given', () => {
+    const found = searchRecipes('makes:@in', 0, scope);
+    expect(found.length).toBeGreaterThan(0);
+    for (const { recipe } of found) {
+      expect(recipe.products.some((p) => p.resource === 'item:angels-ore1-crushed')).toBe(true);
+    }
+    // ...and the same query outside a cell is not a free-for-all
+    expect(searchRecipes('makes:@in', 0)).toEqual([]);
+  });
+
   it('finds nothing without a search', () => {
     expect(searchRecipes('   ', 0)).toEqual([]);
   });

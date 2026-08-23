@@ -2,6 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { debounce } from './ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from './app.tsx';
+import type { Cell } from './cell.ts';
 import { CrashHandler } from './crash-handler.tsx';
 
 export interface UrlState {
@@ -12,11 +13,18 @@ export interface UrlState {
   cs: string;
   /** game progress, as a whole percentage; searches favour results near it. See `relevanceOf`. */
   gp: number;
+  /** the cells being planned; see `CELL.md` */
+  cl: Cell[];
+  /**
+   * which of `cl` is being worked on: recipes added from the search go there, and the search's
+   * `@in`/`@out` queries mean its edges. Out of range — which `[]` always is — means none is.
+   */
+  ci: number;
 }
 
-const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0 };
+const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0 };
 
-const HASH_VERSION = 'i';
+const HASH_VERSION = 'j';
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);

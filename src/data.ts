@@ -8,6 +8,11 @@ export function resourceName(id: ResourceId): string {
   return staticData.resources[id]?.human ?? id;
 }
 
+/** The display name for a recipe, falling back to its id. */
+export function recipeName(id: string): string {
+  return staticData.recipes[id]?.human ?? id;
+}
+
 /**
  * Sort key for "simplest first": how far into the tech tree a recipe or resource is. Something with
  * no complexity at all is unreachable — nothing in the tree unlocks it — so it sorts last, not
