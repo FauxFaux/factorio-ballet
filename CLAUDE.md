@@ -25,7 +25,20 @@ npx vitest run test/scripts/locale.test.ts   # single test file
 npx vitest run -t 'resolves a recipe-name key'   # by test name
 ```
 
+### Committing
+
 Before committing, always run `npm run lint` and `npm run format`. Do not commit if lint fails.
+
+**Commit straight to `main`.** This is a single-author repo with no PR flow; do not branch, and do
+not ask whether to. The whole history is linear on `main` and should stay that way.
+
+Messages are [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): subject`,
+with the subject in lowercase imperative mood and no trailing full stop. The types in use are `feat`
+(most of them), `fix`, `refactor` and `chore`; the scope is optional and is a part of the tree —
+`ui`, `scripts` — omitted when the change spans the lot. Run `git log --oneline` for the house
+style. Explain the _why_ in the body when it is not obvious from the diff: the design docs are the
+source of truth for intent, and a commit body is the right place for the reasoning that did not earn
+a paragraph in one.
 
 ### Data regeneration
 
