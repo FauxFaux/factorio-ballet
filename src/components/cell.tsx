@@ -1,12 +1,15 @@
 import './cell.css';
 import { useMemo, useState } from 'preact/hooks';
 import {
+  activeAfterRemoval,
   cellInterface,
   cellTitle,
   entryMachine,
   entryRecipe,
   newCell,
+  parseCount,
   withEntry,
+  withoutCell,
   withoutEntry,
   type Cell,
   type CellEntry,
@@ -42,12 +45,12 @@ export function CellList({
     setCurrent(list.length);
   };
 
-  /* The index of the cell being worked on has to survive the removal of another: it shifts down
-   * with the list, and clamps into what is left when the last cell goes. */
+  /* The index of the cell being worked on has to survive the removal of another; see
+   * {@link activeAfterRemoval}. */
   const remove = (index: number) => {
     const left = list.length - 1;
-    setList((prev) => prev.filter((_, i) => i !== index));
-    setCurrent((prev) => Math.min(prev > index ? prev - 1 : prev, Math.max(0, left - 1)));
+    setList((prev) => withoutCell(prev, index));
+    setCurrent((prev) => activeAfterRemoval(prev, index, left));
   };
 
   return (
@@ -258,8 +261,7 @@ function CellRow({
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;
           setDraft(raw);
-          const count = Number(raw);
-          onChange({ ...entry, count: raw && Number.isFinite(count) ? count : undefined });
+          onChange({ ...entry, count: parseCount(raw) });
         }}
         onBlur={() => setDraft(undefined)}
       />

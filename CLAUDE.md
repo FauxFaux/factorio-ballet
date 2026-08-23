@@ -140,6 +140,11 @@ land between 53% and 58%). `src/data.ts` loads `src/assets/static.json` at modul
 render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
 `craft:<name>`) via `components/resource.tsx`.
 
+`src/flow.ts` is the arithmetic between a `Recipe` and a card: amounts per craft, rates per second
+at a given machine's speed, and the decimal precision, decided once per recipe over every machine it
+could run in so the numbers do not change width as the pointer moves along the machine list. No
+scaling of one recipe against another — that is the solver's, and it is not here.
+
 **Synthetic recipes** (`Recipe.synthetic`, `scripts/synthetic.ts`) are the sources the game has no
 `data.raw.recipe` for: `synthetic:pumping-water` in an offshore pump, `synthetic:mining-coal` in a
 drill. They are ordinary `Recipe`s with invented categories (`synthetic-pump:<fluid>`,

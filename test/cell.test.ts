@@ -1,12 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import {
+  activeAfterRemoval,
   cellInterface,
   cellTitle,
   entryMachine,
   hasRecipe,
   newCell,
+  parseCount,
   scopeOf,
   withEntry,
+  withoutCell,
   withoutEntry,
   withRecipe,
   type Cell,
@@ -152,5 +155,33 @@ describe('cellTitle', () => {
     expect(cellTitle(newCell())).toBe('Empty cell');
     expect(cellTitle(chain)).toBe('Iron plate');
     expect(cellTitle({ ...chain, name: 'Gears' })).toBe('Gears');
+  });
+});
+
+describe('cell list', () => {
+  const three = [newCell('iron-plate'), newCell('iron-gear-wheel'), newCell('car')];
+
+  it('removes a cell without touching the original list', () => {
+    expect(withoutCell(three, 1).map((c) => cellTitle(c))).toEqual(['Iron plate', 'Car']);
+    expect(three).toHaveLength(3);
+  });
+
+  it('keeps working on the same cell when an earlier one goes', () => {
+    expect(activeAfterRemoval(2, 0, 2)).toBe(1);
+    expect(activeAfterRemoval(1, 2, 2)).toBe(1);
+  });
+
+  it('clamps into what is left when the cell being worked on was the last', () => {
+    expect(activeAfterRemoval(2, 2, 2)).toBe(1);
+    expect(activeAfterRemoval(0, 0, 0)).toBe(0);
+  });
+});
+
+describe('parseCount', () => {
+  it('reads what was typed, and takes anything else as undecided', () => {
+    expect(parseCount('2.5')).toBe(2.5);
+    expect(parseCount('0')).toBe(0);
+    expect(parseCount('')).toBeUndefined();
+    expect(parseCount('lots')).toBeUndefined();
   });
 });

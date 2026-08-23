@@ -1,24 +1,13 @@
 import './recipe.css';
-import type {
-  Ingredient,
-  IngredientTemperature,
-  MachineId,
-  Product,
-  ProductAmount,
-  Recipe,
-  ResourceId,
-} from '../types.ts';
+import type { MachineId, ResourceId } from '../types.ts';
 import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
-import { machinesFor, resourceName, type MachineMatch } from '../data.ts';
-import { fmt } from '../ts.ts';
+import { machinesFor, type MachineMatch } from '../data.ts';
+import { flowTitle, recipeFlows, speedOf, type Flow } from '../flow.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
-
-/** Crafting speed we quote rates at, until we have building data. */
-const CRAFTING_SPEED = 1;
 
 /**
  * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
@@ -26,26 +15,8 @@ const CRAFTING_SPEED = 1;
  */
 const PRODUCTIVITY_MODULE: ResourceId = 'item:productivity-module';
 
-/**
- * Rates this small would read as `0.00`, so a recipe with one anywhere in reach is quoted an extra
- * digit throughout.
- */
-const THREE_DP_BELOW = 0.05;
-
 /** Durations are one number in a row of its own, so a plain two decimals is enough. */
 const DURATION_DIGITS = 2;
-
-/** How to render a number whose value depends on the machine previewed. */
-type Fmt = (value: number) => string;
-
-interface Flow {
-  resource: ResourceId;
-  /** Per craft, e.g. `2` or `1–3`. */
-  amount: string;
-  /** Per second, at the card's current crafting speed, already formatted. */
-  rate: string;
-  note?: string;
-}
 
 export function RecipeCard({
   match: { id, recipe, name },
@@ -64,16 +35,8 @@ export function RecipeCard({
   /** The machine being hovered, whose speed the card's numbers are quoted at. */
   const [preview, setPreview] = useState<MachineId | undefined>(undefined);
   const machines = machinesFor(recipe);
-  const speed = machines.find(({ id }) => id === preview)?.machine.speed ?? CRAFTING_SPEED;
-  const crafts = speed / recipe.duration;
-  /* Scaled numbers land on far fewer round values than the 1× baseline does, and {@link fmt}'s
-   * precision moves with the magnitude, so the numbers changed width — and the summary rewrapped —
-   * as the pointer moved along the machine list. Both precisions are decided for the card as a
-   * whole instead, so nothing moves whichever machine is previewed. */
-  const digits = rateDigits(recipe, machines);
-  const rate = (value: number) => value.toFixed(digits);
-  const ins = recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts, rate));
-  const outs = recipe.products.map((product) => productFlow(product, crafts, rate));
+  const speed = speedOf(machines, preview);
+  const { ins, outs } = recipeFlows(recipe, machines, speed);
 
   const classes = ['recipe-card'];
   if (preview !== undefined) classes.push('is-previewing');
@@ -182,15 +145,9 @@ function FlowChips({ flows }: { flows: Flow[] }) {
   );
 }
 
-function flowTitle(flow: Flow): string {
-  const note = flow.note ? `, ${flow.note}` : '';
-  return `${resourceName(flow.resource)}: ${flow.amount} per craft${note}`;
-}
-
 /**
- * The machines which can run this recipe, each labelled with its crafting speed; the recipe's
- * rates above are quoted at {@link CRAFTING_SPEED}, so the speed is the multiplier to apply.
- * Hovering one applies it, so the card shows that machine's numbers.
+ * The machines which can run this recipe, each labelled with its crafting speed: the multiplier to
+ * apply to the 1× rates above. Hovering one applies it, so the card shows that machine's numbers.
  */
 function MachineRow({
   machines,
@@ -301,55 +258,4 @@ function FlowRow({
       <td class="flow-rate">{flow.rate}/s</td>
     </tr>
   );
-}
-
-/**
- * How many decimals this recipe's rates are quoted at, decided once for the card: three if any flow
- * could fall below {@link THREE_DP_BELOW} on any machine it can run on — including the 1× baseline —
- * and two otherwise. Deciding it per number instead let a card wrap to two lines at three decimals
- * and back to one at two.
- */
-function rateDigits(recipe: Recipe, machines: MachineMatch[]): number {
-  const slowest = Math.min(CRAFTING_SPEED, ...machines.map(({ machine }) => machine.speed));
-  const amounts = [
-    ...recipe.ingredients.map((ingredient) => ingredient.amount),
-    ...recipe.products.map((product) => averageAmount(product.amount) * product.probability),
-  ].filter((amount) => amount > 0);
-  const smallest = (Math.min(...amounts) * slowest) / recipe.duration;
-  return smallest < THREE_DP_BELOW ? 3 : 2;
-}
-
-function ingredientFlow(ingredient: Ingredient, crafts: number, rate: Fmt): Flow {
-  return {
-    resource: ingredient.resource,
-    amount: fmt(ingredient.amount),
-    rate: rate(ingredient.amount * crafts),
-    note: ingredient.temperature && temperatureNote(ingredient.temperature),
-  };
-}
-
-function productFlow(product: Product, crafts: number, rate: Fmt): Flow {
-  const expected = averageAmount(product.amount) * product.probability;
-  return {
-    resource: product.resource,
-    amount: amountLabel(product.amount),
-    rate: rate(expected * crafts),
-    note: product.probability === 1 ? undefined : `${fmt(product.probability * 100)}%`,
-  };
-}
-
-function averageAmount(amount: ProductAmount): number {
-  return 'fixed' in amount ? amount.fixed : (amount.min + amount.max) / 2;
-}
-
-function amountLabel(amount: ProductAmount): string {
-  return 'fixed' in amount ? fmt(amount.fixed) : `${fmt(amount.min)}–${fmt(amount.max)}`;
-}
-
-function temperatureNote(temperature: IngredientTemperature): string {
-  if ('fixed' in temperature) return `at ${fmt(temperature.fixed)}°C`;
-  if ('min' in temperature && 'max' in temperature)
-    return `${fmt(temperature.min)}–${fmt(temperature.max)}°C`;
-  if ('min' in temperature) return `≥${fmt(temperature.min)}°C`;
-  return `≤${fmt(temperature.max)}°C`;
 }

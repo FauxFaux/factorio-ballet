@@ -96,6 +96,29 @@ export function withoutEntry(cell: Cell, index: number): Cell {
   return { ...cell, entries: cell.entries.filter((_, i) => i !== index) };
 }
 
+/**
+ * How many of the entry's machine, read off what was typed into the count box. Anything which is
+ * not a number — including the empty box — is "not decided", which is what `CellEntry.count`'s
+ * absence means.
+ */
+export function parseCount(raw: string): number | undefined {
+  const count = Number(raw);
+  return raw && Number.isFinite(count) ? count : undefined;
+}
+
+export function withoutCell(list: Cell[], index: number): Cell[] {
+  return list.filter((_, i) => i !== index);
+}
+
+/**
+ * Which cell is being worked on once `removed` has gone: the same one, which has shifted down the
+ * list if it sat after the hole, and clamped into what is left when the cell being worked on was
+ * itself the last one. `remaining` is the length after the removal.
+ */
+export function activeAfterRemoval(active: number, removed: number, remaining: number): number {
+  return Math.min(active > removed ? active - 1 : active, Math.max(0, remaining - 1));
+}
+
 export function cellInterface(cell: Cell): CellInterface {
   const used = new Set<ResourceId>();
   const made = new Set<ResourceId>();
