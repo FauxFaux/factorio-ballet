@@ -287,6 +287,23 @@ describe('moduleLayout', () => {
     expect(run.effects).toEqual({ speed: 1, productivity: 2 });
   });
 
+  it('says what could reach the machine at all, which is what a row draws a box for', () => {
+    // a pump has no slots, so nothing reaches it — not a module, and not a beacon either
+    const pump = staticData.recipes['synthetic:pumping-water'];
+    expect(
+      entryRun({ recipe: 'synthetic:pumping-water' }, pump, 'offshore-pump', both).layout,
+    ).toMatchObject({ reaches: { speed: false, productivity: false } });
+    // an ordinary recipe reaches for speed and not productivity, and gears for both
+    expect(
+      entryRun({ ...row, recipe: 'electronic-circuit' }, circuits, row.machine, both).layout
+        .reaches,
+    ).toEqual({ speed: true, productivity: false });
+    expect(entryRun(row, gears, row.machine, both).layout.reaches).toEqual({
+      speed: true,
+      productivity: true,
+    });
+  });
+
   it('is nothing at all where the header has picked no module of that family', () => {
     const speedOnly = entryRun(row, gears, row.machine, { speed: SPEED_3 });
     // no productivity module to fill the slots with, so the speed request has them instead

@@ -294,6 +294,15 @@ export interface Layout {
    * takes the agricultural modules where an assembler takes the productivity ones. See `moduleFor`.
    */
   families: Record<BoostEffect, string>;
+  /**
+   * Whether asking for modules of each effect could do anything here at all — which is not the same
+   * as their coming to nothing today. A number the user cannot spend is a box the row does not draw
+   * (see `ModuleBoxes`), so this is the difference between "no modules yet" and "not here, ever":
+   * an offshore pump has no slots, so neither a module nor a beacon reaches it; a machine whose
+   * `allowedEffects` leaves an effect out would ignore one that did; and productivity needs the
+   * recipe's permission on top of both.
+   */
+  reaches: Record<BoostEffect, boolean>;
 }
 
 /** A machine with nothing in it, and nowhere to put anything. */
@@ -302,6 +311,7 @@ export const NO_LAYOUT: Layout = {
   speed: NO_BOOST,
   slots: 0,
   families: BOOST_CATEGORY,
+  reaches: { productivity: false, speed: false },
 };
 
 /**
@@ -312,8 +322,8 @@ export const NO_LAYOUT: Layout = {
  *
  * The two autos differ because the two questions do. Productivity's is "as many as will fit", which
  * is the standard build and the only thing a slot can be worth on a recipe which pays for it —
- * unless the recipe or the machine would ignore them, where it is none at all rather than a speed
- * malus bought for nothing. Speed's is whatever slots are still empty afterwards and no beacons,
+ * unless it does not {@link Layout.reaches} the machine at all, where it is none rather than a
+ * speed malus bought for nothing. Speed's is whatever slots are still empty afterwards and no beacons,
  * which is the machine you would put together without thinking about it.
  *
  * A number the user typed is honoured either way, and typing one into the speed box does not take a
@@ -333,7 +343,15 @@ export function moduleLayout(
   beacon: Beacon | undefined,
 ): Layout {
   const slots = Math.max(0, free);
-  const auto = recipe.allowProductivity && allowsEffect(machine, 'productivity') ? slots : 0;
+  /* What could ever reach this machine. Not "what is in it": the row asks for modules it does not
+     have yet all the time, and the slots are the point of asking. A machine with none at all is out
+     of reach of beacons too, which is the game's rule and the reason a pump takes nothing. */
+  const reaches = {
+    speed: !!machine.moduleSlots && allowsEffect(machine, 'speed'),
+    productivity:
+      !!machine.moduleSlots && allowsEffect(machine, 'productivity') && !!recipe.allowProductivity,
+  };
+  const auto = reaches.productivity ? slots : 0;
   const productivity = moduleBoost(
     machine,
     slots,
@@ -352,6 +370,7 @@ export function moduleLayout(
     productivity,
     speed,
     slots,
+    reaches,
     /* What each box is drawing, chosen or not: the module itself where there is one, and otherwise
        the family this machine would have used, so an empty box still says which. */
     families: {

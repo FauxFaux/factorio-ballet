@@ -296,8 +296,11 @@ many productivity modules and how many speed modules this row is to feel, blank 
 with the whole layout — where each module went, how many beacons the speed took, and what the
 machine ends up running at — in the tooltips. There is deliberately no beacon count on the row
 itself: a cell is a column of rows, and the beacons are an answer rather than a thing to decide. The
-productivity box is capped at the machine's slots and is drawn dim and disabled on a recipe which
-takes no productivity, so the rows still read as two columns whatever is in them; each box's icon
+productivity box is capped at the machine's slots. A box whose modules could not reach the machine
+goes invisible rather than away — `Layout.reaches`, which is the machine having slots at all, its
+`allowedEffects`, and for productivity the recipe's permission too, so a pump draws neither box and
+an ordinary recipe draws only the speed one. Invisible and not absent because the rows of a cell
+read as columns, and a box which came and went would shuffle every other one along; each box's icon
 and its tooltip name the family that box is actually spending, which is how a farm row says
 "agricultural" where an assembler says "productivity".
 

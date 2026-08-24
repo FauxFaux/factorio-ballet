@@ -50,9 +50,18 @@
   font-style: italic;
 }
 
+/* A column of its own, right up against the machine picker: one glyph wide, kept empty rather than
+   dropped on the rows with nothing to say, so nothing to its right moves. */
 .cell-warn {
-  cursor: help;
+  display: inline-flex;
+  justify-content: flex-end;
+  width: 1em;
+  flex-shrink: 0;
   line-height: 1;
+}
+
+.cell-warn.is-problem {
+  cursor: help;
 }
 
 .cell-count {
@@ -93,10 +102,13 @@
   cursor: help;
 }
 
-/* a recipe which takes no productivity: the box stays, so the rows still read as two columns, and
-   says by being dim that there is nothing here to ask for */
-.cell-module.is-off {
-  opacity: 0.45;
+/* Modules which could not reach this machine are nothing to ask for, so the box shows nothing — and
+   keeps its place all the same, because the rows of a cell read as columns and a box which came and
+   went would shuffle every other one along as the eye went down them. A machine which takes no
+   modules at all hides the pair of them, border included. */
+.cell-module.is-hidden,
+.cell-modules.is-hidden {
+  visibility: hidden;
 }
 
 /* the same 32px box the module pickers use, so a row's icons line up with the header's */

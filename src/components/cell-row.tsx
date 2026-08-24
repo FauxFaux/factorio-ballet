@@ -58,6 +58,8 @@ export function CellRow({
   onRemove: () => void;
 }) {
   const recipe = entryRecipe(entry);
+  /** The solver's complaint about this row, if it has one worth a mark on it. */
+  const problem = note !== undefined && isProblem(note) ? note : undefined;
   const rowClass = [
     'cell-recipe',
     dragging && 'is-dragging',
@@ -99,6 +101,17 @@ export function CellRow({
         {recipe?.human ?? entry.recipe}
         {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
       </span>
+      {/* The ⚠ sits just left of the machine and keeps its place whether or not there is anything
+          to say: a cell is a column of rows read as a table, and a mark which took up space only
+          sometimes would shuffle every machine along as the eye went down them. */}
+      <span
+        class={problem ? 'cell-warn is-problem' : 'cell-warn'}
+        title={problem ? noteText(problem) : undefined}
+        role={problem ? 'img' : undefined}
+        aria-label={problem ? 'Not worked out' : undefined}
+      >
+        {problem ? '⚠' : null}
+      </span>
       {recipe ? (
         <>
           <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
@@ -110,11 +123,6 @@ export function CellRow({
             onChange={onChange}
           />
         </>
-      ) : null}
-      {note && isProblem(note) ? (
-        <span class="cell-warn" title={noteText(note)} role="img" aria-label="Not worked out">
-          ⚠
-        </span>
       ) : null}
       <CountBox entry={entry} count={count} onChange={onChange} />
       <button
@@ -183,9 +191,12 @@ function ModuleBoxes({
   onChange: (entry: CellEntry) => void;
 }) {
   const { effects, layout } = entryRun(entry, recipe, machine, modules);
+  /* A pump takes no modules at all — no slots, so no beacon reaches it either — and neither box is
+     a question worth asking there. The whole control goes with them, border and all. */
+  const nothing = !layout.reaches.productivity && !layout.reaches.speed;
 
   return (
-    <span class="cell-modules">
+    <span class={nothing ? 'cell-modules is-hidden' : 'cell-modules'}>
       <ModuleBox
         family={layout.families.productivity}
         boost={layout.productivity}
@@ -193,18 +204,18 @@ function ModuleBoxes({
         /* The one cap in the row: a productivity module is only ever in a slot, so asking for more
            than there are is asking for something the game has no way to build. */
         max={layout.slots}
-        disabled={!recipe.allowProductivity}
-        title={
-          recipe.allowProductivity
-            ? productivityTitle(layout, effects)
-            : 'This recipe takes no productivity, so a productivity module in it would be nothing but its own speed malus.'
-        }
+        /* Nothing to ask for where the productivity would go nowhere — a recipe which does not
+           allow it, a machine which ignores it, a machine with no slots — so the box goes invisible
+           rather than away, and the speed boxes down the cell stay in one column. */
+        hidden={!layout.reaches.productivity}
+        title={productivityTitle(layout, effects)}
         onCount={(count) => onChange({ ...entry, productivityModules: count })}
       />
       <ModuleBox
         family={layout.families.speed}
         boost={layout.speed}
         count={entry.speedModules}
+        hidden={!layout.reaches.speed}
         title={speedTitle(layout, effects)}
         onCount={(count) => onChange({ ...entry, speedModules: count })}
       />
@@ -222,7 +233,7 @@ function ModuleBox({
   boost,
   count,
   max,
-  disabled,
+  hidden,
   title,
   onCount,
 }: {
@@ -230,7 +241,8 @@ function ModuleBox({
   boost: Boost;
   count: number | undefined;
   max?: number;
-  disabled?: boolean;
+  /** Keep the space, show nothing: there is nothing here to ask for. */
+  hidden?: boolean;
   title: string;
   onCount: (count: number | undefined) => void;
 }) {
@@ -240,7 +252,10 @@ function ModuleBox({
   const auto = count === undefined;
 
   return (
-    <span class={disabled ? 'cell-module is-off' : 'cell-module'} title={title}>
+    <span
+      class={hidden ? 'cell-module is-hidden' : 'cell-module'}
+      title={hidden ? undefined : title}
+    >
       {/* No module chosen in the header is the early game's answer and not a missing one, so the
           box says which family it is spending and that the family is off, exactly as the picker up
           there does. */}
@@ -259,7 +274,7 @@ function ModuleBox({
         min={0}
         max={max}
         step={1}
-        disabled={disabled}
+        disabled={hidden}
         value={draft ?? count ?? ''}
         /* What "auto" comes to, in the placeholder for the same reason the solver's count is:
            it is what would happen, not what was asked for. */
