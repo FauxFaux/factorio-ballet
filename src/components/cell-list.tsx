@@ -1,7 +1,7 @@
 import './cell-list.css';
 import { activeAfterRemoval, newCell, withoutCell, type Cell } from '../cell.ts';
 import { atIndex, type State } from '../ts.ts';
-import type { ChosenModules } from '../data.ts';
+import type { Chosen } from '../data.ts';
 import { CellBox } from './cell/box.tsx';
 
 /**
@@ -12,15 +12,15 @@ export function CellList({
   cells,
   active,
   progress,
-  modules,
+  chosen,
   setSearch,
 }: {
   cells: State<Cell[]>;
   active: State<number>;
   /** Where the player is through the game, which decides the machine a recipe defaults to. */
   progress: number;
-  /** Which module the header means by each family a row can spend; see `ChosenModules`. */
-  modules: ChosenModules;
+  /** What the header says a row has to spend: modules and a beacon; see `Chosen`. */
+  chosen: Chosen;
   setSearch: (search: string) => void;
 }) {
   const [list, setList] = cells;
@@ -58,7 +58,7 @@ export function CellList({
           cell={atIndex(cells, i)}
           active={i === current}
           progress={progress}
-          modules={modules}
+          chosen={chosen}
           onActivate={() => setCurrent(i)}
           onRemove={() => remove(i)}
           /* Searching from a cell means working on it: the `@in`/`@out` queries read the cell being

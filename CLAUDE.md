@@ -223,9 +223,7 @@ nothing), while speed's is whatever slots that left and no beacons. `laidOutEffe
 `moduleEffects` with a `Layout` on top, so both go through the same gates and cannot disagree about
 what the machine applies; both of a module's numbers ride along wherever it sits, which is what
 makes a productivity module a speed malus as well as a yield, and `applyBoost` is the one place
-either is gated. Which beacon gets built is not a choice yet (`rowBeacon` in `src/data.ts`, the
-vanilla two-slot one): a bigger beacon is fewer beacons for the same modules and so a _better_
-answer, which is not something to have jump about as the progress slider moves.
+either is gated. Which beacon gets built is the header's, not the row's — see `BeaconPicker` below.
 
 Which _tier_ is meant by "a speed module" — or a productivity one — is a fact about the save rather
 than about any one machine, so it is one setting in the header rather than a repeated choice:
@@ -235,8 +233,27 @@ which the UI calls "agricultural" because a `module-category` prototype has no n
 slider it defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category with
 three states which are all different: a module id, `null` for none, and _absent_ for auto, which
 follows the slider through `defaultModule`. `chosenModule` resolves one; `chosenModules` resolves
-the two a row can spend into a `ChosenModules`, which `App` does once and hands down to the cells,
-so a row counts modules and names a family but never a module.
+the two a row can spend into a `ChosenModules`, so a row counts modules and names a family but never
+a module.
+
+**Which beacon** is the same kind of fact about the save, so it is the same kind of control: a
+fourth picker in the same bar (`BeaconPicker`, `components/beacon.tsx`, wearing `module.css`'s
+classes because the only difference between the two is the icons), storing to `UrlState.be` with
+`ModuleChoice`'s three states — an id, `null` for none, absent for auto. `beaconTiers` is the three
+cheapest-first, `defaultBeacon` is `defaultModule`'s rule over them (the best you could have built,
+and none until that is nothing), and `chosenBeacon` resolves the choice. The picker quotes what one
+full beacon is worth in modules — `×3` for the vanilla two-slot one — because every beacon here
+transmits the same 150% and the slot count is the whole difference; `×3` also cannot be misread as a
+count of beacons, which is a number the app has elsewhere. That the answer moves with the slider is
+the point, and it moves upwards: a bigger beacon is fewer beacons for the same modules and so a
+better transmission, so a cell quietly improves rather than jumping about. There is still no beacon
+_count_ on a row — how many reach a machine is a fact about a floor plan the app cannot see, and it
+stays an answer rather than a question.
+
+`Chosen` is the pair of those decisions — `{ modules, beacon }` — resolved once by `resolveChosen`
+in `App` and handed down to the cells, so a row is given modules and a beacon rather than a
+preference to re-resolve. `NO_CHOICE` is the empty one: no modules, no beacons, which is the crash
+site and what every default argument takes.
 
 `defaultModule` is deliberately **not** `defaultMachine`'s nearest-`progress` rule — it is the best
 tier you could already have built, and none until that is nothing. The difference is that none
@@ -346,8 +363,8 @@ recipes were added in), `conflict` (one row pulled two ways: scaled to the large
 named), and `stranded` (nothing connects the row to the rest).
 
 A row is solved at the machine it is in, with what is in that machine's slots and whatever beacons
-its speed count came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is
-`ChosenModules`, what the header means by a module of each family, resolved once by `chosenModules`
+its speed count came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is `Chosen`,
+what the header means by a module of each family and by a beacon, resolved once by `resolveChosen`
 in `App` — and hands `netRates` the two multipliers, so an unpinned row's modules move with the
 progress slider exactly as its machine does. Productivity changes what a row is worth without
 changing what it eats, which is a real answer and not a scaling: the same three assemblers of gears

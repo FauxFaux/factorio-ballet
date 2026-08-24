@@ -2,10 +2,10 @@ import {
   complexityOf,
   defaultMachine,
   machinesFor,
+  NO_CHOICE,
   resourceName,
-  rowBeacon,
   staticData,
-  type ChosenModules,
+  type Chosen,
 } from './data.ts';
 import {
   laidOutEffects,
@@ -64,7 +64,7 @@ export interface CellEntry {
    * as many as fit on a recipe which pays for them, and none at all on one which does not.
    *
    * A count and not a loadout, because which tier is meant is one decision in the header rather
-   * than a repeated one (`ChosenModules`); the row says how many, never which.
+   * than a repeated one (`Chosen`); the row says how many, never which.
    */
   productivityModules?: number;
 
@@ -130,9 +130,9 @@ export function entryEffects(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  modules: ChosenModules = {},
+  chosen: Chosen = NO_CHOICE,
 ): Effects {
-  return entryRun(entry, recipe, machine, modules).effects;
+  return entryRun(entry, recipe, machine, chosen).effects;
 }
 
 /** What a row is running at, and where its modules went; see {@link entryRun}. */
@@ -147,18 +147,26 @@ export interface EntryRun {
  * the two families share the machine — how many slots the productivity modules take decides how
  * many are left for speed, and so how many beacons the speed took.
  *
- * `modules` is what the header means by a module of each family; the row states how many of each,
- * never which, so a save that upgrades to speed module 3 upgrades every row at once.
+ * `chosen` is what the header means by a module of each family and by a beacon; the row states how
+ * many modules of each, never which, so a save that upgrades to speed module 3 — or to a six-slot
+ * beacon — upgrades every row at once.
  */
 export function entryRun(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  modules: ChosenModules = {},
+  chosen: Chosen = NO_CHOICE,
 ): EntryRun {
   const found = machine === undefined ? undefined : staticData.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
-  return laidOutEffects(found, entry.modules, recipe, modules, entryWants(entry), rowBeacon);
+  return laidOutEffects(
+    found,
+    entry.modules,
+    recipe,
+    chosen.modules,
+    entryWants(entry),
+    chosen.beacon,
+  );
 }
 
 /** What the row is asking for, as {@link moduleLayout} takes it. */

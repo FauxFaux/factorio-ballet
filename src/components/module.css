@@ -1,4 +1,6 @@
-/* The families of modules, across the header: one picker each, reading as one control. */
+/* The families of modules, across the header: one picker each, reading as one control — and the
+   beacon picker at the end of them, which wears these same classes (see `beacon.tsx`), because the
+   only difference between the two is what the icons are. */
 .module-bar {
   display: flex;
   align-items: center;

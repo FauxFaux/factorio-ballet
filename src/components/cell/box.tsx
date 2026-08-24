@@ -8,7 +8,7 @@ import {
   withoutEntry,
   type Cell,
 } from '../../cell.ts';
-import type { ChosenModules } from '../../data.ts';
+import type { Chosen } from '../../data.ts';
 import { noteFor, solveCell } from '../../solve.ts';
 import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';
@@ -29,7 +29,7 @@ export function CellBox({
   cell: [cell, setCell],
   active,
   progress,
-  modules,
+  chosen,
   onActivate,
   onRemove,
   onSearch,
@@ -37,14 +37,14 @@ export function CellBox({
   cell: State<Cell>;
   active: boolean;
   progress: number;
-  /** Which module the header means by each family a row can spend; see `ChosenModules`. */
-  modules: ChosenModules;
+  /** What the header says a row has to spend: modules and a beacon; see `Chosen`. */
+  chosen: Chosen;
   onActivate: () => void;
   onRemove: () => void;
   onSearch: (search: string) => void;
 }) {
   const iface = useMemo(() => cellInterface(cell), [cell]);
-  const solution = useMemo(() => solveCell(cell, progress, modules), [cell, progress, modules]);
+  const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const rowDrag = useRowDrag((from, to) => setCell((prev) => moveEntry(prev, from, to)));
 
   return (
@@ -85,7 +85,7 @@ export function CellBox({
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
                 progress={progress}
-                modules={modules}
+                chosen={chosen}
                 drag={rowDrag(i)}
                 onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                 onRemove={() => setCell((prev) => withoutEntry(prev, i))}

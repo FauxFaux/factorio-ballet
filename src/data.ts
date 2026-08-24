@@ -1,5 +1,6 @@
 import type {
   Beacon,
+  BeaconId,
   Effect,
   Machine,
   MachineId,
@@ -343,17 +344,75 @@ export function defaultModule(modules: ModuleMatch[], progress: number): ModuleM
 }
 
 /**
- * The beacon a cell row builds when its speed modules overflow the machine: the vanilla two-slot
- * one, because it is the one every pack has and the one a factory is actually tiled with.
+ * The beacons this pack has, cheapest first: one tier of the same idea, as the module families are.
  *
- * Not a choice yet, and deliberately not one that follows the progress slider: a bigger beacon is
- * fewer beacons for the same modules and so a *better* transmission strength, which would make the
- * answer jump about as the slider moved past `bob-beacon-2`. When the row grows a beacon picker
- * this is where its default belongs; until then it is the conservative reading — the most beacons
- * a request needs, and so the worst discount.
+ * A beacon is placed by an item of the same name, so — exactly as for a {@link Module} — the icon
+ * and the complexity are on the `item:<id>` resource and only the slots and the transmission are
+ * the beacon's own.
  */
-export const rowBeacon: Beacon | undefined =
-  staticData.beacons['beacon'] ?? Object.values(staticData.beacons ?? {})[0];
+export interface BeaconMatch {
+  id: BeaconId;
+  beacon: Beacon;
+  /** The complexity of the item which places it, which is the beacon's; as {@link ModuleMatch}. */
+  complexity?: number;
+}
+
+/** Cheapest first, then the smaller beacon, then by id — as {@link cheapestModule}. */
+export const beaconTiers: BeaconMatch[] = Object.entries(staticData.beacons ?? {})
+  .map(([id, beacon]) => ({
+    id,
+    beacon,
+    complexity: staticData.resources[`item:${beacon.item ?? id}`]?.complexity,
+  }))
+  .sort(
+    (a, b) =>
+      complexityOf(a) - complexityOf(b) ||
+      a.beacon.moduleSlots - b.beacon.moduleSlots ||
+      a.id.localeCompare(b.id),
+  );
+
+/** What a beacon is called; its own name, unlike a module's, which is its item's. */
+export function beaconName(id: BeaconId): string {
+  return staticData.beacons[id]?.human ?? id;
+}
+
+/**
+ * How many modules' worth one full beacon of this kind transmits, before the count penalty: the
+ * number the choice between two tiers actually turns on, since every beacon here transmits the same
+ * 150% and only the slot count differs. Six slots at 1.5 is nine modules from one beacon.
+ */
+export function beaconWorth(beacon: Beacon): number {
+  return beacon.moduleSlots * beacon.distributionEffectivity;
+}
+
+/**
+ * Which beacon to assume when nobody has chosen one: {@link defaultModule}'s rule, and for
+ * {@link defaultModule}'s reason — the best you could already have built, and none at all until
+ * that is nothing. A beacon is a thing you build, so "none" is the honest answer for as long as
+ * the technology is out of reach, and a row's speed modules then have nowhere to go but the
+ * machine's own slots.
+ *
+ * That the answer moves with the slider is the point and not a wart, though it moves *upwards*: a
+ * bigger beacon is fewer beacons for the same modules and so a better transmission, so a cell gets
+ * quietly better as the game goes on rather than jumping about. Pin one in the header to stop it.
+ */
+export function defaultBeacon(progress: number): BeaconMatch | undefined {
+  return beaconTiers.findLast((match) => complexityOf(match) <= progress);
+}
+
+/**
+ * Which beacon the user wants built where a row's speed modules overflow the machine. Three states,
+ * as {@link ModuleChoice}'s are: an id, `null` for none — no beacons, however far through the game
+ * you are — and absent for nobody having decided, which follows the progress slider through
+ * {@link defaultBeacon}.
+ */
+export type BeaconChoice = BeaconId | null | undefined;
+
+/** Which beacon a row builds right now: the one pinned, or {@link defaultBeacon}'s. */
+export function chosenBeacon(choice: BeaconChoice, progress: number): Beacon | undefined {
+  if (choice !== undefined) return choice === null ? undefined : staticData.beacons[choice];
+  return defaultBeacon(progress)?.beacon;
+}
 
 /** The two module families a cell row asks for; see `moduleLayout` in `src/flow.ts`. */
 export const SPEED_CATEGORY = 'speed';
@@ -397,6 +456,33 @@ export function chosenModules(choice: ModuleChoice, progress: number): ChosenMod
   return Object.fromEntries(
     moduleCategories.map(({ id }) => [id, chosenModule(choice, id, progress)]),
   );
+}
+
+/**
+ * What the header says a row has to spend: which module each family means, and which beacon gets
+ * built where a row's speed modules overflow the machine.
+ *
+ * One object because it is one decision — what you have built by now — and every row spends all of
+ * it. A row states how many modules it wants for an effect and never which module, which family or
+ * which beacon, so this is where all three of those are answered, once for the app rather than once
+ * per row. {@link NO_CHOICE} is the empty answer: no modules, no beacons, which is the crash site.
+ */
+export interface Chosen {
+  modules: ChosenModules;
+  /** Absent is none, and the early game's honest answer: you have not built a beacon yet. */
+  beacon?: Beacon;
+}
+
+/** Nothing chosen at all: an unmodded machine with no beacons round it. */
+export const NO_CHOICE: Chosen = { modules: {} };
+
+/** Both halves of {@link Chosen} resolved against the header's choices and the progress slider. */
+export function resolveChosen(
+  choice: ModuleChoice,
+  beacon: BeaconChoice,
+  progress: number,
+): Chosen {
+  return { modules: chosenModules(choice, progress), beacon: chosenBeacon(beacon, progress) };
 }
 
 /** The families picked for one effect, in the order {@link moduleCategories} has them. */

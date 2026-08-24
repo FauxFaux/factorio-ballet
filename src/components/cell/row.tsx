@@ -1,7 +1,7 @@
 import './row.css';
 import { useState } from 'preact/hooks';
 import { entryMachine, entryRecipe, parseCount, type CellEntry } from '../../cell.ts';
-import { machinesFor, type ChosenModules } from '../../data.ts';
+import { machinesFor, type Chosen } from '../../data.ts';
 import { isProblem, noteText, type SolveNote } from '../../solve.ts';
 import { fmt } from '../../ts.ts';
 import type { Recipe } from '../../types.ts';
@@ -21,7 +21,7 @@ export function CellRow({
   count,
   note,
   progress,
-  modules,
+  chosen,
   drag,
   onChange,
   onRemove,
@@ -31,8 +31,8 @@ export function CellRow({
   count: number | undefined;
   note: SolveNote | undefined;
   progress: number;
-  /** Which module the header means by each family this row can spend; see `ChosenModules`. */
-  modules: ChosenModules;
+  /** What the header says this row has to spend: modules and a beacon; see `Chosen`. */
+  chosen: Chosen;
   /** This row's part in reordering the cell; see `useRowDrag`. */
   drag: RowDrag;
   onChange: (entry: CellEntry) => void;
@@ -91,7 +91,7 @@ export function CellRow({
             entry={entry}
             recipe={recipe}
             machine={entryMachine(entry, recipe, progress)}
-            modules={modules}
+            chosen={chosen}
             onChange={onChange}
           />
         </>

@@ -1,5 +1,5 @@
 import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from './cell.ts';
-import { machinesFor, recipeName, resourceName, type ChosenModules } from './data.ts';
+import { machinesFor, NO_CHOICE, recipeName, resourceName, type Chosen } from './data.ts';
 import { netRates, speedOf } from './flow.ts';
 import { fmt } from './ts.ts';
 import type { ResourceId } from './types.ts';
@@ -92,28 +92,29 @@ export const defaultSolver = dumbSolver;
  * beacons around them, handed to a solver. The machine is `entryMachine`'s, so an unpinned one
  * moves with the progress slider — and so, therefore, do the modules' effects and the whole answer.
  *
- * `modules` is what the header means by a module of each family — `chosenModules` in `src/data.ts`
- * resolves both — against which a row's two counts are spent, `moduleLayout` deciding which slots
- * each family gets and how many beacons the speed took. A family the header has left at none leaves
- * the rows unmodded on that side, however many modules they ask for.
+ * `chosen` is what the header means by a module of each family and by a beacon — `resolveChosen` in
+ * `src/data.ts` resolves the lot — against which a row's two counts are spent, `moduleLayout`
+ * deciding which slots each family gets and how many beacons the speed took. A family the header
+ * has left at none leaves the rows unmodded on that side, however many modules they ask for, and no
+ * beacon leaves the speed nowhere to go past the machine's own slots.
  */
 export function solveCell(
   cell: Cell,
   progress: number,
-  modules: ChosenModules = {},
+  chosen: Chosen = NO_CHOICE,
   solver: Solver = defaultSolver,
 ): Solution {
-  return solver.solve(cell.entries.map((entry) => rowOf(entry, progress, modules)));
+  return solver.solve(cell.entries.map((entry) => rowOf(entry, progress, chosen)));
 }
 
-function rowOf(entry: CellEntry, progress: number, modules: ChosenModules): SolveRow {
+function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {
   const recipe = entryRecipe(entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
   const speed = speedOf(machinesFor(recipe), machine);
   return {
-    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine, modules)),
+    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine, chosen)),
     count: entry.count,
   };
 }

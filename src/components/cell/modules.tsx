@@ -1,12 +1,12 @@
 import './modules.css';
 import { useState } from 'preact/hooks';
 import { entryRun, parseModules, type CellEntry } from '../../cell.ts';
-import { categoryName, modulesIn, type ChosenModules } from '../../data.ts';
+import { categoryName, modulesIn, type Chosen } from '../../data.ts';
 import type { Boost, Effects, Layout } from '../../flow.ts';
 import { fmt } from '../../ts.ts';
 import type { MachineId, Recipe } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
-import { UnlitIcon } from '../module.tsx';
+import { UnlitIcon } from '../unlit-module-icon.tsx';
 
 /**
  * What is in this row's machines: how many productivity modules, and how many speed modules. Two
@@ -26,16 +26,17 @@ export function ModuleBoxes({
   entry,
   recipe,
   machine,
-  modules,
+  chosen,
   onChange,
 }: {
   entry: CellEntry;
   recipe: Recipe;
   machine: MachineId | undefined;
-  modules: ChosenModules;
+  /** What the header says this row has to spend: modules and a beacon; see `Chosen`. */
+  chosen: Chosen;
   onChange: (entry: CellEntry) => void;
 }) {
-  const { effects, layout } = entryRun(entry, recipe, machine, modules);
+  const { effects, layout } = entryRun(entry, recipe, machine, chosen);
   /* A pump takes no modules at all — no slots, so no beacon reaches it either — and neither box is
      a question worth asking there. The whole control goes with them, border and all. */
   const nothing = !layout.reaches.productivity && !layout.reaches.speed;
@@ -157,15 +158,20 @@ function speedTitle(layout: Layout, effects: Effects): string {
   if (!boost.module) {
     return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
-  const beacons =
-    boost.beacons === 0
-      ? 'no beacons'
-      : `${fmt(boost.inBeacons)} over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
-        ` at ${fmt(boost.transmission * 100)}% each`;
+  /* Where the ones the machine could not hold went, which is exactly one of three things: into
+     beacons, or nowhere at all because there is no beacon to hold them — the header's beacon picker
+     set to none, which is also the whole early game's answer — or nowhere because none were left
+     over. A module with nowhere to go and no reason given reads as a bug rather than a setting. */
   const lost = boost.wanted - boost.inMachine - boost.inBeacons;
-  const nowhere = lost > 0 ? `, ${fmt(lost)} with nowhere to go` : '';
+  const rest =
+    boost.beacons > 0
+      ? `${fmt(boost.inBeacons)} over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
+        ` at ${fmt(boost.transmission * 100)}% each`
+      : lost > 0
+        ? `${fmt(lost)} with nowhere to go — no beacon to put them in, which the header picks`
+        : 'no beacons';
   return (
-    `${fmt(boost.wanted)} ${family} modules: ${fmt(boost.inMachine)} in the machine, ${beacons}${nowhere}` +
+    `${fmt(boost.wanted)} ${family} modules: ${fmt(boost.inMachine)} in the machine, ${rest}` +
     ` — ${outcome(effects)}. Blank fills whatever slots the productivity modules left.`
   );
 }

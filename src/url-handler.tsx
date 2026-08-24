@@ -3,7 +3,7 @@ import { debounce } from './ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from './app.tsx';
 import type { Cell } from './cell.ts';
-import type { ModuleChoice } from './data.ts';
+import type { BeaconChoice, ModuleChoice } from './data.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
 
@@ -24,10 +24,15 @@ export interface UrlState {
   ci: number;
   /**
    * which module tier is meant by "a speed module", per module category; see `ModuleChoice`. A
-   * category nobody has picked is absent, and follows `gp` instead. Nothing consumes this yet — the
-   * cell rows will.
+   * category nobody has picked is absent, and follows `gp` instead.
    */
   mo: ModuleChoice;
+  /**
+   * which beacon a row builds where its speed modules overflow the machine; see `BeaconChoice`.
+   * Absent — which it is until someone picks one — follows `gp` through `defaultBeacon`, and
+   * `null` is "none, whatever the progress".
+   */
+  be?: BeaconChoice;
 }
 
 const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
@@ -45,7 +50,7 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `n${fingerprint}`;
+const HASH_VERSION = `o${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -204,6 +209,7 @@ const referenceState: PackedState = {
     productivity: 'productivity-module',
     'angels-bio-yield': 'angels-bio-yield-module-5',
   },
+  be: 'bob-beacon-2',
 };
 
 const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));
