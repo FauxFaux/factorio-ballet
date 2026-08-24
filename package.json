@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@primer/octicons-react": "^19.33.0",
     "fflate": "^0.8",
     "preact": "^10",
     "serialize-error": "^13",

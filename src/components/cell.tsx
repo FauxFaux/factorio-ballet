@@ -12,7 +12,7 @@ import { resourceName, type ChosenModules } from '../data.ts';
 import { isProblem, noteFor, noteLine, solveCell, type Solution } from '../solve.ts';
 import { fmt, type State } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
-import { CellRow } from './cell-row.tsx';
+import { CellRow, WarnIcon } from './cell-row.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
 /**
@@ -273,6 +273,7 @@ function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution }) {
           key={`${note.entry}:${note.kind}`}
           class={isProblem(note) ? 'cell-note is-problem' : 'cell-note'}
         >
+          {isProblem(note) ? <WarnIcon /> : null}
           {noteLine(cell, note)}
         </li>
       ))}

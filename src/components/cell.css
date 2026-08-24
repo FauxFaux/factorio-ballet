@@ -175,8 +175,8 @@
   margin: 2px 0;
 }
 
-.cell-note.is-problem::before {
-  content: "⚠ ";
+.cell-note .warn-icon {
+  margin-right: 4px;
 }
 
 @media (max-width: 800px) {

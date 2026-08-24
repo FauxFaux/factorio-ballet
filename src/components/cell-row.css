@@ -64,6 +64,12 @@
   cursor: help;
 }
 
+/* Sized to the surrounding text wherever a `WarnIcon` is used, cell-warn or cell-note alike. */
+.warn-icon {
+  width: 1em;
+  height: 1em;
+}
+
 .cell-count {
   width: 4.5rem;
   font: inherit;

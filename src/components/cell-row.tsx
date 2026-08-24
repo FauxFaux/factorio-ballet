@@ -1,4 +1,5 @@
 import './cell-row.css';
+import { AlertFillIcon } from '@primer/octicons-react';
 import { useState } from 'preact/hooks';
 import {
   entryMachine,
@@ -16,6 +17,15 @@ import type { MachineId, Recipe } from '../types.ts';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachinePicker } from './machine.tsx';
 import { UnlitIcon } from './module.tsx';
+
+/**
+ * The glyph for a solver note, wherever one is shown: a row's own mark, or the sentence it points
+ * at under the cell. `label` is what a screen reader says; omit it where the icon sits beside text
+ * that already says as much, and the icon reads as decorative instead of announcing twice.
+ */
+export function WarnIcon({ label }: { label?: string }) {
+  return <AlertFillIcon size={24} className="warn-icon" aria-label={label} />;
+}
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -101,16 +111,14 @@ export function CellRow({
         {recipe?.human ?? entry.recipe}
         {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
       </span>
-      {/* The ⚠ sits just left of the machine and keeps its place whether or not there is anything
-          to say: a cell is a column of rows read as a table, and a mark which took up space only
-          sometimes would shuffle every machine along as the eye went down them. */}
+      {/* The warning icon sits just left of the machine and keeps its place whether or not there
+          is anything to say: a cell is a column of rows read as a table, and a mark which took up
+          space only sometimes would shuffle every machine along as the eye went down them. */}
       <span
         class={problem ? 'cell-warn is-problem' : 'cell-warn'}
         title={problem ? noteText(problem) : undefined}
-        role={problem ? 'img' : undefined}
-        aria-label={problem ? 'Not worked out' : undefined}
       >
-        {problem ? '⚠' : null}
+        {problem ? <WarnIcon label="Not worked out" /> : null}
       </span>
       {recipe ? (
         <>
