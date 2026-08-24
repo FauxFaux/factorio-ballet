@@ -25,6 +25,10 @@ npx vitest run test/scripts/locale.test.ts   # single test file
 npx vitest run -t 'resolves a recipe-name key'   # by test name
 ```
 
+For a UI change, prefer asking the user to look at the already-running dev server over driving it
+with Playwright: this container has no working browser install, so a screenshot attempt burns time
+and often fails outright, while the user's own browser is faster and is the real target anyway.
+
 ### Committing
 
 Before committing, always run `npm run lint` and `npm run format`. Do not commit if lint fails.
