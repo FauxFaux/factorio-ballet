@@ -1,0 +1,49 @@
+.cell-side-head {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 0 2px;
+  font-size: 14px;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
+/* the same accent the recipe card's `out` row gets: outputs are the interesting end */
+.cell-out .cell-side-head {
+  color: var(--accent);
+}
+
+.cell-none {
+  margin: 0;
+  padding: 2px 6px;
+  font-style: italic;
+}
+
+/* the resource button and its rate: the rate stays put while the button takes the width */
+.cell-flow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cell-rate {
+  font-family: var(--mono);
+  font-size: 15px;
+  color: var(--text-h);
+  white-space: nowrap;
+}
+
+/* the unit repeats down the column; the number is the part worth reading */
+.cell-rate-unit {
+  font-size: 12px;
+  color: var(--text);
+}
+
+/* a rate totalled over only the rows which have a count is a number you cannot act on yet */
+.cell-rate.is-partial {
+  color: var(--text);
+  cursor: help;
+}

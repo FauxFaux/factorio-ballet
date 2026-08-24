@@ -17,10 +17,10 @@ later.
 ## Where this is now
 
 Built: the data structure (`src/cell.ts`), the cells in `UrlState`, the box which draws one
-(`src/components/cell.tsx`), the search vocabulary for refining a cell — `makes:@in` / `uses:@out`
-over the cell's own open edges, which is the "adding recipes that makes: or uses: items from the
-input or output set" step above — and the first solver (`src/solve.ts`), which is the "attempt to
-scale one of the recipes to match the other" step.
+(`src/components/cell/`), the search vocabulary for refining a cell — `makes:@in` / `uses:@out` over
+the cell's own open edges, which is the "adding recipes that makes: or uses: items from the input or
+output set" step above — and the first solver (`src/solve.ts`), which is the "attempt to scale one
+of the recipes to match the other" step.
 
 That solver is deliberately dumb: it propagates demand out from the rows the user pinned, one row at
 a time, and stops when nothing moves. It does not do cycles, it will not choose between two recipes

@@ -1,0 +1,27 @@
+.cell-internal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 6px;
+  margin: 6px 0 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: help;
+}
+
+.cell-internal-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* an internal resource which did not come out level, so it is on its way to being an edge */
+.cell-leftover {
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0;
+  color: var(--accent);
+}

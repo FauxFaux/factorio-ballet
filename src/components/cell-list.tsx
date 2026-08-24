@@ -2,7 +2,7 @@ import './cell-list.css';
 import { activeAfterRemoval, newCell, withoutCell, type Cell } from '../cell.ts';
 import { atIndex, type State } from '../ts.ts';
 import type { ChosenModules } from '../data.ts';
-import { CellBox } from './cell.tsx';
+import { CellBox } from './cell/box.tsx';
 
 /**
  * The cells being planned, and the controls for which one is being worked on. Adding a recipe from

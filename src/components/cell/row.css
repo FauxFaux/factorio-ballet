@@ -1,0 +1,86 @@
+.cell-recipe {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  padding: 4px 0;
+}
+
+.cell-recipe + .cell-recipe {
+  border-top: 1px solid var(--border);
+}
+
+.cell-recipe.is-dragging {
+  opacity: 0.4;
+}
+
+/* Where the dragged row would land: an inset shadow rather than a border, so it draws over the
+   row's own divider without nudging anything's height. */
+.cell-recipe.drop-before {
+  box-shadow: inset 0 3px 0 0 var(--accent);
+}
+
+.cell-recipe.drop-after {
+  box-shadow: inset 0 -3px 0 0 var(--accent);
+}
+
+.cell-drag-handle {
+  flex-shrink: 0;
+  color: var(--text);
+  cursor: grab;
+  line-height: 1;
+  user-select: none;
+}
+
+.cell-drag-handle:active {
+  cursor: grabbing;
+}
+
+.cell-recipe-name {
+  flex: 1 1 8rem;
+  min-width: 0;
+  color: var(--text-h);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-unknown {
+  color: var(--text);
+  font-style: italic;
+}
+
+/* A column of its own, right up against the machine picker: one glyph wide, kept empty rather than
+   dropped on the rows with nothing to say, so nothing to its right moves. The icon itself is sized
+   in notes.css, where `WarnIcon` lives. */
+.cell-warn {
+  display: inline-flex;
+  justify-content: flex-end;
+  width: 1em;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.cell-warn.is-problem {
+  cursor: help;
+}
+
+.cell-count {
+  width: 4.5rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 15px;
+  text-align: right;
+  color: var(--text-h);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+}
+
+/* the solver's own count, in the placeholder rather than the value: not the user's number */
+.cell-count.is-derived::placeholder {
+  color: var(--text);
+  opacity: 1;
+  font-style: italic;
+}

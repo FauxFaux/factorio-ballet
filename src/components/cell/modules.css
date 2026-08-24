@@ -1,0 +1,54 @@
+/* The two module requests, productivity then speed: one control, so it is boxed like one and the
+   inputs inside it carry no border of their own. Where each module went — and the beacons the speed
+   took — is in the tooltips rather than on the row, which has a cell's worth of rows to fit. */
+.cell-modules {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px 4px 1px 1px;
+}
+
+.cell-module {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  cursor: help;
+}
+
+/* Modules which could not reach this machine are nothing to ask for, so the box shows nothing — and
+   keeps its place all the same, because the rows of a cell read as columns and a box which came and
+   went would shuffle every other one along as the eye went down them. A machine which takes no
+   modules at all hides the pair of them, border included. */
+.cell-module.is-hidden,
+.cell-modules.is-hidden {
+  visibility: hidden;
+}
+
+/* the same 32px box the module pickers use, so a row's icons line up with the header's */
+.cell-module-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.cell-module-count {
+  width: 2.5rem;
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 15px;
+  text-align: right;
+  color: var(--text-h);
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+/* what the layout comes to on its own, in the placeholder: the same "not your number, but what
+   would happen" the count box draws that way */
+.cell-module-count.is-derived::placeholder {
+  color: var(--text);
+  opacity: 1;
+  font-style: italic;
+}

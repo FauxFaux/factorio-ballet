@@ -1,0 +1,22 @@
+/* Sized to the surrounding text wherever a `WarnIcon` is used, cell-note or a row's cell-warn
+   alike, so it lives with the component rather than with either of its two homes. */
+.warn-icon {
+  width: 1em;
+  height: 1em;
+}
+
+.cell-notes {
+  list-style: none;
+  margin: 6px 0 0;
+  padding: 6px 0 0;
+  border-top: 1px solid var(--border);
+  font-size: 14px;
+}
+
+.cell-note {
+  margin: 2px 0;
+}
+
+.cell-note .warn-icon {
+  margin-right: 4px;
+}

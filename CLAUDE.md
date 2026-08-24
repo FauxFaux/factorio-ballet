@@ -124,9 +124,9 @@ app; and `modules` packs as pairs rather than an object, because a loadout's ord
 fills the slots and JS enumerates integer-like object keys in numeric order whatever you insert.
 
 Styles are plain CSS, one file per component, imported by the component itself
-(`components/cell.tsx` → `components/cell.css`) — Vite concatenates them into one bundle in import
-order. `index.css` is globals only: the `:root` custom properties, `#app`, `code`. `app.css` is the
-shell — the header and the two-column layout, including the widths of `.resource-list` and
+(`components/cell/row.tsx` → `components/cell/row.css`) — Vite concatenates them into one bundle in
+import order. `index.css` is globals only: the `:root` custom properties, `#app`, `code`. `app.css`
+is the shell — the header and the two-column layout, including the widths of `.resource-list` and
 `.recipe-list`, which belong with the media query that overrides them rather than with the lists.
 There is no scoping, so the class names stay prefixed by component and a couple are shared across
 files (`.recipe-hint`, `.search-btn`); every file is loaded on every page, so that works, but put a
@@ -276,7 +276,7 @@ rather than pass it off as something you could look up in-game. `scripts/complex
 same set — splitting each one per machine, since you only need the cheapest — which is why the two
 agree on ids. Rocket launches and burnt fuel are still complexity-only.
 
-### Cells (`src/cell.ts`, `components/cell.tsx`)
+### Cells (`src/cell.ts`, `components/cell/`)
 
 A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
 to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
@@ -284,6 +284,15 @@ to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shap
 `{ recipe, machine?, count?, modules?, productivityModules?, speedModules? }`. The cells being
 planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes added
 from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.
+
+`components/cell/` is a file per part of that box rather than one file for the lot, because it is
+the busiest piece of UI here: `box.tsx` is the cell itself and the frame the rest sit in, `row.tsx`
+one recipe of it, `modules.tsx` the two module boxes on a row, `side.tsx` an `in`/`out` edge,
+`internal.tsx` the leftovers line, `notes.tsx` the solver's sentences — and `WarnIcon`, which the
+rows mark themselves with, so it lives with the notes it points at — and `drag.ts` the reordering,
+which is the list's business and not any row's: `useRowDrag` holds which row is in the air, hands
+each row the `RowDrag` it needs to take part, and calls back with the two indices once, on a drop
+which actually moves something. Each has its own CSS beside it, on the same rule as everywhere else.
 
 `cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
 an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
