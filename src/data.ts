@@ -244,8 +244,14 @@ export interface ModuleCategory {
   id: string;
   human: string;
   /** The effect the category is *for*, and so the one a picker quotes; see {@link headlineEffect}. */
-  effect: 'speed' | 'productivity';
+  effect: BoostEffect;
 }
+
+/**
+ * The two effects this app models, which are the two things a family of modules is reached for and
+ * the two a cell row can spend its module count on; see `CellEntry.boost`.
+ */
+export type BoostEffect = 'speed' | 'productivity';
 
 /**
  * The three families this pack has, in the order a picker should show them. Productivity modules
@@ -298,6 +304,15 @@ export function modulesIn(category: string): ModuleMatch[] {
   return byModuleCategory.get(category) ?? [];
 }
 
+/**
+ * What a family of modules is picked *for*, by its category id. An unknown category cannot happen
+ * for a module in the data — {@link moduleCategories} is built from the categories there are — so
+ * the fallback is only the type's business.
+ */
+export function categoryEffect(category: string): BoostEffect {
+  return moduleCategories.find(({ id }) => id === category)?.effect ?? 'speed';
+}
+
 /** What a module does, by the effect its category is picked for: the number a picker shows. */
 export function headlineEffect(category: ModuleCategory, module: Module): number {
   return module[category.effect] ?? 0;
@@ -331,8 +346,19 @@ export function defaultModule(modules: ModuleMatch[], progress: number): ModuleM
 export const rowBeacon: Beacon | undefined =
   staticData.beacons['beacon'] ?? Object.values(staticData.beacons ?? {})[0];
 
-/** The module family a cell row's speed count spends; see `CellEntry.speedModules`. */
+/** The two module families a cell row's count can spend; see `CellEntry.boost`. */
 export const SPEED_CATEGORY = 'speed';
+export const PRODUCTIVITY_CATEGORY = 'productivity';
+
+/**
+ * Which family a row spends for each effect. The dataset's own `angels-bio-yield` is productivity
+ * too, but it is a family for one kind of machine rather than an alternative to the productivity
+ * modules, so it is the header's picker and not a row's choice.
+ */
+export const BOOST_CATEGORY: Record<BoostEffect, string> = {
+  speed: SPEED_CATEGORY,
+  productivity: PRODUCTIVITY_CATEGORY,
+};
 
 /**
  * Which module a family means right now: the one the header pinned, or — where it pinned nothing —
@@ -347,6 +373,22 @@ export function chosenModule(
   const picked = choice[category];
   if (picked !== undefined) return picked ?? undefined;
   return defaultModule(modulesIn(category), progress)?.id;
+}
+
+/** Which module the header means by each family a row can spend, resolved by {@link chosenModules}. */
+export type ChosenModules = { [E in BoostEffect]?: ModuleId };
+
+/**
+ * Both families a cell row can reach for, resolved once against the header's choices: a row states
+ * how many modules and which effect it wants them for, never which module, so this is where "a
+ * speed module" and "a productivity module" become tiers. Resolved for the app rather than per row,
+ * because it is one decision and every row spends it.
+ */
+export function chosenModules(choice: ModuleChoice, progress: number): ChosenModules {
+  return {
+    speed: chosenModule(choice, SPEED_CATEGORY, progress),
+    productivity: chosenModule(choice, PRODUCTIVITY_CATEGORY, progress),
+  };
 }
 
 /**

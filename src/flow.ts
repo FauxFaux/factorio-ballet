@@ -1,5 +1,5 @@
 import type { MachineMatch } from './data.ts';
-import { allowsEffect, resourceName, staticData } from './data.ts';
+import { allowsEffect, categoryEffect, resourceName, staticData } from './data.ts';
 import { fmt } from './ts.ts';
 import type {
   Beacon,
@@ -97,10 +97,10 @@ export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
  *
  * Modules we did not ingest — efficiency, pollution — are not in `staticData.modules` and count for
  * nothing, which is right for both numbers here. Beacons are {@link boostedEffects}, which is this
- * with a {@link Boost} added to the speed side.
+ * with a {@link Boost} added to whichever side the modules in it are for.
  */
 export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
-  return withBoost(machine, recipe, slotEffects(machine, fill), 0);
+  return applyBoost(machine, recipe, slotEffects(machine, fill), NO_BOOST);
 }
 
 /** What one loadout adds up to in the machine's own slots, before either of the machine's gates. */
@@ -125,20 +125,21 @@ function slotEffects(machine: Machine, fill: ModuleFill): Slots {
 interface Slots {
   speed: number;
   productivity: number;
-  /** Slots left for {@link speedBoost} to put its speed modules in. */
+  /** Slots left for {@link moduleBoost} to put the row's modules in. */
   free: number;
 }
 
 /**
- * The machine's own gates, applied to what is in it plus whatever the beacons around it add.
+ * The machine's own gates, applied to what is in it plus whatever the row's {@link Boost} adds.
  * Everything both {@link moduleEffects} and {@link boostedEffects} return comes through here, so
- * the two cannot disagree about which effects a machine bothers with — including the beacons',
- * which a machine ignoring the speed effect ignores exactly as it ignores a speed module in its
- * own slots.
+ * the two cannot disagree about which effects a machine bothers with — including the boost's,
+ * which a machine ignoring an effect ignores exactly as it ignores a module carrying it in its own
+ * slots. Both of the boost's numbers land, because a module is both of them wherever it sits: a
+ * productivity module in a spare slot is a speed malus as well as a yield.
  */
-function withBoost(machine: Machine, recipe: Recipe, slots: Slots, beaconSpeed: number): Effects {
-  let speed = slots.speed + beaconSpeed;
-  let productivity = slots.productivity;
+function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, boost: Boost): Effects {
+  let speed = slots.speed + boost.speed;
+  let productivity = slots.productivity + boost.productivity;
 
   if (!allowsEffect(machine, 'speed')) speed = 0;
   if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
@@ -152,10 +153,15 @@ function takesCategory(holder: Machine | Beacon, category: string): boolean {
 }
 
 /**
- * A row's request for speed modules, laid out over the machine and the beacons it took to hold the
- * rest. The user states one number — how many speed modules they want this machine feeling — and
+ * A row's request for modules of one family, laid out over the machine and the beacons it took to
+ * hold the rest. The user states one number — how many of them they want this machine feeling — and
  * this is where that becomes a factory: the machine's own slots first, because they are free, and
  * then beacons, which are not.
+ *
+ * Which family that is is the row's own choice ({@link CellEntry.boost}), and the beacons are where
+ * the two part company: a beacon transmits speed and refuses productivity outright, so a request
+ * for more productivity modules than the machine holds is modules with nowhere to go rather than a
+ * row of beacons.
  *
  * The beacon arithmetic is `docs/beacons.wiki`'s: each of `n` beacons transmits
  * `distributionEffectivity / sqrt(n)` of what is in it, so `n` full beacons come to `1.5 × sqrt(n)`
@@ -183,6 +189,8 @@ export interface Boost {
   transmission: number;
   /** The speed fraction the lot of it adds: 1.2 is "+120%", before the machine's own gates. */
   speed: number;
+  /** The productivity fraction it adds, on the same terms; a speed module's is zero. */
+  productivity: number;
 }
 
 /** Nothing asked for and nothing to show for it. */
@@ -193,21 +201,23 @@ export const NO_BOOST: Boost = {
   beacons: 0,
   transmission: 0,
   speed: 0,
+  productivity: 0,
 };
 
 /**
- * How a row's `wanted` speed modules are laid out; see {@link Boost}. `wanted` absent is the
- * default — as many as the machine's spare slots hold and no beacons, which is the loadout you
- * would build without thinking about it.
+ * How a row's `wanted` modules are laid out; see {@link Boost}. `wanted` absent is the default — as
+ * many as the machine's spare slots hold and no beacons, which is the loadout you would build
+ * without thinking about it.
  *
  * Three ways of asking for something which cannot happen, all of which end up quoting less rather
  * than more: a machine with no slots at all receives nothing, from a beacon either (the game's
  * rule, and the reason a pump cannot be beaconed); a machine which refuses the module's category
  * holds none of them itself, though beacons will still reach it, because a beacon's own whitelist
  * is what governs what goes in a beacon; and a beacon which will not take the module leaves the
- * overflow nowhere to go, so it is dropped rather than pretended into the machine.
+ * overflow nowhere to go, so it is dropped rather than pretended into the machine — which is every
+ * productivity module past the machine's own slots, since no beacon transmits productivity.
  */
-export function speedBoost(
+export function moduleBoost(
   machine: Machine,
   free: number,
   module: ModuleId | undefined,
@@ -215,10 +225,13 @@ export function speedBoost(
   beacon: Beacon | undefined,
 ): Boost {
   const found = module === undefined ? undefined : staticData.modules[module];
-  const effect = found?.speed ?? 0;
   /* Not "no slots left": no slots at all. A beacon transmits to machines which take modules, so a
    * machine which takes none is out of reach of both halves of this. */
   if (!module || !found || !machine.moduleSlots) return NO_BOOST;
+  /* What the family is reached for, which is the beacon's question and not the machine's: a beacon
+   * takes the modules whose effect it transmits, and what one does once it is in there is both of
+   * its numbers whichever of them it was picked for. */
+  const effect = categoryEffect(found.category);
 
   const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
   const asked = wanted ?? slots;
@@ -232,12 +245,16 @@ export function speedBoost(
     beacon &&
     beacon.moduleSlots > 0 &&
     takesCategory(beacon, found.category) &&
-    (beacon.allowedEffects?.includes('speed') ?? true)
+    (beacon.allowedEffects?.includes(effect) ?? true)
       ? beacon.moduleSlots
       : 0;
   const inBeacons = holds ? spare : 0;
   const beacons = holds ? Math.ceil(inBeacons / holds) : 0;
   const transmission = beacons ? (beacon?.distributionEffectivity ?? 0) / Math.sqrt(beacons) : 0;
+  /* How many modules the machine ends up feeling, a beaconed one being worth its transmission. Both
+     of the module's numbers are scaled by it: a family is picked for one effect, but a module is
+     all of what it does, and it is `applyBoost` which decides which of them this machine keeps. */
+  const felt = inMachine + inBeacons * transmission;
 
   return {
     module,
@@ -246,11 +263,12 @@ export function speedBoost(
     inBeacons,
     beacons,
     transmission,
-    speed: (inMachine + inBeacons * transmission) * effect,
+    speed: felt * (found.speed ?? 0),
+    productivity: felt * (found.productivity ?? 0),
   };
 }
 
-/** A machine running a recipe with `fill` in its slots and `boost`'s speed modules on top. */
+/** A machine running a recipe with `fill` in its slots and a boost of `wanted` modules on top. */
 export function boostedEffects(
   machine: Machine,
   fill: ModuleFill | undefined,
@@ -260,8 +278,8 @@ export function boostedEffects(
   beacon: Beacon | undefined,
 ): { effects: Effects; boost: Boost } {
   const slots = slotEffects(machine, fill ?? {});
-  const boost = speedBoost(machine, slots.free, module, wanted, beacon);
-  return { effects: withBoost(machine, recipe, slots, boost.speed), boost };
+  const boost = moduleBoost(machine, slots.free, module, wanted, beacon);
+  return { effects: applyBoost(machine, recipe, slots, boost), boost };
 }
 
 /**

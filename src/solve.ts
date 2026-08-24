@@ -1,8 +1,8 @@
 import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from './cell.ts';
-import { machinesFor, recipeName, resourceName } from './data.ts';
+import { machinesFor, recipeName, resourceName, type ChosenModules } from './data.ts';
 import { netRates, speedOf } from './flow.ts';
 import { fmt } from './ts.ts';
-import type { ModuleId, ResourceId } from './types.ts';
+import type { ResourceId } from './types.ts';
 
 /**
  * How many machines of each recipe a cell needs, worked out from the ones the user pinned.
@@ -92,28 +92,28 @@ export const defaultSolver = dumbSolver;
  * beacons around them, handed to a solver. The machine is `entryMachine`'s, so an unpinned one
  * moves with the progress slider — and so, therefore, do the modules' effects and the whole answer.
  *
- * `speedModule` is which module the header means by "a speed module", against which every row's
- * `speedModules` count is spent; `chosenModule` in `src/data.ts` resolves it, and `undefined` —
- * the early game, or a player who has said none — leaves every row unmodded however many its rows
- * ask for.
+ * `modules` is what the header means by a module of each family a row can spend — `chosenModules`
+ * in `src/data.ts` resolves both — against which every row's `boostModules` count goes, on the side
+ * its own `boost` names. A family the header has left at none leaves the rows spending it unmodded,
+ * however many modules they ask for.
  */
 export function solveCell(
   cell: Cell,
   progress: number,
-  speedModule?: ModuleId,
+  modules: ChosenModules = {},
   solver: Solver = defaultSolver,
 ): Solution {
-  return solver.solve(cell.entries.map((entry) => rowOf(entry, progress, speedModule)));
+  return solver.solve(cell.entries.map((entry) => rowOf(entry, progress, modules)));
 }
 
-function rowOf(entry: CellEntry, progress: number, speedModule?: ModuleId): SolveRow {
+function rowOf(entry: CellEntry, progress: number, modules: ChosenModules): SolveRow {
   const recipe = entryRecipe(entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
   const speed = speedOf(machinesFor(recipe), machine);
   return {
-    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine, speedModule)),
+    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine, modules)),
     count: entry.count,
   };
 }

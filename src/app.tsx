@@ -1,7 +1,7 @@
 import './app.css';
 import { useMemo } from 'preact/hooks';
 import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.ts';
-import { chosenModule, SPEED_CATEGORY } from './data.ts';
+import { chosenModules } from './data.ts';
 import { field, type State } from './ts.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
@@ -17,10 +17,11 @@ export function App({ uss }: { uss: State<UrlState> }) {
   const gp = field(uss, 'gp');
   // the slider is in whole percent, everything downstream in `complexity`'s own 0-to-1 scale
   const progress = gp[0] / 100;
-  /* Which module the cells mean by "a speed module": one decision, in the header, spent by every
-   * row's own count of them. Resolved here so the cells are handed a module rather than a
-   * preference to re-resolve. */
-  const speedModule = chosenModule(us.mo, SPEED_CATEGORY, progress);
+  /* Which modules the cells mean by "a speed module" and "a productivity module": one decision each,
+   * in the header, spent by every row's own count of them. Resolved here so the cells are handed
+   * modules rather than a preference to re-resolve — and memoised, because a cell's solution is
+   * memoised against this. */
+  const modules = useMemo(() => chosenModules(us.mo, progress), [us.mo, progress]);
 
   /* The cell being worked on, if any: what a recipe added from the search joins, and what the
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */
@@ -55,7 +56,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
         cells={field(uss, 'cl')}
         active={field(uss, 'ci')}
         progress={progress}
-        speedModule={speedModule}
+        modules={modules}
         setSearch={recipeSearch[1]}
       />
       <div class="columns">

@@ -226,7 +226,7 @@ export interface Module {
  * The discount is {@link distributionEffectivity} divided by the square root of how many beacons
  * reach the machine, applied to each module in each of them — so `n` beacons holding the same
  * modules come to `dist × sqrt(n)` times one beacon's worth, and the second beacon is worth 41% of
- * the first. See `speedBoost` in `src/flow.ts`, and `docs/beacons.wiki`.
+ * the first. See `moduleBoost` in `src/flow.ts`, and `docs/beacons.wiki`.
  *
  * What is not modelled is where anything is: a beacon reaches a 9×9 square in the game, and this
  * app has no floor plan, so "how many beacons reach this machine" is a number the user states

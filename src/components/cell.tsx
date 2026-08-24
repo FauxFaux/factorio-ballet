@@ -8,10 +8,10 @@ import {
   withoutEntry,
   type Cell,
 } from '../cell.ts';
-import { resourceName } from '../data.ts';
+import { resourceName, type ChosenModules } from '../data.ts';
 import { isProblem, noteFor, noteLine, solveCell, type Solution } from '../solve.ts';
 import { fmt, type State } from '../ts.ts';
-import type { ModuleId, ResourceId } from '../types.ts';
+import type { ResourceId } from '../types.ts';
 import { CellRow } from './cell-row.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
@@ -27,7 +27,7 @@ export function CellBox({
   cell: [cell, setCell],
   active,
   progress,
-  speedModule,
+  modules,
   onActivate,
   onRemove,
   onSearch,
@@ -35,17 +35,14 @@ export function CellBox({
   cell: State<Cell>;
   active: boolean;
   progress: number;
-  /** Which module the header means by "a speed module"; see `CellEntry.speedModules`. */
-  speedModule?: ModuleId;
+  /** Which module the header means by each family a row can spend; see `ChosenModules`. */
+  modules: ChosenModules;
   onActivate: () => void;
   onRemove: () => void;
   onSearch: (search: string) => void;
 }) {
   const iface = useMemo(() => cellInterface(cell), [cell]);
-  const solution = useMemo(
-    () => solveCell(cell, progress, speedModule),
-    [cell, progress, speedModule],
-  );
+  const solution = useMemo(() => solveCell(cell, progress, modules), [cell, progress, modules]);
   /** The row being dragged, by index; `null` when no drag is in progress. */
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   /** Which side of which row the dragged one would land on, for the drop-line indicator. */
@@ -89,7 +86,7 @@ export function CellBox({
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
                 progress={progress}
-                speedModule={speedModule}
+                modules={modules}
                 dragging={dragIndex === i}
                 dropBefore={dropHint?.index === i && dropHint.before}
                 dropAfter={dropHint?.index === i && !dropHint.before}

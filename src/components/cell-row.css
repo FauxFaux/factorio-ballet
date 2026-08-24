@@ -75,9 +75,9 @@
   font-style: italic;
 }
 
-/* The speed-module request: an icon of what is being asked for, the count, and the beacons it
-   came to. One control, so it is boxed like one and the input inside it carries no border. */
-.cell-speed {
+/* The module request: an icon of what is being asked for, the count, and the beacons it came to.
+   One control, so it is boxed like one and the input inside it carries no border. */
+.cell-boost {
   display: inline-flex;
   align-items: center;
   gap: 2px;
@@ -87,15 +87,25 @@
   cursor: help;
 }
 
+/* Which family the count is spent on, and the click which changes it: a button only where the
+   recipe gives the row a choice, so it is styled as the icon it wraps and nothing more. */
+.cell-boost-flip {
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
 /* the same 32px box the module pickers use, so a row's icons line up with the header's */
-.cell-speed-icon {
+.cell-boost-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
   flex-shrink: 0;
 }
 
-.cell-speed-count {
+.cell-boost-count {
   width: 3rem;
   font: inherit;
   font-family: var(--mono);
@@ -109,7 +119,7 @@
 
 /* what filling the machine's slots comes to, in the placeholder: the same "not your number, but
    what would happen" the count box draws that way */
-.cell-speed-count.is-derived::placeholder {
+.cell-boost-count.is-derived::placeholder {
   color: var(--text);
   opacity: 1;
   font-style: italic;

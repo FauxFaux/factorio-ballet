@@ -190,24 +190,39 @@ agrees to 4dp rather than shipping the table. Only speed reaches a machine this 
 `allowedEffects` says so — and the machine has to have module slots of its own to receive anything
 at all, which is the game's rule and the reason a pump cannot be beaconed.
 
-A row states **how many speed modules it wants**, not where they go: `CellEntry.speedModules`, laid
-out by `speedBoost` (`src/flow.ts`) into the machine's spare slots first and then into as many
-`beacon`s as the rest of them take, last one built whether or not it is full. Absent is auto — fill
-the machine, build no beacons — and `boostedEffects` is `moduleEffects` with that added to the speed
-side, so both go through the same gates and cannot disagree about what the machine applies. Which
-beacon gets built is not a choice yet (`rowBeacon` in `src/data.ts`, the vanilla two-slot one): a
-bigger beacon is fewer beacons for the same modules and so a _better_ answer, which is not something
-to have jump about as the progress slider moves.
+A row states **how many modules it wants**, not where they go: `CellEntry.boostModules`, laid out by
+`moduleBoost` (`src/flow.ts`) into the machine's spare slots first and then into as many `beacon`s
+as the rest of them take, last one built whether or not it is full. Absent is auto — fill the
+machine, build no beacons — and `boostedEffects` is `moduleEffects` with that added, so both go
+through the same gates and cannot disagree about what the machine applies. Both of a module's
+numbers ride along wherever it sits, which is what makes a productivity module in a spare slot a
+speed malus as well as a yield; `applyBoost` is the one place either is gated. Which beacon gets
+built is not a choice yet (`rowBeacon` in `src/data.ts`, the vanilla two-slot one): a bigger beacon
+is fewer beacons for the same modules and so a _better_ answer, which is not something to have jump
+about as the progress slider moves.
 
-Which _tier_ is meant by "a speed module" is a fact about the save rather than about any one
-machine, so it is one setting in the header rather than a repeated choice: `moduleCategories` is the
-families the dataset has — `speed`, `productivity` and `angels-bio-yield`, which the UI calls
-"agricultural" because a `module-category` prototype has no name to ingest — and `ModuleBar`
-(`components/module.tsx`) is a `ModulePicker` for each, sitting right of the progress slider it
-defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category with three
-states which are all different: a module id, `null` for none, and _absent_ for auto, which follows
-the slider through `defaultModule`. `chosenModule` resolves one; `App` does that once for `speed`
-and hands the id down to the cells, so a row counts modules and never names them.
+**Which family** those modules come from is the row's own choice, `CellEntry.boost`, and it is one
+of the two effects the app models (`BoostEffect`). Absent is `defaultBoost`: productivity where
+`Recipe.allowProductivity`, speed everywhere else — the only sensible reading of each case, since a
+productivity module on a recipe which refuses it is nothing but its own speed malus, and no recipe
+here which allows productivity is stuck in a machine which ignores it. That default is a fact about
+the _recipe_ and not the machine, deliberately: the machine moves as the progress slider does, and a
+row which changed families underneath the user would be a different answer rather than a bigger one.
+`flipBoost` is the click on the row's module icon, and it stores nothing when it lands back on the
+default, there being no way to tell a pin of an unmoving default apart from the default. Where the
+two families part company is beacons: no beacon transmits productivity, so a productivity request
+past the machine's own slots is modules with nowhere to go rather than a row of beacons.
+
+Which _tier_ is meant by "a speed module" — or a productivity one — is a fact about the save rather
+than about any one machine, so it is one setting in the header rather than a repeated choice:
+`moduleCategories` is the families the dataset has — `speed`, `productivity` and `angels-bio-yield`,
+which the UI calls "agricultural" because a `module-category` prototype has no name to ingest — and
+`ModuleBar` (`components/module.tsx`) is a `ModulePicker` for each, sitting right of the progress
+slider it defaults from. The choices live in `UrlState.mo`, a `ModuleChoice` keyed by category with
+three states which are all different: a module id, `null` for none, and _absent_ for auto, which
+follows the slider through `defaultModule`. `chosenModule` resolves one; `chosenModules` resolves
+the two a row can spend into a `ChosenModules`, which `App` does once and hands down to the cells,
+so a row counts modules and names a family but never a module.
 
 `defaultModule` is deliberately **not** `defaultMachine`'s nearest-`progress` rule — it is the best
 tier you could already have built, and none until that is nothing. The difference is that none
@@ -251,10 +266,10 @@ agree on ids. Rocket launches and burnt fuel are still complexity-only.
 
 A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
 to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
-`{ entries, name? }` and a `CellEntry` is `{ recipe, machine?, count?, modules?, speedModules? }`.
-The cells being planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on —
-recipes added from the search go there, and an out-of-range `ci` (which `[]` always is) means none
-is.
+`{ entries, name? }` and a `CellEntry` is
+`{ recipe, machine?, count?, modules?, boostModules?, boost? }`. The cells being planned live in
+`UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes added from the search go
+there, and an out-of-range `ci` (which `[]` always is) means none is.
 
 `cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
 an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
@@ -266,10 +281,11 @@ is a `MachinePicker` — a dropdown, because a cell is a column of rows and the 
 the search results keep the horizontal `MachineChip` row, where listing every candidate and hovering
 for its numbers is the point. "Auto" is a real option in it rather than the absence of one — named
 as `CellEntry.count`'s placeholder is, and meaning the same thing: it is `entryMachine`'s default,
-so it walks up the tiers as the progress slider moves. Beside it is `SpeedBox`, one integer: how
-many speed modules this row is to feel, blank for auto, with the beacons it took drawn next to it
-and the whole layout — where each module went, and what the machine ends up running at — in its
-tooltip.
+so it walks up the tiers as the progress slider moves. Beside it is `BoostBox`, one integer: how
+many modules this row is to feel, blank for auto, with the beacons it took drawn next to it and the
+whole layout — where each module went, and what the machine ends up running at — in its tooltip. Its
+icon is the row's family control: a recipe which allows productivity draws it as a button which
+flips between the two, and one which does not has no choice to offer and draws a plain icon.
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`
@@ -300,13 +316,13 @@ recipes were added in), `conflict` (one row pulled two ways: scaled to the large
 named), and `stranded` (nothing connects the row to the rest).
 
 A row is solved at the machine it is in, with what is in that machine's slots and whatever beacons
-its `speedModules` came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is which
-module the header means by "a speed module" — and hands `netRates` the two multipliers, so an
-unpinned row's modules move with the progress slider exactly as its machine does. Productivity
-changes what a row is worth without changing what it eats, which is a real answer and not a scaling:
-the same three assemblers of gears consume the same plates and hand on 36% more gears, so downstream
-counts fall and upstream ones do not. `UI.md` describes the wider planner design the solver
-eventually serves.
+its `boostModules` came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is
+`ChosenModules`, what the header means by a module of each family, resolved once by `chosenModules`
+in `App` — and hands `netRates` the two multipliers, so an unpinned row's modules move with the
+progress slider exactly as its machine does. Productivity changes what a row is worth without
+changing what it eats, which is a real answer and not a scaling: the same three assemblers of gears
+consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
+not. `UI.md` describes the wider planner design the solver eventually serves.
 
 Tests in `test/` mirror the source layout (`test/scripts/`).
 

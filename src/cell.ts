@@ -5,6 +5,8 @@ import {
   resourceName,
   rowBeacon,
   staticData,
+  type BoostEffect,
+  type ChosenModules,
 } from './data.ts';
 import {
   boostedEffects,
@@ -57,17 +59,25 @@ export interface CellEntry {
   modules?: ModuleFill;
 
   /**
-   * How many speed modules this row is to feel, wherever they have to go to get there: the
-   * machine's spare slots first, and then as many beacons as the rest of them take. Absent is
-   * auto — fill the machine and build no beacons — which is the loadout you would put in without
-   * thinking about it, and is nothing at all until the header names a speed module to fill it
-   * with. See {@link speedBoost}.
+   * How many modules of {@link boost}'s family this row is to feel, wherever they have to go to get
+   * there: the machine's spare slots first, and then as many beacons as the rest of them take.
+   * Absent is auto — fill the machine and build no beacons — which is the loadout you would put in
+   * without thinking about it, and is nothing at all until the header names a module of that family
+   * to fill it with. See {@link moduleBoost}.
    *
    * A count and not a loadout, because beacons are not a thing you can pick per slot: what the
    * user knows is "I want this smelter going four times as fast", and how many beacons that is is
    * the answer rather than the question.
    */
-  speedModules?: number;
+  boostModules?: number;
+
+  /**
+   * Which of the two families {@link boostModules} is spent on, and so which of the header's
+   * pickers this row reads. Absent is {@link defaultBoost} — productivity where the recipe takes
+   * it, speed everywhere else — and is stored only when the user has said otherwise, because the
+   * default is a fact about the recipe and never moves under them the way the default machine does.
+   */
+  boost?: BoostEffect;
 }
 
 /**
@@ -120,9 +130,9 @@ export function entryEffects(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  speed?: ModuleId,
+  modules: ChosenModules = {},
 ): Effects {
-  return entryRun(entry, recipe, machine, speed).effects;
+  return entryRun(entry, recipe, machine, modules).effects;
 }
 
 /** What a row is running at, and the modules and beacons it took; see {@link entryRun}. */
@@ -133,22 +143,53 @@ export interface EntryRun {
 
 /**
  * A row resolved: the two multipliers the solver scales its rates by, and the {@link Boost} which
- * is how the row's `speedModules` were laid out to get them. Both come out of one pass, because
+ * is how the row's `boostModules` were laid out to get them. Both come out of one pass, because
  * the beacons and the slots share the machine — how many modules the machine holds itself decides
  * how many are left to beacon.
  *
- * `speed` is which module the header means by "a speed module"; the row states how many, never
- * which, so a save that upgrades to speed module 3 upgrades every row at once.
+ * `modules` is what the header means by a module of each family; the row states how many and which
+ * family, never which module, so a save that upgrades to speed module 3 upgrades every row at once.
  */
 export function entryRun(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  speed?: ModuleId,
+  modules: ChosenModules = {},
 ): EntryRun {
   const found = machine === undefined ? undefined : staticData.machines[machine];
   if (!found) return { effects: NO_EFFECTS, boost: NO_BOOST };
-  return boostedEffects(found, entry.modules, recipe, speed, entry.speedModules, rowBeacon);
+  const module = modules[entryBoost(entry, recipe)];
+  return boostedEffects(found, entry.modules, recipe, module, entry.boostModules, rowBeacon);
+}
+
+/**
+ * Which family of module a row reaches for when nobody has said: productivity where the recipe
+ * allows it, and speed everywhere else. That is not a preference but the only sensible reading of
+ * each case — a productivity module on a recipe which does not allow productivity is nothing but
+ * its own speed malus (`modulesFor` will not even offer one), while a recipe which does allow it is
+ * one where more out of the same ingredients beats more of it per second.
+ *
+ * A fact about the recipe alone, deliberately: the machine moves as the progress slider does, and a
+ * row which quietly changed families underneath the user would be a different answer rather than a
+ * bigger one. Every recipe here which allows productivity has some machine which applies it.
+ */
+export function defaultBoost(recipe: Recipe): BoostEffect {
+  return recipe.allowProductivity ? 'productivity' : 'speed';
+}
+
+/** The family this row's modules come from: the user's choice, or {@link defaultBoost}'s. */
+export function entryBoost(entry: CellEntry, recipe: Recipe): BoostEffect {
+  return entry.boost ?? defaultBoost(recipe);
+}
+
+/**
+ * The entry spending the other family — what clicking the module icon on a row does. Landing back
+ * on {@link defaultBoost} stores nothing rather than pinning the same answer: the default cannot
+ * move, so a pin of it would be a byte in the URL which nothing could ever tell apart.
+ */
+export function flipBoost(entry: CellEntry, recipe: Recipe): CellEntry {
+  const flipped: BoostEffect = entryBoost(entry, recipe) === 'speed' ? 'productivity' : 'speed';
+  return { ...entry, boost: flipped === defaultBoost(recipe) ? undefined : flipped };
 }
 
 /** How many slots a loadout asks for, which is not necessarily how many the machine has. */

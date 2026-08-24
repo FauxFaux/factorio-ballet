@@ -1,11 +1,21 @@
 import { describe, expect, it } from 'vitest';
-import { entryEffects, entryRun, parseModules, type Cell } from '../src/cell.ts';
+import {
+  defaultBoost,
+  entryBoost,
+  entryEffects,
+  entryRun,
+  flipBoost,
+  parseModules,
+  type Cell,
+} from '../src/cell.ts';
 import { chosenModule, rowBeacon, SPEED_CATEGORY, staticData } from '../src/data.ts';
-import { boostedEffects, speedBoost } from '../src/flow.ts';
+import { boostedEffects, moduleBoost } from '../src/flow.ts';
 import { solveCell } from '../src/solve.ts';
 import type { Machine } from '../src/types.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];
+/** Does not allow productivity, which is the ordinary case; see `test/modules.test.ts`. */
+const circuits = staticData.recipes['electronic-circuit'];
 /** Two module slots, which is the machine the worked example in `docs/beacons.wiki` terms uses. */
 const two = staticData.machines['assembling-machine-2'];
 const three = staticData.machines['assembling-machine-3'];
@@ -15,7 +25,7 @@ const character = staticData.machines['character'];
 const SPEED_3 = 'speed-module-3';
 
 const boost = (machine: Machine, wanted: number | undefined, free = machine.moduleSlots ?? 0) =>
-  speedBoost(machine, free, SPEED_3, wanted, rowBeacon);
+  moduleBoost(machine, free, SPEED_3, wanted, rowBeacon);
 
 describe('the ingested beacons', () => {
   it('is the three the pack has, with their slots and their transmission', () => {
@@ -37,7 +47,7 @@ describe('the ingested beacons', () => {
   });
 });
 
-describe('speedBoost', () => {
+describe('moduleBoost', () => {
   it('fills the machine and builds nothing when nobody asked for more', () => {
     const auto = boost(three, undefined);
     expect(auto).toMatchObject({ wanted: 3, inMachine: 3, inBeacons: 0, beacons: 0 });
@@ -76,8 +86,8 @@ describe('speedBoost', () => {
   });
 
   it('is nothing at all with no module chosen', () => {
-    expect(speedBoost(three, 3, undefined, 8, rowBeacon).speed).toBe(0);
-    expect(speedBoost(three, 3, 'no-such-module', 8, rowBeacon).speed).toBe(0);
+    expect(moduleBoost(three, 3, undefined, 8, rowBeacon).speed).toBe(0);
+    expect(moduleBoost(three, 3, 'no-such-module', 8, rowBeacon).speed).toBe(0);
   });
 
   it('reaches no machine which takes no modules', () => {
@@ -105,12 +115,12 @@ describe('speedBoost', () => {
 
   it('drops what a beacon will not hold rather than putting it in the machine', () => {
     const picky = { ...rowBeacon!, allowedModuleCategories: ['productivity'] };
-    const dropped = speedBoost(two, 2, SPEED_3, 8, picky);
+    const dropped = moduleBoost(two, 2, SPEED_3, 8, picky);
     expect(dropped).toMatchObject({ wanted: 8, inMachine: 2, inBeacons: 0, beacons: 0 });
     expect(dropped.speed).toBeCloseTo(0.8);
     // and the same for a beacon which takes the module but transmits no speed
     const quiet = { ...rowBeacon!, allowedEffects: ['consumption' as const] };
-    expect(speedBoost(two, 2, SPEED_3, 8, quiet)).toMatchObject({ inBeacons: 0, beacons: 0 });
+    expect(moduleBoost(two, 2, SPEED_3, 8, quiet)).toMatchObject({ inBeacons: 0, beacons: 0 });
   });
 });
 
@@ -144,10 +154,17 @@ describe('boostedEffects', () => {
 });
 
 describe('a cell row with beacons', () => {
-  const entry = { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2', speedModules: 8 };
+  /* Gears allow productivity, so the row is spending speed only because it says so; see the
+     family block below for what it does when nobody has said. */
+  const entry = {
+    recipe: 'iron-gear-wheel',
+    machine: 'assembling-machine-2',
+    boostModules: 8,
+    boost: 'speed' as const,
+  };
 
   it("is the row's own count of the header's module", () => {
-    expect(entryRun(entry, gears, entry.machine, SPEED_3).boost).toMatchObject({
+    expect(entryRun(entry, gears, entry.machine, { speed: SPEED_3 }).boost).toMatchObject({
       module: SPEED_3,
       inMachine: 2,
       beacons: 3,
@@ -157,15 +174,15 @@ describe('a cell row with beacons', () => {
   });
 
   it('fills the machine when the row asks for nothing', () => {
-    const auto = { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2' };
-    expect(entryRun(auto, gears, auto.machine, SPEED_3).effects.speed).toBeCloseTo(1.8);
+    const auto = { ...entry, boostModules: undefined };
+    expect(entryRun(auto, gears, auto.machine, { speed: SPEED_3 }).effects.speed).toBeCloseTo(1.8);
   });
 
   it('scales what the rest of the cell has to keep up with', () => {
-    const cell = (speedModules?: number): Cell => ({
-      entries: [{ ...entry, speedModules, count: 1 }, { recipe: 'iron-plate' }],
+    const cell = (boostModules?: number): Cell => ({
+      entries: [{ ...entry, boostModules, count: 1 }, { recipe: 'iron-plate' }],
     });
-    const plates = (c: Cell) => solveCell(c, 0, SPEED_3).counts[1]!;
+    const plates = (c: Cell) => solveCell(c, 0, { speed: SPEED_3 }).counts[1]!;
     // a machine going 2.16× as fast eats its ingredients 2.16× as fast, and the row feeding it
     // has to be that much bigger: 3.8785 / 1.8, the beaconed row against the auto one
     expect(plates(cell(8)) / plates(cell(undefined))).toBeCloseTo(2.1547);
@@ -195,5 +212,74 @@ describe('chosenModule', () => {
   it('follows the slider where the header picked nothing', () => {
     expect(chosenModule({}, SPEED_CATEGORY, 0)).toBeUndefined();
     expect(chosenModule({}, SPEED_CATEGORY, 1)).toBe('bob-speed-module-5');
+  });
+});
+
+/**
+ * Which family a row spends its count on. The choice is the row's and the tier is the header's, so
+ * everything here is against the resolved pair a cell is handed rather than a `ModuleChoice`.
+ */
+describe("a row's module family", () => {
+  const prod3 = 'productivity-module-3';
+  /** Both families chosen in the header, as a save with the tier-3 modules researched would have. */
+  const both = { speed: SPEED_3, productivity: prod3 };
+  const row = { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2' };
+
+  it('is productivity where the recipe allows it, and speed where it does not', () => {
+    expect(defaultBoost(gears)).toBe('productivity');
+    expect(defaultBoost(circuits)).toBe('speed');
+    expect(entryBoost({ recipe: 'iron-gear-wheel' }, gears)).toBe('productivity');
+    // a productivity module on a recipe which cannot use it is nothing but its own speed malus
+    expect(entryBoost({ recipe: 'electronic-circuit' }, circuits)).toBe('speed');
+  });
+
+  it('is whichever the row pinned', () => {
+    expect(entryBoost({ ...row, boost: 'speed' }, gears)).toBe('speed');
+    expect(entryBoost({ ...row, boost: 'productivity' }, circuits)).toBe('productivity');
+  });
+
+  it('flips, and stores nothing when it lands back on the default', () => {
+    const flipped = flipBoost(row, gears);
+    expect(flipped.boost).toBe('speed');
+    // the default cannot move, so pinning it would be a byte nothing could tell apart
+    expect(flipBoost(flipped, gears).boost).toBeUndefined();
+    expect(flipBoost(row, circuits).boost).toBe('productivity');
+  });
+
+  it('spends the family it names out of the pair the header resolved', () => {
+    // two slots filled with productivity module 3: +12% each, at −15% speed each
+    const auto = entryRun(row, gears, row.machine, both);
+    expect(auto.boost).toMatchObject({ module: prod3, wanted: 2, inMachine: 2, beacons: 0 });
+    expect(auto.effects.productivity).toBeCloseTo(1.24);
+    expect(auto.effects.speed).toBeCloseTo(0.7);
+    // and the same row flipped is the speed module the other picker names
+    const fast = entryRun(flipBoost(row, gears), gears, row.machine, both);
+    expect(fast.boost).toMatchObject({ module: SPEED_3, inMachine: 2 });
+    expect(fast.effects).toEqual({ speed: 1.8, productivity: 1 });
+  });
+
+  it('builds no beacons for productivity, however many are asked for', () => {
+    // the game's rule, stated by the beacon's own `allowedEffects`: the overflow goes nowhere
+    const eight = entryRun({ ...row, boostModules: 8 }, gears, row.machine, both);
+    expect(eight.boost).toMatchObject({ wanted: 8, inMachine: 2, inBeacons: 0, beacons: 0 });
+    expect(eight.effects.productivity).toBeCloseTo(1.24);
+  });
+
+  it('pays the speed malus on a recipe which will not take the productivity', () => {
+    const pinned = {
+      recipe: 'electronic-circuit',
+      machine: 'assembling-machine-2',
+      boost: 'productivity' as const,
+    };
+    const run = entryRun(pinned, circuits, pinned.machine, both);
+    expect(run.boost.productivity).toBeCloseTo(0.24);
+    expect(run.effects).toEqual({ speed: 0.7, productivity: 1 });
+  });
+
+  it('is nothing at all where the header has picked no module of that family', () => {
+    expect(entryRun(row, gears, row.machine, { speed: SPEED_3 }).effects).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
   });
 });

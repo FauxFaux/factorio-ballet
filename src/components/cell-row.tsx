@@ -1,18 +1,27 @@
 import './cell-row.css';
 import { useState } from 'preact/hooks';
 import {
+  entryBoost,
   entryMachine,
   entryRecipe,
   entryRun,
+  flipBoost,
   parseCount,
   parseModules,
   type CellEntry,
 } from '../cell.ts';
-import { machinesFor, modulesIn, rowBeacon, SPEED_CATEGORY } from '../data.ts';
+import {
+  BOOST_CATEGORY,
+  machinesFor,
+  modulesIn,
+  rowBeacon,
+  type BoostEffect,
+  type ChosenModules,
+} from '../data.ts';
 import type { Boost, Effects } from '../flow.ts';
 import { isProblem, noteText, type SolveNote } from '../solve.ts';
 import { fmt } from '../ts.ts';
-import type { MachineId, ModuleId, Recipe } from '../types.ts';
+import type { MachineId, Recipe } from '../types.ts';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachinePicker } from './machine.tsx';
 import { UnlitIcon } from './module.tsx';
@@ -27,7 +36,7 @@ export function CellRow({
   count,
   note,
   progress,
-  speedModule,
+  modules,
   dragging,
   dropBefore,
   dropAfter,
@@ -43,8 +52,8 @@ export function CellRow({
   count: number | undefined;
   note: SolveNote | undefined;
   progress: number;
-  /** Which module the header means by "a speed module"; see `CellEntry.speedModules`. */
-  speedModule?: ModuleId;
+  /** Which module the header means by each family this row can spend; see `ChosenModules`. */
+  modules: ChosenModules;
   /** Whether this is the row currently being dragged, for the fade the rest of the list gets. */
   dragging: boolean;
   /** Whether the dragged row would land just above or below this one. */
@@ -102,11 +111,11 @@ export function CellRow({
       {recipe ? (
         <>
           <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
-          <SpeedBox
+          <BoostBox
             entry={entry}
             recipe={recipe}
             machine={entryMachine(entry, recipe, progress)}
-            speedModule={speedModule}
+            modules={modules}
             onChange={onChange}
           />
         </>
@@ -156,68 +165,94 @@ function CellMachines({
 }
 
 /**
- * How many speed modules this row is to feel — the machine's own slots first, and beacons for
- * whatever is left over, which is why one number can ask for more than the machine holds. Blank is
- * auto: fill the slots, build no beacons, and the placeholder says how many that is.
+ * How many modules this row is to feel — the machine's own slots first, and beacons for whatever is
+ * left over, which is why one number can ask for more than the machine holds. Blank is auto: fill
+ * the slots, build no beacons, and the placeholder says how many that is.
  *
- * Which module those are is the header's business and not the row's, so this box is a count and
- * never a picker; with no speed module chosen — the whole early game — the count buys nothing, and
- * the tooltip says so rather than the box disappearing under the user.
+ * Which family they come from is the row's own choice and the icon is the control for it: a recipe
+ * which allows productivity defaults to productivity modules, because more out of the same
+ * ingredients is what you would reach for there, and clicking the icon spends speed modules
+ * instead. A recipe which does not allow productivity has no such choice to offer — a productivity
+ * module in it is nothing but its own speed malus — so the icon is just an icon.
+ *
+ * Which *tier* either family means is the header's business and not the row's, so this box is a
+ * count and never a picker; with no module chosen there — the whole early game — the count buys
+ * nothing, and the tooltip says so rather than the box disappearing under the user.
  */
-function SpeedBox({
+function BoostBox({
   entry,
   recipe,
   machine,
-  speedModule,
+  modules,
   onChange,
 }: {
   entry: CellEntry;
   recipe: Recipe;
   machine: MachineId | undefined;
-  speedModule?: ModuleId;
+  modules: ChosenModules;
   onChange: (entry: CellEntry) => void;
 }) {
   /* As `CountBox`'s: the box holds what is being typed, so a half-typed number is not rounded out
      from under the caret. */
   const [draft, setDraft] = useState<string | undefined>(undefined);
-  const { effects, boost } = entryRun(entry, recipe, machine, speedModule);
-  const auto = entry.speedModules === undefined;
+  const effect = entryBoost(entry, recipe);
+  const { effects, boost } = entryRun(entry, recipe, machine, modules);
+  const auto = entry.boostModules === undefined;
+  const family = effect === 'speed' ? 'Speed' : 'Productivity';
+
+  /* No module chosen in the header is the early game's answer and not a missing one, so the box
+     says which family it is spending and that the family is off, exactly as the picker up there
+     does. */
+  const icon = boost.module ? (
+    <span
+      class="cell-boost-icon"
+      style={resourceIconStyle(`item:${boost.module}`)}
+      aria-hidden="true"
+    />
+  ) : (
+    <UnlitIcon modules={modulesIn(BOOST_CATEGORY[effect])} class="cell-boost-icon" />
+  );
 
   return (
-    <span class="cell-speed" title={speedTitle(boost, effects)}>
-      {/* No speed module chosen in the header is the early game's answer and not a missing one,
-          so the box says which family it is spending and that the family is off, exactly as the
-          picker up there does. */}
-      {boost.module ? (
-        <span
-          class="cell-speed-icon"
-          style={resourceIconStyle(`item:${boost.module}`)}
-          aria-hidden="true"
-        />
+    <span class="cell-boost" title={boostTitle(effect, boost, effects)}>
+      {recipe.allowProductivity ? (
+        <button
+          type="button"
+          class="cell-boost-flip"
+          title={
+            effect === 'speed'
+              ? 'Spending speed modules — click for productivity instead'
+              : 'Spending productivity modules — click for speed instead'
+          }
+          aria-label={`Spend ${effect === 'speed' ? 'productivity' : 'speed'} modules instead`}
+          onClick={() => onChange(flipBoost(entry, recipe))}
+        >
+          {icon}
+        </button>
       ) : (
-        <UnlitIcon modules={modulesIn(SPEED_CATEGORY)} class="cell-speed-icon" />
+        icon
       )}
       <input
-        class={auto ? 'cell-speed-count is-derived' : 'cell-speed-count'}
+        class={auto ? 'cell-boost-count is-derived' : 'cell-boost-count'}
         type="number"
         min={0}
         step={1}
-        value={draft ?? entry.speedModules ?? ''}
+        value={draft ?? entry.boostModules ?? ''}
         /* What "auto" comes to, in the placeholder for the same reason the solver's count is:
            it is what would happen, not what was asked for. */
         placeholder={auto ? fmt(boost.wanted) : ''}
-        aria-label="Speed modules"
+        aria-label={`${family} modules`}
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;
           setDraft(raw);
-          onChange({ ...entry, speedModules: parseModules(raw) });
+          onChange({ ...entry, boostModules: parseModules(raw) });
         }}
         onBlur={() => setDraft(undefined)}
       />
       {boost.beacons > 0 ? (
         <span class="cell-beacons">
           <span
-            class="cell-speed-icon"
+            class="cell-boost-icon"
             style={rowBeacon?.item ? resourceIconStyle(`item:${rowBeacon.item}`) : undefined}
             aria-hidden="true"
           />
@@ -228,10 +263,11 @@ function SpeedBox({
   );
 }
 
-/** The whole of what the speed box did, as a sentence: where the modules went and what came of it. */
-function speedTitle(boost: Boost, effects: Effects): string {
+/** The whole of what the boost box did, as a sentence: where the modules went and what came of it. */
+function boostTitle(effect: BoostEffect, boost: Boost, effects: Effects): string {
+  const family = effect === 'speed' ? 'Speed' : 'Productivity';
   if (!boost.module) {
-    return 'Speed modules for this row. None is chosen in the header, so nothing here is modded yet.';
+    return `${family} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
   const beacons =
     boost.beacons === 0
@@ -240,10 +276,30 @@ function speedTitle(boost: Boost, effects: Effects): string {
         ` at ${fmt(boost.transmission * 100)}% each`;
   const lost = boost.wanted - boost.inMachine - boost.inBeacons;
   const nowhere = lost > 0 ? `, ${fmt(lost)} with nowhere to go` : '';
+  /* Where the two families part company, and the reason a productivity row's overflow goes nowhere:
+     no beacon transmits productivity, so the machine's own slots are the whole of it. */
+  const blank =
+    effect === 'speed'
+      ? 'Blank fills the machine and builds no beacons.'
+      : 'Blank fills the machine; productivity modules do not go in beacons.';
   return (
-    `${fmt(boost.wanted)} speed modules: ${fmt(boost.inMachine)} in the machine, ${beacons}${nowhere}` +
-    ` — ×${fmt(effects.speed)} speed. Blank fills the machine and builds no beacons.`
+    `${fmt(boost.wanted)} ${family.toLowerCase()} modules: ${fmt(boost.inMachine)} in the machine,` +
+    ` ${beacons}${nowhere} — ${outcome(effects)}. ${blank}`
   );
+}
+
+/**
+ * What the row ends up running at: only the multiplier which is not 1, because a speed row quoting
+ * "×1 output" and a productivity row quoting the speed it did not change are both noise. Nothing
+ * survives when the machine applies neither, which is a real answer — a productivity module on a
+ * machine which ignores productivity is a slower machine and nothing else, and that shows up here
+ * as the speed it cost.
+ */
+function outcome(effects: Effects): string {
+  const parts: string[] = [];
+  if (effects.speed !== 1) parts.push(`×${fmt(effects.speed)} speed`);
+  if (effects.productivity !== 1) parts.push(`×${fmt(effects.productivity)} output`);
+  return parts.length ? parts.join(', ') : 'no effect in this machine';
 }
 
 /** How many machines, pinned by the user or worked out by the solver. */
