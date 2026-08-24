@@ -103,11 +103,21 @@ current:
 ### App shell (`src/`)
 
 `main.tsx` → `UrlHandler` → `CrashHandler` → `App`. All UI state lives in `UrlState` and is packed
-into the URL hash (`url-handler.tsx`): JSON with sorted keys → deflate (with a dictionary derived
-from the default state, duplicated in-file "for stability reasons") → base64url, prefixed with a
-version letter (`HASH_VERSION = 'k'`). The dictionary is derived from the default state, so **adding
-a field to `UrlState` invalidates every existing hash** — bump the version letter whenever the state
-shape changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
+into the URL hash (`url-handler.tsx`): ids numbered (`pack.ts`) → JSON with sorted keys → deflate
+(with a dictionary, a literal reference state in-file "for stability reasons") → base64url, prefixed
+with `HASH_VERSION`. The dictionary is a state of the current shape, so **adding a field to
+`UrlState` invalidates every existing hash** — bump the version letter whenever the state shape
+changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
+
+`src/pack.ts` is why a hash of a hundred recipes is ~950 characters rather than ~2200: a prototype
+id is a name — the game has no numeric ids — and at 26 characters apiece the names were most of the
+payload, so `packCells` swaps each for its position in the dataset's `Object.keys`. That position is
+a fact about one `static.json`, so the second half of `HASH_VERSION` is a fingerprint of every id
+`pack.ts` numbers, and a regenerated dataset invalidates old hashes automatically rather than
+silently reading them as the wrong recipes. Two things the shape is careful about: an id the dataset
+does not have packs as the name it already was, so a stale URL survives a round trip through the
+app; and `modules` packs as pairs rather than an object, because a loadout's order is the order it
+fills the slots and JS enumerates integer-like object keys in numeric order whatever you insert.
 
 Styles are plain CSS, one file per component, imported by the component itself
 (`components/cell.tsx` → `components/cell.css`) — Vite concatenates them into one bundle in import

@@ -5,6 +5,7 @@ import { App } from './app.tsx';
 import type { Cell } from './cell.ts';
 import type { ModuleChoice } from './data.ts';
 import { CrashHandler } from './crash-handler.tsx';
+import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
 
 export interface UrlState {
   v: 1;
@@ -31,7 +32,20 @@ export interface UrlState {
 
 const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 
-const HASH_VERSION = 'k';
+/** {@link UrlState} as it is written to the hash: see {@link PackedCell} for what changes. */
+type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
+
+/**
+ * The letter every hash starts with, so that a hash written by an older build is refused rather
+ * than misread. Bump the letter whenever the shape of `UrlState` changes — the dictionary is
+ * derived from a state of the current shape, so a field added to one invalidates every hash anyway.
+ *
+ * The rest of it is `pack.ts`'s fingerprint, which does the same job for the dataset: cells are
+ * packed as indices into `static.json`'s prototype lists, so regenerating it renumbers every saved
+ * plan. That half moves on its own, because the ingest is a script which knows nothing about this
+ * file and no-one would remember.
+ */
+const HASH_VERSION = `l${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -109,7 +123,17 @@ export function UrlHandler() {
   );
 }
 
-const referenceState: UrlState = {
+/**
+ * What a full-ish plan looks like once packed, as the deflate dictionary: a hash is a few hundred
+ * bytes, far too short for deflate to learn the key names from the payload itself, so it is handed
+ * them.
+ *
+ * A literal, and in the packed shape rather than run through `packCells` — what earns its place
+ * here is the punctuation around the numbers (`{"recipe":`, `,"machine":`, `"entries":[`), and
+ * deriving it from real data would tie the dictionary to the dataset those recipes came from. The
+ * numbers below are real indices all the same, so that their widths are representative.
+ */
+const referenceState: PackedState = {
   v: 1,
   rs: 'silicon',
   cs: 'makes:item:copper-plate',
@@ -118,46 +142,50 @@ const referenceState: UrlState = {
     {
       entries: [
         {
-          recipe: 'bob-processing-electronics',
+          recipe: 320,
           count: 25,
         },
         {
-          recipe: 'angels-wire-platinum',
+          recipe: 1451,
           speedModules: 2,
         },
         {
-          recipe: 'copper-cable',
+          recipe: 45,
         },
         {
-          recipe: 'bob-silicon-wafer',
+          recipe: 247,
         },
         {
-          recipe: 'angels-mono-silicon',
-          machine: 'angels-casting-machine-3',
+          recipe: 1463,
+          machine: 108,
         },
         {
-          recipe: 'angels-mono-silicon-seed',
+          recipe: 1461,
         },
         {
-          recipe: 'bob-silicon-nitride',
+          recipe: 249,
+          modules: [
+            [2, 1],
+            [5, 3],
+          ],
         },
         {
-          recipe: 'bob-silicon-powder',
+          recipe: 248,
         },
         {
-          recipe: 'angels-liquid-molten-silicon',
+          recipe: 1460,
           count: 4,
         },
         {
-          recipe: 'angels-gas-compressed-air',
-          machine: 'angels-air-filter-2',
+          recipe: 1114,
+          machine: 65,
         },
         {
-          recipe: 'angels-air-separation',
-          machine: 'angels-chemical-plant-2',
+          recipe: 1115,
+          machine: 67,
         },
         {
-          recipe: 'angels-chemical-void-angels-gas-oxygen',
+          recipe: 2207,
         },
       ],
     },
@@ -176,7 +204,8 @@ const referenceState: UrlState = {
 const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));
 
 function packUs(us: UrlState): string {
-  const json = JSON.stringify(shallowSortKeys(us));
+  const packed: PackedState = { ...us, cl: packCells(us.cl) };
+  const json = JSON.stringify(shallowSortKeys(packed));
   const data = deflateSync(strToU8(json), {
     level: 9,
     dictionary: urlDictionary,
@@ -190,7 +219,8 @@ function unpackUs(hash: string): UrlState {
   // @ts-expect-error (fromBase64 is missing from Uint8Array typings)
   const data = Uint8Array.fromBase64(encoded, { alphabet: 'base64url' });
   const str = strFromU8(inflateSync(data, { dictionary: urlDictionary }));
-  return { ...defaultUs, ...JSON.parse(str) };
+  const packed = { ...defaultUs, ...JSON.parse(str) } as PackedState;
+  return { ...packed, cl: unpackCells(packed.cl ?? []) };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
