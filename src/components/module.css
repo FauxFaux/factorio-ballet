@@ -35,7 +35,7 @@
 }
 
 /* "None" wearing the tier-1 module's artwork with its lights put out; see `UnlitFilter`. Shared
-   with `.cell-speed-icon` in cell-row.css, which has the same nothing to say. */
+   with `.cell-module-icon` in cell-row.css, which has the same nothing to say. */
 .is-unlit {
   filter: url("#module-unlit");
 }

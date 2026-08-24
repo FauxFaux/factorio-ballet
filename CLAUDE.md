@@ -190,28 +190,26 @@ agrees to 4dp rather than shipping the table. Only speed reaches a machine this 
 `allowedEffects` says so — and the machine has to have module slots of its own to receive anything
 at all, which is the game's rule and the reason a pump cannot be beaconed.
 
-A row states **how many modules it wants**, not where they go: `CellEntry.boostModules`, laid out by
-`moduleBoost` (`src/flow.ts`) into the machine's spare slots first and then into as many `beacon`s
-as the rest of them take, last one built whether or not it is full. Absent is auto — fill the
-machine, build no beacons — and `boostedEffects` is `moduleEffects` with that added, so both go
-through the same gates and cannot disagree about what the machine applies. Both of a module's
-numbers ride along wherever it sits, which is what makes a productivity module in a spare slot a
-speed malus as well as a yield; `applyBoost` is the one place either is gated. Which beacon gets
-built is not a choice yet (`rowBeacon` in `src/data.ts`, the vanilla two-slot one): a bigger beacon
-is fewer beacons for the same modules and so a _better_ answer, which is not something to have jump
-about as the progress slider moves.
+A row states **how many modules of each family it wants**, not where they go: two counts,
+`CellEntry.productivityModules` and `CellEntry.speedModules`, laid out by `moduleLayout`
+(`src/flow.ts`) over the slots the row's own loadout left. The two are asked separately because the
+game answers them separately — a productivity module has nowhere to be but the machine's own slots,
+so that count is capped there, while speed has beacons and so no ceiling — and wanting both at once
+is the ordinary case rather than an exotic one.
 
-**Which family** those modules come from is the row's own choice, `CellEntry.boost`, and it is one
-of the two effects the app models (`BoostEffect`). Absent is `defaultBoost`: productivity where
-`Recipe.allowProductivity`, speed everywhere else — the only sensible reading of each case, since a
-productivity module on a recipe which refuses it is nothing but its own speed malus, and no recipe
-here which allows productivity is stuck in a machine which ignores it. That default is a fact about
-the _recipe_ and not the machine, deliberately: the machine moves as the progress slider does, and a
-row which changed families underneath the user would be a different answer rather than a bigger one.
-`flipBoost` is the click on the row's module icon, and it stores nothing when it lands back on the
-default, there being no way to tell a pin of an unmoving default apart from the default. Where the
-two families part company is beacons: no beacon transmits productivity, so a productivity request
-past the machine's own slots is modules with nowhere to go rather than a row of beacons.
+The order is arithmetic and not a preference: productivity takes its slots first, because a slot is
+the only place it can go and one spent on speed is one it cannot have; speed fills whatever is left
+and beacons the rest, losing nothing by being asked second. **A typed speed count does not take a
+slot back off productivity** — a beacon reaches a machine whose own slots are full, which is exactly
+what beacons are for. The two autos differ for the same reason: productivity's is "as many as fit",
+and none at all where the recipe or the machine would ignore them (a speed malus bought for
+nothing), while speed's is whatever slots that left and no beacons. `laidOutEffects` is
+`moduleEffects` with a `Layout` on top, so both go through the same gates and cannot disagree about
+what the machine applies; both of a module's numbers ride along wherever it sits, which is what
+makes a productivity module a speed malus as well as a yield, and `applyBoost` is the one place
+either is gated. Which beacon gets built is not a choice yet (`rowBeacon` in `src/data.ts`, the
+vanilla two-slot one): a bigger beacon is fewer beacons for the same modules and so a _better_
+answer, which is not something to have jump about as the progress slider moves.
 
 Which _tier_ is meant by "a speed module" — or a productivity one — is a fact about the save rather
 than about any one machine, so it is one setting in the header rather than a repeated choice:
@@ -267,9 +265,9 @@ agree on ids. Rocket launches and burnt fuel are still complexity-only.
 A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
 to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
 `{ entries, name? }` and a `CellEntry` is
-`{ recipe, machine?, count?, modules?, boostModules?, boost? }`. The cells being planned live in
-`UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes added from the search go
-there, and an out-of-range `ci` (which `[]` always is) means none is.
+`{ recipe, machine?, count?, modules?, productivityModules?, speedModules? }`. The cells being
+planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes added
+from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.
 
 `cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
 an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
@@ -281,11 +279,13 @@ is a `MachinePicker` — a dropdown, because a cell is a column of rows and the 
 the search results keep the horizontal `MachineChip` row, where listing every candidate and hovering
 for its numbers is the point. "Auto" is a real option in it rather than the absence of one — named
 as `CellEntry.count`'s placeholder is, and meaning the same thing: it is `entryMachine`'s default,
-so it walks up the tiers as the progress slider moves. Beside it is `BoostBox`, one integer: how
-many modules this row is to feel, blank for auto, with the beacons it took drawn next to it and the
-whole layout — where each module went, and what the machine ends up running at — in its tooltip. Its
-icon is the row's family control: a recipe which allows productivity draws it as a button which
-flips between the two, and one which does not has no choice to offer and draws a plain icon.
+so it walks up the tiers as the progress slider moves. Beside it is `ModuleBoxes`, two integers: how
+many productivity modules and how many speed modules this row is to feel, blank in either for auto,
+with the whole layout — where each module went, how many beacons the speed took, and what the
+machine ends up running at — in the tooltips. There is deliberately no beacon count on the row
+itself: a cell is a column of rows, and the beacons are an answer rather than a thing to decide. The
+productivity box is capped at the machine's slots and is drawn dim and disabled on a recipe which
+takes no productivity, so the rows still read as two columns whatever is in them.
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`
@@ -316,7 +316,7 @@ recipes were added in), `conflict` (one row pulled two ways: scaled to the large
 named), and `stranded` (nothing connects the row to the rest).
 
 A row is solved at the machine it is in, with what is in that machine's slots and whatever beacons
-its `boostModules` came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is
+its speed count came to: `rowOf` reads `entryEffects` — `solveCell`'s third argument is
 `ChosenModules`, what the header means by a module of each family, resolved once by `chosenModules`
 in `App` — and hands `netRates` the two multipliers, so an unpinned row's modules move with the
 progress slider exactly as its machine does. Productivity changes what a row is worth without

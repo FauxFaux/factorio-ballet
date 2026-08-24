@@ -92,10 +92,10 @@ export const defaultSolver = dumbSolver;
  * beacons around them, handed to a solver. The machine is `entryMachine`'s, so an unpinned one
  * moves with the progress slider — and so, therefore, do the modules' effects and the whole answer.
  *
- * `modules` is what the header means by a module of each family a row can spend — `chosenModules`
- * in `src/data.ts` resolves both — against which every row's `boostModules` count goes, on the side
- * its own `boost` names. A family the header has left at none leaves the rows spending it unmodded,
- * however many modules they ask for.
+ * `modules` is what the header means by a module of each family — `chosenModules` in `src/data.ts`
+ * resolves both — against which a row's two counts are spent, `moduleLayout` deciding which slots
+ * each family gets and how many beacons the speed took. A family the header has left at none leaves
+ * the rows unmodded on that side, however many modules they ask for.
  */
 export function solveCell(
   cell: Cell,

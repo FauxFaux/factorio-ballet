@@ -249,7 +249,7 @@ export interface ModuleCategory {
 
 /**
  * The two effects this app models, which are the two things a family of modules is reached for and
- * the two a cell row can spend its module count on; see `CellEntry.boost`.
+ * the two a cell row asks for a count of; see `CellEntry.productivityModules`.
  */
 export type BoostEffect = 'speed' | 'productivity';
 
@@ -346,7 +346,7 @@ export function defaultModule(modules: ModuleMatch[], progress: number): ModuleM
 export const rowBeacon: Beacon | undefined =
   staticData.beacons['beacon'] ?? Object.values(staticData.beacons ?? {})[0];
 
-/** The two module families a cell row's count can spend; see `CellEntry.boost`. */
+/** The two module families a cell row asks for; see `moduleLayout` in `src/flow.ts`. */
 export const SPEED_CATEGORY = 'speed';
 export const PRODUCTIVITY_CATEGORY = 'productivity';
 

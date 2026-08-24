@@ -5,16 +5,16 @@ import {
   resourceName,
   rowBeacon,
   staticData,
-  type BoostEffect,
   type ChosenModules,
 } from './data.ts';
 import {
-  boostedEffects,
-  NO_BOOST,
+  laidOutEffects,
   NO_EFFECTS,
-  type Boost,
+  NO_LAYOUT,
   type Effects,
+  type Layout,
   type ModuleFill,
+  type ModuleWants,
 } from './flow.ts';
 import type { SearchScope } from './search.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
@@ -59,25 +59,25 @@ export interface CellEntry {
   modules?: ModuleFill;
 
   /**
-   * How many modules of {@link boost}'s family this row is to feel, wherever they have to go to get
-   * there: the machine's spare slots first, and then as many beacons as the rest of them take.
-   * Absent is auto — fill the machine and build no beacons — which is the loadout you would put in
-   * without thinking about it, and is nothing at all until the header names a module of that family
-   * to fill it with. See {@link moduleBoost}.
+   * How many productivity modules go in the machine. Capped at the slots it has, because that is
+   * the only place a productivity module can be — no beacon transmits productivity. Absent is auto:
+   * as many as fit on a recipe which pays for them, and none at all on one which does not.
    *
-   * A count and not a loadout, because beacons are not a thing you can pick per slot: what the
-   * user knows is "I want this smelter going four times as fast", and how many beacons that is is
-   * the answer rather than the question.
+   * A count and not a loadout, because which tier is meant is one decision in the header rather
+   * than a repeated one (`ChosenModules`); the row says how many, never which.
    */
-  boostModules?: number;
+  productivityModules?: number;
 
   /**
-   * Which of the two families {@link boostModules} is spent on, and so which of the header's
-   * pickers this row reads. Absent is {@link defaultBoost} — productivity where the recipe takes
-   * it, speed everywhere else — and is stored only when the user has said otherwise, because the
-   * default is a fact about the recipe and never moves under them the way the default machine does.
+   * How many speed modules this row is to feel, wherever they have to go to get there: whatever
+   * slots the productivity modules left, and then as many beacons as the rest of them take. Absent
+   * is auto — fill those slots, build no beacons.
+   *
+   * Not capped, and that is the difference between the two boxes: a beacon reaches a machine whose
+   * own slots are full, so "I want this smelter going four times as fast" is a number the user can
+   * state and how many beacons it comes to is the answer rather than the question.
    */
-  boost?: BoostEffect;
+  speedModules?: number;
 }
 
 /**
@@ -135,20 +135,20 @@ export function entryEffects(
   return entryRun(entry, recipe, machine, modules).effects;
 }
 
-/** What a row is running at, and the modules and beacons it took; see {@link entryRun}. */
+/** What a row is running at, and where its modules went; see {@link entryRun}. */
 export interface EntryRun {
   effects: Effects;
-  boost: Boost;
+  layout: Layout;
 }
 
 /**
- * A row resolved: the two multipliers the solver scales its rates by, and the {@link Boost} which
- * is how the row's `boostModules` were laid out to get them. Both come out of one pass, because
- * the beacons and the slots share the machine — how many modules the machine holds itself decides
- * how many are left to beacon.
+ * A row resolved: the two multipliers the solver scales its rates by, and the {@link Layout} which
+ * is how the row's two module counts were laid out to get them. Both come out of one pass, because
+ * the two families share the machine — how many slots the productivity modules take decides how
+ * many are left for speed, and so how many beacons the speed took.
  *
- * `modules` is what the header means by a module of each family; the row states how many and which
- * family, never which module, so a save that upgrades to speed module 3 upgrades every row at once.
+ * `modules` is what the header means by a module of each family; the row states how many of each,
+ * never which, so a save that upgrades to speed module 3 upgrades every row at once.
  */
 export function entryRun(
   entry: CellEntry,
@@ -157,39 +157,13 @@ export function entryRun(
   modules: ChosenModules = {},
 ): EntryRun {
   const found = machine === undefined ? undefined : staticData.machines[machine];
-  if (!found) return { effects: NO_EFFECTS, boost: NO_BOOST };
-  const module = modules[entryBoost(entry, recipe)];
-  return boostedEffects(found, entry.modules, recipe, module, entry.boostModules, rowBeacon);
+  if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
+  return laidOutEffects(found, entry.modules, recipe, modules, entryWants(entry), rowBeacon);
 }
 
-/**
- * Which family of module a row reaches for when nobody has said: productivity where the recipe
- * allows it, and speed everywhere else. That is not a preference but the only sensible reading of
- * each case — a productivity module on a recipe which does not allow productivity is nothing but
- * its own speed malus (`modulesFor` will not even offer one), while a recipe which does allow it is
- * one where more out of the same ingredients beats more of it per second.
- *
- * A fact about the recipe alone, deliberately: the machine moves as the progress slider does, and a
- * row which quietly changed families underneath the user would be a different answer rather than a
- * bigger one. Every recipe here which allows productivity has some machine which applies it.
- */
-export function defaultBoost(recipe: Recipe): BoostEffect {
-  return recipe.allowProductivity ? 'productivity' : 'speed';
-}
-
-/** The family this row's modules come from: the user's choice, or {@link defaultBoost}'s. */
-export function entryBoost(entry: CellEntry, recipe: Recipe): BoostEffect {
-  return entry.boost ?? defaultBoost(recipe);
-}
-
-/**
- * The entry spending the other family — what clicking the module icon on a row does. Landing back
- * on {@link defaultBoost} stores nothing rather than pinning the same answer: the default cannot
- * move, so a pin of it would be a byte in the URL which nothing could ever tell apart.
- */
-export function flipBoost(entry: CellEntry, recipe: Recipe): CellEntry {
-  const flipped: BoostEffect = entryBoost(entry, recipe) === 'speed' ? 'productivity' : 'speed';
-  return { ...entry, boost: flipped === defaultBoost(recipe) ? undefined : flipped };
+/** What the row is asking for, as {@link moduleLayout} takes it. */
+export function entryWants(entry: CellEntry): ModuleWants {
+  return { productivity: entry.productivityModules, speed: entry.speedModules };
 }
 
 /** How many slots a loadout asks for, which is not necessarily how many the machine has. */

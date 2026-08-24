@@ -75,38 +75,40 @@
   font-style: italic;
 }
 
-/* The module request: an icon of what is being asked for, the count, and the beacons it came to.
-   One control, so it is boxed like one and the input inside it carries no border. */
-.cell-boost {
+/* The two module requests, productivity then speed: one control, so it is boxed like one and the
+   inputs inside it carry no border of their own. Where each module went — and the beacons the speed
+   took — is in the tooltips rather than on the row, which has a cell's worth of rows to fit. */
+.cell-modules {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 1px 4px 1px 1px;
+}
+
+.cell-module {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   cursor: help;
 }
 
-/* Which family the count is spent on, and the click which changes it: a button only where the
-   recipe gives the row a choice, so it is styled as the icon it wraps and nothing more. */
-.cell-boost-flip {
-  display: inline-flex;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
+/* a recipe which takes no productivity: the box stays, so the rows still read as two columns, and
+   says by being dim that there is nothing here to ask for */
+.cell-module.is-off {
+  opacity: 0.45;
 }
 
 /* the same 32px box the module pickers use, so a row's icons line up with the header's */
-.cell-boost-icon {
+.cell-module-icon {
   display: inline-block;
   width: 32px;
   height: 32px;
   flex-shrink: 0;
 }
 
-.cell-boost-count {
-  width: 3rem;
+.cell-module-count {
+  width: 2.5rem;
   font: inherit;
   font-family: var(--mono);
   font-size: 15px;
@@ -117,18 +119,10 @@
   padding: 0;
 }
 
-/* what filling the machine's slots comes to, in the placeholder: the same "not your number, but
-   what would happen" the count box draws that way */
-.cell-boost-count.is-derived::placeholder {
+/* what the layout comes to on its own, in the placeholder: the same "not your number, but what
+   would happen" the count box draws that way */
+.cell-module-count.is-derived::placeholder {
   color: var(--text);
   opacity: 1;
   font-style: italic;
-}
-
-.cell-beacons {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--mono);
-  font-size: 13px;
-  white-space: nowrap;
 }

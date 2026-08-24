@@ -1,6 +1,5 @@
 import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data.ts';
-import type { BoostEffect } from './data.ts';
 import type { ModuleFill } from './flow.ts';
 
 /**
@@ -36,9 +35,8 @@ export interface PackedEntry {
    * other way round and quietly re-slot the machine.
    */
   modules?: [PackedId, number][];
-  boostModules?: number;
-  /** Not an id and not numbered: one of two words, and the dictionary has both. */
-  boost?: BoostEffect;
+  productivityModules?: number;
+  speedModules?: number;
 }
 
 /**
@@ -90,8 +88,10 @@ function packEntry(entry: CellEntry): PackedEntry {
   if (entry.count !== undefined) packed.count = entry.count;
   const modules = packModules(entry.modules);
   if (modules) packed.modules = modules;
-  if (entry.boostModules !== undefined) packed.boostModules = entry.boostModules;
-  if (entry.boost !== undefined) packed.boost = entry.boost;
+  if (entry.productivityModules !== undefined) {
+    packed.productivityModules = entry.productivityModules;
+  }
+  if (entry.speedModules !== undefined) packed.speedModules = entry.speedModules;
   return packed;
 }
 
@@ -101,8 +101,10 @@ function unpackEntry(packed: PackedEntry): CellEntry {
   if (packed.count !== undefined) entry.count = packed.count;
   const modules = unpackModules(packed.modules);
   if (modules) entry.modules = modules;
-  if (packed.boostModules !== undefined) entry.boostModules = packed.boostModules;
-  if (packed.boost !== undefined) entry.boost = packed.boost;
+  if (packed.productivityModules !== undefined) {
+    entry.productivityModules = packed.productivityModules;
+  }
+  if (packed.speedModules !== undefined) entry.speedModules = packed.speedModules;
   return entry;
 }
 

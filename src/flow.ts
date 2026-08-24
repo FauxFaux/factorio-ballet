@@ -1,5 +1,11 @@
 import type { MachineMatch } from './data.ts';
-import { allowsEffect, categoryEffect, resourceName, staticData } from './data.ts';
+import {
+  allowsEffect,
+  categoryEffect,
+  resourceName,
+  staticData,
+  type ChosenModules,
+} from './data.ts';
 import { fmt } from './ts.ts';
 import type {
   Beacon,
@@ -96,11 +102,11 @@ export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
  * machine are the ones the user chose first and the answer never overstates the machine.
  *
  * Modules we did not ingest — efficiency, pollution — are not in `staticData.modules` and count for
- * nothing, which is right for both numbers here. Beacons are {@link boostedEffects}, which is this
- * with a {@link Boost} added to whichever side the modules in it are for.
+ * nothing, which is right for both numbers here. A row's own two counts are {@link laidOutEffects},
+ * which is this with a {@link Layout} of modules added on top.
  */
 export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
-  return applyBoost(machine, recipe, slotEffects(machine, fill), NO_BOOST);
+  return applyBoost(machine, recipe, slotEffects(machine, fill));
 }
 
 /** What one loadout adds up to in the machine's own slots, before either of the machine's gates. */
@@ -131,15 +137,15 @@ interface Slots {
 
 /**
  * The machine's own gates, applied to what is in it plus whatever the row's {@link Boost} adds.
- * Everything both {@link moduleEffects} and {@link boostedEffects} return comes through here, so
+ * Everything both {@link moduleEffects} and {@link laidOutEffects} return comes through here, so
  * the two cannot disagree about which effects a machine bothers with — including the boost's,
  * which a machine ignoring an effect ignores exactly as it ignores a module carrying it in its own
  * slots. Both of the boost's numbers land, because a module is both of them wherever it sits: a
  * productivity module in a spare slot is a speed malus as well as a yield.
  */
-function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, boost: Boost): Effects {
-  let speed = slots.speed + boost.speed;
-  let productivity = slots.productivity + boost.productivity;
+function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: Boost[]): Effects {
+  let speed = slots.speed + boosts.reduce((total, boost) => total + boost.speed, 0);
+  let productivity = slots.productivity + boosts.reduce((total, b) => total + b.productivity, 0);
 
   if (!allowsEffect(machine, 'speed')) speed = 0;
   if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
@@ -158,10 +164,9 @@ function takesCategory(holder: Machine | Beacon, category: string): boolean {
  * this is where that becomes a factory: the machine's own slots first, because they are free, and
  * then beacons, which are not.
  *
- * Which family that is is the row's own choice ({@link CellEntry.boost}), and the beacons are where
- * the two part company: a beacon transmits speed and refuses productivity outright, so a request
- * for more productivity modules than the machine holds is modules with nowhere to go rather than a
- * row of beacons.
+ * One family of the two a row asks for; {@link moduleLayout} is both of them over one machine. The
+ * beacons are where the families part company: a beacon transmits speed and refuses productivity
+ * outright, which is why only the speed half of a row ever builds any.
  *
  * The beacon arithmetic is `docs/beacons.wiki`'s: each of `n` beacons transmits
  * `distributionEffectivity / sqrt(n)` of what is in it, so `n` full beacons come to `1.5 × sqrt(n)`
@@ -205,9 +210,8 @@ export const NO_BOOST: Boost = {
 };
 
 /**
- * How a row's `wanted` modules are laid out; see {@link Boost}. `wanted` absent is the default — as
- * many as the machine's spare slots hold and no beacons, which is the loadout you would build
- * without thinking about it.
+ * How one family's `wanted` modules are laid out; see {@link Boost}. `wanted` absent is as many as
+ * the spare slots hold and no beacons, which {@link moduleLayout} is what decides for each family.
  *
  * Three ways of asking for something which cannot happen, all of which end up quoting less rather
  * than more: a machine with no slots at all receives nothing, from a beacon either (the game's
@@ -268,18 +272,86 @@ export function moduleBoost(
   };
 }
 
-/** A machine running a recipe with `fill` in its slots and a boost of `wanted` modules on top. */
-export function boostedEffects(
+/**
+ * How many modules of each family a row wants. The two are asked differently on purpose, because
+ * the game answers them differently: productivity can only ever be in the machine's own slots, so
+ * that number is capped there, while speed goes wherever it fits and beacons are how it gets there.
+ * Absent is auto for either, and the two autos are not the same rule; see {@link moduleLayout}.
+ */
+export interface ModuleWants {
+  productivity?: number;
+  speed?: number;
+}
+
+/** Where a row's modules ended up: one {@link Boost} per family, plus the slots they had. */
+export interface Layout {
+  productivity: Boost;
+  speed: Boost;
+  /** The machine's slots which the row's own loadout left free — what the two were laid out over. */
+  slots: number;
+}
+
+/** A machine with nothing in it, and nowhere to put anything. */
+export const NO_LAYOUT: Layout = { productivity: NO_BOOST, speed: NO_BOOST, slots: 0 };
+
+/**
+ * Both families over one machine: productivity into its slots, speed into whatever they leave, and
+ * beacons for the rest of the speed. The order is not a preference but the arithmetic — a slot is
+ * the only place a productivity module can be, so a slot spent on speed is one productivity cannot
+ * have, while speed has beacons to fall back on and loses nothing by being asked second.
+ *
+ * The two autos differ because the two questions do. Productivity's is "as many as will fit", which
+ * is the standard build and the only thing a slot can be worth on a recipe which pays for it —
+ * unless the recipe or the machine would ignore them, where it is none at all rather than a speed
+ * malus bought for nothing. Speed's is whatever slots are still empty afterwards and no beacons,
+ * which is the machine you would put together without thinking about it.
+ *
+ * A number the user typed is honoured either way, and typing one into the speed box does not take a
+ * slot back off productivity: a beaconed speed module reaches a machine whose own slots are full,
+ * which is exactly what beacons are for, and it is `docs/beacons.wiki`'s discount that pays for it.
+ */
+export function moduleLayout(
+  machine: Machine,
+  free: number,
+  recipe: Recipe,
+  modules: ChosenModules,
+  wants: ModuleWants,
+  beacon: Beacon | undefined,
+): Layout {
+  const slots = Math.max(0, free);
+  const auto = recipe.allowProductivity && allowsEffect(machine, 'productivity') ? slots : 0;
+  const productivity = moduleBoost(
+    machine,
+    slots,
+    modules.productivity,
+    Math.min(wants.productivity ?? auto, slots),
+    beacon,
+  );
+  const speed = moduleBoost(
+    machine,
+    slots - productivity.inMachine,
+    modules.speed,
+    wants.speed,
+    beacon,
+  );
+  return { productivity, speed, slots };
+}
+
+/** A machine running a recipe with `fill` in its slots and a {@link Layout} of modules on top. */
+export function laidOutEffects(
   machine: Machine,
   fill: ModuleFill | undefined,
   recipe: Recipe,
-  module: ModuleId | undefined,
-  wanted: number | undefined,
+  modules: ChosenModules,
+  wants: ModuleWants,
   beacon: Beacon | undefined,
-): { effects: Effects; boost: Boost } {
+): { effects: Effects; layout: Layout } {
   const slots = slotEffects(machine, fill ?? {});
-  const boost = moduleBoost(machine, slots.free, module, wanted, beacon);
-  return { effects: applyBoost(machine, recipe, slots, boost), boost };
+  const layout = moduleLayout(machine, slots.free, recipe, modules, wants, beacon);
+  return {
+    effects: applyBoost(machine, recipe, slots, layout.productivity, layout.speed),
+    layout,
+  };
 }
 
 /**
