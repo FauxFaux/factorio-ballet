@@ -197,6 +197,18 @@ game answers them separately — a productivity module has nowhere to be but the
 so that count is capped there, while speed has beacons and so no ceiling — and wanting both at once
 is the ordinary case rather than an exotic one.
 
+**Which family** either count is spent on is the machine's answer and not the row's. `moduleFor`
+(`src/data.ts`) picks, among the families named for that effect, the best module the header has
+chosen that this machine will take — two families are picked for productivity, `productivity` and
+Angel's `angels-bio-yield`, and Angel's farms name no `allowed_module_categories` at all, so they
+take both. Neither "the productivity family" nor "the one the machine allows" answers it, and what
+does is which is worth more here: bio-yield is pure yield at up to +50% against +20% with a speed
+malus, so a farm grows on the agricultural modules and an assembler runs on the ordinary ones. The
+speed malus is not weighed against the yield — that is a judgement about a factory, and the row has
+a speed box to make it with. `familyFor` is the same question asked of the dataset rather than of
+the header, which is what an empty box draws with its lights out, and `Layout.families` carries both
+answers to the row.
+
 The order is arithmetic and not a preference: productivity takes its slots first, because a slot is
 the only place it can go and one spent on speed is one it cannot have; speed fills whatever is left
 and beacons the rest, losing nothing by being asked second. **A typed speed count does not take a
@@ -285,7 +297,9 @@ with the whole layout — where each module went, how many beacons the speed too
 machine ends up running at — in the tooltips. There is deliberately no beacon count on the row
 itself: a cell is a column of rows, and the beacons are an answer rather than a thing to decide. The
 productivity box is capped at the machine's slots and is drawn dim and disabled on a recipe which
-takes no productivity, so the rows still read as two columns whatever is in them.
+takes no productivity, so the rows still read as two columns whatever is in them; each box's icon
+and its tooltip name the family that box is actually spending, which is how a farm row says
+"agricultural" where an assembler says "productivity".
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`

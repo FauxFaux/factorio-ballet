@@ -1,9 +1,14 @@
 import type { MachineMatch } from './data.ts';
 import {
   allowsEffect,
+  BOOST_CATEGORY,
   categoryEffect,
+  familyFor,
+  moduleFor,
   resourceName,
   staticData,
+  takesCategory,
+  type BoostEffect,
   type ChosenModules,
 } from './data.ts';
 import { fmt } from './ts.ts';
@@ -153,11 +158,6 @@ function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: B
   return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
 }
 
-/** Whether a machine or a beacon will take a module of this category at all; absent means all. */
-function takesCategory(holder: Machine | Beacon, category: string): boolean {
-  return holder.allowedModuleCategories?.includes(category) ?? true;
-}
-
 /**
  * A row's request for modules of one family, laid out over the machine and the beacons it took to
  * hold the rest. The user states one number — how many of them they want this machine feeling — and
@@ -283,16 +283,26 @@ export interface ModuleWants {
   speed?: number;
 }
 
-/** Where a row's modules ended up: one {@link Boost} per family, plus the slots they had. */
+/** Where a row's modules ended up: one {@link Boost} per effect, plus the slots they had. */
 export interface Layout {
   productivity: Boost;
   speed: Boost;
   /** The machine's slots which the row's own loadout left free — what the two were laid out over. */
   slots: number;
+  /**
+   * Which family each side is spending, which is the machine's answer and not the row's: a farm
+   * takes the agricultural modules where an assembler takes the productivity ones. See `moduleFor`.
+   */
+  families: Record<BoostEffect, string>;
 }
 
 /** A machine with nothing in it, and nowhere to put anything. */
-export const NO_LAYOUT: Layout = { productivity: NO_BOOST, speed: NO_BOOST, slots: 0 };
+export const NO_LAYOUT: Layout = {
+  productivity: NO_BOOST,
+  speed: NO_BOOST,
+  slots: 0,
+  families: BOOST_CATEGORY,
+};
 
 /**
  * Both families over one machine: productivity into its slots, speed into whatever they leave, and
@@ -309,6 +319,10 @@ export const NO_LAYOUT: Layout = { productivity: NO_BOOST, speed: NO_BOOST, slot
  * A number the user typed is honoured either way, and typing one into the speed box does not take a
  * slot back off productivity: a beaconed speed module reaches a machine whose own slots are full,
  * which is exactly what beacons are for, and it is `docs/beacons.wiki`'s discount that pays for it.
+ *
+ * Which module either side is spending is `moduleFor`'s, not the header's alone: more than one
+ * family is picked for productivity, and which of them a machine reaches for is a fact about the
+ * machine — Angel's farms take the agricultural modules, an assembler the ordinary ones.
  */
 export function moduleLayout(
   machine: Machine,
@@ -323,18 +337,28 @@ export function moduleLayout(
   const productivity = moduleBoost(
     machine,
     slots,
-    modules.productivity,
+    moduleFor(machine, 'productivity', modules),
     Math.min(wants.productivity ?? auto, slots),
     beacon,
   );
   const speed = moduleBoost(
     machine,
     slots - productivity.inMachine,
-    modules.speed,
+    moduleFor(machine, 'speed', modules),
     wants.speed,
     beacon,
   );
-  return { productivity, speed, slots };
+  return {
+    productivity,
+    speed,
+    slots,
+    /* What each box is drawing, chosen or not: the module itself where there is one, and otherwise
+       the family this machine would have used, so an empty box still says which. */
+    families: {
+      productivity: familyFor(machine, 'productivity'),
+      speed: familyFor(machine, 'speed'),
+    },
+  };
 }
 
 /** A machine running a recipe with `fill` in its slots and a {@link Layout} of modules on top. */

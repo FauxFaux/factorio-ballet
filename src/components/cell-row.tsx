@@ -8,14 +8,8 @@ import {
   parseModules,
   type CellEntry,
 } from '../cell.ts';
-import {
-  BOOST_CATEGORY,
-  machinesFor,
-  modulesIn,
-  type BoostEffect,
-  type ChosenModules,
-} from '../data.ts';
-import type { Boost, Effects } from '../flow.ts';
+import { categoryName, machinesFor, modulesIn, type ChosenModules } from '../data.ts';
+import type { Boost, Effects, Layout } from '../flow.ts';
 import { isProblem, noteText, type SolveNote } from '../solve.ts';
 import { fmt } from '../ts.ts';
 import type { MachineId, Recipe } from '../types.ts';
@@ -193,7 +187,7 @@ function ModuleBoxes({
   return (
     <span class="cell-modules">
       <ModuleBox
-        family="productivity"
+        family={layout.families.productivity}
         boost={layout.productivity}
         count={entry.productivityModules}
         /* The one cap in the row: a productivity module is only ever in a slot, so asking for more
@@ -202,23 +196,27 @@ function ModuleBoxes({
         disabled={!recipe.allowProductivity}
         title={
           recipe.allowProductivity
-            ? productivityTitle(layout.productivity, effects)
+            ? productivityTitle(layout, effects)
             : 'This recipe takes no productivity, so a productivity module in it would be nothing but its own speed malus.'
         }
         onCount={(count) => onChange({ ...entry, productivityModules: count })}
       />
       <ModuleBox
-        family="speed"
+        family={layout.families.speed}
         boost={layout.speed}
         count={entry.speedModules}
-        title={speedTitle(layout.speed, effects)}
+        title={speedTitle(layout, effects)}
         onCount={(count) => onChange({ ...entry, speedModules: count })}
       />
     </span>
   );
 }
 
-/** One family's box: which module is being spent, and how many of them. */
+/**
+ * One side's box: which module is being spent, and how many of them. `family` is the module
+ * category, which is the machine's answer rather than the effect's — the agricultural modules and
+ * the productivity ones are both picked for productivity, and a farm takes the first.
+ */
 function ModuleBox({
   family,
   boost,
@@ -228,7 +226,7 @@ function ModuleBox({
   title,
   onCount,
 }: {
-  family: BoostEffect;
+  family: string;
   boost: Boost;
   count: number | undefined;
   max?: number;
@@ -253,7 +251,7 @@ function ModuleBox({
           aria-hidden="true"
         />
       ) : (
-        <UnlitIcon modules={modulesIn(BOOST_CATEGORY[family])} class="cell-module-icon" />
+        <UnlitIcon modules={modulesIn(family)} class="cell-module-icon" />
       )}
       <input
         class={auto ? 'cell-module-count is-derived' : 'cell-module-count'}
@@ -266,7 +264,7 @@ function ModuleBox({
         /* What "auto" comes to, in the placeholder for the same reason the solver's count is:
            it is what would happen, not what was asked for. */
         placeholder={auto ? fmt(boost.wanted) : ''}
-        aria-label={`${family === 'speed' ? 'Speed' : 'Productivity'} modules`}
+        aria-label={`${categoryName(family)} modules`}
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;
           setDraft(raw);
@@ -280,20 +278,24 @@ function ModuleBox({
 }
 
 /** What the productivity box did: slots, and what the machine made of them. */
-function productivityTitle(boost: Boost, effects: Effects): string {
+function productivityTitle(layout: Layout, effects: Effects): string {
+  const boost = layout.productivity;
+  const family = categoryName(layout.families.productivity);
   if (!boost.module) {
-    return 'Productivity modules for this row. None is chosen in the header, so nothing here is modded yet.';
+    return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
   return (
-    `${fmt(boost.inMachine)} productivity modules in the machine — ${outcome(effects)}.` +
+    `${fmt(boost.inMachine)} ${family} modules in the machine — ${outcome(effects)}.` +
     ' Blank fills the slots; no beacon transmits productivity, so this is the whole of it.'
   );
 }
 
 /** What the speed box did: the slots productivity left, the beacons the rest took, and the result. */
-function speedTitle(boost: Boost, effects: Effects): string {
+function speedTitle(layout: Layout, effects: Effects): string {
+  const boost = layout.speed;
+  const family = categoryName(layout.families.speed);
   if (!boost.module) {
-    return 'Speed modules for this row. None is chosen in the header, so nothing here is modded yet.';
+    return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
   const beacons =
     boost.beacons === 0
@@ -303,9 +305,14 @@ function speedTitle(boost: Boost, effects: Effects): string {
   const lost = boost.wanted - boost.inMachine - boost.inBeacons;
   const nowhere = lost > 0 ? `, ${fmt(lost)} with nowhere to go` : '';
   return (
-    `${fmt(boost.wanted)} speed modules: ${fmt(boost.inMachine)} in the machine, ${beacons}${nowhere}` +
+    `${fmt(boost.wanted)} ${family} modules: ${fmt(boost.inMachine)} in the machine, ${beacons}${nowhere}` +
     ` — ${outcome(effects)}. Blank fills whatever slots the productivity modules left.`
   );
+}
+
+/** A family's name at the front of a sentence; they are all lowercase, as a picker wants them. */
+function sentence(family: string): string {
+  return family.charAt(0).toUpperCase() + family.slice(1);
 }
 
 /**

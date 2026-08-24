@@ -1,8 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   allowsEffect,
+  categoryName,
   defaultModule,
+  familyFor,
   moduleCategories,
+  moduleFor,
   modulesFor,
   modulesIn,
   staticData,
@@ -191,5 +194,55 @@ describe('the module families', () => {
     // 0.4954, and tier 3 is 0.6727 — the best one you have, not the nearest one there is
     expect(at(0.5)).toBe('productivity-module-2');
     expect(at(1)).toBe('bob-productivity-module-5');
+  });
+});
+
+/**
+ * Which family a machine reaches for, given the header has chosen one of each. Two families are
+ * picked for productivity — the ordinary modules and Angel's bio-yield ones — so "the productivity
+ * module" is not a question the header alone can answer.
+ */
+describe('moduleFor', () => {
+  const chosen = {
+    speed: 'speed-module-3',
+    productivity: 'productivity-module-3',
+    'angels-bio-yield': 'angels-bio-yield-module-5',
+  };
+  /** Where Arumbiphila is grown: two slots, and no `allowed_module_categories` at all. */
+  const desert = staticData.machines['angels-desert-farm'];
+
+  it('gives a farm the agricultural modules, which is what a farm is for', () => {
+    // the farm names no whitelist, so it takes the ordinary productivity modules too — but +50% of
+    // pure yield beats +12% at −15% speed, and that is what decides it
+    expect(desert.allowedModuleCategories).toBeUndefined();
+    expect(moduleFor(desert, 'productivity', chosen)).toBe('angels-bio-yield-module-5');
+    expect(familyFor(desert, 'productivity')).toBe('angels-bio-yield');
+  });
+
+  it('gives every other machine the productivity modules, being all they will take', () => {
+    expect(assembler.allowedModuleCategories).toContain('productivity');
+    expect(assembler.allowedModuleCategories).not.toContain('angels-bio-yield');
+    expect(moduleFor(assembler, 'productivity', chosen)).toBe('productivity-module-3');
+    expect(familyFor(assembler, 'productivity')).toBe('productivity');
+  });
+
+  it('falls through to a family the header has actually chosen', () => {
+    // a player not using the bio-yield modules at all still has the ordinary ones in a farm
+    const noBio = { ...chosen, 'angels-bio-yield': undefined };
+    expect(moduleFor(desert, 'productivity', noBio)).toBe('productivity-module-3');
+    expect(moduleFor(desert, 'productivity', {})).toBeUndefined();
+  });
+
+  it('is the one speed family either way, and reaches a machine which will not hold it', () => {
+    expect(moduleFor(desert, 'speed', chosen)).toBe('speed-module-3');
+    // the machine refusing the category is the beacons' business, not this: a module is still named
+    const picky = { ...assembler, allowedModuleCategories: ['angels-bio-yield'] };
+    expect(moduleFor(picky, 'speed', chosen)).toBe('speed-module-3');
+    expect(familyFor(picky, 'speed')).toBe('speed');
+  });
+
+  it('is named on a row as the picker names it', () => {
+    expect(categoryName('angels-bio-yield')).toBe('agricultural');
+    expect(categoryName('productivity')).toBe('productivity');
   });
 });

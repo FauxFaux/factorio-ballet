@@ -195,6 +195,15 @@ export function allowsEffect(machine: Machine, effect: Effect): boolean {
   return machine.allowedEffects?.includes(effect) ?? true;
 }
 
+/**
+ * Whether a machine or a beacon will take a module of this category at all; absent means all, and
+ * that absence is the only home Angel's bio-yield modules have — every machine here which names a
+ * list names the same six categories, all of them except that one.
+ */
+export function takesCategory(holder: Machine | Beacon, category: string): boolean {
+  return holder.allowedModuleCategories?.includes(category) ?? true;
+}
+
 export interface ModuleMatch {
   id: ModuleId;
   module: Module;
@@ -220,7 +229,7 @@ export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
   if (!machine.moduleSlots) return [];
   const out: ModuleMatch[] = [];
   for (const [id, module] of Object.entries(staticData.modules)) {
-    if (!(machine.allowedModuleCategories?.includes(module.category) ?? true)) continue;
+    if (!takesCategory(machine, module.category)) continue;
     // a *bonus* which survives, not merely an effect: a productivity module's speed is negative,
     // so on a recipe which does not allow productivity it is the only thing left of it
     const faster = (module.speed ?? 0) > 0 && allowsEffect(machine, 'speed');
@@ -375,20 +384,85 @@ export function chosenModule(
   return defaultModule(modulesIn(category), progress)?.id;
 }
 
-/** Which module the header means by each family a row can spend, resolved by {@link chosenModules}. */
-export type ChosenModules = { [E in BoostEffect]?: ModuleId };
+/** Which module the header means by each family, keyed by category id; see {@link chosenModules}. */
+export type ChosenModules = Record<string, ModuleId | undefined>;
 
 /**
- * Both families a cell row can reach for, resolved once against the header's choices: a row states
- * how many modules and which effect it wants them for, never which module, so this is where "a
- * speed module" and "a productivity module" become tiers. Resolved for the app rather than per row,
- * because it is one decision and every row spends it.
+ * Every family resolved once against the header's choices: a row states how many modules it wants
+ * for an effect, never which module or even which family, so this is where "a productivity module"
+ * becomes a tier. Resolved for the app rather than per row, because it is one decision and every
+ * row spends it — {@link moduleFor} is the per-machine half, which family of the ones here.
  */
 export function chosenModules(choice: ModuleChoice, progress: number): ChosenModules {
-  return {
-    speed: chosenModule(choice, SPEED_CATEGORY, progress),
-    productivity: chosenModule(choice, PRODUCTIVITY_CATEGORY, progress),
-  };
+  return Object.fromEntries(
+    moduleCategories.map(({ id }) => [id, chosenModule(choice, id, progress)]),
+  );
+}
+
+/** The families picked for one effect, in the order {@link moduleCategories} has them. */
+function familiesOf(effect: BoostEffect): ModuleCategory[] {
+  return moduleCategories.filter((category) => category.effect === effect);
+}
+
+/** What one module is worth for an effect: the number the choice between two families turns on. */
+function worthOf(id: ModuleId | undefined, effect: BoostEffect): number {
+  return (id === undefined ? 0 : (staticData.modules[id]?.[effect] ?? 0)) || 0;
+}
+
+/**
+ * Which module a machine would actually reach for, for one effect: the best of what the header has
+ * chosen, out of the families this machine will take.
+ *
+ * More than one family can be picked for the same effect — `productivity` and Angel's
+ * `angels-bio-yield` both are — and which of them a row spends is a fact about the machine and not
+ * about the row. Angel's farms name no `allowed_module_categories` at all, so they take ordinary
+ * productivity modules as well as the bio-yield ones a farm is actually for; every other machine
+ * which names a list leaves bio-yield out. So neither "the productivity family" nor "the one the
+ * machine allows" answers it, and what does is which module is worth more here: bio-yield is pure
+ * yield at up to +50%, against +20% and a speed malus, so a farm gets the agricultural modules and
+ * an assembler the only ones it can take.
+ *
+ * The speed malus is not weighed against the yield, deliberately — that is a judgement about a
+ * factory, and the row has a speed box of its own to make it with.
+ *
+ * A machine which refuses every family that has a module is still worth answering for, because a
+ * beacon reaches a machine which will not hold the module itself; {@link takesCategory} decides
+ * what goes in the slots, and this only decides which module is being talked about.
+ */
+export function moduleFor(
+  machine: Machine,
+  effect: BoostEffect,
+  chosen: ChosenModules,
+): ModuleId | undefined {
+  const named = familiesOf(effect).filter(({ id }) => chosen[id] !== undefined);
+  const takes = named.filter((category) => takesCategory(machine, category.id));
+  const pool = takes.length > 0 ? takes : named;
+  return pool
+    .map(({ id }) => chosen[id])
+    .toSorted((a, b) => worthOf(b, effect) - worthOf(a, effect))[0];
+}
+
+/**
+ * Which family stands for an effect in this machine when the header has chosen no module at all —
+ * the icon a row's box draws with its lights out. {@link moduleFor}'s question asked of the
+ * dataset rather than of the header: the best a family could be worth here, chosen or not.
+ */
+export function familyFor(machine: Machine | undefined, effect: BoostEffect): string {
+  const families = familiesOf(effect);
+  const takes = machine
+    ? families.filter((category) => takesCategory(machine, category.id))
+    : families;
+  const best = (category: ModuleCategory) =>
+    Math.max(0, ...modulesIn(category.id).map(({ module }) => module[effect] ?? 0));
+  return (
+    (takes.length > 0 ? takes : families).toSorted((a, b) => best(b) - best(a))[0]?.id ??
+    BOOST_CATEGORY[effect]
+  );
+}
+
+/** What a family is called on a row: the picker's own name for it, `agricultural` and all. */
+export function categoryName(category: string): string {
+  return moduleCategories.find(({ id }) => id === category)?.human ?? category;
 }
 
 /**

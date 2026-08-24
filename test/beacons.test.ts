@@ -270,6 +270,23 @@ describe('moduleLayout', () => {
     expect(asked.effects.productivity).toBeCloseTo(1.24);
   });
 
+  it('grows a farm with the agricultural modules', () => {
+    // the case this was got wrong on: Arumbiphila in a desert farm, which takes both families and
+    // wants the bio-yield one — two slots of pure +50% yield, and no speed malus to show for it
+    const farm = { recipe: 'angels-desert-5', machine: 'angels-desert-farm' };
+    const grown = staticData.recipes['angels-desert-5'];
+    const run = entryRun(farm, grown, farm.machine, {
+      ...both,
+      'angels-bio-yield': 'angels-bio-yield-module-5',
+    });
+    expect(run.layout.families.productivity).toBe('angels-bio-yield');
+    expect(run.layout.productivity).toMatchObject({
+      module: 'angels-bio-yield-module-5',
+      inMachine: 2,
+    });
+    expect(run.effects).toEqual({ speed: 1, productivity: 2 });
+  });
+
   it('is nothing at all where the header has picked no module of that family', () => {
     const speedOnly = entryRun(row, gears, row.machine, { speed: SPEED_3 });
     // no productivity module to fill the slots with, so the speed request has them instead
