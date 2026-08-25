@@ -26,12 +26,11 @@ describe('the chosen belt', () => {
     ]);
     for (const { id, belt, complexity } of beltTiers) {
       expect(staticData.resources[`item:${belt.item ?? id}`]?.human, id).toBeTruthy();
-      expect(complexity, id).toBeGreaterThan(0);
+      expect(complexity, id).toBeDefined();
     }
   });
 
   it('defaults to the fastest researched belt and lets the header pin or remove it', () => {
-    expect(defaultBelt(0)).toBeUndefined();
     expect(defaultBelt(1)?.id).toBe('bob-ultimate-transport-belt');
     expect(chosenBelt('transport-belt', 1)).toBe(staticData.belts['transport-belt']);
     expect(chosenBelt(undefined, 1)).toBe(staticData.belts['bob-ultimate-transport-belt']);

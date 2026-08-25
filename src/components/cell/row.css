@@ -67,24 +67,6 @@
   font-weight: bold;
 }
 
-.cell-connection {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 8px;
-  margin-top: 2px;
-}
-
-.cell-connection-details,
-.cell-connection-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.cell-connection-details {
-  min-width: 0;
-}
-
 .cell-connection-flows {
   display: flex;
   flex-wrap: wrap;
@@ -121,10 +103,6 @@
   margin: -8px;
   margin-left: -4px;
   transform: scale(0.5);
-}
-
-.cell-connection > span:last-child {
-  font-family: var(--mono);
 }
 
 .cell-connections-pending {

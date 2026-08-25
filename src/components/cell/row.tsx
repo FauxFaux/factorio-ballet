@@ -19,7 +19,6 @@ import { recipeConnections, RecipeConnections } from './connections.tsx';
  */
 export function CellRow({
   entry,
-  entries,
   entryIndex,
   count,
   note,
@@ -31,8 +30,6 @@ export function CellRow({
   onRemove,
 }: {
   entry: CellEntry;
-  /** The cell's rows, so expanded connections can name their other end. */
-  entries: CellEntry[];
   entryIndex: number;
   /** What the solver made of this row, pinned or not; `undefined` if it could not work it out. */
   count: number | undefined;
@@ -133,7 +130,6 @@ export function CellRow({
       {expanded ? (
         <RecipeConnections
           connections={connections}
-          entries={entries}
           solved={count !== undefined}
           belt={chosen.belt}
         />
