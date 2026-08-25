@@ -39,6 +39,13 @@ export function CellSide({
   onSearch: (search: string) => void;
 }) {
   const side = SIDES[dir];
+  const pickResource = (id: ResourceId) => {
+    onSearch(side.search(id));
+    document
+      .getElementById('recipe-search')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
+
   return (
     <div class={`cell-side cell-${dir}`}>
       <h3 class="cell-side-head" title={side.hint}>
@@ -60,7 +67,7 @@ export function CellSide({
       ) : (
         ids.map((id) => (
           <div key={id} class="cell-flow">
-            <ResourceButton id={id} onPick={() => onSearch(side.search(id))} />
+            <ResourceButton id={id} onPick={() => pickResource(id)} />
             <EdgeRate
               /* an input is consumed and so negative; both sides read as a rate, not a sign */
               rate={

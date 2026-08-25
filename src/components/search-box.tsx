@@ -8,16 +8,20 @@ import type { State } from '../ts.ts';
  */
 export function SearchBox({
   search: [search, setSearch],
+  id,
   placeholder,
   children,
 }: {
   search: State<string>;
+  /** An optional document target for controls elsewhere that reveal this search. */
+  id?: string;
   placeholder: string;
   children?: ComponentChildren;
 }) {
   return (
     <p class="search-box">
       <input
+        id={id}
         type="search"
         value={search}
         onInput={(e) => setSearch((e.target as HTMLInputElement).value)}

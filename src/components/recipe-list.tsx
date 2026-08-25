@@ -35,6 +35,7 @@ export function RecipeList({
     <div class="recipe-list">
       <SearchBox
         search={[search, setSearch]}
+        id="recipe-search"
         placeholder="makes:item:iron-plate, uses:@out, circuit..."
       >
         {flipped ? (
