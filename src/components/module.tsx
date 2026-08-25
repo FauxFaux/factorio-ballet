@@ -176,6 +176,7 @@ export function ModuleBar({
 }) {
   return (
     <div class="module-bar">
+      <BeltPicker belt={belt} progress={progress} />
       {moduleCategories.map((category) => {
         const modules = modulesIn(category.id);
         const choice = category.id in chosen ? chosen[category.id] : undefined;
@@ -203,7 +204,6 @@ export function ModuleBar({
         );
       })}
       <BeaconPicker beacon={beacon} progress={progress} />
-      <BeltPicker belt={belt} progress={progress} />
     </div>
   );
 }

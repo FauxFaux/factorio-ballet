@@ -20,7 +20,7 @@ export function BeltPicker({
   if (beltTiers.length === 0) return null;
 
   const pinned = choice !== undefined;
-  const current = pinned ? beltTiers.find(({ id }) => id === choice) : defaultBelt(progress);
+  const current = pinned ? beltTiers.find(({ id }) => id === choice)! : defaultBelt(progress);
   const what = current ? `${beltName(current.id)}: ${rate(current.belt)}` : 'No belts';
   const label = pinned ? what : `${what}, by default for this progress`;
   const choose = (id: BeltChoice) => {
@@ -38,17 +38,8 @@ export function BeltPicker({
         title={`${label} — click to change`}
         onClick={() => setOpen(!open)}
       >
-        {current ? (
-          <>
-            <span class="module-icon" style={beltIconStyle(current.id)} aria-hidden="true" />
-            <span class="module-effect">{rate(current.belt)}</span>
-          </>
-        ) : (
-          <>
-            <UnlitBelt class="module-icon" />
-            <span class="module-effect">—</span>
-          </>
-        )}
+        <span class="module-icon" style={beltIconStyle(current.id)} aria-hidden="true" />
+        <span class="module-effect">{rate(current.belt)}</span>
         <span class="module-caret" aria-hidden="true">
           ▾
         </span>
@@ -66,18 +57,6 @@ export function BeltPicker({
             <span class="module-icon" aria-hidden="true" />
             <span class="module-option-effect">—</span>
             <span class="module-option-name">auto</span>
-          </button>
-          <button
-            type="button"
-            class={choice === null ? 'module-option is-chosen' : 'module-option'}
-            role="option"
-            aria-selected={choice === null}
-            title="No belt, whatever the progress"
-            onClick={() => choose(null)}
-          >
-            <UnlitBelt class="module-icon" />
-            <span class="module-option-effect">—</span>
-            <span class="module-option-name">none</span>
           </button>
           {beltTiers.map(({ id, belt }) => (
             <button
@@ -108,15 +87,4 @@ function rateSummary(belt: Belt): string {
 
 function beltIconStyle(id: BeltId): string {
   return resourceIconStyle(`item:${staticData.belts[id]?.item ?? id}`);
-}
-
-function UnlitBelt({ class: box }: { class: string }) {
-  const cheapest = beltTiers[0];
-  return (
-    <span
-      class={`${box} is-unlit`}
-      style={cheapest ? beltIconStyle(cheapest.id) : undefined}
-      aria-hidden="true"
-    />
-  );
 }

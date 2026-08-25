@@ -444,7 +444,7 @@ export function beltName(id: BeltId): string {
 }
 
 /** The fastest belt already available at this point in the tech tree. */
-export function defaultBelt(progress: number): BeltMatch | undefined {
+export function defaultBelt(progress: number): BeltMatch {
   return beltTiers.findLast((match) => complexityOf(match) <= progress);
 }
 
