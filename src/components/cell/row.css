@@ -36,6 +36,58 @@
   cursor: grabbing;
 }
 
+.cell-row-expand {
+  padding: 1px 3px;
+  font-size: 13px;
+}
+
+/* The open row stays part of the recipe's flex line, but its detail takes a whole new line. */
+.cell-connections {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  flex-basis: 100%;
+  margin: 2px 0 2px 2.1em;
+  padding: 6px 8px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.cell-connection-column h4,
+.cell-connection-column p {
+  margin: 0;
+}
+
+.cell-connection-column h4 {
+  color: var(--text-h);
+  font: inherit;
+  font-weight: bold;
+}
+
+.cell-connection {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.cell-connection span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-connection span:last-child {
+  font-family: var(--mono);
+}
+
+.cell-connections-pending {
+  display: block;
+}
+
 .cell-recipe-name {
   flex: 1 1 8rem;
   min-width: 0;

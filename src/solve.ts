@@ -16,6 +16,8 @@ import type { ResourceId } from './types.ts';
 export interface Solution {
   /** Machines per row, index-parallel with `Cell.entries`; `undefined` where it could not be. */
   counts: (number | undefined)[];
+  /** Net rates for one machine in each row, index-parallel with `counts`. */
+  rates: Map<ResourceId, number>[];
   /**
    * Net rate per second across the rows which do have a count: positive leaves the cell, negative
    * has to be fed in, and ~0 is a resource the cell balances itself. Partial while `complete` is
@@ -219,6 +221,7 @@ function solveDumb(rows: SolveRow[]): Solution {
 
   return {
     counts,
+    rates: rows.map((row) => row.rates),
     balance: scrub(balanceOf(rows, counts)),
     complete: counts.every((count) => count !== undefined),
     notes: notes.sort((a, b) => a.entry - b.entry),

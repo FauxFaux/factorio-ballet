@@ -82,8 +82,11 @@ export function CellBox({
               <CellRow
                 key={entry.recipe}
                 entry={entry}
+                entries={cell.entries}
+                entryIndex={i}
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
+                solution={solution}
                 progress={progress}
                 chosen={chosen}
                 drag={rowDrag(i)}

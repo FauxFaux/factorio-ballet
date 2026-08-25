@@ -1,8 +1,8 @@
 import './row.css';
-import { useState } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { entryMachine, entryRecipe, parseCount, type CellEntry } from '../../cell.ts';
-import { machinesFor, type Chosen } from '../../data.ts';
-import { isProblem, noteText, type SolveNote } from '../../solve.ts';
+import { machinesFor, recipeName, type Chosen } from '../../data.ts';
+import { isProblem, noteText, type Solution, type SolveNote } from '../../solve.ts';
 import { fmt } from '../../ts.ts';
 import type { Recipe } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
@@ -18,8 +18,11 @@ import { WarnIcon } from './notes.tsx';
  */
 export function CellRow({
   entry,
+  entries,
+  entryIndex,
   count,
   note,
+  solution,
   progress,
   chosen,
   drag,
@@ -27,9 +30,14 @@ export function CellRow({
   onRemove,
 }: {
   entry: CellEntry;
+  /** The cell's rows, so expanded connections can name their other end. */
+  entries: CellEntry[];
+  entryIndex: number;
   /** What the solver made of this row, pinned or not; `undefined` if it could not work it out. */
   count: number | undefined;
   note: SolveNote | undefined;
+  /** The other solved rows, used for the expanded in-cell flow breakdown. */
+  solution: Solution;
   progress: number;
   /** What the header says this row has to spend: modules and a beacon; see `Chosen`. */
   chosen: Chosen;
@@ -39,6 +47,11 @@ export function CellRow({
   onRemove: () => void;
 }) {
   const recipe = entryRecipe(entry);
+  const [expanded, setExpanded] = useState(false);
+  const connections = useMemo(
+    () => recipeConnections(entryIndex, solution),
+    [entryIndex, solution],
+  );
   /** The solver's complaint about this row, if it has one worth a mark on it. */
   const problem = note !== undefined && isProblem(note) ? note : undefined;
   const rowClass = [
@@ -66,6 +79,16 @@ export function CellRow({
       >
         ≡
       </span>
+      <button
+        type="button"
+        class="cell-btn cell-row-expand"
+        title={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
+        aria-label={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
+        aria-expanded={expanded}
+        onClick={() => setExpanded((wasExpanded) => !wasExpanded)}
+      >
+        {expanded ? '▾' : '▸'}
+      </button>
       <span
         class="recipe-icon"
         style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
@@ -106,7 +129,126 @@ export function CellRow({
       >
         ×
       </button>
+      {expanded ? (
+        <RecipeConnections
+          connections={connections}
+          entries={entries}
+          solved={count !== undefined}
+        />
+      ) : null}
     </div>
+  );
+}
+
+/** A recipe on the other end of one or more of this row's in-cell flows. */
+type RecipeConnection = { entry: number; percent: number };
+
+/** The two directions shown when a recipe row is opened. */
+type RecipeConnections = { inputs: RecipeConnection[]; outputs: RecipeConnection[] };
+
+const FLOW_EPS = 1e-9;
+
+/**
+ * Split each of this row's resources between the other rows which can be on its other end. A
+ * cell only records net rates, not a literal belt-by-belt routing, so when more than one row can
+ * make or use an item the split is proportional to their current rates. Resources are weighted by
+ * this row's rate, then the results are folded by recipe: one concise answer per neighbouring row.
+ */
+function recipeConnections(entry: number, solution: Solution): RecipeConnections {
+  return {
+    inputs: connectionsFor(entry, solution, 'input'),
+    outputs: connectionsFor(entry, solution, 'output'),
+  };
+}
+
+function connectionsFor(
+  entry: number,
+  solution: Solution,
+  direction: 'input' | 'output',
+): RecipeConnection[] {
+  const count = solution.counts[entry];
+  const rates = solution.rates[entry];
+  if (count === undefined || !rates) return [];
+
+  const portions = new Map<number, number>();
+  let total = 0;
+  for (const [resource, rate] of rates) {
+    const own = rate * count;
+    const wantsOther = direction === 'input' ? own < -FLOW_EPS : own > FLOW_EPS;
+    if (!wantsOther) continue;
+
+    const matches = solution.rates.flatMap((otherRates, other) => {
+      if (other === entry || solution.counts[other] === undefined) return [];
+      const otherFlow = (otherRates.get(resource) ?? 0) * solution.counts[other]!;
+      const opposite = direction === 'input' ? otherFlow > FLOW_EPS : otherFlow < -FLOW_EPS;
+      return opposite ? [{ entry: other, flow: Math.abs(otherFlow) }] : [];
+    });
+    const available = matches.reduce((sum, match) => sum + match.flow, 0);
+    if (!(available > FLOW_EPS)) continue;
+
+    const weight = Math.abs(own);
+    total += weight;
+    for (const match of matches) {
+      portions.set(
+        match.entry,
+        (portions.get(match.entry) ?? 0) + (weight * match.flow) / available,
+      );
+    }
+  }
+
+  return [...portions]
+    .map(([other, portion]) => ({ entry: other, percent: (portion / total) * 100 }))
+    .sort((a, b) => b.percent - a.percent || a.entry - b.entry);
+}
+
+/** The two compact columns below an expanded recipe row. */
+function RecipeConnections({
+  connections,
+  entries,
+  solved,
+}: {
+  connections: RecipeConnections;
+  entries: CellEntry[];
+  solved: boolean;
+}) {
+  if (!solved) {
+    return (
+      <p class="cell-connections cell-connections-pending">
+        Connections appear once this row is worked out.
+      </p>
+    );
+  }
+  return (
+    <div class="cell-connections">
+      <ConnectionColumn label="Inputs from" connections={connections.inputs} entries={entries} />
+      <ConnectionColumn label="Outputs to" connections={connections.outputs} entries={entries} />
+    </div>
+  );
+}
+
+function ConnectionColumn({
+  label,
+  connections,
+  entries,
+}: {
+  label: string;
+  connections: RecipeConnection[];
+  entries: CellEntry[];
+}) {
+  return (
+    <section class="cell-connection-column">
+      <h4>{label}</h4>
+      {connections.length ? (
+        connections.map(({ entry, percent }) => (
+          <div class="cell-connection" key={entry}>
+            <span title={entries[entry]?.recipe}>{recipeName(entries[entry]?.recipe ?? '?')}</span>
+            <span>{fmt(percent)}%</span>
+          </div>
+        ))
+      ) : (
+        <p>—</p>
+      )}
+    </section>
   );
 }
 
