@@ -34,7 +34,6 @@ describe('the chosen belt', () => {
     expect(defaultBelt(0)).toBeUndefined();
     expect(defaultBelt(1)?.id).toBe('bob-ultimate-transport-belt');
     expect(chosenBelt('transport-belt', 1)).toBe(staticData.belts['transport-belt']);
-    expect(chosenBelt(null, 1)).toBeUndefined();
     expect(chosenBelt(undefined, 1)).toBe(staticData.belts['bob-ultimate-transport-belt']);
   });
 });

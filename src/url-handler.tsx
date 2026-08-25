@@ -34,8 +34,7 @@ export interface UrlState {
    */
   be?: BeaconChoice;
   /**
-   * which belt a future throughput check should use. Absent follows `gp` through `defaultBelt`, and
-   * `null` means no belt, whatever the progress.
+   * which belt a future throughput check should use. Absent follows `gp` through `defaultBelt`.
    */
   bt?: BeltChoice;
 }

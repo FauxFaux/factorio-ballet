@@ -445,16 +445,16 @@ export function beltName(id: BeltId): string {
 
 /** The fastest belt already available at this point in the tech tree. */
 export function defaultBelt(progress: number): BeltMatch {
-  return beltTiers.findLast((match) => complexityOf(match) <= progress);
+  return beltTiers.findLast((match) => complexityOf(match) <= progress) ?? beltTiers[0];
 }
 
-/** An id pins a belt, `null` means no belt, and absent follows {@link defaultBelt}. */
-export type BeltChoice = BeltId | null | undefined;
+/** An id pins a belt, and absent follows {@link defaultBelt}. */
+export type BeltChoice = BeltId | undefined;
 
 /** The belt the header means right now: a pinned choice, or {@link defaultBelt}'s. */
-export function chosenBelt(choice: BeltChoice, progress: number): Belt | undefined {
-  if (choice !== undefined) return choice === null ? undefined : staticData.belts[choice];
-  return defaultBelt(progress)?.belt;
+export function chosenBelt(choice: BeltChoice, progress: number): Belt {
+  if (choice !== undefined) return staticData.belts[choice];
+  return defaultBelt(progress).belt;
 }
 
 /** The two module families a cell row asks for; see `moduleLayout` in `src/flow.ts`. */
@@ -508,19 +508,17 @@ export function chosenModules(choice: ModuleChoice, progress: number): ChosenMod
  * One object because it is one decision — what you have built by now — and every row spends all of
  * it. A row states how many modules it wants for an effect and never which module, which family or
  * which beacon, so this is where those decisions are answered once for the app rather than once per
- * row. {@link NO_CHOICE} is the empty answer: no modules, no beacons, no belt, which is the crash
- * site.
+ * row. {@link NO_CHOICE} is the empty answer: no modules, no beacons, which is the crash site.
  */
 export interface Chosen {
   modules: ChosenModules;
   /** Absent is none, and the early game's honest answer: you have not built a beacon yet. */
   beacon?: Beacon;
-  /** Absent is none, and a future throughput check will consume this header choice. */
-  belt?: Belt;
+  belt: Belt;
 }
 
 /** Nothing chosen at all: an unmodded machine with no beacons round it. */
-export const NO_CHOICE: Chosen = { modules: {} };
+export const NO_CHOICE: Chosen = { modules: {}, belt: defaultBelt(0).belt };
 
 /** Every part of {@link Chosen} resolved against the header's choices and the progress slider. */
 export function resolveChosen(

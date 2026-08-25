@@ -86,7 +86,7 @@ export function RecipeConnections({
   entries: CellEntry[];
   solved: boolean;
   /** The selected item belt; fluids deliberately have no belt equivalent here. */
-  belt?: Belt;
+  belt: Belt;
 }) {
   if (!solved) {
     return (
@@ -140,13 +140,13 @@ function ConnectionColumn({
                     class="cell-connection-flow"
                     key={resource}
                     title={`${fmt(rate)}/s ${resource}`}
-                    >
-                      <ResourceIcon id={resource} />
-                      <span>{fmt(rate)}/s</span>
-                      {belt && resource.startsWith('item:') ? (
-                        <BeltCount rate={rate} belt={belt} />
-                      ) : null}
-                    </span>
+                  >
+                    <ResourceIcon id={resource} />
+                    <span>{fmt(rate)}/s</span>
+                    {belt && resource.startsWith('item:') ? (
+                      <BeltCount rate={rate} belt={belt} />
+                    ) : null}
+                  </span>
                 ))}
               </span>
             </span>

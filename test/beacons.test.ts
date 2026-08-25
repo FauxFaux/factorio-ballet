@@ -8,7 +8,7 @@ import {
   SPEED_CATEGORY,
   staticData,
   type Chosen,
-  type ChosenModules,
+  type ChosenModules, defaultBelt,
 } from '../src/data.ts';
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/flow.ts';
 import { solveCell } from '../src/solve.ts';
@@ -29,7 +29,7 @@ const SPEED_3 = 'speed-module-3';
 const VANILLA = staticData.beacons['beacon'];
 
 /** What the header comes to: modules of each family, and the beacon they overflow into. */
-const kit = (modules: ChosenModules): Chosen => ({ modules, beacon: VANILLA });
+const kit = (modules: ChosenModules): Chosen => ({ modules, beacon: VANILLA, belt: defaultBelt(0).belt });
 
 const boost = (machine: Machine, wanted: number | undefined, free = machine.moduleSlots ?? 0) =>
   moduleBoost(machine, free, SPEED_3, wanted, VANILLA);
