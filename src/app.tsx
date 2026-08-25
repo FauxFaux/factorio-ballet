@@ -19,10 +19,13 @@ export function App({ uss }: { uss: State<UrlState> }) {
   // the slider is in whole percent, everything downstream in `complexity`'s own 0-to-1 scale
   const progress = gp[0] / 100;
   /* Which modules the cells mean by "a speed module" and "a productivity module", and which beacon
-   * the speed ones overflow into: one decision each, in the header, spent by every row's own count
-   * of them. Resolved here so the cells are handed the modules and the beacon rather than a
-   * preference to re-resolve — and memoised, because a cell's solution is memoised against this. */
-  const chosen = useMemo(() => resolveChosen(us.mo, us.be, progress), [us.mo, us.be, progress]);
+   * the speed ones overflow into, plus the belt reserved for future throughput checks. Resolved here
+   * so the cells are handed the modules and beacon rather than a preference to re-resolve — and
+   * memoised, because a cell's solution is memoised against this. */
+  const chosen = useMemo(
+    () => resolveChosen(us.mo, us.be, us.bt, progress),
+    [us.mo, us.be, us.bt, progress],
+  );
 
   /* The cell being worked on, if any: what a recipe added from the search joins, and what the
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */
@@ -50,7 +53,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
       <header class="app-head">
         <h1>faucalc</h1>
         <ProgressSlider progress={gp} />
-        <ModuleBar modules={field(uss, 'mo')} beacon={field(uss, 'be')} progress={progress} />
+        <ModuleBar
+          modules={field(uss, 'mo')}
+          beacon={field(uss, 'be')}
+          belt={field(uss, 'bt')}
+          progress={progress}
+        />
         <DebugButton state={us} />
       </header>
       <CellList

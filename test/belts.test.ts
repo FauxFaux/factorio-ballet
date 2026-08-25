@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../src/data.ts';
+import { beltTiers, chosenBelt, defaultBelt, staticData } from '../src/data.ts';
 
-describe('the ingested belts', () => {
+describe('the chosen belt', () => {
   it('is the six tiers the pack has, in items per second', () => {
     expect(
       Object.fromEntries(Object.entries(staticData.belts).map(([id, b]) => [id, b.itemsPerSecond])),
@@ -15,10 +15,26 @@ describe('the ingested belts', () => {
     });
   });
 
-  it('names an item which is in the data, for the icon and the name and the complexity', () => {
-    for (const [id, belt] of Object.entries(staticData.belts)) {
-      expect(staticData.resources[`item:${belt.item}`], id).toBeDefined();
-      expect(belt.human, id).toBeTruthy();
+  it('joins every belt to the complexity of the item which places it', () => {
+    expect(beltTiers.map(({ id }) => id)).toEqual([
+      'bob-basic-transport-belt',
+      'transport-belt',
+      'fast-transport-belt',
+      'express-transport-belt',
+      'bob-turbo-transport-belt',
+      'bob-ultimate-transport-belt',
+    ]);
+    for (const { id, belt, complexity } of beltTiers) {
+      expect(staticData.resources[`item:${belt.item ?? id}`]?.human, id).toBeTruthy();
+      expect(complexity, id).toBeGreaterThan(0);
     }
+  });
+
+  it('defaults to the fastest researched belt and lets the header pin or remove it', () => {
+    expect(defaultBelt(0)).toBeUndefined();
+    expect(defaultBelt(1)?.id).toBe('bob-ultimate-transport-belt');
+    expect(chosenBelt('transport-belt', 1)).toBe(staticData.belts['transport-belt']);
+    expect(chosenBelt(null, 1)).toBeUndefined();
+    expect(chosenBelt(undefined, 1)).toBe(staticData.belts['bob-ultimate-transport-belt']);
   });
 });

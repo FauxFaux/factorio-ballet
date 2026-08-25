@@ -6,11 +6,13 @@ import {
   moduleName,
   modulesIn,
   type BeaconChoice,
+  type BeltChoice,
   type ModuleCategory,
   type ModuleChoice,
   type ModuleMatch,
 } from '../data.ts';
 import { BeaconPicker } from './beacon.tsx';
+import { BeltPicker } from './belt.tsx';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Module, ModuleId } from '../types.ts';
@@ -162,11 +164,14 @@ export function ModulePicker({
 export function ModuleBar({
   modules: [chosen, setChosen],
   beacon,
+  belt,
   progress,
 }: {
   modules: State<ModuleChoice>;
   /** Which beacon a row builds when its speed modules overflow the machine; see `BeaconPicker`. */
   beacon: State<BeaconChoice>;
+  /** Which belt a future throughput check will use; see {@link BeltPicker}. */
+  belt: State<BeltChoice>;
   progress: number;
 }) {
   return (
@@ -198,6 +203,7 @@ export function ModuleBar({
         );
       })}
       <BeaconPicker beacon={beacon} progress={progress} />
+      <BeltPicker belt={belt} progress={progress} />
     </div>
   );
 }

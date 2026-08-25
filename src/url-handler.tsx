@@ -3,7 +3,7 @@ import { debounce } from './ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from './app.tsx';
 import type { Cell } from './cell.ts';
-import type { BeaconChoice, ModuleChoice } from './data.ts';
+import type { BeaconChoice, BeltChoice, ModuleChoice } from './data.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
 
@@ -33,6 +33,11 @@ export interface UrlState {
    * `null` is "none, whatever the progress".
    */
   be?: BeaconChoice;
+  /**
+   * which belt a future throughput check should use. Absent follows `gp` through `defaultBelt`, and
+   * `null` means no belt, whatever the progress.
+   */
+  bt?: BeltChoice;
 }
 
 const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
@@ -50,7 +55,7 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `o${fingerprint}`;
+const HASH_VERSION = `p${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -210,6 +215,7 @@ const referenceState: PackedState = {
     'angels-bio-yield': 'angels-bio-yield-module-5',
   },
   be: 'bob-beacon-2',
+  bt: 'bob-turbo-transport-belt',
 };
 
 const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));
