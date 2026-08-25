@@ -1,7 +1,7 @@
 import './row.css';
 import { useMemo, useState } from 'preact/hooks';
-import { entryMachine, entryRecipe, parseCount, type CellEntry } from '../../cell.ts';
-import { machinesFor, recipeName, type Chosen } from '../../data.ts';
+import { type CellEntry, entryMachine, entryRecipe, parseCount } from '../../cell.ts';
+import { type Chosen, machinesFor } from '../../data.ts';
 import { isProblem, noteText, type Solution, type SolveNote } from '../../solve.ts';
 import { fmt } from '../../ts.ts';
 import type { Recipe } from '../../types.ts';
@@ -10,6 +10,7 @@ import { MachinePicker } from '../machine.tsx';
 import type { RowDrag } from './drag.ts';
 import { ModuleBoxes } from './modules.tsx';
 import { WarnIcon } from './notes.tsx';
+import { recipeConnections, RecipeConnections } from './connections.tsx';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -137,118 +138,6 @@ export function CellRow({
         />
       ) : null}
     </div>
-  );
-}
-
-/** A recipe on the other end of one or more of this row's in-cell flows. */
-type RecipeConnection = { entry: number; percent: number };
-
-/** The two directions shown when a recipe row is opened. */
-type RecipeConnections = { inputs: RecipeConnection[]; outputs: RecipeConnection[] };
-
-const FLOW_EPS = 1e-9;
-
-/**
- * Split each of this row's resources between the other rows which can be on its other end. A
- * cell only records net rates, not a literal belt-by-belt routing, so when more than one row can
- * make or use an item the split is proportional to their current rates. Resources are weighted by
- * this row's rate, then the results are folded by recipe: one concise answer per neighbouring row.
- */
-function recipeConnections(entry: number, solution: Solution): RecipeConnections {
-  return {
-    inputs: connectionsFor(entry, solution, 'input'),
-    outputs: connectionsFor(entry, solution, 'output'),
-  };
-}
-
-function connectionsFor(
-  entry: number,
-  solution: Solution,
-  direction: 'input' | 'output',
-): RecipeConnection[] {
-  const count = solution.counts[entry];
-  const rates = solution.rates[entry];
-  if (count === undefined || !rates) return [];
-
-  const portions = new Map<number, number>();
-  let total = 0;
-  for (const [resource, rate] of rates) {
-    const own = rate * count;
-    const wantsOther = direction === 'input' ? own < -FLOW_EPS : own > FLOW_EPS;
-    if (!wantsOther) continue;
-
-    const matches = solution.rates.flatMap((otherRates, other) => {
-      if (other === entry || solution.counts[other] === undefined) return [];
-      const otherFlow = (otherRates.get(resource) ?? 0) * solution.counts[other]!;
-      const opposite = direction === 'input' ? otherFlow > FLOW_EPS : otherFlow < -FLOW_EPS;
-      return opposite ? [{ entry: other, flow: Math.abs(otherFlow) }] : [];
-    });
-    const available = matches.reduce((sum, match) => sum + match.flow, 0);
-    if (!(available > FLOW_EPS)) continue;
-
-    const weight = Math.abs(own);
-    total += weight;
-    for (const match of matches) {
-      portions.set(
-        match.entry,
-        (portions.get(match.entry) ?? 0) + (weight * match.flow) / available,
-      );
-    }
-  }
-
-  return [...portions]
-    .map(([other, portion]) => ({ entry: other, percent: (portion / total) * 100 }))
-    .sort((a, b) => b.percent - a.percent || a.entry - b.entry);
-}
-
-/** The two compact columns below an expanded recipe row. */
-function RecipeConnections({
-  connections,
-  entries,
-  solved,
-}: {
-  connections: RecipeConnections;
-  entries: CellEntry[];
-  solved: boolean;
-}) {
-  if (!solved) {
-    return (
-      <p class="cell-connections cell-connections-pending">
-        Connections appear once this row is worked out.
-      </p>
-    );
-  }
-  return (
-    <div class="cell-connections">
-      <ConnectionColumn label="Inputs from" connections={connections.inputs} entries={entries} />
-      <ConnectionColumn label="Outputs to" connections={connections.outputs} entries={entries} />
-    </div>
-  );
-}
-
-function ConnectionColumn({
-  label,
-  connections,
-  entries,
-}: {
-  label: string;
-  connections: RecipeConnection[];
-  entries: CellEntry[];
-}) {
-  return (
-    <section class="cell-connection-column">
-      <h4>{label}</h4>
-      {connections.length ? (
-        connections.map(({ entry, percent }) => (
-          <div class="cell-connection" key={entry}>
-            <span title={entries[entry]?.recipe}>{recipeName(entries[entry]?.recipe ?? '?')}</span>
-            <span>{fmt(percent)}%</span>
-          </div>
-        ))
-      ) : (
-        <p>—</p>
-      )}
-    </section>
   );
 }
 
