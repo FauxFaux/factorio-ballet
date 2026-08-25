@@ -12,7 +12,7 @@ import type {
   ResourceId,
   StaticData,
 } from './types.ts';
-import staticDataJson from './assets/static.json';
+const staticDataJson = await import('./assets/static.json');
 
 export const staticData = staticDataJson as StaticData;
 

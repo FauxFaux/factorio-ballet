@@ -259,7 +259,9 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
     if (r.hidden || r.parameter) continue; // mods disable content by hiding it, not deleting it
     out.set(id, {
       free: r.enabled !== false,
-      ingredients: arr(r.ingredients ?? []).map((i) => rid(RIngredient.parse(i))),
+      ingredients: arr(r.ingredients ?? []).map((i) =>
+        rid(RIngredient.parse(i) as { type: 'item' | 'fluid'; name: string }),
+      ),
       // A result the game never rolls buys you nothing, so it offers nothing to the walk either;
       // this is the same rule the ingest applies, so the two agree on what a product is.
       products: arr(r.results ?? [])
@@ -305,7 +307,10 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
       out.set(`${synthetic.id}#${machine.id}`, {
         free: false,
         synthetic: true,
-        ingredients: [...synthetic.ingredients.map(rid), `item:${machine.item}`],
+        ingredients: [
+          ...synthetic.ingredients.map((v) => rid(v as { type: 'item' | 'fluid'; name: string })),
+          `item:${machine.item}`,
+        ],
         products: synthetic.products.map(rid),
       });
     }
