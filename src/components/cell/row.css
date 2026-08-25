@@ -106,6 +106,21 @@
   transform: scale(0.5);
 }
 
+.cell-connection-belts {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  color: var(--text);
+}
+
+.cell-connection-belt-icon {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  margin: -8px;
+  transform: scale(0.5);
+}
+
 .cell-connection > span:last-child {
   font-family: var(--mono);
 }

@@ -2,7 +2,8 @@ import type { CellEntry } from '../../cell.ts';
 import { recipeName } from '../../data.ts';
 import { fmt } from '../../ts.ts';
 import type { Solution } from '../../solve.ts';
-import type { ResourceId } from '../../types.ts';
+import type { Belt, ResourceId } from '../../types.ts';
+import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
 
 /** A recipe on the other end of one or more of this row's in-cell flows. */
@@ -79,10 +80,13 @@ export function RecipeConnections({
   connections,
   entries,
   solved,
+  belt,
 }: {
   connections: RecipeConnections;
   entries: CellEntry[];
   solved: boolean;
+  /** The selected item belt; fluids deliberately have no belt equivalent here. */
+  belt?: Belt;
 }) {
   if (!solved) {
     return (
@@ -93,8 +97,18 @@ export function RecipeConnections({
   }
   return (
     <div class="cell-connections">
-      <ConnectionColumn label="Inputs from" connections={connections.inputs} entries={entries} />
-      <ConnectionColumn label="Outputs to" connections={connections.outputs} entries={entries} />
+      <ConnectionColumn
+        label="Inputs from"
+        connections={connections.inputs}
+        entries={entries}
+        belt={belt}
+      />
+      <ConnectionColumn
+        label="Outputs to"
+        connections={connections.outputs}
+        entries={entries}
+        belt={belt}
+      />
     </div>
   );
 }
@@ -103,10 +117,12 @@ function ConnectionColumn({
   label,
   connections,
   entries,
+  belt,
 }: {
   label: string;
   connections: RecipeConnection[];
   entries: CellEntry[];
+  belt?: Belt;
 }) {
   return (
     <section class="cell-connection-column">
@@ -124,10 +140,13 @@ function ConnectionColumn({
                     class="cell-connection-flow"
                     key={resource}
                     title={`${fmt(rate)}/s ${resource}`}
-                  >
-                    <ResourceIcon id={resource} />
-                    <span>{fmt(rate)}/s</span>
-                  </span>
+                    >
+                      <ResourceIcon id={resource} />
+                      <span>{fmt(rate)}/s</span>
+                      {belt && resource.startsWith('item:') ? (
+                        <BeltCount rate={rate} belt={belt} />
+                      ) : null}
+                    </span>
                 ))}
               </span>
             </span>
@@ -139,4 +158,28 @@ function ConnectionColumn({
       )}
     </section>
   );
+}
+
+/** The selected belt's share of an item flow; fluids travel by pipes, so never reach this. */
+function BeltCount({ rate, belt }: { rate: number; belt: Belt }) {
+  const count = rate / belt.itemsPerSecond;
+  const human = belt.human ?? belt.item ?? 'belt';
+  return (
+    <span
+      class="cell-connection-belts"
+      title={`${fmtBeltCount(count)} ${human}${count === 1 ? '' : 's'} at ${fmt(belt.itemsPerSecond)}/s each`}
+    >
+      <span>{fmtBeltCount(count)}</span>
+      <span
+        class="cell-connection-belt-icon"
+        style={resourceIconStyle(`item:${belt.item ?? 'belt-unknown'}`)}
+        aria-hidden="true"
+      />
+    </span>
+  );
+}
+
+/** A belt count is a planning estimate; one decimal is easier to scan than rate-level precision. */
+function fmtBeltCount(count: number): string {
+  return count.toFixed(1).replace(/\.0$/, '');
 }

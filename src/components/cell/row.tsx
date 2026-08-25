@@ -135,6 +135,7 @@ export function CellRow({
           connections={connections}
           entries={entries}
           solved={count !== undefined}
+          belt={chosen.belt}
         />
       ) : null}
     </div>
