@@ -74,13 +74,39 @@
   margin-top: 2px;
 }
 
-.cell-connection span:first-child {
+.cell-connection-details,
+.cell-connection-name {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.cell-connection span:last-child {
+.cell-connection-details {
+  min-width: 0;
+}
+
+.cell-connection-flows {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 6px;
+  margin-top: 2px;
+}
+
+.cell-connection-flow {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.cell-connection-flow .resource-icon {
+  margin: -8px;
+  transform: scale(0.5);
+}
+
+.cell-connection > span:last-child {
   font-family: var(--mono);
 }
 
