@@ -10,7 +10,8 @@ import { MachinePicker } from '../machine.tsx';
 import type { RowDrag } from './drag.ts';
 import { ModuleBoxes } from './modules.tsx';
 import { WarnIcon } from './notes.tsx';
-import { recipeConnections, RecipeConnections } from './connections.tsx';
+import { RecipeConnections } from './connections.tsx';
+import { recipeConnections } from './connection-calc.ts';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how

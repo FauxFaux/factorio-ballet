@@ -1,41 +1,8 @@
 import { fmt } from '../../ts.ts';
-import type { Solution } from '../../solve.ts';
-import type { Belt, ResourceId } from '../../types.ts';
+import type { Belt } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
-
-/** One resource this recipe consumes or produces, at its actual per-second rate. */
-type ConnectionFlow = { resource: ResourceId; rate: number };
-/** The two directions shown when a recipe row is opened. */
-type RecipeConnections = { inputs: ConnectionFlow[]; outputs: ConnectionFlow[] };
-const FLOW_EPS = 1e-9;
-
-/**
- * List every material rate for this row. These are deliberately not limited to flows which find a
- * matching row in the cell: the first and last recipes in a chain still need their external input
- * and output rates, including their belt counts.
- */
-export function recipeConnections(entry: number, solution: Solution): RecipeConnections {
-  const count = solution.counts[entry];
-  const rates = solution.rates[entry];
-  if (count === undefined || !rates) return { inputs: [], outputs: [] };
-
-  const flows = [...rates]
-    .map(([resource, rate]) => ({ resource, rate: rate * count }))
-    .filter(({ rate }) => Math.abs(rate) > FLOW_EPS);
-
-  return {
-    inputs: flows
-      .filter(({ rate }) => rate < 0)
-      .map(({ resource, rate }) => ({ resource, rate: -rate }))
-      .sort(byRate),
-    outputs: flows.filter(({ rate }) => rate > 0).sort(byRate),
-  };
-}
-
-function byRate(a: ConnectionFlow, b: ConnectionFlow): number {
-  return b.rate - a.rate || a.resource.localeCompare(b.resource);
-}
+import type { ConnectionFlow, RecipeConnections } from './connection-calc.ts';
 
 /** The two compact columns below an expanded recipe row. */
 export function RecipeConnections({

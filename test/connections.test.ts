@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { recipeConnections } from '../src/components/cell/connections.tsx';
 import type { Solution } from '../src/solve.ts';
+import { recipeConnections } from '../src/components/cell/connection-calc.ts';
 
 describe('recipeConnections', () => {
   it('shows every rate, including an output no other row consumes', () => {
