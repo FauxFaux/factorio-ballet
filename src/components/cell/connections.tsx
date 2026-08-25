@@ -122,7 +122,7 @@ function ConnectionColumn({
   label: string;
   connections: RecipeConnection[];
   entries: CellEntry[];
-  belt?: Belt;
+  belt: Belt;
 }) {
   return (
     <section class="cell-connection-column">
@@ -130,27 +130,30 @@ function ConnectionColumn({
       {connections.length ? (
         connections.map(({ entry, percent, flows }) => (
           <div class="cell-connection" key={entry}>
+            <span>{fmt(percent)}%</span>
             <span class="cell-connection-details">
               <span class="cell-connection-name" title={entries[entry]?.recipe}>
                 {recipeName(entries[entry]?.recipe ?? '?')}
               </span>
-              <span class="cell-connection-flows">
-                {flows.map(({ resource, rate }) => (
-                  <span
-                    class="cell-connection-flow"
-                    key={resource}
-                    title={`${fmt(rate)}/s ${resource}`}
-                  >
-                    <ResourceIcon id={resource} />
-                    <span>{fmt(rate)}/s</span>
-                    {belt && resource.startsWith('item:') ? (
-                      <BeltCount rate={rate} belt={belt} />
-                    ) : null}
-                  </span>
-                ))}
-              </span>
             </span>
-            <span>{fmt(percent)}%</span>
+            <span class="cell-connection-flow">
+              {flows.map(({ resource, rate }) => (
+                <span
+                  class="cell-connection-flow"
+                  key={resource}
+                  title={`${fmt(rate)}/s ${resource}`}
+                >
+                  <ResourceIcon id={resource} />
+                  <span>{fmt(rate)}/s</span>(
+                  {resource.startsWith('item:') ? (
+                    <BeltCount rate={rate} belt={belt} />
+                  ) : (
+                    <PumpCount rate={rate} />
+                  )}
+                  )
+                </span>
+              ))}
+            </span>
           </div>
         ))
       ) : (
@@ -173,6 +176,20 @@ function BeltCount({ rate, belt }: { rate: number; belt: Belt }) {
       <span
         class="cell-connection-belt-icon"
         style={resourceIconStyle(`item:${belt.item ?? 'belt-unknown'}`)}
+        aria-hidden="true"
+      />
+    </span>
+  );
+}
+
+function PumpCount({ rate }: { rate: number }) {
+  const pumps = rate / 1200;
+  return (
+    <span class="cell-connection-pump" title={`${fmt(pumps)} pumps`}>
+      <span>{fmt(pumps)}</span>
+      <span
+        class="cell-connection-belt-icon"
+        style={resourceIconStyle(`item:pump`)}
         aria-hidden="true"
       />
     </span>
