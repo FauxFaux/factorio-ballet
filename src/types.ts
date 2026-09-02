@@ -34,6 +34,61 @@ export interface StaticData {
   sciencePacks: ResourceId[];
 }
 
+/** The on-disk form of {@link StaticData}; nested field names are deliberately one character each. */
+export type StaticDataPacked = {
+  recipes: Record<
+    string,
+    {
+      h?: string;
+      i: PackedIngredient[];
+      p: PackedProduct[];
+      d: number;
+      c: string[];
+      a?: true;
+      s?: true;
+      x?: number;
+    }
+  >;
+  resources: Record<string, { h?: string; z?: number; x?: number }>;
+  machines: Record<
+    string,
+    {
+      h?: string;
+      k: MachineKind;
+      i?: string;
+      c: string[];
+      s: number;
+      n?: number;
+      e?: Effect[];
+      a?: string[];
+    }
+  >;
+  modules: Record<string, { c: string; t: number; s?: number; p?: number }>;
+  beacons: Record<
+    string,
+    {
+      h?: string;
+      i?: string;
+      n: number;
+      d: number;
+      e?: Effect[];
+      a?: string[];
+    }
+  >;
+  belts: Record<string, { h?: string; i?: string; s: number }>;
+  sciencePacks: ResourceId[];
+};
+
+type PackedIngredient = { r: ResourceId; a: number; t?: PackedTemperature };
+type PackedProduct = {
+  r: ResourceId;
+  a: PackedAmount;
+  p: number;
+  i?: number;
+};
+type PackedAmount = { f: number } | { n: number; x: number };
+type PackedTemperature = { f: number } | { n: number; x: number } | { n: number } | { x: number };
+
 export type ResourceId = `item:${string}` | `fluid:${string}`;
 
 /** A crafting machine's prototype id, e.g. `assembling-machine-2`. */
