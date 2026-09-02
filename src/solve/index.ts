@@ -4,6 +4,7 @@ import { netRates, speedOf } from '../flow.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
+import { procRsSolver } from './proc-rs.ts';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -24,7 +25,8 @@ export type SolveNote =
   | { kind: 'seeded'; entry: number }
   | { kind: 'contested'; entry: number; resource: ResourceId }
   | { kind: 'conflict'; entry: number; resource: ResourceId; needed: number; used: number }
-  | { kind: 'stranded'; entry: number };
+  | { kind: 'stranded'; entry: number }
+  | { kind: 'solver'; entry: number; detail: string };
 
 /** One row of a cell, reduced to the only thing the arithmetic cares about. */
 export interface SolveRow {
@@ -43,11 +45,12 @@ export interface Solver {
   solve(rows: SolveRow[]): Solution;
 }
 
-export { dumbSolver };
+export { dumbSolver, procRsSolver };
 
-export const SOLVERS: Solver[] = [dumbSolver];
+export const SOLVERS: Solver[] = [procRsSolver, dumbSolver];
 
-export const defaultSolver: Solver = dumbSolver;
+/** The matrix solver is temporarily the default while its interactive behavior is evaluated. */
+export const defaultSolver: Solver = procRsSolver;
 
 /** Resolve a cell to data-independent rows and hand them to the selected solver. */
 export function solveCell(
@@ -92,6 +95,8 @@ export function noteText(note: SolveNote): string {
       return `${fmt(note.needed)} would balance ${resourceName(note.resource)}, but ${fmt(note.used)} is needed elsewhere, so ${resourceName(note.resource)} is left over.`;
     case 'stranded':
       return 'Nothing in the rest of the cell settles how many of these there are: type a count, or add the recipe on the other end of one of its resources.';
+    case 'solver':
+      return note.detail;
   }
 }
 
