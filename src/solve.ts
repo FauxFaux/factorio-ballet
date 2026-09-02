@@ -3,6 +3,10 @@ import { machinesFor, NO_CHOICE, recipeName, resourceName, type Chosen } from '.
 import { netRates, speedOf } from './flow.ts';
 import { fmt } from './ts.ts';
 import type { ResourceId } from './types.ts';
+import { GraphConfiguration } from 'proc-web';
+
+// Stage-one integration proof: keep the WASM API in the application graph without using it yet.
+void GraphConfiguration;
 
 /**
  * How many machines of each recipe a cell needs, worked out from the ones the user pinned.

@@ -334,9 +334,9 @@ not. `UI.md` describes the wider planner design the solver eventually serves.
 - `../process-mgmt-gui` — the more modern calculator with much less scope: a demand-first
   linear-algebra planner (`src/calc.tsx`, `src/backend/mgmt.ts`) wrapping the `process-mgmt`
   library; analysed in `UI.md §2`.
-- `~/clone/proc-rs` — an external Rust implementation of a production-chain planner. Its
-  `proc-core` crate contains the RREF-based solver, and `ALGORITHM.md` documents how it handles
-  requirements, imports and exports, intermediates, cycles, productivity, and catalysts.
+- `~/clone/proc-rs` — an external Rust implementation of a production-chain planner. Its `proc-core`
+  crate contains the RREF-based solver, and `ALGORITHM.md` documents how it handles requirements,
+  imports and exports, intermediates, cycles, productivity, and catalysts.
 - `../factoriolab` — checked out only because it's referenced as a data source.
 - `../factorio-raw-types` — the types package the ingest validates against, and also the only place
   the icon spritesheet can be rebuilt: `scripts/sprite-sheet.ts` packs `src/assets/icons.avif` +
