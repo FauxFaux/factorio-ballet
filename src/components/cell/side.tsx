@@ -1,6 +1,6 @@
 import './side.css';
 import { fmt } from '../../ts.ts';
-import type { Solution } from '../../solve.ts';
+import type { Solution } from '../../solve/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceButton } from '../resource.tsx';
 

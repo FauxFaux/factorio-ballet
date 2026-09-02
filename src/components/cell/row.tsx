@@ -2,7 +2,7 @@ import './row.css';
 import { useMemo, useState } from 'preact/hooks';
 import { type CellEntry, entryMachine, entryRecipe, parseCount } from '../../cell.ts';
 import { type Chosen, machinesFor } from '../../data.ts';
-import { isProblem, noteText, type Solution, type SolveNote } from '../../solve.ts';
+import { isProblem, noteText, type Solution, type SolveNote } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
 import type { Recipe } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';

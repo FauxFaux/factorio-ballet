@@ -29,7 +29,7 @@ import type {
  * What one resource does in one recipe, ready to render: how much per craft, and how fast at the
  * speed it is being quoted at. This file is one recipe in one machine and no more — {@link netRates}
  * is the same arithmetic in the form the solver scales, but the scaling of one recipe against
- * another is `solve.ts`, not here.
+ * another is `solve/index.ts`, not here.
  */
 export interface Flow {
   resource: ResourceId;

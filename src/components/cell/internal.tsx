@@ -1,6 +1,6 @@
 import './internal.css';
 import { resourceName } from '../../data.ts';
-import type { Solution } from '../../solve.ts';
+import type { Solution } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceIcon } from '../resource.tsx';

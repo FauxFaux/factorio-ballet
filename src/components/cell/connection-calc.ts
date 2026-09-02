@@ -1,5 +1,5 @@
 import type { ResourceId } from '../../types.ts';
-import type { Solution } from '../../solve.ts';
+import type { Solution } from '../../solve/index.ts';
 
 /** One resource this recipe consumes or produces, at its actual per-second rate. */
 export type ConnectionFlow = { resource: ResourceId; rate: number };

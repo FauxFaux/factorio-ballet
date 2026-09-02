@@ -12,7 +12,7 @@ import {
   defaultBelt,
 } from '../src/data.ts';
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/flow.ts';
-import { solveCell } from '../src/solve.ts';
+import { solveCell } from '../src/solve/index.ts';
 import type { Machine } from '../src/types.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];

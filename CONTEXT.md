@@ -284,13 +284,15 @@ is "something which makes anything this cell has to be fed". That is the search 
 up, and the buttons on each side of a cell are how you get it without typing. An `@`-query outside a
 cell matches nothing rather than everything.
 
-### Solver (`src/solve.ts`)
+### Solver (`src/solve/`)
 
 A solver turns the counts the user pinned into the counts they did not: fifteen steel furnaces, so
 how many coke plants (`FACTORIO.md`). `solveCell` reduces each `CellEntry` to a `SolveRow` — the
 `netRates` of one machine, plus the pinned `count` if there is one — and hands the rows to a
-`Solver`. There is one, `dumbSolver`, and the interface exists because there will be more: the
-linear-algebra core this repo used to carry (`git show c14f792`) handles the cycles this one cannot.
+`Solver`. The shared contract and cell adapter live in `solve/index.ts`; the demand-propagation
+implementation lives in `solve/dumb.ts`. There is one solver, `dumbSolver`, and the interface exists
+because there will be more: the linear-algebra core this repo used to carry (`git show c14f792`)
+handles the cycles this one cannot.
 
 The dumb solver is demand propagation, one row per pass against a freshly totalled balance: seed
 (the pinned rows, or one of the top row if nothing is pinned), find a row which makes what the cell

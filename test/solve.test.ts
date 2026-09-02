@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest';
 import { newCell, type Cell } from '../src/cell.ts';
 import { defaultMachine, machinesFor, staticData } from '../src/data.ts';
 import { netRates, NO_EFFECTS, speedOf } from '../src/flow.ts';
-import { dumbSolver, noteFor, solveCell, type SolveRow } from '../src/solve.ts';
+import {
+  dumbSolver,
+  noteFor,
+  solveCell,
+  type Solution,
+  type SolveRow,
+  type Solver,
+} from '../src/solve/index.ts';
 import type { ResourceId } from '../src/types.ts';
 
 const X = 'item:x' as ResourceId;
@@ -16,6 +23,42 @@ const row = (rates: Partial<Record<ResourceId, number>>, count?: number): SolveR
 });
 
 const solve = (...rows: SolveRow[]) => dumbSolver.solve(rows);
+
+describe('Solver interface', () => {
+  it('receives resolved rows from solveCell and returns its solution unchanged', () => {
+    let received: SolveRow[] = [];
+    const expected: Solution = {
+      counts: [7],
+      rates: [],
+      balance: new Map(),
+      complete: true,
+      notes: [],
+    };
+    const solver: Solver = {
+      id: 'recording',
+      human: 'Recording',
+      about: 'Records the rows it receives.',
+      solve(rows) {
+        received = rows;
+        return expected;
+      },
+    };
+
+    const answer = solveCell(
+      { entries: [{ recipe: 'iron-plate', count: 3 }] },
+      0,
+      undefined,
+      solver,
+    );
+
+    expect(answer).toBe(expected);
+    expect(received).toHaveLength(1);
+    expect(received[0]?.count).toBe(3);
+    expect([...received[0]!.rates.values()]).toEqual(expect.arrayContaining([expect.any(Number)]));
+    expect([...received[0]!.rates.values()].some((rate) => rate > 0)).toBe(true);
+    expect([...received[0]!.rates.values()].some((rate) => rate < 0)).toBe(true);
+  });
+});
 
 describe('dumbSolver', () => {
   it('has nothing to say about an empty cell', () => {

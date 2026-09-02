@@ -1,7 +1,7 @@
 import './notes.css';
 import { AlertFillIcon } from '@primer/octicons-react';
 import type { Cell } from '../../cell.ts';
-import { isProblem, noteLine, type Solution } from '../../solve.ts';
+import { isProblem, noteLine, type Solution } from '../../solve/index.ts';
 
 /**
  * The glyph for a solver note, wherever one is shown: a row's own mark, or the sentence it points

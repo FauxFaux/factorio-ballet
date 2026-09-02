@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Solution } from '../src/solve.ts';
+import type { Solution } from '../src/solve/index.ts';
 import { recipeConnections } from '../src/components/cell/connection-calc.ts';
 
 describe('recipeConnections', () => {

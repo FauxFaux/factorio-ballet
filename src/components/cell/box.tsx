@@ -9,7 +9,7 @@ import {
   type Cell,
 } from '../../cell.ts';
 import type { Chosen } from '../../data.ts';
-import { noteFor, solveCell } from '../../solve.ts';
+import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';
 import { InternalRow } from './internal.tsx';
