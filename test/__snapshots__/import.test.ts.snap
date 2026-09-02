@@ -1,0 +1,83 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`decodeUrl > decodes the persisted proc-rs URL 1`] = `
+{
+  "d": {
+    "id": "factorio-2.0.73-angelbob-2.0.6",
+    "style": "recipelister",
+  },
+  "io": [],
+  "p": [
+    {
+      "d": 1,
+      "f": "assembling-machine-1",
+      "i": 1,
+      "o": 1,
+      "p": "bob-ruby-5",
+    },
+    {
+      "d": 1,
+      "f": "assembling-machine-2",
+      "i": 1,
+      "o": 1,
+      "p": "bob-ruby-4",
+    },
+    {
+      "d": 1,
+      "f": "assembling-machine-1",
+      "i": 1,
+      "o": 1,
+      "p": "bob-ruby-3",
+    },
+    {
+      "d": 1,
+      "f": "angels-crystallizer",
+      "i": 1,
+      "o": 1,
+      "p": "angels-ore7-crystallization-3",
+    },
+    {
+      "d": 1,
+      "f": "angels-filtration-unit-2",
+      "i": 1,
+      "o": 1,
+      "p": "angels-crystal-slurry-filtering-2",
+    },
+    {
+      "d": 1,
+      "f": "angels-liquifier",
+      "i": 1,
+      "o": 1,
+      "p": "angels-geode-blue-liquify",
+    },
+    {
+      "d": 1,
+      "f": "angels-chemical-plant-2",
+      "i": 1,
+      "o": 1,
+      "p": "bob-polishing-compound",
+    },
+    {
+      "d": 1,
+      "f": "assembling-machine-1",
+      "i": 1,
+      "o": 1,
+      "p": "bob-grinding-wheel",
+    },
+    {
+      "d": 1,
+      "f": "assembling-machine-1",
+      "i": 1,
+      "o": 1,
+      "p": "bob-polishing-wheel",
+    },
+  ],
+  "r": [
+    {
+      "i": "bob-ruby-5",
+      "q": 3,
+    },
+  ],
+  "u": "second",
+}
+`;
