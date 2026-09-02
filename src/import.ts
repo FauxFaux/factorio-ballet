@@ -1,32 +1,47 @@
 import { decode } from '@msgpack/msgpack';
 
 export interface DataSetConfiguration {
+  /** Dataset id (`d.id`). */
   id: string;
+  /** Dataset parser/style id (`d.style`). */
   style: string;
 }
 
 export interface Requirement {
+  /** Item id (`i`). */
   i: string;
+  /** Required quantity (`q`). */
   q: number;
 }
 
 export interface ImportExport {
+  /** Item id (`i`). */
   i: string;
 }
 
 export interface ActiveProcess {
+  /** Process id (`p`). */
   p: string;
+  /** Factory id (`f`). */
   f: string;
+  /** Process duration multiplier (`d`). */
   d: number;
+  /** Process input multiplier (`i`). */
   i: number;
+  /** Process output multiplier (`o`). */
   o: number;
 }
 
 export interface DehydratedGraphConfiguration {
+  /** Current dataset configuration (`d`), or null when no dataset is selected. */
   d: DataSetConfiguration | null;
+  /** Required items (`r`). */
   r: Requirement[];
+  /** Imported/exported item ids (`io`). */
   io: ImportExport[];
+  /** Active processes (`p`). */
   p: ActiveProcess[];
+  /** Display/calculation units (`u`), normally "second" or "minute". */
   u: string;
 }
 
@@ -37,10 +52,13 @@ export function decodeUrl(url: string): DehydratedGraphConfiguration | null {
   if (encoded === null || encoded === '') return null;
 
   const bytes = decodeBase64Url(encoded);
+  // rmp-serde serializes these structs as arrays. The elements correspond to the short field
+  // names in DehydratedGraphConfiguration: d, r, io, p, u.
   const [dataset, requirements, importsExports, processes, units] = decode(bytes) as [
     [string, string] | null,
     [string, number][],
     [string][],
+    // ActiveProcess fields, in order: p (process), f (factory), d (duration), i (input), o (output).
     [string, string, number, number, number][],
     string,
   ];

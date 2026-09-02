@@ -6,6 +6,7 @@ import { field, type State } from './ts.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
+import { ImportButton } from './components/import-button.tsx';
 import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
@@ -59,6 +60,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
           belt={field(uss, 'bt')}
           progress={progress}
         />
+        <ImportButton />
         <DebugButton state={us} />
       </header>
       <CellList
