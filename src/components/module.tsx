@@ -119,7 +119,13 @@ export function ModulePicker({
               that: empty slots, whatever the slider says. */}
           <button
             type="button"
-            class={choice === null ? 'module-option is-chosen' : 'module-option'}
+            class={
+              choice === null
+                ? 'module-option is-chosen'
+                : !pinned && !current
+                  ? 'module-option is-default'
+                  : 'module-option'
+            }
             role="option"
             aria-selected={choice === null}
             title={`No ${category.human} modules, however far through the game you are`}
@@ -133,7 +139,13 @@ export function ModulePicker({
             <button
               key={id}
               type="button"
-              class={choice === id ? 'module-option is-chosen' : 'module-option'}
+              class={
+                choice === id
+                  ? 'module-option is-chosen'
+                  : !pinned && chosen === id
+                    ? 'module-option is-default'
+                    : 'module-option'
+              }
               role="option"
               aria-selected={choice === id}
               title={`${id}: ${effectSummary(category, module)}`}

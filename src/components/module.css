@@ -116,6 +116,12 @@
   color: var(--accent);
 }
 
+/* When auto is selected, also show which concrete tier it currently resolves to. This is a
+   highlight rather than another selected option: moving the progress slider may change it. */
+.module-option.is-default {
+  background: var(--accent-bg);
+}
+
 .module-option-effect {
   font-family: var(--mono);
   font-size: 13px;

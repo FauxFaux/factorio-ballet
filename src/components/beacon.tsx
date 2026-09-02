@@ -95,7 +95,13 @@ export function BeaconPicker({
               in the machine's own slots and nowhere else. */}
           <button
             type="button"
-            class={choice === null ? 'module-option is-chosen' : 'module-option'}
+            class={
+              choice === null
+                ? 'module-option is-chosen'
+                : !pinned && !current
+                  ? 'module-option is-default'
+                  : 'module-option'
+            }
             role="option"
             aria-selected={choice === null}
             title="No beacons, however far through the game you are: speed modules go in the machine's own slots and nowhere else"
@@ -109,7 +115,13 @@ export function BeaconPicker({
             <button
               key={id}
               type="button"
-              class={choice === id ? 'module-option is-chosen' : 'module-option'}
+              class={
+                choice === id
+                  ? 'module-option is-chosen'
+                  : !pinned && current?.id === id
+                    ? 'module-option is-default'
+                    : 'module-option'
+              }
               role="option"
               aria-selected={choice === id}
               title={`${id}: ${slotSummary(beacon)}`}

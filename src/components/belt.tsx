@@ -62,7 +62,13 @@ export function BeltPicker({
             <button
               key={id}
               type="button"
-              class={choice === id ? 'module-option is-chosen' : 'module-option'}
+              class={
+                choice === id
+                  ? 'module-option is-chosen'
+                  : !pinned && current.id === id
+                    ? 'module-option is-default'
+                    : 'module-option'
+              }
               role="option"
               aria-selected={choice === id}
               title={`${id}: ${rateSummary(belt)}`}
