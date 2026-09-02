@@ -60,7 +60,11 @@ export function App({ uss }: { uss: State<UrlState> }) {
           belt={field(uss, 'bt')}
           progress={progress}
         />
-        <ImportButton />
+        <ImportButton
+          onAddCell={(cell) =>
+            setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
+          }
+        />
         <DebugButton state={us} />
       </header>
       <CellList

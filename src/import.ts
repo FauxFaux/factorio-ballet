@@ -1,4 +1,5 @@
 import { decode } from '@msgpack/msgpack';
+import type { Cell } from './cell.ts';
 
 export interface DataSetConfiguration {
   /** Dataset id (`d.id`). */
@@ -43,6 +44,22 @@ export interface DehydratedGraphConfiguration {
   p: ActiveProcess[];
   /** Display/calculation units (`u`), normally "second" or "minute". */
   u: string;
+}
+
+/**
+ * Convert the processes in a proc-rs graph into one cell.
+ *
+ * `p` and `f` have direct equivalents here: recipe and machine. The proc-rs modifiers do not:
+ * `d` changes process duration, while `i` and `o` change ingredient and product quantities. A
+ * CellEntry currently models machine count, loadout, and those two ids only, so those modifiers
+ * are deliberately not imported. The graph's `d`, `r`, `io`, and `u` fields describe dataset,
+ * requirements, imports/exports, and display units rather than active cell entries, and are also
+ * outside this translation.
+ */
+export function cellFromConfiguration(configuration: DehydratedGraphConfiguration): Cell {
+  return {
+    entries: configuration.p.map(({ p, f }) => ({ recipe: p, machine: f })),
+  };
 }
 
 /** Decode a persisted proc-rs URL or URL fragment. */
