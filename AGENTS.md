@@ -6,6 +6,8 @@ The active application is a Preact, Vite, and TypeScript project at the reposito
 
 Read `FACTORIO.md`, `UI.md`, and `CELL.md` before changing domain or interface behavior. For ingestion changes, read `INGEST.md` first.
 
+For heavier tasks, read `CONTEXT.md` for additional architecture, data-model, solver, ingestion, and repository-history context.
+
 ## Build, Test, and Development Commands
 
 - `npm run dev` starts Vite locally (normally at `http://localhost:5173/`).

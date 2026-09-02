@@ -1,50 +1,6 @@
-# CLAUDE.md
+# Repository Context
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this
-repository.
-
-## What this repo is
-
-General-purpose Factorio production-chain calculator utilities. The live app (npm name `faucalc`) is
-at the repo root: Preact + Vite + TypeScript, aiming at a useful suite of solvers. It is a
-deliberate hybrid of two prior projects (see "Sibling repos" below), and the repo also contains two
-earlier abandoned attempts (`ballet0/`, `guava0/`) kept only for their scripts.
-
-## Commands
-
-Node is managed with `fnm`. If `node` is not on PATH: `eval "$(fnm env)" && fnm use 24`.
-
-```bash
-npm run dev       # vite dev server — assume one is ALREADY running at http://localhost:5173/ showing the user changes live
-npm run build     # tsc -b && vite build
-npm run lint      # eslint . && tsc
-npm run format    # oxfmt
-npm test          # vitest run
-
-npx vitest run test/scripts/locale.test.ts   # single test file
-npx vitest run -t 'resolves a recipe-name key'   # by test name
-```
-
-For a UI change, prefer asking the user to look at the already-running dev server over driving it
-with Playwright: this container has no working browser install, so a screenshot attempt burns time
-and often fails outright, while the user's own browser is faster and is the real target anyway.
-
-### Committing
-
-Before committing, always run `npm run lint` and `npm run format`. Do not commit if lint fails.
-
-**Commit straight to `main`.** This is a single-author repo with no PR flow; do not branch, and do
-not ask whether to. The whole history is linear on `main` and should stay that way.
-
-Messages are [Conventional Commits](https://www.conventionalcommits.org/): `type(scope): subject`,
-with the subject in lowercase imperative mood and no trailing full stop. The types in use are `feat`
-(most of them), `fix`, `refactor` and `chore`; the scope is optional and is a part of the tree —
-`ui`, `scripts` — omitted when the change spans the lot. Run `git log --oneline` for the house
-style. Explain the _why_ in the body when it is not obvious from the diff: the design docs are the
-source of truth for intent, and a commit body is the right place for the reasoning that did not earn
-a paragraph in one.
-
-### Data regeneration
+## Data regeneration
 
 `scripts/ingest-data.ts` converts a Factorio `data-raw-dump.json` + `*-locale.json` files (from the
 game's `script-output/` directory) into `static.json`:
@@ -57,11 +13,6 @@ The checked-in `src/assets/static.json` comes from `APP=~/ins/factorio-2-73-ab` 
 regenerating from any other dump replaces the dataset. The script writes minified, and
 `npm run format` prettifies it in place. Zod validators for the raw game data live in
 `scripts/raw-validators.ts` (typed against the `factorio-raw-types` package).
-
-**Adding a new attribute — read `INGEST.md` first.** It maps the available dumps, how to probe a 59
-MB `data.raw` for which prototypes carry a field, how to verify a regeneration changed only what you
-meant, what can and cannot be done about icons, and a measured field-by-field starting point for
-modules and beacons.
 
 Two things the ingest gets right that are easy to get wrong again:
 
@@ -87,17 +38,10 @@ Two things the ingest gets right that are easy to get wrong again:
   sink. The markers were the reason the hidden-item rule above needed a void exception, and they are
   gone from `resources` now that nothing references them.
 
-## Read the design docs first
+## Supporting reference docs
 
-The repo carries substantial design documentation; it is the source of truth for intent and is kept
-current:
+In addition to the design documents named in `AGENTS.md`, the repo keeps these reference copies:
 
-- `FACTORIO.md` — the problem domain in one page (recipes, rates, and the three complications:
-  cycles, productivity, catalysts).
-- `UI.md` — analysis of the two prior planner UIs (supply-first manifest vs demand-first
-  requirements) and the hybrid design this app is building toward.
-- `INGEST.md` — the game data as source material: which dumps exist, how to research `data.raw` for
-  a new attribute, and what the icon spritesheet can and cannot do.
 - `docs/string.wiki` — copy of the Factorio wiki page on the locale/localisation file format.
 - `docs/beacons.wiki` — copy of the Factorio wiki page on beacons, including the
   transmission-strength table the beacon arithmetic is checked against.
@@ -371,12 +315,9 @@ changing what it eats, which is a real answer and not a scaling: the same three 
 consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
 not. `UI.md` describes the wider planner design the solver eventually serves.
 
-Tests in `test/` mirror the source layout (`test/scripts/`).
-
 ### TypeScript specifics
 
-- Imports include explicit `.ts`/`.tsx` extensions (`allowImportingTsExtensions`);
-  `verbatimModuleSyntax` means `import type` where applicable.
+- `verbatimModuleSyntax` means `import type` where applicable.
 - `erasableSyntaxOnly` — no enums, namespaces, or parameter properties; scripts run directly under
   Node 24's type stripping.
 - **ES2023** target and lib, app and scripts alike, so `findLast`, `at`, `toSorted` and friends are
@@ -393,6 +334,9 @@ Tests in `test/` mirror the source layout (`test/scripts/`).
 - `../process-mgmt-gui` — the more modern calculator with much less scope: a demand-first
   linear-algebra planner (`src/calc.tsx`, `src/backend/mgmt.ts`) wrapping the `process-mgmt`
   library; analysed in `UI.md §2`.
+- `~/clone/proc-rs` — an external Rust implementation of a production-chain planner. Its
+  `proc-core` crate contains the RREF-based solver, and `ALGORITHM.md` documents how it handles
+  requirements, imports and exports, intermediates, cycles, productivity, and catalysts.
 - `../factoriolab` — checked out only because it's referenced as a data source.
 - `../factorio-raw-types` — the types package the ingest validates against, and also the only place
   the icon spritesheet can be rebuilt: `scripts/sprite-sheet.ts` packs `src/assets/icons.avif` +
@@ -401,8 +345,7 @@ Tests in `test/` mirror the source layout (`test/scripts/`).
 
 ## Abandoned attempts kept for scripts
 
-`ballet0/` (was Remix) and `guava0/` (was Next.js) have had their web-framework code deleted; do not
-develop them. Useful leftovers:
+Useful leftovers in the archived attempts:
 
 - `ballet0/scripts/shrink.ts` — pare a `RawData` dump down to selected keys;
   `ballet0/scripts/import-locales.ts` — bundle `*-locale.json` files; `ballet0/app/lib/` —
