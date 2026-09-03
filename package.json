@@ -35,6 +35,7 @@
     "typescript-eslint": "^8",
     "vite": "^8",
     "vite-bundle-analyzer": "^1",
+    "vite-plugin-preload": "^0.7",
     "vitest": "^4"
   }
 }
