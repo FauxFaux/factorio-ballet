@@ -8,6 +8,7 @@ import { arr, effectLimits, isProduced, RIngredient, RLocale, RProduct } from '.
 import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
+import { packStaticData } from './pack-static-data.ts';
 import { placingItems, syntheticRecipes } from './synthetic.ts';
 import type {
   Beacon,
@@ -22,8 +23,9 @@ import type {
   Resource,
   ResourceId,
   StaticData,
-  StaticDataPacked,
 } from '../src/types.ts';
+
+export { packStaticData } from './pack-static-data.ts';
 
 /**
  * Everything with `crafting_categories`, i.e. everything which can run a recipe. `character` is
@@ -142,119 +144,6 @@ async function main() {
   const { recipes: packedRecipes, ...withoutRecipes } = packed;
   await fs.writeFile('static.json', JSON.stringify(withoutRecipes));
   await fs.writeFile('static-recipes.json', JSON.stringify({ recipes: packedRecipes }));
-}
-
-export function packStaticData(data: StaticData): StaticDataPacked {
-  const resourceIds = Object.keys(data.resources) as ResourceId[];
-  const resourceIndexes = new Map(resourceIds.map((id, index) => [id, index]));
-  const resourceIndex = (id: ResourceId): number => {
-    const index = resourceIndexes.get(id);
-    if (index === undefined) throw new Error(`Missing resource ${id}`);
-    return index;
-  };
-
-  return {
-    recipes: Object.fromEntries(
-      Object.entries(data.recipes).map(([id, recipe]) => [
-        id,
-        {
-          h: recipe.human,
-          i: recipe.ingredients.map((ingredient) => ({
-            r: resourceIndex(ingredient.resource),
-            a: ingredient.amount,
-            t: ingredient.temperature && packTemperature(ingredient.temperature),
-          })),
-          p: recipe.products.map((product) => ({
-            r: resourceIndex(product.resource),
-            a: packAmount(product.amount),
-            p: product.probability,
-            i: product.ignoredByProductivity,
-          })),
-          d: recipe.duration,
-          c: recipe.categories,
-          a: recipe.allowProductivity,
-          s: recipe.synthetic,
-          x: recipe.complexity,
-        },
-      ]),
-    ),
-    resources: Object.fromEntries(
-      Object.entries(data.resources).map(([id, resource]) => [
-        id,
-        {
-          h: resource.human,
-          z: resource.stackSize,
-          x: resource.complexity,
-        },
-      ]),
-    ),
-    machines: Object.fromEntries(
-      Object.entries(data.machines).map(([id, machine]) => [
-        id,
-        {
-          h: machine.human,
-          k: machine.kind,
-          i: machine.item,
-          c: machine.categories,
-          s: machine.speed,
-          n: machine.moduleSlots,
-          e: machine.allowedEffects,
-          a: machine.allowedModuleCategories,
-        },
-      ]),
-    ),
-    modules: Object.fromEntries(
-      Object.entries(data.modules).map(([id, module]) => [
-        id,
-        {
-          c: module.category,
-          t: module.tier,
-          s: module.speed,
-          p: module.productivity,
-        },
-      ]),
-    ),
-    beacons: Object.fromEntries(
-      Object.entries(data.beacons).map(([id, beacon]) => [
-        id,
-        {
-          h: beacon.human,
-          i: beacon.item,
-          n: beacon.moduleSlots,
-          d: beacon.distributionEffectivity,
-          e: beacon.allowedEffects,
-          a: beacon.allowedModuleCategories,
-        },
-      ]),
-    ),
-    belts: Object.fromEntries(
-      Object.entries(data.belts).map(([id, belt]) => [
-        id,
-        {
-          h: belt.human,
-          i: belt.item,
-          s: belt.itemsPerSecond,
-        },
-      ]),
-    ),
-    sciencePacks: data.sciencePacks,
-  };
-}
-
-function packAmount(
-  amount: Product['amount'],
-): StaticDataPacked['recipes'][string]['p'][number]['a'] {
-  return 'fixed' in amount ? { f: amount.fixed } : { n: amount.min, x: amount.max };
-}
-
-function packTemperature(
-  temperature: NonNullable<Ingredient['temperature']>,
-): NonNullable<StaticDataPacked['recipes'][string]['i'][number]['t']> {
-  if ('fixed' in temperature) return { f: temperature.fixed };
-  if ('min' in temperature && 'max' in temperature)
-    return { n: temperature.min, x: temperature.max };
-  if ('min' in temperature) return { n: temperature.min };
-  return { x: temperature.max };
 }
 
 /**
