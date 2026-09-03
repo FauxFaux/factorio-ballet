@@ -123,6 +123,8 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   text-align: left;
+  align-items: center;
+  color: var(--text);
 }
 
 .cell-connection-transport-value {
@@ -154,11 +156,6 @@
   display: block;
   width: 100%;
   background: var(--accent);
-}
-
-.cell-connection-belts {
-  align-items: center;
-  color: var(--text);
 }
 
 .cell-connection-belt-icon {
