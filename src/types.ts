@@ -79,9 +79,9 @@ export type StaticDataPacked = {
   sciencePacks: ResourceId[];
 };
 
-type PackedIngredient = { r: ResourceId; a: number; t?: PackedTemperature };
+type PackedIngredient = { r: number; a: number; t?: PackedTemperature };
 type PackedProduct = {
-  r: ResourceId;
+  r: number;
   a: PackedAmount;
   p: number;
   i?: number;

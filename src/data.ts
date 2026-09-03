@@ -36,6 +36,13 @@ const decodeTemperature = (
 };
 
 function decodeStaticData(data: StaticDataPacked): StaticData {
+  const resourceIds = Object.keys(data.resources) as ResourceId[];
+  const resourceId = (index: number): ResourceId => {
+    const id = resourceIds[index];
+    if (id === undefined) throw new Error(`Missing resource index ${index}`);
+    return id;
+  };
+
   return {
     recipes: Object.fromEntries(
       Object.entries(data.recipes).map(([id, recipe]) => [
@@ -43,12 +50,12 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
         {
           human: recipe.h,
           ingredients: recipe.i.map((ingredient) => ({
-            resource: ingredient.r,
+            resource: resourceId(ingredient.r),
             amount: ingredient.a,
             temperature: ingredient.t && decodeTemperature(ingredient.t),
           })),
           products: recipe.p.map((product) => ({
-            resource: product.r,
+            resource: resourceId(product.r),
             amount: decodeAmount(product.a),
             probability: product.p,
             ignoredByProductivity: product.i,

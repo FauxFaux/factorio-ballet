@@ -145,6 +145,14 @@ async function main() {
 }
 
 export function packStaticData(data: StaticData): StaticDataPacked {
+  const resourceIds = Object.keys(data.resources) as ResourceId[];
+  const resourceIndexes = new Map(resourceIds.map((id, index) => [id, index]));
+  const resourceIndex = (id: ResourceId): number => {
+    const index = resourceIndexes.get(id);
+    if (index === undefined) throw new Error(`Missing resource ${id}`);
+    return index;
+  };
+
   return {
     recipes: Object.fromEntries(
       Object.entries(data.recipes).map(([id, recipe]) => [
@@ -152,12 +160,12 @@ export function packStaticData(data: StaticData): StaticDataPacked {
         {
           h: recipe.human,
           i: recipe.ingredients.map((ingredient) => ({
-            r: ingredient.resource,
+            r: resourceIndex(ingredient.resource),
             a: ingredient.amount,
             t: ingredient.temperature && packTemperature(ingredient.temperature),
           })),
           p: recipe.products.map((product) => ({
-            r: product.resource,
+            r: resourceIndex(product.resource),
             a: packAmount(product.amount),
             p: product.probability,
             i: product.ignoredByProductivity,
