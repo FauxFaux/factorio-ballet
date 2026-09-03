@@ -10,6 +10,7 @@
     "format": "oxfmt",
     "lint": "eslint . && tsc -b",
     "preview": "vite preview",
+    "split-icons": "node scripts/split-icons.ts",
     "test": "vitest run"
   },
   "dependencies": {
@@ -28,6 +29,7 @@
     "eslint": "^10",
     "factorio-raw-types": "^0.4",
     "oxfmt": "^0.64",
+    "sharp": "^0.35",
     "typescript": "~6",
     "typescript-eslint": "^8",
     "vite": "^8",
