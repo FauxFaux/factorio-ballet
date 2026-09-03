@@ -1,5 +1,5 @@
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
-import { fmt } from '../../ts.ts';
+import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import type { InternalConnections, InternalFlow } from './internal-calc.ts';
@@ -77,6 +77,10 @@ function InPlayConnectionTable({
     outputRate === undefined
       ? inputs
       : [...inputs, { recipe: undefined, label: '[output]' as const, rate: outputRate }];
+  const rateDecimalPlaces = decimalPlacesForSignificantFigures(
+    Math.max(0, ...outputFlows.map((flow) => flow.rate), ...inputFlows.map((flow) => flow.rate)),
+    3,
+  );
   const totalConsumption = inputFlows.reduce((total, flow) => total + flow.rate, 0);
   const rowCount = Math.max(outputFlows.length, inputFlows.length, 1);
 
@@ -94,9 +98,9 @@ function InPlayConnectionTable({
         return (
           <div class="cell-in-play-connection-row" key={index}>
             <ConnectionRecipeFlow flow={output} onRecipeHover={onRecipeHover} />
-            <ConnectionRate flow={output} />
+            <ConnectionRate flow={output} decimalPlaces={rateDecimalPlaces} />
             <ConnectionConsumptionBar flow={input} total={totalConsumption} />
-            <ConnectionRate flow={input} />
+            <ConnectionRate flow={input} decimalPlaces={rateDecimalPlaces} />
             <ConnectionRecipeFlow flow={input} onRecipeHover={onRecipeHover} />
           </div>
         );
@@ -138,8 +142,18 @@ function ConnectionRecipeFlow({
   );
 }
 
-function ConnectionRate({ flow }: { flow: ConnectionFlow | undefined }) {
-  return <span class="cell-in-play-connection-rate">{flow ? `${fmt(flow.rate)}/s` : ''}</span>;
+function ConnectionRate({
+  flow,
+  decimalPlaces,
+}: {
+  flow: ConnectionFlow | undefined;
+  decimalPlaces: number;
+}) {
+  return (
+    <span class="cell-in-play-connection-rate">
+      {flow ? `${flow.rate.toFixed(decimalPlaces)}/s` : ''}
+    </span>
+  );
 }
 
 function ConnectionConsumptionBar({
