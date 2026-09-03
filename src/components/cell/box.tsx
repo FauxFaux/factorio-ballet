@@ -94,7 +94,9 @@ export function CellBox({
               />
             ))
           )}
-          {iface.internal.length ? <InternalRow ids={iface.internal} solution={solution} /> : null}
+          {iface.internal.length ? (
+            <InternalRow ids={iface.internal} entries={cell.entries} solution={solution} />
+          ) : null}
           <SolveNotes cell={cell} solution={solution} />
         </div>
         <CellSide dir="out" ids={iface.outputs} solution={solution} onSearch={onSearch} />

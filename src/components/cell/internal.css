@@ -12,10 +12,39 @@
   cursor: help;
 }
 
+.cell-internal-entry {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 .cell-internal-chip {
   display: inline-flex;
   align-items: center;
   gap: 2px;
+}
+
+.cell-internal-connections {
+  flex-basis: 100%;
+  margin: 4px 0 2px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.cell-internal-connection-flow {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 16rem;
+  font-family: var(--mono);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.cell-internal-connection-flow .recipe-icon {
+  flex-shrink: 0;
+  transform: scale(0.55);
+  margin: -8px;
 }
 
 /* an internal resource which did not come out level, so it is on its way to being an edge */
