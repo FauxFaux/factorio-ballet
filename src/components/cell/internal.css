@@ -13,9 +13,15 @@
 }
 
 .cell-internal-entry {
+  position: relative;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
+}
+
+.cell-internal-entry:hover,
+.cell-internal-entry:focus-within {
+  z-index: 3;
 }
 
 .cell-internal-chip {
@@ -25,10 +31,26 @@
 }
 
 .cell-internal-connections {
-  flex-basis: 100%;
-  margin: 4px 0 2px;
+  position: absolute;
+  z-index: 2;
+  top: 100%;
+  left: 50%;
+  width: min(32rem, calc(100vw - 2rem));
+  transform: translateX(-50%);
+  margin: 0;
   text-transform: none;
   letter-spacing: 0;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 100ms ease;
+}
+
+.cell-internal-entry.is-expanded .cell-internal-connections {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .cell-internal-connection-flow {

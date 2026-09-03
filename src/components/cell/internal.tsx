@@ -1,5 +1,5 @@
 import './internal.css';
-import { useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type { Solution } from '../../solve/index.ts';
@@ -28,8 +28,40 @@ export function InternalRow({
   entries: CellEntry[];
   solution: Solution;
 }) {
+  const [pinned, setPinned] = useState<ResourceId>();
+  const [hovered, setHovered] = useState<ResourceId>();
+  const root = useRef<HTMLDivElement>(null);
+  const expanded = pinned ?? hovered;
+
+  useEffect(() => {
+    if (pinned === undefined) return;
+
+    const dismissOnOutsideClick = (event: PointerEvent) => {
+      if (!root.current?.contains(event.target as Node)) setPinned(undefined);
+    };
+    const dismissOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setPinned(undefined);
+    };
+    document.addEventListener('pointerdown', dismissOnOutsideClick);
+    document.addEventListener('keydown', dismissOnEscape);
+    return () => {
+      document.removeEventListener('pointerdown', dismissOnOutsideClick);
+      document.removeEventListener('keydown', dismissOnEscape);
+    };
+  }, [pinned]);
+
+  const show = (id: ResourceId) => {
+    setHovered(id);
+    setPinned((current) => (current === id ? current : undefined));
+  };
+
   return (
-    <div class="cell-internal" title="Made and used inside this cell">
+    <div
+      ref={root}
+      class="cell-internal"
+      title="Made and used inside this cell"
+      onMouseLeave={() => setHovered(undefined)}
+    >
       internal
       {ids.map((id) => {
         return (
@@ -38,6 +70,10 @@ export function InternalRow({
             id={id}
             recipes={entries.map((entry) => entry.recipe)}
             solution={solution}
+            expanded={expanded === id}
+            onMouseEnter={() => show(id)}
+            onFocus={() => show(id)}
+            onToggle={() => setPinned(id)}
           />
         );
       })}
@@ -49,12 +85,19 @@ function InternalChip({
   id,
   recipes,
   solution,
+  expanded,
+  onMouseEnter,
+  onFocus,
+  onToggle,
 }: {
   id: ResourceId;
   recipes: string[];
   solution: Solution;
+  expanded: boolean;
+  onMouseEnter: () => void;
+  onFocus: () => void;
+  onToggle: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
   const connections = useMemo(
     () => internalConnections(id, recipes, solution),
     [id, recipes, solution],
@@ -62,20 +105,20 @@ function InternalChip({
   const rate = solution.balance.get(id) ?? 0;
 
   return (
-    <div class="cell-internal-entry">
+    <div
+      class={expanded ? 'cell-internal-entry is-expanded' : 'cell-internal-entry'}
+      data-internal-resource={id}
+      onMouseEnter={onMouseEnter}
+    >
       <button
         type="button"
         class="cell-internal-chip cell-btn"
-        title={
-          expanded ? `Hide recipes for ${resourceName(id)}` : `Show recipes for ${resourceName(id)}`
-        }
-        aria-label={
-          expanded ? `Hide recipes for ${resourceName(id)}` : `Show recipes for ${resourceName(id)}`
-        }
+        title={`Pin recipes for ${resourceName(id)}`}
+        aria-label={`Pin recipes for ${resourceName(id)}`}
         aria-expanded={expanded}
-        onClick={() => setExpanded((wasExpanded) => !wasExpanded)}
+        onFocus={onFocus}
+        onClick={onToggle}
       >
-        <span aria-hidden="true">{expanded ? '▾' : '▸'}</span>
         <ResourceIcon id={id} />
         {rate === 0 ? null : (
           <span class="cell-leftover">
@@ -84,9 +127,7 @@ function InternalChip({
           </span>
         )}
       </button>
-      {expanded ? (
-        <InternalConnectionsView connections={connections} solved={solution.complete} />
-      ) : null}
+      <InternalConnectionsView connections={connections} solved={solution.complete} />
     </div>
   );
 }
