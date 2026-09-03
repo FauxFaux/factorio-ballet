@@ -90,42 +90,63 @@ const fixtures: Fixture[] = [
     balance: [[X, 0]],
   },
   {
-    name: 'rejects inconsistent pins without changing them',
+    name: 'falls back to dumb solver for inconsistent pins',
     rows: [row({ [X]: 1 }, 1), row({ [X]: -1 }, 2)],
     counts: [1, 2],
-    complete: false,
+    complete: true,
     notes: [
       {
         kind: 'solver',
         entry: 0,
-        detail:
-          'The pinned counts cannot balance all internal resources together: change or clear a count.',
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
       },
     ],
     balance: [[X, -1]],
   },
   {
-    name: 'does not choose between competing alternatives',
+    name: 'falls back to dumb solver for competing alternatives',
     rows: [row({ [X]: 1 }), row({ [X]: 1 }), row({ [X]: -1 }, 1)],
     counts: [undefined, undefined, 1],
     complete: false,
-    notes: [{ kind: 'stranded', entry: 1 }],
+    notes: [
+      { kind: 'contested', entry: 0, resource: X },
+      { kind: 'contested', entry: 1, resource: X },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ],
     balance: [[X, -1]],
   },
   {
-    name: 'leaves a disconnected row undetermined',
+    name: 'falls back to dumb solver for a disconnected row',
     rows: [row({ [X]: 1 }, 1), row({ [X]: -1 }), row({ [Y]: 5, [Z]: -2 })],
-    counts: [1, undefined, undefined],
+    counts: [1, 1, undefined],
     complete: false,
-    notes: [{ kind: 'stranded', entry: 2 }],
-    balance: [[X, 1]],
+    notes: [
+      { kind: 'stranded', entry: 2 },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ],
+    balance: [[X, 0]],
   },
   {
     name: 'leaves an unpinned zero-rate row undetermined',
     rows: [row({ [X]: 0 }), row({ [Y]: 1 }, 7)],
     counts: [undefined, 7],
     complete: false,
-    notes: [{ kind: 'stranded', entry: 0 }],
+    notes: [
+      { kind: 'stranded', entry: 0 },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ],
     balance: [[Y, 7]],
   },
   {

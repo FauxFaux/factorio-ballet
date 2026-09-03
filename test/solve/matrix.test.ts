@@ -57,37 +57,58 @@ describe('matrixSolver', () => {
     expect(answer.complete).toBe(true);
   });
 
-  it('rejects inconsistent pins without changing them', () => {
+  it('falls back to dumb solver for inconsistent pins', () => {
     const answer = solve(row({ [X]: 1 }, 1), row({ [X]: -1 }, 2));
     expect(answer.counts).toEqual([1, 2]);
-    expect(answer.complete).toBe(false);
+    expect(answer.complete).toBe(true);
     expect(answer.notes).toEqual([
       {
         kind: 'solver',
         entry: 0,
-        detail:
-          'The pinned counts cannot balance all internal resources together: change or clear a count.',
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
       },
     ]);
   });
 
-  it('does not choose between competing alternatives', () => {
+  it('falls back to dumb solver for competing alternatives', () => {
     const answer = solve(row({ [X]: 1 }), row({ [X]: 1 }), row({ [X]: -1 }, 1));
     expect(answer.counts).toEqual([undefined, undefined, 1]);
     expect(answer.complete).toBe(false);
-    expect(answer.notes).toEqual([{ kind: 'stranded', entry: 1 }]);
+    expect(answer.notes).toEqual([
+      { kind: 'contested', entry: 0, resource: X },
+      { kind: 'contested', entry: 1, resource: X },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ]);
   });
 
-  it('reports a disconnected row as free', () => {
+  it('falls back to dumb solver for a disconnected row', () => {
     const answer = solve(row({ [X]: 1 }, 1), row({ [X]: -1 }), row({ [Y]: 5, [Z]: -2 }));
-    expect(answer.counts).toEqual([1, undefined, undefined]);
-    expect(answer.notes).toEqual([{ kind: 'stranded', entry: 2 }]);
+    expect(answer.counts).toEqual([1, 1, undefined]);
+    expect(answer.notes).toEqual([
+      { kind: 'stranded', entry: 2 },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ]);
   });
 
   it('reports an unpinned zero-rate row as free', () => {
     const answer = solve(row({ [X]: 0 }), row({ [Y]: 1 }, 7));
     expect(answer.counts).toEqual([undefined, 7]);
-    expect(answer.notes).toEqual([{ kind: 'stranded', entry: 0 }]);
+    expect(answer.notes).toEqual([
+      { kind: 'stranded', entry: 0 },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ]);
   });
 
   it('rejects a negative unique answer without clamping it', () => {

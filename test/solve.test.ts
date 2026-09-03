@@ -228,6 +228,13 @@ describe('solveCell', () => {
     const cell: Cell = {
       entries: [{ recipe: 'iron-plate', count: 1 }, { recipe: 'no-such-recipe' }],
     };
-    expect(solveCell(cell, 0).notes).toEqual([{ kind: 'stranded', entry: 1 }]);
+    expect(solveCell(cell, 0).notes).toEqual([
+      { kind: 'stranded', entry: 1 },
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ]);
   });
 });

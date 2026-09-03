@@ -22,12 +22,10 @@ the cell's own open edges, which is the "adding recipes that makes: or uses: ite
 output set" step above — and the solvers under `src/solve/`, which perform the "attempt to scale one
 of the recipes to match the other" step.
 
-The default matrix solver balances every internal resource simultaneously, including cycles. It will
-not choose between alternative recipes, and inconsistent pins or an underdetermined system do not
-have to produce a complete answer — pinned counts remain in place, their rates still show on the
-cell's edges, and the problem is written out under the rows. The demand-propagation `dumbSolver`
-remains as a simpler alternative without cycle support. "Not always possible, and will be resolved
-later" is the design, not a gap in it: what the app owes the user there is a sentence saying which
+The default matrix solver balances every internal resource simultaneously, including cycles. If its
+system is inconsistent or underdetermined, it falls back to the demand-propagation `dumbSolver`,
+which remains available as a simpler alternative without cycle support. "Not always possible, and
+will be resolved later" is the design: what the app owes the user there is a sentence saying which
 number to type, and that is what a `SolveNote` is.
 
 A row also carries what is in its machine's slots (`CellEntry.modules`), and the rates it is solved

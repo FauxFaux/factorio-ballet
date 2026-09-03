@@ -1,4 +1,5 @@
 import type { ResourceId } from '../types.ts';
+import { dumbSolver } from './dumb.ts';
 import type { Solution, SolveNote, SolveRow, Solver } from './index.ts';
 import { rref, SOLVER_TOLERANCE } from './rref.ts';
 
@@ -39,14 +40,8 @@ function solveMatrix(rows: SolveRow[]): Solution {
     return failed(rows, `The matrix solver failed: ${errorText(error)}`);
   }
 
-  if (result.status !== 'unique') {
-    return failed(
-      rows,
-      diagnosticText(result),
-      result.status === 'underdetermined' && result.freeEntries.length > 0
-        ? result.freeEntries.map((entry) => ({ kind: 'stranded', entry }))
-        : undefined,
-    );
+  if (result.status === 'inconsistent' || result.status === 'underdetermined') {
+    return fallback(rows);
   }
 
   const counts = result.candidate;
@@ -77,6 +72,46 @@ function solveMatrix(rows: SolveRow[]): Solution {
     complete: true,
     notes,
   };
+}
+
+function fallback(rows: SolveRow[]): Solution {
+  const solution = dumbSolver.solve(rows);
+  if (rows.length === 0) return solution;
+  return {
+    ...solution,
+    notes: [
+      ...solution.notes,
+      {
+        kind: 'solver',
+        entry: 0,
+        detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+      },
+    ],
+  };
+}
+
+function failed(rows: SolveRow[], detail: string, notes?: SolveNote[]): Solution {
+  const counts = rows.map((row) => row.count);
+  return {
+    counts,
+    rates: rows.map((row) => row.rates),
+    balance: scrub(balanceOf(rows, counts)),
+    complete: false,
+    notes: notes ?? (rows.length > 0 ? [{ kind: 'solver', entry: 0, detail }] : []),
+  };
+}
+
+function diagnosticText(result: MatrixResult, fallback?: string): string {
+  if (result.status === 'underdetermined') {
+    return 'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.';
+  }
+  if (result.status === 'inconsistent') {
+    return 'The pinned counts cannot balance all internal resources together: change or clear a count.';
+  }
+  if (result.negativeEntries.length > 0) {
+    return 'Balancing these recipes requires a negative machine count, so this selection is not feasible.';
+  }
+  return result.detail ?? fallback ?? 'The matrix solver could not solve this cell.';
 }
 
 function solveSystem(rows: SolveRow[]): MatrixResult {
@@ -191,30 +226,6 @@ function maximumResidual(coefficients: number[][], rhs: number[], candidate: num
     maximum = Math.max(maximum, Math.abs(actual - rhs[equation]!));
   });
   return maximum;
-}
-
-function failed(rows: SolveRow[], detail: string, notes?: SolveNote[]): Solution {
-  const counts = rows.map((row) => row.count);
-  return {
-    counts,
-    rates: rows.map((row) => row.rates),
-    balance: scrub(balanceOf(rows, counts)),
-    complete: false,
-    notes: notes ?? (rows.length > 0 ? [{ kind: 'solver', entry: 0, detail }] : []),
-  };
-}
-
-function diagnosticText(result: MatrixResult, fallback?: string): string {
-  if (result.status === 'underdetermined') {
-    return 'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.';
-  }
-  if (result.status === 'inconsistent') {
-    return 'The pinned counts cannot balance all internal resources together: change or clear a count.';
-  }
-  if (result.negativeEntries.length > 0) {
-    return 'Balancing these recipes requires a negative machine count, so this selection is not feasible.';
-  }
-  return result.detail ?? fallback ?? 'The matrix solver could not solve this cell.';
 }
 
 function balanceOf(rows: SolveRow[], counts: (number | undefined)[]): Map<ResourceId, number> {
