@@ -17,6 +17,7 @@ const data = {
   modules: {},
   beacons: {},
   belts: { belt: {} },
+  sciencePacks: ['item:early', 'item:middle'],
 } satisfies IconData;
 
 describe('splitIcons', () => {
@@ -34,13 +35,43 @@ describe('splitIcons', () => {
       data,
     );
 
-    expect(result[0]?.cells.flatMap((cell) => cell.keys)).toEqual(['recipe:belt', 'craft:belt']);
+    expect(result[0]?.cells.flatMap((cell) => cell.keys)).toEqual([
+      'recipe:early',
+      'craft:early',
+      'recipe:belt',
+      'craft:belt',
+      'recipe:middle',
+    ]);
     expect(
       result
         .slice(1)
         .flatMap((split) => split.cells)
         .flatMap((cell) => cell.keys),
-    ).toEqual(['recipe:early', 'craft:early', 'recipe:middle', 'recipe:late', 'craft:unknown']);
+    ).toEqual(['recipe:late', 'craft:unknown']);
+  });
+
+  it('only puts science packs retained as slider landmarks in the UI sheet', () => {
+    const result = splitIcons(
+      {
+        'craft:first-pack': [0, 0],
+        'craft:clustered-pack': [32, 0],
+        'craft:next-pack': [64, 0],
+      },
+      {
+        ...data,
+        resources: {
+          'item:first-pack': { complexity: 0.1 },
+          'item:clustered-pack': { complexity: 0.12 },
+          'item:next-pack': { complexity: 0.2 },
+        },
+        sciencePacks: ['item:first-pack', 'item:clustered-pack', 'item:next-pack'],
+      },
+    );
+
+    expect(result[0]?.cells.flatMap((cell) => cell.keys)).toEqual([
+      'craft:first-pack',
+      'craft:next-pack',
+    ]);
   });
 
   it('makes four balanced, ascending complexity ranges', () => {

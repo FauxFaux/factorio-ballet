@@ -18,6 +18,8 @@ import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
+import { selectPackLandmarks } from '../src/data/landmarks.ts';
+import type { ResourceId } from '../src/types.ts';
 
 const CELL_SIZE = 32;
 const COMPLEXITY_SHEETS = 4;
@@ -35,6 +37,7 @@ export interface IconData {
   modules: Record<string, unknown>;
   beacons: Record<string, { item?: string }>;
   belts: Record<string, { item?: string }>;
+  sciencePacks: ResourceId[];
 }
 
 export interface IconCell {
@@ -78,6 +81,9 @@ function uiIconIds(data: IconData): Set<string> {
   for (const [id, machine] of Object.entries(data.machines)) {
     add(id);
     add(machine.item);
+  }
+  for (const landmark of selectPackLandmarks(data.sciencePacks, data.resources)) {
+    add(iconId(landmark.id));
   }
   return ids;
 }
@@ -176,6 +182,7 @@ async function loadIconData(): Promise<IconData> {
     modules: Record<string, unknown>;
     beacons: Record<string, PackedEntry>;
     belts: Record<string, PackedEntry>;
+    sciencePacks: ResourceId[];
   };
   type PackedRecipes = { recipes: Record<string, PackedEntry> };
   const readJson = async (path: string): Promise<unknown> =>
@@ -196,6 +203,7 @@ async function loadIconData(): Promise<IconData> {
     modules: packed.modules,
     beacons: placed(packed.beacons),
     belts: placed(packed.belts),
+    sciencePacks: packed.sciencePacks,
   };
 }
 

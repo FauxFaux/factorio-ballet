@@ -1,5 +1,9 @@
 import type { Beacon, BeaconId, Belt, BeltId, ModuleId, ResourceId } from '../types.ts';
 import { staticData } from './decode.ts';
+import { selectPackLandmarks } from './landmarks.ts';
+import type { Landmark } from './landmarks.ts';
+
+export type { Landmark } from './landmarks.ts';
 
 export { staticData };
 
@@ -35,15 +39,6 @@ export function relevanceOf(of: { complexity?: number }, progress: number): numb
   return of.complexity === undefined ? Infinity : Math.abs(of.complexity - progress);
 }
 
-/** ~16px of icon on a ~400px track; any closer and two landmarks overlap instead of reading. */
-const MIN_PACK_GAP = 0.04;
-
-/** A science pack and where on the complexity scale it sits: one mark on the progress slider. */
-export interface Landmark {
-  id: ResourceId;
-  complexity: number;
-}
-
 /**
  * The science packs the progress slider is labelled with: the game's own list, thinned so the icons
  * do not sit on top of each other. Ten of Bob's packs land between 0.53 and 0.58 — a real wall in
@@ -52,15 +47,7 @@ export interface Landmark {
  * people actually name their progress after.
  */
 export const packLandmarks: Landmark[] = (() => {
-  const out: Landmark[] = [];
-  for (const id of staticData.sciencePacks) {
-    const complexity = staticData.resources[id]?.complexity;
-    if (complexity === undefined) continue;
-    const last = out[out.length - 1];
-    if (last && complexity - last.complexity < MIN_PACK_GAP) continue;
-    out.push({ id, complexity });
-  }
-  return out;
+  return selectPackLandmarks(staticData.sciencePacks, staticData.resources);
 })();
 
 /** The display name for a module: the item's, because a module is the item you craft. */
