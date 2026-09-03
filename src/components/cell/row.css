@@ -49,7 +49,7 @@
 .cell-connections {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 6px;
+  gap: 24px;
   flex-basis: 100%;
   margin: 2px 0 2px 2.1em;
   padding: 6px 8px;
@@ -60,37 +60,51 @@
   font-size: 13px;
 }
 
-.cell-connection-column h4,
-.cell-connection-column p {
-  margin: 0;
-}
-
-.cell-connection-column h4 {
-  color: var(--text-h);
-  font: inherit;
-  font-weight: bold;
-}
-
-.cell-connection-flows {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px 6px;
-  margin-top: 2px;
-}
-
-.cell-connection-flow {
-  display: inline-flex;
+.cell-connection-table {
+  display: grid;
+  grid-template-columns: 4px minmax(0, 1fr) 4.5rem auto;
+  gap: 2px 8px;
   align-items: center;
-  vertical-align: middle;
-  gap: 4px;
   font-family: var(--mono);
   font-size: 12px;
+}
+
+.cell-connection-row {
+  display: contents;
+}
+
+.cell-connection-item {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 3px;
   white-space: nowrap;
 }
 
-.cell-connection-flow .resource-icon {
+.cell-connection-item .resource-icon {
+  flex-shrink: 0;
   margin: -8px;
   transform: scale(0.5);
+}
+
+.cell-connection-rate,
+.cell-connection-transport {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.cell-connection-distribution {
+  display: inline-flex;
+  align-items: end;
+  height: 1em;
+  overflow: hidden;
+  background: var(--accent-bg);
+}
+
+.cell-connection-distribution span {
+  display: block;
+  width: 100%;
+  background: var(--accent);
 }
 
 .cell-connection-belts {

@@ -25,47 +25,56 @@ export function RecipeConnections({
   }
   return (
     <div class="cell-connections">
-      <ConnectionColumn label="Inputs" flows={connections.inputs} belt={belt} />
-      <ConnectionColumn label="Outputs" flows={connections.outputs} belt={belt} />
+      <ConnectionTable flows={connections.inputs} belt={belt} />
+      <ConnectionTable flows={connections.outputs} belt={belt} />
     </div>
   );
 }
 
-function ConnectionColumn({
-  label,
-  flows,
+function ConnectionTable({ flows, belt }: { flows: ConnectionFlow[]; belt: Belt }) {
+  const total = flows.reduce((sum, flow) => sum + flow.rate, 0);
+
+  return (
+    <div class="cell-connection-table">
+      {flows.map((flow) => (
+        <ConnectionRow flow={flow} total={total} belt={belt} key={flow.resource} />
+      ))}
+    </div>
+  );
+}
+
+function ConnectionRow({
+  flow: { resource, rate },
+  total,
   belt,
 }: {
-  label: string;
-  flows: ConnectionFlow[];
+  flow: ConnectionFlow;
+  total: number;
   belt: Belt;
 }) {
+  const proportion = total > 0 ? Math.min(rate / total, 1) : 0;
+  const share = `${fmt(proportion * 100)}% of total`;
   return (
-    <section class="cell-connection-column">
-      <h4>{label}</h4>
-      {flows.length ? (
-        <div class="cell-connection-flows">
-          {flows.map(({ resource, rate }) => (
-            <span
-              class="cell-connection-flow"
-              key={resource}
-              title={`${fmt(rate)}/s ${resourceName(resource)} (${resource})`}
-            >
-              <ResourceIcon id={resource} />
-              <span>{fmt(rate)}/s</span>(
-              {resource.startsWith('item:') ? (
-                <BeltCount rate={rate} belt={belt} />
-              ) : (
-                <PumpCount rate={rate} />
-              )}
-              )
-            </span>
-          ))}
-        </div>
-      ) : (
-        <p>—</p>
-      )}
-    </section>
+    <div class="cell-connection-row">
+      <span class="cell-connection-distribution" title={share} aria-label={share}>
+        <span style={`height: ${proportion * 100}%`} aria-hidden="true" />
+      </span>
+      <span
+        class="cell-connection-item"
+        title={`${fmt(rate)}/s ${resourceName(resource)} (${resource})`}
+      >
+        <ResourceIcon id={resource} />
+        <span>{resourceName(resource)}</span>
+      </span>
+      <span class="cell-connection-rate">{fmt(rate)}/s</span>
+      <span class="cell-connection-transport">
+        {resource.startsWith('item:') ? (
+          <BeltCount rate={rate} belt={belt} />
+        ) : (
+          <PumpCount rate={rate} />
+        )}
+      </span>
+    </div>
   );
 }
 
