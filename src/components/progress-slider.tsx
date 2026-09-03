@@ -1,6 +1,5 @@
 import './progress-slider.css';
 import { type Landmark, packLandmarks, resourceName } from '../data/index.ts';
-import { bareName } from '../search.ts';
 import type { State } from '../ts.ts';
 import { iconStyle } from './icon.tsx';
 
@@ -65,7 +64,7 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
               aria-label={`Set progress to ${name}`}
               onClick={() => setGp(percent)}
             >
-              <span class="progress-pack-icon" style={iconStyle(`craft:${bareName(pack.id)}`)} />
+              <span class="progress-pack-icon" style={iconStyle(pack.id, 'item:item-unknown')} />
             </button>
           );
         })}
