@@ -1,4 +1,4 @@
-import type { ModuleMatch } from '../data.ts';
+import type { ModuleMatch } from '../data/index.ts';
 import { resourceIconStyle } from './icon.tsx';
 
 /**

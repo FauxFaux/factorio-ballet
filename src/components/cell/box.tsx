@@ -8,7 +8,7 @@ import {
   withoutEntry,
   type Cell,
 } from '../../cell.ts';
-import type { Chosen } from '../../data.ts';
+import type { Chosen } from '../../data/index.ts';
 import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';

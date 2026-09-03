@@ -17,7 +17,7 @@ import {
   withRecipe,
   type Cell,
 } from '../src/cell.ts';
-import { complexityOf, defaultMachine, machinesFor, staticData } from '../src/data.ts';
+import { complexityOf, defaultMachine, machinesFor, staticData } from '../src/data/index.ts';
 
 /** Ore crushed -> plate -> gear: two recipes which chain, so the middle one goes internal. */
 const chain: Cell = { entries: [{ recipe: 'iron-plate' }, { recipe: 'iron-gear-wheel' }] };

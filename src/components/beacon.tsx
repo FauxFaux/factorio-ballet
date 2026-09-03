@@ -5,7 +5,7 @@ import {
   defaultBeacon,
   staticData,
   type BeaconChoice,
-} from '../data.ts';
+} from '../data/index.ts';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Beacon, BeaconId } from '../types.ts';

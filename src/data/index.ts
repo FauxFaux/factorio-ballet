@@ -3,15 +3,13 @@ import type {
   BeaconId,
   Belt,
   BeltId,
-  Effect,
   Machine,
   MachineId,
-  Module,
   ModuleId,
   Recipe,
   ResourceId,
-} from './types.ts';
-import { staticData } from './data-decode.ts';
+} from '../types.ts';
+import { staticData } from './decode.ts';
 
 export { staticData };
 
@@ -188,161 +186,34 @@ function compareMachines(a: MachineMatch, b: MachineMatch, progress: number): nu
   );
 }
 
-/**
- * Whether a machine applies one of the module effects. Absent means no restriction — see
- * `Machine.allowedEffects`, and note that the game ignores a disallowed effect rather than refusing
- * the module carrying it.
- */
-export function allowsEffect(machine: Machine, effect: Effect): boolean {
-  return machine.allowedEffects?.includes(effect) ?? true;
-}
+export {
+  allowsEffect,
+  BOOST_CATEGORY,
+  categoryEffect,
+  categoryName,
+  chosenModule,
+  chosenModules,
+  defaultModule,
+  familyFor,
+  headlineEffect,
+  moduleFor,
+  modulesFor,
+  modulesIn,
+  moduleCategories,
+  PRODUCTIVITY_CATEGORY,
+  SPEED_CATEGORY,
+  takesCategory,
+} from './modules.ts';
+export type {
+  BoostEffect,
+  ChosenModules,
+  ModuleCategory,
+  ModuleChoice,
+  ModuleMatch,
+} from './modules.ts';
 
-/**
- * Whether a machine or a beacon will take a module of this category at all; absent means all, and
- * that absence is the only home Angel's bio-yield modules have — every machine here which names a
- * list names the same six categories, all of them except that one.
- */
-export function takesCategory(holder: Machine | Beacon, category: string): boolean {
-  return holder.allowedModuleCategories?.includes(category) ?? true;
-}
-
-export interface ModuleMatch {
-  id: ModuleId;
-  module: Module;
-  /** The complexity of the module's item, which is the module's; as `MachineMatch.complexity`. */
-  complexity?: number;
-}
-
-/**
- * The modules which would do something in this machine on this recipe, cheapest first.
- *
- * Three gates, and each one of them is a way to overstate throughput by a lot if it is skipped:
- * the machine must have slots at all, it must take the module's category, and at least one of the
- * two effects we model has to survive both `Machine.allowedEffects` and — for productivity —
- * `Recipe.allowProductivity`, which only 335 of the 2330 recipes here set. A productivity module
- * on a recipe which does not allow it is not a worse choice but a purely negative one — its speed
- * malus and nothing else — so it is not offered at all.
- *
- * Cheapest first rather than by tier: the tiers of one family come out in order anyway, because a
- * module is unlocked by the research which makes it, and the families interleave the way the
- * search results do.
- */
-export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
-  if (!machine.moduleSlots) return [];
-  const out: ModuleMatch[] = [];
-  for (const [id, module] of Object.entries(staticData.modules)) {
-    if (!takesCategory(machine, module.category)) continue;
-    // a *bonus* which survives, not merely an effect: a productivity module's speed is negative,
-    // so on a recipe which does not allow productivity it is the only thing left of it
-    const faster = (module.speed ?? 0) > 0 && allowsEffect(machine, 'speed');
-    const moreOut =
-      (module.productivity ?? 0) > 0 &&
-      allowsEffect(machine, 'productivity') &&
-      recipe.allowProductivity;
-    if (!faster && !moreOut) continue;
-    out.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
-  }
-  return out.sort(cheapestModule);
-}
-
-/**
- * A module category as the app offers it: the game's `module-category` id, and a name for it. The
- * ids are the game's; the names are ours, because a `module-category` prototype carries no
- * `localised_name` to ingest and `angels-bio-yield` is not what anyone calls the modules that go in
- * a farm.
- */
-export interface ModuleCategory {
-  id: string;
-  human: string;
-  /** The effect the category is *for*, and so the one a picker quotes; see {@link headlineEffect}. */
-  effect: BoostEffect;
-}
-
-/**
- * The two effects this app models, which are the two things a family of modules is reached for and
- * the two a cell row asks for a count of; see `CellEntry.productivityModules`.
- */
-export type BoostEffect = 'speed' | 'productivity';
-
-/**
- * The three families this pack has, in the order a picker should show them. Productivity modules
- * also change speed and bio-yield modules do not, but what you pick either of them *for* is the
- * yield, which is why the effect is stated here rather than guessed from the module.
- */
-const KNOWN_CATEGORIES: ModuleCategory[] = [
-  { id: 'speed', human: 'speed', effect: 'speed' },
-  { id: 'productivity', human: 'productivity', effect: 'productivity' },
-  { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
-];
-
-/** Cheapest first, then up the tiers, then by id: the order every list of modules comes out in. */
-const cheapestModule = (a: ModuleMatch, b: ModuleMatch): number =>
-  complexityOf(a) - complexityOf(b) || a.module.tier - b.module.tier || a.id.localeCompare(b.id);
-
-/** Every module there is, grouped by category and cheapest first, built once. */
-const byModuleCategory = ((): Map<string, ModuleMatch[]> => {
-  const index = new Map<string, ModuleMatch[]>();
-  for (const [id, module] of Object.entries(staticData.modules)) {
-    let list = index.get(module.category);
-    if (!list) index.set(module.category, (list = []));
-    list.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
-  }
-  for (const list of index.values()) list.sort(cheapestModule);
-  return index;
-})();
-
-/**
- * The categories there are actually modules for: the known three first and in their order, then
- * anything else the dataset has, under its bare id. A regenerated dump with a fourth family in it
- * should grow a picker rather than quietly lose the modules — and it names its own effect, so an
- * unknown category is quoted by whichever of the two its modules add to.
- */
-export const moduleCategories: ModuleCategory[] = [
-  ...KNOWN_CATEGORIES.filter(({ id }) => byModuleCategory.has(id)),
-  ...[...byModuleCategory]
-    .filter(([id]) => !KNOWN_CATEGORIES.some((known) => known.id === id))
-    .map(([id, modules]) => ({
-      id,
-      human: id,
-      effect: modules.some(({ module }) => (module.productivity ?? 0) > 0)
-        ? ('productivity' as const)
-        : ('speed' as const),
-    })),
-];
-
-/** The modules in one category, cheapest first — all of them, whatever machine or recipe. */
-export function modulesIn(category: string): ModuleMatch[] {
-  return byModuleCategory.get(category) ?? [];
-}
-
-/**
- * What a family of modules is picked *for*, by its category id. An unknown category cannot happen
- * for a module in the data — {@link moduleCategories} is built from the categories there are — so
- * the fallback is only the type's business.
- */
-export function categoryEffect(category: string): BoostEffect {
-  return moduleCategories.find(({ id }) => id === category)?.effect ?? 'speed';
-}
-
-/** What a module does, by the effect its category is picked for: the number a picker shows. */
-export function headlineEffect(category: ModuleCategory, module: Module): number {
-  return module[category.effect] ?? 0;
-}
-
-/**
- * Which module in a category to assume when nobody has chosen one: the best you could already have
- * built, and `undefined` — none, empty slots — while that is nothing. That is not
- * {@link defaultMachine}'s nearest-`progress` rule, and the difference is none: a machine has to be
- * *some* machine, so nearest is the best a default can do there, while a tier-1 speed module you
- * cannot craft yet has an honest answer to fall back to. "None" is a complexity of zero — you have
- * empty slots at the crash site — so it wins for as long as no real module is unlocked.
- *
- * Takes the cheapest-first list {@link modulesIn} returns: the last module in it you can reach is
- * the best one you can reach, and one nothing unlocks (complexity `Infinity`) is never reached.
- */
-export function defaultModule(modules: ModuleMatch[], progress: number): ModuleMatch | undefined {
-  return modules.findLast((match) => complexityOf(match) <= progress);
-}
+import { chosenModules } from './modules.ts';
+import type { ChosenModules, ModuleChoice } from './modules.ts';
 
 /**
  * The beacons this pack has, cheapest first: one tier of the same idea, as the module families are.
@@ -456,50 +327,6 @@ export function chosenBelt(choice: BeltChoice, progress: number): Belt {
   return defaultBelt(progress).belt;
 }
 
-/** The two module families a cell row asks for; see `moduleLayout` in `src/flow.ts`. */
-export const SPEED_CATEGORY = 'speed';
-export const PRODUCTIVITY_CATEGORY = 'productivity';
-
-/**
- * Which family a row spends for each effect. The dataset's own `angels-bio-yield` is productivity
- * too, but it is a family for one kind of machine rather than an alternative to the productivity
- * modules, so it is the header's picker and not a row's choice.
- */
-export const BOOST_CATEGORY: Record<BoostEffect, string> = {
-  speed: SPEED_CATEGORY,
-  productivity: PRODUCTIVITY_CATEGORY,
-};
-
-/**
- * Which module a family means right now: the one the header pinned, or — where it pinned nothing —
- * whatever {@link defaultModule} makes of where the player is. `undefined` either way for none,
- * which is both what `null` means and what the early game defaults to.
- */
-export function chosenModule(
-  choice: ModuleChoice,
-  category: string,
-  progress: number,
-): ModuleId | undefined {
-  const picked = choice[category];
-  if (picked !== undefined) return picked ?? undefined;
-  return defaultModule(modulesIn(category), progress)?.id;
-}
-
-/** Which module the header means by each family, keyed by category id; see {@link chosenModules}. */
-export type ChosenModules = Record<string, ModuleId | undefined>;
-
-/**
- * Every family resolved once against the header's choices: a row states how many modules it wants
- * for an effect, never which module or even which family, so this is where "a productivity module"
- * becomes a tier. Resolved for the app rather than per row, because it is one decision and every
- * row spends it — {@link moduleFor} is the per-machine half, which family of the ones here.
- */
-export function chosenModules(choice: ModuleChoice, progress: number): ChosenModules {
-  return Object.fromEntries(
-    moduleCategories.map(({ id }) => [id, chosenModule(choice, id, progress)]),
-  );
-}
-
 /**
  * What the header says a row has to spend: which module each family means, which beacon gets built
  * where a row's speed modules overflow the machine, and which belt will eventually constrain it.
@@ -532,77 +359,3 @@ export function resolveChosen(
     belt: chosenBelt(belt, progress),
   };
 }
-
-/** The families picked for one effect, in the order {@link moduleCategories} has them. */
-function familiesOf(effect: BoostEffect): ModuleCategory[] {
-  return moduleCategories.filter((category) => category.effect === effect);
-}
-
-/** What one module is worth for an effect: the number the choice between two families turns on. */
-function worthOf(id: ModuleId | undefined, effect: BoostEffect): number {
-  return (id === undefined ? 0 : (staticData.modules[id]?.[effect] ?? 0)) || 0;
-}
-
-/**
- * Which module a machine would actually reach for, for one effect: the best of what the header has
- * chosen, out of the families this machine will take.
- *
- * More than one family can be picked for the same effect — `productivity` and Angel's
- * `angels-bio-yield` both are — and which of them a row spends is a fact about the machine and not
- * about the row. Angel's farms name no `allowed_module_categories` at all, so they take ordinary
- * productivity modules as well as the bio-yield ones a farm is actually for; every other machine
- * which names a list leaves bio-yield out. So neither "the productivity family" nor "the one the
- * machine allows" answers it, and what does is which module is worth more here: bio-yield is pure
- * yield at up to +50%, against +20% and a speed malus, so a farm gets the agricultural modules and
- * an assembler the only ones it can take.
- *
- * The speed malus is not weighed against the yield, deliberately — that is a judgement about a
- * factory, and the row has a speed box of its own to make it with.
- *
- * A machine which refuses every family that has a module is still worth answering for, because a
- * beacon reaches a machine which will not hold the module itself; {@link takesCategory} decides
- * what goes in the slots, and this only decides which module is being talked about.
- */
-export function moduleFor(
-  machine: Machine,
-  effect: BoostEffect,
-  chosen: ChosenModules,
-): ModuleId | undefined {
-  const named = familiesOf(effect).filter(({ id }) => chosen[id] !== undefined);
-  const takes = named.filter((category) => takesCategory(machine, category.id));
-  const pool = takes.length > 0 ? takes : named;
-  return pool
-    .map(({ id }) => chosen[id])
-    .toSorted((a, b) => worthOf(b, effect) - worthOf(a, effect))[0];
-}
-
-/**
- * Which family stands for an effect in this machine when the header has chosen no module at all —
- * the icon a row's box draws with its lights out. {@link moduleFor}'s question asked of the
- * dataset rather than of the header: the best a family could be worth here, chosen or not.
- */
-export function familyFor(machine: Machine | undefined, effect: BoostEffect): string {
-  const families = familiesOf(effect);
-  const takes = machine
-    ? families.filter((category) => takesCategory(machine, category.id))
-    : families;
-  const best = (category: ModuleCategory) =>
-    Math.max(0, ...modulesIn(category.id).map(({ module }) => module[effect] ?? 0));
-  return (
-    (takes.length > 0 ? takes : families).toSorted((a, b) => best(b) - best(a))[0]?.id ??
-    BOOST_CATEGORY[effect]
-  );
-}
-
-/** What a family is called on a row: the picker's own name for it, `agricultural` and all. */
-export function categoryName(category: string): string {
-  return moduleCategories.find(({ id }) => id === category)?.human ?? category;
-}
-
-/**
- * Which module the user wants reached for in each category, keyed by {@link ModuleCategory}`.id`.
- * Three states, and they are all different: a module id, `null` for none — no modules of this
- * family, whatever the progress — and absent for a category nobody has decided, which follows the
- * progress slider through {@link defaultModule}.
- */
-export type ModuleChoice = Record<string, ModuleId | null>;

@@ -1,4 +1,4 @@
-import { relevanceOf, resourceName, staticData } from './data.ts';
+import { relevanceOf, resourceName, staticData } from './data/index.ts';
 import type { Recipe, ResourceId } from './types.ts';
 
 export interface RecipeMatch {

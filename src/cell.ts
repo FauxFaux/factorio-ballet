@@ -6,7 +6,7 @@ import {
   resourceName,
   staticData,
   type Chosen,
-} from './data.ts';
+} from './data/index.ts';
 import {
   laidOutEffects,
   NO_EFFECTS,

@@ -1,5 +1,5 @@
 import { useMemo } from 'preact/hooks';
-import { relevanceOf, resourceName, staticData } from '../data.ts';
+import { relevanceOf, resourceName, staticData } from '../data/index.ts';
 import type { State } from '../ts.ts';
 import type { Resource, ResourceId } from '../types.ts';
 import { ResourceButton } from './resource.tsx';

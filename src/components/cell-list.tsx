@@ -1,7 +1,7 @@
 import './cell-list.css';
 import { activeAfterRemoval, newCell, withoutCell, type Cell } from '../cell.ts';
 import { atIndex, type State } from '../ts.ts';
-import type { Chosen } from '../data.ts';
+import type { Chosen } from '../data/index.ts';
 import { CellBox } from './cell/box.tsx';
 
 /**

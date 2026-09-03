@@ -1,5 +1,5 @@
 import './progress-slider.css';
-import { type Landmark, packLandmarks, resourceName } from '../data.ts';
+import { type Landmark, packLandmarks, resourceName } from '../data/index.ts';
 import { bareName } from '../search.ts';
 import type { State } from '../ts.ts';
 import { iconStyle } from './icon.tsx';

@@ -1,4 +1,4 @@
-import type { MachineMatch } from './data.ts';
+import type { MachineMatch } from './data/index.ts';
 import {
   allowsEffect,
   BOOST_CATEGORY,
@@ -10,7 +10,7 @@ import {
   takesCategory,
   type BoostEffect,
   type ChosenModules,
-} from './data.ts';
+} from './data/index.ts';
 import { fmt } from './ts.ts';
 import type {
   Beacon,

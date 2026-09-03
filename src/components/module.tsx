@@ -10,7 +10,7 @@ import {
   type ModuleCategory,
   type ModuleChoice,
   type ModuleMatch,
-} from '../data.ts';
+} from '../data/index.ts';
 import { BeaconPicker } from './beacon.tsx';
 import { BeltPicker } from './belt.tsx';
 import { useMenu } from './menu.ts';

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { beltTiers, chosenBelt, defaultBelt, staticData } from '../src/data.ts';
+import { beltTiers, chosenBelt, defaultBelt, staticData } from '../src/data/index.ts';
 
 describe('the chosen belt', () => {
   it('is the six tiers the pack has, in items per second', () => {

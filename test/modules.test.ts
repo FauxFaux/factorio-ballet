@@ -9,7 +9,7 @@ import {
   modulesFor,
   modulesIn,
   staticData,
-} from '../src/data.ts';
+} from '../src/data/index.ts';
 import { fillSlots, moduleEffects } from '../src/flow.ts';
 
 /** Allows productivity; runs in an assembler. */

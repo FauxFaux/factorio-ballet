@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Cell } from '../src/cell.ts';
-import { staticData } from '../src/data.ts';
+import { staticData } from '../src/data/index.ts';
 import { fingerprint, packCells, unpackCells } from '../src/pack.ts';
 
 const recipe = Object.keys(staticData.recipes)[0];

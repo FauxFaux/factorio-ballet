@@ -3,7 +3,7 @@ import { debounce } from './ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from './app.tsx';
 import type { Cell } from './cell.ts';
-import type { BeaconChoice, BeltChoice, ModuleChoice } from './data.ts';
+import type { BeaconChoice, BeltChoice, ModuleChoice } from './data/index.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
 

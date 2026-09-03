@@ -1,7 +1,7 @@
 import './modules.css';
 import { useState } from 'preact/hooks';
 import { entryRun, parseModules, type CellEntry } from '../../cell.ts';
-import { categoryName, modulesIn, type Chosen } from '../../data.ts';
+import { categoryName, modulesIn, type Chosen } from '../../data/index.ts';
 import type { Boost, Effects, Layout } from '../../flow.ts';
 import { fmt } from '../../ts.ts';
 import type { MachineId, Recipe } from '../../types.ts';

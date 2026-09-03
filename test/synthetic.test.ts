@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { machinesFor, staticData } from '../src/data.ts';
+import { machinesFor, staticData } from '../src/data/index.ts';
 import { searchRecipes } from '../src/search.ts';
 
 /**

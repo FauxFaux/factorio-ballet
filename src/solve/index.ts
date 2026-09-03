@@ -1,5 +1,5 @@
 import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from '../cell.ts';
-import { machinesFor, NO_CHOICE, recipeName, resourceName, type Chosen } from '../data.ts';
+import { machinesFor, NO_CHOICE, recipeName, resourceName, type Chosen } from '../data/index.ts';
 import { netRates, speedOf } from '../flow.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId } from '../types.ts';

@@ -1,5 +1,5 @@
 import './internal.css';
-import { resourceName } from '../../data.ts';
+import { resourceName } from '../../data/index.ts';
 import type { Solution } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';

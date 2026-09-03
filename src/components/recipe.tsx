@@ -3,7 +3,7 @@ import type { MachineId, ResourceId } from '../types.ts';
 import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
-import { machinesFor, type MachineMatch } from '../data.ts';
+import { machinesFor, type MachineMatch } from '../data/index.ts';
 import { flowTitle, recipeFlows, speedOf, type Flow } from '../flow.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';

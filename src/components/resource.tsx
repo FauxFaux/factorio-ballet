@@ -1,5 +1,5 @@
 import './resource.css';
-import { staticData } from '../data.ts';
+import { staticData } from '../data/index.ts';
 import type { ResourceId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 

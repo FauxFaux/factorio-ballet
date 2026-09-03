@@ -1,7 +1,7 @@
-import type { Ingredient, Product, ResourceId, StaticData, StaticDataPacked } from './types.ts';
+import type { Ingredient, Product, ResourceId, StaticData, StaticDataPacked } from '../types.ts';
 
-const staticDataJson = await import('./assets/static.json');
-const staticRecipesJson = await import('./assets/static-recipes.json');
+const staticDataJson = await import('../assets/static.json');
+const staticRecipesJson = await import('../assets/static-recipes.json');
 
 const packed = {
   ...(staticDataJson.default as unknown as Omit<StaticDataPacked, 'recipes'>),

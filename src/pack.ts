@@ -1,5 +1,5 @@
 import type { Cell, CellEntry } from './cell.ts';
-import { staticData } from './data.ts';
+import { staticData } from './data/index.ts';
 import type { ModuleFill } from './flow.ts';
 
 /**
