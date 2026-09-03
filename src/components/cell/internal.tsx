@@ -148,8 +148,8 @@ function InternalConnectionsView({
   }
   return (
     <div class="cell-connections cell-internal-connections">
-      <InternalConnectionColumn label="Used by" flows={connections.inputs} />
       <InternalConnectionColumn label="Made by" flows={connections.outputs} />
+      <InternalConnectionColumn label="Used by" flows={connections.inputs} />
     </div>
   );
 }
