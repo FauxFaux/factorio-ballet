@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "bundle:analyze": "tsc -b && vite build --mode analyze",
     "deploy:snapshot": "npm run build && rsync -av --delete dist/ sek:/srv/ballet.goeswhere.com/snapshot-$(git rev-parse --short HEAD)/",
     "format": "oxfmt",
     "lint": "eslint . && tsc -b",
@@ -33,6 +34,7 @@
     "typescript": "~6",
     "typescript-eslint": "^8",
     "vite": "^8",
+    "vite-bundle-analyzer": "^1",
     "vitest": "^4"
   }
 }
