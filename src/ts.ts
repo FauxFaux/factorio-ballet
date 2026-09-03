@@ -70,3 +70,9 @@ export function fmt(value: number): string {
   const fixed = value.toFixed(digits);
   return fixed.includes('.') ? fixed.replace(/0+$/, '').replace(/\.$/, '') : fixed;
 }
+
+/** Decimal places needed to show this magnitude to the requested significant-figure precision. */
+export function decimalPlacesForSignificantFigures(value: number, figures: number): number {
+  if (value === 0) return 0;
+  return Math.max(0, figures - 1 - Math.floor(Math.log10(Math.abs(value))));
+}

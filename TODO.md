@@ -1,0 +1,4 @@
+- http://localhost:5173/#p5qsqwanHVDw4E47hmagUIKGH0p8AGUMgaEA83Z5fn4K1I-GBkAzwZ6EWQyzEQA=
+  - when no saw blade recipe, solver reports negative but dosen't add input
+  - saw blade doesn't show as output of wood recipe
+  - timborer's???

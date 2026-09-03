@@ -7,6 +7,13 @@ export type ConnectionFlow = { resource: ResourceId; rate: number };
 export type RecipeConnections = { inputs: ConnectionFlow[]; outputs: ConnectionFlow[] };
 const FLOW_EPS = 1e-9;
 
+/** The comparison bars describe only belt-borne items, never fluids carried by pipes. */
+export function itemRateTotal(flows: ConnectionFlow[]): number {
+  return flows
+    .filter(({ resource }) => resource.startsWith('item:'))
+    .reduce((sum, flow) => sum + flow.rate, 0);
+}
+
 /**
  * List every material rate for this row. These are deliberately not limited to flows which find a
  * matching row in the cell: the first and last recipes in a chain still need their external input

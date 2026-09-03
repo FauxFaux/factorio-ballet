@@ -93,6 +93,55 @@
   white-space: nowrap;
 }
 
+/* The separate point column keeps `1270/s` and `31.7/s` aligned on the decimal place. */
+.cell-connection-rate {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  text-align: left;
+}
+
+.cell-connection-rate-value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1ch var(--cell-connection-rate-fraction-width);
+  text-align: left;
+}
+
+.cell-connection-table:not(.has-rate-fractions) .cell-connection-rate-value {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cell-connection-rate-value > :first-child {
+  text-align: right;
+}
+
+.cell-connection-rate-point {
+  text-align: center;
+}
+
+.cell-connection-belts,
+.cell-connection-pump {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  text-align: left;
+}
+
+.cell-connection-transport-value {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1ch var(--cell-connection-transport-fraction-width);
+}
+
+.cell-connection-table:not(.has-transport-fractions) .cell-connection-transport-value {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.cell-connection-transport-value > :first-child {
+  text-align: right;
+}
+
+.cell-connection-transport-point {
+  text-align: center;
+}
+
 .cell-connection-distribution {
   display: inline-flex;
   align-items: end;
@@ -108,9 +157,7 @@
 }
 
 .cell-connection-belts {
-  display: inline-flex;
   align-items: center;
-  gap: 1px;
   color: var(--text);
 }
 
