@@ -47,6 +47,17 @@
   transition: opacity 100ms ease;
 }
 
+.cell-internal-resource-details {
+  grid-column: 1 / -1;
+  white-space: nowrap;
+}
+
+.cell-internal-resource-details span {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
 .cell-internal-entry.is-expanded .cell-internal-connections {
   visibility: visible;
   opacity: 1;

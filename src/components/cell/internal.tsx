@@ -136,6 +136,7 @@ function InternalChip({
         )}
       </button>
       <InternalConnectionsView
+        id={id}
         connections={connections}
         solved={solution.complete}
         onRecipeHover={onRecipeHover}
@@ -145,23 +146,29 @@ function InternalChip({
 }
 
 function InternalConnectionsView({
+  id,
   connections,
   solved,
   onRecipeHover,
 }: {
+  id: ResourceId;
   connections: InternalConnections;
   solved: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
 }) {
+  const resource = staticData.resources[id];
+
   if (!solved) {
     return (
       <div class="cell-connections cell-connections-pending">
+        <ResourceDetails id={id} stackSize={resource?.stackSize} />
         Recipes appear once the cell is worked out.
       </div>
     );
   }
   return (
     <div class="cell-connections cell-internal-connections">
+      <ResourceDetails id={id} stackSize={resource?.stackSize} />
       <InternalConnectionColumn
         label="Made by"
         flows={connections.outputs}
@@ -172,6 +179,18 @@ function InternalConnectionsView({
         flows={connections.inputs}
         onRecipeHover={onRecipeHover}
       />
+    </div>
+  );
+}
+
+function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number }) {
+  return (
+    <div class="cell-internal-resource-details">
+      <strong>{resourceName(id)}</strong>
+      <span>
+        {' · '}
+        {id} · stack size {stackSize ?? 'fluid'}
+      </span>
     </div>
   );
 }
