@@ -1,4 +1,5 @@
 import { fmt } from '../../ts.ts';
+import { resourceName } from '../../data/index.ts';
 import type { Belt } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
@@ -45,7 +46,11 @@ function ConnectionColumn({
       {flows.length ? (
         <div class="cell-connection-flows">
           {flows.map(({ resource, rate }) => (
-            <span class="cell-connection-flow" key={resource} title={`${fmt(rate)}/s ${resource}`}>
+            <span
+              class="cell-connection-flow"
+              key={resource}
+              title={`${fmt(rate)}/s ${resourceName(resource)} (${resource})`}
+            >
               <ResourceIcon id={resource} />
               <span>{fmt(rate)}/s</span>(
               {resource.startsWith('item:') ? (
