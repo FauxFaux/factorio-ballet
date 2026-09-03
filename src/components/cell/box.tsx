@@ -96,11 +96,13 @@ export function CellBox({
               />
             ))
           )}
-          {iface.internal.length ? (
+          {iface.inPlay.length ? (
             <InPlayRow
-              ids={iface.internal}
+              ids={iface.inPlay}
               entries={cell.entries}
               solution={solution}
+              inputs={new Set(iface.inputs)}
+              outputs={new Set(iface.outputs)}
               onRecipeHover={setHoveredRecipe}
             />
           ) : null}

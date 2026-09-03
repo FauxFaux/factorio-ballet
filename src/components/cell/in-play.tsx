@@ -13,21 +13,20 @@ import {
   type InternalFlow,
 } from './internal-calc.ts';
 
-/**
- * Resources the cell makes and consumes itself. `cellInterface` calls a resource internal on set
- * arithmetic alone, so one of these balancing at zero is the cell handling it — and one which does
- * not is a leftover the user is about to have to do something about, which is why it is spelled out
- * here rather than left to the icon.
- */
+/** Every resource a recipe in this cell consumes or produces, including its open edges. */
 export function InPlayRow({
   ids,
   entries,
   solution,
+  inputs,
+  outputs,
   onRecipeHover,
 }: {
   ids: ResourceId[];
   entries: CellEntry[];
   solution: Solution;
+  inputs: ReadonlySet<ResourceId>;
+  outputs: ReadonlySet<ResourceId>;
   onRecipeHover: (recipe: string | undefined) => void;
 }) {
   const [pinned, setPinned] = useState<ResourceId>();
@@ -75,6 +74,8 @@ export function InPlayRow({
             id={id}
             recipes={entries.map((entry) => entry.recipe)}
             solution={solution}
+            input={inputs.has(id)}
+            output={outputs.has(id)}
             onRecipeHover={onRecipeHover}
             expanded={expanded === id}
             onMouseEnter={() => show(id)}
@@ -91,6 +92,8 @@ function InPlayChip({
   id,
   recipes,
   solution,
+  input,
+  output,
   onRecipeHover,
   expanded,
   onMouseEnter,
@@ -100,6 +103,8 @@ function InPlayChip({
   id: ResourceId;
   recipes: string[];
   solution: Solution;
+  input: boolean;
+  output: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
   expanded: boolean;
   onMouseEnter: () => void;
@@ -128,16 +133,18 @@ function InPlayChip({
         onClick={onToggle}
       >
         <ResourceIcon id={id} />
-        {rate === 0 ? null : (
+        {!input && !output && rate !== 0 ? (
           <span class="cell-leftover">
             {rate > 0 ? '+' : '−'}
             {fmt(Math.abs(rate))}
           </span>
-        )}
+        ) : null}
       </button>
       <InPlayConnectionsView
         id={id}
         connections={connections}
+        inputRate={input ? Math.abs(rate) : undefined}
+        outputRate={output ? Math.abs(rate) : undefined}
         solved={solution.complete}
         onRecipeHover={onRecipeHover}
       />
@@ -148,11 +155,15 @@ function InPlayChip({
 function InPlayConnectionsView({
   id,
   connections,
+  inputRate,
+  outputRate,
   solved,
   onRecipeHover,
 }: {
   id: ResourceId;
   connections: InternalConnections;
+  inputRate: number | undefined;
+  outputRate: number | undefined;
   solved: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
 }) {
@@ -172,11 +183,15 @@ function InPlayConnectionsView({
       <InPlayConnectionColumn
         label="Made by"
         flows={connections.outputs}
+        interfaceFlow={inputRate === undefined ? undefined : { label: '[input]', rate: inputRate }}
         onRecipeHover={onRecipeHover}
       />
       <InPlayConnectionColumn
         label="Used by"
         flows={connections.inputs}
+        interfaceFlow={
+          outputRate === undefined ? undefined : { label: '[output]', rate: outputRate }
+        }
         onRecipeHover={onRecipeHover}
       />
     </div>
@@ -198,17 +213,28 @@ function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number
 function InPlayConnectionColumn({
   label,
   flows,
+  interfaceFlow,
   onRecipeHover,
 }: {
   label: string;
   flows: InternalFlow[];
+  interfaceFlow: { label: '[input]' | '[output]'; rate: number } | undefined;
   onRecipeHover: (recipe: string | undefined) => void;
 }) {
   return (
     <section class="cell-connection-column">
       <strong>{label}</strong>
-      {flows.length ? (
+      {flows.length || interfaceFlow ? (
         <div class="cell-connection-flows">
+          {interfaceFlow ? (
+            <span
+              class="cell-in-play-connection-flow cell-in-play-interface-flow"
+              title={`${fmt(interfaceFlow.rate)}/s ${interfaceFlow.label}`}
+            >
+              <span>{interfaceFlow.label}</span>
+              <span>{fmt(interfaceFlow.rate)}/s</span>
+            </span>
+          ) : null}
           {flows.map(({ recipe, rate }) => {
             const data = staticData.recipes[recipe];
             return (

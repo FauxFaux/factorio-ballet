@@ -86,8 +86,8 @@ export interface CellInterface {
   inputs: ResourceId[];
   /** Made by a recipe in the cell, used by none: what the cell hands on. */
   outputs: ResourceId[];
-  /** Both made and used inside; the cell's own business. */
-  internal: ResourceId[];
+  /** Every resource a recipe in the cell consumes or produces. */
+  inPlay: ResourceId[];
 }
 
 export function newCell(recipe?: string): Cell {
@@ -263,11 +263,32 @@ export function cellInterface(cell: Cell): CellInterface {
     for (const ingredient of recipe.ingredients) used.add(ingredient.resource);
     for (const product of recipe.products) made.add(product.resource);
   }
+  const inputs = simplestFirst([...used].filter((id) => !made.has(id)));
+  const outputs = simplestFirst([...made].filter((id) => !used.has(id)));
+  const internal = new Set([...made].filter((id) => used.has(id)));
   return {
-    inputs: simplestFirst([...used].filter((id) => !made.has(id))),
-    outputs: simplestFirst([...made].filter((id) => !used.has(id))),
-    internal: simplestFirst([...made].filter((id) => used.has(id))),
+    inputs,
+    outputs,
+    inPlay: [...inputs, ...internalsBottomFirst(cell, internal), ...outputs],
   };
+}
+
+/**
+ * A cell reads left-to-right: its inputs come first, then the hand-offs nearest the later recipe
+ * rows, then its outputs. Walking from the bottom means an intermediate appears beside the row
+ * that first needs it, rather than the one above which happens to make it.
+ */
+function internalsBottomFirst(cell: Cell, remaining: Set<ResourceId>): ResourceId[] {
+  const ordered: ResourceId[] = [];
+  for (let index = cell.entries.length - 1; index >= 0; index--) {
+    const recipe = entryRecipe(cell.entries[index]);
+    if (!recipe) continue;
+    for (const { resource } of [...recipe.ingredients, ...recipe.products]) {
+      if (!remaining.delete(resource)) continue;
+      ordered.push(resource);
+    }
+  }
+  return ordered;
 }
 
 /** The cell's open edges, as the recipe search's `makes:@in` / `uses:@out` read them. */

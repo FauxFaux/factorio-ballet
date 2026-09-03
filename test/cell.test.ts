@@ -25,14 +25,14 @@ const chain: Cell = { entries: [{ recipe: 'iron-plate' }, { recipe: 'iron-gear-w
 
 describe('cellInterface', () => {
   it('has nothing to say about an empty cell', () => {
-    expect(cellInterface(newCell())).toEqual({ inputs: [], outputs: [], internal: [] });
+    expect(cellInterface(newCell())).toEqual({ inputs: [], outputs: [], inPlay: [] });
   });
 
   it('reads a lone recipe straight off', () => {
     expect(cellInterface(newCell('iron-plate'))).toEqual({
       inputs: ['item:angels-ore1-crushed'],
       outputs: ['item:iron-plate'],
-      internal: [],
+      inPlay: ['item:angels-ore1-crushed', 'item:iron-plate'],
     });
   });
 
@@ -42,15 +42,15 @@ describe('cellInterface', () => {
     expect(cellInterface(newCell('angels-water-void-angels-water-yellow-waste'))).toEqual({
       inputs: ['fluid:angels-water-yellow-waste'],
       outputs: [],
-      internal: [],
+      inPlay: ['fluid:angels-water-yellow-waste'],
     });
   });
 
-  it('takes what one recipe hands the next out of the interface', () => {
+  it('keeps the open edges while including every resource in play', () => {
     expect(cellInterface(chain)).toEqual({
       inputs: ['item:angels-ore1-crushed'],
       outputs: ['item:iron-gear-wheel'],
-      internal: ['item:iron-plate'],
+      inPlay: ['item:angels-ore1-crushed', 'item:iron-plate', 'item:iron-gear-wheel'],
     });
   });
 
