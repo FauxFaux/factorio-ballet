@@ -77,6 +77,7 @@ function InPlayConnectionTable({
     outputRate === undefined
       ? inputs
       : [...inputs, { recipe: undefined, label: '[output]' as const, rate: outputRate }];
+  const totalConsumption = inputFlows.reduce((total, flow) => total + flow.rate, 0);
   const rowCount = Math.max(outputFlows.length, inputFlows.length, 1);
 
   return (
@@ -94,6 +95,7 @@ function InPlayConnectionTable({
           <div class="cell-in-play-connection-row" key={index}>
             <ConnectionRecipeFlow flow={output} onRecipeHover={onRecipeHover} />
             <ConnectionRate flow={output} />
+            <ConnectionConsumptionBar flow={input} total={totalConsumption} />
             <ConnectionRate flow={input} />
             <ConnectionRecipeFlow flow={input} onRecipeHover={onRecipeHover} />
           </div>
@@ -138,4 +140,26 @@ function ConnectionRecipeFlow({
 
 function ConnectionRate({ flow }: { flow: ConnectionFlow | undefined }) {
   return <span class="cell-in-play-connection-rate">{flow ? `${fmt(flow.rate)}/s` : ''}</span>;
+}
+
+function ConnectionConsumptionBar({
+  flow,
+  total,
+}: {
+  flow: ConnectionFlow | undefined;
+  total: number;
+}) {
+  const proportion = flow && total && total > 0 ? Math.min(flow.rate / total, 1) : undefined;
+  if (proportion === undefined) {
+    return <span class="cell-in-play-connection-consumption-bar" />;
+  }
+  return (
+    <span
+      class="cell-in-play-connection-consumption-bar"
+      title={`${fmt(proportion * 100)}% of total consumption`}
+      aria-label={`${fmt(proportion * 100)}% of total consumption`}
+    >
+      <span style={`height: ${proportion * 100}%`} aria-hidden="true" />
+    </span>
+  );
 }
