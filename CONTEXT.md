@@ -85,8 +85,8 @@ productivity is not paid on (`ignoredByProductivity`); `Recipe.ingredients` carr
 temperatures. Machines are keyed by bare prototype id and carry `crafting_speed`, module slots, and
 the `item` which places them; which machine can run which recipe is the game's category system —
 `Recipe.categories` flattens the prototype's `category` + `additional_categories`, and `machinesFor`
-in `src/data/index.ts` indexes `Machine.categories` the other way, slowest first so a machine family reads
-as tiers. Machine power and pollution are still missing. Recipes and resources also carry a
+in `src/data/index.ts` indexes `Machine.categories` the other way, slowest first so a machine family
+reads as tiers. Machine power and pollution are still missing. Recipes and resources also carry a
 `complexity`: how far through the tech tree you must be to have the thing, 0 at the crash site to 1
 at the last technology, derived by `scripts/complexity.ts` (which the ingest imports). Search
 results sort by `relevanceOf`: distance from the header slider's game-progress setting, in either
@@ -97,8 +97,8 @@ walk, so not an approximation), and hand crafting is 0 because you start with th
 `sciencePacks` is that walk's own list of research ingredients, cheapest first — the packs are the
 only readable landmarks on the complexity scale, so the slider is labelled with their icons instead
 of numbers (`components/progress-slider.tsx`, thinned by `packLandmarks` because ten of Bob's packs
-land between 53% and 58%). `src/data/decode.ts` loads `src/assets/static.json` at module level. Icons
-render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
+land between 53% and 58%). `src/data/decode.ts` loads `src/assets/static.json` at module level.
+Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
 `craft:<name>`) via `components/resource.tsx`.
 
 `src/flow.ts` is the arithmetic between a `Recipe` and a card: amounts per craft, rates per second
@@ -114,8 +114,8 @@ size and complexity are already on the `item:<id>` resource, and `Module` carrie
 of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³. `moduleEffects` (`src/flow.ts`)
 does that sum and returns the two multipliers, one on the machine's speed and one on everything the
 recipe produces; `fillSlots` is the "and what if I fill all three slots with these" case.
-`modulesFor` (`src/data/modules.ts`) is which modules a machine will take on a recipe, and is where the
-three ways of overstating throughput live: `Machine.allowedModuleCategories` refuses a module
+`modulesFor` (`src/data/modules.ts`) is which modules a machine will take on a recipe, and is where
+the three ways of overstating throughput live: `Machine.allowedModuleCategories` refuses a module
 outright (absent means all — that absence is the only home Angel's bio-yield modules have),
 `Machine.allowedEffects` ignores the effects it omits rather than refusing the module (which is why
 speed modules work in an oil refinery, whose list has no `quality`), and productivity does nothing
@@ -146,16 +146,16 @@ so that count is capped there, while speed has beacons and so no ceiling — and
 is the ordinary case rather than an exotic one.
 
 **Which family** either count is spent on is the machine's answer and not the row's. `moduleFor`
-(`src/data/modules.ts`) picks, among the families named for that effect, the best module the header has
-chosen that this machine will take — two families are picked for productivity, `productivity` and
-Angel's `angels-bio-yield`, and Angel's farms name no `allowed_module_categories` at all, so they
-take both. Neither "the productivity family" nor "the one the machine allows" answers it, and what
-does is which is worth more here: bio-yield is pure yield at up to +50% against +20% with a speed
-malus, so a farm grows on the agricultural modules and an assembler runs on the ordinary ones. The
-speed malus is not weighed against the yield — that is a judgement about a factory, and the row has
-a speed box to make it with. `familyFor` is the same question asked of the dataset rather than of
-the header, which is what an empty box draws with its lights out, and `Layout.families` carries both
-answers to the row.
+(`src/data/modules.ts`) picks, among the families named for that effect, the best module the header
+has chosen that this machine will take — two families are picked for productivity, `productivity`
+and Angel's `angels-bio-yield`, and Angel's farms name no `allowed_module_categories` at all, so
+they take both. Neither "the productivity family" nor "the one the machine allows" answers it, and
+what does is which is worth more here: bio-yield is pure yield at up to +50% against +20% with a
+speed malus, so a farm grows on the agricultural modules and an assembler runs on the ordinary ones.
+The speed malus is not weighed against the yield — that is a judgement about a factory, and the row
+has a speed box to make it with. `familyFor` is the same question asked of the dataset rather than
+of the header, which is what an empty box draws with its lights out, and `Layout.families` carries
+both answers to the row.
 
 The order is arithmetic and not a preference: productivity takes its slots first, because a slot is
 the only place it can go and one spent on speed is one it cannot have; speed fills whatever is left
