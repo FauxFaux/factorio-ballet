@@ -79,21 +79,50 @@
 .cell-body {
   display: grid;
   grid-template-columns: minmax(9rem, 1fr) minmax(0, 2.5fr) minmax(9rem, 1fr);
+  grid-template-areas: "in middle out";
   gap: 0 12px;
   align-items: start;
   margin-top: 6px;
 }
 
+.cell-in {
+  grid-area: in;
+}
+
 .cell-middle {
+  grid-area: middle;
   min-width: 0;
   padding: 0 12px;
   border-left: 1px solid var(--border);
   border-right: 1px solid var(--border);
 }
 
+.cell-out {
+  grid-area: out;
+}
+
+/* The recipe rows keep their full width before they need to wrap; the two interface sides then
+ * become a single left-hand column. */
+@media (max-width: 1400px) {
+  .cell-body {
+    grid-template-columns: minmax(9rem, 1fr) minmax(0, 2.5fr);
+    grid-template-areas:
+      "in middle"
+      "out middle";
+  }
+
+  .cell-middle {
+    border-right: none;
+  }
+}
+
 @media (max-width: 800px) {
   .cell-body {
     grid-template-columns: 1fr;
+    grid-template-areas:
+      "in"
+      "middle"
+      "out";
   }
 
   .cell-middle {
