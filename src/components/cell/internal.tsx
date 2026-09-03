@@ -23,10 +23,12 @@ export function InternalRow({
   ids,
   entries,
   solution,
+  onRecipeHover,
 }: {
   ids: ResourceId[];
   entries: CellEntry[];
   solution: Solution;
+  onRecipeHover: (recipe: string | undefined) => void;
 }) {
   const [pinned, setPinned] = useState<ResourceId>();
   const [hovered, setHovered] = useState<ResourceId>();
@@ -60,7 +62,10 @@ export function InternalRow({
       ref={root}
       class="cell-internal"
       title="Made and used inside this cell"
-      onMouseLeave={() => setHovered(undefined)}
+      onMouseLeave={() => {
+        setHovered(undefined);
+        onRecipeHover(undefined);
+      }}
     >
       internal
       {ids.map((id) => {
@@ -70,6 +75,7 @@ export function InternalRow({
             id={id}
             recipes={entries.map((entry) => entry.recipe)}
             solution={solution}
+            onRecipeHover={onRecipeHover}
             expanded={expanded === id}
             onMouseEnter={() => show(id)}
             onFocus={() => show(id)}
@@ -85,6 +91,7 @@ function InternalChip({
   id,
   recipes,
   solution,
+  onRecipeHover,
   expanded,
   onMouseEnter,
   onFocus,
@@ -93,6 +100,7 @@ function InternalChip({
   id: ResourceId;
   recipes: string[];
   solution: Solution;
+  onRecipeHover: (recipe: string | undefined) => void;
   expanded: boolean;
   onMouseEnter: () => void;
   onFocus: () => void;
@@ -127,7 +135,11 @@ function InternalChip({
           </span>
         )}
       </button>
-      <InternalConnectionsView connections={connections} solved={solution.complete} />
+      <InternalConnectionsView
+        connections={connections}
+        solved={solution.complete}
+        onRecipeHover={onRecipeHover}
+      />
     </div>
   );
 }
@@ -135,9 +147,11 @@ function InternalChip({
 function InternalConnectionsView({
   connections,
   solved,
+  onRecipeHover,
 }: {
   connections: InternalConnections;
   solved: boolean;
+  onRecipeHover: (recipe: string | undefined) => void;
 }) {
   if (!solved) {
     return (
@@ -148,13 +162,29 @@ function InternalConnectionsView({
   }
   return (
     <div class="cell-connections cell-internal-connections">
-      <InternalConnectionColumn label="Made by" flows={connections.outputs} />
-      <InternalConnectionColumn label="Used by" flows={connections.inputs} />
+      <InternalConnectionColumn
+        label="Made by"
+        flows={connections.outputs}
+        onRecipeHover={onRecipeHover}
+      />
+      <InternalConnectionColumn
+        label="Used by"
+        flows={connections.inputs}
+        onRecipeHover={onRecipeHover}
+      />
     </div>
   );
 }
 
-function InternalConnectionColumn({ label, flows }: { label: string; flows: InternalFlow[] }) {
+function InternalConnectionColumn({
+  label,
+  flows,
+  onRecipeHover,
+}: {
+  label: string;
+  flows: InternalFlow[];
+  onRecipeHover: (recipe: string | undefined) => void;
+}) {
   return (
     <section class="cell-connection-column">
       <strong>{label}</strong>
@@ -167,6 +197,8 @@ function InternalConnectionColumn({ label, flows }: { label: string; flows: Inte
                 class="cell-internal-connection-flow"
                 key={recipe}
                 title={`${fmt(rate)}/s ${recipeName(recipe)}`}
+                onMouseEnter={() => onRecipeHover(recipe)}
+                onMouseLeave={() => onRecipeHover(undefined)}
               >
                 <span
                   class="recipe-icon"

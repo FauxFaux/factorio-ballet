@@ -14,6 +14,10 @@
   opacity: 0.4;
 }
 
+.cell-recipe.is-highlighted {
+  background: var(--accent-bg);
+}
+
 /* Where the dragged row would land: an inset shadow rather than a border, so it draws over the
    row's own divider without nudging anything's height. */
 .cell-recipe.drop-before {

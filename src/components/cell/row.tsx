@@ -24,6 +24,7 @@ export function CellRow({
   entryIndex,
   count,
   note,
+  highlighted,
   solution,
   progress,
   chosen,
@@ -36,6 +37,7 @@ export function CellRow({
   /** What the solver made of this row, pinned or not; `undefined` if it could not work it out. */
   count: number | undefined;
   note: SolveNote | undefined;
+  highlighted: boolean;
   /** The other solved rows, used for the expanded in-cell flow breakdown. */
   solution: Solution;
   progress: number;
@@ -56,6 +58,7 @@ export function CellRow({
   const problem = note !== undefined && isProblem(note) ? note : undefined;
   const rowClass = [
     'cell-recipe',
+    highlighted && 'is-highlighted',
     drag.dragging && 'is-dragging',
     drag.dropBefore && 'drop-before',
     drag.dropAfter && 'drop-after',

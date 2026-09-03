@@ -1,5 +1,5 @@
 import './box.css';
-import { useMemo } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import {
   cellInterface,
   cellTitle,
@@ -46,6 +46,7 @@ export function CellBox({
   const iface = useMemo(() => cellInterface(cell), [cell]);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const rowDrag = useRowDrag((from, to) => setCell((prev) => moveEntry(prev, from, to)));
+  const [hoveredRecipe, setHoveredRecipe] = useState<string>();
 
   return (
     <section class={active ? 'cell is-active' : 'cell'}>
@@ -85,6 +86,7 @@ export function CellBox({
                 entryIndex={i}
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
+                highlighted={hoveredRecipe === entry.recipe}
                 solution={solution}
                 progress={progress}
                 chosen={chosen}
@@ -95,7 +97,12 @@ export function CellBox({
             ))
           )}
           {iface.internal.length ? (
-            <InternalRow ids={iface.internal} entries={cell.entries} solution={solution} />
+            <InternalRow
+              ids={iface.internal}
+              entries={cell.entries}
+              solution={solution}
+              onRecipeHover={setHoveredRecipe}
+            />
           ) : null}
           <SolveNotes cell={cell} solution={solution} />
         </div>
