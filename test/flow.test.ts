@@ -8,7 +8,8 @@ import {
   recipeFlows,
   speedOf,
 } from '../src/flow.ts';
-import { machinesFor, staticData, type MachineMatch } from '../src/data/index.ts';
+import { machinesFor, type MachineMatch } from '../src/data/machines.ts';
+import { staticData } from '../src/data/index.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];
 /** Three results, the rarest of them 0.0055% of a craft: the reason for the third decimal. */

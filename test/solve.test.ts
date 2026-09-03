@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { newCell, type Cell } from '../src/cell.ts';
-import { defaultMachine, machinesFor, staticData } from '../src/data/index.ts';
+import { defaultMachine, machinesFor } from '../src/data/machines.ts';
+import { staticData } from '../src/data/index.ts';
 import { netRates, NO_EFFECTS, speedOf } from '../src/flow.ts';
 import {
   dumbSolver,

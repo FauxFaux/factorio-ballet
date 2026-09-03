@@ -1,4 +1,4 @@
-import type { MachineMatch } from './data/index.ts';
+import type { MachineMatch } from './data/machines.ts';
 import { resourceName } from './data/index.ts';
 import { fmt } from './ts.ts';
 import type {

@@ -1,5 +1,5 @@
 import './machine.css';
-import { machineName, type MachineMatch } from '../data/index.ts';
+import { machineName, type MachineMatch } from '../data/machines.ts';
 import { useMenu } from './menu.ts';
 import { fmt } from '../ts.ts';
 import type { Machine, MachineId } from '../types.ts';

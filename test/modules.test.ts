@@ -8,8 +8,8 @@ import {
   moduleFor,
   modulesFor,
   modulesIn,
-  staticData,
-} from '../src/data/index.ts';
+} from '../src/data/modules.ts';
+import { staticData } from '../src/data/index.ts';
 import { fillSlots, moduleEffects } from '../src/flow.ts';
 
 /** Allows productivity; runs in an assembler. */

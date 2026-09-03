@@ -1,16 +1,14 @@
 import './module.css';
+import { moduleName, type BeaconChoice, type BeltChoice } from '../data/index.ts';
 import {
   defaultModule,
   headlineEffect,
   moduleCategories,
-  moduleName,
   modulesIn,
-  type BeaconChoice,
-  type BeltChoice,
   type ModuleCategory,
   type ModuleChoice,
   type ModuleMatch,
-} from '../data/index.ts';
+} from '../data/modules.ts';
 import { BeaconPicker } from './beacon.tsx';
 import { BeltPicker } from './belt.tsx';
 import { useMenu } from './menu.ts';

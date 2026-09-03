@@ -1,12 +1,5 @@
-import {
-  complexityOf,
-  defaultMachine,
-  machinesFor,
-  NO_CHOICE,
-  resourceName,
-  staticData,
-  type Chosen,
-} from './data/index.ts';
+import { complexityOf, NO_CHOICE, resourceName, staticData, type Chosen } from './data/index.ts';
+import { defaultMachine, machinesFor } from './data/machines.ts';
 import {
   laidOutEffects,
   NO_EFFECTS,

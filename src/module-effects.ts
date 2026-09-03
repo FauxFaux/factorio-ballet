@@ -4,11 +4,11 @@ import {
   categoryEffect,
   familyFor,
   moduleFor,
-  staticData,
   takesCategory,
   type BoostEffect,
   type ChosenModules,
-} from './data/index.ts';
+} from './data/modules.ts';
+import { staticData } from './data/index.ts';
 import type { Beacon, Machine, ModuleId, Recipe } from './types.ts';
 
 export interface Effects {

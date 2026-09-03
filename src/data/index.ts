@@ -68,34 +68,6 @@ export function moduleName(id: ModuleId): string {
   return resourceName(`item:${id}`);
 }
 
-export { defaultMachine, machineName, machinesFor, type MachineMatch } from './machines.ts';
-
-export {
-  allowsEffect,
-  BOOST_CATEGORY,
-  categoryEffect,
-  categoryName,
-  chosenModule,
-  chosenModules,
-  defaultModule,
-  familyFor,
-  headlineEffect,
-  moduleFor,
-  modulesFor,
-  modulesIn,
-  moduleCategories,
-  PRODUCTIVITY_CATEGORY,
-  SPEED_CATEGORY,
-  takesCategory,
-} from './modules.ts';
-export type {
-  BoostEffect,
-  ChosenModules,
-  ModuleCategory,
-  ModuleChoice,
-  ModuleMatch,
-} from './modules.ts';
-
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
 
