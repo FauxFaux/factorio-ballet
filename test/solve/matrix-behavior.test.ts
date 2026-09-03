@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { Solution, SolveNote, SolveRow } from '../../src/solve/index.ts';
-import { procRsSolver } from '../../src/solve/proc-rs.ts';
+import { matrixSolver } from '../../src/solve/matrix.ts';
 import type { ResourceId } from '../../src/types.ts';
 
 const X = 'item:x' as ResourceId;
@@ -162,9 +162,9 @@ function expectCounts(actual: Solution['counts'], expected: Fixture['counts']): 
   });
 }
 
-describe('procRsSolver behavior', () => {
+describe('matrixSolver behavior', () => {
   it.each(fixtures)('$name', ({ rows, counts, complete, notes, balance }) => {
-    const answer = procRsSolver.solve(rows);
+    const answer = matrixSolver.solve(rows);
 
     expectCounts(answer.counts, counts);
     expect(answer.rates).toEqual(rows.map(({ rates }) => rates));

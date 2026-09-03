@@ -289,10 +289,16 @@ cell matches nothing rather than everything.
 A solver turns the counts the user pinned into the counts they did not: fifteen steel furnaces, so
 how many coke plants (`FACTORIO.md`). `solveCell` reduces each `CellEntry` to a `SolveRow` — the
 `netRates` of one machine, plus the pinned `count` if there is one — and hands the rows to a
-`Solver`. The shared contract and cell adapter live in `solve/index.ts`; the demand-propagation
-implementation lives in `solve/dumb.ts`. There is one solver, `dumbSolver`, and the interface exists
-because there will be more: the linear-algebra core this repo used to carry (`git show c14f792`)
-handles the cycles this one cannot.
+`Solver`. The shared contract and cell adapter live in `solve/index.ts`. The default `matrixSolver`
+lives in `solve/matrix.ts`; it builds balance equations for resources which have both positive and
+negative rates, adds one equation per pinned row, and uses the dependency-free RREF in
+`solve/rref.ts` to classify and solve the system. It handles cycles, rejects inconsistent pins and
+negative unique answers, and leaves one-sided resources as cell edges. The simpler
+demand-propagation `dumbSolver` lives in `solve/dumb.ts` and remains available as an alternative.
+
+The matrix implementation is a TypeScript port of the row-oriented algorithm formerly supplied by
+the `proc-web` WASM bridge. `proc-rs` remains useful historical algorithm and parity reference
+material, but is not a runtime, package, or build dependency.
 
 The dumb solver is demand propagation, one row per pass against a freshly totalled balance: seed
 (the pinned rows, or one of the top row if nothing is pinned), find a row which makes what the cell
@@ -336,9 +342,9 @@ not. `UI.md` describes the wider planner design the solver eventually serves.
 - `../process-mgmt-gui` — the more modern calculator with much less scope: a demand-first
   linear-algebra planner (`src/calc.tsx`, `src/backend/mgmt.ts`) wrapping the `process-mgmt`
   library; analysed in `UI.md §2`.
-- `~/clone/proc-rs` — an external Rust implementation of a production-chain planner. Its `proc-core`
-  crate contains the RREF-based solver, and `ALGORITHM.md` documents how it handles requirements,
-  imports and exports, intermediates, cycles, productivity, and catalysts.
+- `~/clone/proc-rs` — the historical algorithm/reference implementation for the local row solver,
+  not a dependency. Its `proc-core` crate contains the RREF-based solver, and `ALGORITHM.md`
+  documents its wider requirements/import/export planner.
 - `../factoriolab` — checked out only because it's referenced as a data source.
 - `../factorio-raw-types` — the types package the ingest validates against, and also the only place
   the icon spritesheet can be rebuilt: `scripts/sprite-sheet.ts` packs `src/assets/icons.avif` +

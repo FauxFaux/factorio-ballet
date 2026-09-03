@@ -19,14 +19,14 @@ later.
 Built: the data structure (`src/cell.ts`), the cells in `UrlState`, the box which draws one
 (`src/components/cell/`), the search vocabulary for refining a cell — `makes:@in` / `uses:@out` over
 the cell's own open edges, which is the "adding recipes that makes: or uses: items from the input or
-output set" step above — and the first solver (`src/solve.ts`), which is the "attempt to scale one
+output set" step above — and the solvers under `src/solve/`, which perform the "attempt to scale one
 of the recipes to match the other" step.
 
-That solver is deliberately dumb: it propagates demand out from the rows the user pinned, one row at
-a time, and stops when nothing moves. It does not do cycles, it will not choose between two recipes
-which could both take up the same slack, and it does not have to answer at all — a row it cannot
-work out keeps its `auto`, the rates it does know still show on the cell's edges, and everything it
-assumed or gave up on is written out under the rows. "Not always possible, and will be resolved
+The default matrix solver balances every internal resource simultaneously, including cycles. It will
+not choose between alternative recipes, and inconsistent pins or an underdetermined system do not
+have to produce a complete answer — pinned counts remain in place, their rates still show on the
+cell's edges, and the problem is written out under the rows. The demand-propagation `dumbSolver`
+remains as a simpler alternative without cycle support. "Not always possible, and will be resolved
 later" is the design, not a gap in it: what the app owes the user there is a sentence saying which
 number to type, and that is what a `SolveNote` is.
 
@@ -37,7 +37,6 @@ product the recipe actually made — `Product.ignoredByProductivity` is the cata
 handed back — so a garden which turns one garden into two grows one of them, whatever is in the
 slots.
 
-Not built: the module picker itself, so a loadout only reaches a cell through the URL; beacons; the
-catalyst which goes round a cycle of two recipes rather than one, which needs a solver that closes
-cycles; and any notion of a cell's rates being a _target_ — you scale the cell by pinning a machine
-count, not by asking for 9 steel a second.
+Not built: the catalyst-specific rules for a catalyst which goes round a cycle of two recipes, and
+any notion of a cell's rates being a _target_ — you scale the cell by pinning a machine count, not
+by asking for 9 steel a second.

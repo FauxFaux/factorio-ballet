@@ -5,7 +5,7 @@ import { netRates, speedOf } from '../flow.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
-import { procRsSolver } from './proc-rs.ts';
+import { matrixSolver } from './matrix.ts';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -46,12 +46,12 @@ export interface Solver {
   solve(rows: SolveRow[]): Solution;
 }
 
-export { dumbSolver, procRsSolver };
+export { dumbSolver, matrixSolver };
 
-export const SOLVERS: Solver[] = [procRsSolver, dumbSolver];
+export const SOLVERS: Solver[] = [matrixSolver, dumbSolver];
 
-/** The matrix solver is temporarily the default while its interactive behavior is evaluated. */
-export const defaultSolver: Solver = procRsSolver;
+/** The simultaneous, cycle-capable solver is the application default. */
+export const defaultSolver: Solver = matrixSolver;
 
 /** Resolve a cell to data-independent rows and hand them to the selected solver. */
 export function solveCell(

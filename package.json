@@ -19,7 +19,6 @@
     "@primer/octicons-react": "^19",
     "fflate": "^0.8",
     "preact": "^10",
-    "proc-web": "file:../../clone/proc-rs/proc-web/pkg",
     "serialize-error": "^13",
     "zod": "^4"
   },
