@@ -91,6 +91,7 @@
 
 .cell-middle {
   grid-area: middle;
+  container: cell-middle / inline-size;
   min-width: 0;
   padding: 0 12px;
   border-left: 1px solid var(--border);
@@ -114,6 +115,12 @@
   .cell-middle {
     border-right: none;
   }
+
+  .cell-out {
+    margin-top: 6px;
+    padding-top: 6px;
+    border-top: 1px solid var(--border);
+  }
 }
 
 @media (max-width: 800px) {
@@ -121,8 +128,8 @@
     grid-template-columns: 1fr;
     grid-template-areas:
       "in"
-      "middle"
-      "out";
+      "out"
+      "middle";
   }
 
   .cell-middle {

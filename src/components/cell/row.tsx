@@ -110,28 +110,30 @@ export function CellRow({
       >
         {problem ? <WarnIcon label="Not worked out" /> : null}
       </span>
-      {recipe ? (
-        <>
-          <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
-          <ModuleBoxes
-            entry={entry}
-            recipe={recipe}
-            machine={entryMachine(entry, recipe, progress)}
-            chosen={chosen}
-            onChange={onChange}
-          />
-        </>
-      ) : null}
       <CountBox entry={entry} count={count} onChange={onChange} />
-      <button
-        type="button"
-        class="cell-btn cell-remove"
-        title="Remove this recipe"
-        aria-label="Remove this recipe"
-        onClick={onRemove}
-      >
-        ×
-      </button>
+      <div class="cell-row-controls">
+        {recipe ? (
+          <>
+            <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
+            <ModuleBoxes
+              entry={entry}
+              recipe={recipe}
+              machine={entryMachine(entry, recipe, progress)}
+              chosen={chosen}
+              onChange={onChange}
+            />
+          </>
+        ) : null}
+        <button
+          type="button"
+          class="cell-btn cell-remove"
+          title="Remove this recipe"
+          aria-label="Remove this recipe"
+          onClick={onRemove}
+        >
+          ×
+        </button>
+      </div>
       {expanded ? (
         <RecipeConnections
           connections={connections}

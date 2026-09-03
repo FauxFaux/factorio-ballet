@@ -180,6 +180,25 @@
   white-space: nowrap;
 }
 
+/* This wrapper disappears into the normal flex row. At a narrow cell width it becomes the second
+ * line, keeping every machine-specific control together rather than letting the recipe line wrap
+ * between them. */
+.cell-row-controls {
+  display: contents;
+}
+
+/* Keep the count at the right of the recipe line. The controls follow it in wide rows, but gain
+ * their own line in the narrow layout below. */
+.cell-row-controls > .machine-picker,
+.cell-row-controls > .cell-modules,
+.cell-row-controls > .cell-remove {
+  order: 1;
+}
+
+.cell-count {
+  order: 2;
+}
+
 .cell-unknown {
   color: var(--text);
   font-style: italic;
@@ -218,4 +237,19 @@
   color: var(--text);
   opacity: 1;
   font-style: italic;
+}
+
+@container cell-middle (max-width: 650px) {
+  .cell-row-controls {
+    display: flex;
+    order: 1;
+    flex: 0 0 calc(100% - 2.6em);
+    align-items: center;
+    gap: 4px 8px;
+    margin-left: 2.6em;
+  }
+
+  .cell-count {
+    order: 0;
+  }
 }
