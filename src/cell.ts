@@ -208,6 +208,15 @@ export function withEntry(cell: Cell, index: number, entry: CellEntry): Cell {
   return { ...cell, entries: cell.entries.map((old, i) => (i === index ? entry : old)) };
 }
 
+/** The cell with every explicitly chosen machine returned to auto selection. */
+export function resetMachines(cell: Cell): Cell {
+  if (!cell.entries.some((entry) => entry.machine !== undefined)) return cell;
+  return {
+    ...cell,
+    entries: cell.entries.map((entry) => ({ ...entry, machine: undefined })),
+  };
+}
+
 export function withoutEntry(cell: Cell, index: number): Cell {
   return { ...cell, entries: cell.entries.filter((_, i) => i !== index) };
 }

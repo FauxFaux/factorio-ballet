@@ -69,6 +69,12 @@
   white-space: nowrap;
 }
 
+.cell-reset-machines {
+  color: var(--text);
+  font-size: 13px;
+  opacity: 0.8;
+}
+
 /* inputs, work, outputs: a sankey diagram's shape without the sankey */
 .cell-body {
   display: grid;

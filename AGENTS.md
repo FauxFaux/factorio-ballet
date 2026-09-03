@@ -25,7 +25,7 @@ repository-history context.
 - `npm run format` formats the repository with oxfmt.
 - `npm run preview` serves the built application locally.
 
-Use Node 24; if needed, initialize it with `eval "$(fnm env)" && fnm use 24`.
+Use Node 24, assuming `node` is available on `PATH`.
 
 ## Coding Style & Naming Conventions
 

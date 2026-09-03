@@ -8,6 +8,7 @@ import {
   hasRecipe,
   newCell,
   parseCount,
+  resetMachines,
   scopeOf,
   slotsUsed,
   withEntry,
@@ -95,6 +96,34 @@ describe('entries', () => {
     });
     expect(withoutEntry(chain, 0).entries.map((e) => e.recipe)).toEqual(['iron-gear-wheel']);
     expect(chain.entries.map((e) => e.recipe)).toEqual(['iron-plate', 'iron-gear-wheel']);
+  });
+
+  it('resets every pinned machine to auto while preserving the rest of each entry', () => {
+    const cell: Cell = {
+      entries: [
+        { recipe: 'iron-plate', machine: 'stone-furnace', count: 2 },
+        {
+          recipe: 'iron-gear-wheel',
+          machine: 'assembling-machine-2',
+          modules: { 'speed-module': 1 },
+        },
+        { recipe: 'car' },
+      ],
+    };
+
+    expect(resetMachines(cell)).toEqual({
+      entries: [
+        { recipe: 'iron-plate', machine: undefined, count: 2 },
+        {
+          recipe: 'iron-gear-wheel',
+          machine: undefined,
+          modules: { 'speed-module': 1 },
+        },
+        { recipe: 'car' },
+      ],
+    });
+    const auto = { entries: [{ recipe: 'iron-plate' }] };
+    expect(resetMachines(auto)).toBe(auto);
   });
 });
 

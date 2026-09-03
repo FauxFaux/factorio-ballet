@@ -4,6 +4,7 @@ import {
   cellInterface,
   cellTitle,
   moveEntry,
+  resetMachines,
   withEntry,
   withoutEntry,
   type Cell,
@@ -63,6 +64,17 @@ export function CellBox({
         <span class="cell-size">
           {cell.entries.length} {cell.entries.length === 1 ? 'recipe' : 'recipes'}
         </span>
+        {cell.entries.some((entry) => entry.machine !== undefined) ? (
+          <button
+            type="button"
+            class="cell-btn cell-reset-machines"
+            title="Reset all machines to auto"
+            aria-label="Reset all machines to auto"
+            onClick={() => setCell(resetMachines)}
+          >
+            ↺ auto
+          </button>
+        ) : null}
         <button
           type="button"
           class="cell-btn cell-remove"
