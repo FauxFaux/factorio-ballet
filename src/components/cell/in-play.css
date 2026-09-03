@@ -1,4 +1,4 @@
-.cell-internal {
+.cell-in-play {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -12,25 +12,25 @@
   cursor: help;
 }
 
-.cell-internal-entry {
+.cell-in-play-entry {
   position: relative;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.cell-internal-entry:hover,
-.cell-internal-entry:focus-within {
+.cell-in-play-entry:hover,
+.cell-in-play-entry:focus-within {
   z-index: 3;
 }
 
-.cell-internal-chip {
+.cell-in-play-chip {
   display: inline-flex;
   align-items: center;
   gap: 2px;
 }
 
-.cell-internal-connections {
+.cell-in-play-connections {
   position: absolute;
   z-index: 2;
   top: 100%;
@@ -47,24 +47,24 @@
   transition: opacity 100ms ease;
 }
 
-.cell-internal-resource-details {
+.cell-in-play-resource-details {
   grid-column: 1 / -1;
   white-space: nowrap;
 }
 
-.cell-internal-resource-details span {
+.cell-in-play-resource-details span {
   color: var(--muted);
   font-family: var(--mono);
   font-size: 12px;
 }
 
-.cell-internal-entry.is-expanded .cell-internal-connections {
+.cell-in-play-entry.is-expanded .cell-in-play-connections {
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
 }
 
-.cell-internal-connection-flow {
+.cell-in-play-connection-flow {
   display: inline-flex;
   align-items: center;
   gap: 3px;
@@ -74,7 +74,7 @@
   white-space: nowrap;
 }
 
-.cell-internal-connection-flow .recipe-icon {
+.cell-in-play-connection-flow .recipe-icon {
   flex-shrink: 0;
   transform: scale(0.55);
   margin: -8px;

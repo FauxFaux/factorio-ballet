@@ -12,7 +12,7 @@ import type { Chosen } from '../../data/index.ts';
 import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';
-import { InternalRow } from './internal.tsx';
+import { InPlayRow } from './in-play.tsx';
 import { SolveNotes } from './notes.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
@@ -97,7 +97,7 @@ export function CellBox({
             ))
           )}
           {iface.internal.length ? (
-            <InternalRow
+            <InPlayRow
               ids={iface.internal}
               entries={cell.entries}
               solution={solution}

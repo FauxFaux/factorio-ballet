@@ -1,4 +1,4 @@
-import './internal.css';
+import './in-play.css';
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
@@ -14,12 +14,12 @@ import {
 } from './internal-calc.ts';
 
 /**
- * What the cell makes and consumes itself. `cellInterface` calls a resource internal on set
+ * Resources the cell makes and consumes itself. `cellInterface` calls a resource internal on set
  * arithmetic alone, so one of these balancing at zero is the cell handling it — and one which does
  * not is a leftover the user is about to have to do something about, which is why it is spelled out
  * here rather than left to the icon.
  */
-export function InternalRow({
+export function InPlayRow({
   ids,
   entries,
   solution,
@@ -60,17 +60,17 @@ export function InternalRow({
   return (
     <div
       ref={root}
-      class="cell-internal"
-      title="Made and used inside this cell"
+      class="cell-in-play"
+      title="Resources in play in this cell"
       onMouseLeave={() => {
         setHovered(undefined);
         onRecipeHover(undefined);
       }}
     >
-      internal
+      in play
       {ids.map((id) => {
         return (
-          <InternalChip
+          <InPlayChip
             key={id}
             id={id}
             recipes={entries.map((entry) => entry.recipe)}
@@ -87,7 +87,7 @@ export function InternalRow({
   );
 }
 
-function InternalChip({
+function InPlayChip({
   id,
   recipes,
   solution,
@@ -114,13 +114,13 @@ function InternalChip({
 
   return (
     <div
-      class={expanded ? 'cell-internal-entry is-expanded' : 'cell-internal-entry'}
-      data-internal-resource={id}
+      class={expanded ? 'cell-in-play-entry is-expanded' : 'cell-in-play-entry'}
+      data-in-play-resource={id}
       onMouseEnter={onMouseEnter}
     >
       <button
         type="button"
-        class="cell-internal-chip cell-btn"
+        class="cell-in-play-chip cell-btn"
         title={`Pin recipes for ${resourceName(id)}`}
         aria-label={`Pin recipes for ${resourceName(id)}`}
         aria-expanded={expanded}
@@ -135,7 +135,7 @@ function InternalChip({
           </span>
         )}
       </button>
-      <InternalConnectionsView
+      <InPlayConnectionsView
         id={id}
         connections={connections}
         solved={solution.complete}
@@ -145,7 +145,7 @@ function InternalChip({
   );
 }
 
-function InternalConnectionsView({
+function InPlayConnectionsView({
   id,
   connections,
   solved,
@@ -167,14 +167,14 @@ function InternalConnectionsView({
     );
   }
   return (
-    <div class="cell-connections cell-internal-connections">
+    <div class="cell-connections cell-in-play-connections">
       <ResourceDetails id={id} stackSize={resource?.stackSize} />
-      <InternalConnectionColumn
+      <InPlayConnectionColumn
         label="Made by"
         flows={connections.outputs}
         onRecipeHover={onRecipeHover}
       />
-      <InternalConnectionColumn
+      <InPlayConnectionColumn
         label="Used by"
         flows={connections.inputs}
         onRecipeHover={onRecipeHover}
@@ -185,7 +185,7 @@ function InternalConnectionsView({
 
 function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number }) {
   return (
-    <div class="cell-internal-resource-details">
+    <div class="cell-in-play-resource-details">
       <strong>{resourceName(id)}</strong>
       <span>
         {' · '}
@@ -195,7 +195,7 @@ function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number
   );
 }
 
-function InternalConnectionColumn({
+function InPlayConnectionColumn({
   label,
   flows,
   onRecipeHover,
@@ -213,7 +213,7 @@ function InternalConnectionColumn({
             const data = staticData.recipes[recipe];
             return (
               <span
-                class="cell-internal-connection-flow"
+                class="cell-in-play-connection-flow"
                 key={recipe}
                 title={`${fmt(rate)}/s ${recipeName(recipe)}`}
                 onMouseEnter={() => onRecipeHover(recipe)}
