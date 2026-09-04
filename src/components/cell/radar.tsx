@@ -3,7 +3,7 @@ import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { resourceName, staticData } from '../../data/index.ts';
 import { icons } from '../../data/decode-icons.ts';
 import type { ResourceId } from '../../types.ts';
-import { assemblerColumnLayout } from './radar-layout.ts';
+import { assemblerColumnLayout, stackAssemblerDistricts } from './radar-layout.ts';
 
 /**
  * RADAR's rail view adapted to one cell, which is one brick for now. Its 192-by-128 coordinates
@@ -58,8 +58,9 @@ export function CellRadar({
 }
 
 /**
- * Each recipe is its own district for now. Assemblers fill 100 units of the radar's usable
- * vertical space, then continue in a new column so they remain inside the rail brick.
+ * A private hand-off lets two neighbouring recipe districts share a vertical assembler column.
+ * Other hand-offs keep their own column so the sketch does not pretend their routing is simpler
+ * than it is.
  */
 function AssemblerColumns({
   entries,
@@ -73,7 +74,7 @@ function AssemblerColumns({
   startX: number;
 }) {
   let x = startX;
-  const columns = entries
+  const districts = entries
     .map((entry, index) => ({ entry, count: counts[index], index }))
     .toReversed()
     .flatMap(({ entry, count: solvedCount, index }) => {
@@ -85,26 +86,48 @@ function AssemblerColumns({
       if (!machine) return [];
 
       const count = Math.max(1, Math.ceil(solvedCount ?? 1));
-      const column = (
-        <AssemblerColumn
-          key={`${entry.recipe}-${index}`}
-          x={x}
-          recipe={entry.recipe}
-          recipeName={recipe.human ?? entry.recipe}
-          machineWidth={machine.size.width}
-          machineHeight={machine.size.height}
-          count={count}
-        />
-      );
-      x += assemblerColumnLayout(machine.size.width, machine.size.height, count).width + 4;
-      return [column];
+      return [
+        {
+          id: `${entry.recipe}-${index}`,
+          recipeId: entry.recipe,
+          recipeName: recipe.human ?? entry.recipe,
+          recipe,
+          machineWidth: machine.size.width,
+          machineHeight: machine.size.height,
+          count,
+        },
+      ];
     });
+
+  const columns = stackAssemblerDistricts(districts).map((stack, stackIndex) => {
+    const column = (
+      <g key={stackIndex}>
+        {stack.districts.map(
+          ({ id, recipeId, recipeName, machineWidth, machineHeight, count, y }) => (
+            <AssemblerColumn
+              key={id}
+              x={x}
+              y={20 + y}
+              recipe={recipeId}
+              recipeName={recipeName}
+              machineWidth={machineWidth}
+              machineHeight={machineHeight}
+              count={count}
+            />
+          ),
+        )}
+      </g>
+    );
+    x += stack.width + 4;
+    return column;
+  });
 
   return <g class="cell-radar-assemblers">{columns}</g>;
 }
 
 function AssemblerColumn({
   x,
+  y,
   recipe,
   recipeName,
   machineWidth,
@@ -112,6 +135,7 @@ function AssemblerColumn({
   count,
 }: {
   x: number;
+  y: number;
   recipe: string;
   recipeName: string;
   machineWidth: number;
@@ -121,7 +145,7 @@ function AssemblerColumn({
   const layout = assemblerColumnLayout(machineWidth, machineHeight, count);
   const iconSize = 12;
   const iconX = x + layout.width / 2 - iconSize / 2;
-  const iconY = 20 + layout.height / 2 - iconSize / 2;
+  const iconY = y + layout.height / 2 - iconSize / 2;
 
   return (
     <g>
@@ -130,7 +154,7 @@ function AssemblerColumn({
           class="cell-radar-assembler"
           key={index}
           x={x + column * (machineWidth + 4)}
-          y={20 + row * machineHeight}
+          y={y + row * machineHeight}
           width={machineWidth}
           height={machineHeight}
         />
