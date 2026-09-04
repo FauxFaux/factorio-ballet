@@ -47,6 +47,20 @@ describe('cellInterface', () => {
     });
   });
 
+  it('treats the expected loss of a returned saw blade as a necessary input', () => {
+    expect(cellInterface(newCell('angels-wood-sawing-1'))).toEqual({
+      inputs: ['item:angels-solid-saw', 'item:angels-solid-tree'],
+      outputs: ['item:wood'],
+      inPlay: ['item:angels-solid-saw', 'item:angels-solid-tree', 'item:wood'],
+    });
+
+    const withSaws = cellInterface({
+      entries: [{ recipe: 'angels-solid-saw' }, { recipe: 'angels-wood-sawing-1' }],
+    });
+    expect(withSaws.inputs).not.toContain('item:angels-solid-saw');
+    expect(withSaws.outputs).not.toContain('item:angels-solid-saw');
+  });
+
   it('keeps the open edges while including every resource in play', () => {
     expect(cellInterface(chain)).toEqual({
       inputs: ['item:angels-ore1-crushed'],

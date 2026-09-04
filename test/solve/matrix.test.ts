@@ -19,6 +19,8 @@ describe('matrixSolver', () => {
     expect(solve()).toEqual({
       counts: [],
       rates: [],
+      inputRates: [],
+      outputRates: [],
       balance: new Map(),
       complete: true,
       notes: [],

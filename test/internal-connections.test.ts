@@ -7,6 +7,8 @@ describe('internalConnections', () => {
     const solution: Solution = {
       counts: [2, 3],
       rates: [new Map([['item:plate', -2]]), new Map([['item:plate', 1]])],
+      inputRates: [new Map([['item:plate', 2]]), new Map()],
+      outputRates: [new Map(), new Map([['item:plate', 1]])],
       balance: new Map(),
       complete: true,
       notes: [],

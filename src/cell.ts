@@ -2,6 +2,7 @@ import { complexityOf, NO_CHOICE, resourceName, staticData, type Chosen } from '
 import { defaultMachine, machinesFor } from './data/machines.ts';
 import {
   laidOutEffects,
+  netRates,
   NO_EFFECTS,
   NO_LAYOUT,
   type Effects,
@@ -76,10 +77,10 @@ export interface CellEntry {
 /**
  * What a cell looks like from outside: which resources cross its edge, and which never leave.
  *
- * Set arithmetic only — a resource both made and used inside the cell is `internal` whether or not
- * the amounts actually balance, because nothing here knows amounts. Once the solver lands, an
- * unbalanced internal resource becomes a partial input or output; until then "the cell handles this
- * itself" is the honest reading.
+ * Recipe-local inputs and outputs are netted first, then set arithmetic is applied between recipes.
+ * This matters for returned tools and catalysts: one saw returned 90% of the time is a net input,
+ * while a separate recipe which makes saws closes that edge. Rates and machine scaling remain the
+ * solver's job.
  */
 export interface CellInterface {
   /** Used by a recipe in the cell, made by none: what the cell must be fed. */
@@ -266,15 +267,23 @@ export function activeAfterRemoval(active: number, removed: number, remaining: n
 export function cellInterface(cell: Cell): CellInterface {
   const used = new Set<ResourceId>();
   const made = new Set<ResourceId>();
+  const inPlay = new Set<ResourceId>();
   for (const entry of cell.entries) {
     const recipe = entryRecipe(entry);
     if (!recipe) continue;
-    for (const ingredient of recipe.ingredients) used.add(ingredient.resource);
-    for (const product of recipe.products) made.add(product.resource);
+    for (const ingredient of recipe.ingredients) inPlay.add(ingredient.resource);
+    for (const product of recipe.products) inPlay.add(product.resource);
+    /* Net a resource only within this recipe. A saw returned 90% of the time remains an input;
+     * adding a separate recipe which makes saws can then close that edge normally. */
+    for (const [resource, rate] of netRates(recipe, recipe.duration, NO_EFFECTS)) {
+      if (rate < 0) used.add(resource);
+      if (rate > 0) made.add(resource);
+    }
   }
   const inputs = simplestFirst([...used].filter((id) => !made.has(id)));
   const outputs = simplestFirst([...made].filter((id) => !used.has(id)));
-  const internal = new Set([...made].filter((id) => used.has(id)));
+  const edges = new Set([...inputs, ...outputs]);
+  const internal = new Set([...inPlay].filter((id) => !edges.has(id)));
   return {
     inputs,
     outputs,

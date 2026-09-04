@@ -31,6 +31,8 @@ describe('Solver interface', () => {
     const expected: Solution = {
       counts: [7],
       rates: [],
+      inputRates: [],
+      outputRates: [],
       balance: new Map(),
       complete: true,
       notes: [],
@@ -189,6 +191,20 @@ describe('solveCell', () => {
     expect(answer.counts[1]).toBeCloseTo(made / used, 9);
     expect(answer.balance.get('item:iron-plate')).toBe(0);
     expect(answer.complete).toBe(true);
+  });
+
+  it('makes replacement saws for the expected loss from wood sawing', () => {
+    const answer = solveCell(
+      {
+        entries: [{ recipe: 'angels-wood-sawing-1', count: 1 }, { recipe: 'angels-solid-saw' }],
+      },
+      0,
+    );
+
+    expect(answer.counts[1]).toBeGreaterThan(0);
+    expect(answer.balance.get('item:angels-solid-saw')).toBe(0);
+    expect(answer.inputRates[0]!.get('item:angels-solid-saw')).toBeGreaterThan(0);
+    expect(answer.outputRates[0]!.get('item:angels-solid-saw')).toBeGreaterThan(0);
   });
 
   /** The gear row, in a machine which has slots, so the loadout has somewhere to go. */

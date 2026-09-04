@@ -71,10 +71,25 @@ function solveDumb(rows: SolveRow[]): Solution {
   return {
     counts,
     rates: rows.map((row) => row.rates),
+    inputRates: rows.map(inputRates),
+    outputRates: rows.map(outputRates),
     balance: scrub(balanceOf(rows, counts)),
     complete: counts.every((count) => count !== undefined),
     notes: notes.sort((a, b) => a.entry - b.entry),
   };
+}
+
+function inputRates(row: SolveRow): Map<ResourceId, number> {
+  return (
+    row.inputs ??
+    new Map(
+      [...row.rates].filter(([, rate]) => rate < 0).map(([resource, rate]) => [resource, -rate]),
+    )
+  );
+}
+
+function outputRates(row: SolveRow): Map<ResourceId, number> {
+  return row.outputs ?? new Map([...row.rates].filter(([, rate]) => rate > 0));
 }
 
 function balanceOf(rows: SolveRow[], counts: (number | undefined)[]): Map<ResourceId, number> {

@@ -21,19 +21,18 @@ export function itemRateTotal(flows: ConnectionFlow[]): number {
  */
 export function recipeConnections(entry: number, solution: Solution): RecipeConnections {
   const count = solution.counts[entry];
-  const rates = solution.rates[entry];
-  if (count === undefined || !rates) return { inputs: [], outputs: [] };
-
-  const flows = [...rates]
-    .map(([resource, rate]) => ({ resource, rate: rate * count }))
-    .filter(({ rate }) => Math.abs(rate) > FLOW_EPS);
+  const inputs = solution.inputRates[entry];
+  const outputs = solution.outputRates[entry];
+  if (count === undefined || !inputs || !outputs) return { inputs: [], outputs: [] };
+  const flows = (rates: Map<ResourceId, number>) =>
+    [...rates]
+      .map(([resource, rate]) => ({ resource, rate: rate * count }))
+      .filter(({ rate }) => rate > FLOW_EPS)
+      .sort(byRate);
 
   return {
-    inputs: flows
-      .filter(({ rate }) => rate < 0)
-      .map(({ resource, rate }) => ({ resource, rate: -rate }))
-      .sort(byRate),
-    outputs: flows.filter(({ rate }) => rate > 0).sort(byRate),
+    inputs: flows(inputs),
+    outputs: flows(outputs),
   };
 }
 

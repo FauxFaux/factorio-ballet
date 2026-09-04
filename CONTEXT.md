@@ -255,28 +255,29 @@ which is the list's business and not any row's: `useRowDrag` holds which row is 
 each row the `RowDrag` it needs to take part, and calls back with the two indices once, on a drop
 which actually moves something. Each has its own CSS beside it, on the same rule as everywhere else.
 
-`cellInterface` is **set arithmetic, not rates**: used-and-not-made is an `input`, made-and-not-used
-an `output`, and both is `internal`. Which of those a resource is does not depend on the solver and
-must not — the search scopes are built from it — so the rates the solver works out are laid over
-that classification rather than changing it, and an internal resource which does not balance is
-drawn as a leftover on the `internal` row. `CellBox` lays a cell out as a sankey diagram's shape
-without the sankey: inputs left, outputs right, recipes and their machines between. A row's machine
-is a `MachinePicker` — a dropdown, because a cell is a column of rows and the choice has been made;
-the search results keep the horizontal `MachineChip` row, where listing every candidate and hovering
-for its numbers is the point. "Auto" is a real option in it rather than the absence of one — named
-as `CellEntry.count`'s placeholder is, and meaning the same thing: it is `entryMachine`'s default,
-so it walks up the tiers as the progress slider moves. Beside it is `ModuleBoxes`, two integers: how
-many productivity modules and how many speed modules this row is to feel, blank in either for auto,
-with the whole layout — where each module went, how many beacons the speed took, and what the
-machine ends up running at — in the tooltips. There is deliberately no beacon count on the row
-itself: a cell is a column of rows, and the beacons are an answer rather than a thing to decide. The
-productivity box is capped at the machine's slots. A box whose modules could not reach the machine
-goes invisible rather than away — `Layout.reaches`, which is the machine having slots at all, its
-`allowedEffects`, and for productivity the recipe's permission too, so a pump draws neither box and
-an ordinary recipe draws only the speed one. Invisible and not absent because the rows of a cell
-read as columns, and a box which came and went would shuffle every other one along; each box's icon
-and its tooltip name the family that box is actually spending, which is how a farm row says
-"agricultural" where an assembler says "productivity".
+`cellInterface` nets inputs and outputs within each recipe, then performs set arithmetic between
+recipes: used-and-not-made is an `input`, made-and-not-used an `output`, and both is `internal`.
+Recipe-local netting makes a saw returned 90% of the time a necessary input, while adding a separate
+saw recipe closes that edge. Which side a resource is on does not depend on machine counts or the
+solver — the search scopes are built from it — so solved rates are laid over that classification,
+and an internal resource which does not balance is drawn as a leftover. `CellBox` lays a cell out as
+a sankey diagram's shape without the sankey: inputs left, outputs right, recipes and their machines
+between. A row's machine is a `MachinePicker` — a dropdown, because a cell is a column of rows and
+the choice has been made; the search results keep the horizontal `MachineChip` row, where listing
+every candidate and hovering for its numbers is the point. "Auto" is a real option in it rather than
+the absence of one — named as `CellEntry.count`'s placeholder is, and meaning the same thing: it is
+`entryMachine`'s default, so it walks up the tiers as the progress slider moves. Beside it is
+`ModuleBoxes`, two integers: how many productivity modules and how many speed modules this row is to
+feel, blank in either for auto, with the whole layout — where each module went, how many beacons the
+speed took, and what the machine ends up running at — in the tooltips. There is deliberately no
+beacon count on the row itself: a cell is a column of rows, and the beacons are an answer rather
+than a thing to decide. The productivity box is capped at the machine's slots. A box whose modules
+could not reach the machine goes invisible rather than away — `Layout.reaches`, which is the machine
+having slots at all, its `allowedEffects`, and for productivity the recipe's permission too, so a
+pump draws neither box and an ordinary recipe draws only the speed one. Invisible and not absent
+because the rows of a cell read as columns, and a box which came and went would shuffle every other
+one along; each box's icon and its tooltip name the family that box is actually spending, which is
+how a farm row says "agricultural" where an assembler says "productivity".
 
 The cell also steers the recipe search. `searchRecipes` takes an optional `SearchScope` — the active
 cell's open edges — which `makes:`/`uses:` resolve `@in`, `@out` and `@edge` against, so `makes:@in`

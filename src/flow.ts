@@ -40,15 +40,31 @@ export function speedOf(machines: MachineMatch[], id: MachineId | undefined): nu
 }
 
 export function netRates(recipe: Recipe, speed: number, effects: Effects): Map<ResourceId, number> {
-  const crafts = (speed * effects.speed) / recipe.duration;
+  const { inputs, outputs } = directionalRates(recipe, speed, effects);
   const rates = new Map<ResourceId, number>();
   const add = (resource: ResourceId, rate: number) =>
     rates.set(resource, (rates.get(resource) ?? 0) + rate);
-  for (const { resource, amount } of recipe.ingredients) add(resource, -amount * crafts);
-  for (const product of recipe.products) {
-    add(product.resource, productAmount(product, effects.productivity) * crafts);
-  }
+  for (const [resource, rate] of inputs) add(resource, -rate);
+  for (const [resource, rate] of outputs) add(resource, rate);
   return rates;
+}
+
+/** Gross rates on each side, before a returned tool or catalyst is netted. */
+export function directionalRates(
+  recipe: Recipe,
+  speed: number,
+  effects: Effects,
+): { inputs: Map<ResourceId, number>; outputs: Map<ResourceId, number> } {
+  const crafts = (speed * effects.speed) / recipe.duration;
+  const inputs = new Map<ResourceId, number>();
+  const outputs = new Map<ResourceId, number>();
+  const add = (rates: Map<ResourceId, number>, resource: ResourceId, rate: number) =>
+    rates.set(resource, (rates.get(resource) ?? 0) + rate);
+  for (const { resource, amount } of recipe.ingredients) add(inputs, resource, amount * crafts);
+  for (const product of recipe.products) {
+    add(outputs, product.resource, productAmount(product, effects.productivity) * crafts);
+  }
+  return { inputs, outputs };
 }
 
 export function productAmount(product: Product, productivity: number): number {

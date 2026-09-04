@@ -1,7 +1,7 @@
 import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from '../cell.ts';
 import { machinesFor } from '../data/machines.ts';
 import { NO_CHOICE, recipeName, resourceName, type Chosen } from '../data/index.ts';
-import { netRates, speedOf } from '../flow.ts';
+import { directionalRates, netRates, speedOf } from '../flow.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
@@ -15,6 +15,10 @@ export interface Solution {
   rates: Map<ResourceId, number>[];
   /** Net rate per second across the rows which do have a count. */
   balance: Map<ResourceId, number>;
+  /** Gross ingredient rates per second per machine, before returned resources are netted. */
+  inputRates: Map<ResourceId, number>[];
+  /** Gross product rates per second per machine, before returned resources are netted. */
+  outputRates: Map<ResourceId, number>[];
   /** Whether every row got a count. */
   complete: boolean;
   /** What the solver assumed, and everywhere it gave up; see {@link noteText}. */
@@ -33,6 +37,10 @@ export type SolveNote =
 export interface SolveRow {
   /** Net rates per second for a single machine, modules and all; {@link netRates}. */
   rates: Map<ResourceId, number>;
+  /** Gross ingredient rates, when the row came from a recipe rather than a solver unit test. */
+  inputs?: Map<ResourceId, number>;
+  /** Gross product rates, when the row came from a recipe rather than a solver unit test. */
+  outputs?: Map<ResourceId, number>;
   /** Pinned by the user. A solver must never change one: it is the question, not the answer. */
   count?: number;
 }
@@ -69,8 +77,10 @@ function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
   const speed = speedOf(machinesFor(recipe), machine);
+  const effects = entryEffects(entry, recipe, machine, chosen);
   return {
-    rates: netRates(recipe, speed, entryEffects(entry, recipe, machine, chosen)),
+    rates: netRates(recipe, speed, effects),
+    ...directionalRates(recipe, speed, effects),
     count: entry.count,
   };
 }

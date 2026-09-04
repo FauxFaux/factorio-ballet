@@ -67,6 +67,8 @@ function solveMatrix(rows: SolveRow[]): Solution {
   return {
     counts: scrubbedCounts,
     rates: rows.map((row) => row.rates),
+    inputRates: rows.map(inputRates),
+    outputRates: rows.map(outputRates),
     /* Match the bridge: calculate with the candidate, then scrub only the presentation. */
     balance: scrub(balanceOf(rows, counts)),
     complete: true,
@@ -95,10 +97,25 @@ function failed(rows: SolveRow[], detail: string, notes?: SolveNote[]): Solution
   return {
     counts,
     rates: rows.map((row) => row.rates),
+    inputRates: rows.map(inputRates),
+    outputRates: rows.map(outputRates),
     balance: scrub(balanceOf(rows, counts)),
     complete: false,
     notes: notes ?? (rows.length > 0 ? [{ kind: 'solver', entry: 0, detail }] : []),
   };
+}
+
+function inputRates(row: SolveRow): Map<ResourceId, number> {
+  return (
+    row.inputs ??
+    new Map(
+      [...row.rates].filter(([, rate]) => rate < 0).map(([resource, rate]) => [resource, -rate]),
+    )
+  );
+}
+
+function outputRates(row: SolveRow): Map<ResourceId, number> {
+  return row.outputs ?? new Map([...row.rates].filter(([, rate]) => rate > 0));
 }
 
 function diagnosticText(result: MatrixResult, fallback?: string): string {
