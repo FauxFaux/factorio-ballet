@@ -1,5 +1,4 @@
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
-import type { RefObject } from 'preact';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
@@ -13,7 +12,6 @@ export function InPlayConnectionsView({
   outputRate,
   solved,
   onRecipeHover,
-  connectionsElement,
 }: {
   id: ResourceId;
   connections: InternalConnections;
@@ -21,20 +19,19 @@ export function InPlayConnectionsView({
   outputRate: number | undefined;
   solved: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
-  connectionsElement: RefObject<HTMLDivElement>;
 }) {
   const resource = staticData.resources[id];
 
   if (!solved) {
     return (
-      <div ref={connectionsElement} class="cell-connections cell-connections-pending">
+      <div class="cell-connections cell-connections-pending">
         <ResourceDetails id={id} stackSize={resource?.stackSize} />
         Recipes appear once the cell is worked out.
       </div>
     );
   }
   return (
-    <div ref={connectionsElement} class="cell-connections cell-in-play-connections">
+    <div class="cell-connections cell-in-play-connections">
       <ResourceDetails id={id} stackSize={resource?.stackSize} />
       <InPlayConnectionTable
         outputs={connections.outputs}
@@ -53,7 +50,8 @@ function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number
       <strong>{resourceName(id)}</strong>
       <span>
         {' · '}
-        {id}{stackSize ? `· stack size ${stackSize}` : ''}
+        {id}
+        {stackSize ? `· stack size ${stackSize}` : ''}
       </span>
     </div>
   );
@@ -88,7 +86,10 @@ function InPlayConnectionTable({
   const rowCount = Math.max(outputFlows.length, inputFlows.length, 1);
 
   return (
-    <div class="cell-in-play-connection-table">
+    <div
+      class="cell-in-play-connection-table"
+      style={`--cell-in-play-used-by-heading-row: ${rowCount + 2}`}
+    >
       <strong class="cell-in-play-connection-heading cell-in-play-connection-made-by">
         Made by
       </strong>
@@ -99,7 +100,11 @@ function InPlayConnectionTable({
         const output = outputFlows[index];
         const input = inputFlows[index];
         return (
-          <div class="cell-in-play-connection-row" key={index}>
+          <div
+            class="cell-in-play-connection-row"
+            key={index}
+            style={`--cell-in-play-made-by-row: ${index + 2}; --cell-in-play-used-by-row: ${rowCount + index + 3}`}
+          >
             <ConnectionRecipeFlow flow={output} onRecipeHover={onRecipeHover} />
             <ConnectionRate flow={output} decimalPlaces={rateDecimalPlaces} />
             <ConnectionConsumptionBar flow={input} total={totalConsumption} />

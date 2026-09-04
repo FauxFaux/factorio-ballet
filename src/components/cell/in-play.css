@@ -13,15 +13,9 @@
 }
 
 .cell-in-play-entry {
-  position: relative;
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-}
-
-.cell-in-play-entry:hover,
-.cell-in-play-entry:focus-within {
-  z-index: 3;
 }
 
 .cell-in-play-chip {
@@ -30,21 +24,18 @@
   gap: 2px;
 }
 
+.cell-in-play-chip.is-selected,
+.cell-in-play-chip:focus-visible {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
 .cell-in-play-connections {
-  position: absolute;
-  z-index: 2;
-  top: 100%;
-  left: 50%;
-  width: min(32rem, calc(100vw - 2rem));
-  transform: translateX(calc(-50% + var(--cell-in-play-connections-offset, 0px)));
-  margin: 0;
+  width: min(32rem, 100%);
+  margin: 2px 0;
   text-transform: none;
   letter-spacing: 0;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 25%);
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 100ms ease;
 }
 
 .cell-in-play-resource-details {
@@ -56,12 +47,6 @@
   color: var(--muted);
   font-family: var(--mono);
   font-size: 0.6667rem;
-}
-
-.cell-in-play-entry.is-expanded .cell-in-play-connections {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: auto;
 }
 
 .cell-in-play-connection-table {
@@ -130,6 +115,53 @@
   flex-shrink: 0;
   transform: scale(0.55);
   margin: -8px;
+}
+
+/* Below the three-column cell layout, read the producers first and the consumers second. This
+ * avoids squeezing two recipe names and their rates into the narrower middle column. */
+@media (max-width: 1400px) {
+  .cell-in-play-connection-table {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 2px;
+  }
+
+  .cell-in-play-connection-made-by,
+  .cell-in-play-connection-used-by {
+    grid-column: 1 / -1;
+  }
+
+  .cell-in-play-connection-made-by {
+    grid-row: 1;
+  }
+
+  .cell-in-play-connection-used-by {
+    grid-row: var(--cell-in-play-used-by-heading-row);
+    margin-top: 6px;
+  }
+
+  .cell-in-play-connection-row > :nth-child(1) {
+    grid-column: 1;
+    grid-row: var(--cell-in-play-made-by-row);
+  }
+
+  .cell-in-play-connection-row > :nth-child(2) {
+    grid-column: 2;
+    grid-row: var(--cell-in-play-made-by-row);
+  }
+
+  .cell-in-play-connection-row > :nth-child(3) {
+    display: none;
+  }
+
+  .cell-in-play-connection-row > :nth-child(4) {
+    grid-column: 2;
+    grid-row: var(--cell-in-play-used-by-row);
+  }
+
+  .cell-in-play-connection-row > :nth-child(5) {
+    grid-column: 1;
+    grid-row: var(--cell-in-play-used-by-row);
+  }
 }
 
 /* an internal resource which did not come out level, so it is on its way to being an edge */
