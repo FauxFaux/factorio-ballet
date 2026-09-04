@@ -2,7 +2,7 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type { RawData } from 'factorio-raw-types/prototypes';
+import type { BoundingBox, FluidBox, RawData } from 'factorio-raw-types/prototypes';
 import { BELT_KEYS, ITEM_KEYS } from './raw-keys.ts';
 import { arr, effectLimits, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
@@ -17,6 +17,7 @@ import type {
   IngredientTemperature,
   Machine,
   MachineKind,
+  MachineSize,
   Module,
   Product,
   Recipe,
@@ -225,6 +226,7 @@ function addSynthetic(
         item: m.item,
         categories: [s.category],
         speed: m.speed,
+        size: m.size,
         moduleSlots: m.moduleSlots,
         allowedEffects: m.allowedEffects,
         allowedModuleCategories: m.allowedModuleCategories,
@@ -314,6 +316,9 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         categories: m.crafting_categories ?? [],
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
         speed: 'crafting_speed' in m ? (m.crafting_speed ?? 1) : 1,
+        size: machineSize(m.collision_box, id),
+        fluidboxConnectionPoints:
+          'fluid_boxes' in m ? fluidboxConnectionPoints(m.fluid_boxes) : undefined,
         moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
         // both absent-means-everything; see `Machine.allowedEffects`
         allowedEffects: 'allowed_effects' in m ? effectLimits(m.allowed_effects) : undefined,
@@ -325,6 +330,51 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
 
   console.log(`Machines: ${Object.keys(machines).length} (dropped ${skipped} hidden)`);
   return machines;
+}
+
+/**
+ * Factorio collision boxes inset the footprint slightly (a 3×3 assembler is −1.2…1.2), so round
+ * their span upward to recover whole grid tiles. Every production machine in the shipped pack has
+ * one; failing loudly makes a new prototype shape a data-model decision rather than a zero-sized
+ * radar rectangle.
+ */
+export function machineSize(collisionBox: BoundingBox | undefined, id: string): MachineSize {
+  if (!collisionBox || !Array.isArray(collisionBox)) {
+    throw new Error(`Machine ${id} has no array collision_box`);
+  }
+  const [left, top] = point(collisionBox[0]);
+  const [right, bottom] = point(collisionBox[1]);
+  return { width: Math.ceil(right - left), height: Math.ceil(bottom - top) };
+}
+
+function point(position: unknown): [number, number] {
+  if (!Array.isArray(position) || position.length !== 2) {
+    throw new Error('Expected a collision box point to be an array');
+  }
+  const [x, y] = position;
+  if (typeof x !== 'number' || typeof y !== 'number') {
+    throw new Error('Expected numeric collision box coordinates');
+  }
+  return [x, y];
+}
+
+/**
+ * Preserve pipe endpoints, not fluid boxes: a box can expose several sides and the radar needs
+ * the physical connection points. The raw type permits alternate `positions` forms for rotated
+ * connections, but the current dump uses one `position` for every crafting-machine connection;
+ * reject a new form so we do not silently omit pipes from a layout.
+ */
+export function fluidboxConnectionPoints(fluidBoxes: FluidBox[] | undefined) {
+  if (!fluidBoxes) return undefined;
+  return fluidBoxes.flatMap((box) =>
+    box.pipe_connections.map((connection) => {
+      if (!connection.position || connection.positions || !Array.isArray(connection.position)) {
+        throw new Error('Expected each machine pipe connection to have one array position');
+      }
+      const [x, y] = connection.position;
+      return { x, y };
+    }),
+  );
 }
 
 /**

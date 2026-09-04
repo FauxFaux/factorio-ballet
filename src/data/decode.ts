@@ -72,6 +72,8 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
           item: machine.i,
           categories: machine.c,
           speed: machine.s,
+          size: machine.z,
+          fluidboxConnectionPoints: machine.f,
           moduleSlots: machine.n,
           allowedEffects: machine.e,
           allowedModuleCategories: machine.a,

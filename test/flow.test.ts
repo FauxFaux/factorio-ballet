@@ -86,7 +86,12 @@ describe('rateDigits', () => {
     const slow: MachineMatch[] = [
       {
         id: 'snail',
-        machine: { kind: 'assembling-machine', categories: ['crafting'], speed: 0.01 },
+        machine: {
+          kind: 'assembling-machine',
+          categories: ['crafting'],
+          speed: 0.01,
+          size: { width: 3, height: 3 },
+        },
       },
     ];
     expect(rateDigits(gears, [])).toBe(2);

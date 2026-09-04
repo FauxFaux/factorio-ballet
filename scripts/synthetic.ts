@@ -16,11 +16,15 @@
  * Still missing, and named in `scripts/complexity.ts` instead: rocket launches and burnt fuel.
  */
 
-import type { RawData } from 'factorio-raw-types/prototypes';
+import type { BoundingBox, RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, effectLimits, RProduct, type RIngredient } from './raw-validators.ts';
 import { entriesOf } from '../src/ts.ts';
-import type { Effect, MachineKind } from '../src/types.ts';
+import type {
+  Effect,
+  MachineKind,
+  MachineSize,
+} from '../src/types.ts';
 
 /** `pumping_speed` is per tick; every rate in our model is per second. */
 const TICKS = 60;
@@ -44,6 +48,7 @@ export interface SyntheticMachine {
   kind: MachineKind;
   /** Crafts per second of a one-second recipe, as `Machine.speed`. */
   speed: number;
+  size: MachineSize;
   moduleSlots?: number;
   /** As `Machine.allowedEffects` / `Machine.allowedModuleCategories`: absent means no restriction. */
   allowedEffects?: Effect[];
@@ -110,6 +115,7 @@ function* pumping(raw: RawData, placedBy: Map<string, string>): Generator<Synthe
       item,
       kind: 'offshore-pump',
       speed: pump.pumping_speed,
+      size: machineSize(pump.collision_box, id),
     });
   }
 
@@ -147,6 +153,7 @@ function* mining(raw: RawData, placedBy: Map<string, string>): Generator<Synthet
         item,
         kind: 'mining-drill',
         speed: drill.mining_speed,
+        size: machineSize(drill.collision_box, id),
         moduleSlots: drill.module_slots,
         allowedEffects: effectLimits(drill.allowed_effects),
         allowedModuleCategories: drill.allowed_module_categories,
@@ -188,6 +195,27 @@ function* mining(raw: RawData, placedBy: Map<string, string>): Generator<Synthet
       machines,
     };
   }
+}
+
+/** As in the main ingest: collision boxes are slightly inset from the grid footprint. */
+function machineSize(collisionBox: BoundingBox | undefined, id: string): MachineSize {
+  if (!collisionBox || !Array.isArray(collisionBox)) {
+    throw new Error(`Machine ${id} has no array collision_box`);
+  }
+  const [left, top] = point(collisionBox[0]);
+  const [right, bottom] = point(collisionBox[1]);
+  return { width: Math.ceil(right - left), height: Math.ceil(bottom - top) };
+}
+
+function point(position: unknown): [number, number] {
+  if (!Array.isArray(position) || position.length !== 2) {
+    throw new Error('Expected a collision box point to be an array');
+  }
+  const [x, y] = position;
+  if (typeof x !== 'number' || typeof y !== 'number') {
+    throw new Error('Expected numeric collision box coordinates');
+  }
+  return [x, y];
 }
 
 function push<K, V>(map: Map<K, V[]>, key: K, value: V) {

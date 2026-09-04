@@ -2771,6 +2771,7 @@
       "i": "assembling-machine-1",
       "c": ["crafting", "basic-crafting", "advanced-crafting"],
       "s": 0.5,
+      "z": { "width": 3, "height": 3 },
       "e": ["speed", "consumption", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -2780,6 +2781,11 @@
       "i": "assembling-machine-2",
       "c": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "s": 0.75,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2790,6 +2796,11 @@
       "i": "assembling-machine-3",
       "c": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "s": 1.25,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2800,6 +2811,14 @@
       "i": "oil-refinery",
       "c": ["oil-processing"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2810,6 +2829,13 @@
       "i": "chemical-plant",
       "c": ["chemistry", "bob-distillery"],
       "s": 1.75,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": -1, "y": 1 },
+        { "x": 1, "y": 1 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2820,6 +2846,11 @@
       "i": "centrifuge",
       "c": ["centrifuging"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1.19 },
+        { "x": 0, "y": 1.19 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2830,6 +2861,7 @@
       "i": "bob-stone-mixing-furnace",
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 1,
+      "z": { "width": 2, "height": 2 },
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
     "bob-steel-mixing-furnace": {
@@ -2838,6 +2870,7 @@
       "i": "bob-steel-mixing-furnace",
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
     "bob-electric-mixing-furnace": {
@@ -2846,6 +2879,7 @@
       "i": "bob-electric-mixing-furnace",
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2856,6 +2890,11 @@
       "i": "bob-assembling-machine-4",
       "c": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2866,6 +2905,11 @@
       "i": "bob-assembling-machine-5",
       "c": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "s": 2.75,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 5,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2876,6 +2920,11 @@
       "i": "bob-assembling-machine-6",
       "c": ["basic-crafting", "crafting", "advanced-crafting", "crafting-with-fluid"],
       "s": 3.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2886,6 +2935,8 @@
       "i": "bob-electronics-machine-1",
       "c": ["electronics", "electronics-with-fluid"],
       "s": 1,
+      "z": { "width": 2, "height": 2 },
+      "f": [{ "x": 0.5, "y": -0.5 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2896,6 +2947,8 @@
       "i": "bob-electronics-machine-2",
       "c": ["electronics", "electronics-with-fluid"],
       "s": 2.25,
+      "z": { "width": 2, "height": 2 },
+      "f": [{ "x": 0.5, "y": -0.5 }],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2906,6 +2959,8 @@
       "i": "bob-electronics-machine-3",
       "c": ["electronics", "electronics-with-fluid"],
       "s": 4,
+      "z": { "width": 2, "height": 2 },
+      "f": [{ "x": 0.5, "y": -0.5 }],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2916,6 +2971,8 @@
       "i": "bob-electric-chemical-mixing-furnace",
       "c": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
+      "f": [{ "x": 0, "y": -1 }],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2926,6 +2983,8 @@
       "i": "bob-electric-chemical-mixing-furnace-2",
       "c": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "s": 4,
+      "z": { "width": 3, "height": 3 },
+      "f": [{ "x": 0, "y": -1 }],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2936,6 +2995,7 @@
       "i": "bob-fluid-mixing-furnace",
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
     "bob-centrifuge-2": {
@@ -2944,6 +3004,11 @@
       "i": "bob-centrifuge-2",
       "c": ["centrifuging", "angels-centrifuging-2"],
       "s": 2.25,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1.19 },
+        { "x": 0, "y": 1.19 }
+      ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2954,6 +3019,11 @@
       "i": "bob-centrifuge-3",
       "c": ["centrifuging", "angels-centrifuging-2", "angels-centrifuging-3"],
       "s": 3.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1.19 },
+        { "x": 0, "y": 1.19 }
+      ],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2964,6 +3034,7 @@
       "i": "angels-burner-ore-crusher",
       "c": ["angels-ore-refining-t1"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
     "angels-ore-crusher": {
@@ -2972,6 +3043,7 @@
       "i": "angels-ore-crusher",
       "c": ["angels-ore-refining-t1"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2982,6 +3054,7 @@
       "i": "angels-ore-crusher-2",
       "c": ["angels-ore-refining-t1"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2992,6 +3065,7 @@
       "i": "angels-ore-crusher-3",
       "c": ["angels-ore-refining-t1"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3002,6 +3076,7 @@
       "i": "angels-ore-sorting-facility",
       "c": ["angels-ore-sorting"],
       "s": 0.5,
+      "z": { "width": 7, "height": 7 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3012,6 +3087,7 @@
       "i": "angels-ore-sorting-facility-2",
       "c": ["angels-ore-sorting", "angels-ore-sorting-2"],
       "s": 0.75,
+      "z": { "width": 7, "height": 7 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3022,6 +3098,7 @@
       "i": "angels-ore-sorting-facility-3",
       "c": ["angels-ore-sorting", "angels-ore-sorting-2", "angels-ore-sorting-3"],
       "s": 1,
+      "z": { "width": 7, "height": 7 },
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3037,6 +3114,7 @@
         "angels-ore-sorting-4"
       ],
       "s": 1.5,
+      "z": { "width": 7, "height": 7 },
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3053,6 +3131,7 @@
         "angels-ore-sorting-5"
       ],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3063,6 +3142,11 @@
       "i": "angels-ore-floatation-cell",
       "c": ["angels-ore-refining-t2"],
       "s": 0.75,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3073,6 +3157,11 @@
       "i": "angels-ore-floatation-cell-2",
       "c": ["angels-ore-refining-t2"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3083,6 +3172,11 @@
       "i": "angels-ore-floatation-cell-3",
       "c": ["angels-ore-refining-t2"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3093,6 +3187,11 @@
       "i": "angels-ore-leaching-plant",
       "c": ["angels-ore-refining-t3"],
       "s": 0.75,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3103,6 +3202,11 @@
       "i": "angels-ore-leaching-plant-2",
       "c": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3113,6 +3217,11 @@
       "i": "angels-ore-leaching-plant-3",
       "c": ["angels-ore-refining-t3", "angels-ore-refining-t3b"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3123,6 +3232,7 @@
       "i": "angels-ore-refinery",
       "c": ["angels-ore-refining-t4"],
       "s": 0.75,
+      "z": { "width": 7, "height": 7 },
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3133,6 +3243,7 @@
       "i": "angels-ore-refinery-2",
       "c": ["angels-ore-refining-t4"],
       "s": 1.5,
+      "z": { "width": 7, "height": 7 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3143,6 +3254,7 @@
       "i": "angels-powderizer",
       "c": ["angels-powderizing-1"],
       "s": 1.5,
+      "z": { "width": 2, "height": 2 },
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3153,6 +3265,7 @@
       "i": "angels-powderizer-2",
       "c": ["angels-powderizing-1", "angels-powderizing-2"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3163,6 +3276,7 @@
       "i": "angels-powderizer-3",
       "c": ["angels-powderizing-1", "angels-powderizing-2", "angels-powderizing-3"],
       "s": 3,
+      "z": { "width": 2, "height": 2 },
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3173,6 +3287,13 @@
       "i": "angels-electro-whinning-cell",
       "c": ["angels-ore-refining-t3-5"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3183,6 +3304,13 @@
       "i": "angels-electro-whinning-cell-2",
       "c": ["angels-ore-refining-t3-5"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3193,6 +3321,8 @@
       "i": "angels-crystallizer",
       "c": ["angels-crystallizing"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": 2 }],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3203,6 +3333,8 @@
       "i": "angels-crystallizer-2",
       "c": ["angels-crystallizing", "angels-crystallizing-2"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": 2 }],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3213,6 +3345,8 @@
       "i": "angels-crystallizer-3",
       "c": ["angels-crystallizing", "angels-crystallizing-2", "angels-crystallizing-3"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": 2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3223,6 +3357,13 @@
       "i": "angels-filtration-unit",
       "c": ["angels-filtering"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3233,6 +3374,13 @@
       "i": "angels-filtration-unit-2",
       "c": ["angels-filtering", "angels-filtering-2"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3243,6 +3391,13 @@
       "i": "angels-filtration-unit-3",
       "c": ["angels-filtering", "angels-filtering-2", "angels-filtering-3"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3253,6 +3408,11 @@
       "i": "angels-liquifier",
       "c": ["angels-liquifying"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": -1 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3263,6 +3423,11 @@
       "i": "angels-liquifier-2",
       "c": ["angels-liquifying"],
       "s": 2.25,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": -1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3273,6 +3438,11 @@
       "i": "angels-liquifier-3",
       "c": ["angels-liquifying"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": -1 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3283,6 +3453,11 @@
       "i": "angels-liquifier-4",
       "c": ["angels-liquifying"],
       "s": 3.75,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": -1 }
+      ],
       "n": 4,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3293,6 +3468,12 @@
       "i": "angels-hydro-plant",
       "c": ["angels-water-treatment"],
       "s": 1,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -2, "y": -3 },
+        { "x": 2, "y": 3 },
+        { "x": -2, "y": 3 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3303,6 +3484,12 @@
       "i": "angels-hydro-plant-2",
       "c": ["angels-water-treatment"],
       "s": 1.5,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -2, "y": -3 },
+        { "x": 2, "y": 3 },
+        { "x": -2, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3313,6 +3500,12 @@
       "i": "angels-hydro-plant-3",
       "c": ["angels-water-treatment"],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -2, "y": -3 },
+        { "x": 2, "y": 3 },
+        { "x": -2, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3323,6 +3516,11 @@
       "i": "angels-salination-plant",
       "c": ["angels-salination-plant"],
       "s": 1,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": 3 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3333,6 +3531,11 @@
       "i": "angels-salination-plant-2",
       "c": ["angels-salination-plant"],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3343,6 +3546,12 @@
       "i": "angels-washing-plant",
       "c": ["angels-washing-plant"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 2, "y": 0 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3353,6 +3562,12 @@
       "i": "angels-washing-plant-2",
       "c": ["angels-washing-plant"],
       "s": 2.25,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 2, "y": 0 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3363,6 +3578,11 @@
       "i": "angels-barreling-pump",
       "c": ["angels-barreling-pump"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": 1 },
+        { "x": 0, "y": -1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3373,6 +3593,13 @@
       "i": "angels-electrolyser",
       "c": ["angels-petrochem-electrolyser"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 },
+        { "x": -2, "y": 2 },
+        { "x": 2, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3383,6 +3610,13 @@
       "i": "angels-electrolyser-2",
       "c": ["angels-petrochem-electrolyser"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 },
+        { "x": -2, "y": 2 },
+        { "x": 2, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3393,6 +3627,13 @@
       "i": "angels-electrolyser-3",
       "c": ["angels-petrochem-electrolyser"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 },
+        { "x": -2, "y": 2 },
+        { "x": 2, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3403,6 +3644,13 @@
       "i": "angels-electrolyser-4",
       "c": ["angels-petrochem-electrolyser"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 },
+        { "x": -2, "y": 2 },
+        { "x": 2, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3413,6 +3661,11 @@
       "i": "angels-air-filter",
       "c": ["angels-petrochem-air-filtering"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": -2 },
+        { "x": 0, "y": 2 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3423,6 +3676,11 @@
       "i": "angels-air-filter-2",
       "c": ["angels-petrochem-air-filtering"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": -2 },
+        { "x": 0, "y": 2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3433,6 +3691,11 @@
       "i": "angels-air-filter-3",
       "c": ["angels-petrochem-air-filtering"],
       "s": 2.25,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": -2 },
+        { "x": 0, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3443,6 +3706,13 @@
       "i": "angels-chemical-plant-2",
       "c": ["chemistry", "bob-distillery"],
       "s": 2.25,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": -1, "y": 1 },
+        { "x": 1, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3453,6 +3723,13 @@
       "i": "angels-chemical-plant-3",
       "c": ["chemistry", "bob-distillery"],
       "s": 2.75,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": -1, "y": 1 },
+        { "x": 1, "y": 1 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3463,6 +3740,13 @@
       "i": "angels-chemical-plant-4",
       "c": ["chemistry", "bob-distillery"],
       "s": 3.25,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": -1, "y": 1 },
+        { "x": 1, "y": 1 }
+      ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3473,6 +3757,15 @@
       "i": "angels-advanced-chemical-plant",
       "c": ["angels-advanced-chemistry"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 2, "y": 2 },
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3483,6 +3776,15 @@
       "i": "angels-advanced-chemical-plant-2",
       "c": ["angels-advanced-chemistry"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 2, "y": 2 },
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3493,6 +3795,13 @@
       "i": "angels-gas-refinery-small",
       "c": ["angels-gas-refining"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3503,6 +3812,13 @@
       "i": "angels-gas-refinery-small-2",
       "c": ["angels-gas-refining"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3513,6 +3829,13 @@
       "i": "angels-gas-refinery-small-3",
       "c": ["angels-gas-refining"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3523,6 +3846,13 @@
       "i": "angels-gas-refinery-small-4",
       "c": ["angels-gas-refining"],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3533,6 +3863,15 @@
       "i": "angels-gas-refinery",
       "c": ["angels-advanced-gas-refining"],
       "s": 1,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": 3 },
+        { "x": 1, "y": 3 },
+        { "x": -3, "y": -3 },
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": -3 },
+        { "x": 3, "y": -3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3543,6 +3882,15 @@
       "i": "angels-gas-refinery-2",
       "c": ["angels-advanced-gas-refining"],
       "s": 1.5,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": 3 },
+        { "x": 1, "y": 3 },
+        { "x": -3, "y": -3 },
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": -3 },
+        { "x": 3, "y": -3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3553,6 +3901,15 @@
       "i": "angels-gas-refinery-3",
       "c": ["angels-advanced-gas-refining"],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": 3 },
+        { "x": 1, "y": 3 },
+        { "x": -3, "y": -3 },
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": -3 },
+        { "x": 3, "y": -3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3563,6 +3920,15 @@
       "i": "angels-gas-refinery-4",
       "c": ["angels-advanced-gas-refining"],
       "s": 2.5,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": -1, "y": 3 },
+        { "x": 1, "y": 3 },
+        { "x": -3, "y": -3 },
+        { "x": -1, "y": -3 },
+        { "x": 1, "y": -3 },
+        { "x": 3, "y": -3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3573,6 +3939,13 @@
       "i": "angels-separator",
       "c": ["angels-petrochem-separation"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 },
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3583,6 +3956,13 @@
       "i": "angels-separator-2",
       "c": ["angels-petrochem-separation"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 },
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3593,6 +3973,13 @@
       "i": "angels-separator-3",
       "c": ["angels-petrochem-separation"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 },
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3603,6 +3990,13 @@
       "i": "angels-separator-4",
       "c": ["angels-petrochem-separation"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 },
+        { "x": -2, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3613,6 +4007,14 @@
       "i": "angels-oil-refinery-2",
       "c": ["oil-processing"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3623,6 +4025,14 @@
       "i": "angels-oil-refinery-3",
       "c": ["oil-processing"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3633,6 +4043,14 @@
       "i": "angels-oil-refinery-4",
       "c": ["oil-processing"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -2, "y": -2 },
+        { "x": 0, "y": -2 },
+        { "x": 2, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3643,6 +4061,13 @@
       "i": "angels-steam-cracker",
       "c": ["angels-steam-cracking"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3653,6 +4078,13 @@
       "i": "angels-steam-cracker-2",
       "c": ["angels-steam-cracking"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3663,6 +4095,13 @@
       "i": "angels-steam-cracker-3",
       "c": ["angels-steam-cracking"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3673,6 +4112,13 @@
       "i": "angels-steam-cracker-4",
       "c": ["angels-steam-cracking"],
       "s": 2.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3683,6 +4129,13 @@
       "i": "angels-electric-boiler",
       "c": ["angels-petrochem-boiler"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": 0 },
+        { "x": 1, "y": 0 },
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3693,6 +4146,13 @@
       "i": "angels-electric-boiler-2",
       "c": ["angels-petrochem-boiler"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": 0 },
+        { "x": 1, "y": 0 },
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3703,6 +4163,13 @@
       "i": "angels-electric-boiler-3",
       "c": ["angels-petrochem-boiler"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": 0 },
+        { "x": 1, "y": 0 },
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3713,6 +4180,8 @@
       "i": "angels-induction-furnace",
       "c": ["angels-induction-smelting"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 2, "y": -2 }],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3723,6 +4192,8 @@
       "i": "angels-induction-furnace-2",
       "c": ["angels-induction-smelting", "angels-induction-smelting-2"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 2, "y": -2 }],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3737,6 +4208,8 @@
         "angels-induction-smelting-3"
       ],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 2, "y": -2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3752,6 +4225,8 @@
         "angels-induction-smelting-4"
       ],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 2, "y": -2 }],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3762,6 +4237,11 @@
       "i": "angels-blast-furnace",
       "c": ["angels-blast-smelting"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3772,6 +4252,11 @@
       "i": "angels-blast-furnace-2",
       "c": ["angels-blast-smelting", "angels-blast-smelting-2"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3782,6 +4267,11 @@
       "i": "angels-blast-furnace-3",
       "c": ["angels-blast-smelting", "angels-blast-smelting-2", "angels-blast-smelting-3"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3797,6 +4287,11 @@
         "angels-blast-smelting-4"
       ],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 0, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3807,6 +4302,13 @@
       "i": "angels-chemical-furnace",
       "c": ["angels-chemical-smelting"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3817,6 +4319,13 @@
       "i": "angels-chemical-furnace-2",
       "c": ["angels-chemical-smelting", "angels-chemical-smelting-2"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3827,6 +4336,13 @@
       "i": "angels-chemical-furnace-3",
       "c": ["angels-chemical-smelting", "angels-chemical-smelting-2", "angels-chemical-smelting-3"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3842,6 +4358,13 @@
         "angels-chemical-smelting-4"
       ],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3852,6 +4375,13 @@
       "i": "angels-casting-machine",
       "c": ["angels-casting"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": 1, "y": 1 },
+        { "x": -1, "y": 1 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3862,6 +4392,13 @@
       "i": "angels-casting-machine-2",
       "c": ["angels-casting", "angels-casting-2"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": 1, "y": 1 },
+        { "x": -1, "y": 1 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3872,6 +4409,13 @@
       "i": "angels-casting-machine-3",
       "c": ["angels-casting", "angels-casting-2", "angels-casting-3"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": 1, "y": 1 },
+        { "x": -1, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3882,6 +4426,13 @@
       "i": "angels-casting-machine-4",
       "c": ["angels-casting", "angels-casting-2", "angels-casting-3", "angels-casting-4"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": 1, "y": 1 },
+        { "x": -1, "y": 1 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3892,6 +4443,7 @@
       "i": "angels-powder-mixer",
       "c": ["angels-powder-mixing"],
       "s": 1,
+      "z": { "width": 2, "height": 2 },
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3902,6 +4454,7 @@
       "i": "angels-powder-mixer-2",
       "c": ["angels-powder-mixing", "angels-powder-mixing-2"],
       "s": 1.5,
+      "z": { "width": 2, "height": 2 },
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3912,6 +4465,7 @@
       "i": "angels-powder-mixer-3",
       "c": ["angels-powder-mixing", "angels-powder-mixing-2", "angels-powder-mixing-3"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3927,6 +4481,7 @@
         "angels-powder-mixing-4"
       ],
       "s": 3,
+      "z": { "width": 2, "height": 2 },
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3937,6 +4492,7 @@
       "i": "angels-ore-processing-machine",
       "c": ["angels-ore-processing"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3947,6 +4503,7 @@
       "i": "angels-ore-processing-machine-2",
       "c": ["angels-ore-processing", "angels-ore-processing-2"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3957,6 +4514,7 @@
       "i": "angels-ore-processing-machine-3",
       "c": ["angels-ore-processing", "angels-ore-processing-2", "angels-ore-processing-3"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3972,6 +4530,7 @@
         "angels-ore-processing-4"
       ],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3982,6 +4541,7 @@
       "i": "angels-pellet-press",
       "c": ["angels-pellet-pressing"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3992,6 +4552,7 @@
       "i": "angels-pellet-press-2",
       "c": ["angels-pellet-pressing", "angels-pellet-pressing-2"],
       "s": 1.5,
+      "z": { "width": 3, "height": 3 },
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4002,6 +4563,7 @@
       "i": "angels-pellet-press-3",
       "c": ["angels-pellet-pressing", "angels-pellet-pressing-2", "angels-pellet-pressing-3"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4017,6 +4579,7 @@
         "angels-pellet-pressing-4"
       ],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4027,6 +4590,7 @@
       "i": "angels-sintering-oven-4",
       "c": ["angels-sintering", "angels-sintering-2", "angels-sintering-3", "angels-sintering-4"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4043,6 +4607,7 @@
         "angels-sintering-5"
       ],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4053,6 +4618,13 @@
       "i": "angels-strand-casting-machine",
       "c": ["angels-strand-casting"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4063,6 +4635,13 @@
       "i": "angels-strand-casting-machine-2",
       "c": ["angels-strand-casting", "angels-strand-casting-2"],
       "s": 1.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4073,6 +4652,13 @@
       "i": "angels-strand-casting-machine-3",
       "c": ["angels-strand-casting", "angels-strand-casting-2", "angels-strand-casting-3"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4088,6 +4674,13 @@
         "angels-strand-casting-4"
       ],
       "s": 3,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": -1, "y": 2 },
+        { "x": 1, "y": 2 },
+        { "x": -1, "y": -2 },
+        { "x": 1, "y": -2 }
+      ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4098,6 +4691,13 @@
       "i": "angels-cooling-tower",
       "c": ["angels-cooling"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": -1, "y": -1 },
+        { "x": 1, "y": -1 },
+        { "x": -1, "y": 1 },
+        { "x": 1, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4108,6 +4708,11 @@
       "i": "angels-algae-farm",
       "c": ["angels-bio-processing"],
       "s": 0.5,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 0, "y": -3 },
+        { "x": 0, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4117,6 +4722,11 @@
       "i": "angels-algae-farm-2",
       "c": ["angels-bio-processing", "angels-bio-processing-2"],
       "s": 1,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 0, "y": -3 },
+        { "x": 0, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4126,6 +4736,11 @@
       "i": "angels-algae-farm-3",
       "c": ["angels-bio-processing", "angels-bio-processing-2", "angels-bio-processing-3"],
       "s": 1.5,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 0, "y": -3 },
+        { "x": 0, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4140,6 +4755,11 @@
         "angels-bio-processing-4"
       ],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 0, "y": -3 },
+        { "x": 0, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4154,6 +4774,8 @@
         "angels-basic-farming"
       ],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": -2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4163,6 +4785,8 @@
       "i": "angels-temperate-farm",
       "c": ["angels-temperate-farming", "angels-advanced-temperate-farming"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": -2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4172,6 +4796,8 @@
       "i": "angels-desert-farm",
       "c": ["angels-desert-farming", "angels-advanced-desert-farming"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": -2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4181,6 +4807,8 @@
       "i": "angels-swamp-farm",
       "c": ["angels-swamp-farming", "angels-advanced-swamp-farming"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": -2 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4190,6 +4818,7 @@
       "i": "angels-seed-extractor",
       "c": ["angels-seed-extractor"],
       "s": 0.75,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4200,6 +4829,8 @@
       "i": "angels-bio-press",
       "c": ["angels-bio-pressing"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
+      "f": [{ "x": 0, "y": 1 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4210,6 +4841,7 @@
       "i": "angels-bio-processor",
       "c": ["angels-bio-processor"],
       "s": 1,
+      "z": { "width": 5, "height": 5 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4220,6 +4852,8 @@
       "i": "angels-nutrient-extractor",
       "c": ["angels-nutrient-extractor"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
+      "f": [{ "x": 0, "y": 1 }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4230,6 +4864,11 @@
       "i": "angels-bio-generator-temperate-1",
       "c": ["angels-tree-temperate", "angels-tree"],
       "s": 0.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4240,6 +4879,11 @@
       "i": "angels-bio-generator-swamp-1",
       "c": ["angels-tree-swamp", "angels-tree"],
       "s": 0.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4250,6 +4894,11 @@
       "i": "angels-bio-generator-desert-1",
       "c": ["angels-tree-desert", "angels-tree"],
       "s": 0.5,
+      "z": { "width": 3, "height": 3 },
+      "f": [
+        { "x": 0, "y": -1 },
+        { "x": 0, "y": 1 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4260,6 +4909,11 @@
       "i": "angels-bio-arboretum-1",
       "c": ["angels-arboretum"],
       "s": 0.5,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": -2 },
+        { "x": 0, "y": 2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4269,6 +4923,12 @@
       "i": "angels-bio-refugium-fish",
       "c": ["angels-bio-refugium-fish"],
       "s": 0.75,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 1, "y": 3 },
+        { "x": -1, "y": 3 },
+        { "x": 0, "y": -3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4278,6 +4938,14 @@
       "i": "angels-bio-refugium-puffer",
       "c": ["angels-bio-refugium-puffer"],
       "s": 0.75,
+      "z": { "width": 5, "height": 5 },
+      "f": [
+        { "x": 0, "y": 2 },
+        { "x": 2, "y": 2 },
+        { "x": -2, "y": 2 },
+        { "x": 1, "y": -2 },
+        { "x": -1, "y": -2 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4287,6 +4955,11 @@
       "i": "angels-bio-refugium-biter",
       "c": ["angels-bio-refugium-biter"],
       "s": 2,
+      "z": { "width": 7, "height": 7 },
+      "f": [
+        { "x": 0, "y": -3 },
+        { "x": 0, "y": 3 }
+      ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4296,6 +4969,7 @@
       "i": "stone-furnace",
       "c": ["smelting"],
       "s": 1,
+      "z": { "width": 2, "height": 2 },
       "e": ["speed", "consumption", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4305,6 +4979,7 @@
       "i": "electric-furnace",
       "c": ["smelting"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4315,6 +4990,7 @@
       "i": "steel-furnace",
       "c": ["smelting"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "e": ["speed", "consumption", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4324,6 +5000,7 @@
       "i": "bob-electric-furnace-2",
       "c": ["smelting"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4334,6 +5011,7 @@
       "i": "bob-electric-furnace-3",
       "c": ["smelting"],
       "s": 4,
+      "z": { "width": 3, "height": 3 },
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4344,6 +5022,7 @@
       "i": "bob-fluid-furnace",
       "c": ["smelting"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "e": ["speed", "consumption", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4353,6 +5032,8 @@
       "i": "angels-clarifier",
       "c": ["angels-water-void"],
       "s": 2,
+      "z": { "width": 5, "height": 5 },
+      "f": [{ "x": 0, "y": 2 }],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4363,6 +5044,8 @@
       "i": "angels-flare-stack",
       "c": ["angels-chemical-void"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
+      "f": [{ "x": 0.5, "y": 0.5 }],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4373,6 +5056,7 @@
       "i": "angels-composter",
       "c": ["angels-bio-void"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4383,6 +5067,7 @@
       "i": "angels-bio-hatchery",
       "c": ["angels-bio-hatchery"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4393,6 +5078,7 @@
       "i": "angels-bio-butchery",
       "c": ["angels-bio-butchery"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4403,6 +5089,7 @@
       "i": "rocket-silo",
       "c": ["rocket-building"],
       "s": 1,
+      "z": { "width": 9, "height": 9 },
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4411,35 +5098,40 @@
       "h": "Character",
       "k": "character",
       "c": ["crafting", "angels-manual-crafting"],
-      "s": 1
+      "s": 1,
+      "z": { "width": 1, "height": 1 }
     },
     "offshore-pump": {
       "h": "Offshore pump",
       "k": "offshore-pump",
       "i": "offshore-pump",
       "c": ["synthetic-pump:water"],
-      "s": 20
+      "s": 20,
+      "z": { "width": 2, "height": 2 }
     },
     "angels-ground-water-pump": {
       "h": "Ground water bore",
       "k": "offshore-pump",
       "i": "angels-ground-water-pump",
       "c": ["synthetic-pump:water"],
-      "s": 1
+      "s": 1,
+      "z": { "width": 1, "height": 2 }
     },
     "angels-sea-pump-placeable": {
       "h": "Heavy offshore pump",
       "k": "offshore-pump",
       "i": "angels-sea-pump",
       "c": ["synthetic-pump:water"],
-      "s": 25
+      "s": 25,
+      "z": { "width": 4, "height": 3 }
     },
     "angels-seafloor-pump": {
       "h": "Seafloor pump",
       "k": "offshore-pump",
       "i": "angels-seafloor-pump",
       "c": ["synthetic-pump:angels-water-viscous-mud"],
-      "s": 5
+      "s": 5,
+      "z": { "width": 4, "height": 3 }
     },
     "electric-mining-drill": {
       "h": "Electric mining drill",
@@ -4447,6 +5139,7 @@
       "i": "electric-mining-drill",
       "c": ["synthetic-mine:basic-solid"],
       "s": 0.5,
+      "z": { "width": 3, "height": 3 },
       "n": 3,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4456,6 +5149,7 @@
       "i": "burner-mining-drill",
       "c": ["synthetic-mine:basic-solid"],
       "s": 0.25,
+      "z": { "width": 2, "height": 2 },
       "e": [],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4465,6 +5159,7 @@
       "i": "bob-mining-drill-1",
       "c": ["synthetic-mine:basic-solid"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
       "n": 4,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4474,6 +5169,7 @@
       "i": "bob-mining-drill-2",
       "c": ["synthetic-mine:basic-solid"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 5,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4483,6 +5179,7 @@
       "i": "bob-mining-drill-3",
       "c": ["synthetic-mine:basic-solid"],
       "s": 4,
+      "z": { "width": 3, "height": 3 },
       "n": 6,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4492,6 +5189,7 @@
       "i": "bob-mining-drill-4",
       "c": ["synthetic-mine:basic-solid"],
       "s": 8,
+      "z": { "width": 3, "height": 3 },
       "n": 8,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4501,6 +5199,7 @@
       "i": "bob-area-mining-drill-1",
       "c": ["synthetic-mine:basic-solid"],
       "s": 0.75,
+      "z": { "width": 3, "height": 3 },
       "n": 4,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4510,6 +5209,7 @@
       "i": "bob-area-mining-drill-2",
       "c": ["synthetic-mine:basic-solid"],
       "s": 1.25,
+      "z": { "width": 3, "height": 3 },
       "n": 5,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4519,6 +5219,7 @@
       "i": "bob-area-mining-drill-3",
       "c": ["synthetic-mine:basic-solid"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 6,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4528,6 +5229,7 @@
       "i": "bob-area-mining-drill-4",
       "c": ["synthetic-mine:basic-solid"],
       "s": 3.25,
+      "z": { "width": 3, "height": 3 },
       "n": 8,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4537,6 +5239,7 @@
       "i": "bob-steam-mining-drill",
       "c": ["synthetic-mine:basic-solid"],
       "s": 2,
+      "z": { "width": 2, "height": 2 },
       "e": [],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4546,6 +5249,7 @@
       "i": "pumpjack",
       "c": ["synthetic-mine:basic-fluid"],
       "s": 1,
+      "z": { "width": 3, "height": 3 },
       "n": 2,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4555,6 +5259,7 @@
       "i": "bob-pumpjack-1",
       "c": ["synthetic-mine:basic-fluid"],
       "s": 2,
+      "z": { "width": 3, "height": 3 },
       "n": 3,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4564,6 +5269,7 @@
       "i": "bob-pumpjack-2",
       "c": ["synthetic-mine:basic-fluid"],
       "s": 3,
+      "z": { "width": 3, "height": 3 },
       "n": 4,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4573,6 +5279,7 @@
       "i": "bob-pumpjack-3",
       "c": ["synthetic-mine:basic-fluid"],
       "s": 5,
+      "z": { "width": 3, "height": 3 },
       "n": 5,
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
     },
@@ -4582,6 +5289,7 @@
       "i": "angels-thermal-bore",
       "c": ["synthetic-mine:angels-fissure"],
       "s": 0.75,
+      "z": { "width": 9, "height": 9 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4592,6 +5300,7 @@
       "i": "angels-thermal-extractor",
       "c": ["synthetic-mine:angels-fissure"],
       "s": 2,
+      "z": { "width": 9, "height": 9 },
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]

@@ -60,6 +60,8 @@ export function packStaticData(data: StaticData): StaticDataPacked {
           i: machine.item,
           c: machine.categories,
           s: machine.speed,
+          z: machine.size,
+          f: machine.fluidboxConnectionPoints,
           n: machine.moduleSlots,
           e: machine.allowedEffects,
           a: machine.allowedModuleCategories,

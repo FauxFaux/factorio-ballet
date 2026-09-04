@@ -58,6 +58,8 @@ export type StaticDataPacked = {
       i?: string;
       c: string[];
       s: number;
+      z: MachineSize;
+      f?: FluidboxConnectionPoint[];
       n?: number;
       e?: Effect[];
       a?: string[];
@@ -93,6 +95,18 @@ export type ResourceId = `item:${string}` | `fluid:${string}`;
 
 /** A crafting machine's prototype id, e.g. `assembling-machine-2`. */
 export type MachineId = string;
+
+/** The number of grid tiles a machine occupies in each direction. */
+export interface MachineSize {
+  width: number;
+  height: number;
+}
+
+/** A tile-centred point on a machine's edge where a pipe can connect. */
+export interface FluidboxConnectionPoint {
+  x: number;
+  y: number;
+}
 
 /** A module's prototype id, e.g. `speed-module-3`; the same id as the item you craft. */
 export type ModuleId = string;
@@ -207,6 +221,19 @@ export interface Machine {
   categories: string[];
   /** Crafts per second, against a recipe whose duration is one second. */
   speed: number;
+
+  /**
+   * Its footprint in Factorio tiles, derived from the collision box. The radar uses this rather
+   * than treating every assembler as a 3×3 square.
+   */
+  size: MachineSize;
+
+  /**
+   * Every pipe connection on the machine's fluid boxes, relative to its centre. Absent means it
+   * has no fluid boxes. A fluid box may have more than one connection, so this is deliberately a
+   * flat list of physical points rather than one entry per box.
+   */
+  fluidboxConnectionPoints?: FluidboxConnectionPoint[];
   moduleSlots?: number;
 
   /**
