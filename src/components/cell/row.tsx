@@ -22,6 +22,7 @@ import { recipeConnections } from './connection-calc.ts';
 export function CellRow({
   entry,
   entryIndex,
+  recipeIds,
   count,
   note,
   highlighted,
@@ -34,6 +35,8 @@ export function CellRow({
 }: {
   entry: CellEntry;
   entryIndex: number;
+  /** Recipe ids parallel to the solution's rows, used to name connected recipes. */
+  recipeIds: string[];
   /** What the solver made of this row, pinned or not; `undefined` if it could not work it out. */
   count: number | undefined;
   note: SolveNote | undefined;
@@ -51,8 +54,8 @@ export function CellRow({
   const recipe = entryRecipe(entry);
   const [expanded, setExpanded] = useState(false);
   const connections = useMemo(
-    () => recipeConnections(entryIndex, solution),
-    [entryIndex, solution],
+    () => recipeConnections(entryIndex, solution, recipeIds),
+    [entryIndex, recipeIds, solution],
   );
   /** The solver's complaint about this row, if it has one worth a mark on it. */
   const problem = note !== undefined && isProblem(note) ? note : undefined;
@@ -139,6 +142,7 @@ export function CellRow({
           connections={connections}
           solved={count !== undefined}
           belt={chosen.belt}
+          recipe={entry.recipe}
         />
       ) : null}
     </div>

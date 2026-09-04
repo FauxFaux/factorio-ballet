@@ -77,7 +77,7 @@
 
 .cell-connection-table {
   display: grid;
-  grid-template-columns: 4px minmax(0, 1fr) 4.5rem auto;
+  grid-template-columns: 4px minmax(0, 1fr) 4.5rem auto auto;
   gap: 2px 8px;
   align-items: center;
   font-family: var(--mono);
@@ -103,6 +103,7 @@
 }
 
 .cell-connection-rate,
+.cell-connection-machine-ratio,
 .cell-connection-transport {
   text-align: right;
   white-space: nowrap;

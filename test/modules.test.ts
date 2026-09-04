@@ -226,6 +226,11 @@ describe('moduleFor', () => {
     expect(familyFor(assembler, 'productivity')).toBe('productivity');
   });
 
+  it('does not substitute agricultural modules when productivity is set to none', () => {
+    const noProductivity = { ...chosen, productivity: undefined };
+    expect(moduleFor(assembler, 'productivity', noProductivity)).toBeUndefined();
+  });
+
   it('falls through to a family the header has actually chosen', () => {
     // a player not using the bio-yield modules at all still has the ordinary ones in a farm
     const noBio = { ...chosen, 'angels-bio-yield': undefined };

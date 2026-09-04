@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import type { Solution } from '../src/solve/index.ts';
-import { recipeConnections } from '../src/components/cell/connection-calc.ts';
+import {
+  recipeConnections,
+  simplifiedMachineRatio,
+} from '../src/components/cell/connection-calc.ts';
 
 describe('recipeConnections', () => {
   it('shows every rate, including an output no other row consumes', () => {
@@ -60,5 +63,37 @@ describe('recipeConnections', () => {
       inputs: [{ resource: 'item:saw', rate: 1 }],
       outputs: [{ resource: 'item:saw', rate: 0.9 }],
     });
+  });
+
+  it('shows counterpart machines relative to this recipe for in-cell flows', () => {
+    const solution: Solution = {
+      counts: [1, 2],
+      rates: [new Map([['item:plate', -2]]), new Map([['item:plate', 1]])],
+      inputRates: [new Map([['item:plate', 2]]), new Map()],
+      outputRates: [new Map(), new Map([['item:plate', 1]])],
+      balance: new Map(),
+      complete: true,
+      notes: [],
+    };
+
+    expect(recipeConnections(0, solution, ['make-furnace', 'make-plate'])).toEqual({
+      inputs: [
+        {
+          resource: 'item:plate',
+          rate: 2,
+          connectedMachineCount: 2,
+          machineCount: 1,
+          connectedRecipes: ['make-plate'],
+        },
+      ],
+      outputs: [],
+    });
+  });
+});
+
+describe('simplifiedMachineRatio', () => {
+  it('scales the smaller side to one and rounds the other to one decimal place', () => {
+    expect(simplifiedMachineRatio(1.7, 1)).toBe('1.7:1');
+    expect(simplifiedMachineRatio(1, 2.54)).toBe('1:2.5');
   });
 });

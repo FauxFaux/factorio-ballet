@@ -131,7 +131,10 @@ export function moduleFor(
 ): ModuleId | undefined {
   const named = familiesOf(effect).filter(({ id }) => chosen[id] !== undefined);
   const takes = named.filter((category) => takesCategory(machine, category.id));
-  const pool = takes.length > 0 ? takes : named;
+  /* Productivity only works from the machine's own slots, so a category the machine refuses is
+     not a usable fallback. Speed can still be named for a machine which will not hold it itself:
+     beacons may take that category and transmit its speed effect. */
+  const pool = takes.length > 0 ? takes : effect === 'productivity' ? [] : named;
   return pool
     .map(({ id }) => chosen[id])
     .toSorted((a, b) => worthOf(b, effect) - worthOf(a, effect))[0];

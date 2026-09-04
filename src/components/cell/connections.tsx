@@ -1,20 +1,27 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
-import { resourceName } from '../../data/index.ts';
+import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
-import { itemRateTotal, type ConnectionFlow, type RecipeConnections } from './connection-calc.ts';
+import {
+  itemRateTotal,
+  simplifiedMachineRatio,
+  type ConnectionFlow,
+  type RecipeConnections,
+} from './connection-calc.ts';
 
 /** The two compact columns below an expanded recipe row. */
 export function RecipeConnections({
   connections,
   solved,
   belt,
+  recipe,
 }: {
   connections: RecipeConnections;
   solved: boolean;
   /** The selected item belt; fluids deliberately have no belt equivalent here. */
   belt: Belt;
+  recipe: string;
 }) {
   if (!solved) {
     return (
@@ -25,8 +32,8 @@ export function RecipeConnections({
   }
   return (
     <div class="cell-connections cell-recipe-connections">
-      <ConnectionSection title="Inputs" flows={connections.inputs} belt={belt} />
-      <ConnectionSection title="Outputs" flows={connections.outputs} belt={belt} />
+      <ConnectionSection title="Inputs" flows={connections.inputs} belt={belt} recipe={recipe} />
+      <ConnectionSection title="Outputs" flows={connections.outputs} belt={belt} recipe={recipe} />
     </div>
   );
 }
@@ -35,20 +42,30 @@ function ConnectionSection({
   title,
   flows,
   belt,
+  recipe,
 }: {
   title: string;
   flows: ConnectionFlow[];
   belt: Belt;
+  recipe: string;
 }) {
   return (
     <section class="cell-connection-section">
       <h3 class="cell-connection-section-title">{title}</h3>
-      <ConnectionTable flows={flows} belt={belt} />
+      <ConnectionTable flows={flows} belt={belt} recipe={recipe} />
     </section>
   );
 }
 
-function ConnectionTable({ flows, belt }: { flows: ConnectionFlow[]; belt: Belt }) {
+function ConnectionTable({
+  flows,
+  belt,
+  recipe,
+}: {
+  flows: ConnectionFlow[];
+  belt: Belt;
+  recipe: string;
+}) {
   const total = itemRateTotal(flows);
   const rateDecimalPlaces = decimalPlacesForSignificantFigures(
     Math.max(...flows.map((flow) => flow.rate)),
@@ -72,6 +89,7 @@ function ConnectionTable({ flows, belt }: { flows: ConnectionFlow[]; belt: Belt 
           flow={flow}
           total={total}
           belt={belt}
+          recipe={recipe}
           rateDecimalPlaces={rateDecimalPlaces}
           transportDecimalPlaces={transportDecimalPlaces}
           key={flow.resource}
@@ -82,15 +100,17 @@ function ConnectionTable({ flows, belt }: { flows: ConnectionFlow[]; belt: Belt 
 }
 
 function ConnectionRow({
-  flow: { resource, rate },
+  flow: { resource, rate, connectedMachineCount, machineCount, connectedRecipes },
   total,
   belt,
+  recipe,
   rateDecimalPlaces,
   transportDecimalPlaces,
 }: {
   flow: ConnectionFlow;
   total: number;
   belt: Belt;
+  recipe: string;
   rateDecimalPlaces: number;
   transportDecimalPlaces: number;
 }) {
@@ -116,6 +136,12 @@ function ConnectionRow({
         <span>{resourceName(resource)}</span>
       </span>
       <ConnectionRate rate={rate} decimalPlaces={rateDecimalPlaces} />
+      <MachineRatio
+        connectedMachineCount={connectedMachineCount}
+        machineCount={machineCount}
+        connectedRecipes={connectedRecipes}
+        recipe={recipe}
+      />
       <span class="cell-connection-transport">
         {resource.startsWith('item:') ? (
           <BeltCount rate={rate} belt={belt} decimalPlaces={transportDecimalPlaces} />
@@ -124,6 +150,34 @@ function ConnectionRow({
         )}
       </span>
     </div>
+  );
+}
+
+function MachineRatio({
+  connectedMachineCount,
+  machineCount,
+  connectedRecipes,
+  recipe,
+}: {
+  connectedMachineCount: number | undefined;
+  machineCount: number | undefined;
+  connectedRecipes: string[] | undefined;
+  recipe: string;
+}) {
+  if (connectedMachineCount === undefined || machineCount === undefined) {
+    return <span class="cell-connection-machine-ratio" />;
+  }
+  const ratio = simplifiedMachineRatio(connectedMachineCount, machineCount);
+  const [connectedRatio, machineRatio] = ratio.split(':');
+  const connectedRecipe = connectedRecipes?.map(recipeName).join(', ') ?? 'connected';
+  return (
+    <span
+      class="cell-connection-machine-ratio"
+      title={`${connectedRatio} ${connectedRecipe} assembler${connectedRatio === '1' ? '' : 's'} per ${machineRatio === '1' ? '' : `${machineRatio} `}${recipeName(recipe)} assembler${machineRatio === '1' ? '' : 's'}`}
+      aria-label={`${ratio} machines`}
+    >
+      {ratio}
+    </span>
   );
 }
 
