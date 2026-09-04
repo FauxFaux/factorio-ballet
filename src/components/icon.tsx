@@ -5,10 +5,13 @@ import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 export function iconStyle(...keys: string[]): string {
   for (const key of keys) {
     const icon = icons[key];
-    if (icon) return `background: url("${icon[0]}") -${icon[1]}px -${icon[2]}px no-repeat`;
+    if (icon) return spriteStyle(icon);
   }
-  const [url, x, y] = icons['item:item-unknown'];
-  return `background: url("${url}") -${x}px -${y}px no-repeat`;
+  return spriteStyle(icons['item:item-unknown']);
+}
+
+function spriteStyle([url, x, y, sheetSize]: [string, number, number, number]): string {
+  return `background: url("${url}") ${-x / 18}rem ${-y / 18}rem / ${sheetSize / 18}rem no-repeat`;
 }
 
 /** Machines with no item of their own to borrow an icon from, and what stands in instead. */

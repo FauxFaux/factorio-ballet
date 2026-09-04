@@ -31,8 +31,8 @@
 
 .module-icon {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 1.7778rem;
+  height: 1.7778rem;
   flex-shrink: 0;
 }
 
@@ -54,14 +54,14 @@
    the tier changes and shove its neighbours along the header. */
 .module-effect {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 0.7222rem;
   min-width: 4ch;
   text-align: right;
   white-space: nowrap;
 }
 
 .module-caret {
-  font-size: 11px;
+  font-size: 0.6111rem;
   line-height: 1;
   padding-left: 2px;
 }
@@ -124,7 +124,7 @@
 
 .module-option-effect {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 0.7222rem;
   text-align: right;
   white-space: nowrap;
 }

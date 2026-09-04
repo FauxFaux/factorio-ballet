@@ -9,19 +9,19 @@ import icons3Data from '../assets/icons-3.json';
 import iconsUiUrl from '../assets/icons-ui.avif';
 import iconsUiData from '../assets/icons-ui.json';
 
-type Icon = [url: string, x: number, y: number];
+type Icon = [url: string, x: number, y: number, sheetSize: number];
 type IconData = Record<string, [number, number]>;
 
-function iconsFromSheet(url: string, data: unknown): Record<string, Icon> {
+function iconsFromSheet(url: string, data: unknown, sheetSize: number): Record<string, Icon> {
   return Object.fromEntries(
-    Object.entries(data as IconData).map(([key, [x, y]]) => [key, [url, x, y]]),
+    Object.entries(data as IconData).map(([key, [x, y]]) => [key, [url, x, y, sheetSize]]),
   );
 }
 
 export const icons: Record<string, Icon> = {
-  ...iconsFromSheet(icons0Url, icons0Data),
-  ...iconsFromSheet(icons1Url, icons1Data),
-  ...iconsFromSheet(icons2Url, icons2Data),
-  ...iconsFromSheet(icons3Url, icons3Data),
-  ...iconsFromSheet(iconsUiUrl, iconsUiData),
+  ...iconsFromSheet(icons0Url, icons0Data, 864),
+  ...iconsFromSheet(icons1Url, icons1Data, 864),
+  ...iconsFromSheet(icons2Url, icons2Data, 864),
+  ...iconsFromSheet(icons3Url, icons3Data, 864),
+  ...iconsFromSheet(iconsUiUrl, iconsUiData, 480),
 };

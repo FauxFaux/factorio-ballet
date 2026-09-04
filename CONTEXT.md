@@ -321,7 +321,7 @@ in `App` — and hands `netRates` the two multipliers, so an unpinned row's modu
 progress slider exactly as its machine does. Productivity changes what a row is worth without
 changing what it eats, which is a real answer and not a scaling: the same three assemblers of gears
 consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
-not. `UI.md` describes the wider planner design the solver eventually serves.
+not. `CONTEXT-UI.md` describes the wider planner design the solver eventually serves.
 
 ### TypeScript specifics
 
@@ -336,12 +336,12 @@ not. `UI.md` describes the wider planner design the solver eventually serves.
 
 - `../factorio-loader` — the older codebase: many utilities, but focused on one specific
   save/use-case rather than being general. Its `web/pages/plan.tsx` is the supply-first manifest
-  planner analysed in `UI.md §1`; `extract/*.lua` + `scripts/load-recs.ts` are its game-data
+  planner analysed in `CONTEXT-UI.md §1`; `extract/*.lua` + `scripts/load-recs.ts` are its game-data
   extraction path. Its README notes the `process-mgmt` library is GPL — re-implement ideas from it
   rather than copying code.
 - `../process-mgmt-gui` — the more modern calculator with much less scope: a demand-first
   linear-algebra planner (`src/calc.tsx`, `src/backend/mgmt.ts`) wrapping the `process-mgmt`
-  library; analysed in `UI.md §2`.
+  library; analysed in `CONTEXT-UI.md §2`.
 - `~/clone/proc-rs` — the historical algorithm/reference implementation for the local row solver,
   not a dependency. Its `proc-core` crate contains the RREF-based solver, and `ALGORITHM.md`
   documents its wider requirements/import/export planner.

@@ -1,4 +1,4 @@
-# Planner UI notes
+# Planner UI context
 
 Design notes from studying the two existing planners we're building a hybrid of. Goal: a planner on
 top of our `StaticData` model (`src/types.ts`) that feeds the local RREF matrix solver.

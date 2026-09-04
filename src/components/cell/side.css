@@ -3,7 +3,7 @@
   align-items: center;
   gap: 4px;
   margin: 0 0 2px;
-  font-size: 14px;
+  font-size: 0.7778rem;
   font-weight: normal;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -31,14 +31,14 @@
 
 .cell-rate {
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
   color: var(--text-h);
   white-space: nowrap;
 }
 
 /* the unit repeats down the column; the number is the part worth reading */
 .cell-rate-unit {
-  font-size: 12px;
+  font-size: 0.6667rem;
   color: var(--text);
 }
 

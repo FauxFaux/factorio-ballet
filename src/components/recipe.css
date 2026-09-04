@@ -16,8 +16,8 @@
 
 .recipe-icon {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 1.7778rem;
+  height: 1.7778rem;
   flex-shrink: 0;
 }
 
@@ -33,7 +33,7 @@
   margin-left: auto;
   flex-shrink: 0;
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
 }
 
 /* A card the game has no recipe for: a pump or a drill working the ground it stands on. The dashed
@@ -52,7 +52,7 @@
   border-radius: 4px;
   padding: 0 5px;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.6667rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: help;
@@ -73,7 +73,7 @@
 
 .fold-toggle {
   font: inherit;
-  line-height: 32px;
+  line-height: 1.7778rem;
   color: inherit;
   background: none;
   border: 1px solid transparent;
@@ -96,7 +96,7 @@
 .recipe-flows th {
   text-align: left;
   font-weight: normal;
-  font-size: 14px;
+  font-size: 0.7778rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   padding-right: 8px;
@@ -115,7 +115,7 @@
 .flow-amount,
 .flow-rate {
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
   white-space: nowrap;
   width: 1%;
 }
@@ -132,7 +132,7 @@
 }
 
 .flow-note {
-  font-size: 14px;
+  font-size: 0.7778rem;
   font-family: var(--mono);
   padding-left: 6px;
 }
@@ -154,13 +154,13 @@
 
 .flow-chip-rate {
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
   color: var(--text-h);
 }
 
 /* the unit repeats on every chip; the number is the part worth reading */
 .flow-chip-unit {
-  font-size: 12px;
+  font-size: 0.6667rem;
   color: var(--text);
 }
 
@@ -202,7 +202,7 @@
 }
 
 .recipe-machines-label {
-  font-size: 14px;
+  font-size: 0.7778rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   padding-right: 2px;
@@ -225,7 +225,7 @@
 }
 
 .productivity-check {
-  font-size: 13px;
+  font-size: 0.7222rem;
   line-height: 1;
 }
 

@@ -28,8 +28,8 @@
 /* the same 32px box the module pickers use, so a row's icons line up with the header's */
 .cell-module-icon {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 1.7778rem;
+  height: 1.7778rem;
   flex-shrink: 0;
 }
 
@@ -37,7 +37,7 @@
   width: 2.5rem;
   font: inherit;
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
   text-align: right;
   color: var(--text-h);
   background: none;

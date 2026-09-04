@@ -9,7 +9,7 @@
   border-radius: 4px;
   padding: 2px 6px;
   font: inherit;
-  font-size: 18px;
+  font-size: 1rem;
   line-height: 1;
   color: inherit;
   background: none;
@@ -35,7 +35,7 @@
 .debug-menu textarea {
   display: block;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.6667rem;
   color: inherit;
   background: var(--bg);
   border: 1px solid var(--border);

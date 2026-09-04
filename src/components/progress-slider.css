@@ -53,8 +53,8 @@
  * `top left` the scaled sprite lands on the content box exactly, whatever the box is. */
 .progress-pack-icon {
   display: block;
-  width: 32px;
-  height: 32px;
+  width: 1.7778rem;
+  height: 1.7778rem;
   transform: scale(0.5);
   transform-origin: top left;
 }

@@ -26,6 +26,10 @@
   @media (max-width: 1024px) {
     font-size: 16px;
   }
+
+  @media (min-width: 1600px) {
+    font-size: clamp(18px, calc(0.9375vw + 3px), 27px);
+  }
 }
 
 #app {
@@ -40,7 +44,7 @@ code {
   font-family: var(--mono);
   color: var(--text-h);
 
-  font-size: 15px;
+  font-size: 0.8333rem;
   line-height: 135%;
   padding: 4px 8px;
   background: var(--code-bg);

@@ -6,7 +6,7 @@
   margin: 6px 0 0;
   padding-top: 6px;
   border-top: 1px solid var(--border);
-  font-size: 14px;
+  font-size: 0.7778rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   cursor: help;
@@ -55,7 +55,7 @@
 .cell-in-play-resource-details span {
   color: var(--muted);
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.6667rem;
 }
 
 .cell-in-play-entry.is-expanded .cell-in-play-connections {
@@ -95,7 +95,7 @@
 .cell-in-play-connection-rate {
   min-width: 0;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.6667rem;
   white-space: nowrap;
 }
 
@@ -135,7 +135,7 @@
 /* an internal resource which did not come out level, so it is on its way to being an edge */
 .cell-leftover {
   font-family: var(--mono);
-  font-size: 13px;
+  font-size: 0.7222rem;
   letter-spacing: 0;
   color: var(--accent);
 }

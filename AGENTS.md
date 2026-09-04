@@ -9,11 +9,13 @@ mirror features in `test/`, with script-specific tests in `test/scripts/`. Data 
 analysis utilities belong in `scripts/`. Treat `ballet0/` and `guava0/` as archived experiments
 retained for reference and scripts, not as the current app.
 
-Read `FACTORIO.md`, `UI.md`, and `CELL.md` before changing domain or interface behavior. For
-ingestion changes, read `INGEST.md` first.
+Read `FACTORIO.md` and `CELL.md` before changing domain or cell behavior. Read `STYLING.md` before
+changing layout, responsive behavior, or shared visual sizing. For ingestion changes, read
+`INGEST.md` first.
 
 For heavier tasks, read `CONTEXT.md` for additional architecture, data-model, solver, ingestion, and
-repository-history context.
+repository-history context. `CONTEXT-UI.md` contains the longer background analysis behind the
+planner's interface direction; consult it when that design context is relevant.
 
 ## Build, Test, and Development Commands
 

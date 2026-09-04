@@ -42,7 +42,7 @@
 
 .cell-row-expand {
   padding: 1px 3px;
-  font-size: 13px;
+  font-size: 0.7222rem;
 }
 
 /* The open row stays part of the recipe's flex line, but its detail takes a whole new line. */
@@ -58,7 +58,7 @@
   background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 4px;
-  font-size: 13px;
+  font-size: 0.7222rem;
 }
 
 .cell-connection-table {
@@ -67,7 +67,7 @@
   gap: 2px 8px;
   align-items: center;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 0.6667rem;
 }
 
 .cell-connection-row {
@@ -161,8 +161,8 @@
 
 .cell-connection-belt-icon {
   display: inline-block;
-  width: 32px;
-  height: 32px;
+  width: 1.7778rem;
+  height: 1.7778rem;
   margin: -8px;
   margin-left: -4px;
   transform: scale(0.5);
@@ -224,7 +224,7 @@
   width: 4.5rem;
   font: inherit;
   font-family: var(--mono);
-  font-size: 15px;
+  font-size: 0.8333rem;
   text-align: right;
   color: var(--text-h);
   background: var(--bg);

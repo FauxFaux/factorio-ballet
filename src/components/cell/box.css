@@ -63,7 +63,7 @@
 }
 
 .cell-size {
-  font-size: 14px;
+  font-size: 0.7778rem;
   text-transform: uppercase;
   letter-spacing: 1px;
   white-space: nowrap;
@@ -71,7 +71,7 @@
 
 .cell-reset-machines {
   color: var(--text);
-  font-size: 13px;
+  font-size: 0.7222rem;
   opacity: 0.8;
 }
 
