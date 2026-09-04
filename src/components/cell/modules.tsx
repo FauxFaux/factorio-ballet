@@ -175,10 +175,10 @@ function ModuleBox({
         max={max}
         step={1}
         disabled={hidden}
-        value={draft ?? count ?? ''}
-        /* What "auto" comes to, in the placeholder for the same reason the solver's count is:
-           it is what would happen, not what was asked for. */
-        placeholder={auto ? fmt(boost.wanted) : ''}
+        /* An auto count is still an actual value here: native number spinners only step values,
+           not placeholders. The derived styling says it is what would happen, not what was
+           explicitly asked for. */
+        value={draft ?? count ?? boost.wanted}
         aria-label={`${categoryName(family)} modules`}
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;

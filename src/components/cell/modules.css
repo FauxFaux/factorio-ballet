@@ -45,10 +45,9 @@
   padding: 0;
 }
 
-/* what the layout comes to on its own, in the placeholder: the same "not your number, but what
-   would happen" the count box draws that way */
-.cell-module-count.is-derived::placeholder {
+/* What the layout comes to on its own: it is a real value so native number controls can step it,
+   but its appearance still says "not your number, but what would happen". */
+.cell-module-count.is-derived {
   color: var(--text);
-  opacity: 1;
   font-style: italic;
 }

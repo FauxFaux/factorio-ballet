@@ -266,10 +266,10 @@
   padding: 2px 4px;
 }
 
-/* the solver's own count, in the placeholder rather than the value: not the user's number */
-.cell-count.is-derived::placeholder {
+/* The solver's own count: a real value so native number controls can step it, styled to say it is
+   not the user's number. */
+.cell-count.is-derived {
   color: var(--text);
-  opacity: 1;
   font-style: italic;
 }
 

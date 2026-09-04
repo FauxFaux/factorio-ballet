@@ -195,10 +195,10 @@ function CountBox({
       type="number"
       min={0}
       step="any"
-      value={draft ?? entry.count ?? ''}
-      /* A worked-out count sits in the placeholder rather than the value: it is the solver's
-       * answer, not the user's, and typing over it is how you disagree with it. */
-      placeholder={entry.count === undefined && count !== undefined ? fmt(count) : 'auto'}
+      /* A solved count is a real value so the native number spinner starts from that number. Its
+       * derived styling still distinguishes the solver's answer from a count the user pinned. */
+      value={draft ?? entry.count ?? (count === undefined ? '' : fmt(count))}
+      placeholder={entry.count === undefined && count === undefined ? 'auto' : ''}
       title={countTitle(entry, count)}
       aria-label="Machine count"
       onInput={(e) => {
