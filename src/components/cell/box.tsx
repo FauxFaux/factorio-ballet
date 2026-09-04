@@ -15,6 +15,7 @@ import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes } from './notes.tsx';
+import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 
@@ -120,7 +121,10 @@ export function CellBox({
           ) : null}
           <SolveNotes cell={cell} solution={solution} />
         </div>
-        <CellSide dir="out" ids={iface.outputs} solution={solution} onSearch={onSearch} />
+        <div class="cell-out-stack">
+          <CellSide dir="out" ids={iface.outputs} solution={solution} onSearch={onSearch} />
+          <CellRadar title={cellTitle(cell)} inputs={iface.inputs} outputs={iface.outputs} />
+        </div>
       </div>
     </section>
   );

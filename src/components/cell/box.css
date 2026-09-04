@@ -102,6 +102,13 @@
   grid-area: out;
 }
 
+/* Keep the rail sketch beside the outputs at full width. At the two-column breakpoint this
+ * whole stack follows the inputs in the shared left column. */
+.cell-out-stack {
+  grid-area: out;
+  min-width: 0;
+}
+
 /* The recipe rows keep their full width before they need to wrap; the two interface sides then
  * become a single left-hand column. */
 @media (max-width: 1400px) {

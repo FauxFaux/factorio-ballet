@@ -20,11 +20,7 @@ import type { BoundingBox, RawData } from 'factorio-raw-types/prototypes';
 import { ITEM_KEYS } from './raw-keys.ts';
 import { arr, effectLimits, RProduct, type RIngredient } from './raw-validators.ts';
 import { entriesOf } from '../src/ts.ts';
-import type {
-  Effect,
-  MachineKind,
-  MachineSize,
-} from '../src/types.ts';
+import type { Effect, MachineKind, MachineSize } from '../src/types.ts';
 
 /** `pumping_speed` is per tick; every rate in our model is per second. */
 const TICKS = 60;

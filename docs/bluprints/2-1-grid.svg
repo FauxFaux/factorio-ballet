@@ -1,0 +1,20 @@
+<svg viewBox="0 0 192 128" width="576" height="384">
+    <g>
+        <rect x="0" y="0" width="192" height="128" fill="#312a03"></rect>
+        <rect x="3" y="4" width="2" height="120" fill="#8c8e8b"></rect>
+        <rect x="187" y="4" width="2" height="120" fill="#8c8e8b"></rect>
+        <rect x="0" y="4" width="192" height="2" fill="#8c8e8b"></rect>
+        <rect x="0" y="122" width="192" height="2" fill="#8c8e8b"></rect>
+        <path d="M 4 13 a 8 8 0 0 1 8 -8 M 4 115 a 8 8 0 0 0 8 8 M 188 13 a 8 8 0 0 0 -8 -8 M 188 115 a 8 8 0 0 1 -8 8 M 4 4 a 8 8 0 0 0 -8 -8 M 188 4 a 8 8 0 0 1 8 -8 M 4 124 a 8 8 0 0 1 -8 8 M 188 124 a 8 8 0 0 0 8 8 M 4 13 c 0 8, 8 12, 8 20  l 0 60 c 0 8, -8 12, -8 20  M 4 13 c 0 9, 16 11, 16 20  l 0 60 c 0 9, -16 11, -16 20  M 188 13 c 0 8, -8 12, -8 20  l 0 60 c 0 8, 8 12, 8 20 "
+              stroke="#8c8e8b" stroke-width="2" fill="transparent"></path>
+        <circle cx="10" cy="84" r="1.8" fill="white" stroke="black">
+            <title>item:capacitor1, item:inductor1, item:pcb1, item:resistor1</title>
+        </circle>
+        <circle cx="18" cy="84" r="1.8" fill="white" stroke="black">
+            <title>item:valve</title>
+        </circle>
+        <circle cx="182" cy="38" r="1.8" fill="white" stroke="black">
+            <title>item:electronic-circuit</title>
+        </circle>
+    </g>
+</svg>

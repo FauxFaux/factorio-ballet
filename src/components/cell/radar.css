@@ -1,0 +1,58 @@
+.cell-radar {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.cell-radar figcaption {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 4px;
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-size: 0.7778rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cell-radar-caption {
+  overflow: hidden;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.9em;
+  letter-spacing: normal;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.cell-radar svg {
+  display: block;
+  width: min(100%, 42rem);
+  max-height: 15rem;
+  margin: 0 auto;
+}
+
+.cell-radar-floor {
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.cell-radar-border {
+  fill: #8e99a8;
+}
+
+.cell-radar-path {
+  fill: none;
+  stroke: #8e99a8;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.cell-radar-stops circle {
+  fill: var(--text-h);
+  stroke: var(--bg);
+  stroke-width: 1;
+}
