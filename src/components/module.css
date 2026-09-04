@@ -3,8 +3,20 @@
    only difference between the two is what the icons are. */
 .module-bar {
   display: flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: 6px;
+  min-width: 0;
+  margin: 0;
+  padding: 0.2222rem 0.4444rem;
+  border: 1px solid var(--border);
+  border-radius: 0.2222rem;
+}
+
+.module-bar legend {
+  padding: 0 0.3333rem;
+  color: var(--text-h);
+  font-size: 0.7778rem;
 }
 
 .module {

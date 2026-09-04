@@ -1,6 +1,16 @@
 .progress-slider {
   flex: 0 1 26rem;
   min-width: 14rem;
+  margin: 0;
+  padding: 0.2222rem 0.5556rem;
+  border: 1px solid var(--border);
+  border-radius: 0.2222rem;
+}
+
+.progress-slider legend {
+  padding: 0 0.3333rem;
+  color: var(--text-h);
+  font-size: 0.7778rem;
 }
 
 .progress-slider input {

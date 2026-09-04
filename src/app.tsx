@@ -53,19 +53,23 @@ export function App({ uss }: { uss: State<UrlState> }) {
       <UnlitFilter />
       <header class="app-head">
         <h1>faucalc</h1>
-        <ProgressSlider progress={gp} />
-        <ModuleBar
-          modules={field(uss, 'mo')}
-          beacon={field(uss, 'be')}
-          belt={field(uss, 'bt')}
-          progress={progress}
-        />
-        <ImportButton
-          onAddCell={(cell) =>
-            setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
-          }
-        />
-        <DebugButton state={us} />
+        <div class="app-head-defaults">
+          <ProgressSlider progress={gp} />
+          <ModuleBar
+            modules={field(uss, 'mo')}
+            beacon={field(uss, 'be')}
+            belt={field(uss, 'bt')}
+            progress={progress}
+          />
+        </div>
+        <div class="app-head-advanced">
+          <ImportButton
+            onAddCell={(cell) =>
+              setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
+            }
+          />
+          <DebugButton state={us} />
+        </div>
       </header>
       <CellList
         cells={field(uss, 'cl')}

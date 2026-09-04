@@ -185,7 +185,8 @@ export function ModuleBar({
   progress: number;
 }) {
   return (
-    <div class="module-bar">
+    <fieldset class="module-bar">
+      <legend>Default entities</legend>
       <BeltPicker belt={belt} progress={progress} />
       {moduleCategories.map((category) => {
         const modules = modulesIn(category.id);
@@ -214,6 +215,6 @@ export function ModuleBar({
         );
       })}
       <BeaconPicker beacon={beacon} progress={progress} />
-    </div>
+    </fieldset>
   );
 }

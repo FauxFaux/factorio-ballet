@@ -38,7 +38,8 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
   const era = at ? `at ${resourceName(at.id)}` : passed ? `past ${resourceName(passed.id)}` : '';
 
   return (
-    <div class="progress-slider">
+    <fieldset class="progress-slider">
+      <legend>Overall game progress</legend>
       <input
         type="range"
         min={0}
@@ -69,6 +70,6 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
           );
         })}
       </div>
-    </div>
+    </fieldset>
   );
 }

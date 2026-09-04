@@ -2,12 +2,44 @@
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0 32px;
+  gap: 0.5rem 32px;
   margin: 0.67em 0;
 }
 
 .app-head h1 {
   margin: 0;
+}
+
+.app-head-defaults {
+  display: flex;
+  flex: 1 1 100%;
+  align-items: stretch;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 32px;
+  min-width: 0;
+}
+
+.app-head-advanced {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+@media (min-width: 801px) {
+  .app-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: stretch;
+  }
+
+  .app-head h1 {
+    align-self: center;
+  }
+
+  .app-head-defaults {
+    flex-basis: auto;
+  }
 }
 
 .columns {

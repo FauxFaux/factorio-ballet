@@ -2,7 +2,6 @@
 .import-button {
   position: relative;
   flex-shrink: 0;
-  margin-left: auto;
 }
 
 .import-button img {
