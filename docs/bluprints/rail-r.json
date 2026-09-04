@@ -1,0 +1,121 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "type": "virtual",
+          "name": "signal-R"
+        },
+        "index": 1
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "curved-rail-a",
+        "position": {
+          "x": -1246,
+          "y": -283
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 2,
+        "name": "straight-rail",
+        "position": {
+          "x": -1243,
+          "y": -283
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 3,
+        "name": "straight-rail",
+        "position": {
+          "x": -1241,
+          "y": -283
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 4,
+        "name": "half-diagonal-rail",
+        "position": {
+          "x": -1251,
+          "y": -281
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 5,
+        "name": "half-diagonal-rail",
+        "position": {
+          "x": -1255,
+          "y": -279
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 6,
+        "name": "curved-rail-b",
+        "position": {
+          "x": -1259,
+          "y": -277
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 7,
+        "name": "curved-rail-b",
+        "position": {
+          "x": -1263,
+          "y": -273
+        },
+        "direction": 2
+      },
+      {
+        "entity_number": 8,
+        "name": "curved-rail-a",
+        "position": {
+          "x": -1265,
+          "y": -268
+        },
+        "direction": 2
+      },
+      {
+        "entity_number": 9,
+        "name": "straight-rail",
+        "position": {
+          "x": -1265,
+          "y": -265
+        }
+      },
+      {
+        "entity_number": 10,
+        "name": "straight-rail",
+        "position": {
+          "x": -1265,
+          "y": -263
+        }
+      },
+      {
+        "entity_number": 11,
+        "name": "straight-rail",
+        "position": {
+          "x": -1265,
+          "y": -261
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "straight-rail",
+        "position": {
+          "x": -1265,
+          "y": -259
+        }
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}

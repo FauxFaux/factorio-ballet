@@ -1,0 +1,16 @@
+north
+northnortheast
+northeast
+eastnortheast
+east
+eastsoutheast
+southeast
+southsoutheast
+south
+southsouthwest
+southwest
+westsouthwest
+west
+westnorthwest
+northwest
+northnorthwest
