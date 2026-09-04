@@ -123,7 +123,14 @@ export function CellBox({
         </div>
         <div class="cell-out-stack">
           <CellSide dir="out" ids={iface.outputs} solution={solution} onSearch={onSearch} />
-          <CellRadar title={cellTitle(cell)} inputs={iface.inputs} outputs={iface.outputs} />
+          <CellRadar
+            title={cellTitle(cell)}
+            inputs={iface.inputs}
+            outputs={iface.outputs}
+            entries={cell.entries}
+            counts={solution.counts}
+            progress={progress}
+          />
         </div>
       </div>
     </section>

@@ -1,5 +1,7 @@
 import './radar.css';
-import { resourceName } from '../../data/index.ts';
+import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
+import { resourceName, staticData } from '../../data/index.ts';
+import { icons } from '../../data/decode-icons.ts';
 import type { ResourceId } from '../../types.ts';
 
 /**
@@ -11,10 +13,16 @@ export function CellRadar({
   title,
   inputs,
   outputs,
+  entries,
+  counts,
+  progress,
 }: {
   title: string;
   inputs: ResourceId[];
   outputs: ResourceId[];
+  entries: CellEntry[];
+  counts: (number | undefined)[];
+  progress: number;
 }) {
   return (
     <figure class="cell-radar">
@@ -37,8 +45,136 @@ export function CellRadar({
         <path class="cell-radar-path" d={railPath(inputs.length, outputs.length)} />
         <StationStops side="in" resources={inputs} />
         <StationStops side="out" resources={outputs} />
+        <AssemblerColumns
+          entries={entries}
+          counts={counts}
+          progress={progress}
+          startX={8 + inputs.length * 8}
+        />
       </svg>
     </figure>
+  );
+}
+
+/**
+ * Each recipe is its own district for now. The real radar will eventually add paired-column
+ * packing and belts, but a vertical stack already shows both the chosen machine's footprint and
+ * the solver's scale for every recipe in the cell.
+ */
+function AssemblerColumns({
+  entries,
+  counts,
+  progress,
+  startX,
+}: {
+  entries: CellEntry[];
+  counts: (number | undefined)[];
+  progress: number;
+  startX: number;
+}) {
+  let x = startX;
+  const columns = entries
+    .map((entry, index) => ({ entry, count: counts[index], index }))
+    .toReversed()
+    .flatMap(({ entry, count: solvedCount, index }) => {
+      const recipe = entryRecipe(entry);
+      if (!recipe) return [];
+
+      const machineId = entryMachine(entry, recipe, progress);
+      const machine = machineId ? staticData.machines[machineId] : undefined;
+      if (!machine) return [];
+
+      const count = Math.max(1, Math.ceil(solvedCount ?? 1));
+      const column = (
+        <AssemblerColumn
+          key={`${entry.recipe}-${index}`}
+          x={x}
+          recipe={entry.recipe}
+          recipeName={recipe.human ?? entry.recipe}
+          machineWidth={machine.size.width}
+          machineHeight={machine.size.height}
+          count={count}
+        />
+      );
+      x += machine.size.width + 4;
+      return [column];
+    });
+
+  return <g class="cell-radar-assemblers">{columns}</g>;
+}
+
+function AssemblerColumn({
+  x,
+  recipe,
+  recipeName,
+  machineWidth,
+  machineHeight,
+  count,
+}: {
+  x: number;
+  recipe: string;
+  recipeName: string;
+  machineWidth: number;
+  machineHeight: number;
+  count: number;
+}) {
+  const height = count * machineHeight;
+  const iconSize = 12;
+  const iconX = x + machineWidth / 2 - iconSize / 2;
+  const iconY = 20 + height / 2 - iconSize / 2;
+
+  return (
+    <g>
+      {Array.from({ length: count }, (_, index) => (
+        <rect
+          class="cell-radar-assembler"
+          key={index}
+          x={x}
+          y={20 + index * machineHeight}
+          width={machineWidth}
+          height={machineHeight}
+        />
+      ))}
+      <RecipeIcon x={iconX} y={iconY} size={iconSize} recipe={recipe} name={recipeName} />
+    </g>
+  );
+}
+
+/** An SVG view box crops the sprite sheet in the radar's own coordinate system. */
+function RecipeIcon({
+  x,
+  y,
+  size,
+  recipe,
+  name,
+}: {
+  x: number;
+  y: number;
+  size: number;
+  recipe: string;
+  name: string;
+}) {
+  const recipeData = staticData.recipes[recipe];
+  const product = recipeData?.products[0]?.resource;
+  const [url, spriteX, spriteY, sheetSize] =
+    icons[`recipe:${recipe}`] ??
+    (product ? icons[product] : undefined) ??
+    icons['recipe:recipe-unknown'];
+
+  return (
+    <svg
+      class="cell-radar-recipe-icon"
+      x={x}
+      y={y}
+      width={size}
+      height={size}
+      viewBox={`${spriteX} ${spriteY} 32 32`}
+      role="img"
+      aria-label={name}
+    >
+      <title>{name}</title>
+      <image href={url} width={sheetSize} height={sheetSize} />
+    </svg>
   );
 }
 

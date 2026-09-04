@@ -56,3 +56,13 @@
   stroke: var(--bg);
   stroke-width: 1;
 }
+
+.cell-radar-assembler {
+  fill: color-mix(in srgb, var(--accent) 45%, var(--bg));
+  stroke: var(--text-h);
+  stroke-width: 0.5;
+}
+
+.cell-radar-recipe-icon {
+  overflow: hidden;
+}
