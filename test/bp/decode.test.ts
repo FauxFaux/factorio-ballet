@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import { decode, decodeDocument } from '../../src/bp/decode.ts';
 
 const fixtures = [
+  ['3x-train-layout.base64', 171],
   ['4x-train-layout.base64', 215],
   ['empty-grid-v0.base64', 898],
   ['empty-plus-left-four.base64', 945],
