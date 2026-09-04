@@ -50,7 +50,7 @@ function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number
       <strong>{resourceName(id)}</strong>
       <span>
         {' · '}
-        {id} · stack size {stackSize ?? 'fluid'}
+        {id}{stackSize ? `· stack size ${stackSize}` : ''}
       </span>
     </div>
   );
