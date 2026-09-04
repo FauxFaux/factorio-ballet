@@ -10,16 +10,12 @@ import { resourceIconStyle } from '../icon.tsx';
 import { UnlitIcon } from '../unlit-module-icon.tsx';
 
 /**
- * What is in this row's machines: how many productivity modules, and how many speed modules. Two
- * numbers rather than one control, because the game answers them differently — productivity has
- * nowhere to be but the machine's own slots, while speed has beacons and so no ceiling — and
- * because wanting both at once is the ordinary case, not an exotic one.
+ * What reaches this row's machine: its productivity modules (or speed modules where productivity
+ * is unavailable), then full speed-module beacons. The two columns answer two distinct questions:
+ * what goes in slots, and how many beacons reach the machine.
  *
- * Where they all end up is worked out rather than asked for: productivity takes the slots it is
- * given, speed fills whatever is left, and the rest of the speed is beacons. Blank in either box is
- * that rule with nobody having said otherwise — the placeholder shows what it comes to — and the
- * tooltips carry the whole layout, beacons included, which is why no beacon count is drawn on the
- * row. Which *tier* either family means is the header's business, so these are counts and never
+ * Blank in the first box fills its applicable slots. Which *tier* either family means is the
+ * header's business, so these are counts and never
  * pickers; with no module chosen there — the whole early game — a count buys nothing, and the
  * tooltip says so rather than the box disappearing under the user.
  */
@@ -38,6 +34,10 @@ export function ModuleBoxes({
   onChange: (entry: CellEntry) => void;
 }) {
   const { effects, layout } = entryRun(entry, recipe, machine, chosen);
+  const inMachine = layout.reaches.productivity ? layout.productivity : layout.speed;
+  const inMachineCount = layout.reaches.productivity
+    ? entry.productivityModules
+    : entry.speedModules;
   /* A pump takes no modules at all — no slots, so no beacon reaches it either — and neither box is
      a question worth asking there. The whole control goes with them, border and all. */
   const nothing = !layout.reaches.productivity && !layout.reaches.speed;
@@ -45,26 +45,79 @@ export function ModuleBoxes({
   return (
     <span class={nothing ? 'cell-modules is-hidden' : 'cell-modules'}>
       <ModuleBox
-        family={layout.families.productivity}
-        boost={layout.productivity}
-        count={entry.productivityModules}
+        family={layout.reaches.productivity ? layout.families.productivity : layout.families.speed}
+        boost={inMachine}
+        count={inMachineCount}
         /* The one cap in the row: a productivity module is only ever in a slot, so asking for more
            than there are is asking for something the game has no way to build. */
         max={layout.slots}
         /* Nothing to ask for where the productivity would go nowhere — a recipe which does not
            allow it, a machine which ignores it, a machine with no slots — so the box goes invisible
            rather than away, and the speed boxes down the cell stay in one column. */
-        hidden={!layout.reaches.productivity}
-        title={productivityTitle(layout, effects)}
-        onCount={(count) => onChange({ ...entry, productivityModules: count })}
-      />
-      <ModuleBox
-        family={layout.families.speed}
-        boost={layout.speed}
-        count={entry.speedModules}
         hidden={!layout.reaches.speed}
-        title={speedTitle(layout, effects)}
-        onCount={(count) => onChange({ ...entry, speedModules: count })}
+        title={inMachineTitle(layout, effects)}
+        onCount={(count) =>
+          onChange(
+            layout.reaches.productivity
+              ? { ...entry, productivityModules: count }
+              : { ...entry, speedModules: count },
+          )
+        }
+      />
+      <BeaconBox
+        beacon={chosen.beacon}
+        count={entry.beacons}
+        hidden={!layout.reaches.speed || !chosen.beacon}
+        title={beaconTitle(layout, effects)}
+        onCount={(count) => onChange({ ...entry, beacons: count })}
+      />
+    </span>
+  );
+}
+
+/** The second column: an explicit count of beacons, each packed with speed modules. */
+function BeaconBox({
+  beacon,
+  count,
+  hidden,
+  title,
+  onCount,
+}: {
+  beacon: Chosen['beacon'];
+  count: number | undefined;
+  hidden: boolean;
+  title: string;
+  onCount: (count: number | undefined) => void;
+}) {
+  const [draft, setDraft] = useState<string | undefined>(undefined);
+  return (
+    <span
+      class={hidden ? 'cell-module is-hidden' : 'cell-module'}
+      title={hidden ? undefined : title}
+    >
+      {beacon ? (
+        <span
+          class="cell-module-icon"
+          style={resourceIconStyle(`item:${beacon.item}`)}
+          aria-hidden="true"
+        />
+      ) : (
+        <UnlitIcon modules={modulesIn('speed')} class="cell-module-icon" />
+      )}
+      <input
+        class="cell-module-count"
+        type="number"
+        min={0}
+        step={1}
+        disabled={hidden}
+        value={draft ?? count ?? 0}
+        aria-label="beacons"
+        onInput={(e) => {
+          const raw = (e.target as HTMLInputElement).value;
+          setDraft(raw);
+          onCount(parseModules(raw));
+        }}
+        onBlur={() => setDraft(undefined)}
       />
     </span>
   );
@@ -139,42 +192,48 @@ function ModuleBox({
   );
 }
 
-/** What the productivity box did: slots, and what the machine made of them. */
-function productivityTitle(layout: Layout, effects: Effects): string {
-  const boost = layout.productivity;
-  const family = categoryName(layout.families.productivity);
-  if (!boost.module) {
-    return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
+/** What the first box did: productivity where available, speed otherwise. */
+function inMachineTitle(layout: Layout, effects: Effects): string {
+  const productivity = layout.reaches.productivity;
+  const boost = productivity ? layout.productivity : layout.speed;
+  const family = categoryName(productivity ? layout.families.productivity : layout.families.speed);
+  const modules = [
+    moduleCount(layout.productivity.inMachine, categoryName(layout.families.productivity)),
+    moduleCount(layout.speed.inMachine, categoryName(layout.families.speed)),
+  ].filter((module): module is string => module !== undefined);
+  if (!modules.length) {
+    return boost.module
+      ? `No ${family} modules are in the machine — ${outcome(effects)}.`
+      : `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
-  return (
-    `${fmt(boost.inMachine)} ${family} modules in the machine — ${outcome(effects)}.` +
-    ' Blank fills the slots; no beacon transmits productivity, so this is the whole of it.'
-  );
+  let msg = `In-machine: ${modules.join(' and ')}, giving ${outcome(effects)}.`;
+  if (productivity && layout.speed.inMachine > 0) {
+    msg +=
+      " I'm assuming you only took out the productivity modules because you wanted more speed, so have some speed modules.";
+  }
+
+  return msg;
 }
 
-/** What the speed box did: the slots productivity left, the beacons the rest took, and the result. */
-function speedTitle(layout: Layout, effects: Effects): string {
+/** A computed module count, omitted when that family occupies no machine slots. */
+function moduleCount(count: number, family: string): string | undefined {
+  if (!count) return undefined;
+  return `${fmt(count)} ${family} module${count === 1 ? '' : 's'}`;
+}
+
+/** What the beacon box did: every selected beacon is full of the selected speed module. */
+function beaconTitle(layout: Layout, effects: Effects): string {
   const boost = layout.speed;
   const family = categoryName(layout.families.speed);
   if (!boost.module) {
     return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
   }
-  /* Where the ones the machine could not hold went, which is exactly one of three things: into
-     beacons, or nowhere at all because there is no beacon to hold them — the header's beacon picker
-     set to none, which is also the whole early game's answer — or nowhere because none were left
-     over. A module with nowhere to go and no reason given reads as a bug rather than a setting. */
-  const lost = boost.wanted - boost.inMachine - boost.inBeacons;
   const rest =
     boost.beacons > 0
-      ? `${fmt(boost.inBeacons)} over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
+      ? `${fmt(boost.inBeacons)} ${family} modules over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
         ` at ${fmt(boost.transmission * 100)}% each`
-      : lost > 0
-        ? `${fmt(lost)} with nowhere to go — no beacon to put them in, which the header picks`
-        : 'no beacons';
-  return (
-    `${fmt(boost.wanted)} ${family} modules: ${fmt(boost.inMachine)} in the machine, ${rest}` +
-    ` — ${outcome(effects)}. Blank fills whatever slots the productivity modules left.`
-  );
+      : 'no beacons';
+  return `${rest} — ${outcome(effects)}.`;
 }
 
 /** A family's name at the front of a sentence; they are all lowercase, as a picker wants them. */

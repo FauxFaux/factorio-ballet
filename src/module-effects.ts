@@ -89,6 +89,7 @@ export function moduleBoost(
   module: ModuleId | undefined,
   wanted: number | undefined,
   beacon: Beacon | undefined,
+  wantedBeacons = 0,
 ): Boost {
   const found = module === undefined ? undefined : staticData.modules[module];
   if (!module || !found || !machine.moduleSlots) return NO_BOOST;
@@ -96,7 +97,6 @@ export function moduleBoost(
   const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
   const asked = wanted ?? slots;
   const inMachine = Math.min(asked, slots);
-  const spare = asked - inMachine;
   const holds =
     beacon &&
     beacon.moduleSlots > 0 &&
@@ -104,8 +104,8 @@ export function moduleBoost(
     (beacon.allowedEffects?.includes(effect) ?? true)
       ? beacon.moduleSlots
       : 0;
-  const inBeacons = holds ? spare : 0;
-  const beacons = holds ? Math.ceil(inBeacons / holds) : 0;
+  const beacons = holds ? wantedBeacons : 0;
+  const inBeacons = holds ? beacons * holds : 0;
   const transmission = beacons ? (beacon?.distributionEffectivity ?? 0) / Math.sqrt(beacons) : 0;
   const felt = inMachine + inBeacons * transmission;
   return {
@@ -123,6 +123,7 @@ export function moduleBoost(
 export interface ModuleWants {
   productivity?: number;
   speed?: number;
+  beacons?: number;
 }
 
 export interface Layout {
@@ -169,6 +170,7 @@ export function moduleLayout(
     moduleFor(machine, 'speed', modules),
     wants.speed,
     beacon,
+    wants.beacons,
   );
   return {
     productivity,

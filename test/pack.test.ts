@@ -14,7 +14,13 @@ describe('packCells', () => {
         name: 'silicon',
         entries: [
           { recipe: 'copper-cable', count: 2.5 },
-          { recipe: 'iron-gear-wheel', machine, productivityModules: 2, speedModules: 4 },
+          {
+            recipe: 'iron-gear-wheel',
+            machine,
+            productivityModules: 2,
+            speedModules: 4,
+            beacons: 3,
+          },
           { recipe, modules: { [moduleA]: 1, [moduleB]: 2 } },
         ],
       },

@@ -37,6 +37,7 @@ export interface PackedEntry {
   modules?: [PackedId, number][];
   productivityModules?: number;
   speedModules?: number;
+  beacons?: number;
 }
 
 /**
@@ -92,6 +93,7 @@ function packEntry(entry: CellEntry): PackedEntry {
     packed.productivityModules = entry.productivityModules;
   }
   if (entry.speedModules !== undefined) packed.speedModules = entry.speedModules;
+  if (entry.beacons !== undefined) packed.beacons = entry.beacons;
   return packed;
 }
 
@@ -105,6 +107,7 @@ function unpackEntry(packed: PackedEntry): CellEntry {
     entry.productivityModules = packed.productivityModules;
   }
   if (packed.speedModules !== undefined) entry.speedModules = packed.speedModules;
+  if (packed.beacons !== undefined) entry.beacons = packed.beacons;
   return entry;
 }
 

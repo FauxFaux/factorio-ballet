@@ -63,15 +63,17 @@ export interface CellEntry {
   productivityModules?: number;
 
   /**
-   * How many speed modules this row is to feel, wherever they have to go to get there: whatever
-   * slots the productivity modules left, and then as many beacons as the rest of them take. Absent
-   * is auto — fill those slots, build no beacons.
-   *
-   * Not capped, and that is the difference between the two boxes: a beacon reaches a machine whose
-   * own slots are full, so "I want this smelter going four times as fast" is a number the user can
-   * state and how many beacons it comes to is the answer rather than the question.
+   * How many speed modules go in the machine's own slots. This is used instead of
+   * `productivityModules` when the recipe cannot use productivity; absent fills the available
+   * slots automatically.
    */
   speedModules?: number;
+
+  /**
+   * How many selected beacons reach this machine. Every one is assumed to be full of the chosen
+   * speed module. Absent means no beacons.
+   */
+  beacons?: number;
 }
 
 /**
@@ -139,7 +141,7 @@ export interface EntryRun {
  * A row resolved: the two multipliers the solver scales its rates by, and the {@link Layout} which
  * is how the row's two module counts were laid out to get them. Both come out of one pass, because
  * the two families share the machine — how many slots the productivity modules take decides how
- * many are left for speed, and so how many beacons the speed took.
+ * many are left for speed, while `CellEntry.beacons` states how many full beacons reach it.
  *
  * `chosen` is what the header means by a module of each family and by a beacon; the row states how
  * many modules of each, never which, so a save that upgrades to speed module 3 — or to a six-slot
@@ -165,7 +167,11 @@ export function entryRun(
 
 /** What the row is asking for, as {@link moduleLayout} takes it. */
 export function entryWants(entry: CellEntry): ModuleWants {
-  return { productivity: entry.productivityModules, speed: entry.speedModules };
+  return {
+    productivity: entry.productivityModules,
+    speed: entry.speedModules,
+    beacons: entry.beacons,
+  };
 }
 
 /** How many slots a loadout asks for, which is not necessarily how many the machine has. */

@@ -1,6 +1,6 @@
-/* The two module requests, productivity then speed: one control, so it is boxed like one and the
-   inputs inside it carry no border of their own. Where each module went — and the beacons the speed
-   took — is in the tooltips rather than on the row, which has a cell's worth of rows to fit. */
+/* The in-machine module count and the beacon count: one control, so it is boxed like one and the
+   inputs inside it carry no border of their own. Their effects are in the tooltips rather than on
+   the row, which has a cell's worth of rows to fit. */
 .cell-modules {
   display: inline-flex;
   align-items: center;
