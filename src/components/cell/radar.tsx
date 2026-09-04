@@ -3,6 +3,7 @@ import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { resourceName, staticData } from '../../data/index.ts';
 import { icons } from '../../data/decode-icons.ts';
 import type { ResourceId } from '../../types.ts';
+import { assemblerColumnLayout } from './radar-layout.ts';
 
 /**
  * RADAR's rail view adapted to one cell, which is one brick for now. Its 192-by-128 coordinates
@@ -57,9 +58,8 @@ export function CellRadar({
 }
 
 /**
- * Each recipe is its own district for now. The real radar will eventually add paired-column
- * packing and belts, but a vertical stack already shows both the chosen machine's footprint and
- * the solver's scale for every recipe in the cell.
+ * Each recipe is its own district for now. Assemblers fill 100 units of the radar's usable
+ * vertical space, then continue in a new column so they remain inside the rail brick.
  */
 function AssemblerColumns({
   entries,
@@ -96,7 +96,7 @@ function AssemblerColumns({
           count={count}
         />
       );
-      x += machine.size.width + 4;
+      x += assemblerColumnLayout(machine.size.width, machine.size.height, count).width + 4;
       return [column];
     });
 
@@ -118,19 +118,19 @@ function AssemblerColumn({
   machineHeight: number;
   count: number;
 }) {
-  const height = count * machineHeight;
+  const layout = assemblerColumnLayout(machineWidth, machineHeight, count);
   const iconSize = 12;
-  const iconX = x + machineWidth / 2 - iconSize / 2;
-  const iconY = 20 + height / 2 - iconSize / 2;
+  const iconX = x + layout.width / 2 - iconSize / 2;
+  const iconY = 20 + layout.height / 2 - iconSize / 2;
 
   return (
     <g>
-      {Array.from({ length: count }, (_, index) => (
+      {layout.assemblers.map(({ column, row }, index) => (
         <rect
           class="cell-radar-assembler"
           key={index}
-          x={x}
-          y={20 + index * machineHeight}
+          x={x + column * (machineWidth + 4)}
+          y={20 + row * machineHeight}
           width={machineWidth}
           height={machineHeight}
         />
