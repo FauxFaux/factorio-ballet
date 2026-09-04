@@ -18,16 +18,33 @@ export function RecipeConnections({
 }) {
   if (!solved) {
     return (
-      <p class="cell-connections cell-connections-pending">
+      <p class="cell-connections cell-recipe-connections cell-connections-pending">
         Connections appear once this row is worked out.
       </p>
     );
   }
   return (
-    <div class="cell-connections">
-      <ConnectionTable flows={connections.inputs} belt={belt} />
-      <ConnectionTable flows={connections.outputs} belt={belt} />
+    <div class="cell-connections cell-recipe-connections">
+      <ConnectionSection title="Inputs" flows={connections.inputs} belt={belt} />
+      <ConnectionSection title="Outputs" flows={connections.outputs} belt={belt} />
     </div>
+  );
+}
+
+function ConnectionSection({
+  title,
+  flows,
+  belt,
+}: {
+  title: string;
+  flows: ConnectionFlow[];
+  belt: Belt;
+}) {
+  return (
+    <section class="cell-connection-section">
+      <h3 class="cell-connection-section-title">{title}</h3>
+      <ConnectionTable flows={flows} belt={belt} />
+    </section>
   );
 }
 

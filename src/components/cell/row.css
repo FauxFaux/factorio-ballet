@@ -61,6 +61,20 @@
   font-size: 0.7222rem;
 }
 
+.cell-recipe-connections {
+  flex: 0 1 50rem;
+  box-sizing: border-box;
+  max-width: calc(100% - 2.1em);
+}
+
+.cell-connection-section-title {
+  display: none;
+  margin: 0;
+  color: var(--text-h);
+  font: inherit;
+  font-weight: bold;
+}
+
 .cell-connection-table {
   display: grid;
   grid-template-columns: 4px minmax(0, 1fr) 4.5rem auto;
@@ -170,6 +184,24 @@
 
 .cell-connections-pending {
   display: block;
+}
+
+/* Inputs and outputs are a single vertical reading order when the cell itself is stacked. */
+@media (max-width: 800px) {
+  .cell-recipe-connections {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .cell-connection-section + .cell-connection-section {
+    padding-top: 8px;
+    border-top: 1px solid var(--border);
+  }
+
+  .cell-connection-section-title {
+    display: block;
+    margin-bottom: 2px;
+  }
 }
 
 .cell-recipe-name {
