@@ -1,4 +1,5 @@
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
+import type { RefObject } from 'preact';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
@@ -12,6 +13,7 @@ export function InPlayConnectionsView({
   outputRate,
   solved,
   onRecipeHover,
+  connectionsElement,
 }: {
   id: ResourceId;
   connections: InternalConnections;
@@ -19,19 +21,20 @@ export function InPlayConnectionsView({
   outputRate: number | undefined;
   solved: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
+  connectionsElement: RefObject<HTMLDivElement>;
 }) {
   const resource = staticData.resources[id];
 
   if (!solved) {
     return (
-      <div class="cell-connections cell-connections-pending">
+      <div ref={connectionsElement} class="cell-connections cell-connections-pending">
         <ResourceDetails id={id} stackSize={resource?.stackSize} />
         Recipes appear once the cell is worked out.
       </div>
     );
   }
   return (
-    <div class="cell-connections cell-in-play-connections">
+    <div ref={connectionsElement} class="cell-connections cell-in-play-connections">
       <ResourceDetails id={id} stackSize={resource?.stackSize} />
       <InPlayConnectionTable
         outputs={connections.outputs}

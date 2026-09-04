@@ -15,8 +15,8 @@
  * and the thumb's centre stops half its own width short of each end of the input. */
 .progress-packs {
   position: relative;
-  height: 24px;
-  margin: 2px 8px 0;
+  height: 1.3333rem;
+  margin: 0.1111rem 0.4444rem 0;
 }
 
 .progress-pack {
@@ -26,12 +26,12 @@
   /* the sprite is scaled from this box's content origin, so size the content to the scaled sprite
    * exactly and let the padding be the only thing between it and the border */
   box-sizing: content-box;
-  width: 16px;
-  height: 16px;
-  padding: 3px;
+  width: 0.8889rem;
+  height: 0.8889rem;
+  padding: 0.1667rem;
   background: none;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 0.2222rem;
   cursor: pointer;
 }
 

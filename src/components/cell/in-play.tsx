@@ -1,5 +1,5 @@
 import './in-play.css';
-import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { resourceName } from '../../data/index.ts';
 import type { Solution } from '../../solve/index.ts';
@@ -112,6 +112,29 @@ function InPlayChip({
     [id, recipes, solution],
   );
   const rate = solution.balance.get(id) ?? 0;
+  const connectionsElement = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const element = connectionsElement.current;
+    if (!expanded || !element) return;
+
+    const positionWithinViewport = () => {
+      element.style.removeProperty('--cell-in-play-connections-offset');
+      const { left, right } = element.getBoundingClientRect();
+      const edgeInset = 16;
+      const offset =
+        left < edgeInset
+          ? edgeInset - left
+          : right > window.innerWidth - edgeInset
+            ? window.innerWidth - edgeInset - right
+            : 0;
+      element.style.setProperty('--cell-in-play-connections-offset', `${offset}px`);
+    };
+
+    positionWithinViewport();
+    window.addEventListener('resize', positionWithinViewport);
+    return () => window.removeEventListener('resize', positionWithinViewport);
+  }, [expanded]);
 
   return (
     <div
@@ -143,6 +166,7 @@ function InPlayChip({
         outputRate={output ? Math.abs(rate) : undefined}
         solved={solution.complete}
         onRecipeHover={onRecipeHover}
+        connectionsElement={connectionsElement}
       />
     </div>
   );
