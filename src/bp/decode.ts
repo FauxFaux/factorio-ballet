@@ -54,6 +54,9 @@ export interface Entity {
   inventory?: JsonObject;
   tags?: JsonObject;
   type?: 'input' | 'output';
+  /** Inserter offsets are serialized as two-element arrays by Factorio 2.x. */
+  drop_position?: Position | [number, number];
+  pickup_position?: Position | [number, number];
 }
 
 export interface Tile {

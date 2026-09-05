@@ -321,14 +321,8 @@
           "y": -473.5
         },
         "direction": 12,
-        "drop_position": [
-          0.80078125,
-          0
-        ],
-        "pickup_position": [
-          -1,
-          1
-        ]
+        "drop_position": [0.80078125, 0],
+        "pickup_position": [-1, 1]
       },
       {
         "entity_number": 36,

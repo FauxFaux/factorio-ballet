@@ -14,3 +14,33 @@
   margin: 0.4em 0;
   font-size: 1.1111rem;
 }
+
+.design {
+  margin: 0 0 12px;
+}
+
+.design-head {
+  margin: 0 0 6px;
+  font-family: var(--heading);
+  color: var(--text-h);
+}
+
+.design-surface {
+  display: grid;
+  height: 500px;
+  gap: 8px;
+}
+
+.design-column {
+  min-width: 0;
+  background: #10284d;
+  border: 1px solid #214777;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.design-column h3 {
+  margin: 0;
+  font-size: 0.8333rem;
+  color: var(--text-h);
+}

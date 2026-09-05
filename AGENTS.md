@@ -43,10 +43,10 @@ parameters with `_`.
 Tests use Vitest and must match `test/**/*.test.{ts,tsx}`. Name suites after the unit under test and
 write behavior-focused `it(...)` descriptions. Add regression coverage for solver, packing,
 URL-state, or ingestion changes. Preact interaction tests use Testing Library and opt into
-`happy-dom` with a `// @vitest-environment happy-dom` comment; use
-`test/search-box.test.tsx` as the minimal example. Prefer accessible queries such as `getByRole`
-and `user-event` interactions over querying implementation classes or calling handlers directly.
-Run the focused test while developing, then `npm test` and `npm run lint` before handing off.
+`happy-dom` with a `// @vitest-environment happy-dom` comment; use `test/search-box.test.tsx` as the
+minimal example. Prefer accessible queries such as `getByRole` and `user-event` interactions over
+querying implementation classes or calling handlers directly. Run the focused test while developing,
+then `npm test` and `npm run lint` before handing off.
 
 ## Commit & Pull Request Guidelines
 
