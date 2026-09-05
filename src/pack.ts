@@ -21,6 +21,7 @@ import type { ModuleFill } from './flow.ts';
 export interface PackedCell {
   entries: PackedEntry[];
   name?: string;
+  design?: true;
 }
 
 /** {@link CellEntry} with its ids packed; see {@link PackedId} for why the types are unions. */

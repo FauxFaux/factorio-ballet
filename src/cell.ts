@@ -25,6 +25,8 @@ export interface Cell {
   entries: CellEntry[];
   /** What the user called it, if they bothered; otherwise {@link cellTitle} names it after a recipe. */
   name?: string;
+  /** Whether this cell has its one blank factory-design surface. */
+  design?: true;
 }
 
 /**
@@ -209,6 +211,11 @@ export function hasRecipe(cell: Cell, recipe: string): boolean {
 export function withRecipe(cell: Cell, recipe: string): Cell {
   if (hasRecipe(cell, recipe)) return cell;
   return { ...cell, entries: [...cell.entries, { recipe }] };
+}
+
+/** Adds this cell's one factory-design surface. */
+export function withDesign(cell: Cell): Cell {
+  return cell.design ? cell : { ...cell, design: true };
 }
 
 export function withEntry(cell: Cell, index: number, entry: CellEntry): Cell {

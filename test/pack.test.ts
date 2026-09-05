@@ -24,7 +24,7 @@ describe('packCells', () => {
           { recipe, modules: { [moduleA]: 1, [moduleB]: 2 } },
         ],
       },
-      { entries: [] },
+      { entries: [], design: true },
     ];
     expect(unpackCells(packCells(cells))).toEqual(cells);
   });

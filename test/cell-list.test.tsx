@@ -5,11 +5,11 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { CellList } from '../src/components/cell-list.tsx';
-import type { Cell } from '../src/cell.ts';
+import { newCell, type Cell } from '../src/cell.ts';
 import { NO_CHOICE } from '../src/data/index.ts';
 
 function CellListExample() {
-  const cells = useState<Cell[]>([]);
+  const cells = useState<Cell[]>([newCell()]);
   const active = useState(0);
   return (
     <CellList
@@ -29,7 +29,8 @@ describe('CellList', () => {
 
     await user.click(screen.getByRole('button', { name: '+ design' }));
 
-    expect(screen.getByRole('region', { name: 'Design 1' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Design' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Column 1' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: '+ design' })).toBeNull();
   });
 });

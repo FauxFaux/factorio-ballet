@@ -1,0 +1,25 @@
+.cell-design {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.cell-design-surface {
+  display: grid;
+  height: 500px;
+  gap: 8px;
+}
+
+.cell-design-column {
+  min-width: 0;
+  background: #10284d;
+  border: 1px solid #214777;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.cell-design-column h3 {
+  margin: 0;
+  font-size: 0.8333rem;
+  color: var(--text-h);
+}

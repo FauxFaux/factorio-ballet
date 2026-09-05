@@ -5,6 +5,7 @@ import {
   cellTitle,
   moveEntry,
   resetMachines,
+  withDesign,
   withEntry,
   withoutEntry,
   type Cell,
@@ -18,6 +19,7 @@ import { SolveNotes } from './notes.tsx';
 import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
+import { CellDesign } from './design.tsx';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -79,6 +81,16 @@ export function CellBox({
             ↺ auto
           </button>
         ) : null}
+        {!cell.design ? (
+          <button
+            type="button"
+            class="cell-btn"
+            title="Start a blank design for this cell"
+            onClick={() => setCell(withDesign)}
+          >
+            + design
+          </button>
+        ) : null}
         <button
           type="button"
           class="cell-btn cell-remove"
@@ -137,6 +149,7 @@ export function CellBox({
           />
         </div>
       </div>
+      {cell.design ? <CellDesign /> : null}
     </section>
   );
 }
