@@ -19,7 +19,7 @@ import { SolveNotes } from './notes.tsx';
 import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
-import { CellDesign } from './design.tsx';
+import { CellDesign } from '../design/columns.tsx';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and

@@ -1,15 +1,3 @@
-.cell-design {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px solid var(--border);
-}
-
-.cell-design-surface {
-  display: grid;
-  height: 500px;
-  gap: 8px;
-}
-
 .cell-design-column {
   min-width: 0;
   background-color: #17376d;

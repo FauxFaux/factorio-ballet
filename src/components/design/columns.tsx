@@ -1,4 +1,5 @@
-import './design.css';
+import './columns.css';
+import { DesignColumn } from './design-column.tsx';
 import { useEffect, useRef, useState } from 'preact/hooks';
 
 /** A cell's blank construction area, ready for future factory-design content. */
@@ -29,9 +30,7 @@ export function CellDesign() {
         style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
       >
         {Array.from({ length: columnCount }, (_, index) => (
-          <section key={index} class="cell-design-column">
-            <h3>Column {index + 1}</h3>
-          </section>
+          <DesignColumn key={index} index={index} />
         ))}
       </div>
     </section>
