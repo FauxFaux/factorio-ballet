@@ -12,8 +12,14 @@
 
 .cell-design-column {
   min-width: 0;
-  background: #10284d;
-  border: 1px solid #214777;
+  background-color: #17376d;
+  background-image:
+    radial-gradient(circle at center, rgb(56 108 195 / 48%), transparent 68%),
+    repeating-linear-gradient(to right, rgb(177 205 255 / 18%) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(to bottom, rgb(177 205 255 / 18%) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(to right, rgb(202 220 255 / 34%) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(to bottom, rgb(202 220 255 / 34%) 0 1px, transparent 1px 40px);
+  border: 1px solid #527cba;
   border-radius: 6px;
   padding: 8px 12px;
 }
