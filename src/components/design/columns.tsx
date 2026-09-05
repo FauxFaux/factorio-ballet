@@ -1,18 +1,40 @@
 import './columns.css';
 import { DesignColumn } from './design-column.tsx';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import type { FactoryDesign } from '../../design.ts';
+import type { Setter } from '../../ts.ts';
 
-/** A cell's blank construction area, ready for future factory-design content. */
-export function CellDesign() {
+/** A cell's construction area, with one persisted blueprint for each created column. */
+export function CellDesign({
+  design,
+  setDesign,
+}: {
+  design: FactoryDesign;
+  setDesign: Setter<FactoryDesign>;
+}) {
   const surface = useRef<HTMLDivElement>(null);
   const [columnCount, setColumnCount] = useState(1);
 
   useEffect(() => {
     const element = surface.current;
     if (!element) return;
+    if (!design.columns) return;
 
     const updateColumnCount = () => {
-      setColumnCount(Math.max(1, Math.floor((element.clientWidth + 8) / (600 + 8))));
+      const nextCount = Math.max(1, Math.floor((element.clientWidth + 8) / (600 + 8)));
+      setColumnCount(nextCount);
+      setDesign((previous) => {
+        const missing = nextCount - previous.columns.length;
+        return missing > 0
+          ? {
+              ...previous,
+              columns: [
+                ...previous.columns,
+                ...Array.from({ length: missing }, () => ({ entities: [] })),
+              ],
+            }
+          : previous;
+      });
     };
 
     updateColumnCount();
@@ -29,8 +51,8 @@ export function CellDesign() {
         class="cell-design-surface"
         style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
       >
-        {Array.from({ length: columnCount }, (_, index) => (
-          <DesignColumn key={index} index={index} />
+        {design.columns.map((column, index) => (
+          <DesignColumn key={index} index={index} column={column} />
         ))}
       </div>
     </section>

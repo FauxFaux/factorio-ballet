@@ -24,7 +24,34 @@ describe('packCells', () => {
           { recipe, modules: { [moduleA]: 1, [moduleB]: 2 } },
         ],
       },
-      { entries: [], design: true },
+      {
+        entries: [],
+        design: {
+          columns: [
+            {
+              entities: [
+                {
+                  kind: 'assembler',
+                  position: { x: 2, y: 3 },
+                  size: { width: 3, height: 3 },
+                  recipe: 'copper-cable',
+                },
+                { kind: 'belt', position: { x: 1, y: 3 }, direction: 'east' },
+                {
+                  kind: 'underground-belt',
+                  position: { x: 4, y: 3 },
+                  direction: 'east',
+                  end: 'output',
+                },
+                { kind: 'splitter', position: { x: 5, y: 3 }, direction: 'south' },
+                { kind: 'pipe', position: { x: 2, y: 2 } },
+                { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'south' },
+                { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+              ],
+            },
+          ],
+        },
+      },
     ];
     expect(unpackCells(packCells(cells))).toEqual(cells);
   });

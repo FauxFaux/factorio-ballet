@@ -149,7 +149,18 @@ export function CellBox({
           />
         </div>
       </div>
-      {cell.design ? <CellDesign /> : null}
+      {cell.design ? (
+        <CellDesign
+          design={cell.design}
+          setDesign={(update) =>
+            setCell((previous) => ({
+              ...previous,
+              design:
+                typeof update === 'function' ? update(previous.design ?? cell.design!) : update,
+            }))
+          }
+        />
+      ) : null}
     </section>
   );
 }

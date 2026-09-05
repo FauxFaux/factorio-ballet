@@ -1,10 +1,11 @@
 import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data/index.ts';
 import type { ModuleFill } from './flow.ts';
+import type { FactoryDesign } from './design.ts';
 
 /**
- * The cells as they go into the URL hash: the same shape, with every prototype id replaced by its
- * position in the dataset's list of them.
+ * The cells as they go into the URL hash: the same shape, with each recipe and machine prototype
+ * id in a recipe entry replaced by its position in the dataset's list of them.
  *
  * A recipe id is a name — the game has no numeric ids, and `data.raw` keys everything by prototype
  * name — which at 26 characters apiece is most of what a full plan's hash is made of. Deflate can
@@ -21,7 +22,7 @@ import type { ModuleFill } from './flow.ts';
 export interface PackedCell {
   entries: PackedEntry[];
   name?: string;
-  design?: true;
+  design?: FactoryDesign;
 }
 
 /** {@link CellEntry} with its ids packed; see {@link PackedId} for why the types are unions. */

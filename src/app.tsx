@@ -68,7 +68,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
               setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
             }
           />
-          <DebugButton state={us} />
+          <DebugButton uss={uss} />
         </div>
       </header>
       <CellList

@@ -11,6 +11,7 @@ import {
   type ModuleWants,
 } from './flow.ts';
 import type { SearchScope } from './search.ts';
+import { newFactoryDesign, type FactoryDesign } from './design.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
 
 /**
@@ -25,8 +26,8 @@ export interface Cell {
   entries: CellEntry[];
   /** What the user called it, if they bothered; otherwise {@link cellTitle} names it after a recipe. */
   name?: string;
-  /** Whether this cell has its one blank factory-design surface. */
-  design?: true;
+  /** The cell's optional factory-design surface and its persisted blueprint columns. */
+  design?: FactoryDesign;
 }
 
 /**
@@ -213,9 +214,9 @@ export function withRecipe(cell: Cell, recipe: string): Cell {
   return { ...cell, entries: [...cell.entries, { recipe }] };
 }
 
-/** Adds this cell's one factory-design surface. */
+/** Adds this cell's factory-design surface with its first blank blueprint column. */
 export function withDesign(cell: Cell): Cell {
-  return cell.design ? cell : { ...cell, design: true };
+  return cell.design ? cell : { ...cell, design: newFactoryDesign() };
 }
 
 export function withEntry(cell: Cell, index: number, entry: CellEntry): Cell {
