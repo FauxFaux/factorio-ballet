@@ -48,7 +48,9 @@ export function CellBox({
   const iface = useMemo(() => cellInterface(cell), [cell]);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const recipeIds = useMemo(() => cell.entries.map(({ recipe }) => recipe), [cell.entries]);
-  const rowDrag = useRowDrag((from, to) => setCell((prev) => moveEntry(prev, from, to)));
+  const rowDrag = useRowDrag(cell.entries.length, (from, to) =>
+    setCell((prev) => moveEntry(prev, from, to)),
+  );
   const [hoveredRecipe, setHoveredRecipe] = useState<string>();
 
   return (

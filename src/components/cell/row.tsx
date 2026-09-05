@@ -63,8 +63,8 @@ export function CellRow({
     'cell-recipe',
     highlighted && 'is-highlighted',
     drag.dragging && 'is-dragging',
-    drag.dropBefore && 'drop-before',
-    drag.dropAfter && 'drop-after',
+    drag.dropEdge === 'before' && 'drop-before',
+    drag.dropEdge === 'after' && 'drop-after',
   ]
     .filter(Boolean)
     .join(' ');

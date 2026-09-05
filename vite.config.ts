@@ -9,6 +9,6 @@ export default defineConfig(({ mode }) => ({
   base: './',
   plugins: [preact(), preload(), ...(mode === 'analyze' ? [analyzer()] : [])],
   test: {
-    include: ['test/**/*.test.ts'],
+    include: ['test/**/*.test.{ts,tsx}'],
   },
 }));

@@ -8,13 +8,19 @@ import { useState } from 'preact/hooks';
 export type RowDrag = {
   /** Whether this is the row currently being dragged, for the fade the rest of the list gets. */
   dragging: boolean;
-  /** Whether the dragged row would land just above or below this one. */
-  dropBefore: boolean;
-  dropAfter: boolean;
+  /** Which edge the dragged row would land at; absent when that position cannot move it. */
+  dropEdge: DropEdge | null;
   onDragStart: () => void;
   onDragEnd: () => void;
   onDragOver: (e: DragEvent) => void;
   onDrop: (e: DragEvent) => void;
+};
+
+export type DropEdge = 'before' | 'after';
+
+/** A canonical location between rows: zero is before the first row, `rowCount` is after the last. */
+export type RowDropTarget = {
+  insertion: number;
 };
 
 /**
@@ -22,11 +28,14 @@ export type RowDrag = {
  * hands each row its own `RowDrag`. `onMove` is called with the two indices once, on a drop which
  * actually moves something.
  */
-export function useRowDrag(onMove: (from: number, to: number) => void): (i: number) => RowDrag {
+export function useRowDrag(
+  rowCount: number,
+  onMove: (from: number, to: number) => void,
+): (i: number) => RowDrag {
   /** The row being dragged, by index; `null` when no drag is in progress. */
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   /** Which side of which row the dragged one would land on, for the drop-line indicator. */
-  const [dropHint, setDropHint] = useState<{ index: number; before: boolean } | null>(null);
+  const [dropHint, setDropHint] = useState<RowDropTarget | null>(null);
   const clear = () => {
     setDragIndex(null);
     setDropHint(null);
@@ -34,20 +43,27 @@ export function useRowDrag(onMove: (from: number, to: number) => void): (i: numb
 
   return (i: number) => ({
     dragging: dragIndex === i,
-    dropBefore: dropHint?.index === i && dropHint.before,
-    dropAfter: dropHint?.index === i && !dropHint.before,
+    dropEdge:
+      dropHint?.insertion === i
+        ? 'before'
+        : i === rowCount - 1 && dropHint?.insertion === rowCount
+          ? 'after'
+          : null,
     onDragStart: () => setDragIndex(i),
     onDragEnd: clear,
     onDragOver: (e: DragEvent) => {
+      if (dragIndex === null) return;
       e.preventDefault();
-      setDropHint({ index: i, before: dropBefore(i, e) });
+      const target = eventTarget(i, e);
+      const valid = dropDestination(dragIndex, target) === null ? null : target;
+      if (e.dataTransfer) e.dataTransfer.dropEffect = valid ? 'move' : 'none';
+      setDropHint(valid);
     },
     onDrop: (e: DragEvent) => {
       e.preventDefault();
       if (dragIndex !== null) {
-        const insertion = dropBefore(i, e) ? i : i + 1;
-        const to = dragIndex < insertion ? insertion - 1 : insertion;
-        if (to !== dragIndex) onMove(dragIndex, to);
+        const to = dropDestination(dragIndex, eventTarget(i, e));
+        if (to !== null) onMove(dragIndex, to);
       }
       clear();
     },
@@ -55,15 +71,27 @@ export function useRowDrag(onMove: (from: number, to: number) => void): (i: numb
 }
 
 /**
- * Whether dragging over row `i` means "drop before it" rather than "after it". Every position
- * between two rows is reachable as "after" the earlier one, so only row 0 needs the split — landing
- * before it is the one place with no earlier row to be "after" of. Every other row answers `false`
- * unconditionally, which is the point: a threshold splitting a single row's own height is what was
- * flickering (and occasionally swallowing the drop) right on the line between two rows, so no other
- * row gets one.
+ * Resolve a visible drop location to the index the moved row will have. `null` is deliberately a
+ * first-class result: several edges describe the row's existing location and must not look active.
+ * Keeping this independent of DOM events also gives future cell drop targets one shared rule for
+ * deciding whether accepting a dragged row would do anything.
  */
-function dropBefore(i: number, e: DragEvent): boolean {
-  if (i !== 0) return false;
+export function dropDestination(from: number, target: RowDropTarget): number | null {
+  const to = from < target.insertion ? target.insertion - 1 : target.insertion;
+  return to === from ? null : to;
+}
+
+/** Both row edges bordering one gap resolve to the same target, so its highlight cannot jump. */
+export function rowDropTarget(index: number, edge: DropEdge): RowDropTarget {
+  return { insertion: edge === 'before' ? index : index + 1 };
+}
+
+/** Which half of a target contains the pointer. The midpoint belongs to the lower half. */
+export function dropEdgeAt(clientY: number, top: number, height: number): DropEdge {
+  return clientY < top + height / 2 ? 'before' : 'after';
+}
+
+function eventTarget(index: number, e: DragEvent): RowDropTarget {
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
-  return e.clientY < rect.top + rect.height / 2;
+  return rowDropTarget(index, dropEdgeAt(e.clientY, rect.top, rect.height));
 }

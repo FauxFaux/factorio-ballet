@@ -25,9 +25,12 @@
   "devDependencies": {
     "@eslint/js": "^10",
     "@preact/preset-vite": "^2",
+    "@testing-library/preact": "^3",
+    "@testing-library/user-event": "^14",
     "@types/node": "^24",
     "eslint": "^10",
     "factorio-raw-types": "^0.4",
+    "happy-dom": "^20",
     "oxfmt": "^0.64",
     "sharp": "^0.35",
     "typescript": "~6",
