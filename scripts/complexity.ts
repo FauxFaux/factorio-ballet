@@ -22,6 +22,16 @@
  * The max is the point: a recipe unlocked at 10% whose ingredient only exists at 60% is a 60%
  * recipe.
  *
+ * `ballet0/app/routes/sets.$setId.bp/route.tsx` contained another implementation of the same broad
+ * idea. Its `costs` function seeded a few basic materials with hand-picked prices, then repeatedly
+ * priced each craft as `1.2 * sum(ingredient price * amount)`, keeping the cheapest price found,
+ * until a pass made no changes. In other words, it propagated an additive bill-of-materials cost
+ * through the recipe graph by fixed-point relaxation; cycles without a priced input never became
+ * reachable. That is a useful alternative when the question is "how much prior production is in
+ * this thing?" This model asks "how late does any prerequisite become available?" instead, so it
+ * seeds natural sources, includes technology unlocks, and combines prerequisites with `max` rather
+ * than `sum`.
+ *
  * ```bash
  * APP=~/ins/factorio-2-73-ab node scripts/complexity.ts            # landmark report
  * APP=~/ins/factorio-2-73-ab node scripts/complexity.ts plastic    # everything matching

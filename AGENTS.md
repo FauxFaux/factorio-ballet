@@ -6,8 +6,7 @@ The active application is a Preact, Vite, and TypeScript project at the reposito
 calculation and data-model code lives in `src/*.ts`; UI components and their adjacent CSS live under
 `src/components/`. Generated application data and icon sprites are in `src/assets/`. Vitest suites
 mirror features in `test/`, with script-specific tests in `test/scripts/`. Data ingestion and
-analysis utilities belong in `scripts/`. Treat `ballet0/` as an archived experiment retained for
-reference and scripts, not as the current app.
+analysis utilities belong in `scripts/`.
 
 Read `FACTORIO.md` and `CELL.md` before changing domain or cell behavior. Read `STYLING.md` before
 changing layout, responsive behavior, or shared visual sizing. For ingestion changes, read
