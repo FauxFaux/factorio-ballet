@@ -1,0 +1,32 @@
+/* The export floats from the header so opening it does not rearrange the cell. */
+.cell-as-json {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cell-as-json-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  left: 0;
+  max-width: calc(100vw - 24px);
+  box-sizing: border-box;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 6px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.cell-as-json-menu textarea {
+  display: block;
+  max-width: calc(100vw - 40px);
+  box-sizing: border-box;
+  font-family: var(--mono);
+  font-size: 0.6667rem;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  resize: both;
+}

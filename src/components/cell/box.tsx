@@ -20,6 +20,7 @@ import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
+import { CellAsJson } from './as-json.tsx';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -91,6 +92,7 @@ export function CellBox({
             + design
           </button>
         ) : null}
+        <CellAsJson cell={cell} iface={iface} solution={solution} />
         <button
           type="button"
           class="cell-btn cell-remove"
