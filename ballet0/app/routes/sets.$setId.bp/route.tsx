@@ -1,28 +1,12 @@
 import { useLoaderData } from '@remix-run/react';
-import { Recipe, Shrunk } from '~/lib/shrunk';
-import { LoaderFunctionArgs } from '@remix-run/router';
-import { Locales } from '~/lib/locale';
-import { CraftIcon, Icons, RecipeIcon } from '~/lib/icons';
+import { Recipe } from '~/lib/shrunk';
+import { CraftIcon, RecipeIcon } from '~/lib/icons';
 import { IconCopy, IconFlask } from '@tabler/icons-react';
 import { ItemProductPrototype, ProductPrototype } from 'factorio-raw-types/prototypes';
 import { useMemo, useState } from 'react';
 import { twMerge } from 'tailwind-merge';
 import { mallAssembler } from '~/lib/bp';
 import { encode } from '~/lib/bp/blueprints';
-
-async function load<T>(setId: string, thing: string) {
-  const resp = await fetch(`/assets/sets/${setId}/${thing}.json`);
-  return (await resp.json()) as T;
-}
-
-export const clientLoader = async (args: LoaderFunctionArgs) => {
-  const setId = args.params.setId!;
-  return {
-    shrunk: await load<Shrunk>(setId, 'shrunk-data'),
-    locales: await load<Locales>(setId, 'locales'),
-    icons: await load<Icons>(setId, 'icons'),
-  };
-};
 
 type Ds = Awaited<ReturnType<typeof clientLoader>>;
 

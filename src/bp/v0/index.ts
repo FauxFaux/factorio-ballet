@@ -1,7 +1,8 @@
-import type { Blueprint } from './blueprints';
+import type { Blueprint } from './blueprints.ts';
 
 // c.f. https://github.com/FauxFaux/factorio-loader/blob/aca1e2a28c69e0ac073391b6498f897d6803d02a/web/pages/recipes.tsx#L247
 // c.f. https://github.com/FauxFaux/factorio-loader/blob/aca1e2a28c69e0ac073391b6498f897d6803d02a/web/pages/recipes.tsx#L299
+// WARNING: not been run since ... pynanodoes? Outdated versioning, not using bobs names.
 export const mallAssembler = (
   recipeId: string,
   itemId: string,
