@@ -346,7 +346,6 @@ not. `CONTEXT-UI.md` describes the wider planner design the solver eventually se
 - `~/clone/proc-rs` — the historical algorithm/reference implementation for the local row solver,
   not a dependency. Its `proc-core` crate contains the RREF-based solver, and `ALGORITHM.md`
   documents its wider requirements/import/export planner.
-- `../factoriolab` — checked out only because it's referenced as a data source.
 - `../factorio-raw-types` — the types package the ingest validates against, and also the only place
   the icon spritesheet can be rebuilt: `scripts/sprite-sheet.ts` packs `src/assets/icons.avif` +
   `icons.json` from the game's per-prototype PNGs. Its key scheme has moved on from the one our
@@ -359,5 +358,8 @@ Useful leftovers in the archived attempts:
 - `ballet0/scripts/shrink.ts` — pare a `RawData` dump down to selected keys;
   `ballet0/scripts/import-locales.ts` — bundle `*-locale.json` files; `ballet0/app/lib/` —
   blueprint-string and icon helpers.
-- `guava0/scripts/translate-lab.ts` — load factoriolab's TypeScript data model directly
-  (babel/pirates hook) to extract datasets like tech trees.
+
+`guava0/` was removed after its only remaining artifact, `scripts/translate-lab.ts`, was superseded
+by the Factorio dump ingest described in `INGEST.md`. It read Factoriolab's TypeScript data model
+directly to extract data such as tech trees. That checkout is historical context only and is no
+longer a relevant source or dependency for this repository.
