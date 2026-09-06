@@ -31,7 +31,7 @@
     "eslint": "^10",
     "factorio-raw-types": "^0.4",
     "happy-dom": "^20",
-    "oxfmt": "^0.64",
+    "oxfmt": "^0.66",
     "sharp": "^0.35",
     "typescript": "~6",
     "typescript-eslint": "^8",
