@@ -10,7 +10,7 @@ import {
 import { decode } from '../../src/bp/decode.ts';
 
 const fixture = decode(
-  readFileSync(new URL('../../docs/bluprints/belt-loop.base64', import.meta.url), 'utf8'),
+  readFileSync(new URL('../../docs/blueprints/belt-loop.base64', import.meta.url), 'utf8'),
 );
 
 const ref = (entityNumber: number, lane: 'left' | 'right'): BeltLaneRef => ({

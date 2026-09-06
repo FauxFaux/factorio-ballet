@@ -1,8 +1,7 @@
 # Rail blueprint notes
 
-These notes describe the Factorio 2.x rail geometry demonstrated by the fixtures in
-`docs/bluprints/`. The fixtures are the authority when they disagree with the older
-`docs/blueprint.wiki`.
+These notes describe the Factorio 2.x rail geometry demonstrated by the fixtures in ``. The fixtures
+are the authority when they disagree with the older `../blueprint.wiki`.
 
 ## Blueprint representation
 
@@ -42,9 +41,9 @@ one entity. A complete turn normally reads `A, B, B, A` between cardinal straigh
 
 ## Connection model
 
-`src/bp/rail.ts` converts the entities to `RailPiece`s with two `RailEnd`s and groups touching ends
-into a `RailGraph`. Connection keys use doubled coordinates (`x2`, `y2`) so half tiles remain exact.
-Node degree has a useful interpretation:
+`../../src/bp/rail.ts` converts the entities to `RailPiece`s with two `RailEnd`s and groups touching
+ends into a `RailGraph`. Connection keys use doubled coordinates (`x2`, `y2`) so half tiles remain
+exact. Node degree has a useful interpretation:
 
 - 1: an unconnected blueprint boundary or unfinished rail end
 - 2: an ordinary continuation
@@ -78,8 +77,8 @@ ends and the next begins.
 
 ### The r-shaped chain
 
-The corrected `rail-r.json` is an open, continuous chain of 12 pieces. From its vertical tail to its
-horizontal tip it is:
+The corrected `../../rail-r.json` is an open, continuous chain of 12 pieces. From its vertical tail
+to its horizontal tip it is:
 
 ```text
 straight 0 ×4 -> A2 -> B2 -> B12 -> half-diagonal 4 ×2 -> A12 -> straight 4 ×2
@@ -230,33 +229,33 @@ were left by the cut.
 
 ## Repeatable workflow
 
-Use `scripts/rail-blueprint.ts` as the executable recipe for this analysis. It contains the reusable
-parts of the one-off research: topology inspection, direct or half-turn overlay matching, entity
-renumbering, reference repair, zlib/base64 encoding, and removal of the rightmost path in this
-12-tile-pitch fan design.
+Use `../../scripts/rail-blueprint.ts` as the executable recipe for this analysis. It contains the
+reusable parts of the one-off research: topology inspection, direct or half-turn overlay matching,
+entity renumbering, reference repair, zlib/base64 encoding, and removal of the rightmost path in
+this 12-tile-pitch fan design.
 
 Decode a fresh game export with the earlier general blueprint script:
 
 ```sh
-node scripts/blueprint.ts docs/bluprints/example.base64 > docs/bluprints/example.json
+node scripts/blueprint.ts docs/blueprints/example.base64 > docs/blueprints/example.json
 ```
 
 Inspect a decoded blueprint before changing it:
 
 ```sh
-node scripts/rail-blueprint.ts inspect docs/bluprints/4x-train-layout.json
+node scripts/rail-blueprint.ts inspect docs/blueprints/4x-train-layout.json
 ```
 
 Verify the two overlays. `SOURCE` is transformed into `TARGET` coordinates:
 
 ```sh
 node scripts/rail-blueprint.ts overlay \
-  docs/bluprints/4x-train-layout.json \
-  docs/bluprints/empty-plus-left-four.json
+  docs/blueprints/4x-train-layout.json \
+  docs/blueprints/empty-plus-left-four.json
 
 node scripts/rail-blueprint.ts overlay \
-  docs/bluprints/4x-train-layout.json \
-  docs/bluprints/empty-plus-right-four.json \
+  docs/blueprints/4x-train-layout.json \
+  docs/blueprints/empty-plus-right-four.json \
   --rotate-180
 ```
 
@@ -267,10 +266,10 @@ Remove the rightmost path and write synchronized decoded and game-importable out
 
 ```sh
 node scripts/rail-blueprint.ts remove-rightmost \
-  docs/bluprints/4x-train-layout.json \
-  docs/bluprints/3x-train-layout.json \
-  docs/bluprints/3x-train-layout.base64
-npx oxfmt docs/bluprints/3x-train-layout.json
+  docs/blueprints/4x-train-layout.json \
+  docs/blueprints/3x-train-layout.json \
+  docs/blueprints/3x-train-layout.base64
+npx oxfmt docs/blueprints/3x-train-layout.json
 ```
 
 The removal command is intentionally specialized to the demonstrated fan: vertical paths at a
