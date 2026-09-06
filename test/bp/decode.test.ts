@@ -10,11 +10,17 @@ const fixtures = [
   ['empty-plus-right-four.base64', 949],
 ] as const;
 
-const fixturePath = (name: string) => new URL(`../../docs/bluprints/${name}`, import.meta.url);
+const fixturePaths = {
+  '3x-train-layout.base64': 'docs/blueprints/3x-train-layout.base64',
+  '4x-train-layout.base64': 'docs/blueprints/4x-train-layout.base64',
+  'empty-grid-v0.base64': 'docs/blueprints/empty-grid-v0.base64',
+  'empty-plus-left-four.base64': 'docs/blueprints/empty-plus-left-four.base64',
+  'empty-plus-right-four.base64': 'docs/blueprints/empty-plus-right-four.base64',
+} as const;
 
 describe('blueprint string decoding', () => {
   test.each(fixtures)('decodes %s', (name, entityCount) => {
-    const blueprint = decode(readFileSync(fixturePath(name), 'utf8'));
+    const blueprint = decode(readFileSync(fixturePaths[name], 'utf8'));
 
     expect(blueprint.item).toBe('blueprint');
     expect(blueprint.version).toBe(562949958205441);
@@ -23,7 +29,7 @@ describe('blueprint string decoding', () => {
   });
 
   test('retains the top-level JSON wrapper', () => {
-    const document = decodeDocument(readFileSync(fixturePath('empty-grid-v0.base64'), 'utf8'));
+    const document = decodeDocument(readFileSync(fixturePaths['empty-grid-v0.base64'], 'utf8'));
 
     expect(document).toHaveProperty('blueprint.label', 'Empty Grid v0');
   });

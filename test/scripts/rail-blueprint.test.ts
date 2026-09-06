@@ -8,12 +8,18 @@ import {
 } from '../../scripts/rail-blueprint.ts';
 import { decodeDocument, type Blueprint, type BlueprintDocument } from '../../src/bp/decode.ts';
 
-const fixture = (name: string): BlueprintDocument =>
-  JSON.parse(
-    readFileSync(new URL(`../../docs/bluprints/${name}.json`, import.meta.url), 'utf8'),
-  ) as BlueprintDocument;
+const fixturePaths = {
+  '3x-train-layout': 'docs/blueprints/3x-train-layout.json',
+  '4x-train-layout': 'docs/blueprints/4x-train-layout.json',
+  'empty-plus-left-four': 'docs/blueprints/empty-plus-left-four.json',
+  'empty-plus-right-four': 'docs/blueprints/empty-plus-right-four.json',
+} as const;
+type FixtureName = keyof typeof fixturePaths;
 
-const blueprint = (name: string): Blueprint => {
+const fixture = (name: FixtureName): BlueprintDocument =>
+  JSON.parse(readFileSync(fixturePaths[name], 'utf8')) as BlueprintDocument;
+
+const blueprint = (name: FixtureName): Blueprint => {
   const document = fixture(name);
   if (!('blueprint' in document)) throw new Error(`${name} is not a blueprint`);
   return document.blueprint;

@@ -3,9 +3,22 @@ import { describe, expect, test } from 'vitest';
 import { decode, type Entity } from '../../src/bp/decode.ts';
 import { buildRailGraph, findRailAlignment, isRailEntity } from '../../src/bp/rail.ts';
 
-const fixturePath = (name: string) =>
-  new URL(`../../docs/bluprints/${name}.base64`, import.meta.url);
-const fixture = (name: string) => decode(readFileSync(fixturePath(name), 'utf8'));
+const fixturePaths = {
+  '3x-train-layout': 'docs/blueprints/3x-train-layout.base64',
+  '4x-train-layout': 'docs/blueprints/4x-train-layout.base64',
+  'empty-grid-v0': 'docs/blueprints/empty-grid-v0.base64',
+  'empty-plus-left-four': 'docs/blueprints/empty-plus-left-four.base64',
+  'empty-plus-right-four': 'docs/blueprints/empty-plus-right-four.base64',
+  'rail-circle': 'docs/blueprints/rail-circle.base64',
+  'rail-r': 'docs/blueprints/rail-r.base64',
+} as const;
+type FixtureName = keyof typeof fixturePaths;
+
+const fixture = (name: string) => {
+  const path = fixturePaths[name as FixtureName];
+  if (!path) throw new Error(`unknown fixture: ${name}`);
+  return decode(readFileSync(path, 'utf8'));
+};
 
 const entityKey = (entity: Entity, x: number, y: number, direction: number) =>
   [entity.name, x, y, direction].join(':');
