@@ -6,9 +6,16 @@
     <title>faucalc</title>
   </head>
   <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.tsx"></script>
-    <script type="module" src="/src/data/preload-icons.ts"></script>
+    <div id="app">Loading...</div>
+    <script type="module" async src="/src/main.tsx"></script>
+    <script>
+      function preloadImage(u) {
+        const d = new Image();
+        d.src = u;
+        d.decode().catch((err) => console.log("preload failed, ignoring", u, err));
+      }
+      INJECT_ICONS_ARRAY.map((u, i) => setTimeout(() => preloadImage(u), i * 100));
+    </script>
     <noscript>This is a JavaScript single page app with no fallback, sorry.</noscript>
   </body>
 </html>
