@@ -119,7 +119,7 @@ function ResourceDetails({
         >
           ⌕ uses
         </button>
-        {onToggleImport ? (
+        {onToggleImport && (forcedImport || (imbalance ?? 0) < 0) ? (
           <button
             type="button"
             class="cell-btn cell-in-play-resource-action"
@@ -138,7 +138,7 @@ function ResourceDetails({
             )}
           </button>
         ) : null}
-        {onToggleExport ? (
+        {onToggleExport && (forcedExport || (imbalance ?? 0) > 0) ? (
           <button
             type="button"
             class="cell-btn cell-in-play-resource-action"
