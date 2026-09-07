@@ -68,12 +68,14 @@ export function worldToViewport(
 export function Belt({
   belt,
   status,
+  hasLoop,
   worldOrigin,
   onPointerDown,
   onPointerMove,
 }: {
   belt: DesignBelt;
   status: EntityPositionStatus;
+  hasLoop: boolean;
   worldOrigin: ViewportPoint;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
@@ -81,13 +83,18 @@ export function Belt({
   const { x, y } = belt.position;
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
   const isOverlapping = status === 'overlap';
+  const isError = isOverlapping || hasLoop;
+  const errorDescription = [
+    ...(isOverlapping ? ['overlaps another entity'] : []),
+    ...(hasLoop ? ['is part of a belt loop'] : []),
+  ].join(', ');
 
   return (
     <div
-      class={`cell-design-belt${isOverlapping ? ' cell-design-belt-error' : ''}`}
+      class={`cell-design-belt${isError ? ' cell-design-belt-error' : ''}`}
       role="img"
-      aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${isOverlapping ? ', overlaps another entity' : ''}`}
-      title={`Transport belt (${x}, ${y}), ${belt.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
+      aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${errorDescription ? `, ${errorDescription}` : ''}`}
+      title={`Transport belt (${x}, ${y}), ${belt.direction}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
       onPointerDown={onPointerDown}

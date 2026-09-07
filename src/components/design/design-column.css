@@ -118,8 +118,10 @@
 }
 
 .cell-design-belt-error {
-  border-color: crimson;
-  box-shadow: inset 0 0 0 1px crimson;
+  color: white;
+  background: crimson;
+  border-color: lightcoral;
+  box-shadow: inset 0 0 0 1px darkred;
 }
 
 .cell-design-belt-arrow {

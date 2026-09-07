@@ -3,6 +3,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
 import {
+  beltLoopEntityIndexes,
   DesignColumn,
   entityPositionStatuses,
   worldToViewport,
@@ -281,6 +282,42 @@ describe('DesignColumn', () => {
     expect(belt.style.top).toBe('24px');
     expect(belt.style.width).toBe('12px');
     expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
+  });
+
+  it('marks every belt in a logical belt containing a direct loop as an error', () => {
+    const entities: DesignColumnData['entities'] = [
+      { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },
+      { kind: 'belt', position: { x: 1, y: 0 }, direction: 'south' },
+      { kind: 'belt', position: { x: 1, y: 1 }, direction: 'west' },
+      { kind: 'belt', position: { x: 0, y: 1 }, direction: 'north' },
+      { kind: 'belt', position: { x: 4, y: 4 }, direction: 'east' },
+    ];
+
+    expect(beltLoopEntityIndexes(entities)).toEqual(new Set([0, 1, 2, 3]));
+  });
+
+  it('marks a loop formed through a sideload and its whole logical belt as errors', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            { kind: 'belt', position: { x: 1, y: -1 }, direction: 'south' },
+            { kind: 'belt', position: { x: 1, y: 0 }, direction: 'east' },
+            { kind: 'belt', position: { x: 1, y: 1 }, direction: 'north' },
+            { kind: 'belt', position: { x: 2, y: 0 }, direction: 'south' },
+            { kind: 'belt', position: { x: 2, y: 1 }, direction: 'west' },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    expect(document.querySelectorAll('.cell-design-belt-error')).toHaveLength(5);
+    expect(screen.getAllByRole('img', { name: /is part of a belt loop/ })).toHaveLength(5);
   });
 
   it('keeps a belt drag straight until the cursor is three tiles off track', () => {

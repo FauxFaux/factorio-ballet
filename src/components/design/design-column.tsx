@@ -2,6 +2,7 @@ import './design-column.css';
 import { ArrowRightIcon, TrashIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
 import type { CellEntry } from '../../cell.ts';
 import type {
   DesignColumn as DesignColumnData,
@@ -58,6 +59,7 @@ export function DesignColumn({
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
   const entityStatuses = entityPositionStatuses(column.entities);
+  const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
 
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -271,6 +273,7 @@ export function DesignColumn({
               key={entityIndex}
               belt={entity}
               status={entityStatuses[entityIndex]}
+              hasLoop={loopBeltIndexes.has(entityIndex)}
               worldOrigin={worldOrigin}
               onPointerDown={(event) => {
                 if (event.button !== 0 || cursorMode !== 'erase') return;
@@ -288,6 +291,108 @@ export function DesignColumn({
       </div>
     </section>
   );
+}
+
+/**
+ * Return every design-belt index belonging to a logical belt which contains a directed loop.
+ * A sideload joins its source and target into the same logical belt, so an upstream sideload is
+ * also marked when another section of that belt loops.
+ */
+export function beltLoopEntityIndexes(entities: DesignColumnData['entities']): Set<number> {
+  const belts = entities.flatMap((entity, entityIndex) =>
+    entity.kind === 'belt' ? [{ belt: entity, entityIndex }] : [],
+  );
+  if (belts.length === 0) return new Set();
+
+  const graph = buildBeltGraph(
+    belts.map(({ belt, entityIndex }) => ({
+      entity_number: entityIndex,
+      name: 'transport-belt',
+      position: belt.position,
+      direction: factorioDirection(belt.direction),
+    })),
+  );
+  const connectedBelts = new Map<number, Set<number>>();
+  for (const { entityIndex } of belts) connectedBelts.set(entityIndex, new Set([entityIndex]));
+  for (const { from, to } of graph.connections) {
+    connectedBelts.get(from.entityNumber)?.add(to.entityNumber);
+    connectedBelts.get(to.entityNumber)?.add(from.entityNumber);
+  }
+
+  const invalid = new Set<number>();
+  const visited = new Set<number>();
+  for (const { entityIndex } of belts) {
+    if (visited.has(entityIndex)) continue;
+    const component = connectedBeltIndexes(entityIndex, connectedBelts, visited);
+    if (componentHasBeltLoop(component, graph.connections)) {
+      for (const index of component) invalid.add(index);
+    }
+  }
+  return invalid;
+}
+
+function factorioDirection(direction: DesignDirection): 0 | 4 | 8 | 12 {
+  switch (direction) {
+    case 'north':
+      return 0;
+    case 'east':
+      return 4;
+    case 'south':
+      return 8;
+    case 'west':
+      return 12;
+  }
+}
+
+function connectedBeltIndexes(
+  start: number,
+  connections: Map<number, Set<number>>,
+  visited: Set<number>,
+): Set<number> {
+  const component = new Set<number>();
+  const pending = [start];
+  while (pending.length > 0) {
+    const current = pending.pop()!;
+    if (visited.has(current)) continue;
+    visited.add(current);
+    component.add(current);
+    for (const next of connections.get(current) ?? []) pending.push(next);
+  }
+  return component;
+}
+
+function componentHasBeltLoop(
+  component: Set<number>,
+  connections: ReturnType<typeof buildBeltGraph>['connections'],
+): boolean {
+  const outgoing = new Map<string, { lane: BeltLaneRef; next: BeltLaneRef[] }>();
+  for (const { from, to } of connections) {
+    if (!component.has(from.entityNumber) || !component.has(to.entityNumber)) continue;
+    const key = beltLaneKey(from);
+    const current = outgoing.get(key) ?? { lane: from, next: [] };
+    current.next.push(to);
+    outgoing.set(key, current);
+  }
+
+  const states = new Map<string, 'visiting' | 'complete'>();
+  const visit = (lane: BeltLaneRef): boolean => {
+    const key = beltLaneKey(lane);
+    const state = states.get(key);
+    if (state === 'visiting') return true;
+    if (state === 'complete') return false;
+    states.set(key, 'visiting');
+    for (const next of outgoing.get(key)?.next ?? []) {
+      if (visit(next)) return true;
+    }
+    states.set(key, 'complete');
+    return false;
+  };
+
+  return [...outgoing.values()].some(({ lane }) => visit(lane));
+}
+
+function beltLaneKey(lane: BeltLaneRef): string {
+  return `${lane.entityNumber}:${lane.line}:${lane.lane}:${lane.splitterSide ?? ''}`;
 }
 
 function directionBetween(first: DesignPosition, second: DesignPosition): DesignDirection {
