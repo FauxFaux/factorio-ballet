@@ -13,6 +13,7 @@ import {
 import type { Chosen } from '../../data/index.ts';
 import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
+import type { ResourceId } from '../../types.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
@@ -55,6 +56,12 @@ export function CellBox({
     setCell((prev) => moveEntry(prev, from, to)),
   );
   const [hoveredRecipe, setHoveredRecipe] = useState<string>();
+  const [selectedResource, setSelectedResource] = useState<ResourceId>();
+
+  const selectResource = (id: ResourceId | undefined) => {
+    setSelectedResource(id);
+    setHoveredRecipe(undefined);
+  };
 
   return (
     <section class={active ? 'cell is-active' : 'cell'}>
@@ -109,6 +116,7 @@ export function CellBox({
           ids={iface.inputs}
           solution={solution}
           onSearch={onSearch}
+          onSelect={selectResource}
           imports={cell.imports}
         />
         <div class="cell-middle">
@@ -163,6 +171,8 @@ export function CellBox({
               }
               onRecipeHover={setHoveredRecipe}
               onSearch={onSearch}
+              selected={selectedResource}
+              onSelect={selectResource}
             />
           ) : null}
           <SolveNotes cell={cell} solution={solution} />
@@ -173,6 +183,7 @@ export function CellBox({
             ids={iface.outputs}
             solution={solution}
             onSearch={onSearch}
+            onSelect={selectResource}
             exports={cell.exports}
           />
           <CellRadar

@@ -1,5 +1,5 @@
 import './in-play.css';
-import { useMemo, useState } from 'preact/hooks';
+import { useMemo } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { resourceName } from '../../data/index.ts';
 import type { Solution } from '../../solve/index.ts';
@@ -22,6 +22,8 @@ export function InPlayRow({
   onToggleExport,
   onRecipeHover,
   onSearch,
+  selected,
+  onSelect,
 }: {
   ids: ResourceId[];
   entries: CellEntry[];
@@ -34,11 +36,11 @@ export function InPlayRow({
   onToggleExport?: (id: ResourceId) => void;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
+  selected?: ResourceId;
+  onSelect: (id: ResourceId | undefined) => void;
 }) {
-  const [selected, setSelected] = useState<ResourceId>();
-
   const select = (id: ResourceId) => {
-    setSelected((current) => (current === id ? undefined : id));
+    onSelect(selected === id ? undefined : id);
     onRecipeHover(undefined);
   };
 

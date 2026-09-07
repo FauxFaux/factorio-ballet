@@ -33,6 +33,7 @@ export function CellSide({
   ids,
   solution,
   onSearch,
+  onSelect,
   exports = [],
   imports = [],
 }: {
@@ -40,12 +41,14 @@ export function CellSide({
   ids: ResourceId[];
   solution: Solution;
   onSearch: (search: string) => void;
+  onSelect: (id: ResourceId) => void;
   exports?: ResourceId[];
   imports?: ResourceId[];
 }) {
   const side = SIDES[dir];
   const forced = dir === 'in' ? imports : exports;
   const pickResource = (id: ResourceId) => {
+    onSelect(id);
     onSearch(side.search(id));
     document
       .getElementById('recipe-search')

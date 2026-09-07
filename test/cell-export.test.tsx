@@ -2,7 +2,7 @@
 import { cleanup, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import state from './assets/uranium.state.json';
 import { cellInterface, type Cell } from '../src/cell.ts';
 import { resolveChosen, resourceName } from '../src/data/index.ts';
@@ -89,6 +89,35 @@ describe('explicit cell imports', () => {
     await user.click(screen.getByRole('button', { name: 'clear explicit import' }));
     expect(screen.queryByText('forced')).toBeNull();
     expect(screen.getByRole('button', { name: 'import shortfall' })).toBeTruthy();
+  });
+});
+
+describe('cell side resource selection', () => {
+  it('selects the clicked side resource in play and searches for its recipes', async () => {
+    const onSearch = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={onSearch}
+      />,
+    );
+
+    const sideResource = document.querySelector<HTMLButtonElement>('.cell-out .resource-button');
+    expect(sideResource).toBeTruthy();
+    await user.click(sideResource!);
+
+    const resource = sideResource!.querySelector<HTMLElement>('[title]')!;
+    const id = resource.title.split(' (')[0];
+    expect(onSearch).toHaveBeenCalledWith(`uses:${id}`);
+    expect(
+      document.querySelector(`[data-in-play-resource="${id}"] [aria-pressed="true"]`),
+    ).toBeTruthy();
   });
 });
 
