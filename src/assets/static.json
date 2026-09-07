@@ -225,7 +225,7 @@
     "item:uranium-238": { "h": "Uranium-238", "z": 100, "x": 0.511 },
     "item:centrifuge": { "h": "Centrifuge", "z": 50, "x": 0.511 },
     "item:uranium-fuel-cell": { "h": "Uranium-235 fuel cell", "z": 50, "x": 0.5471 },
-    "item:depleted-uranium-fuel-cell": { "h": "Depleted uranium fuel cell", "z": 50, "x": 0 },
+    "item:depleted-uranium-fuel-cell": { "h": "Depleted uranium fuel cell", "z": 50, "x": 0.5471 },
     "item:heat-exchanger": { "h": "Heat exchanger", "z": 50, "x": 0.2993 },
     "item:steam-turbine": { "h": "Steam turbine", "z": 10, "x": 0.5482 },
     "item:heat-pipe": { "h": "Heat pipe", "z": 50, "x": 0.2712 },
@@ -5304,6 +5304,38 @@
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+    },
+    "nuclear-reactor": {
+      "h": "Uranium reactor",
+      "k": "reactor",
+      "i": "nuclear-reactor",
+      "c": ["synthetic-reactor:nuclear"],
+      "s": 54,
+      "z": { "width": 5, "height": 5 }
+    },
+    "angels-burner-reactor": {
+      "h": "Fast burner reactor",
+      "k": "reactor",
+      "i": "angels-burner-reactor",
+      "c": ["synthetic-reactor:nuclear"],
+      "s": 160,
+      "z": { "width": 9, "height": 10 }
+    },
+    "bob-nuclear-reactor-2": {
+      "h": "Thorium reactor",
+      "k": "reactor",
+      "i": "bob-nuclear-reactor-2",
+      "c": ["synthetic-reactor:bob-thorium"],
+      "s": 72,
+      "z": { "width": 5, "height": 5 }
+    },
+    "bob-nuclear-reactor-3": {
+      "h": "Deuterium reactor",
+      "k": "reactor",
+      "i": "bob-nuclear-reactor-3",
+      "c": ["synthetic-reactor:bob-deuterium"],
+      "s": 90,
+      "z": { "width": 5, "height": 5 }
     }
   },
   "modules": {

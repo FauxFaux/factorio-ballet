@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { machinesFor } from '../src/data/machines.ts';
 import { staticData } from '../src/data/index.ts';
 import { searchRecipes } from '../src/search.ts';
+import { energyInMegajoules, powerInMegawatts } from '../scripts/synthetic.ts';
 
 /**
  * Against the shipped `static.json`, so these are as much a check on the ingest as on the app: the
@@ -46,6 +47,37 @@ describe('synthetic recipes', () => {
     expect(solid).not.toContain('pumpjack');
     expect(fluid).toContain('pumpjack');
     expect(fluid).not.toContain('electric-mining-drill');
+  });
+
+  it('burns a fuel cell at each compatible reactor input rate', () => {
+    const recipe = staticData.recipes['synthetic:burning-uranium-fuel-cell'];
+    expect(recipe.ingredients).toEqual([{ resource: 'item:uranium-fuel-cell', amount: 1 }]);
+    expect(recipe.products).toEqual([
+      { resource: 'item:depleted-uranium-fuel-cell', amount: { fixed: 1 }, probability: 1 },
+    ]);
+    expect(recipe.duration).toBe(2000);
+
+    const reactors = machinesFor(recipe);
+    expect(reactors.map(({ id }) => id)).toEqual(['nuclear-reactor', 'angels-burner-reactor']);
+    expect(reactors.every(({ machine }) => machine.kind === 'reactor')).toBe(true);
+    expect(recipe.duration / reactors[0]!.machine.speed).toBeCloseTo(2000 / 54);
+    // The fast reactor consumes 160 MW of fuel and emits 40 MW at 25% effectivity. Effectivity is
+    // heat output, so it does not enter this item-flow duration.
+    expect(recipe.duration / reactors[1]!.machine.speed).toBe(12.5);
+  });
+
+  it('keeps reactor fuel categories separate and omits fuels with no spent result', () => {
+    const thorium = staticData.recipes['synthetic:burning-angels-thorium-fuel-cell'];
+    expect(machinesFor(thorium).map(({ id }) => id)).toEqual(['bob-nuclear-reactor-2']);
+    expect(staticData.recipes['synthetic:burning-coal']).toBeUndefined();
+  });
+
+  it('normalises Factorio energy strings to mega-units', () => {
+    expect(energyInMegajoules('2GJ')).toBe(2000);
+    expect(energyInMegajoules('350kJ')).toBeCloseTo(0.35);
+    expect(powerInMegawatts('54MW')).toBe(54);
+    expect(powerInMegawatts('1J')).toBeCloseTo(0.00006);
+    expect(() => energyInMegajoules('lots')).toThrow(/Unsupported Factorio energy value/);
   });
 
   it('turns up in a search for what it makes', () => {

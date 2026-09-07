@@ -2,18 +2,20 @@
  * The sources of a resource which are not recipes.
  *
  * Some of what the game makes has no `data.raw.recipe` behind it at all: an offshore pump conjures
- * fluid out of the tile it stands on, and a mining drill pulls ore out of a patch. Both are
- * conversions with a machine, a duration and a rate — everything a recipe has — so this builds
- * them into recipe-shaped records the rest of the pipeline can treat like any other.
+ * fluid out of the tile it stands on, a mining drill pulls ore out of a patch, and a reactor turns
+ * a fuel cell into its spent result. All are conversions with a machine, a duration and a rate —
+ * everything a recipe has — so this builds them into recipe-shaped records the rest of the
+ * pipeline can treat like any other.
  *
- * They are deliberately marked, not disguised: the ids are `synthetic:pumping-water` /
- * `synthetic:mining-coal`, and the ingest sets `Recipe.synthetic` so the UI can say so.
+ * They are deliberately marked, not disguised: the ids are `synthetic:pumping-water`,
+ * `synthetic:mining-coal` and `synthetic:burning-uranium-fuel-cell`, and the ingest sets
+ * `Recipe.synthetic` so the UI can say so.
  *
  * Two consumers, which is why this is its own module. `scripts/complexity.ts` needs them to reach
  * large parts of the graph at all (water, and Angel's whole mud line), and splits each one back out
  * per machine; `scripts/ingest-data.ts` emits them into `static.json` along with the machines.
  *
- * Still missing, and named in `scripts/complexity.ts` instead: rocket launches and burnt fuel.
+ * Rocket launches are still missing, and named in `scripts/complexity.ts` instead.
  */
 
 import type { BoundingBox, RawData } from 'factorio-raw-types/prototypes';
@@ -22,7 +24,7 @@ import { arr, effectLimits, RProduct, type RIngredient } from './raw-validators.
 import { entriesOf } from '../src/ts.ts';
 import type { Effect, MachineKind, MachineSize } from '../src/types.ts';
 
-/** `pumping_speed` is per tick; every rate in our model is per second. */
+/** Factorio runs at 60 ticks/s; pump speed and joule-spelled power both need that conversion. */
 const TICKS = 60;
 
 /**
@@ -35,7 +37,7 @@ const FLUID_AMOUNT_SCALE = 10;
 /** The game's default for a `resource` naming no category. */
 const DEFAULT_RESOURCE_CATEGORY = 'basic-solid';
 
-/** A machine which runs a synthetic recipe: a mining drill or an offshore pump. */
+/** A machine which runs a synthetic recipe: a mining drill, an offshore pump or a reactor. */
 export interface SyntheticMachine {
   /** Entity prototype id, which is how `Machine` is keyed. */
   id: string;
@@ -52,7 +54,7 @@ export interface SyntheticMachine {
 }
 
 export interface SyntheticRecipe {
-  /** `synthetic:pumping-water`, `synthetic:mining-infinite-angels-ore1`. */
+  /** For example `synthetic:pumping-water` or `synthetic:burning-uranium-fuel-cell`. */
   id: string;
   /**
    * An invented recipe category, the one entry of these machines' `Machine.categories`. Namespaced
@@ -61,7 +63,7 @@ export interface SyntheticRecipe {
    */
   category: string;
   /** How to name it: `<verb> <the game's name for `source` in the `locale` namespace>`. */
-  name: { verb: string; locale: 'fluid' | 'entity'; source: string };
+  name: { verb: string; locale: 'item' | 'fluid' | 'entity'; source: string };
   duration: number;
   /** Raw-shaped, so each consumer can reuse the conversion it already has. */
   ingredients: RIngredient[];
@@ -83,7 +85,7 @@ export function placingItems(raw: RawData): Map<string, string> {
 
 export function syntheticRecipes(raw: RawData): SyntheticRecipe[] {
   const placedBy = placingItems(raw);
-  return [...pumping(raw, placedBy), ...mining(raw, placedBy)];
+  return [...pumping(raw, placedBy), ...mining(raw, placedBy), ...burningFuelCells(raw, placedBy)];
 }
 
 /**
@@ -191,6 +193,85 @@ function* mining(raw: RawData, placedBy: Map<string, string>): Generator<Synthet
       machines,
     };
   }
+}
+
+/**
+ * Reactor fuel cells, one recipe per live item with a spent-cell result.
+ *
+ * A reactor consumes energy rather than performing crafts, but its fuel-cell rate has the same
+ * separable shape as our recipe/machine model:
+ *
+ *     cells / second = reactor consumption (MW) / cell fuel value (MJ)
+ *
+ * Quoting the recipe duration as the fuel value in MJ and the machine speed as its consumption in
+ * MW therefore makes `speed / duration` the exact burn rate, and lets one recipe run in every
+ * reactor accepting its fuel category. `energy_source.effectivity` changes how much of that input
+ * becomes heat; it does not change how quickly the input fuel is consumed. Neighbour bonus changes
+ * heat output too, so neither belongs in this material-flow-only model.
+ *
+ * Chemical fuels without `burnt_result` and fluid-burning reactors are deliberately not folded in:
+ * they are useful heat inputs, but not the item-to-spent-item conversion represented here.
+ */
+function* burningFuelCells(
+  raw: RawData,
+  placedBy: Map<string, string>,
+): Generator<SyntheticRecipe> {
+  const byFuelCategory = new Map<string, SyntheticMachine[]>();
+  for (const [id, reactor] of Object.entries(raw.reactor ?? {})) {
+    const item = placedBy.get(id);
+    if (reactor.hidden || !item || reactor.energy_source.type !== 'burner') continue;
+    for (const category of reactor.energy_source.fuel_categories ?? ['chemical']) {
+      push(byFuelCategory, category, {
+        id,
+        item,
+        kind: 'reactor',
+        speed: powerInMegawatts(reactor.consumption),
+        size: machineSize(reactor.collision_box, id),
+      });
+    }
+  }
+
+  for (const key of ITEM_KEYS) {
+    for (const [id, fuel] of entriesOf(raw[key] ?? {})) {
+      if (fuel.hidden || fuel.parameter || !fuel.burnt_result || !fuel.fuel_value) continue;
+      const fuelCategory = fuel.fuel_category ?? 'chemical';
+      const machines = byFuelCategory.get(fuelCategory);
+      if (!machines?.length) continue;
+
+      yield {
+        id: `synthetic:burning-${id}`,
+        category: `synthetic-reactor:${fuelCategory}`,
+        name: { verb: 'Burning', locale: 'item', source: id },
+        duration: energyInMegajoules(fuel.fuel_value),
+        ingredients: [{ type: 'item', name: id, amount: 1 }],
+        products: [{ type: 'item', name: fuel.burnt_result, amount: 1 }],
+        machines,
+      };
+    }
+  }
+}
+
+/** Parse an energy amount in Factorio's string format and return MJ. */
+export function energyInMegajoules(value: string): number {
+  const { megas, unit } = parseEnergy(value);
+  // Factorio treats watts as joules per second and stores them as joules per 60-tick second.
+  return unit === 'J' ? megas : megas / TICKS;
+}
+
+/** Parse a power in Factorio's string format and return MW. */
+export function powerInMegawatts(value: string): number {
+  const { megas, unit } = parseEnergy(value);
+  // Conversely, a joule spelling on a power field means that many joules each tick.
+  return unit === 'W' ? megas : megas * TICKS;
+}
+
+function parseEnergy(value: string): { megas: number; unit: 'J' | 'W' } {
+  const match = /^(\d+(?:\.\d+)?)([kMGTPEZYRQ]?)([JW])$/.exec(value);
+  if (!match) throw new Error(`Unsupported Factorio energy value: ${value}`);
+  const amount = Number(match[1]);
+  const exponent = ['', 'k', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y', 'R', 'Q'].indexOf(match[2]);
+  if (exponent < 0) throw new Error(`Unsupported Factorio energy multiplier: ${value}`);
+  return { megas: amount * 1e3 ** (exponent - 2), unit: match[3] as 'J' | 'W' };
 }
 
 /** As in the main ingest: collision boxes are slightly inset from the grid footprint. */

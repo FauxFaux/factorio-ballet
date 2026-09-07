@@ -80,7 +80,7 @@ const rid = (x: { type: 'item' | 'fluid'; name: string }): ResourceId => `${x.ty
 interface Rec {
   /** available without research */
   free: boolean;
-  /** not a real recipe: a pump, a miner, a rocket launch, or a fuel cell burning down */
+  /** not a real recipe: a pump, a miner, a reactor burn, or a rocket launch */
   synthetic?: boolean;
   ingredients: ResourceId[];
   products: ResourceId[];
@@ -281,8 +281,9 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
     });
   }
 
-  // Launching and burning are item properties, so only the item subtypes are worth walking — every
-  // one of them extends `ItemPrototype` and so carries both fields.
+  // Launching is an item property, so only the item subtypes are worth walking — every one of them
+  // extends `ItemPrototype` and so carries `rocket_launch_products`. Fuel-cell burning is built by
+  // `syntheticRecipes` below, where its compatible reactor can gate the conversion too.
   for (const key of ITEM_KEYS) {
     for (const [id, item] of entriesOf(raw[key] ?? {})) {
       const launched = arr(item.rocket_launch_products ?? []);
@@ -294,14 +295,6 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
           synthetic: true,
           ingredients: [`item:${id}`, 'item:rocket-silo', 'item:rocket-part'],
           products: launched.map(rid),
-        });
-      }
-      if (item.burnt_result) {
-        out.set(`burn:${id}`, {
-          free: false,
-          synthetic: true,
-          ingredients: [`item:${id}`],
-          products: [`item:${item.burnt_result}`],
         });
       }
     }

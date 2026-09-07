@@ -139,9 +139,10 @@ export interface Recipe {
 
   /**
    * Not a `data.raw.recipe` at all, but something the game does which behaves like one: an offshore
-   * pump conjuring fluid from the tile it stands on, or a mining drill working an ore patch. Built
-   * by `scripts/synthetic.ts`, and flagged here so the UI can say so rather than passing it off as
-   * a recipe you could look up in the game.
+   * pump conjuring fluid from the tile it stands on, a mining drill working an ore patch, or a
+   * reactor burning a fuel cell down to its spent result. Built by `scripts/synthetic.ts`, and
+   * flagged here so the UI can say so rather than passing it off as a recipe you could look up in
+   * the game.
    */
   synthetic?: true;
 
@@ -209,7 +210,7 @@ export interface Resource {
 
 /**
  * Something which can run recipes: an assembler, a furnace, the rocket silo, the player, or — for
- * the synthetic recipes — a mining drill or an offshore pump.
+ * the synthetic recipes — a mining drill, an offshore pump or a reactor.
  */
 export interface Machine {
   human?: string;
@@ -264,7 +265,8 @@ export type MachineKind =
   | 'rocket-silo'
   | 'character'
   | 'mining-drill'
-  | 'offshore-pump';
+  | 'offshore-pump'
+  | 'reactor';
 
 /**
  * One of the five things a module does to the machine it sits in. We model the two which change

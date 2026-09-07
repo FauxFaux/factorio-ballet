@@ -183,14 +183,15 @@ function applyComplexity(
 }
 
 /**
- * The sources which are not recipes — offshore pumps and mining drills — folded in as recipes and
- * machines like any other, and flagged `synthetic` so the UI can distinguish them. See
+ * The sources which are not recipes — offshore pumps, mining drills and reactor fuel cells —
+ * folded in as recipes and machines like any other, and flagged `synthetic` so the UI can
+ * distinguish them. See
  * `scripts/synthetic.ts` for what they are and where the rates come from; `scripts/complexity.ts`
  * builds the same set, which is why the two agree on ids.
  *
- * The machines are new entries here rather than in `handleMachines`: a drill has no
- * `crafting_categories`, so its only categories are the ones the synthetic recipes invent, and a
- * drill covering several resource categories accumulates one per recipe it can run.
+ * The machines are new entries here rather than in `handleMachines`: they have no
+ * `crafting_categories`, so their only categories are the ones the synthetic recipes invent, and a
+ * machine covering several source or fuel categories accumulates one per recipe it can run.
  */
 function addSynthetic(
   v: RawData,

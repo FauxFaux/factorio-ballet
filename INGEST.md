@@ -244,6 +244,35 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
 arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts`.
 
+## Notes for reactors and fuel cells
+
+- **`data.raw.reactor`** — 8 live prototypes in this pack. Their continuous input power is
+  `consumption` (`"54MW"` on `nuclear-reactor`), the fraction of that input emitted as heat is
+  `energy_source.effectivity` (1 when absent), and `neighbour_bonus` multiplies heat output per
+  connected operating neighbour. The accepted item fuels are `energy_source.fuel_categories`,
+  matched against an item's singular `fuel_category`. The burner source defaults to the `chemical`
+  category when its list is absent.
+- **Fuel cells are item prototypes**, and carry `fuel_value` (`"2GJ"` on
+  `uranium-fuel-cell`) and `burnt_result` (`depleted-uranium-fuel-cell`). Ten items in the raw dump
+  have a spent result, but five are disabled Bob's variants; the five live ones are uranium-235,
+  Angel's uranium-234, mixed-oxide, thorium and deuterium cells.
+- **Cell consumption is energy divided by input power.** A 2 GJ cell in the pack's 54 MW uranium
+  reactor lasts `2000 MJ / 54 MJ/s = 37.037 s`; the same cell in Angel's 160 MW fast burner reactor
+  lasts 12.5 s. Its 25% `effectivity` makes the latter's base heat output 40 MW but does not make it
+  consume fuel at 40 MW. `neighbour_bonus` likewise adds heat without consuming more fuel. Neither
+  belongs in the current material-flow model.
+- This factorises exactly into the existing recipe/machine arithmetic. Each synthetic fuel-cell
+  recipe has `duration = fuel_value` in MJ, each promoted reactor has `speed = consumption` in MW,
+  and `duration / speed` is seconds per cell. Categories are
+  `synthetic-reactor:<fuel-category>`, so one uranium recipe can run in both the uranium and fast
+  burner reactors while thorium and deuterium remain on their own reactors.
+- Only burner reactors matched to live item fuels with a `burnt_result` are emitted: 5 recipes over
+  4 reactors in this pack. The two Bob's chemical burner reactors consume ordinary fuels without a
+  spent product, and the two fluid reactors use a fluid energy source; both are heat-production
+  models rather than the item conversion in scope here. `scale_energy_usage` and a full heat buffer
+  can affect whether a reactor is actively consuming at all, but the recipe rate is its continuous
+  running rate, as every other machine rate in the planner is.
+
 ## Progression ("how far through the game is this?")
 
 `scripts/complexity.ts` scores every resource and recipe 0–1 for how deep into the tech tree you
@@ -278,20 +307,20 @@ become reachable at all:
 - `rocket_launch_products` — the only source of space science in a pre-Space-Age pack.
 - `burnt_result` — depleted fuel cells.
 
-The first two are now built by **`scripts/synthetic.ts`** and shared with the ingest; see
-[Synthetic recipes](#synthetic-recipes) for the shape and the rates. The other two stay inside
-`complexity.ts`.
+Mining, pumping and spent fuel are now built by **`scripts/synthetic.ts`** and shared with the
+ingest; see [Synthetic recipes](#synthetic-recipes) for the shape and the rates. Rocket launches
+stay inside `complexity.ts`.
 
 Unreachable resources then get a second pass pricing them on their unlock technology alone. That
-list is a completeness check, not a feature: with all four sources modelled it is 2 (bob fuel cells
-Angel's replaced), and a long list means another source like the seafloor pump is still missing.
+list is a completeness check, not a feature: a long list means another source like the seafloor pump
+is still missing.
 
 ## Synthetic recipes
 
-`scripts/synthetic.ts` turns the two machine-shaped non-recipe sources into `Recipe`s and `Machine`s
-so the app can show them: `synthetic:pumping-water` (2 in this pack, one per fluid a pump can carry)
-and `synthetic:mining-coal` (17, one per placed resource patch), over 21 machines. Both
-`ingest-data.ts` and `complexity.ts` call it, which is what keeps their ids in step.
+`scripts/synthetic.ts` turns the three machine-shaped non-recipe source families into `Recipe`s and
+`Machine`s so the app can show them: pumps (2 recipes in this pack), miners (17 recipes) and reactor
+fuel cells (5 recipes), over 25 machines in total. Both `ingest-data.ts` and `complexity.ts` call it,
+which is what keeps their ids in step.
 
 The rate conversions are the fiddly part, and all three follow from `Machine.speed` meaning "crafts
 per second of a one-second recipe":
@@ -302,6 +331,9 @@ per second of a one-second recipe":
 - **Miners.** `mining_speed` per second against `minable.mining_time` seconds is already the model,
   so both go across as they are. Patch richness is not modelled: a pumpjack's real output scales
   with the well's yield percentage, and these are the 100% numbers.
+- **Reactors.** A fuel's `fuel_value` in MJ divided by a reactor's `consumption` in MW is seconds per
+  cell, so those become recipe duration and machine speed respectively. Burner effectivity and
+  neighbour bonus only change heat output. Only item fuels with `burnt_result` are included.
 - **`minable.fluid_amount` is stated ten times too large.** The prototype value must be divisible by
   ten and the game divides it out again, so the `10` on every infinite ore is one acid per ore.
 

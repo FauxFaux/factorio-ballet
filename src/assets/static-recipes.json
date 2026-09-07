@@ -15719,12 +15719,7 @@
         { "r": 982, "a": { "f": 3 }, "p": 1 },
         { "r": 981, "a": { "f": 2 }, "p": 0.05 },
         { "r": 1629, "a": { "f": 60 }, "p": 1, "i": 60 },
-        {
-          "r": 985,
-          "a": { "f": 1 },
-          "p": 0.13333333333333333,
-          "i": 1
-        }
+        { "r": 985, "a": { "f": 1 }, "p": 0.13333333333333333, "i": 1 }
       ],
       "d": 800,
       "c": ["angels-centrifuging-3"],
@@ -27863,6 +27858,51 @@
       "c": ["synthetic-mine:basic-fluid"],
       "s": true,
       "x": 0.324
+    },
+    "synthetic:burning-uranium-fuel-cell": {
+      "h": "Burning Uranium-235 fuel cell",
+      "i": [{ "r": 192, "a": 1 }],
+      "p": [{ "r": 193, "a": { "f": 1 }, "p": 1 }],
+      "d": 2000,
+      "c": ["synthetic-reactor:nuclear"],
+      "s": true,
+      "x": 0.5471
+    },
+    "synthetic:burning-angels-uranium-fuel-cell": {
+      "h": "Burning Uranium-234 fuel cell",
+      "i": [{ "r": 988, "a": 1 }],
+      "p": [{ "r": 193, "a": { "f": 1 }, "p": 1 }],
+      "d": 1500,
+      "c": ["synthetic-reactor:nuclear"],
+      "s": true,
+      "x": 0.5471
+    },
+    "synthetic:burning-angels-mixed-oxide-cell": {
+      "h": "Burning Mixed-oxide (MOX) fuel cell",
+      "i": [{ "r": 989, "a": 1 }],
+      "p": [{ "r": 990, "a": { "f": 1 }, "p": 1 }],
+      "d": 8000,
+      "c": ["synthetic-reactor:nuclear"],
+      "s": true,
+      "x": 0.7025
+    },
+    "synthetic:burning-angels-thorium-fuel-cell": {
+      "h": "Burning Thorium fuel cell",
+      "i": [{ "r": 991, "a": 1 }],
+      "p": [{ "r": 992, "a": { "f": 1 }, "p": 1 }],
+      "d": 15000,
+      "c": ["synthetic-reactor:bob-thorium"],
+      "s": true,
+      "x": 0.7754
+    },
+    "synthetic:burning-angels-deuterium-fuel-cell": {
+      "h": "Burning Deuterium fuel cell",
+      "i": [{ "r": 993, "a": 1 }],
+      "p": [{ "r": 994, "a": { "f": 1 }, "p": 1 }],
+      "d": 80000,
+      "c": ["synthetic-reactor:bob-deuterium"],
+      "s": true,
+      "x": 0.8015
     }
   }
 }
