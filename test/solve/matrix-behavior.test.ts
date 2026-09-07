@@ -96,9 +96,11 @@ const fixtures: Fixture[] = [
     complete: true,
     notes: [
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The pinned counts cannot balance all internal resources together: change or clear a count.',
       },
     ],
     balance: [[X, -1]],
@@ -112,9 +114,11 @@ const fixtures: Fixture[] = [
       { kind: 'contested', entry: 0, resource: X },
       { kind: 'contested', entry: 1, resource: X },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ],
     balance: [[X, -1]],
@@ -127,9 +131,11 @@ const fixtures: Fixture[] = [
     notes: [
       { kind: 'stranded', entry: 2 },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ],
     balance: [[X, 0]],
@@ -142,9 +148,11 @@ const fixtures: Fixture[] = [
     notes: [
       { kind: 'stranded', entry: 0 },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ],
     balance: [[Y, 7]],

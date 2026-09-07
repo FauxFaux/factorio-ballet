@@ -41,7 +41,7 @@ function solveMatrix(rows: SolveRow[]): Solution {
   }
 
   if (result.status === 'inconsistent' || result.status === 'underdetermined') {
-    return fallback(rows);
+    return fallback(rows, diagnosticText(result));
   }
 
   const counts = result.candidate;
@@ -76,7 +76,7 @@ function solveMatrix(rows: SolveRow[]): Solution {
   };
 }
 
-function fallback(rows: SolveRow[]): Solution {
+function fallback(rows: SolveRow[], failure: string): Solution {
   const solution = dumbSolver.solve(rows);
   if (rows.length === 0) return solution;
   return {
@@ -84,9 +84,10 @@ function fallback(rows: SolveRow[]): Solution {
     notes: [
       ...solution.notes,
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure,
       },
     ],
   };

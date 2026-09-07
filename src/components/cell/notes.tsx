@@ -17,10 +17,11 @@ export function WarnIcon({ label }: { label?: string }) {
  * ⚠ on a row points at the same sentence; this is the version you can read without hovering.
  */
 export function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution }) {
-  if (solution.notes.length === 0) return null;
+  const notes = solution.notes.filter((note) => note.kind !== 'fallback');
+  if (notes.length === 0) return null;
   return (
     <ul class="cell-notes">
-      {solution.notes.map((note) => (
+      {notes.map((note) => (
         <li
           key={`${note.entry}:${note.kind}`}
           class={isProblem(note) ? 'cell-note is-problem' : 'cell-note'}
@@ -30,5 +31,20 @@ export function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution 
         </li>
       ))}
     </ul>
+  );
+}
+
+/** A matrix fallback affects the whole cell, so it leads the cell rather than hiding below rows. */
+export function SolverFallbackNotice({ solution }: { solution: Solution }) {
+  const note = solution.notes.find((candidate) => candidate.kind === 'fallback');
+  if (!note || note.kind !== 'fallback') return null;
+  return (
+    <aside class="cell-solver-fallback" role="alert">
+      <WarnIcon />
+      <div>
+        <div>{note.detail}</div>
+        <div class="cell-solver-fallback-detail">{note.failure}</div>
+      </div>
+    </aside>
   );
 }

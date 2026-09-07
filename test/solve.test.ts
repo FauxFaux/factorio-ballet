@@ -247,9 +247,11 @@ describe('solveCell', () => {
     expect(solveCell(cell, 0).notes).toEqual([
       { kind: 'stranded', entry: 1 },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ]);
   });

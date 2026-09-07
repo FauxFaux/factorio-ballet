@@ -65,9 +65,11 @@ describe('matrixSolver', () => {
     expect(answer.complete).toBe(true);
     expect(answer.notes).toEqual([
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The pinned counts cannot balance all internal resources together: change or clear a count.',
       },
     ]);
   });
@@ -80,9 +82,11 @@ describe('matrixSolver', () => {
       { kind: 'contested', entry: 0, resource: X },
       { kind: 'contested', entry: 1, resource: X },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ]);
   });
@@ -93,9 +97,11 @@ describe('matrixSolver', () => {
     expect(answer.notes).toEqual([
       { kind: 'stranded', entry: 2 },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ]);
   });
@@ -106,9 +112,11 @@ describe('matrixSolver', () => {
     expect(answer.notes).toEqual([
       { kind: 'stranded', entry: 0 },
       {
-        kind: 'solver',
+        kind: 'fallback',
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
+        failure:
+          'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.',
       },
     ]);
   });

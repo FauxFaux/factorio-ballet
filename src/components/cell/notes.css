@@ -20,3 +20,27 @@
 .cell-note .warn-icon {
   margin-right: 4px;
 }
+
+.cell-solver-fallback {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  margin-top: 8px;
+  padding: 8px 10px;
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(248, 113, 113, 0.6);
+  border-radius: 4px;
+}
+
+.cell-solver-fallback .warn-icon {
+  flex: 0 0 auto;
+  margin-top: 0.2em;
+}
+
+.cell-solver-fallback-detail {
+  margin-top: 2px;
+  font-family: var(--mono);
+  color: var(--text-h);
+  font-size: 0.7778rem;
+}

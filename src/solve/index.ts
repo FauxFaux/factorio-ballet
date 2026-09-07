@@ -31,7 +31,8 @@ export type SolveNote =
   | { kind: 'contested'; entry: number; resource: ResourceId }
   | { kind: 'conflict'; entry: number; resource: ResourceId; needed: number; used: number }
   | { kind: 'stranded'; entry: number }
-  | { kind: 'solver'; entry: number; detail: string };
+  | { kind: 'solver'; entry: number; detail: string }
+  | { kind: 'fallback'; entry: number; detail: string; failure: string };
 
 /** One row of a cell, reduced to the only thing the arithmetic cares about. */
 export interface SolveRow {
@@ -107,6 +108,8 @@ export function noteText(note: SolveNote): string {
     case 'stranded':
       return 'Nothing in the rest of the cell settles how many of these there are: type a count, or add the recipe on the other end of one of its resources.';
     case 'solver':
+      return note.detail;
+    case 'fallback':
       return note.detail;
   }
 }

@@ -15,7 +15,7 @@ import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
-import { SolveNotes } from './notes.tsx';
+import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
 import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
@@ -106,6 +106,7 @@ export function CellBox({
       <div class="cell-body">
         <CellSide dir="in" ids={iface.inputs} solution={solution} onSearch={onSearch} />
         <div class="cell-middle">
+          <SolverFallbackNotice solution={solution} />
           {cell.entries.length === 0 ? (
             <p class="recipe-hint">Add a recipe from the search.</p>
           ) : (
