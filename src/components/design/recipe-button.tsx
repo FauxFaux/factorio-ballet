@@ -48,12 +48,13 @@ export function RecipeButton({
         if (target === undefined || !machine) return;
         onChange((previous) => reconcileAssemblers(previous, entry.recipe, target, machine.size));
       }}
-    >
-      <span
-        class="cell-design-recipe-icon"
-        style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
-        aria-hidden="true"
-      />
+      >
+      <span class="cell-design-recipe-icon" aria-hidden="true">
+        <span
+          class="cell-design-recipe-icon-sprite"
+          style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
+        />
+      </span>
     </button>
   );
 }
