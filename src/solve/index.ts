@@ -6,6 +6,7 @@ import { fmt } from '../ts.ts';
 import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
 import { matrixSolver } from './matrix.ts';
+import { boundarySuggestions, type BoundarySuggestion } from './boundary-suggestions.ts';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -23,6 +24,8 @@ export interface Solution {
   complete: boolean;
   /** What the solver assumed, and everywhere it gave up; see {@link noteText}. */
   notes: SolveNote[];
+  /** Verified boundary alternatives, attached to resources rather than recipe rows. */
+  boundarySuggestions?: BoundarySuggestion[];
 }
 
 /** Something the user needs to know about their cell, against the row it happened to. */
@@ -73,7 +76,6 @@ export function solveCell(
   const exports = new Set(cell.exports);
   const imports = new Set(cell.imports);
   const external = new Set([...exports, ...imports]);
-  if (!external.size) return solver.solve(rows);
   // Explicit boundary resources do not set counts; retain their full physical flows below.
   const solution = solver.solve(
     rows.map((row) => ({
@@ -101,7 +103,14 @@ export function solveCell(
       });
     }
   }
+  solution.boundarySuggestions = boundarySuggestions(rows, solution, solver, imports, exports);
   return solution;
+}
+
+/** Explain an alternative without presenting its predicted rate as the current balance. */
+export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
+  const { resource, direction, rate, requiresMatrix } = suggestion;
+  return `Allow ${resourceName(resource)} ${direction}: recalculating with this boundary balances all other internal resources, with ${fmt(Math.abs(rate))}/s ${direction === 'export' ? 'leaving' : 'supplied to'} the cell. Choose “${direction === 'export' ? 'export surplus' : 'import shortfall'}” if that matches your factory.${requiresMatrix ? ' This alternative needs the Matrix solver; the dumb solver still cannot balance it.' : ''}`;
 }
 
 function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {

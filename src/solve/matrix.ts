@@ -124,7 +124,7 @@ function diagnosticText(result: MatrixResult, fallback?: string): string {
     return 'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.';
   }
   if (result.status === 'inconsistent') {
-    return 'The pinned counts cannot balance all internal resources together: change or clear a count.';
+    return 'The pinned counts cannot balance all internal resources together: review resource warnings for an import/export alternative, or change or clear a count.';
   }
   if (result.negativeEntries.length > 0) {
     return 'Balancing these recipes requires a negative machine count, so this selection is not feasible.';

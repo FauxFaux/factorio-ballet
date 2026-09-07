@@ -2,7 +2,7 @@ import './in-play.css';
 import { useMemo } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { resourceName } from '../../data/index.ts';
-import type { Solution } from '../../solve/index.ts';
+import { boundarySuggestionText, type Solution } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceIcon } from '../resource.tsx';
@@ -60,6 +60,26 @@ export function InPlayRow({
           />
         );
       })}
+      {solution.boundarySuggestions?.length ? (
+        <div class="cell-in-play-resource-details">
+          <p class="cell-export-note">
+            <WarnIcon /> These internal balances cannot all close together. A resource can appear
+            balanced here while forcing a shortfall elsewhere. Review a verified alternative (choose
+            one):
+            {solution.boundarySuggestions.map((suggestion) => (
+              <button
+                key={suggestion.resource}
+                type="button"
+                class="cell-btn cell-in-play-resource-action"
+                title={boundarySuggestionText(suggestion)}
+                onClick={() => onSelect(suggestion.resource)}
+              >
+                {suggestion.direction} {resourceName(suggestion.resource)}
+              </button>
+            ))}
+          </p>
+        </div>
+      ) : null}
       {selected ? (
         <InPlayDetails
           id={selected}
@@ -95,6 +115,8 @@ function InPlayChip({
   onClick: () => void;
 }) {
   const rate = solution.balance.get(id) ?? 0;
+  const suggestion = solution.boundarySuggestions?.find((candidate) => candidate.resource === id);
+  const unbalanced = !input && !output && rate !== 0;
 
   return (
     <div class="cell-in-play-entry" data-in-play-resource={id}>
@@ -107,13 +129,21 @@ function InPlayChip({
         onClick={onClick}
       >
         <ResourceIcon id={id} />
-        {!input && !output && rate !== 0 ? (
+        {unbalanced || suggestion ? (
           <span
             class="cell-leftover"
-            title={`${resourceName(id)} is unbalanced. Open its details to review supply and consumption or allow ${rate > 0 ? 'surplus export' : 'shortfall import'}.`}
+            title={
+              suggestion
+                ? boundarySuggestionText(suggestion)
+                : `${resourceName(id)} is unbalanced. Open its details to review supply and consumption or allow ${rate > 0 ? 'surplus export' : 'shortfall import'}.`
+            }
           >
-            <WarnIcon /> {rate > 0 ? '+' : '−'}
-            {fmt(Math.abs(rate))}
+            <WarnIcon
+              label={
+                suggestion ? `Review ${suggestion.direction} for ${resourceName(id)}` : undefined
+              }
+            />
+            {unbalanced ? `${rate > 0 ? '+' : '−'}${fmt(Math.abs(rate))}` : null}
           </span>
         ) : null}
       </button>
@@ -163,6 +193,7 @@ function InPlayDetails({
       onToggleImport={onToggleImport}
       onToggleExport={onToggleExport}
       imbalance={!input && !output ? rate : undefined}
+      suggestion={solution.boundarySuggestions?.find((candidate) => candidate.resource === id)}
       solved={solution.complete}
       onRecipeHover={onRecipeHover}
       onSearch={onSearch}

@@ -100,7 +100,7 @@ const fixtures: Fixture[] = [
         entry: 0,
         detail: 'The matrix solver returned an error, so the dumb solver was used instead.',
         failure:
-          'The pinned counts cannot balance all internal resources together: change or clear a count.',
+          'The pinned counts cannot balance all internal resources together: review resource warnings for an import/export alternative, or change or clear a count.',
       },
     ],
     balance: [[X, -1]],

@@ -4,6 +4,8 @@ import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import type { InternalConnections, InternalFlow } from './internal-calc.ts';
 import { WarnIcon } from './notes.tsx';
+import { boundarySuggestionText } from '../../solve/index.ts';
+import type { BoundarySuggestion } from '../../solve/boundary-suggestions.ts';
 import {
   PackageDependenciesIcon,
   PackageDependentsIcon,
@@ -22,6 +24,7 @@ export function InPlayConnectionsView({
   onToggleImport,
   onToggleExport,
   imbalance,
+  suggestion,
   onRecipeHover,
   onSearch,
 }: {
@@ -35,6 +38,7 @@ export function InPlayConnectionsView({
   onToggleImport?: () => void;
   onToggleExport?: () => void;
   imbalance?: number;
+  suggestion?: BoundarySuggestion;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
 }) {
@@ -49,6 +53,7 @@ export function InPlayConnectionsView({
       onToggleImport={onToggleImport}
       onToggleExport={onToggleExport}
       imbalance={imbalance}
+      suggestion={suggestion}
     />
   );
 
@@ -83,6 +88,7 @@ function ResourceDetails({
   onToggleImport,
   onToggleExport,
   imbalance,
+  suggestion,
 }: {
   id: ResourceId;
   stackSize?: number;
@@ -92,6 +98,7 @@ function ResourceDetails({
   onToggleImport?: () => void;
   onToggleExport?: () => void;
   imbalance?: number;
+  suggestion?: BoundarySuggestion;
 }) {
   return (
     <div class="cell-in-play-resource-details">
@@ -159,6 +166,11 @@ function ResourceDetails({
           </button>
         ) : null}
       </span>
+      {suggestion ? (
+        <p class="cell-export-note">
+          <WarnIcon /> {boundarySuggestionText(suggestion)}
+        </p>
+      ) : null}
       {forcedImport ? (
         <p class="cell-export-note">
           Explicit import: shortfall is supplied externally; recipes can still produce this
