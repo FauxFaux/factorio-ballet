@@ -1,4 +1,5 @@
 .cell-design-column {
+  --cell-design-tile-size: 40px;
   --cell-design-paper: midnightblue;
   --cell-design-grid: cornflowerblue;
   --cell-design-grid-major: lightsteelblue;
@@ -8,9 +9,39 @@
   --cell-design-control-text: aliceblue;
 
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 6px;
   min-width: 0;
+  overflow: hidden;
+  background-color: var(--cell-design-paper);
+  border: 1px solid var(--cell-design-control-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.cell-design-toolbar {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.cell-design-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.cell-design-world {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-auto-columns: var(--cell-design-tile-size);
+  grid-auto-rows: var(--cell-design-tile-size);
+  place-content: start;
+  transform: translate(var(--cell-design-pan-x, 0), var(--cell-design-pan-y, 0))
+    scale(var(--cell-design-zoom, 1));
+  transform-origin: top left;
   background-color: var(--cell-design-paper);
   background-image:
     radial-gradient(
@@ -31,16 +62,13 @@
     repeating-linear-gradient(
       to right,
       color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
-      transparent 1px 40px
+      transparent 1px var(--cell-design-tile-size)
     ),
     repeating-linear-gradient(
       to bottom,
       color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
-      transparent 1px 40px
+      transparent 1px var(--cell-design-tile-size)
     );
-  border: 1px solid var(--cell-design-control-border);
-  border-radius: 6px;
-  padding: 8px 12px;
 }
 
 .cell-design-column h3 {
@@ -56,6 +84,26 @@
   min-width: 0;
   flex-wrap: wrap;
   gap: 4px;
+}
+
+.cell-design-assembler {
+  z-index: 1;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  place-items: center;
+  margin: 2px;
+  background: color-mix(in srgb, var(--cell-design-control) 82%, transparent);
+  border: 2px solid var(--cell-design-control-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 35%);
+}
+
+.cell-design-assembler-icon {
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 70%));
 }
 
 .cell-design-recipe {
