@@ -45,6 +45,13 @@ export function InPlayRow({
     onRecipeHover(undefined);
   };
 
+  const applyBoundarySuggestion = (suggestion: NonNullable<Solution['boundarySuggestions']>[number]) => {
+    onSelect(suggestion.resource);
+    onRecipeHover(undefined);
+    if (suggestion.direction === 'import') onToggleImport?.(suggestion.resource);
+    else onToggleExport?.(suggestion.resource);
+  };
+
   return (
     <div class="cell-in-play" title="Resources in play in this cell">
       {ids.map((id) => {
@@ -72,7 +79,7 @@ export function InPlayRow({
                 type="button"
                 class="cell-btn cell-in-play-resource-action"
                 title={boundarySuggestionText(suggestion)}
-                onClick={() => onSelect(suggestion.resource)}
+                onClick={() => applyBoundarySuggestion(suggestion)}
               >
                 <ResourceIcon id={suggestion.resource} />
                 {suggestion.direction} {resourceName(suggestion.resource)}

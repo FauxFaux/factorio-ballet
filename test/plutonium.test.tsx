@@ -64,7 +64,7 @@ describe('plutonium boundary diagnosis', () => {
     ).toBe(true);
   });
 
-  it('opens the balanced resource warning and clears it after enabling export', async () => {
+  it('applies a boundary suggestion while opening its resource details', async () => {
     function Example() {
       return (
         <CellBox
@@ -84,9 +84,8 @@ describe('plutonium boundary diagnosis', () => {
     expect(within(chip).getByLabelText(`Review export for ${resourceName(u238)}`)).toBeTruthy();
     await user.click(screen.getByRole('button', { name: `export ${resourceName(u238)}` }));
     expect(
-      screen.getByText(/recalculating with this boundary balances all other internal resources/),
-    ).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'export surplus' }));
+      screen.queryByText(/recalculating with this boundary balances all other internal resources/),
+    ).toBeNull();
     expect(screen.queryByText(/These internal balances cannot all close together/)).toBeNull();
     expect(screen.queryByLabelText(`Review export for ${resourceName(u238)}`)).toBeNull();
     expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
