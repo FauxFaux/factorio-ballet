@@ -283,7 +283,7 @@ describe('DesignColumn', () => {
     expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
   });
 
-  it('draws an unbroken belt path and infers its direction from the drag', () => {
+  it('keeps a belt drag straight until the cursor is three tiles off track', () => {
     let column: DesignColumnData = { entities: [] };
     render(
       <DesignColumn
@@ -305,14 +305,23 @@ describe('DesignColumn', () => {
 
     fireEvent.pointerDown(viewport, { button: 0, pointerId: 1, clientX: 13, clientY: 25 });
     fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 37, clientY: 25 });
-    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 37, clientY: 37 });
-    fireEvent.pointerUp(viewport, { pointerId: 1, clientX: 37, clientY: 37 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 37, clientY: 49 });
+
+    expect(column.entities).toEqual([
+      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 3, y: 2 }, direction: 'east' },
+    ]);
+
+    fireEvent.pointerUp(viewport, { pointerId: 1, clientX: 37, clientY: 61 });
 
     expect(column.entities).toEqual([
       { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
       { kind: 'belt', position: { x: 2, y: 2 }, direction: 'east' },
       { kind: 'belt', position: { x: 3, y: 2 }, direction: 'south' },
       { kind: 'belt', position: { x: 3, y: 3 }, direction: 'south' },
+      { kind: 'belt', position: { x: 3, y: 4 }, direction: 'south' },
+      { kind: 'belt', position: { x: 3, y: 5 }, direction: 'south' },
     ]);
   });
 

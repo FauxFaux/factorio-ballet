@@ -19,7 +19,8 @@ import { RecipeButton } from './recipe-button.tsx';
 
 type CursorMode = 'pan' | 'belt' | 'erase';
 type PanDrag = { pointerId: number; x: number; y: number };
-type BeltDrag = { pointerId: number; position: DesignPosition };
+type BeltAxis = 'horizontal' | 'vertical';
+type BeltDrag = { pointerId: number; position: DesignPosition; axis?: BeltAxis };
 type AssemblerDrag = {
   pointerId: number;
   x: number;
@@ -125,10 +126,11 @@ export function DesignColumn({
   const extendBeltDrag = (pointerId: number, position: DesignPosition) => {
     const previous = beltDrag.current;
     if (!previous || previous.pointerId !== pointerId) return;
-    const positions = cardinalPath(previous.position, position);
+    const next = straightBeltPath(previous, position);
+    const { positions } = next;
     if (positions.length === 0) return;
     onChange((current) => paintBelts(current, previous.position, positions));
-    beltDrag.current = { pointerId, position: positions.at(-1)! };
+    beltDrag.current = { pointerId, position: next.position, axis: next.axis };
   };
 
   return (
@@ -309,6 +311,36 @@ function cardinalPath(from: DesignPosition, to: DesignPosition): DesignPosition[
     path.push(current);
   }
   return path;
+}
+
+/**
+ * Keep the current belt run straight until the pointer has clearly moved away
+ * from it. This makes small perpendicular pointer wobble harmless while
+ * dragging a long row or column of belts.
+ */
+function straightBeltPath(
+  drag: BeltDrag,
+  to: DesignPosition,
+): { axis: BeltAxis; position: DesignPosition; positions: DesignPosition[] } {
+  const axis =
+    drag.axis ??
+    (Math.abs(to.x - drag.position.x) >= Math.abs(to.y - drag.position.y)
+      ? 'horizontal'
+      : 'vertical');
+  const offTrack =
+    axis === 'horizontal' ? Math.abs(to.y - drag.position.y) : Math.abs(to.x - drag.position.x);
+  const onTrack =
+    axis === 'horizontal' ? { x: to.x, y: drag.position.y } : { x: drag.position.x, y: to.y };
+
+  if (offTrack < 3) {
+    return { axis, position: onTrack, positions: cardinalPath(drag.position, onTrack) };
+  }
+
+  return {
+    axis: axis === 'horizontal' ? 'vertical' : 'horizontal',
+    position: to,
+    positions: [...cardinalPath(drag.position, onTrack), ...cardinalPath(onTrack, to)],
+  };
 }
 
 function paintBelts(
