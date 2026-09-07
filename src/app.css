@@ -67,4 +67,8 @@
   .resource-list {
     flex: none;
   }
+
+  .void-path {
+    flex: none;
+  }
 }

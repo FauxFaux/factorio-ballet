@@ -1,0 +1,43 @@
+import { describe, expect, it } from 'vitest';
+import { staticData } from '../src/data/index.ts';
+import type { Recipe, ResourceId } from '../src/types.ts';
+import { voidPlans } from '../src/void-path.ts';
+
+const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
+  ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),
+  products: products.map((resource) => ({ resource, amount: { fixed: 1 }, probability: 1 })),
+  duration: 1,
+  categories: ['crafting'],
+});
+
+describe('voidPlans', () => {
+  it('prefers a closed route without unresolved coproducts', () => {
+    const waste = 'item:waste';
+    const intermediate = 'item:intermediate';
+    const unwanted = 'item:unwanted';
+    const water = 'fluid:water';
+    const plans = voidPlans(waste, {
+      recipes: {
+        dirty: recipe([waste], [intermediate, unwanted]),
+        clean: recipe([waste, water], [intermediate]),
+        pump: recipe([], [water]),
+        void: recipe([intermediate], []),
+      },
+    });
+
+    expect(plans[0]?.recipes).toEqual(['pump', 'clean', 'void']);
+    expect(plans.some((plan) => plan.recipes.includes('dirty'))).toBe(false);
+  });
+
+  it('finds the expected crushed-slag route', () => {
+    const plan = voidPlans('item:angels-slag', staticData).find(({ recipes }) =>
+      [
+        'angels-stone-crushed',
+        'angels-water-mineralized',
+        'synthetic:pumping-water',
+        'angels-water-void-angels-water-mineralized',
+      ].every((id) => recipes.includes(id)),
+    );
+    expect(plan).toBeDefined();
+  });
+});

@@ -1,9 +1,9 @@
 import './app.css';
-import { useMemo } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.ts';
 import { resolveChosen } from './data/index.ts';
 import { field, type State } from './ts.ts';
-import type { MachineId } from './types.ts';
+import type { MachineId, ResourceId } from './types.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
@@ -13,8 +13,10 @@ import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
 import { ResourceList } from './components/resource-list.tsx';
 import { UnlitFilter } from './components/unlit-module-icon.tsx';
+import { VoidPath } from './components/void-path.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
+  const [selectedResource, setSelectedResource] = useState<ResourceId>();
   const [us, setUs] = uss;
   const recipeSearch = field(uss, 'cs');
   const gp = field(uss, 'gp');
@@ -83,7 +85,10 @@ export function App({ uss }: { uss: State<UrlState> }) {
         <ResourceList
           search={field(uss, 'rs')}
           progress={progress}
-          onPick={(id) => recipeSearch[1](`makes:${id}`)}
+          onPick={(id) => {
+            setSelectedResource(id);
+            recipeSearch[1](`makes:${id}`);
+          }}
         />
         <RecipeList
           search={recipeSearch}
@@ -92,6 +97,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
           onAdd={addRecipe}
           inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
         />
+        <VoidPath resource={selectedResource} />
       </div>
     </main>
   );
