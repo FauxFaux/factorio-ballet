@@ -28,7 +28,7 @@ export function CellDesign({
     if (!design.columns) return;
 
     const updateColumnCount = () => {
-      const nextCount = Math.max(1, Math.floor((element.clientWidth + 8) / (600 + 8)));
+      const nextCount = Math.min(3, Math.max(1, Math.floor((element.clientWidth + 8) / (600 + 8))));
       setColumnCount(nextCount);
       setDesign((previous) => {
         const missing = nextCount - previous.columns.length;
@@ -58,7 +58,7 @@ export function CellDesign({
         class="cell-design-surface"
         style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
       >
-        {design.columns.map((column, index) => (
+        {design.columns.slice(0, columnCount).map((column, index) => (
           <DesignColumn
             key={index}
             index={index}
