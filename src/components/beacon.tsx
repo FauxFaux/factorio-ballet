@@ -104,7 +104,10 @@ export function BeaconPicker({
             }
             role="option"
             aria-selected={choice === null}
-            title="No beacons, however far through the game you are: speed modules go in the machine's own slots and nowhere else"
+            title={
+              'No beacons, however far through the game you are: ' +
+              "speed modules go in the machine's own slots and nowhere else"
+            }
             onClick={() => choose(null)}
           >
             <UnlitBeacon class="module-icon" />

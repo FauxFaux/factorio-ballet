@@ -94,12 +94,17 @@ export function solveCell(
     const invalidImport = imports.has(resource) && rate > 1e-9;
     if (invalidExport || invalidImport) {
       solution.complete = false;
+      const boundary = invalidExport ? 'export' : 'import';
+      const imbalance = invalidExport
+        ? `shortfall of ${fmt(-rate)}/s`
+        : `surplus of ${fmt(rate)}/s`;
+      const remedy = invalidExport ? 'Add supply' : 'Add consumption';
       solution.notes.push({
         kind: 'solver',
         entry: 0,
-        detail: invalidExport
-          ? `${resourceName(resource)} is marked for export but has a shortfall of ${fmt(-rate)}/s. Add supply or clear its explicit export.`
-          : `${resourceName(resource)} is marked for import but has a surplus of ${fmt(rate)}/s. Add consumption or clear its explicit import.`,
+        detail:
+          `${resourceName(resource)} is marked for ${boundary} but has a ${imbalance}. ` +
+          `${remedy} or clear its explicit ${boundary}.`,
       });
     }
   }
@@ -110,7 +115,18 @@ export function solveCell(
 /** Explain an alternative without presenting its predicted rate as the current balance. */
 export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
   const { resource, direction, rate, requiresMatrix } = suggestion;
-  return `Allow ${resourceName(resource)} ${direction}: recalculating with this boundary balances all other internal resources, with ${fmt(Math.abs(rate))}/s ${direction === 'export' ? 'leaving' : 'supplied to'} the cell. Choose “${direction === 'export' ? 'export surplus' : 'import shortfall'}” if that matches your factory.${requiresMatrix ? ' This alternative needs the Matrix solver; the dumb solver still cannot balance it.' : ''}`;
+  const boundaryRate = `${fmt(Math.abs(rate))}/s ${
+    direction === 'export' ? 'leaving' : 'supplied to'
+  } the cell.`;
+  const choice = direction === 'export' ? 'export surplus' : 'import shortfall';
+  const matrixNote = requiresMatrix
+    ? ' This alternative needs the Matrix solver; the dumb solver still cannot balance it.'
+    : '';
+  return (
+    `Allow ${resourceName(resource)} ${direction}: recalculating with this boundary ` +
+    `balances all other internal resources, with ${boundaryRate} Choose “${choice}” ` +
+    `if that matches your factory.${matrixNote}`
+  );
 }
 
 function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {
@@ -141,13 +157,25 @@ export function isProblem(note: SolveNote): boolean {
 export function noteText(note: SolveNote): string {
   switch (note.kind) {
     case 'seeded':
-      return 'Nothing was pinned, so this is taken to be one machine; type a count on any row to scale the cell against it instead.';
+      return (
+        'Nothing was pinned, so this is taken to be one machine; ' +
+        'type a count on any row to scale the cell against it instead.'
+      );
     case 'contested':
-      return `This and another row could both balance ${resourceName(note.resource)}, and picking between them is not the solver's call: type a count on one of them.`;
+      return (
+        `This and another row could both balance ${resourceName(note.resource)}, ` +
+        "and picking between them is not the solver's call: type a count on one of them."
+      );
     case 'conflict':
-      return `${fmt(note.needed)} would balance ${resourceName(note.resource)}, but ${fmt(note.used)} is needed elsewhere, so ${resourceName(note.resource)} is left over.`;
+      return (
+        `${fmt(note.needed)} would balance ${resourceName(note.resource)}, ` +
+        `${fmt(note.used)} is needed elsewhere, so ${resourceName(note.resource)} is left over.`
+      );
     case 'stranded':
-      return 'Nothing in the rest of the cell settles how many of these there are: type a count, or add the recipe on the other end of one of its resources.';
+      return (
+        'Nothing in the rest of the cell settles how many of these there are: ' +
+        'type a count, or add the recipe on the other end of one of its resources.'
+      );
     case 'solver':
       return note.detail;
     case 'fallback':

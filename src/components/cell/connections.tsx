@@ -78,12 +78,16 @@ function ConnectionTable({
       3,
     ),
   );
+  const tableClass =
+    'cell-connection-table' +
+    (rateDecimalPlaces > 0 ? ' has-rate-fractions' : '') +
+    (transportDecimalPlaces > 0 ? ' has-transport-fractions' : '');
+  const fractionWidths =
+    `--cell-connection-rate-fraction-width: ${rateDecimalPlaces}ch; ` +
+    `--cell-connection-transport-fraction-width: ${transportDecimalPlaces}ch`;
 
   return (
-    <div
-      class={`cell-connection-table${rateDecimalPlaces > 0 ? ' has-rate-fractions' : ''}${transportDecimalPlaces > 0 ? ' has-transport-fractions' : ''}`}
-      style={`--cell-connection-rate-fraction-width: ${rateDecimalPlaces}ch; --cell-connection-transport-fraction-width: ${transportDecimalPlaces}ch`}
-    >
+    <div class={tableClass} style={fractionWidths}>
       {flows.map((flow) => (
         <ConnectionRow
           flow={flow}
@@ -170,10 +174,17 @@ function MachineRatio({
   const ratio = simplifiedMachineRatio(connectedMachineCount, machineCount);
   const [connectedRatio, machineRatio] = ratio.split(':');
   const connectedRecipe = connectedRecipes?.map(recipeName).join(', ') ?? 'connected';
+  const connectedAssemblers = `${connectedRatio} ${connectedRecipe} assembler${
+    connectedRatio === '1' ? '' : 's'
+  }`;
+  const machinePrefix = machineRatio === '1' ? '' : `${machineRatio} `;
+  const machineAssemblers = `${machinePrefix}${recipeName(recipe)} assembler${
+    machineRatio === '1' ? '' : 's'
+  }`;
   return (
     <span
       class="cell-connection-machine-ratio"
-      title={`${connectedRatio} ${connectedRecipe} assembler${connectedRatio === '1' ? '' : 's'} per ${machineRatio === '1' ? '' : `${machineRatio} `}${recipeName(recipe)} assembler${machineRatio === '1' ? '' : 's'}`}
+      title={`${connectedAssemblers} per ${machineAssemblers}`}
       aria-label={`${ratio} machines`}
     >
       {ratio}
@@ -215,10 +226,11 @@ function BeltCount({
 }) {
   const count = rate / belt.itemsPerSecond;
   const human = belt.human ?? belt.item ?? 'belt';
+  const perBelt = `${fmt(belt.itemsPerSecond)}/s each`;
   return (
     <span
       class="cell-connection-belts"
-      title={`${count.toFixed(2)} ${human}${count === 1 ? '' : 's'} at ${fmt(belt.itemsPerSecond)}/s each`}
+      title={`${count.toFixed(2)} ${human}${count === 1 ? '' : 's'} at ${perBelt}`}
     >
       <TransportValue count={count} decimalPlaces={decimalPlaces} />
       <span

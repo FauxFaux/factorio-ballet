@@ -204,12 +204,14 @@ function inMachineTitle(layout: Layout, effects: Effects): string {
   if (!modules.length) {
     return boost.module
       ? `No ${family} modules are in the machine — ${outcome(effects)}.`
-      : `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
+      : `${sentence(family)} modules for this row. ` +
+          'None is chosen in the header, so nothing here is modded yet.';
   }
   let msg = `In-machine: ${modules.join(' and ')}, giving ${outcome(effects)}.`;
   if (productivity && layout.speed.inMachine > 0) {
     msg +=
-      " I'm assuming you only took out the productivity modules because you wanted more speed, so have some speed modules.";
+      " I'm assuming you only took out the productivity modules because you wanted more speed, " +
+      'so have some speed modules.';
   }
 
   return msg;
@@ -226,11 +228,15 @@ function beaconTitle(layout: Layout, effects: Effects): string {
   const boost = layout.speed;
   const family = categoryName(layout.families.speed);
   if (!boost.module) {
-    return `${sentence(family)} modules for this row. None is chosen in the header, so nothing here is modded yet.`;
+    return (
+      `${sentence(family)} modules for this row. ` +
+      'None is chosen in the header, so nothing here is modded yet.'
+    );
   }
   const rest =
     boost.beacons > 0
-      ? `${fmt(boost.inBeacons)} ${family} modules over ${boost.beacons} ${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
+      ? `${fmt(boost.inBeacons)} ${family} modules over ${boost.beacons} ` +
+        `${boost.beacons === 1 ? 'beacon' : 'beacons'}` +
         ` at ${fmt(boost.transmission * 100)}% each`
       : 'no beacons';
   return `${rest} — ${outcome(effects)}.`;

@@ -80,7 +80,8 @@ export function MachinePicker({
 
   const current = machines.find(({ id }) => id === chosen);
   const label = current
-    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×${pinned ? '' : ', by default for this progress'}`
+    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×` +
+      (pinned ? '' : ', by default for this progress')
     : 'No machine can run this';
 
   const choose = (id: MachineId | undefined) => {

@@ -540,9 +540,9 @@ function histogram(costs: number[], scale: number) {
   console.log(`${finite.length} resources, deepest costs ${Math.max(...finite).toExponential(3)}:`);
   const wide = Math.max(...buckets);
   buckets.forEach((n, i) => {
-    console.log(
-      `  ${String(i * 10).padStart(3)}-${String(i * 10 + 10).padEnd(3)}% ${'#'.repeat(Math.round((n / wide) * 50)).padEnd(50)} ${n}`,
-    );
+    const range = `${String(i * 10).padStart(3)}-${String(i * 10 + 10).padEnd(3)}%`;
+    const bar = '#'.repeat(Math.round((n / wide) * 50)).padEnd(50);
+    console.log(`  ${range} ${bar} ${n}`);
   });
 }
 

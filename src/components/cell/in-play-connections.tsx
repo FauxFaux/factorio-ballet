@@ -234,12 +234,11 @@ function InPlayConnectionTable({
       {Array.from({ length: rowCount }, (_, index) => {
         const output = outputFlows[index];
         const input = inputFlows[index];
+        const gridRows =
+          `--cell-in-play-made-by-row: ${index + 2}; ` +
+          `--cell-in-play-used-by-row: ${rowCount + index + 3}`;
         return (
-          <div
-            class="cell-in-play-connection-row"
-            key={index}
-            style={`--cell-in-play-made-by-row: ${index + 2}; --cell-in-play-used-by-row: ${rowCount + index + 3}`}
-          >
+          <div class="cell-in-play-connection-row" key={index} style={gridRows}>
             <ConnectionRecipeFlow flow={output} onRecipeHover={onRecipeHover} />
             <ConnectionRate flow={output} decimalPlaces={rateDecimalPlaces} />
             <ConnectionConsumptionBar flow={input} total={totalConsumption} />

@@ -45,13 +45,14 @@ export function InPlayRow({
     onRecipeHover(undefined);
   };
 
-  const applyBoundarySuggestion = (suggestion: NonNullable<Solution['boundarySuggestions']>[number]) => {
+  const applyBoundarySuggestion = (
+    suggestion: NonNullable<Solution['boundarySuggestions']>[number],
+  ) => {
     onSelect(suggestion.resource);
     onRecipeHover(undefined);
     if (suggestion.direction === 'import') onToggleImport?.(suggestion.resource);
     else onToggleExport?.(suggestion.resource);
   };
-
   return (
     <div class="cell-in-play" title="Resources in play in this cell">
       {ids.map((id) => {
@@ -125,6 +126,10 @@ function InPlayChip({
   const rate = solution.balance.get(id) ?? 0;
   const suggestion = solution.boundarySuggestions?.find((candidate) => candidate.resource === id);
   const unbalanced = !input && !output && rate !== 0;
+  const imbalanceTitle =
+    `${resourceName(id)} is unbalanced. ` +
+    'Open its details to review supply and consumption or allow ' +
+    `${rate > 0 ? 'surplus export' : 'shortfall import'}.`;
 
   return (
     <div class="cell-in-play-entry" data-in-play-resource={id}>
@@ -140,11 +145,7 @@ function InPlayChip({
         {unbalanced || suggestion ? (
           <span
             class="cell-leftover"
-            title={
-              suggestion
-                ? boundarySuggestionText(suggestion)
-                : `${resourceName(id)} is unbalanced. Open its details to review supply and consumption or allow ${rate > 0 ? 'surplus export' : 'shortfall import'}.`
-            }
+            title={suggestion ? boundarySuggestionText(suggestion) : imbalanceTitle}
           >
             <WarnIcon
               label={

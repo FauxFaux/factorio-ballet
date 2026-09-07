@@ -203,10 +203,10 @@ function addSynthetic(
   const added = new Set<string>();
 
   for (const s of synthetic) {
+    const sourceName = resolveLocale(s.name.source, locales, s.name.locale) ?? s.name.source;
     recipes[s.id] = {
       // trimmed: a couple of Angel's names carry a trailing space ("Infinite rubyte ")
-      human:
-        `${s.name.verb} ${resolveLocale(s.name.source, locales, s.name.locale) ?? s.name.source}`.trim(),
+      human: `${s.name.verb} ${sourceName}`.trim(),
       ingredients: s.ingredients.map(toIng),
       products: s.products.map(toProd),
       duration: s.duration,

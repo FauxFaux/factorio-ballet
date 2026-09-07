@@ -25,6 +25,7 @@ export function CellRadar({
   counts: (number | undefined)[];
   progress: number;
 }) {
+  const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
   return (
     <figure class="cell-radar">
       <figcaption>
@@ -34,7 +35,7 @@ export function CellRadar({
       <svg
         viewBox="0 0 192 128"
         role="img"
-        aria-label={`Rail brick for ${title}: ${inputs.length} input and ${outputs.length} output stations`}
+        aria-label={`Rail brick for ${title}: ${stationSummary}`}
       >
         <title>Rail brick for {title}</title>
         <desc>
@@ -225,8 +226,10 @@ function railPath(inputCount: number, outputCount: number): string {
     [startControlX, startControlY]: [number, number],
     [endControlX, endControlY]: [number, number],
     [endX, endY]: [number, number],
-  ) =>
-    `c ${startControlX} ${startControlY}, ${endControlX + endX} ${endControlY + endY}, ${endX} ${endY}`;
+  ) => {
+    const endControl = `${endControlX + endX} ${endControlY + endY}`;
+    return `c ${startControlX} ${startControlY}, ${endControl}, ${endX} ${endY}`;
+  };
 
   const rails = [
     'M 4 13 a 8 8 0 0 1 8 -8',

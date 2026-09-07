@@ -22,7 +22,8 @@ export const matrixSolver: Solver = {
   id: 'matrix',
   human: 'Matrix',
   about:
-    'Balances every internal resource simultaneously. Handles cycles but does not choose between alternatives.',
+    'Balances every internal resource simultaneously. ' +
+    'Handles cycles but does not choose between alternatives.',
   solve: solveMatrix,
 };
 
@@ -121,13 +122,19 @@ function outputRates(row: SolveRow): Map<ResourceId, number> {
 
 function diagnosticText(result: MatrixResult, fallback?: string): string {
   if (result.status === 'underdetermined') {
-    return 'The recipes do not determine one unique set of machine counts: type another count or remove an alternative recipe.';
+    return (
+      'The recipes do not determine one unique set of machine counts: ' +
+      'type another count or remove an alternative recipe.'
+    );
   }
   if (result.status === 'inconsistent') {
     return 'The pinned counts cannot balance all internal resources together.';
   }
   if (result.negativeEntries.length > 0) {
-    return 'Balancing these recipes requires a negative machine count, so this selection is not feasible.';
+    return (
+      'Balancing these recipes requires a negative machine count, ' +
+      'so this selection is not feasible.'
+    );
   }
   return result.detail ?? fallback ?? 'The matrix solver could not solve this cell.';
 }
