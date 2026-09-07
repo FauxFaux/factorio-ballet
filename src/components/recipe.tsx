@@ -3,7 +3,7 @@ import type { MachineId, ResourceId } from '../types.ts';
 import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
-import { machinesFor, type MachineMatch } from '../data/machines.ts';
+import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
 import { flowTitle, recipeFlows, speedOf, type Flow } from '../flow.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
@@ -23,6 +23,7 @@ export function RecipeCard({
   onPick,
   onAdd,
   inCell,
+  progress,
 }: {
   match: RecipeMatch;
   onPick: (id: ResourceId) => void;
@@ -30,12 +31,16 @@ export function RecipeCard({
   onAdd?: () => void;
   /** Whether that cell already runs it, in which case the button says so instead of repeating it. */
   inCell?: boolean;
+  /** Overall game progress, used to choose the card's unhovered machine. */
+  progress: number;
 }) {
   const [open, setOpen] = useState(false);
   /** The machine being hovered, whose speed the card's numbers are quoted at. */
   const [preview, setPreview] = useState<MachineId | undefined>(undefined);
   const machines = machinesFor(recipe);
-  const speed = speedOf(machines, preview);
+  const defaultMachineId = defaultMachine(machines, progress)?.id;
+  const displayedMachine = preview ?? defaultMachineId;
+  const speed = speedOf(machines, displayedMachine);
   const { ins, outs } = recipeFlows(recipe, machines, speed);
 
   const classes = ['recipe-card'];
@@ -72,7 +77,7 @@ export function RecipeCard({
       <MachineRow
         machines={machines}
         allowProductivity={recipe.allowProductivity ?? false}
-        preview={preview}
+        displayedMachine={displayedMachine}
         onPreview={setPreview}
       />
     </div>
@@ -147,17 +152,19 @@ function FlowChips({ flows }: { flows: Flow[] }) {
 
 /**
  * The machines which can run this recipe, each labelled with its crafting speed: the multiplier to
- * apply to the 1× rates above. Hovering one applies it, so the card shows that machine's numbers.
+ * apply to the default machine's rates above. Hovering one applies it, so the card shows that
+ * machine's numbers.
  */
 function MachineRow({
   machines,
   allowProductivity,
-  preview,
+  displayedMachine,
   onPreview,
 }: {
   machines: MachineMatch[];
   allowProductivity: boolean;
-  preview?: MachineId;
+  /** The default or hovered machine whose numbers the card currently shows. */
+  displayedMachine?: MachineId;
   onPreview: (id: MachineId | undefined) => void;
 }) {
   if (machines.length === 0) return null;
@@ -173,7 +180,7 @@ function MachineRow({
             key={id}
             id={id}
             machine={machine}
-            active={id === preview}
+            active={id === displayedMachine}
             onMouseEnter={() => onPreview(id)}
           />
         ))}

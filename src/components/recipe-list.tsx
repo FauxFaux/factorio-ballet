@@ -62,6 +62,7 @@ export function RecipeList({
           onPick={onPick}
           onAdd={onAdd && (() => onAdd(match.id))}
           inCell={inCell?.(match.id)}
+          progress={progress}
         />
       ))}
       {found.length > LIMIT ? (
