@@ -82,18 +82,18 @@ describe('explicit cell imports', () => {
       screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-235')}` }),
     );
     expect(screen.getByText(/or import the shortfall/)).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'Import shortfall' }));
+    await user.click(screen.getByRole('button', { name: 'import shortfall' }));
     expect(screen.getByText(/Explicit import: shortfall is supplied/)).toBeTruthy();
     expect(screen.getByTitle('Explicit import: shortfall is supplied externally')).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'Clear explicit import' }));
+    await user.click(screen.getByRole('button', { name: 'clear explicit import' }));
     expect(screen.queryByText('forced')).toBeNull();
-    await user.click(screen.getByRole('button', { name: 'Import shortfall' }));
-    await user.click(screen.getByRole('button', { name: 'Export surplus' }));
-    expect(screen.queryByRole('button', { name: 'Clear explicit import' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Clear explicit export' })).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'Import shortfall' }));
-    expect(screen.queryByRole('button', { name: 'Clear explicit export' })).toBeNull();
-    expect(screen.getByRole('button', { name: 'Clear explicit import' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'import shortfall' }));
+    await user.click(screen.getByRole('button', { name: 'export surplus' }));
+    expect(screen.queryByRole('button', { name: 'clear explicit import' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'import shortfall' }));
+    expect(screen.queryByRole('button', { name: 'clear explicit export' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'clear explicit import' })).toBeTruthy();
   });
 });
 
@@ -150,10 +150,12 @@ describe('explicit cell exports', () => {
     await user.click(
       screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-238')}` }),
     );
-    await user.click(screen.getByRole('button', { name: 'Export surplus' }));
-    expect(screen.getByText('forced')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'export surplus' }));
+    expect(
+      screen.getByTitle('Explicit export: surplus is allowed to leave this cell'),
+    ).toBeTruthy();
     expect(screen.getByText(/Explicit export: surplus may leave/)).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: 'Clear explicit export' }));
+    await user.click(screen.getByRole('button', { name: 'clear explicit export' }));
     expect(screen.queryByText('forced')).toBeNull();
   });
 });

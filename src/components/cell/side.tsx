@@ -3,6 +3,7 @@ import { fmt } from '../../ts.ts';
 import type { Solution } from '../../solve/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceButton } from '../resource.tsx';
+import { PackageDependenciesIcon, PackageDependentsIcon } from '@primer/octicons-react';
 
 /** The label, tooltip and search each side of a cell gets; the two sides are mirror images. */
 const SIDES = {
@@ -71,18 +72,22 @@ export function CellSide({
         <p class="cell-none">—</p>
       ) : (
         ids.map((id) => (
-          <div key={id} class={forced.includes(id) ? 'cell-flow is-forced-export' : 'cell-flow'}>
+          <div key={id} class={forced.includes(id) ? 'cell-flow is-forced' : 'cell-flow'}>
             <ResourceButton id={id} onPick={() => pickResource(id)} />
             {forced.includes(id) ? (
               <span
-                class="cell-forced-export"
+                class="cell-forced"
                 title={
                   dir === 'in'
                     ? 'Explicit import: shortfall is supplied externally'
                     : 'Explicit export: surplus is allowed to leave this cell'
                 }
               >
-                forced
+                {dir === 'in' ? (
+                  <PackageDependenciesIcon size={32} />
+                ) : (
+                  <PackageDependentsIcon size={32} />
+                )}
               </span>
             ) : null}
             <EdgeRate

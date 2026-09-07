@@ -3,6 +3,11 @@ import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import type { InternalConnections, InternalFlow } from './internal-calc.ts';
+import {
+  PackageDependenciesIcon,
+  PackageDependentsIcon,
+  PackageIcon,
+} from '@primer/octicons-react';
 
 /** The recipe flow breakdown shown when an in-play resource is expanded. */
 export function InPlayConnectionsView({
@@ -98,7 +103,7 @@ function ResourceDetails({
       <span class="cell-in-play-resource-searches">
         <button
           type="button"
-          class="cell-btn"
+          class="cell-btn cell-in-play-resource-action"
           title={`Search for recipes making ${resourceName(id)} (makes:${id})`}
           aria-label={`Search for recipes making ${resourceName(id)}`}
           onClick={() => onSearch(`makes:${id}`)}
@@ -107,7 +112,7 @@ function ResourceDetails({
         </button>
         <button
           type="button"
-          class="cell-btn"
+          class="cell-btn cell-in-play-resource-action"
           title={`Search for recipes using ${resourceName(id)} (uses:${id})`}
           aria-label={`Search for recipes using ${resourceName(id)}`}
           onClick={() => onSearch(`uses:${id}`)}
@@ -117,23 +122,39 @@ function ResourceDetails({
         {onToggleImport ? (
           <button
             type="button"
-            class="cell-btn"
+            class="cell-btn cell-in-play-resource-action"
             aria-pressed={forcedImport}
             title="Supply this resource's shortfall from outside the cell"
             onClick={onToggleImport}
           >
-            {forcedImport ? 'Clear explicit import' : 'Import shortfall'}
+            {forcedImport ? (
+              <>
+                <PackageIcon /> clear explicit import
+              </>
+            ) : (
+              <>
+                <PackageDependenciesIcon /> import shortfall
+              </>
+            )}
           </button>
         ) : null}
         {onToggleExport ? (
           <button
             type="button"
-            class="cell-btn"
+            class="cell-btn cell-in-play-resource-action"
             aria-pressed={forcedExport}
             title="Allow surplus to leave this cell, including waste products"
             onClick={onToggleExport}
           >
-            {forcedExport ? 'Clear explicit export' : 'Export surplus'}
+            {forcedExport ? (
+              <>
+                <PackageIcon /> clear explicit export
+              </>
+            ) : (
+              <>
+                <PackageDependentsIcon /> export surplus
+              </>
+            )}
           </button>
         ) : null}
       </span>

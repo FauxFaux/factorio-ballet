@@ -14,7 +14,7 @@
         d.src = u;
         d.decode().catch((err) => console.log("preload failed, ignoring", u, err));
       }
-      if (typeof INJECT_ICONS_ARRAY !== 'undefined') {
+      if (typeof INJECT_ICONS_ARRAY !== "undefined") {
         INJECT_ICONS_ARRAY.map((u, i) => setTimeout(() => preloadImage(u), i * 100));
       }
     </script>

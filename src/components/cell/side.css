@@ -29,15 +29,22 @@
   gap: 4px;
 }
 
-.cell-flow.is-forced-export {
-  background: var(--accent-bg);
-  border-left: 2px solid var(--accent-border);
-  flex-wrap: wrap;
+.cell-flow > .resource-button {
+  min-width: 0;
 }
 
-.cell-forced-export {
+.cell-flow.is-forced {
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent-border);
+  flex-wrap: nowrap;
+}
+
+.cell-forced {
+  display: flex;
+  flex: none;
+  white-space: nowrap;
   color: var(--accent);
-  font-size: 0.6667rem;
+  margin-right: 0.3rem;
 }
 
 .cell-rate {
