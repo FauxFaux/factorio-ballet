@@ -55,7 +55,7 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `t${fingerprint}`;
+const HASH_VERSION = `u${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -206,27 +206,19 @@ const referenceState: PackedState = {
     },
     {
       entries: [],
+      imports: [],
+      exports: [],
       design: {
         columns: [
           {
             entities: [
-              {
-                kind: 'assembler',
-                position: { x: 8, y: 4 },
-                size: { width: 3, height: 3 },
-                recipe: 'copper-cable',
-              },
-              { kind: 'belt', position: { x: 7, y: 5 }, direction: 'east' },
-              {
-                kind: 'underground-belt',
-                position: { x: 4, y: 5 },
-                direction: 'east',
-                end: 'input',
-              },
-              { kind: 'splitter', position: { x: 12, y: 6 }, direction: 'south' },
-              { kind: 'pipe', position: { x: 8, y: 3 } },
-              { kind: 'underground-pipe', position: { x: 8, y: 0 }, direction: 'south' },
-              { kind: 'inserter', position: { x: 7, y: 4 }, direction: 'east' },
+              [0, 8, 4, 3, 3, 45],
+              [1, 7, 5, 'e'],
+              [2, 4, 5, 1, 0],
+              [3, 12, 6, 2],
+              [4, 8, 3],
+              [5, 8, 0, 2],
+              [6, 7, 4, 1],
             ],
           },
         ],
