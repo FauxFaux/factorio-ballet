@@ -112,6 +112,12 @@ describe('entries', () => {
     expect(chain.entries.map((e) => e.recipe)).toEqual(['iron-plate', 'iron-gear-wheel']);
   });
 
+  it('keeps the chosen machine when adding a recipe', () => {
+    expect(withRecipe(newCell(), 'iron-gear-wheel', 'assembling-machine-2').entries).toEqual([
+      { recipe: 'iron-gear-wheel', machine: 'assembling-machine-2' },
+    ]);
+  });
+
   it('resets every pinned machine to auto while preserving the rest of each entry', () => {
     const cell: Cell = {
       entries: [

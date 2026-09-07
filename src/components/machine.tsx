@@ -41,6 +41,7 @@ export function MachineChip({
       type="button"
       class={classes}
       title={label}
+      aria-label={label}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
     >

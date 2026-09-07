@@ -3,6 +3,7 @@ import { useMemo } from 'preact/hooks';
 import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.ts';
 import { resolveChosen } from './data/index.ts';
 import { field, type State } from './ts.ts';
+import type { MachineId } from './types.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
@@ -36,14 +37,14 @@ export function App({ uss }: { uss: State<UrlState> }) {
   /* Both branches write `cl` and `ci` together, which is why this is not two `field` setters: the
    * first recipe added with no cell to put it in makes one, and that one becomes the cell being
    * worked on. */
-  const addRecipe = (recipe: string) =>
+  const addRecipe = (recipe: string, machine: MachineId | undefined) =>
     setUs((prev) =>
       prev.cl[prev.ci]
         ? {
             ...prev,
-            cl: prev.cl.map((c, i) => (i === prev.ci ? withRecipe(c, recipe) : c)),
+            cl: prev.cl.map((c, i) => (i === prev.ci ? withRecipe(c, recipe, machine) : c)),
           }
-        : { ...prev, cl: [...prev.cl, newCell(recipe)], ci: prev.cl.length },
+        : { ...prev, cl: [...prev.cl, newCell(recipe, machine)], ci: prev.cl.length },
     );
 
   return (

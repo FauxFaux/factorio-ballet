@@ -1,7 +1,7 @@
 import { useMemo } from 'preact/hooks';
 import { flipDirection, searchRecipes, type SearchScope } from '../search.ts';
 import type { State } from '../ts.ts';
-import type { ResourceId } from '../types.ts';
+import type { MachineId, ResourceId } from '../types.ts';
 import { RecipeCard } from './recipe.tsx';
 import { SearchBox } from './search-box.tsx';
 
@@ -24,7 +24,7 @@ export function RecipeList({
   progress: number;
   scope?: SearchScope;
   /** Add a recipe to the cell being worked on; absent when there is nothing to add it to. */
-  onAdd?: (recipe: string) => void;
+  onAdd?: (recipe: string, machine: MachineId | undefined) => void;
   inCell?: (recipe: string) => boolean;
 }) {
   const found = useMemo(() => searchRecipes(search, progress, scope), [search, progress, scope]);
@@ -60,7 +60,7 @@ export function RecipeList({
           key={match.id}
           match={match}
           onPick={onPick}
-          onAdd={onAdd && (() => onAdd(match.id))}
+          onAdd={onAdd && ((machine) => onAdd(match.id, machine))}
           inCell={inCell?.(match.id)}
           progress={progress}
         />

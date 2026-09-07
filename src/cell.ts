@@ -96,8 +96,8 @@ export interface CellInterface {
   inPlay: ResourceId[];
 }
 
-export function newCell(recipe?: string): Cell {
-  return { entries: recipe ? [{ recipe }] : [] };
+export function newCell(recipe?: string, machine?: MachineId): Cell {
+  return { entries: recipe ? [machine ? { recipe, machine } : { recipe }] : [] };
 }
 
 /** The recipe an entry names, or `undefined` if the data no longer has it (a stale URL). */
@@ -209,9 +209,9 @@ export function hasRecipe(cell: Cell, recipe: string): boolean {
 }
 
 /** The cell with `recipe` in it; unchanged if it already is, as a cell runs each recipe once. */
-export function withRecipe(cell: Cell, recipe: string): Cell {
+export function withRecipe(cell: Cell, recipe: string, machine?: MachineId): Cell {
   if (hasRecipe(cell, recipe)) return cell;
-  return { ...cell, entries: [...cell.entries, { recipe }] };
+  return { ...cell, entries: [...cell.entries, machine ? { recipe, machine } : { recipe }] };
 }
 
 /** Adds this cell's factory-design surface with its first blank blueprint column. */

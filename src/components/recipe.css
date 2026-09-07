@@ -174,7 +174,7 @@
   padding: 0 4px;
 }
 
-/* While a machine is hovered, the duration and rates are that machine's, not the default-machine
+/* While a machine is selected, the duration and rates are that machine's, not the default-machine
  * baseline; the accent says "these numbers moved". */
 .recipe-card.is-previewing .recipe-duration,
 .recipe-card.is-previewing .flow-rate,

@@ -27,24 +27,26 @@ export function RecipeCard({
 }: {
   match: RecipeMatch;
   onPick: (id: ResourceId) => void;
-  /** Put this recipe in the cell being worked on; absent when there is nowhere to put it. */
-  onAdd?: () => void;
+  /** Put this recipe, in the selected machine, in the cell being worked on. */
+  onAdd?: (machine: MachineId | undefined) => void;
   /** Whether that cell already runs it, in which case the button says so instead of repeating it. */
   inCell?: boolean;
-  /** Overall game progress, used to choose the card's unhovered machine. */
+  /** Overall game progress, used to choose the card's unselected machine. */
   progress: number;
 }) {
   const [open, setOpen] = useState(false);
-  /** The machine being hovered, whose speed the card's numbers are quoted at. */
-  const [preview, setPreview] = useState<MachineId | undefined>(undefined);
+  /** The machine chosen from this card, whose speed its numbers are quoted at. */
+  const [selectedMachine, setSelectedMachine] = useState<MachineId | undefined>(undefined);
+  /** The machine under the pointer, which temporarily previews its rates. */
+  const [hoveredMachine, setHoveredMachine] = useState<MachineId | undefined>(undefined);
   const machines = machinesFor(recipe);
   const defaultMachineId = defaultMachine(machines, progress)?.id;
-  const displayedMachine = preview ?? defaultMachineId;
+  const displayedMachine = hoveredMachine ?? selectedMachine ?? defaultMachineId;
   const speed = speedOf(machines, displayedMachine);
   const { ins, outs } = recipeFlows(recipe, machines, speed);
 
   const classes = ['recipe-card'];
-  if (preview !== undefined) classes.push('is-previewing');
+  if (hoveredMachine !== undefined || selectedMachine !== undefined) classes.push('is-previewing');
   if (recipe.synthetic) classes.push('is-synthetic');
 
   return (
@@ -56,7 +58,7 @@ export function RecipeCard({
         </span>
         {recipe.synthetic ? <SyntheticChip /> : null}
         <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
-        {onAdd ? <AddToCell onAdd={onAdd} inCell={inCell ?? false} /> : null}
+        {onAdd ? <AddToCell onAdd={() => onAdd(selectedMachine)} inCell={inCell ?? false} /> : null}
       </div>
       <div class="recipe-flows-fold">
         <button
@@ -78,7 +80,10 @@ export function RecipeCard({
         machines={machines}
         allowProductivity={recipe.allowProductivity ?? false}
         displayedMachine={displayedMachine}
-        onPreview={setPreview}
+        onHover={setHoveredMachine}
+        onChoose={(machine) =>
+          setSelectedMachine((current) => (current === machine ? undefined : machine))
+        }
       />
     </div>
   );
@@ -152,36 +157,38 @@ function FlowChips({ flows }: { flows: Flow[] }) {
 
 /**
  * The machines which can run this recipe, each labelled with its crafting speed: the multiplier to
- * apply to the default machine's rates above. Hovering one applies it, so the card shows that
- * machine's numbers.
+ * apply to the default machine's rates above. Hovering one previews it; choosing one keeps it as
+ * the card's selection and adds the recipe with that machine.
  */
 function MachineRow({
   machines,
   allowProductivity,
   displayedMachine,
-  onPreview,
+  onHover,
+  onChoose,
 }: {
   machines: MachineMatch[];
   allowProductivity: boolean;
-  /** The default or hovered machine whose numbers the card currently shows. */
+  /** The default or selected machine whose numbers the card currently shows. */
   displayedMachine?: MachineId;
-  onPreview: (id: MachineId | undefined) => void;
+  onHover: (id: MachineId | undefined) => void;
+  onChoose: (id: MachineId) => void;
 }) {
   if (machines.length === 0) return null;
 
   return (
     <div class="recipe-machines">
-      {/* The preview is cleared when the pointer leaves the whole list, not when it leaves a chip:
-          the gaps between chips are dead space, and clearing there would flash the card back to the
-          1× numbers on the way to the next machine. */}
-      <div class="machine-list" onMouseLeave={() => onPreview(undefined)}>
+      {/* Clearing after the pointer leaves the list rather than each chip avoids a flash through the
+          selected/default rates in the gap between adjacent chips. */}
+      <div class="machine-list" onMouseLeave={() => onHover(undefined)}>
         {machines.map(({ id, machine }) => (
           <MachineChip
             key={id}
             id={id}
             machine={machine}
             active={id === displayedMachine}
-            onMouseEnter={() => onPreview(id)}
+            onClick={() => onChoose(id)}
+            onMouseEnter={() => onHover(id)}
           />
         ))}
       </div>
