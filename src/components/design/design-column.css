@@ -1,33 +1,88 @@
 .cell-design-column {
+  --cell-design-paper: midnightblue;
+  --cell-design-grid: cornflowerblue;
+  --cell-design-grid-major: lightsteelblue;
+  --cell-design-control: navy;
+  --cell-design-control-border: steelblue;
+  --cell-design-control-hover: royalblue;
+  --cell-design-control-text: aliceblue;
+
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   min-width: 0;
-  background-color: #17376d;
+  background-color: var(--cell-design-paper);
   background-image:
-    radial-gradient(circle at center, rgb(56 108 195 / 48%), transparent 68%),
-    repeating-linear-gradient(to right, rgb(177 205 255 / 18%) 0 1px, transparent 1px 8px),
-    repeating-linear-gradient(to bottom, rgb(177 205 255 / 18%) 0 1px, transparent 1px 8px),
-    repeating-linear-gradient(to right, rgb(202 220 255 / 34%) 0 1px, transparent 1px 40px),
-    repeating-linear-gradient(to bottom, rgb(202 220 255 / 34%) 0 1px, transparent 1px 40px);
-  border: 1px solid #527cba;
+    radial-gradient(
+      circle at center,
+      color-mix(in srgb, var(--cell-design-grid) 48%, transparent),
+      transparent 68%
+    ),
+    repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--cell-design-grid) 18%, transparent) 0 1px,
+      transparent 1px 8px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--cell-design-grid) 18%, transparent) 0 1px,
+      transparent 1px 8px
+    ),
+    repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
+      transparent 1px 40px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
+      transparent 1px 40px
+    );
+  border: 1px solid var(--cell-design-control-border);
   border-radius: 6px;
   padding: 8px 12px;
 }
 
 .cell-design-column h3 {
   margin: 0;
+  flex-shrink: 0;
   font-size: 0.8333rem;
-  color: var(--text-h);
+  color: var(--cell-design-control-text);
 }
 
 .cell-design-recipes {
   display: flex;
+  flex: 1;
+  min-width: 0;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
+  gap: 4px;
 }
 
 .cell-design-recipe {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  place-items: center;
+  padding: 0.1111rem;
+  color: var(--cell-design-control-text);
+  background: var(--cell-design-control);
+  border: 1px solid var(--cell-design-control-border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cell-design-recipe:hover:not(:disabled) {
+  background: var(--cell-design-control-hover);
+  border-color: var(--cell-design-control-text);
+}
+
+.cell-design-recipe:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.cell-design-recipe-icon {
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
 }

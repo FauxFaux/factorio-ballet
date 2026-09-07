@@ -2,6 +2,7 @@ import './design-column.css';
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { recipeName, staticData } from '../../data/index.ts';
 import type { DesignAssembler, DesignColumn as DesignColumnData } from '../../design.ts';
+import { recipeIconStyle } from '../icon.tsx';
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
 export function DesignColumn({
@@ -83,7 +84,11 @@ function RecipeButton({
         onChange((previous) => reconcileAssemblers(previous, entry.recipe, target, machine.size));
       }}
     >
-      {name} × {target ?? '?'}
+      <span
+        class="cell-design-recipe-icon"
+        style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
+        aria-hidden="true"
+      />
     </button>
   );
 }
