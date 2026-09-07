@@ -1,5 +1,7 @@
 .cell-design-column {
-  --cell-design-tile-size: 40px;
+  /* One rendered pixel size for every coordinate in the design model. */
+  --cell-design-tile-size: 12px;
+  --cell-design-major-grid-size: calc(var(--cell-design-tile-size) * 15);
   --cell-design-paper: midnightblue;
   --cell-design-grid: cornflowerblue;
   --cell-design-grid-major: lightsteelblue;
@@ -35,38 +37,30 @@
 .cell-design-world {
   position: absolute;
   inset: 0;
-  display: grid;
-  grid-auto-columns: var(--cell-design-tile-size);
-  grid-auto-rows: var(--cell-design-tile-size);
-  place-content: start;
-  transform: translate(var(--cell-design-pan-x, 0), var(--cell-design-pan-y, 0))
-    scale(var(--cell-design-zoom, 1));
+  /* The world starts at its origin, so center that point before applying any user pan. */
+  transform:
+    translate(50%, 50%) translate(var(--cell-design-pan-x, 0), var(--cell-design-pan-y, 0));
   transform-origin: top left;
   background-color: var(--cell-design-paper);
   background-image:
-    radial-gradient(
-      circle at center,
-      color-mix(in srgb, var(--cell-design-grid) 48%, transparent),
-      transparent 68%
-    ),
     repeating-linear-gradient(
       to right,
-      color-mix(in srgb, var(--cell-design-grid) 18%, transparent) 0 1px,
-      transparent 1px 8px
+      color-mix(in srgb, var(--cell-design-grid-major) 50%, transparent) 0 1px,
+      transparent 1px var(--cell-design-major-grid-size)
     ),
     repeating-linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--cell-design-grid) 18%, transparent) 0 1px,
-      transparent 1px 8px
+      color-mix(in srgb, var(--cell-design-grid-major) 50%, transparent) 0 1px,
+      transparent 1px var(--cell-design-major-grid-size)
     ),
     repeating-linear-gradient(
       to right,
-      color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
+      color-mix(in srgb, var(--cell-design-grid) 30%, transparent) 0 1px,
       transparent 1px var(--cell-design-tile-size)
     ),
     repeating-linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--cell-design-grid-major) 34%, transparent) 0 1px,
+      color-mix(in srgb, var(--cell-design-grid) 30%, transparent) 0 1px,
       transparent 1px var(--cell-design-tile-size)
     );
 }
@@ -87,12 +81,15 @@
 }
 
 .cell-design-assembler {
+  position: absolute;
+  top: calc(var(--cell-design-entity-y) * var(--cell-design-tile-size));
+  left: calc(var(--cell-design-entity-x) * var(--cell-design-tile-size));
   z-index: 1;
   display: grid;
-  min-width: 0;
-  min-height: 0;
+  width: calc(var(--cell-design-entity-width) * var(--cell-design-tile-size));
+  height: calc(var(--cell-design-entity-height) * var(--cell-design-tile-size));
+  box-sizing: border-box;
   place-items: center;
-  margin: 2px;
   background: color-mix(in srgb, var(--cell-design-control) 82%, transparent);
   border: 2px solid var(--cell-design-control-border);
   border-radius: 4px;
@@ -101,8 +98,18 @@
 
 .cell-design-assembler-icon {
   display: block;
+  width: calc(var(--cell-design-tile-size) * 0.8);
+  height: calc(var(--cell-design-tile-size) * 0.8);
+}
+
+/* Sprite offsets are expressed in 32px cells. Keep that painting coordinate system intact and
+ * scale the sprite inside its layout-sized wrapper, as other compact icon controls do. */
+.cell-design-assembler-sprite {
+  display: block;
   width: 1.7778rem;
   height: 1.7778rem;
+  transform: scale(calc(1 / 3));
+  transform-origin: top left;
   filter: drop-shadow(0 1px 2px rgb(0 0 0 / 70%));
 }
 

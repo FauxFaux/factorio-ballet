@@ -1,12 +1,14 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/preact';
+import { cleanup, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 import { CellList } from '../src/components/cell-list.tsx';
 import { newCell, type Cell } from '../src/cell.ts';
 import { NO_CHOICE } from '../src/data/index.ts';
+
+afterEach(cleanup);
 
 function CellListExample({ cell = newCell() }: { cell?: Cell }) {
   const cells = useState<Cell[]>([cell]);
@@ -47,5 +49,25 @@ describe('CellList', () => {
 
     expect((recipe as HTMLButtonElement).disabled).toBe(true);
     expect(recipe.closest('section')?.dataset.entityCount).toBe('1');
+  });
+
+  it('places added assemblers at the nearest free position to the design origin', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellListExample
+        cell={{
+          ...newCell('copper-cable'),
+          design: {
+            columns: [
+              { entities: [{ kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' }] },
+            ],
+          },
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Set Copper wire assemblers to 1' }));
+
+    expect(screen.getByRole('img', { name: 'Copper wire assembler at 0, -1' })).toBeTruthy();
   });
 });

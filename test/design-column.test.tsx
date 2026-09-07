@@ -29,8 +29,10 @@ describe('DesignColumn', () => {
     );
 
     const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
-    expect(assembler.style.gridColumn).toBe('9 / span 3');
-    expect(assembler.style.gridRow).toBe('5 / span 2');
+    expect(assembler.style.getPropertyValue('--cell-design-entity-x')).toBe('8');
+    expect(assembler.style.getPropertyValue('--cell-design-entity-y')).toBe('4');
+    expect(assembler.style.getPropertyValue('--cell-design-entity-width')).toBe('3');
+    expect(assembler.style.getPropertyValue('--cell-design-entity-height')).toBe('2');
     expect(assembler.querySelector('.cell-design-assembler-icon')).not.toBeNull();
   });
 

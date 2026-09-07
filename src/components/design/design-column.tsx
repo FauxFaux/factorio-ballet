@@ -64,19 +64,22 @@ function Assembler({ assembler }: { assembler: DesignAssembler }) {
       title={`${name} (${x}, ${y})`}
       data-position={`${x},${y}`}
       style={{
-        gridColumn: `${x + 1} / span ${width}`,
-        gridRow: `${y + 1} / span ${height}`,
+        '--cell-design-entity-x': x,
+        '--cell-design-entity-y': y,
+        '--cell-design-entity-width': width,
+        '--cell-design-entity-height': height,
       }}
     >
-      <span
-        class="cell-design-assembler-icon"
-        style={
-          recipe
-            ? recipeIconStyle(assembler.recipe, recipe)
-            : iconStyle(`recipe:${assembler.recipe}`, 'recipe:recipe-unknown')
-        }
-        aria-hidden="true"
-      />
+      <span class="cell-design-assembler-icon" aria-hidden="true">
+        <span
+          class="cell-design-assembler-sprite"
+          style={
+            recipe
+              ? recipeIconStyle(assembler.recipe, recipe)
+              : iconStyle(`recipe:${assembler.recipe}`, 'recipe:recipe-unknown')
+          }
+        />
+      </span>
     </div>
   );
 }

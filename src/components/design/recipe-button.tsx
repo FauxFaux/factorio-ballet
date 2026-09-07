@@ -1,6 +1,6 @@
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { recipeName, staticData } from '../../data/index.ts';
-import type { DesignAssembler, DesignColumn } from '../../design.ts';
+import type { DesignAssembler, DesignColumn, DesignEntity, DesignPosition } from '../../design.ts';
 import { recipeIconStyle } from '../icon.tsx';
 
 /** A solved recipe's assembler-count control within a design column. */
@@ -67,17 +67,17 @@ function reconcileAssemblers(
   const matching = column.entities.filter(
     (entity): entity is DesignAssembler => entity.kind === 'assembler' && entity.recipe === recipe,
   );
-  let y = Math.max(
-    0,
-    ...column.entities.map(
-      (entity) => entity.position.y + (entity.kind === 'assembler' ? entity.size.height : 1),
-    ),
-  );
+  const retained = matching.slice(0, count).map((assembler) => ({ ...assembler, size }));
+  const occupied = [
+    ...column.entities.filter((entity) => entity.kind !== 'assembler' || entity.recipe !== recipe),
+    ...retained,
+  ].map(entityBounds);
   const assemblers = Array.from({ length: count }, (_, index) => {
     const existing = matching[index];
     if (existing) return { ...existing, size };
-    const assembler: DesignAssembler = { kind: 'assembler', recipe, size, position: { x: 0, y } };
-    y += size.height;
+    const position = nearestFreePosition(size, occupied);
+    const assembler: DesignAssembler = { kind: 'assembler', recipe, size, position };
+    occupied.push(entityBounds(assembler));
     return assembler;
   });
   return {
@@ -89,4 +89,49 @@ function reconcileAssemblers(
       ...assemblers,
     ],
   };
+}
+
+interface DesignBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/** Bounds for placement; non-assemblers currently occupy one tile. */
+function entityBounds(entity: DesignEntity): DesignBounds {
+  return {
+    ...entity.position,
+    ...(entity.kind === 'assembler' ? entity.size : { width: 1, height: 1 }),
+  };
+}
+
+/**
+ * Find the first vacant position in increasing Manhattan distance from the world's origin.
+ * Coordinates may be negative; within a ring, prefer the column's natural top-to-bottom
+ * arrangement.
+ */
+function nearestFreePosition(
+  size: DesignAssembler['size'],
+  occupied: DesignBounds[],
+): DesignPosition {
+  for (let distance = 0; ; distance += 1) {
+    for (let y = -distance; y <= distance; y += 1) {
+      const xDistance = distance - Math.abs(y);
+      for (const x of xDistance === 0 ? [0] : [-xDistance, xDistance]) {
+        const position = { x, y };
+        const candidate = { ...position, ...size };
+        if (!occupied.some((entity) => rectanglesOverlap(candidate, entity))) return position;
+      }
+    }
+  }
+}
+
+function rectanglesOverlap(first: DesignBounds, second: DesignBounds): boolean {
+  return (
+    first.x < second.x + second.width &&
+    first.x + first.width > second.x &&
+    first.y < second.y + second.height &&
+    first.y + first.height > second.y
+  );
 }
