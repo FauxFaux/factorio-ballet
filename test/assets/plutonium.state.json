@@ -1,0 +1,39 @@
+{
+  "v": 1,
+  "rs": "",
+  "cs": "uses:item:angels-neptunium-240",
+  "gp": 100,
+  "cl": [
+    {
+      "entries": [
+        {
+          "recipe": "uranium-processing",
+          "count": 7,
+          "beacons": 1
+        },
+        {
+          "recipe": "angels-uranium-fuel-cell"
+        },
+        {
+          "recipe": "uranium-fuel-cell"
+        },
+        {
+          "recipe": "synthetic:burning-uranium-fuel-cell"
+        },
+        {
+          "recipe": "synthetic:burning-angels-uranium-fuel-cell"
+        },
+        {
+          "recipe": "angels-advanced-uranium-reprocessing"
+        },
+        {
+          "recipe": "angels-plutonium-breeding"
+        }
+      ],
+      "imports": [],
+      "exports": []
+    }
+  ],
+  "ci": 0,
+  "mo": {}
+}

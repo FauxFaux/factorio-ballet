@@ -1,0 +1,223 @@
+{
+  "inputs": [
+    {
+      "material": "item:iron-plate",
+      "rate": 2.4320129166666673
+    },
+    {
+      "material": "fluid:angels-liquid-hydrofluoric-acid",
+      "rate": 15.463640500000006
+    },
+    {
+      "material": "item:uranium-ore",
+      "rate": 100.04166666666666
+    }
+  ],
+  "recipes": [
+    {
+      "recipe": "uranium-processing",
+      "count": 7,
+      "inputs": [
+        {
+          "material": "item:uranium-ore",
+          "rate": 100.04166666666666,
+          "ratio": null
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:uranium-238",
+          "rate": 21.855102499999997,
+          "ratio": 0.5501011433172299
+        },
+        {
+          "material": "item:uranium-235",
+          "rate": 0.1540641666666667,
+          "ratio": 0.013670289855072468
+        },
+        {
+          "material": "item:angels-uranium-234",
+          "rate": 0.0012105041666666666,
+          "ratio": 0.17292916666666666
+        }
+      ]
+    },
+    {
+      "recipe": "angels-uranium-fuel-cell",
+      "count": 1.2105041666666667,
+      "inputs": [
+        {
+          "material": "item:uranium-238",
+          "rate": 0.2408903291666667,
+          "ratio": 8.942674349482447
+        },
+        {
+          "material": "item:iron-plate",
+          "rate": 0.12105041666666667,
+          "ratio": null
+        },
+        {
+          "material": "item:angels-uranium-234",
+          "rate": 0.0012105041666666668,
+          "ratio": 5.78271450256608
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:angels-uranium-fuel-cell",
+          "rate": 0.2663109166666667,
+          "ratio": 2.0625
+        }
+      ]
+    },
+    {
+      "recipe": "uranium-fuel-cell",
+      "count": 0.09569202898550727,
+      "inputs": [
+        {
+          "material": "item:uranium-238",
+          "rate": 4.467860833333335,
+          "ratio": 113.12483052095293
+        },
+        {
+          "material": "item:iron-plate",
+          "rate": 2.3109625000000005,
+          "ratio": null
+        },
+        {
+          "material": "item:uranium-235",
+          "rate": 0.1540641666666667,
+          "ratio": 99.74197337809578
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:uranium-fuel-cell",
+          "rate": 2.3109625000000005,
+          "ratio": 301.875
+        }
+      ]
+    },
+    {
+      "recipe": "synthetic:burning-uranium-fuel-cell",
+      "count": 28.887031250000007,
+      "inputs": [
+        {
+          "material": "item:uranium-fuel-cell",
+          "rate": 2.3109625000000005,
+          "ratio": 0.0033126293995859213
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:depleted-uranium-fuel-cell",
+          "rate": 2.3109625000000005,
+          "ratio": 0.044332446021887024
+        }
+      ]
+    },
+    {
+      "recipe": "synthetic:burning-angels-uranium-fuel-cell",
+      "count": 2.49666484375,
+      "inputs": [
+        {
+          "material": "item:angels-uranium-fuel-cell",
+          "rate": 0.2663109166666667,
+          "ratio": 0.48484848484848486
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:depleted-uranium-fuel-cell",
+          "rate": 0.2663109166666667,
+          "ratio": 0.5129373919887756
+        }
+      ]
+    },
+    {
+      "recipe": "angels-advanced-uranium-reprocessing",
+      "count": 1.280632753623189,
+      "inputs": [
+        {
+          "material": "fluid:angels-liquid-hydrofluoric-acid",
+          "rate": 15.463640500000006,
+          "ratio": null
+        },
+        {
+          "material": "item:depleted-uranium-fuel-cell",
+          "rate": 2.5772734166666673,
+          "ratio": 24.506398110589235
+        }
+      ],
+      "outputs": [
+        {
+          "material": "fluid:angels-water-greenyellow-waste",
+          "rate": 15.463640500000006,
+          "ratio": null
+        },
+        {
+          "material": "item:angels-slag",
+          "rate": 2.5772734166666673,
+          "ratio": null
+        },
+        {
+          "material": "item:uranium-238",
+          "rate": 1.2886367083333337,
+          "ratio": 3.0068792105512827
+        },
+        {
+          "material": "item:angels-neptunium-240",
+          "rate": 0.10309093666666672,
+          "ratio": 1.9869176392447074
+        }
+      ]
+    },
+    {
+      "recipe": "angels-plutonium-breeding",
+      "count": 2.5445118075684356,
+      "inputs": [
+        {
+          "material": "item:uranium-238",
+          "rate": 106.51326426481471,
+          "ratio": 3.2543109955289444
+        },
+        {
+          "material": "item:angels-neptunium-240",
+          "rate": 10.241660025462952,
+          "ratio": 0.5032921245694576
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:uranium-238",
+          "rate": 88.07827621898139,
+          "ratio": 0.5133386262020886
+        },
+        {
+          "material": "item:bob-plutonium-239",
+          "rate": 26.628316066203677,
+          "ratio": null
+        },
+        {
+          "material": "item:uranium-235",
+          "rate": 1.945915404837961,
+          "ratio": 0.03760722536279038
+        }
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "material": "item:angels-slag",
+      "rate": 2.5772734166666673
+    },
+    {
+      "material": "fluid:angels-water-greenyellow-waste",
+      "rate": 15.463640500000006
+    },
+    {
+      "material": "item:bob-plutonium-239",
+      "rate": 26.628316066203677
+    }
+  ]
+}

@@ -61,7 +61,7 @@ describe('explicit cell imports', () => {
     },
   );
 
-  it('enables and clears an identified import from resource details', async () => {
+  it('enables, clears and replaces an import from resource details', async () => {
     function Example() {
       const cell = useState(uranium);
       return (
@@ -82,13 +82,19 @@ describe('explicit cell imports', () => {
       screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-235')}` }),
     );
     expect(screen.getByText(/or import the shortfall/)).toBeTruthy();
-    expect(screen.queryByRole('button', { name: 'export surplus' })).toBeNull();
     await user.click(screen.getByRole('button', { name: 'import shortfall' }));
     expect(screen.getByText(/Explicit import: shortfall is supplied/)).toBeTruthy();
     expect(screen.getByTitle('Explicit import: shortfall is supplied externally')).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'clear explicit import' }));
     expect(screen.queryByText('forced')).toBeNull();
     expect(screen.getByRole('button', { name: 'import shortfall' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'import shortfall' }));
+    await user.click(screen.getByRole('button', { name: 'export surplus' }));
+    expect(screen.queryByRole('button', { name: 'clear explicit import' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'import shortfall' }));
+    expect(screen.queryByRole('button', { name: 'clear explicit export' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'clear explicit import' })).toBeTruthy();
   });
 });
 
@@ -174,7 +180,6 @@ describe('explicit cell exports', () => {
     await user.click(
       screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-238')}` }),
     );
-    expect(screen.queryByRole('button', { name: 'import shortfall' })).toBeNull();
     await user.click(screen.getByRole('button', { name: 'export surplus' }));
     expect(
       screen.getByTitle('Explicit export: surplus is allowed to leave this cell'),
