@@ -17,6 +17,7 @@ export function InPlayRow({
   inputs,
   outputs,
   onRecipeHover,
+  onSearch,
 }: {
   ids: ResourceId[];
   entries: CellEntry[];
@@ -24,6 +25,7 @@ export function InPlayRow({
   inputs: ReadonlySet<ResourceId>;
   outputs: ReadonlySet<ResourceId>;
   onRecipeHover: (recipe: string | undefined) => void;
+  onSearch: (search: string) => void;
 }) {
   const [selected, setSelected] = useState<ResourceId>();
 
@@ -55,6 +57,7 @@ export function InPlayRow({
           input={inputs.has(selected)}
           output={outputs.has(selected)}
           onRecipeHover={onRecipeHover}
+          onSearch={onSearch}
         />
       ) : null}
     </div>
@@ -107,6 +110,7 @@ function InPlayDetails({
   input,
   output,
   onRecipeHover,
+  onSearch,
 }: {
   id: ResourceId;
   recipes: string[];
@@ -114,6 +118,7 @@ function InPlayDetails({
   input: boolean;
   output: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
+  onSearch: (search: string) => void;
 }) {
   const connections = useMemo(
     () => internalConnections(id, recipes, solution),
@@ -129,6 +134,7 @@ function InPlayDetails({
       outputRate={output ? Math.abs(rate) : undefined}
       solved={solution.complete}
       onRecipeHover={onRecipeHover}
+      onSearch={onSearch}
     />
   );
 }

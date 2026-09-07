@@ -135,6 +135,7 @@ export function CellBox({
               inputs={new Set(iface.inputs)}
               outputs={new Set(iface.outputs)}
               onRecipeHover={setHoveredRecipe}
+              onSearch={onSearch}
             />
           ) : null}
           <SolveNotes cell={cell} solution={solution} />

@@ -12,6 +12,7 @@ export function InPlayConnectionsView({
   outputRate,
   solved,
   onRecipeHover,
+  onSearch,
 }: {
   id: ResourceId;
   connections: InternalConnections;
@@ -19,20 +20,21 @@ export function InPlayConnectionsView({
   outputRate: number | undefined;
   solved: boolean;
   onRecipeHover: (recipe: string | undefined) => void;
+  onSearch: (search: string) => void;
 }) {
   const resource = staticData.resources[id];
 
   if (!solved) {
     return (
       <div class="cell-connections cell-connections-pending">
-        <ResourceDetails id={id} stackSize={resource?.stackSize} />
+        <ResourceDetails id={id} stackSize={resource?.stackSize} onSearch={onSearch} />
         Recipes appear once the cell is worked out.
       </div>
     );
   }
   return (
     <div class="cell-connections cell-in-play-connections">
-      <ResourceDetails id={id} stackSize={resource?.stackSize} />
+      <ResourceDetails id={id} stackSize={resource?.stackSize} onSearch={onSearch} />
       <InPlayConnectionTable
         outputs={connections.outputs}
         inputs={connections.inputs}
@@ -44,7 +46,15 @@ export function InPlayConnectionsView({
   );
 }
 
-function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number }) {
+function ResourceDetails({
+  id,
+  stackSize,
+  onSearch,
+}: {
+  id: ResourceId;
+  stackSize?: number;
+  onSearch: (search: string) => void;
+}) {
   return (
     <div class="cell-in-play-resource-details">
       <strong>{resourceName(id)}</strong>
@@ -52,6 +62,26 @@ function ResourceDetails({ id, stackSize }: { id: ResourceId; stackSize?: number
         {' · '}
         {id}
         {stackSize ? `· stack size ${stackSize}` : ''}
+      </span>
+      <span class="cell-in-play-resource-searches">
+        <button
+          type="button"
+          class="cell-btn"
+          title={`Search for recipes making ${resourceName(id)} (makes:${id})`}
+          aria-label={`Search for recipes making ${resourceName(id)}`}
+          onClick={() => onSearch(`makes:${id}`)}
+        >
+          ⌕ makes
+        </button>
+        <button
+          type="button"
+          class="cell-btn"
+          title={`Search for recipes using ${resourceName(id)} (uses:${id})`}
+          aria-label={`Search for recipes using ${resourceName(id)}`}
+          onClick={() => onSearch(`uses:${id}`)}
+        >
+          ⌕ uses
+        </button>
       </span>
     </div>
   );

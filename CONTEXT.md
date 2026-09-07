@@ -233,9 +233,9 @@ round a cycle of two recipes rather than one: that needs a solver which closes c
 drill, and `synthetic:burning-uranium-fuel-cell` in a reactor. They are ordinary `Recipe`s with
 invented categories (`synthetic-pump:<fluid>`, `synthetic-mine:<resource-category>`,
 `synthetic-reactor:<fuel-category>`) run by pumps, drills and reactors promoted to `Machine`s, so
-search, `machinesFor` and the rate maths need no special case; the flag exists so the UI can mark the
-card rather than pass it off as something you could look up in-game. Reactor fuel cells exploit the
-same factorisation: recipe duration is fuel value in MJ and machine speed is fuel consumption in
+search, `machinesFor` and the rate maths need no special case; the flag exists so the UI can mark
+the card rather than pass it off as something you could look up in-game. Reactor fuel cells exploit
+the same factorisation: recipe duration is fuel value in MJ and machine speed is fuel consumption in
 MW, making `duration / speed` the cell's burn time in seconds. This covers only item fuels with a
 `burnt_result`; ordinary chemical fuels and fluid-burning heat sources are not material conversions
 yet. `scripts/complexity.ts` builds the same set — splitting each one per machine, since you only

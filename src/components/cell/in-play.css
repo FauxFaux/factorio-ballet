@@ -49,6 +49,13 @@
   font-size: 0.6667rem;
 }
 
+.cell-in-play-resource-searches {
+  float: right;
+  display: inline-flex;
+  gap: 2px;
+  margin-left: 6px;
+}
+
 .cell-in-play-connection-table {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto 4px auto minmax(0, 1fr);

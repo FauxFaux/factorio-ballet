@@ -252,10 +252,10 @@ arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts
   connected operating neighbour. The accepted item fuels are `energy_source.fuel_categories`,
   matched against an item's singular `fuel_category`. The burner source defaults to the `chemical`
   category when its list is absent.
-- **Fuel cells are item prototypes**, and carry `fuel_value` (`"2GJ"` on
-  `uranium-fuel-cell`) and `burnt_result` (`depleted-uranium-fuel-cell`). Ten items in the raw dump
-  have a spent result, but five are disabled Bob's variants; the five live ones are uranium-235,
-  Angel's uranium-234, mixed-oxide, thorium and deuterium cells.
+- **Fuel cells are item prototypes**, and carry `fuel_value` (`"2GJ"` on `uranium-fuel-cell`) and
+  `burnt_result` (`depleted-uranium-fuel-cell`). Ten items in the raw dump have a spent result, but
+  five are disabled Bob's variants; the five live ones are uranium-235, Angel's uranium-234,
+  mixed-oxide, thorium and deuterium cells.
 - **Cell consumption is energy divided by input power.** A 2 GJ cell in the pack's 54 MW uranium
   reactor lasts `2000 MJ / 54 MJ/s = 37.037 s`; the same cell in Angel's 160 MW fast burner reactor
   lasts 12.5 s. Its 25% `effectivity` makes the latter's base heat output 40 MW but does not make it
@@ -263,9 +263,9 @@ arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts
   belongs in the current material-flow model.
 - This factorises exactly into the existing recipe/machine arithmetic. Each synthetic fuel-cell
   recipe has `duration = fuel_value` in MJ, each promoted reactor has `speed = consumption` in MW,
-  and `duration / speed` is seconds per cell. Categories are
-  `synthetic-reactor:<fuel-category>`, so one uranium recipe can run in both the uranium and fast
-  burner reactors while thorium and deuterium remain on their own reactors.
+  and `duration / speed` is seconds per cell. Categories are `synthetic-reactor:<fuel-category>`, so
+  one uranium recipe can run in both the uranium and fast burner reactors while thorium and
+  deuterium remain on their own reactors.
 - Only burner reactors matched to live item fuels with a `burnt_result` are emitted: 5 recipes over
   4 reactors in this pack. The two Bob's chemical burner reactors consume ordinary fuels without a
   spent product, and the two fluid reactors use a fluid energy source; both are heat-production
@@ -319,8 +319,8 @@ is still missing.
 
 `scripts/synthetic.ts` turns the three machine-shaped non-recipe source families into `Recipe`s and
 `Machine`s so the app can show them: pumps (2 recipes in this pack), miners (17 recipes) and reactor
-fuel cells (5 recipes), over 25 machines in total. Both `ingest-data.ts` and `complexity.ts` call it,
-which is what keeps their ids in step.
+fuel cells (5 recipes), over 25 machines in total. Both `ingest-data.ts` and `complexity.ts` call
+it, which is what keeps their ids in step.
 
 The rate conversions are the fiddly part, and all three follow from `Machine.speed` meaning "crafts
 per second of a one-second recipe":
@@ -331,8 +331,8 @@ per second of a one-second recipe":
 - **Miners.** `mining_speed` per second against `minable.mining_time` seconds is already the model,
   so both go across as they are. Patch richness is not modelled: a pumpjack's real output scales
   with the well's yield percentage, and these are the 100% numbers.
-- **Reactors.** A fuel's `fuel_value` in MJ divided by a reactor's `consumption` in MW is seconds per
-  cell, so those become recipe duration and machine speed respectively. Burner effectivity and
+- **Reactors.** A fuel's `fuel_value` in MJ divided by a reactor's `consumption` in MW is seconds
+  per cell, so those become recipe duration and machine speed respectively. Burner effectivity and
   neighbour bonus only change heat output. Only item fuels with `burnt_result` are included.
 - **`minable.fluid_amount` is stated ten times too large.** The prototype value must be divisible by
   ten and the game divides it out again, so the `10` on every infinite ore is one acid per ore.
