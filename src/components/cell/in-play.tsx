@@ -8,6 +8,7 @@ import type { ResourceId } from '../../types.ts';
 import { ResourceIcon } from '../resource.tsx';
 import { internalConnections } from './internal-calc.ts';
 import { InPlayConnectionsView } from './in-play-connections.tsx';
+import { WarnIcon } from './notes.tsx';
 
 /** Every resource a recipe in this cell consumes or produces, including its open edges. */
 export function InPlayRow({
@@ -111,7 +112,7 @@ function InPlayChip({
             class="cell-leftover"
             title={`${resourceName(id)} is unbalanced. Open its details to review supply and consumption or allow ${rate > 0 ? 'surplus export' : 'shortfall import'}.`}
           >
-            ⚠ {rate > 0 ? '+' : '−'}
+            <WarnIcon /> {rate > 0 ? '+' : '−'}
             {fmt(Math.abs(rate))}
           </span>
         ) : null}

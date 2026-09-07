@@ -3,6 +3,7 @@ import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import type { InternalConnections, InternalFlow } from './internal-calc.ts';
+import { WarnIcon } from './notes.tsx';
 import {
   PackageDependenciesIcon,
   PackageDependentsIcon,
@@ -170,7 +171,7 @@ function ResourceDetails({
         </p>
       ) : imbalance ? (
         <p class="cell-export-note">
-          ⚠ This resource has a {imbalance > 0 ? 'surplus' : 'shortfall'} of{' '}
+          <WarnIcon /> This resource has a {imbalance > 0 ? 'surplus' : 'shortfall'} of{' '}
           {fmt(Math.abs(imbalance))}/s. Review its producers and consumers
           {imbalance > 0 ? ', or export the surplus.' : ', or import the shortfall.'}
         </p>

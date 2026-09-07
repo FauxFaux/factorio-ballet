@@ -42,7 +42,9 @@ export function SolverFallbackNotice({ solution }: { solution: Solution }) {
     <aside class="cell-solver-fallback" role="alert">
       <WarnIcon />
       <div>
-        <div>{note.detail}</div>
+        <div>
+          {note.detail} Review <WarnIcon /> warnings.
+        </div>
         <div class="cell-solver-fallback-detail">{note.failure}</div>
       </div>
     </aside>
