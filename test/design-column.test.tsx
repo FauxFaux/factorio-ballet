@@ -3,6 +3,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DesignColumn, worldToViewport } from '../src/components/design/design-column.tsx';
+import type { DesignColumn as DesignColumnData } from '../src/design.ts';
 
 afterEach(cleanup);
 
@@ -103,6 +104,43 @@ describe('DesignColumn', () => {
     expect(viewport.style.backgroundPosition).toBe('24px -12px');
     expect(assembler.style.left).toBe('24px');
     expect(assembler.style.top).toBe('-12px');
+  });
+
+  it('moves an assembler to snapped integer tile coordinates without panning', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler' as const,
+          recipe: 'copper-cable',
+          position: { x: 8, y: 4 },
+          size: { width: 3, height: 2 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
+    assembler.setPointerCapture = () => undefined;
+    assembler.releasePointerCapture = () => undefined;
+
+    fireEvent.pointerDown(assembler, { button: 0, pointerId: 1, clientX: 20, clientY: 20 });
+    fireEvent.pointerMove(assembler, { pointerId: 1, clientX: 44, clientY: 8 });
+    fireEvent.pointerUp(assembler, { pointerId: 1 });
+
+    expect(column.entities[0].position).toEqual({ x: 10, y: 3 });
+    expect(viewport.style.backgroundPosition).toBe('0px 0px');
   });
 
   it('does not draw unsupported entity kinds as assemblers', () => {

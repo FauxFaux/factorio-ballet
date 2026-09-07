@@ -1,4 +1,5 @@
 import './design-column.css';
+import type { JSX } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName, staticData } from '../../data/index.ts';
@@ -13,6 +14,13 @@ import { RecipeButton } from './recipe-button.tsx';
 const TILE_SIZE = 12;
 
 type ViewportPoint = { x: number; y: number };
+type PanDrag = { pointerId: number; x: number; y: number };
+type AssemblerDrag = {
+  pointerId: number;
+  x: number;
+  y: number;
+  position: DesignPosition;
+};
 
 /** Convert a position in the design model to a pixel position in the visible viewport. */
 export function worldToViewport(
@@ -42,7 +50,8 @@ export function DesignColumn({
   onChange: (update: (column: DesignColumnData) => DesignColumnData) => void;
 }) {
   const viewport = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ pointerId: number; x: number; y: number }>();
+  const drag = useRef<PanDrag>();
+  const assemblerDrag = useRef<AssemblerDrag>();
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
 
@@ -67,6 +76,32 @@ export function DesignColumn({
   const worldOrigin = {
     x: Math.round(viewportSize.width / 2 + pan.x),
     y: Math.round(viewportSize.height / 2 + pan.y),
+  };
+
+  const moveAssembler = (entityIndex: number, event: JSX.TargetedPointerEvent<HTMLDivElement>) => {
+    const previous = assemblerDrag.current;
+    if (!previous || previous.pointerId !== event.pointerId) return;
+
+    const position = {
+      x: previous.position.x + Math.round((event.clientX - previous.x) / TILE_SIZE),
+      y: previous.position.y + Math.round((event.clientY - previous.y) / TILE_SIZE),
+    };
+    onChange((current) => {
+      const entity = current.entities[entityIndex];
+      if (
+        !entity ||
+        entity.kind !== 'assembler' ||
+        (entity.position.x === position.x && entity.position.y === position.y)
+      ) {
+        return current;
+      }
+      return {
+        ...current,
+        entities: current.entities.map((currentEntity, currentIndex) =>
+          currentIndex === entityIndex ? { ...currentEntity, position } : currentEntity,
+        ),
+      };
+    });
   };
 
   return (
@@ -125,7 +160,35 @@ export function DesignColumn({
       >
         {column.entities.map((entity, entityIndex) =>
           entity.kind === 'assembler' ? (
-            <Assembler key={entityIndex} assembler={entity} worldOrigin={worldOrigin} />
+            <Assembler
+              key={entityIndex}
+              assembler={entity}
+              worldOrigin={worldOrigin}
+              onPointerDown={(event) => {
+                if (event.button !== 0) return;
+                event.stopPropagation();
+                event.currentTarget.setPointerCapture(event.pointerId);
+                assemblerDrag.current = {
+                  pointerId: event.pointerId,
+                  x: event.clientX,
+                  y: event.clientY,
+                  position: entity.position,
+                };
+              }}
+              onPointerMove={(event) => {
+                event.stopPropagation();
+                moveAssembler(entityIndex, event);
+              }}
+              onPointerUp={(event) => {
+                if (assemblerDrag.current?.pointerId !== event.pointerId) return;
+                event.stopPropagation();
+                assemblerDrag.current = undefined;
+                event.currentTarget.releasePointerCapture(event.pointerId);
+              }}
+              onLostPointerCapture={() => {
+                assemblerDrag.current = undefined;
+              }}
+            />
           ) : null,
         )}
       </div>
@@ -137,9 +200,17 @@ export function DesignColumn({
 function Assembler({
   assembler,
   worldOrigin,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onLostPointerCapture,
 }: {
   assembler: DesignAssembler;
   worldOrigin: ViewportPoint;
+  onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onPointerUp: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onLostPointerCapture: () => void;
 }) {
   const recipe = staticData.recipes[assembler.recipe];
   const name = recipeName(assembler.recipe);
@@ -154,6 +225,10 @@ function Assembler({
       aria-label={`${name} assembler at ${x}, ${y}`}
       title={`${name} (${x}, ${y})`}
       data-position={`${x},${y}`}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={onPointerUp}
+      onLostPointerCapture={onLostPointerCapture}
       style={{
         left: `${viewportPosition.x}px`,
         top: `${viewportPosition.y}px`,
