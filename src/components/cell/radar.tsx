@@ -1,8 +1,8 @@
 import './radar.css';
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { resourceName, staticData } from '../../data/index.ts';
-import { icons } from '../../data/decode-icons.ts';
 import type { ResourceId } from '../../types.ts';
+import { iconSprite } from '../icon.tsx';
 import { assemblerColumnLayout, stackAssemblerDistricts } from './radar-layout.ts';
 
 /**
@@ -180,10 +180,11 @@ function RecipeIcon({
 }) {
   const recipeData = staticData.recipes[recipe];
   const product = recipeData?.products[0]?.resource;
-  const [url, spriteX, spriteY, sheetSize] =
-    icons[`recipe:${recipe}`] ??
-    (product ? icons[product] : undefined) ??
-    icons['recipe:recipe-unknown'];
+  const [url, spriteX, spriteY, sheetSize] = iconSprite(
+    `recipe:${recipe}`,
+    ...(product ? [product] : []),
+    'recipe:recipe-unknown',
+  );
 
   return (
     <svg

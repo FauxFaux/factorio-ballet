@@ -1,13 +1,18 @@
 const { icons } = await import('../data/decode-icons.ts');
 import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 
-/** CSS for a single sprite from the icon spritesheet; the first key which exists wins. */
-export function iconStyle(...keys: string[]): string {
+/** Look up an icon sprite without exposing the decoded sprite table to eager modules. */
+export function iconSprite(...keys: string[]): [string, number, number, number] {
   for (const key of keys) {
     const icon = icons[key];
-    if (icon) return spriteStyle(icon);
+    if (icon) return icon;
   }
-  return spriteStyle(icons['item:item-unknown']);
+  return icons['item:item-unknown'];
+}
+
+/** CSS for a single sprite from the icon spritesheet; the first key which exists wins. */
+export function iconStyle(...keys: string[]): string {
+  return spriteStyle(iconSprite(...keys));
 }
 
 function spriteStyle([url, x, y, sheetSize]: [string, number, number, number]): string {

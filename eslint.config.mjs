@@ -29,4 +29,22 @@ export default defineConfig(
       "react/jsx-key": "off",
     },
   },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    ignores: ["src/components/icon.tsx"],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: [
+            {
+              group: ["**/data/decode-icons.ts"],
+              message:
+                "Use src/components/icon.tsx so decoded icons remain behind its lazy import.",
+            },
+          ],
+        },
+      ],
+    },
+  },
 );
