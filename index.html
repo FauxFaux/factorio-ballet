@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>faucalc</title>
   </head>
-  <body>
+  <body style="background-color: #16171d">
     <div id="app">Loading...</div>
     <script type="module" async src="/src/main.tsx"></script>
     <script>
@@ -14,7 +14,9 @@
         d.src = u;
         d.decode().catch((err) => console.log("preload failed, ignoring", u, err));
       }
-      INJECT_ICONS_ARRAY.map((u, i) => setTimeout(() => preloadImage(u), i * 100));
+      if (typeof INJECT_ICONS_ARRAY !== 'undefined') {
+        INJECT_ICONS_ARRAY.map((u, i) => setTimeout(() => preloadImage(u), i * 100));
+      }
     </script>
     <noscript>This is a JavaScript single page app with no fallback, sorry.</noscript>
   </body>
