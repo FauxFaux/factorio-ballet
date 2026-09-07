@@ -2,7 +2,11 @@
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
-import { DesignColumn, worldToViewport } from '../src/components/design/design-column.tsx';
+import {
+  DesignColumn,
+  entityPositionStatuses,
+  worldToViewport,
+} from '../src/components/design/design-column.tsx';
 import type { DesignColumn as DesignColumnData } from '../src/design.ts';
 
 afterEach(cleanup);
@@ -39,6 +43,52 @@ describe('DesignColumn', () => {
 
   it('maps negative world coordinates relative to the viewport world origin', () => {
     expect(worldToViewport({ x: -3, y: -2 }, { x: 100, y: 80 })).toEqual({ x: 64, y: 56 });
+  });
+
+  it('marks every entity whose tile rectangle overlaps another entity', () => {
+    expect(
+      entityPositionStatuses([
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 0, y: 0 },
+          size: { width: 3, height: 2 },
+        },
+        { kind: 'belt', position: { x: 2, y: 1 }, direction: 'east' },
+        { kind: 'pipe', position: { x: 3, y: 0 } },
+      ]),
+    ).toEqual(['overlap', 'overlap', 'valid']);
+  });
+
+  it('colours overlapping assemblers as errors', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              position: { x: 0, y: 0 },
+              size: { width: 3, height: 2 },
+            },
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              position: { x: 2, y: 1 },
+              size: { width: 3, height: 2 },
+            },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    expect(screen.getAllByRole('img', { name: /overlaps another entity/ })).toHaveLength(2);
+    expect(document.querySelectorAll('.cell-design-assembler-error')).toHaveLength(2);
   });
 
   it('scrolls the grid and entities through the same viewport transform', () => {

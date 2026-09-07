@@ -113,6 +113,11 @@
   box-shadow: 0 2px 5px rgb(0 0 0 / 35%);
 }
 
+.cell-design-assembler-error {
+  background: color-mix(in srgb, crimson 72%, var(--cell-design-paper));
+  border-color: lightcoral;
+}
+
 .cell-design-assembler-icon {
   display: block;
   width: calc(var(--cell-design-tile-size) * 0.8);

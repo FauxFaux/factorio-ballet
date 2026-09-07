@@ -7,6 +7,7 @@ import { recipeName, staticData } from '../../data/index.ts';
 import type {
   DesignAssembler,
   DesignColumn as DesignColumnData,
+  DesignEntity,
   DesignPosition,
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
@@ -23,6 +24,51 @@ type AssemblerDrag = {
   y: number;
   position: DesignPosition;
 };
+
+/** The placement and connection validity currently known for an entity. */
+export type EntityPositionStatus = 'valid' | 'overlap' | 'disconnected';
+
+interface EntityBounds {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Return each entity's placement status. Connection validation will later be able to return
+ * `disconnected`; for now, only intersecting tile rectangles are invalid.
+ */
+export function entityPositionStatuses(entities: DesignEntity[]): EntityPositionStatus[] {
+  const statuses: EntityPositionStatus[] = Array(entities.length).fill('valid');
+  const bounds = entities.map(entityBounds);
+
+  for (let first = 0; first < bounds.length; first += 1) {
+    for (let second = first + 1; second < bounds.length; second += 1) {
+      if (!rectanglesOverlap(bounds[first], bounds[second])) continue;
+      statuses[first] = 'overlap';
+      statuses[second] = 'overlap';
+    }
+  }
+
+  return statuses;
+}
+
+function entityBounds(entity: DesignEntity): EntityBounds {
+  return {
+    ...entity.position,
+    ...(entity.kind === 'assembler' ? entity.size : { width: 1, height: 1 }),
+  };
+}
+
+function rectanglesOverlap(first: EntityBounds, second: EntityBounds): boolean {
+  return (
+    first.x < second.x + second.width &&
+    first.x + first.width > second.x &&
+    first.y < second.y + second.height &&
+    first.y + first.height > second.y
+  );
+}
 
 /** Convert a position in the design model to a pixel position in the visible viewport. */
 export function worldToViewport(
@@ -57,6 +103,7 @@ export function DesignColumn({
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
+  const entityStatuses = entityPositionStatuses(column.entities);
 
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -184,6 +231,7 @@ export function DesignColumn({
             <Assembler
               key={entityIndex}
               assembler={entity}
+              status={entityStatuses[entityIndex]}
               worldOrigin={worldOrigin}
               onPointerDown={(event) => {
                 if (event.button !== 0) return;
@@ -228,6 +276,7 @@ export function DesignColumn({
 /** An assembler positioned on the design world's tile grid. */
 function Assembler({
   assembler,
+  status,
   worldOrigin,
   onPointerDown,
   onPointerMove,
@@ -235,6 +284,7 @@ function Assembler({
   onLostPointerCapture,
 }: {
   assembler: DesignAssembler;
+  status: EntityPositionStatus;
   worldOrigin: ViewportPoint;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
@@ -246,14 +296,16 @@ function Assembler({
   const { x, y } = assembler.position;
   const { width, height } = assembler.size;
   const viewportPosition = worldToViewport(assembler.position, worldOrigin);
+  const isOverlapping = status === 'overlap';
 
   return (
     <div
-      class="cell-design-assembler"
+      class={`cell-design-assembler${isOverlapping ? ' cell-design-assembler-error' : ''}`}
       role="img"
-      aria-label={`${name} assembler at ${x}, ${y}`}
-      title={`${name} (${x}, ${y})`}
+      aria-label={`${name} assembler at ${x}, ${y}${isOverlapping ? ', overlaps another entity' : ''}`}
+      title={`${name} (${x}, ${y})${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
+      data-position-status={status}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
