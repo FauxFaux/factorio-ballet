@@ -1,9 +1,29 @@
 import './design-column.css';
+import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName, staticData } from '../../data/index.ts';
-import type { DesignAssembler, DesignColumn as DesignColumnData } from '../../design.ts';
+import type {
+  DesignAssembler,
+  DesignColumn as DesignColumnData,
+  DesignPosition,
+} from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
 import { RecipeButton } from './recipe-button.tsx';
+
+const TILE_SIZE = 12;
+
+type ViewportPoint = { x: number; y: number };
+
+/** Convert a position in the design model to a pixel position in the visible viewport. */
+export function worldToViewport(
+  position: DesignPosition,
+  worldOrigin: ViewportPoint,
+): ViewportPoint {
+  return {
+    x: worldOrigin.x + position.x * TILE_SIZE,
+    y: worldOrigin.y + position.y * TILE_SIZE,
+  };
+}
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
 export function DesignColumn({
@@ -21,8 +41,40 @@ export function DesignColumn({
   progress: number;
   onChange: (update: (column: DesignColumnData) => DesignColumnData) => void;
 }) {
+  const viewport = useRef<HTMLDivElement>(null);
+  const drag = useRef<{ pointerId: number; x: number; y: number }>();
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
+
+  useLayoutEffect(() => {
+    const element = viewport.current;
+    if (!element) return;
+
+    const measure = () => {
+      const { width, height } = element.getBoundingClientRect();
+      setViewportSize((previous) =>
+        previous.width === width && previous.height === height ? previous : { width, height },
+      );
+    };
+
+    measure();
+    if (typeof ResizeObserver === 'undefined') return;
+    const observer = new ResizeObserver(measure);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  const worldOrigin = {
+    x: Math.round(viewportSize.width / 2 + pan.x),
+    y: Math.round(viewportSize.height / 2 + pan.y),
+  };
+
   return (
-    <section class="cell-design-column" data-entity-count={column.entities.length}>
+    <section
+      class="cell-design-column"
+      data-entity-count={column.entities.length}
+      style={{ '--cell-design-tile-size': `${TILE_SIZE}px` }}
+    >
       <div class="cell-design-toolbar">
         <h3>Column {index + 1}</h3>
         <div class="cell-design-recipes" aria-label={`Recipes for column ${index + 1}`}>
@@ -38,23 +90,62 @@ export function DesignColumn({
           ))}
         </div>
       </div>
-      <div class="cell-design-viewport">
-        <div class="cell-design-world">
-          {column.entities.map((entity, entityIndex) =>
-            entity.kind === 'assembler' ? <Assembler key={entityIndex} assembler={entity} /> : null,
-          )}
-        </div>
+      <div
+        ref={viewport}
+        class="cell-design-viewport"
+        role="region"
+        aria-label={`Design viewport for column ${index + 1}`}
+        style={{ backgroundPosition: `${worldOrigin.x}px ${worldOrigin.y}px` }}
+        onPointerDown={(event) => {
+          if (event.button !== 0) return;
+          event.currentTarget.setPointerCapture(event.pointerId);
+          drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+        }}
+        onPointerMove={(event) => {
+          const previous = drag.current;
+          if (!previous || previous.pointerId !== event.pointerId) return;
+          setPan((current) => ({
+            x: current.x + event.clientX - previous.x,
+            y: current.y + event.clientY - previous.y,
+          }));
+          drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
+        }}
+        onPointerUp={(event) => {
+          if (drag.current?.pointerId !== event.pointerId) return;
+          drag.current = undefined;
+          event.currentTarget.releasePointerCapture(event.pointerId);
+        }}
+        onLostPointerCapture={() => {
+          drag.current = undefined;
+        }}
+        onWheel={(event) => {
+          event.preventDefault();
+          setPan((current) => ({ x: current.x - event.deltaX, y: current.y - event.deltaY }));
+        }}
+      >
+        {column.entities.map((entity, entityIndex) =>
+          entity.kind === 'assembler' ? (
+            <Assembler key={entityIndex} assembler={entity} worldOrigin={worldOrigin} />
+          ) : null,
+        )}
       </div>
     </section>
   );
 }
 
 /** An assembler positioned on the design world's tile grid. */
-function Assembler({ assembler }: { assembler: DesignAssembler }) {
+function Assembler({
+  assembler,
+  worldOrigin,
+}: {
+  assembler: DesignAssembler;
+  worldOrigin: ViewportPoint;
+}) {
   const recipe = staticData.recipes[assembler.recipe];
   const name = recipeName(assembler.recipe);
   const { x, y } = assembler.position;
   const { width, height } = assembler.size;
+  const viewportPosition = worldToViewport(assembler.position, worldOrigin);
 
   return (
     <div
@@ -64,10 +155,10 @@ function Assembler({ assembler }: { assembler: DesignAssembler }) {
       title={`${name} (${x}, ${y})`}
       data-position={`${x},${y}`}
       style={{
-        '--cell-design-entity-x': x,
-        '--cell-design-entity-y': y,
-        '--cell-design-entity-width': width,
-        '--cell-design-entity-height': height,
+        left: `${viewportPosition.x}px`,
+        top: `${viewportPosition.y}px`,
+        width: `${width * TILE_SIZE}px`,
+        height: `${height * TILE_SIZE}px`,
       }}
     >
       <span class="cell-design-assembler-icon" aria-hidden="true">

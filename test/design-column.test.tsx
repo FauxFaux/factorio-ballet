@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen } from '@testing-library/preact';
+import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
-import { DesignColumn } from '../src/components/design/design-column.tsx';
+import { DesignColumn, worldToViewport } from '../src/components/design/design-column.tsx';
 
 afterEach(cleanup);
 
@@ -29,11 +29,80 @@ describe('DesignColumn', () => {
     );
 
     const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
-    expect(assembler.style.getPropertyValue('--cell-design-entity-x')).toBe('8');
-    expect(assembler.style.getPropertyValue('--cell-design-entity-y')).toBe('4');
-    expect(assembler.style.getPropertyValue('--cell-design-entity-width')).toBe('3');
-    expect(assembler.style.getPropertyValue('--cell-design-entity-height')).toBe('2');
+    expect(assembler.style.left).toBe('96px');
+    expect(assembler.style.top).toBe('48px');
+    expect(assembler.style.width).toBe('36px');
+    expect(assembler.style.height).toBe('24px');
     expect(assembler.querySelector('.cell-design-assembler-icon')).not.toBeNull();
+  });
+
+  it('maps negative world coordinates relative to the viewport world origin', () => {
+    expect(worldToViewport({ x: -3, y: -2 }, { x: 100, y: 80 })).toEqual({ x: 64, y: 56 });
+  });
+
+  it('scrolls the grid and entities through the same viewport transform', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              position: { x: 8, y: 4 },
+              size: { width: 3, height: 2 },
+            },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
+
+    fireEvent.wheel(viewport, { deltaX: 12, deltaY: -24 });
+
+    expect(viewport.style.backgroundPosition).toBe('-12px 24px');
+    expect(assembler.style.left).toBe('84px');
+    expect(assembler.style.top).toBe('72px');
+  });
+
+  it('pans the grid and entities together by dragging', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              position: { x: 0, y: 0 },
+              size: { width: 3, height: 2 },
+            },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 0, 0' });
+    viewport.setPointerCapture = () => undefined;
+    viewport.releasePointerCapture = () => undefined;
+
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 1, clientX: 10, clientY: 20 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 34, clientY: 8 });
+
+    expect(viewport.style.backgroundPosition).toBe('24px -12px');
+    expect(assembler.style.left).toBe('24px');
+    expect(assembler.style.top).toBe('-12px');
   });
 
   it('does not draw unsupported entity kinds as assemblers', () => {

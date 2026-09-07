@@ -1,6 +1,4 @@
 .cell-design-column {
-  /* One rendered pixel size for every coordinate in the design model. */
-  --cell-design-tile-size: 12px;
   --cell-design-major-grid-size: calc(var(--cell-design-tile-size) * 15);
   --cell-design-paper: midnightblue;
   --cell-design-grid: cornflowerblue;
@@ -32,37 +30,39 @@
   flex: 1;
   min-height: 0;
   overflow: hidden;
-}
-
-.cell-design-world {
-  position: absolute;
-  inset: 0;
-  /* The world starts at its origin, so center that point before applying any user pan. */
-  transform:
-    translate(50%, 50%) translate(var(--cell-design-pan-x, 0), var(--cell-design-pan-y, 0));
-  transform-origin: top left;
+  touch-action: none;
+  cursor: grab;
   background-color: var(--cell-design-paper);
   background-image:
-    repeating-linear-gradient(
+    linear-gradient(
       to right,
       color-mix(in srgb, var(--cell-design-grid-major) 50%, transparent) 0 1px,
-      transparent 1px var(--cell-design-major-grid-size)
+      transparent 1px
     ),
-    repeating-linear-gradient(
+    linear-gradient(
       to bottom,
       color-mix(in srgb, var(--cell-design-grid-major) 50%, transparent) 0 1px,
-      transparent 1px var(--cell-design-major-grid-size)
+      transparent 1px
     ),
-    repeating-linear-gradient(
+    linear-gradient(
       to right,
       color-mix(in srgb, var(--cell-design-grid) 30%, transparent) 0 1px,
-      transparent 1px var(--cell-design-tile-size)
+      transparent 1px
     ),
-    repeating-linear-gradient(
+    linear-gradient(
       to bottom,
       color-mix(in srgb, var(--cell-design-grid) 30%, transparent) 0 1px,
-      transparent 1px var(--cell-design-tile-size)
+      transparent 1px
     );
+  background-size:
+    var(--cell-design-major-grid-size) var(--cell-design-major-grid-size),
+    var(--cell-design-major-grid-size) var(--cell-design-major-grid-size),
+    var(--cell-design-tile-size) var(--cell-design-tile-size),
+    var(--cell-design-tile-size) var(--cell-design-tile-size);
+}
+
+.cell-design-viewport:active {
+  cursor: grabbing;
 }
 
 .cell-design-column h3 {
@@ -82,12 +82,8 @@
 
 .cell-design-assembler {
   position: absolute;
-  top: calc(var(--cell-design-entity-y) * var(--cell-design-tile-size));
-  left: calc(var(--cell-design-entity-x) * var(--cell-design-tile-size));
   z-index: 1;
   display: grid;
-  width: calc(var(--cell-design-entity-width) * var(--cell-design-tile-size));
-  height: calc(var(--cell-design-entity-height) * var(--cell-design-tile-size));
   box-sizing: border-box;
   place-items: center;
   background: color-mix(in srgb, var(--cell-design-control) 82%, transparent);
@@ -114,43 +110,41 @@
 }
 
 .cell-design-recipe {
-    display: grid;
-    width: 1.5rem;
-    height: 1.5rem;
-    box-sizing: border-box;
-    place-items: center;
-    padding: 0;
-    color: var(--cell-design-control-text);
-    background: var(--cell-design-control);
-    border: 1px solid var(--cell-design-control-border);
-    border-radius: 4px;
-    cursor: pointer;
+  display: grid;
+  width: 1.5rem;
+  height: 1.5rem;
+  box-sizing: border-box;
+  place-items: center;
+  padding: 0;
+  color: var(--cell-design-control-text);
+  background: var(--cell-design-control);
+  border: 1px solid var(--cell-design-control-border);
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .cell-design-recipe:hover:not(:disabled) {
-    background: var(--cell-design-control-hover);
-    border-color: var(--cell-design-control-text);
+  background: var(--cell-design-control-hover);
+  border-color: var(--cell-design-control-text);
 }
 
 .cell-design-recipe:disabled {
-    opacity: 0.55;
-    cursor: default;
+  opacity: 0.55;
+  cursor: default;
 }
 
 .cell-design-recipe-icon {
-    display: block;
-    width: 1.25rem;
-    height: 1.25rem;
+  display: block;
+  width: 1.25rem;
+  height: 1.25rem;
 }
 
 .cell-design-recipe-icon-sprite {
-    /* Keep the 32px source box: sprite offsets and sheet size are calculated in that coordinate
+  /* Keep the 32px source box: sprite offsets and sheet size are calculated in that coordinate
      * system. Scale its rendered result rather than shrinking the background's layout box. */
-    display: block;
-    width: 1.7778rem;
-    height: 1.7778rem;
-    transform: scale(0.625);
-    transform-origin: top left;
-}
-;
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
+  transform: scale(0.625);
+  transform-origin: top left;
 }
