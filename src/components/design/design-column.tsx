@@ -1,4 +1,5 @@
 import './design-column.css';
+import { TrashIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
@@ -14,6 +15,7 @@ import { RecipeButton } from './recipe-button.tsx';
 const TILE_SIZE = 12;
 
 type ViewportPoint = { x: number; y: number };
+type CursorMode = 'pan' | 'erase';
 type PanDrag = { pointerId: number; x: number; y: number };
 type AssemblerDrag = {
   pointerId: number;
@@ -54,6 +56,7 @@ export function DesignColumn({
   const assemblerDrag = useRef<AssemblerDrag>();
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
+  const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
 
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -104,6 +107,13 @@ export function DesignColumn({
     });
   };
 
+  const eraseEntity = (entityIndex: number) => {
+    onChange((current) => ({
+      ...current,
+      entities: current.entities.filter((_, currentIndex) => currentIndex !== entityIndex),
+    }));
+  };
+
   return (
     <section
       class="cell-design-column"
@@ -112,6 +122,16 @@ export function DesignColumn({
     >
       <div class="cell-design-toolbar">
         <h3>Column {index + 1}</h3>
+        <button
+          type="button"
+          class="cell-design-erase"
+          aria-label="Erase"
+          aria-pressed={cursorMode === 'erase'}
+          title="Erase entities"
+          onClick={() => setCursorMode((mode) => (mode === 'erase' ? 'pan' : 'erase'))}
+        >
+          <TrashIcon aria-hidden="true" />
+        </button>
         <div class="cell-design-recipes" aria-label={`Recipes for column ${index + 1}`}>
           {entries.map((entry, entryIndex) => (
             <RecipeButton
@@ -127,11 +147,12 @@ export function DesignColumn({
       </div>
       <div
         ref={viewport}
-        class="cell-design-viewport"
+        class={`cell-design-viewport${cursorMode === 'erase' ? ' cell-design-viewport-erase' : ''}`}
         role="region"
         aria-label={`Design viewport for column ${index + 1}`}
         style={{ backgroundPosition: `${worldOrigin.x}px ${worldOrigin.y}px` }}
         onPointerDown={(event) => {
+          if (cursorMode === 'erase') return;
           if (event.button !== 0) return;
           event.currentTarget.setPointerCapture(event.pointerId);
           drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
@@ -167,6 +188,10 @@ export function DesignColumn({
               onPointerDown={(event) => {
                 if (event.button !== 0) return;
                 event.stopPropagation();
+                if (cursorMode === 'erase') {
+                  eraseEntity(entityIndex);
+                  return;
+                }
                 event.currentTarget.setPointerCapture(event.pointerId);
                 assemblerDrag.current = {
                   pointerId: event.pointerId,
@@ -177,6 +202,10 @@ export function DesignColumn({
               }}
               onPointerMove={(event) => {
                 event.stopPropagation();
+                if (cursorMode === 'erase') {
+                  if ((event.buttons & 1) !== 0) eraseEntity(entityIndex);
+                  return;
+                }
                 moveAssembler(entityIndex, event);
               }}
               onPointerUp={(event) => {

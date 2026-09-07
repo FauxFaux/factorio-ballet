@@ -143,6 +143,75 @@ describe('DesignColumn', () => {
     expect(viewport.style.backgroundPosition).toBe('0px 0px');
   });
 
+  it('erases an entity when erase mode is active', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 8, y: 4 },
+          size: { width: 3, height: 2 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    const erase = screen.getByRole('button', { name: 'Erase' });
+    fireEvent.click(erase);
+    expect(erase.getAttribute('aria-pressed')).toBe('true');
+
+    fireEvent.pointerDown(screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' }), {
+      button: 0,
+      pointerId: 1,
+    });
+
+    expect(column.entities).toEqual([]);
+  });
+
+  it('erases entities as the primary pointer moves over them in erase mode', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 8, y: 4 },
+          size: { width: 3, height: 2 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Erase' }));
+    fireEvent.pointerMove(screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' }), {
+      buttons: 1,
+      pointerId: 1,
+    });
+
+    expect(column.entities).toEqual([]);
+  });
+
   it('does not draw unsupported entity kinds as assemblers', () => {
     render(
       <DesignColumn
