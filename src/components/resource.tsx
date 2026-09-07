@@ -1,4 +1,5 @@
 import './resource.css';
+import type { ComponentChildren } from 'preact';
 import { staticData } from '../data/index.ts';
 import type { ResourceId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
@@ -22,13 +23,16 @@ export function ResourceIcon({ id }: { id: ResourceId }) {
 export function ResourceButton({
   id,
   onPick,
+  children,
 }: {
   id: ResourceId;
   onPick: (id: ResourceId) => void;
+  children?: ComponentChildren;
 }) {
   return (
     <button type="button" class="resource-button" onClick={() => onPick(id)}>
       <ResourceWithIcon id={id} />
+      {children}
     </button>
   );
 }

@@ -33,18 +33,12 @@
   min-width: 0;
 }
 
-.cell-flow.is-forced {
-  background: var(--accent-bg);
-  border-left: 2px solid var(--accent-border);
-  flex-wrap: nowrap;
-}
-
 .cell-forced {
   display: flex;
   flex: none;
   white-space: nowrap;
   color: var(--accent);
-  margin-right: 0.3rem;
+  margin-left: auto;
 }
 
 .cell-rate {

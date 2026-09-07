@@ -5,7 +5,9 @@
 }
 
 .resource-button {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 4px;
   width: 100%;
   font: inherit;
   color: inherit;
