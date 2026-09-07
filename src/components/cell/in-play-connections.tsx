@@ -11,6 +11,11 @@ export function InPlayConnectionsView({
   inputRate,
   outputRate,
   solved,
+  forcedExport = false,
+  forcedImport = false,
+  onToggleImport,
+  onToggleExport,
+  imbalance,
   onRecipeHover,
   onSearch,
 }: {
@@ -19,22 +24,39 @@ export function InPlayConnectionsView({
   inputRate: number | undefined;
   outputRate: number | undefined;
   solved: boolean;
+  forcedExport?: boolean;
+  forcedImport?: boolean;
+  onToggleImport?: () => void;
+  onToggleExport?: () => void;
+  imbalance?: number;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
 }) {
   const resource = staticData.resources[id];
+  const details = (
+    <ResourceDetails
+      id={id}
+      stackSize={resource?.stackSize}
+      onSearch={onSearch}
+      forcedExport={forcedExport}
+      forcedImport={forcedImport}
+      onToggleImport={onToggleImport}
+      onToggleExport={onToggleExport}
+      imbalance={imbalance}
+    />
+  );
 
   if (!solved) {
     return (
       <div class="cell-connections cell-connections-pending">
-        <ResourceDetails id={id} stackSize={resource?.stackSize} onSearch={onSearch} />
+        {details}
         Recipes appear once the cell is worked out.
       </div>
     );
   }
   return (
     <div class="cell-connections cell-in-play-connections">
-      <ResourceDetails id={id} stackSize={resource?.stackSize} onSearch={onSearch} />
+      {details}
       <InPlayConnectionTable
         outputs={connections.outputs}
         inputs={connections.inputs}
@@ -50,10 +72,20 @@ function ResourceDetails({
   id,
   stackSize,
   onSearch,
+  forcedExport,
+  forcedImport,
+  onToggleImport,
+  onToggleExport,
+  imbalance,
 }: {
   id: ResourceId;
   stackSize?: number;
   onSearch: (search: string) => void;
+  forcedExport: boolean;
+  forcedImport: boolean;
+  onToggleImport?: () => void;
+  onToggleExport?: () => void;
+  imbalance?: number;
 }) {
   return (
     <div class="cell-in-play-resource-details">
@@ -82,7 +114,46 @@ function ResourceDetails({
         >
           ⌕ uses
         </button>
+        {onToggleImport ? (
+          <button
+            type="button"
+            class="cell-btn"
+            aria-pressed={forcedImport}
+            title="Supply this resource's shortfall from outside the cell"
+            onClick={onToggleImport}
+          >
+            {forcedImport ? 'Clear explicit import' : 'Import shortfall'}
+          </button>
+        ) : null}
+        {onToggleExport ? (
+          <button
+            type="button"
+            class="cell-btn"
+            aria-pressed={forcedExport}
+            title="Allow surplus to leave this cell, including waste products"
+            onClick={onToggleExport}
+          >
+            {forcedExport ? 'Clear explicit export' : 'Export surplus'}
+          </button>
+        ) : null}
       </span>
+      {forcedImport ? (
+        <p class="cell-export-note">
+          Explicit import: shortfall is supplied externally; recipes can still produce this
+          resource. Clear explicit import to restore automatic balancing.
+        </p>
+      ) : forcedExport ? (
+        <p class="cell-export-note">
+          Explicit export: surplus may leave this cell; recipes can still consume this resource.
+          Clear explicit export to restore automatic balancing.
+        </p>
+      ) : imbalance ? (
+        <p class="cell-export-note">
+          ⚠ This resource has a {imbalance > 0 ? 'surplus' : 'shortfall'} of{' '}
+          {fmt(Math.abs(imbalance))}/s. Review its producers and consumers
+          {imbalance > 0 ? ', or export the surplus.' : ', or import the shortfall.'}
+        </p>
+      ) : null}
     </div>
   );
 }

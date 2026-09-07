@@ -24,6 +24,10 @@ import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
  */
 export interface Cell {
   entries: CellEntry[];
+  /** Resources whose surplus may leave the cell even when recipes also consume them. */
+  exports?: ResourceId[];
+  /** Resources whose shortfall may be supplied externally even when produced internally. */
+  imports?: ResourceId[];
   /** What the user called it, if they bothered; otherwise {@link cellTitle} names it after a recipe. */
   name?: string;
   /** The cell's optional factory-design surface and its persisted blueprint columns. */
@@ -294,8 +298,18 @@ export function cellInterface(cell: Cell): CellInterface {
       if (rate > 0) made.add(resource);
     }
   }
-  const inputs = simplestFirst([...used].filter((id) => !made.has(id)));
-  const outputs = simplestFirst([...made].filter((id) => !used.has(id)));
+  const exports = new Set(cell.exports);
+  const imports = new Set(cell.imports);
+  const inputs = simplestFirst(
+    [...inPlay].filter(
+      (id) => imports.has(id) || (used.has(id) && !made.has(id) && !exports.has(id)),
+    ),
+  );
+  const outputs = simplestFirst(
+    [...inPlay].filter(
+      (id) => exports.has(id) || (made.has(id) && !used.has(id) && !imports.has(id)),
+    ),
+  );
   const edges = new Set([...inputs, ...outputs]);
   const internal = new Set([...inPlay].filter((id) => !edges.has(id)));
   return {

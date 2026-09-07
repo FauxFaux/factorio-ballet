@@ -23,10 +23,16 @@ output set" step above — and the solvers under `src/solve/`, which perform the
 of the recipes to match the other" step.
 
 The default matrix solver balances every internal resource simultaneously, including cycles. If its
-system is inconsistent or underdetermined, it falls back to the demand-propagation `dumbSolver`,
-which remains available as a simpler alternative without cycle support. "Not always possible, and
-will be resolved later" is the design: what the app owes the user there is a sentence saying which
-number to type, and that is what a `SolveNote` is.
+cell declares `exports`, those resources may leave as surplus even when consumed internally. They do
+not set machine counts, but their full flows remain visible and a net shortfall is an error. The
+resource details let the user toggle this setting; explicit exports appear highlighted in out.
+Similarly, `imports` allow an external supply for a shortfall even when the cell produces that
+resource; a net surplus is an error. Explicit imports appear highlighted in in. Choosing import
+clears export for that resource, and vice versa. Both settings are persisted on the cell. If the
+remaining system is inconsistent or underdetermined, it falls back to the demand-propagation
+`dumbSolver`, which remains available as a simpler alternative without cycle support. "Not always
+possible, and will be resolved later" is the design: what the app owes the user there is a sentence
+saying which number to type, and that is what a `SolveNote` is.
 
 A row also carries what is in its machine's slots (`CellEntry.modules`), and the rates it is solved
 at are that loadout's: speed changes how many crafts a machine gets through, productivity changes

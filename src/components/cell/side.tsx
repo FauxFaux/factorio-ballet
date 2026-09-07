@@ -32,13 +32,18 @@ export function CellSide({
   ids,
   solution,
   onSearch,
+  exports = [],
+  imports = [],
 }: {
   dir: 'in' | 'out';
   ids: ResourceId[];
   solution: Solution;
   onSearch: (search: string) => void;
+  exports?: ResourceId[];
+  imports?: ResourceId[];
 }) {
   const side = SIDES[dir];
+  const forced = dir === 'in' ? imports : exports;
   const pickResource = (id: ResourceId) => {
     onSearch(side.search(id));
     document
@@ -66,8 +71,20 @@ export function CellSide({
         <p class="cell-none">—</p>
       ) : (
         ids.map((id) => (
-          <div key={id} class="cell-flow">
+          <div key={id} class={forced.includes(id) ? 'cell-flow is-forced-export' : 'cell-flow'}>
             <ResourceButton id={id} onPick={() => pickResource(id)} />
+            {forced.includes(id) ? (
+              <span
+                class="cell-forced-export"
+                title={
+                  dir === 'in'
+                    ? 'Explicit import: shortfall is supplied externally'
+                    : 'Explicit export: surplus is allowed to leave this cell'
+                }
+              >
+                forced
+              </span>
+            ) : null}
             <EdgeRate
               /* an input is consumed and so negative; both sides read as a rate, not a sign */
               rate={

@@ -1,0 +1,35 @@
+{
+  "v": 1,
+  "rs": "",
+  "cs": "makes:item:uranium-fuel-cell",
+  "gp": 100,
+  "cl": [
+    {
+      "entries": [
+        {
+          "recipe": "uranium-processing",
+          "count": 3,
+          "beacons": 1
+        },
+        {
+          "recipe": "angels-uranium-fuel-cell"
+        },
+        {
+          "recipe": "uranium-fuel-cell"
+        },
+        {
+          "recipe": "synthetic:burning-uranium-fuel-cell"
+        },
+        {
+          "recipe": "synthetic:burning-angels-uranium-fuel-cell"
+        },
+        {
+          "recipe": "angels-advanced-uranium-reprocessing"
+        }
+      ]
+    }
+  ],
+  "ci": 0,
+  "mo": {}
+}
+

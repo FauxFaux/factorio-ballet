@@ -104,7 +104,13 @@ export function CellBox({
         </button>
       </header>
       <div class="cell-body">
-        <CellSide dir="in" ids={iface.inputs} solution={solution} onSearch={onSearch} />
+        <CellSide
+          dir="in"
+          ids={iface.inputs}
+          solution={solution}
+          onSearch={onSearch}
+          imports={cell.imports}
+        />
         <div class="cell-middle">
           <SolverFallbackNotice solution={solution} />
           {cell.entries.length === 0 ? (
@@ -135,6 +141,26 @@ export function CellBox({
               solution={solution}
               inputs={new Set(iface.inputs)}
               outputs={new Set(iface.outputs)}
+              exports={cell.exports}
+              imports={cell.imports}
+              onToggleImport={(id) =>
+                setCell((previous) => ({
+                  ...previous,
+                  imports: previous.imports?.includes(id)
+                    ? previous.imports.filter((resource) => resource !== id)
+                    : [...(previous.imports ?? []), id],
+                  exports: previous.exports?.filter((resource) => resource !== id),
+                }))
+              }
+              onToggleExport={(id) =>
+                setCell((previous) => ({
+                  ...previous,
+                  imports: previous.imports?.filter((resource) => resource !== id),
+                  exports: previous.exports?.includes(id)
+                    ? previous.exports.filter((resource) => resource !== id)
+                    : [...(previous.exports ?? []), id],
+                }))
+              }
               onRecipeHover={setHoveredRecipe}
               onSearch={onSearch}
             />
@@ -142,7 +168,13 @@ export function CellBox({
           <SolveNotes cell={cell} solution={solution} />
         </div>
         <div class="cell-out-stack">
-          <CellSide dir="out" ids={iface.outputs} solution={solution} onSearch={onSearch} />
+          <CellSide
+            dir="out"
+            ids={iface.outputs}
+            solution={solution}
+            onSearch={onSearch}
+            exports={cell.exports}
+          />
           <CellRadar
             title={cellTitle(cell)}
             inputs={iface.inputs}

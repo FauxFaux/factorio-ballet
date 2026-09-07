@@ -29,6 +29,17 @@
   gap: 4px;
 }
 
+.cell-flow.is-forced-export {
+  background: var(--accent-bg);
+  border-left: 2px solid var(--accent-border);
+  flex-wrap: wrap;
+}
+
+.cell-forced-export {
+  color: var(--accent);
+  font-size: 0.6667rem;
+}
+
 .cell-rate {
   font-family: var(--mono);
   font-size: 0.8333rem;

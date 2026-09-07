@@ -16,6 +16,10 @@ export function InPlayRow({
   solution,
   inputs,
   outputs,
+  exports = [],
+  imports = [],
+  onToggleImport,
+  onToggleExport,
   onRecipeHover,
   onSearch,
 }: {
@@ -24,6 +28,10 @@ export function InPlayRow({
   solution: Solution;
   inputs: ReadonlySet<ResourceId>;
   outputs: ReadonlySet<ResourceId>;
+  exports?: ResourceId[];
+  imports?: ResourceId[];
+  onToggleImport?: (id: ResourceId) => void;
+  onToggleExport?: (id: ResourceId) => void;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
 }) {
@@ -56,6 +64,10 @@ export function InPlayRow({
           solution={solution}
           input={inputs.has(selected)}
           output={outputs.has(selected)}
+          forcedExport={exports.includes(selected)}
+          forcedImport={imports.includes(selected)}
+          onToggleImport={onToggleImport ? () => onToggleImport(selected) : undefined}
+          onToggleExport={onToggleExport ? () => onToggleExport(selected) : undefined}
           onRecipeHover={onRecipeHover}
           onSearch={onSearch}
         />
@@ -93,8 +105,11 @@ function InPlayChip({
       >
         <ResourceIcon id={id} />
         {!input && !output && rate !== 0 ? (
-          <span class="cell-leftover">
-            {rate > 0 ? '+' : '−'}
+          <span
+            class="cell-leftover"
+            title={`${resourceName(id)} is unbalanced. Open its details to review supply and consumption or allow ${rate > 0 ? 'surplus export' : 'shortfall import'}.`}
+          >
+            ⚠ {rate > 0 ? '+' : '−'}
             {fmt(Math.abs(rate))}
           </span>
         ) : null}
@@ -109,6 +124,10 @@ function InPlayDetails({
   solution,
   input,
   output,
+  forcedExport,
+  forcedImport,
+  onToggleImport,
+  onToggleExport,
   onRecipeHover,
   onSearch,
 }: {
@@ -117,6 +136,10 @@ function InPlayDetails({
   solution: Solution;
   input: boolean;
   output: boolean;
+  forcedExport: boolean;
+  forcedImport: boolean;
+  onToggleImport?: () => void;
+  onToggleExport?: () => void;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
 }) {
@@ -130,8 +153,13 @@ function InPlayDetails({
     <InPlayConnectionsView
       id={id}
       connections={connections}
-      inputRate={input ? Math.abs(rate) : undefined}
-      outputRate={output ? Math.abs(rate) : undefined}
+      inputRate={input ? Math.max(0, -rate) : undefined}
+      outputRate={output ? Math.max(0, rate) : undefined}
+      forcedExport={forcedExport}
+      forcedImport={forcedImport}
+      onToggleImport={onToggleImport}
+      onToggleExport={onToggleExport}
+      imbalance={!input && !output ? rate : undefined}
       solved={solution.complete}
       onRecipeHover={onRecipeHover}
       onSearch={onSearch}

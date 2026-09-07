@@ -2,6 +2,7 @@ import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data/index.ts';
 import type { ModuleFill } from './flow.ts';
 import type { FactoryDesign } from './design.ts';
+import type { ResourceId } from './types.ts';
 
 /**
  * The cells as they go into the URL hash: the same shape, with each recipe and machine prototype
@@ -21,6 +22,8 @@ import type { FactoryDesign } from './design.ts';
  */
 export interface PackedCell {
   entries: PackedEntry[];
+  exports?: ResourceId[];
+  imports?: ResourceId[];
   name?: string;
   design?: FactoryDesign;
 }

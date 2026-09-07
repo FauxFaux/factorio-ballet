@@ -69,7 +69,39 @@ export function solveCell(
   chosen: Chosen = NO_CHOICE,
   solver: Solver = defaultSolver,
 ): Solution {
-  return solver.solve(cell.entries.map((entry) => rowOf(entry, progress, chosen)));
+  const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen));
+  const exports = new Set(cell.exports);
+  const imports = new Set(cell.imports);
+  const external = new Set([...exports, ...imports]);
+  if (!external.size) return solver.solve(rows);
+  // Explicit boundary resources do not set counts; retain their full physical flows below.
+  const solution = solver.solve(
+    rows.map((row) => ({
+      ...row,
+      rates: new Map([...row.rates].filter(([id]) => !external.has(id))),
+    })),
+  );
+  solution.rates = rows.map((row) => row.rates);
+  for (const resource of external) {
+    const rate = rows.reduce(
+      (sum, row, index) => sum + (row.rates.get(resource) ?? 0) * (solution.counts[index] ?? 0),
+      0,
+    );
+    solution.balance.set(resource, Math.abs(rate) < 1e-9 ? 0 : rate);
+    const invalidExport = exports.has(resource) && rate < -1e-9;
+    const invalidImport = imports.has(resource) && rate > 1e-9;
+    if (invalidExport || invalidImport) {
+      solution.complete = false;
+      solution.notes.push({
+        kind: 'solver',
+        entry: 0,
+        detail: invalidExport
+          ? `${resourceName(resource)} is marked for export but has a shortfall of ${fmt(-rate)}/s. Add supply or clear its explicit export.`
+          : `${resourceName(resource)} is marked for import but has a surplus of ${fmt(rate)}/s. Add consumption or clear its explicit import.`,
+      });
+    }
+  }
+  return solution;
 }
 
 function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {

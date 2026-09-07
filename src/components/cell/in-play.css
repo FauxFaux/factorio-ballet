@@ -40,7 +40,8 @@
 
 .cell-in-play-resource-details {
   grid-column: 1 / -1;
-  white-space: nowrap;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .cell-in-play-resource-details span {
@@ -52,8 +53,17 @@
 .cell-in-play-resource-searches {
   float: right;
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 2px;
   margin-left: 6px;
+}
+
+.cell-export-note {
+  clear: both;
+  margin: 0.4rem 0;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .cell-in-play-connection-table {
