@@ -17,3 +17,17 @@
   font-size: 0.8333rem;
   color: var(--text-h);
 }
+
+.cell-design-recipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.cell-design-recipe {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

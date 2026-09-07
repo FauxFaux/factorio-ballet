@@ -1,6 +1,7 @@
 import './columns.css';
 import { DesignColumn } from './design-column.tsx';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import type { CellEntry } from '../../cell.ts';
 import type { FactoryDesign } from '../../design.ts';
 import type { Setter } from '../../ts.ts';
 
@@ -8,9 +9,15 @@ import type { Setter } from '../../ts.ts';
 export function CellDesign({
   design,
   setDesign,
+  entries,
+  counts,
+  progress,
 }: {
   design: FactoryDesign;
   setDesign: Setter<FactoryDesign>;
+  entries: CellEntry[];
+  counts: (number | undefined)[];
+  progress: number;
 }) {
   const surface = useRef<HTMLDivElement>(null);
   const [columnCount, setColumnCount] = useState(1);
@@ -52,7 +59,22 @@ export function CellDesign({
         style={{ gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))` }}
       >
         {design.columns.map((column, index) => (
-          <DesignColumn key={index} index={index} column={column} />
+          <DesignColumn
+            key={index}
+            index={index}
+            column={column}
+            entries={entries}
+            counts={counts}
+            progress={progress}
+            onChange={(update) =>
+              setDesign((previous) => ({
+                ...previous,
+                columns: previous.columns.map((current, currentIndex) =>
+                  currentIndex === index ? update(current) : current,
+                ),
+              }))
+            }
+          />
         ))}
       </div>
     </section>

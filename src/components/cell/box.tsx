@@ -199,6 +199,9 @@ export function CellBox({
       {cell.design ? (
         <CellDesign
           design={cell.design}
+          entries={cell.entries}
+          counts={solution.counts}
+          progress={progress}
           setDesign={(update) =>
             setCell((previous) => ({
               ...previous,

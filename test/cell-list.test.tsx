@@ -8,8 +8,8 @@ import { CellList } from '../src/components/cell-list.tsx';
 import { newCell, type Cell } from '../src/cell.ts';
 import { NO_CHOICE } from '../src/data/index.ts';
 
-function CellListExample() {
-  const cells = useState<Cell[]>([newCell()]);
+function CellListExample({ cell = newCell() }: { cell?: Cell }) {
+  const cells = useState<Cell[]>([cell]);
   const active = useState(0);
   return (
     <CellList
@@ -32,5 +32,20 @@ describe('CellList', () => {
     expect(screen.getByRole('region', { name: 'Design' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Column 1' })).toBeTruthy();
     expect(screen.queryByRole('button', { name: '+ design' })).toBeNull();
+  });
+
+  it('fills a design column with the solved number of a recipe’s assemblers', async () => {
+    const user = userEvent.setup();
+    render(<CellListExample cell={newCell('copper-cable')} />);
+
+    await user.click(screen.getByRole('button', { name: '+ design' }));
+
+    const recipe = screen.getByRole('button', { name: 'Set Copper wire assemblers to 1' });
+    expect((recipe as HTMLButtonElement).disabled).toBe(false);
+
+    await user.click(recipe);
+
+    expect((recipe as HTMLButtonElement).disabled).toBe(true);
+    expect(recipe.closest('section')?.dataset.entityCount).toBe('1');
   });
 });
