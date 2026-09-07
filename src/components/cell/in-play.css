@@ -60,10 +60,20 @@
 
 /* The resource actions need a visible resting state among the connection details. */
 .cell-in-play-resource-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  vertical-align: middle;
   margin: 1px;
   padding: 4px 8px;
   border-color: var(--border);
-  background: var(--code-bg);
+  background: var(--bg);
+}
+
+.cell-in-play-resource-action .resource-icon {
+  flex-shrink: 0;
+  margin: -8px;
+  transform: scale(0.55);
 }
 
 .cell-in-play-resource-action[aria-pressed="true"] {

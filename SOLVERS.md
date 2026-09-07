@@ -124,31 +124,31 @@ assume their combination yields a unique answer without another pin.
 ### Verified boundary suggestions
 
 `solveCell` runs `src/solve/boundary-suggestions.ts` for either solver selection. It checks the
-physical balances rather than trusting `complete`. For a failed cell, it first checks whether
-Matrix can already balance the unchanged system; a propagation-only cycle failure does not need
-a new boundary. Otherwise it removes each internal resource equation in turn and tests the
-remaining system with Matrix. Only unique, finite, nonnegative answers that preserve pins, close
-every other internal balance, and respect existing boundary directions become suggestions.
-The removed resource's physical balance determines export versus import and the predicted rate.
-These trials do not modify the cell or the displayed counts.
+physical balances rather than trusting `complete`. For a failed cell, it first checks whether Matrix
+can already balance the unchanged system; a propagation-only cycle failure does not need a new
+boundary. Otherwise it removes each internal resource equation in turn and tests the remaining
+system with Matrix. Only unique, finite, nonnegative answers that preserve pins, close every other
+internal balance, and respect existing boundary directions become suggestions. The removed
+resource's physical balance determines export versus import and the predicted rate. These trials do
+not modify the cell or the displayed counts.
 
 Suggestions live in `Solution.boundarySuggestions`, independently of recipe notes. In-play chips
-show warning icons even when the current resource balance is zero. The in-play explanation links
-to each alternative's resource details, where the existing import/export buttons apply it.
-Alternatives are individual choices, not a recommendation to enable them all. Exports appear first.
-The selected solver is also tested on each alternative; notes say when Matrix is needed.
+show warning icons even when the current resource balance is zero. The in-play explanation links to
+each alternative's resource details, where the existing import/export buttons apply it. Alternatives
+are individual choices, not a recommendation to enable them all. Exports appear first. The selected
+solver is also tested on each alternative; notes say when Matrix is needed.
 
 The plutonium fixtures extend the uranium chain with plutonium breeding and pin seven processing
 machines. The saved dumb answer balances U-238 while leaving U-235 and neptunium unbalanced.
 Removing the U-238 equation gives the only verified single-resource export alternative:
-approximately 17.7502361697 U-238/s, with every other internal resource balanced by Matrix.
-Unlike the smaller uranium fixture, the dumb solver still fails after this export, which the
-suggestion explicitly warns about. Importing neptunium, U-234, or U-235 are also mathematically
-valid alternatives, but require external isotope supplies and describe different factories.
+approximately 17.7502361697 U-238/s, with every other internal resource balanced by Matrix. Unlike
+the smaller uranium fixture, the dumb solver still fails after this export, which the suggestion
+explicitly warns about. Importing neptunium, U-234, or U-235 are also mathematically valid
+alternatives, but require external isotope supplies and describe different factories.
 
-This is a diagnostic search over single boundaries, not an optimizer or a general feasibility
-proof. It does not recommend underdetermined trials, combinations of boundaries, or changes to
-pins. Raw `Solver.solve` calls remain arithmetic-only; use `solveCell` for these cell diagnostics.
+This is a diagnostic search over single boundaries, not an optimizer or a general feasibility proof.
+It does not recommend underdetermined trials, combinations of boundaries, or changes to pins. Raw
+`Solver.solve` calls remain arithmetic-only; use `solveCell` for these cell diagnostics.
 
 ### Investigation steps
 

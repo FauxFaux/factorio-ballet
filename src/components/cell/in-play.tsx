@@ -63,9 +63,9 @@ export function InPlayRow({
       {solution.boundarySuggestions?.length ? (
         <div class="cell-in-play-resource-details">
           <p class="cell-export-note">
-            <WarnIcon /> These internal balances cannot all close together. A resource can appear
-            balanced here while forcing a shortfall elsewhere. Review a verified alternative (choose
-            one):
+            <WarnIcon /> The cell is not internally consistent. A resource can appear balanced in
+            one place while forcing a shortfall elsewhere.
+            <br /> Verified fixes:
             {solution.boundarySuggestions.map((suggestion) => (
               <button
                 key={suggestion.resource}
@@ -74,6 +74,7 @@ export function InPlayRow({
                 title={boundarySuggestionText(suggestion)}
                 onClick={() => onSelect(suggestion.resource)}
               >
+                <ResourceIcon id={suggestion.resource} />
                 {suggestion.direction} {resourceName(suggestion.resource)}
               </button>
             ))}
