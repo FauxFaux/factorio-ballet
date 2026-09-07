@@ -9,6 +9,8 @@ import icons3Data from '../assets/icons-3.json';
 import iconsUiUrl from '../assets/icons-ui.avif';
 import iconsUiData from '../assets/icons-ui.json';
 
+import './preload-icons.ts';
+
 type Icon = [url: string, x: number, y: number, sheetSize: number];
 type IconData = Record<string, [number, number]>;
 

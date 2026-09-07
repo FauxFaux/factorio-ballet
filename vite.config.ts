@@ -16,13 +16,7 @@ export default defineConfig(({ mode }) => ({
 
 function injectIcons(): Plugin {
   const placeholder = 'INJECT_ICONS_ARRAY';
-  const sources = [
-    'src/assets/icons-ui.avif',
-    'src/assets/icons-0.avif',
-    'src/assets/icons-1.avif',
-    'src/assets/icons-2.avif',
-    'src/assets/icons-3.avif',
-  ];
+  const sources = ['src/assets/icons-ui.avif'];
   let config: ResolvedConfig;
 
   return {
