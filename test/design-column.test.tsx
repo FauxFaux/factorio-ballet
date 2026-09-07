@@ -262,7 +262,7 @@ describe('DesignColumn', () => {
     expect(column.entities).toEqual([]);
   });
 
-  it('does not draw unsupported entity kinds as assemblers', () => {
+  it('draws belts as directional one-tile entities', () => {
     render(
       <DesignColumn
         index={0}
@@ -274,6 +274,66 @@ describe('DesignColumn', () => {
       />,
     );
 
-    expect(screen.queryByRole('img')).toBeNull();
+    const belt = screen.getByRole('img', {
+      name: 'Transport belt at 1, 2, pointing east',
+    });
+    expect(belt.style.left).toBe('12px');
+    expect(belt.style.top).toBe('24px');
+    expect(belt.style.width).toBe('12px');
+    expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
+  });
+
+  it('draws an unbroken belt path and infers its direction from the drag', () => {
+    let column: DesignColumnData = { entities: [] };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Draw belts' }));
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    viewport.setPointerCapture = () => undefined;
+    viewport.releasePointerCapture = () => undefined;
+
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 1, clientX: 13, clientY: 25 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 37, clientY: 25 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 37, clientY: 37 });
+    fireEvent.pointerUp(viewport, { pointerId: 1, clientX: 37, clientY: 37 });
+
+    expect(column.entities).toEqual([
+      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 3, y: 2 }, direction: 'south' },
+      { kind: 'belt', position: { x: 3, y: 3 }, direction: 'south' },
+    ]);
+  });
+
+  it('makes belt and erase modes mutually exclusive', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{ entities: [] }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const belt = screen.getByRole('button', { name: 'Draw belts' });
+    const erase = screen.getByRole('button', { name: 'Erase' });
+    fireEvent.click(belt);
+    expect(belt.getAttribute('aria-pressed')).toBe('true');
+    fireEvent.click(erase);
+    expect(belt.getAttribute('aria-pressed')).toBe('false');
+    expect(erase.getAttribute('aria-pressed')).toBe('true');
   });
 });
