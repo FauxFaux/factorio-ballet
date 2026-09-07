@@ -77,7 +77,7 @@ export type StaticDataPacked = {
       a?: string[];
     }
   >;
-  belts: Record<string, { h?: string; i?: string; s: number }>;
+  belts: Record<string, { h?: string; i?: string; s: number; u: number }>;
   sciencePacks: ResourceId[];
 };
 
@@ -341,9 +341,9 @@ export interface Beacon {
  * id of the item you place it from — so the name, the icon, the stack size and the complexity are
  * on the `item:<id>` resource already, exactly as they are for a {@link Module}.
  *
- * Only the belt itself is ingested. Its underground and its splitter carry their own copy of the
- * same `speed` in the game data, and in this pack every one of them agrees with the belt it belongs
- * to — `checkBelts` in the ingest says so — so a tier is one number rather than four.
+ * The belt and its related underground belt are ingested as one tier. Splitters and the other
+ * belt-shaped entities carry their own copy of the same `speed` in the game data; `checkBelts`
+ * verifies that those do not create a second throughput figure.
  */
 export interface Belt {
   human?: string;
@@ -359,4 +359,11 @@ export interface Belt {
    * item like any other, so this is the only rate a belt has.
    */
   itemsPerSecond: number;
+
+  /**
+   * The maximum number of tiles from an underground belt input to its output: 7 for a yellow belt,
+   * 11 for red. This is `max_distance` on the underground entity named by the belt's
+   * `related_underground_belt` prototype field.
+   */
+  undergroundLength: number;
 }

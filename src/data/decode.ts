@@ -111,6 +111,7 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
           human: belt.h,
           item: belt.i,
           itemsPerSecond: belt.s,
+          undergroundLength: belt.u,
         },
       ]),
     ),

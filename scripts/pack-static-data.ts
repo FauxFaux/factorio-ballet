@@ -99,6 +99,7 @@ export function packStaticData(data: StaticData): StaticDataPacked {
           h: belt.human,
           i: belt.item,
           s: belt.itemsPerSecond,
+          u: belt.undergroundLength,
         },
       ]),
     ),

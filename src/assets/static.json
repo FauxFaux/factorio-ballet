@@ -5379,27 +5379,31 @@
     }
   },
   "belts": {
-    "transport-belt": { "h": "Transport belt", "i": "transport-belt", "s": 15 },
-    "fast-transport-belt": { "h": "Fast transport belt", "i": "fast-transport-belt", "s": 30 },
+    "transport-belt": { "h": "Transport belt", "i": "transport-belt", "s": 15, "u": 7 },
+    "fast-transport-belt": { "h": "Fast transport belt", "i": "fast-transport-belt", "s": 30, "u": 11 },
     "express-transport-belt": {
       "h": "Express transport belt",
       "i": "express-transport-belt",
-      "s": 45
+      "s": 45,
+      "u": 15
     },
     "bob-basic-transport-belt": {
       "h": "Basic transport belt",
       "i": "bob-basic-transport-belt",
-      "s": 7.5
+      "s": 7.5,
+      "u": 3
     },
     "bob-turbo-transport-belt": {
       "h": "Turbo transport belt",
       "i": "bob-turbo-transport-belt",
-      "s": 60
+      "s": 60,
+      "u": 19
     },
     "bob-ultimate-transport-belt": {
       "h": "Ultimate transport belt",
       "i": "bob-ultimate-transport-belt",
-      "s": 75
+      "s": 75,
+      "u": 23
     }
   },
   "sciencePacks": [

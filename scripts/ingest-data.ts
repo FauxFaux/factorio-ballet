@@ -488,9 +488,11 @@ const ITEMS_PER_TILE = 4;
 const BELT_LANES = 2;
 
 /**
- * The transport belts, keyed by prototype id. Undergrounds, splitters, loaders and linked belts are
- * `speed` too, and are deliberately not here: they are the same tier's number written out again
- * (see `checkBelts`), and none of them is a thing a plan is measured against.
+ * The transport belts, keyed by prototype id. An underground belt is part of its transport belt's
+ * tier, linked by `related_underground_belt`, so its maximum span belongs on this record too.
+ * Splitters, loaders and linked belts are `speed` too, but remain deliberately absent: they are the
+ * same tier's throughput number written out again (see `checkBelts`), and none is a constraint a
+ * plan is measured against.
  *
  * Hidden is dropped as everywhere else, though no transport belt in this pack is hidden — the
  * hidden belt-shaped prototypes are the three vanilla loaders and the two script-only entities
@@ -507,10 +509,17 @@ function handleBelts(v: RawData, locales: Record<string, RLocale>): Record<strin
       skipped++;
       continue;
     }
+    const underground =
+      b.related_underground_belt && v['underground-belt']?.[b.related_underground_belt];
+    if (!underground) {
+      console.log(`Belt with no related underground belt: ${id}`);
+      continue;
+    }
     belts[id] = {
       human: resolveLocale(id, locales, 'entity'),
       item: placedBy.get(id),
       itemsPerSecond: round(b.speed * TICKS_PER_SECOND * ITEMS_PER_TILE * BELT_LANES),
+      undergroundLength: underground.max_distance,
     };
   }
 

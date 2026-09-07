@@ -15,6 +15,21 @@ describe('the chosen belt', () => {
     });
   });
 
+  it("includes each tier's underground-belt reach", () => {
+    expect(
+      Object.fromEntries(
+        Object.entries(staticData.belts).map(([id, b]) => [id, b.undergroundLength]),
+      ),
+    ).toEqual({
+      'bob-basic-transport-belt': 3,
+      'transport-belt': 7,
+      'fast-transport-belt': 11,
+      'express-transport-belt': 15,
+      'bob-turbo-transport-belt': 19,
+      'bob-ultimate-transport-belt': 23,
+    });
+  });
+
   it('joins every belt to the complexity of the item which places it', () => {
     expect(beltTiers.map(({ id }) => id)).toEqual([
       'bob-basic-transport-belt',

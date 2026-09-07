@@ -224,10 +224,11 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 - **`data.raw['transport-belt']`** — 6 prototypes, none hidden, each placed by an item of its own
   id, all six covered by the spritesheet as `craft:<name>`. `speed` is **tiles per tick**: an item
   occupies a quarter of a tile along the lane it is on and a belt has two lanes, so items per second
-  is `speed × 60 × 4 × 2` — yellow's `0.03125` is 15/s, bob's turbo `0.125` is 60/s. That is the
-  only number ingested (`StaticData.belts`, `Belt.itemsPerSecond`); a belt has nothing else the app
-  wants, and it is an entity placed by an item, so the name, icon, stack size and complexity are
-  already on the item.
+  is `speed × 60 × 4 × 2` — yellow's `0.03125` is 15/s, bob's turbo `0.125` is 60/s. This is
+  ingested as `StaticData.belts` / `Belt.itemsPerSecond`. Its `related_underground_belt` names the
+  matching `underground-belt`, whose `max_distance` is ingested alongside it as
+  `Belt.undergroundLength`: 7 for yellow, 11 for red. A belt is placed by an item, so its name,
+  icon, stack size and complexity are already on the item.
 - **Six other prototype types state a belt `speed`**: `underground-belt`, `splitter`, `loader`,
   `loader-1x1`, `linked-belt` and `lane-splitter` (25 prototypes between them here, `BELT_KEYS` in
   `scripts/raw-keys.ts`). They are the same tier's number written out per entity shape, so none of
