@@ -1,7 +1,7 @@
 import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data/index.ts';
 import type { ModuleFill } from './flow.ts';
-import type { FactoryDesign } from './design.ts';
+import type { DesignColumn, DesignDirection, DesignEntity, FactoryDesign } from './design.ts';
 import type { ResourceId } from './types.ts';
 
 /**
@@ -25,8 +25,32 @@ export interface PackedCell {
   exports?: ResourceId[];
   imports?: ResourceId[];
   name?: string;
-  design?: FactoryDesign;
+  design?: PackedFactoryDesign;
 }
+
+interface PackedFactoryDesign {
+  columns: PackedDesignColumn[];
+}
+
+interface PackedDesignColumn {
+  entities: PackedDesignEntity[];
+}
+
+/**
+ * Entity tags followed by the fields which distinguish them. Belt paths contain one direction
+ * character per belt, starting at x/y; each following belt sits one tile along the preceding
+ * belt's direction. Keeping these as tuples avoids paying for the very repetitive object keys,
+ * while paths additionally avoid paying for every belt position and kind.
+ */
+type PackedDesignEntity =
+  | DesignEntity
+  | [0, number, number, number, number, PackedId]
+  | [1, number, number, string]
+  | [2, number, number, number, number]
+  | [3, number, number, number]
+  | [4, number, number]
+  | [5, number, number, number]
+  | [6, number, number, number];
 
 /** {@link CellEntry} with its ids packed; see {@link PackedId} for why the types are unions. */
 export interface PackedEntry {
@@ -75,17 +99,151 @@ const machineIds = idTable(Object.keys(staticData.machines));
 const moduleIds = idTable(Object.keys(staticData.modules));
 
 export function packCells(cells: Cell[]): PackedCell[] {
-  return cells.map((cell) => ({
-    ...cell,
-    entries: cell.entries.map(packEntry),
-  }));
+  return cells.map((cell) => {
+    const { design, ...rest } = cell;
+    return {
+      ...rest,
+      entries: cell.entries.map(packEntry),
+      ...(design ? { design: packDesign(design) } : {}),
+    };
+  });
 }
 
 export function unpackCells(cells: PackedCell[]): Cell[] {
-  return cells.map((cell) => ({
-    ...cell,
-    entries: (cell.entries ?? []).map(unpackEntry),
-  }));
+  return cells.map((cell) => {
+    const { design, ...rest } = cell;
+    return {
+      ...rest,
+      entries: (cell.entries ?? []).map(unpackEntry),
+      ...(design ? { design: unpackDesign(design) } : {}),
+    };
+  });
+}
+
+const directions: DesignDirection[] = ['north', 'east', 'south', 'west'];
+const directionChars = ['n', 'e', 's', 'w'] as const;
+
+function packDesign(design: FactoryDesign): PackedFactoryDesign {
+  return { columns: design.columns.map(packColumn) };
+}
+
+function packColumn(column: DesignColumn): PackedDesignColumn {
+  const entities: PackedDesignEntity[] = [];
+  for (let i = 0; i < column.entities.length; i++) {
+    const entity = column.entities[i];
+    if (entity.kind !== 'belt') {
+      entities.push(packDesignEntity(entity));
+      continue;
+    }
+
+    const { x, y } = entity.position;
+    let path = directionChars[directions.indexOf(entity.direction)];
+    let previous = entity;
+    while (i + 1 < column.entities.length) {
+      const next = column.entities[i + 1];
+      if (next.kind !== 'belt' || !beltContinues(previous, next)) break;
+      path += directionChars[directions.indexOf(next.direction)];
+      previous = next;
+      i++;
+    }
+    entities.push([1, x, y, path]);
+  }
+  return { entities };
+}
+
+function beltContinues(previous: Extract<DesignEntity, { kind: 'belt' }>, next: DesignEntity) {
+  if (next.kind !== 'belt') return false;
+  const { x, y } = previous.position;
+  const [dx, dy] = directionOffset(previous.direction);
+  return next.position.x === x + dx && next.position.y === y + dy;
+}
+
+function packDesignEntity(entity: Exclude<DesignEntity, { kind: 'belt' }>): PackedDesignEntity {
+  const { x, y } = entity.position;
+  switch (entity.kind) {
+    case 'assembler':
+      return [0, x, y, entity.size.width, entity.size.height, recipeIds.toId(entity.recipe)];
+    case 'underground-belt':
+      return [2, x, y, directions.indexOf(entity.direction), entity.end === 'output' ? 1 : 0];
+    case 'splitter':
+      return [3, x, y, directions.indexOf(entity.direction)];
+    case 'pipe':
+      return [4, x, y];
+    case 'underground-pipe':
+      return [5, x, y, directions.indexOf(entity.direction)];
+    case 'inserter':
+      return [6, x, y, directions.indexOf(entity.direction)];
+  }
+}
+
+function unpackDesign(design: PackedFactoryDesign): FactoryDesign {
+  return { columns: (design.columns ?? []).map(unpackColumn) };
+}
+
+function unpackColumn(column: PackedDesignColumn): DesignColumn {
+  // Object entities are the packed representation used before design packing was introduced.
+  const entities = (column.entities ?? []).flatMap((entity) =>
+    Array.isArray(entity) ? unpackDesignEntity(entity) : [entity as DesignEntity],
+  );
+  return { entities };
+}
+
+function unpackDesignEntity(entity: Exclude<PackedDesignEntity, DesignEntity>): DesignEntity[] {
+  const [kind, x, y] = entity;
+  const position = { x, y };
+  switch (kind) {
+    case 0:
+      return [
+        {
+          kind: 'assembler',
+          position,
+          size: { width: entity[3], height: entity[4] },
+          recipe: recipeIds.toName(entity[5]),
+        },
+      ];
+    case 1: {
+      const belts: DesignEntity[] = [];
+      let beltPosition = position;
+      for (const char of entity[3]) {
+        const direction =
+          directions[directionChars.indexOf(char as (typeof directionChars)[number])];
+        belts.push({ kind: 'belt', position: beltPosition, direction });
+        const [dx, dy] = directionOffset(direction);
+        beltPosition = { x: beltPosition.x + dx, y: beltPosition.y + dy };
+      }
+      return belts;
+    }
+    case 2:
+      return [
+        {
+          kind: 'underground-belt',
+          position,
+          direction: directions[entity[3]],
+          end: entity[4] ? 'output' : 'input',
+        },
+      ];
+    case 3:
+      return [{ kind: 'splitter', position, direction: directions[entity[3]] }];
+    case 4:
+      return [{ kind: 'pipe', position }];
+    case 5:
+      return [{ kind: 'underground-pipe', position, direction: directions[entity[3]] }];
+    case 6:
+      return [{ kind: 'inserter', position, direction: directions[entity[3]] }];
+  }
+}
+
+function directionOffset(direction: DesignDirection): [number, number] {
+  switch (direction) {
+    case 'north':
+      return [0, -1];
+    case 'east':
+      return [1, 0];
+    case 'south':
+      return [0, 1];
+    case 'west':
+      return [-1, 0];
+  }
 }
 
 function packEntry(entry: CellEntry): PackedEntry {

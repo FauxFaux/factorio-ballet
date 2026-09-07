@@ -48,7 +48,7 @@ export function RecipeButton({
         if (target === undefined || !machine) return;
         onChange((previous) => reconcileAssemblers(previous, entry.recipe, target, machine.size));
       }}
-      >
+    >
       <span class="cell-design-recipe-icon" aria-hidden="true">
         <span
           class="cell-design-recipe-icon-sprite"

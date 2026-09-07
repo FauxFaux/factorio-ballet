@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
 import type { Cell } from '../src/cell.ts';
 import { staticData } from '../src/data/index.ts';
 import { fingerprint, packCells, unpackCells } from '../src/pack.ts';
@@ -95,6 +96,43 @@ describe('packCells', () => {
   it('drops an empty loadout rather than packing it', () => {
     const packed = packCells([{ entries: [{ recipe, modules: {} }] }]);
     expect(packed[0].entries[0]).toEqual({ recipe: 0 });
+  });
+
+  it('packs contiguous belts as direction paths', () => {
+    const cells: Cell[] = [
+      {
+        entries: [],
+        design: {
+          columns: [
+            {
+              entities: [
+                { kind: 'belt', position: { x: 2, y: 3 }, direction: 'east' },
+                { kind: 'belt', position: { x: 3, y: 3 }, direction: 'north' },
+                { kind: 'belt', position: { x: 3, y: 2 }, direction: 'west' },
+                { kind: 'belt', position: { x: 9, y: 9 }, direction: 'south' },
+              ],
+            },
+          ],
+        },
+      },
+    ];
+
+    expect(packCells(cells)[0].design?.columns[0].entities).toEqual([
+      [1, 2, 3, 'enw'],
+      [1, 9, 9, 's'],
+    ]);
+    expect(unpackCells(packCells(cells))).toEqual(cells);
+  });
+
+  it('substantially shrinks a belt-heavy design', () => {
+    const state = JSON.parse(
+      readFileSync(new URL('assets/belts.state.json', import.meta.url), 'utf8'),
+    ) as { cl: Cell[] };
+    const originalLength = JSON.stringify(state.cl).length;
+    const packed = packCells(state.cl);
+
+    expect(unpackCells(packed)).toEqual(state.cl);
+    expect(JSON.stringify(packed).length).toBeLessThan(originalLength / 2);
   });
 });
 

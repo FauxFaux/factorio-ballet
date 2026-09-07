@@ -5380,7 +5380,12 @@
   },
   "belts": {
     "transport-belt": { "h": "Transport belt", "i": "transport-belt", "s": 15, "u": 7 },
-    "fast-transport-belt": { "h": "Fast transport belt", "i": "fast-transport-belt", "s": 30, "u": 11 },
+    "fast-transport-belt": {
+      "h": "Fast transport belt",
+      "i": "fast-transport-belt",
+      "s": 30,
+      "u": 11
+    },
     "express-transport-belt": {
       "h": "Express transport belt",
       "i": "express-transport-belt",

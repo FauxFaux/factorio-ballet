@@ -1,0 +1,1228 @@
+{
+  "v": 1,
+  "rs": "",
+  "cs": "",
+  "gp": 66,
+  "cl": [
+    {
+      "entries": [
+        {
+          "recipe": "bob-processing-electronics",
+          "count": 16,
+          "beacons": 1
+        },
+        {
+          "recipe": "bob-silicon-wafer"
+        },
+        {
+          "recipe": "angels-mono-silicon"
+        },
+        {
+          "recipe": "angels-mono-silicon-seed"
+        },
+        {
+          "recipe": "bob-silicon-nitride"
+        },
+        {
+          "recipe": "bob-silicon-powder"
+        },
+        {
+          "recipe": "angels-chemical-void-angels-gas-oxygen"
+        },
+        {
+          "recipe": "angels-air-separation"
+        },
+        {
+          "recipe": "angels-gas-compressed-air"
+        }
+      ],
+      "design": {
+        "columns": [
+          {
+            "entities": [
+              {
+                "kind": "assembler",
+                "recipe": "angels-air-separation",
+                "size": {
+                  "width": 3,
+                  "height": 3
+                },
+                "position": {
+                  "x": 6,
+                  "y": 1
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-powder",
+                "size": {
+                  "width": 2,
+                  "height": 2
+                },
+                "position": {
+                  "x": -10,
+                  "y": -1
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-nitride",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": -7,
+                  "y": -10
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-nitride",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": -7,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-nitride",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": -7,
+                  "y": -15
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-nitride",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": -7,
+                  "y": -5
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "bob-silicon-nitride",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": -7,
+                  "y": 5
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "angels-gas-compressed-air",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": 0,
+                  "y": 1
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "angels-gas-compressed-air",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": 0,
+                  "y": -4
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "angels-gas-compressed-air",
+                "size": {
+                  "width": 5,
+                  "height": 5
+                },
+                "position": {
+                  "x": 0,
+                  "y": 6
+                }
+              },
+              {
+                "kind": "assembler",
+                "recipe": "angels-chemical-void-angels-gas-oxygen",
+                "size": {
+                  "width": 2,
+                  "height": 2
+                },
+                "position": {
+                  "x": -2,
+                  "y": 0
+                }
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 2,
+                  "y": -9
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 3,
+                  "y": -9
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 3,
+                  "y": -10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 4,
+                  "y": -10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 5,
+                  "y": -10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 6,
+                  "y": -10
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 6,
+                  "y": -11
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": -11
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": -10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 8,
+                  "y": -10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": -10
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": -9
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -9
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -8
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -7
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": -7
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": -6
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": -5
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -14,
+                  "y": -11
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -15,
+                  "y": -11
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -15,
+                  "y": -10
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -16,
+                  "y": -10
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -17,
+                  "y": -10
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -18,
+                  "y": -10
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -18,
+                  "y": -9
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": -9
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": -8
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -20,
+                  "y": -7
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -20,
+                  "y": -6
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -20,
+                  "y": -5
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": -5
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": -4
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": -3
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": -2
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": -1
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -22,
+                  "y": -1
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -22,
+                  "y": 0
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -22,
+                  "y": 1
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -22,
+                  "y": 2
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": 2
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": 3
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": 4
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -21,
+                  "y": 5
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -20,
+                  "y": 5
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -20,
+                  "y": 6
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": 6
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": 7
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -19,
+                  "y": 8
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -18,
+                  "y": 8
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -18,
+                  "y": 9
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -17,
+                  "y": 9
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -17,
+                  "y": 10
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -17,
+                  "y": 11
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -16,
+                  "y": 11
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -16,
+                  "y": 12
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -15,
+                  "y": 12
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -15,
+                  "y": 13
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -14,
+                  "y": 13
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -13,
+                  "y": 13
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -13,
+                  "y": 14
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -12,
+                  "y": 14
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -11,
+                  "y": 14
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -11,
+                  "y": 15
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -10,
+                  "y": 15
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -9,
+                  "y": 15
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -9,
+                  "y": 16
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -8,
+                  "y": 16
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -7,
+                  "y": 16
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -6,
+                  "y": 16
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -6,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -5,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -4,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -3,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -2,
+                  "y": 17
+                },
+                "direction": "south"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -2,
+                  "y": 18
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -1,
+                  "y": 18
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 0,
+                  "y": 18
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 1,
+                  "y": 18
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 1,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 2,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 3,
+                  "y": 17
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 4,
+                  "y": 17
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 4,
+                  "y": 16
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 5,
+                  "y": 16
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 5,
+                  "y": 15
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 6,
+                  "y": 15
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": 15
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": 14
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 8,
+                  "y": 14
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 8,
+                  "y": 13
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": 13
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": 12
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": 12
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": 11
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": 10
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": 10
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": 9
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": 8
+                },
+                "direction": "east"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 8
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 7
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 6
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 5
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 4
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 3
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 2
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 12,
+                  "y": 1
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": 1
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": 0
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 11,
+                  "y": -1
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -1
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -2
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 10,
+                  "y": -3
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": -3
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 9,
+                  "y": -4
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 8,
+                  "y": -4
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 8,
+                  "y": -5
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": -5
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 7,
+                  "y": -6
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 6,
+                  "y": -6
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 5,
+                  "y": -6
+                },
+                "direction": "north"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 5,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 4,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 3,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 2,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 1,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": 0,
+                  "y": -7
+                },
+                "direction": "west"
+              },
+              {
+                "kind": "belt",
+                "position": {
+                  "x": -1,
+                  "y": -7
+                },
+                "direction": "west"
+              }
+            ]
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          },
+          {
+            "entities": []
+          }
+        ]
+      }
+    }
+  ],
+  "ci": 0,
+  "mo": {}
+}
