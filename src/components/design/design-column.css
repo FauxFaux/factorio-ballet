@@ -96,6 +96,7 @@
   display: block;
   width: calc(var(--cell-design-tile-size) * 0.8);
   height: calc(var(--cell-design-tile-size) * 0.8);
+  transform: translate(-20%, -20%);
 }
 
 /* Sprite offsets are expressed in 32px cells. Keep that painting coordinate system intact and
