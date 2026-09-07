@@ -144,7 +144,7 @@ function ResourceDetails({
             type="button"
             class="cell-btn cell-in-play-resource-action"
             aria-pressed={forcedExport}
-            title="Allow surplus to leave this cell, including waste products"
+            title="Allow surplus to leave this cell"
             onClick={onToggleExport}
           >
             {forcedExport ? (
