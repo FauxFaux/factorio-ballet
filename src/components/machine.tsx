@@ -15,6 +15,7 @@ export function MachineChip({
   machine,
   active,
   title,
+  compactSpeed = false,
   onClick,
   onMouseEnter,
 }: {
@@ -23,10 +24,12 @@ export function MachineChip({
   /** The machine currently standing for the numbers on show: hovered, or chosen. */
   active?: boolean;
   title?: string;
+  /** Use single-character fractions to keep a row of candidate machines compact. */
+  compactSpeed?: boolean;
   onClick?: () => void;
   onMouseEnter?: () => void;
 }) {
-  const speed = `${fmt(machine.speed)}×`;
+  const speed = `${formatMachineSpeed(machine.speed, compactSpeed)}×`;
   const classes = active ? 'machine is-active' : 'machine';
   const label = title ?? `${machineName(id)} (${id}) at ${speed}`;
   const inner = (
@@ -52,6 +55,17 @@ export function MachineChip({
       {inner}
     </span>
   );
+}
+
+function formatMachineSpeed(speed: number, compact: boolean): string {
+  if (!compact) return fmt(speed);
+
+  const quarters = Math.round(speed * 4);
+  if (quarters !== speed * 4) return fmt(speed);
+
+  const whole = Math.floor(quarters / 4);
+  const fraction = ['', '¼', '½', '¾'][quarters % 4]!;
+  return `${whole || !fraction ? whole : ''}${fraction}`;
 }
 
 /**

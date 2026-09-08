@@ -51,6 +51,15 @@ export function RecipeList({
   inCell?: (recipe: string) => boolean;
 }) {
   const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
+  const ordered = useMemo(() => {
+    const barrelRecipes = found.filter(
+      (result) => result.kind === 'recipe' && result.match.id.endsWith('-barrel'),
+    );
+    const otherResults = found.filter(
+      (result) => result.kind !== 'recipe' || !result.match.id.endsWith('-barrel'),
+    );
+    return [...otherResults, ...barrelRecipes];
+  }, [found]);
   const displayed = useMemo(() => {
     /* Removing a resource can bring another recipe into the visible limit. Repeat until every
        hidden resource has its one producer card visibly shown. */
@@ -58,7 +67,7 @@ export function RecipeList({
     let changed = true;
     while (changed) {
       const visibleRecipes = new Set(
-        found
+        ordered
           .filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id))
           .slice(0, LIMIT)
           .filter((result) => result.kind === 'recipe')
@@ -72,8 +81,8 @@ export function RecipeList({
         }
       }
     }
-    return found.filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id));
-  }, [found]);
+    return ordered.filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id));
+  }, [ordered]);
   const onPick = (id: ResourceId) => setSearch(`makes:${id}`);
   const flipped = flipDirection(search);
 

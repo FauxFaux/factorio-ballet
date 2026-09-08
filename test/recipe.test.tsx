@@ -10,6 +10,23 @@ import { RecipeCard } from '../src/components/recipe.tsx';
 afterEach(cleanup);
 
 describe('RecipeCard', () => {
+  it('uses compact fractions for quarter-based machine speeds', () => {
+    const recipe = staticData.recipes['iron-gear-wheel'];
+    const { container } = render(
+      <RecipeCard
+        match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
+        onPick={() => undefined}
+        progress={0}
+      />,
+    );
+
+    const speeds = [...container.querySelectorAll('.machine-list .machine-speed')].map(
+      (speed) => speed.textContent,
+    );
+    expect(speeds).toContain('¾×');
+    expect(speeds).toContain('1¼×');
+  });
+
   it('previews a machine while it is hovered and restores auto selection afterwards', () => {
     const recipe = staticData.recipes['iron-gear-wheel'];
     const machine = machinesFor(recipe)[0]!;

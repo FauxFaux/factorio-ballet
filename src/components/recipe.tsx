@@ -187,6 +187,7 @@ function MachineRow({
             id={id}
             machine={machine}
             active={id === displayedMachine}
+            compactSpeed
             onClick={() => onChoose(id)}
             onMouseEnter={() => onHover(id)}
           />
