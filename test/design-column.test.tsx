@@ -313,6 +313,38 @@ describe('DesignColumn', () => {
     expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
   });
 
+  it('colours a belt with a traced item and identifies its side in the tooltip', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'iron-gear-wheel',
+              position: { x: 0, y: 0 },
+              size: { width: 1, height: 1 },
+            },
+            { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+            { kind: 'belt', position: { x: 2, y: 0 }, direction: 'east' },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const belt = screen.getByRole('img', {
+      name: 'Transport belt at 2, 0, pointing east, right side: Iron gear wheel (item:iron-gear-wheel)',
+    });
+    expect(belt.classList.contains('cell-design-belt-item')).toBe(true);
+    expect(belt.getAttribute('title')).toBe(
+      'Transport belt (2, 0), east — right side: Iron gear wheel (item:iron-gear-wheel)',
+    );
+  });
+
   it('draws inserters as directional one-tile entities', () => {
     render(
       <DesignColumn

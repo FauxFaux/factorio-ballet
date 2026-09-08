@@ -122,6 +122,15 @@
   border: 1px solid #d0d0d0;
 }
 
+.cell-design-belt-empty {
+  border-color: #d0d0d0;
+}
+
+.cell-design-belt-item {
+  border-color: mediumseagreen;
+  box-shadow: inset 0 0 0 1px seagreen;
+}
+
 .cell-design-belt-error {
   color: white;
   background: crimson;

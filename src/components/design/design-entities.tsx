@@ -1,6 +1,6 @@
 import { ArrowRightIcon, ChevronRightIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
-import { recipeName, staticData } from '../../data/index.ts';
+import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type {
   DesignAssembler,
   DesignBelt,
@@ -9,6 +9,7 @@ import type {
   DesignPosition,
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
+import type { BeltItemTrace } from './design-belts.ts';
 
 export const TILE_SIZE = 12;
 
@@ -75,6 +76,7 @@ export function Belt({
   belt,
   status,
   hasLoop,
+  itemTraces,
   worldOrigin,
   onContextMenu,
   onPointerDown,
@@ -85,6 +87,7 @@ export function Belt({
   belt: DesignBelt;
   status: EntityPositionStatus;
   hasLoop: boolean;
+  itemTraces: BeltItemTrace[];
   worldOrigin: ViewportPoint;
   onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
@@ -96,6 +99,9 @@ export function Belt({
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
   const isOverlapping = status === 'overlap';
   const isError = isOverlapping || hasLoop;
+  const itemDescription = itemTraces
+    .map(({ item, side }) => `${side} side: ${resourceName(item)} (${item})`)
+    .join('; ');
   const errorDescription = [
     ...(isOverlapping ? ['overlaps another entity'] : []),
     ...(hasLoop ? ['is part of a belt loop'] : []),
@@ -103,12 +109,13 @@ export function Belt({
 
   return (
     <div
-      class={`cell-design-belt${isError ? ' cell-design-belt-error' : ''}`}
+      class={`cell-design-belt cell-design-belt-${itemTraces.length === 0 ? 'empty' : 'item'}${isError ? ' cell-design-belt-error' : ''}`}
       role="img"
-      aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${errorDescription ? `, ${errorDescription}` : ''}`}
-      title={`Transport belt (${x}, ${y}), ${belt.direction}${errorDescription ? ` — ${errorDescription}` : ''}`}
+      aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${itemDescription ? `, ${itemDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
+      title={`Transport belt (${x}, ${y}), ${belt.direction}${itemDescription ? ` — ${itemDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
+      data-item-status={itemTraces.length === 0 ? 'empty' : 'traced-item'}
       onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}

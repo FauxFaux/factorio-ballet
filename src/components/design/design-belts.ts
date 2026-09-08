@@ -1,9 +1,45 @@
 import { beltLaneKey, buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
 import type { DesignColumn, DesignDirection, DesignPosition } from '../../design.ts';
+import type { Recipe, ResourceId } from '../../types.ts';
+import { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
 
 type BeltAxis = 'horizontal' | 'vertical';
 
 export type BeltDrag = { pointerId: number; position: DesignPosition; axis?: BeltAxis };
+
+/** One item which has been traced onto a particular side of a transport belt. */
+export interface BeltItemTrace {
+  item: ResourceId;
+  side: 'left' | 'right';
+}
+
+type RecipeProducts = Readonly<Record<string, Pick<Recipe, 'products'>>>;
+
+/**
+ * Return the individually traceable items on each ordinary transport belt.
+ *
+ * An empty or mixed lane deliberately has no trace here because it has no single item to show.
+ */
+export function beltItemTraces(
+  column: DesignColumn,
+  recipes: RecipeProducts,
+): Map<number, BeltItemTrace[]> {
+  const { contents } = analyzeDesignLanes(column, recipes);
+  const traces = new Map<number, BeltItemTrace[]>();
+
+  column.entities.forEach((entity, entityIndex) => {
+    if (entity.kind !== 'belt') return;
+    const beltTraces = (['left', 'right'] as const).flatMap((side) => {
+      const item = singleLaneItem(
+        contents.get(beltLaneKey({ entityNumber: entityIndex, line: 'left', lane: side })),
+      );
+      return item ? [{ item, side }] : [];
+    });
+    traces.set(entityIndex, beltTraces);
+  });
+
+  return traces;
+}
 
 /**
  * Return every design-belt index belonging to a logical belt which contains a directed loop.

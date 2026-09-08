@@ -3,12 +3,14 @@ import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-re
 import type { JSX } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
+import { staticData } from '../../data/index.ts';
 import type {
   DesignColumn as DesignColumnData,
   DesignDirection,
   DesignPosition,
 } from '../../design.ts';
 import {
+  beltItemTraces,
   beltLoopEntityIndexes,
   paintBelts,
   straightBeltPath,
@@ -81,6 +83,7 @@ export function DesignColumn({
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
   const entityStatuses = entityPositionStatuses(column.entities);
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
+  const itemTracesByBelt = beltItemTraces(column, staticData.recipes);
 
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -359,6 +362,7 @@ export function DesignColumn({
               belt={entity}
               status={entityStatuses[entityIndex]}
               hasLoop={loopBeltIndexes.has(entityIndex)}
+              itemTraces={itemTracesByBelt.get(entityIndex) ?? []}
               worldOrigin={worldOrigin}
               onContextMenu={(event) => {
                 event.preventDefault();
