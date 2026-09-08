@@ -1,12 +1,18 @@
-import './void-path.css';
+import './recipe-suggestions.css';
 import { useMemo } from 'preact/hooks';
-import { recipeName, resourceName, staticData } from '../data/index.ts';
-import type { ResourceId } from '../types.ts';
-import { voidPlans } from '../void-path.ts';
-import { RecipeCard } from './recipe.tsx';
-import { ResourceIcon } from './resource.tsx';
+import { recipeName, resourceName, staticData } from '../../data/index.ts';
+import type { ResourceId } from '../../types.ts';
+import { voidPlans } from '../../void-path.ts';
+import { RecipeCard } from '../recipe.tsx';
+import { ResourceIcon } from '../resource.tsx';
 
-export function VoidPath({ resource, progress }: { resource?: ResourceId; progress: number }) {
+export function RecipeSuggestions({
+  resource,
+  progress,
+}: {
+  resource?: ResourceId;
+  progress: number;
+}) {
   const plans = useMemo(() => (resource ? voidPlans(resource, staticData) : []), [resource]);
 
   return (

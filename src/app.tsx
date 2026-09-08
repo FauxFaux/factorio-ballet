@@ -14,7 +14,7 @@ import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
 import { UnlitFilter } from './components/unlit-module-icon.tsx';
-import { VoidPath } from './components/void-path.tsx';
+import { RecipeSuggestions } from './components/recipe-suggestions/recipe-suggestions.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
@@ -97,7 +97,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
               chosen={chosen}
             />
-            <VoidPath resource={selectedResource} progress={progress} />
+            <RecipeSuggestions resource={selectedResource} progress={progress} />
           </div>
         </>
       )}
