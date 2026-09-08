@@ -10,6 +10,23 @@ import { RecipeCard } from '../src/components/recipe.tsx';
 afterEach(cleanup);
 
 describe('RecipeCard', () => {
+  it('can render a compact, read-only folded summary', () => {
+    const recipe = staticData.recipes['iron-gear-wheel'];
+    const { container } = render(
+      <RecipeCard
+        compact
+        match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
+        progress={0}
+      />,
+    );
+
+    expect(container.querySelector('.recipe-card.is-compact')).not.toBeNull();
+    expect(container.querySelector('.flow-summary')).not.toBeNull();
+    expect(container.querySelector('.fold-toggle')).toBeNull();
+    expect(container.querySelector('.recipe-machines')).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Add to this cell' })).toBeNull();
+  });
+
   it('shows expanded flow rates to two decimal places per second', async () => {
     const user = userEvent.setup();
     const recipe = staticData.recipes['iron-gear-wheel'];

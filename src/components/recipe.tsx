@@ -26,9 +26,10 @@ export function RecipeCard({
   inCell,
   progress,
   chosen,
+  compact = false,
 }: {
   match: RecipeMatch;
-  onPick: (id: ResourceId) => void;
+  onPick?: (id: ResourceId) => void;
   /** Put this recipe, in the selected machine, in the cell being worked on. */
   onAdd?: (machine: MachineId | undefined) => void;
   /** Whether that cell already runs it, in which case the button says so instead of repeating it. */
@@ -37,6 +38,8 @@ export function RecipeCard({
   progress: number;
   /** The header's modules and beacon, used to preview a beaconed default machine. */
   chosen?: Chosen;
+  /** A read-only folded summary, for places where recipe selection is not available. */
+  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   /** The machine chosen from this card, whose speed its numbers are quoted at. */
@@ -63,6 +66,21 @@ export function RecipeCard({
     : 1;
   const speed = baseSpeed * beaconSpeed;
   const { ins, outs } = recipeFlows(recipe, machines, speed);
+
+  if (compact) {
+    return (
+      <div class={`recipe-card is-compact${recipe.synthetic ? ' is-synthetic' : ''}`}>
+        <div class="recipe-head">
+          <span class="recipe-icon" style={recipeIconStyle(id, recipe)} aria-hidden="true" />
+          <span class="recipe-name" title={id}>
+            {name}
+          </span>
+          <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
+        </div>
+        <FlowSummary ins={ins} outs={outs} />
+      </div>
+    );
+  }
 
   const classes = ['recipe-card'];
   if (
@@ -97,7 +115,7 @@ export function RecipeCard({
           {open ? '▾' : '▸'}
         </button>
         {open ? (
-          <FlowTable ins={ins} outs={outs} onPick={onPick} />
+          <FlowTable ins={ins} outs={outs} onPick={onPick ?? (() => undefined)} />
         ) : (
           <FlowSummary ins={ins} outs={outs} />
         )}

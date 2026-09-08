@@ -97,7 +97,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
               chosen={chosen}
             />
-            <VoidPath resource={selectedResource} />
+            <VoidPath resource={selectedResource} progress={progress} />
           </div>
         </>
       )}

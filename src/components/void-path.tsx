@@ -3,9 +3,10 @@ import { useMemo } from 'preact/hooks';
 import { recipeName, resourceName, staticData } from '../data/index.ts';
 import type { ResourceId } from '../types.ts';
 import { voidPlans } from '../void-path.ts';
+import { RecipeCard } from './recipe.tsx';
 import { ResourceIcon } from './resource.tsx';
 
-export function VoidPath({ resource }: { resource?: ResourceId }) {
+export function VoidPath({ resource, progress }: { resource?: ResourceId; progress: number }) {
   const plans = useMemo(() => (resource ? voidPlans(resource, staticData) : []), [resource]);
 
   return (
@@ -23,13 +24,20 @@ export function VoidPath({ resource }: { resource?: ResourceId }) {
           <ol class="void-path-results">
             {plans.map((plan, index) => (
               <li key={plan.recipes.join('|')} class="void-path-result">
-                <span class="void-path-rank">{plan.recipes.length} recipes</span>
                 <ol class="void-path-steps" aria-label={`Void path ${index + 1}`}>
-                  {plan.recipes.map((id) => (
-                    <li key={id} title={id}>
-                      {recipeName(id)}
-                    </li>
-                  ))}
+                  {plan.recipes.map((id, step) => {
+                    const recipe = staticData.recipes[id];
+                    if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
+                    return (
+                      <li key={`${id}-${step}`}>
+                        <RecipeCard
+                          compact
+                          match={{ id, recipe, name: recipeName(id) }}
+                          progress={progress}
+                        />
+                      </li>
+                    );
+                  })}
                 </ol>
               </li>
             ))}
