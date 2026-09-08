@@ -1,4 +1,4 @@
-import {ArrowRightIcon, ChevronRightIcon} from '@primer/octicons-react';
+import { ArrowRightIcon, ChevronRightIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { recipeName, staticData } from '../../data/index.ts';
 import type {
@@ -150,7 +150,7 @@ export function Inserter({
   onPointerEnter: () => void;
   onPointerLeave: () => void;
 }) {
-  const {x, y} = inserter.position;
+  const { x, y } = inserter.position;
   const viewportPosition = worldToViewport(inserter.position, worldOrigin);
   const isOverlapping = status === 'overlap';
   const errorDescription = isOverlapping ? ', overlaps another entity' : '';

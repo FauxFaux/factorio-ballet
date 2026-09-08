@@ -1,5 +1,5 @@
 import './design-column.css';
-import {ArrowRightIcon, ChevronRightIcon, TrashIcon} from '@primer/octicons-react';
+import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
@@ -68,6 +68,7 @@ export function DesignColumn({
   const beltDrag = useRef<BeltDrag>();
   const assemblerDrag = useRef<AssemblerDrag>();
   const hoveredEntityIndex = useRef<number>();
+  const inserterDirection = useRef<DesignDirection>('east');
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
@@ -151,7 +152,10 @@ export function DesignColumn({
   const placeInserter = (position: DesignPosition) => {
     onChange((current) => ({
       ...current,
-      entities: [...current.entities, {kind: 'inserter', position, direction: 'east'}],
+      entities: [
+        ...current.entities,
+        { kind: 'inserter', position, direction: inserterDirection.current },
+      ],
     }));
   };
 
@@ -159,12 +163,12 @@ export function DesignColumn({
     onChange((current) => {
       const entity = current.entities[entityIndex];
       if (!entity || !('direction' in entity)) return current;
+      const direction = clockwiseDirection[entity.direction];
+      if (entity.kind === 'inserter') inserterDirection.current = direction;
       return {
         ...current,
         entities: current.entities.map((currentEntity, currentIndex) =>
-          currentIndex === entityIndex
-            ? { ...currentEntity, direction: clockwiseDirection[entity.direction] }
-            : currentEntity,
+          currentIndex === entityIndex ? { ...currentEntity, direction } : currentEntity,
         ),
       };
     });
@@ -338,7 +342,8 @@ export function DesignColumn({
                 hoveredEntityIndex.current = entityIndex;
               }}
               onPointerLeave={() => {
-                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
+                if (hoveredEntityIndex.current === entityIndex)
+                  hoveredEntityIndex.current = undefined;
               }}
             />
           ) : entity.kind === 'belt' ? (
@@ -367,7 +372,8 @@ export function DesignColumn({
                 hoveredEntityIndex.current = entityIndex;
               }}
               onPointerLeave={() => {
-                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
+                if (hoveredEntityIndex.current === entityIndex)
+                  hoveredEntityIndex.current = undefined;
               }}
             />
           ) : entity.kind === 'inserter' ? (
@@ -399,7 +405,8 @@ export function DesignColumn({
                 hoveredEntityIndex.current = entityIndex;
               }}
               onPointerLeave={() => {
-                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
+                if (hoveredEntityIndex.current === entityIndex)
+                  hoveredEntityIndex.current = undefined;
               }}
             />
           ) : null,

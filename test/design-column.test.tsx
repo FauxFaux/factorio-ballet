@@ -386,9 +386,9 @@ describe('DesignColumn', () => {
     ]);
   });
 
-  it.each(['r', 'p'])('rotates the directional entity under the cursor when %s is pressed', (key) => {
+  it('uses the most recently rotated inserter direction for later placements', () => {
     let column: DesignColumnData = {
-      entities: [{ kind: 'belt', position: { x: 1, y: 2 }, direction: 'north' }],
+      entities: [{ kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' }],
     };
     render(
       <DesignColumn
@@ -403,16 +403,53 @@ describe('DesignColumn', () => {
       />,
     );
 
-    const belt = screen.getByRole('img', {
-      name: 'Transport belt at 1, 2, pointing north',
+    fireEvent.click(screen.getByRole('button', { name: 'Place inserters' }));
+    fireEvent.pointerDown(screen.getByRole('img', { name: 'Inserter at 1, 2, pointing east' }), {
+      button: 0,
+      pointerId: 1,
     });
-    fireEvent.pointerEnter(belt);
-    expect(fireEvent.keyDown(window, { key })).toBe(false);
+
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 2, clientX: 25, clientY: 25 });
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 3, clientX: 37, clientY: 25 });
 
     expect(column.entities).toEqual([
-      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'south' },
+      { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'south' },
+      { kind: 'inserter', position: { x: 3, y: 2 }, direction: 'south' },
     ]);
   });
+
+  it.each(['r', 'p'])(
+    'rotates the directional entity under the cursor when %s is pressed',
+    (key) => {
+      let column: DesignColumnData = {
+        entities: [{ kind: 'belt', position: { x: 1, y: 2 }, direction: 'north' }],
+      };
+      render(
+        <DesignColumn
+          index={0}
+          column={column}
+          entries={[]}
+          counts={[]}
+          progress={0}
+          onChange={(update) => {
+            column = update(column);
+          }}
+        />,
+      );
+
+      const belt = screen.getByRole('img', {
+        name: 'Transport belt at 1, 2, pointing north',
+      });
+      fireEvent.pointerEnter(belt);
+      expect(fireEvent.keyDown(window, { key })).toBe(false);
+
+      expect(column.entities).toEqual([
+        { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+      ]);
+    },
+  );
 
   it('marks every belt in a logical belt containing a direct loop as an error', () => {
     const entities: DesignColumnData['entities'] = [
