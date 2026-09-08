@@ -7,7 +7,7 @@ import type { BeaconChoice, BeltChoice } from './data/index.ts';
 import type { ModuleChoice } from './data/modules.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
-import { COMMON_IDS } from './data/common-ids.ts';
+import { COMMON_IDS, REFERENCE_STATE } from './data/common-ids.ts';
 
 export interface UrlState {
   /**
@@ -146,113 +146,7 @@ export function UrlHandler() {
   );
 }
 
-/**
- * A frozen example of what a full-ish plan looks like once packed, used as the deflate dictionary:
- * a hash is a few hundred
- * bytes, far too short for deflate to learn the key names from the payload itself, so it is handed
- * them.
- *
- * Keep this literal unchanged when `UrlState` gains or loses fields: changing the dictionary makes
- * existing hashes impossible to inflate. It is intentionally typed only as a generic record so
- * TypeScript does not force it to track the current state schema. What earns its place here is the
- * punctuation around the numbers (`{"recipe":`, `,"machine":`, `"entries":[`), and deriving it
- * from real data would tie the dictionary to the dataset those recipes came from. The numbers below
- * are real indices all the same, so that their widths are representative.
- */
-const referenceState: Record<string, unknown> = {
-  v: 1,
-  rs: 'silicon',
-  cs: 'makes:item:copper-plate',
-  gp: 69,
-  cl: [
-    {
-      entries: [
-        {
-          recipe: 320,
-          count: 25,
-        },
-        {
-          recipe: 1451,
-          productivityModules: 2,
-        },
-        {
-          recipe: 1452,
-          productivityModules: 4,
-          speedModules: 8,
-        },
-        {
-          recipe: 45,
-        },
-        {
-          recipe: 247,
-        },
-        {
-          recipe: 1463,
-          machine: 108,
-        },
-        {
-          recipe: 1461,
-        },
-        {
-          recipe: 249,
-          modules: [
-            [2, 1],
-            [5, 3],
-          ],
-        },
-        {
-          recipe: 248,
-        },
-        {
-          recipe: 1460,
-          count: 4,
-        },
-        {
-          recipe: 1114,
-          machine: 65,
-        },
-        {
-          recipe: 1115,
-          machine: 67,
-        },
-        {
-          recipe: 2207,
-        },
-      ],
-    },
-    {
-      entries: [],
-      imports: [],
-      exports: [],
-      design: {
-        columns: [
-          {
-            entities: [
-              [0, 8, 4, 3, 3, 45],
-              [1, 7, 5, 'e'],
-              [2, 4, 5, 1, 0],
-              [3, 12, 6, 2],
-              [4, 8, 3],
-              [5, 8, 0, 2],
-              [6, 7, 4, 1],
-            ],
-          },
-        ],
-      },
-    },
-  ],
-  ci: 1,
-  mo: {
-    speed: 'speed-module-3',
-    productivity: 'productivity-module',
-    'angels-bio-yield': 'angels-bio-yield-module-5',
-  },
-  be: 'bob-beacon-2',
-  bt: 'bob-turbo-transport-belt',
-  fa: 'infinite-mining',
-};
-
-const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(referenceState)));
+const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(REFERENCE_STATE)));
 
 function packUs(us: UrlState): string {
   const packed: PackedState = { ...us, cl: packCells(us.cl) };
