@@ -1,5 +1,5 @@
 import './design-column.css';
-import { ArrowRightIcon, TrashIcon } from '@primer/octicons-react';
+import {ArrowRightIcon, ChevronRightIcon, TrashIcon} from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
@@ -14,12 +14,13 @@ import {
   Assembler,
   Belt,
   entityPositionStatuses,
+  Inserter,
   TILE_SIZE,
   type ViewportPoint,
 } from './design-entities.tsx';
 import { RecipeButton } from './recipe-button.tsx';
 
-type CursorMode = 'pan' | 'belt' | 'erase';
+type CursorMode = 'pan' | 'belt' | 'inserter' | 'erase';
 type PanDrag = { pointerId: number; x: number; y: number };
 type AssemblerDrag = {
   pointerId: number;
@@ -135,6 +136,13 @@ export function DesignColumn({
     beltDrag.current = { pointerId, position: next.position, axis: next.axis };
   };
 
+  const placeInserter = (position: DesignPosition) => {
+    onChange((current) => ({
+      ...current,
+      entities: [...current.entities, {kind: 'inserter', position, direction: 'east'}],
+    }));
+  };
+
   return (
     <section
       class="cell-design-column"
@@ -150,6 +158,16 @@ export function DesignColumn({
           aria-pressed={cursorMode === 'belt'}
           title="Draw transport belts"
           onClick={() => setCursorMode((mode) => (mode === 'belt' ? 'pan' : 'belt'))}
+        >
+          <ChevronRightIcon aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          class="cell-design-inserter-mode"
+          aria-label="Place inserters"
+          aria-pressed={cursorMode === 'inserter'}
+          title="Place inserters"
+          onClick={() => setCursorMode((mode) => (mode === 'inserter' ? 'pan' : 'inserter'))}
         >
           <ArrowRightIcon aria-hidden="true" />
         </button>
@@ -178,7 +196,7 @@ export function DesignColumn({
       </div>
       <div
         ref={viewport}
-        class={`cell-design-viewport${cursorMode === 'erase' ? ' cell-design-viewport-erase' : ''}${cursorMode === 'belt' ? ' cell-design-viewport-belt' : ''}`}
+        class={`cell-design-viewport${cursorMode === 'erase' ? ' cell-design-viewport-erase' : ''}${cursorMode === 'belt' ? ' cell-design-viewport-belt' : ''}${cursorMode === 'inserter' ? ' cell-design-viewport-inserter' : ''}`}
         role="region"
         aria-label={`Design viewport for column ${index + 1}`}
         style={{ backgroundPosition: `${worldOrigin.x}px ${worldOrigin.y}px` }}
@@ -191,6 +209,10 @@ export function DesignColumn({
               pointerId: event.pointerId,
               position: viewportToWorld(event),
             };
+            return;
+          }
+          if (cursorMode === 'inserter') {
+            placeInserter(viewportToWorld(event));
             return;
           }
           drag.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
@@ -274,6 +296,23 @@ export function DesignColumn({
               belt={entity}
               status={entityStatuses[entityIndex]}
               hasLoop={loopBeltIndexes.has(entityIndex)}
+              worldOrigin={worldOrigin}
+              onPointerDown={(event) => {
+                if (event.button !== 0 || cursorMode !== 'erase') return;
+                event.stopPropagation();
+                eraseEntity(entityIndex);
+              }}
+              onPointerMove={(event) => {
+                if (cursorMode !== 'erase' || (event.buttons & 1) === 0) return;
+                event.stopPropagation();
+                eraseEntity(entityIndex);
+              }}
+            />
+          ) : entity.kind === 'inserter' ? (
+            <Inserter
+              key={entityIndex}
+              inserter={entity}
+              status={entityStatuses[entityIndex]}
               worldOrigin={worldOrigin}
               onPointerDown={(event) => {
                 if (event.button !== 0 || cursorMode !== 'erase') return;

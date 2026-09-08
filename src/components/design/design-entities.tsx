@@ -1,7 +1,13 @@
-import { ArrowRightIcon } from '@primer/octicons-react';
+import {ArrowRightIcon, ChevronRightIcon} from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { recipeName, staticData } from '../../data/index.ts';
-import type { DesignAssembler, DesignBelt, DesignEntity, DesignPosition } from '../../design.ts';
+import type {
+  DesignAssembler,
+  DesignBelt,
+  DesignEntity,
+  DesignInserter,
+  DesignPosition,
+} from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
 
 export const TILE_SIZE = 12;
@@ -106,10 +112,55 @@ export function Belt({
         height: `${TILE_SIZE}px`,
       }}
     >
-      <ArrowRightIcon
+      <ChevronRightIcon
         className="cell-design-belt-arrow"
         aria-hidden="true"
         data-direction={belt.direction}
+      />
+    </div>
+  );
+}
+
+/** An inserter positioned on one design tile. */
+export function Inserter({
+  inserter,
+  status,
+  worldOrigin,
+  onPointerDown,
+  onPointerMove,
+}: {
+  inserter: DesignInserter;
+  status: EntityPositionStatus;
+  worldOrigin: ViewportPoint;
+  onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+}) {
+  const {x, y} = inserter.position;
+  const viewportPosition = worldToViewport(inserter.position, worldOrigin);
+  const isOverlapping = status === 'overlap';
+  const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+
+  return (
+    <div
+      class={`cell-design-inserter${isOverlapping ? ' cell-design-inserter-error' : ''}`}
+      role="img"
+      aria-label={`Inserter at ${x}, ${y}, pointing ${inserter.direction}${errorDescription}`}
+      title={`Inserter (${x}, ${y}), ${inserter.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
+      data-position={`${x},${y}`}
+      data-position-status={status}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      style={{
+        left: `${viewportPosition.x}px`,
+        top: `${viewportPosition.y}px`,
+        width: `${TILE_SIZE}px`,
+        height: `${TILE_SIZE}px`,
+      }}
+    >
+      <ArrowRightIcon
+        className="cell-design-inserter-arrow"
+        aria-hidden="true"
+        data-direction={inserter.direction}
       />
     </div>
   );

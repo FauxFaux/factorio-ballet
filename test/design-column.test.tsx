@@ -284,6 +284,51 @@ describe('DesignColumn', () => {
     expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
   });
 
+  it('draws inserters as directional one-tile entities', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{ entities: [{ kind: 'inserter', position: { x: 1, y: 2 }, direction: 'north' }] }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const inserter = screen.getByRole('img', { name: 'Inserter at 1, 2, pointing north' });
+    expect(inserter.style.left).toBe('12px');
+    expect(inserter.style.top).toBe('24px');
+    expect(inserter.style.width).toBe('12px');
+    expect(inserter.querySelector('[data-direction="north"]')).not.toBeNull();
+  });
+
+  it('places one east-facing inserter for each grid click without dragging', () => {
+    let column: DesignColumnData = { entities: [] };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Place inserters' }));
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 1, clientX: 13, clientY: 25 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 49, clientY: 25 });
+
+    expect(column.entities).toEqual([
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+    ]);
+  });
+
   it('marks every belt in a logical belt containing a direct loop as an error', () => {
     const entities: DesignColumnData['entities'] = [
       { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },
@@ -381,5 +426,26 @@ describe('DesignColumn', () => {
     fireEvent.click(erase);
     expect(belt.getAttribute('aria-pressed')).toBe('false');
     expect(erase.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  it('makes inserter and belt modes mutually exclusive', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{ entities: [] }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const belt = screen.getByRole('button', { name: 'Draw belts' });
+    const inserter = screen.getByRole('button', { name: 'Place inserters' });
+    fireEvent.click(belt);
+    fireEvent.click(inserter);
+
+    expect(belt.getAttribute('aria-pressed')).toBe('false');
+    expect(inserter.getAttribute('aria-pressed')).toBe('true');
   });
 });
