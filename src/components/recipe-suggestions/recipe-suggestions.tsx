@@ -11,6 +11,7 @@ import {
   type VoidPlan,
 } from '../../void-path.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
+import { fromAirStages } from '../from-air.tsx';
 import { ResourceIcon } from '../resource.tsx';
 
 interface PathSuggestion {
@@ -37,6 +38,12 @@ export const suggestionScoreWeights = {
 // of redoing a full recipe-data pass whenever the current cell changes.
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
+
+// Stage one makes water and compressed air without inputs. Treat the products newly unlocked by
+// stage two (such as oxygen) as available when comparing the extra inputs a path needs.
+const freeOneStepProducts = new Set(
+  fromAirStages(staticData)[1]?.flatMap(({ adds }) => adds) ?? [],
+);
 
 function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
   return 'target' in plan;
@@ -111,7 +118,7 @@ export function suggestedRecipePaths(
 ): PathSuggestion[] {
   const searched = new Set(usedResources(search, cell));
   const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
-  const existingInputs = new Set([...searched, ...inputs]);
+  const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
   const existingOutputs = new Set(outputs);
   const chains = suggestedResourceChains(cell);
 

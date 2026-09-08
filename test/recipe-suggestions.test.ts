@@ -90,6 +90,21 @@ describe('suggestedRecipePaths', () => {
     expect(sulfuricAcid?.score).toBeGreaterThan(clarifier?.score ?? Infinity);
   });
 
+  it('treats products one free air-processing step away as available inputs', () => {
+    const paths = suggestedRecipePaths(`uses:${waste}`, {
+      entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
+    });
+    const sulfuricAcid = paths.find(
+      (path) =>
+        path.kind === 'chain' &&
+        'target' in path.plan &&
+        path.plan.target === 'fluid:angels-liquid-sulfuric-acid',
+    );
+
+    expect(sulfuricAcid?.plan).toMatchObject({ inputs: ['fluid:angels-gas-oxygen'] });
+    expect(sulfuricAcid?.score).toBeCloseTo(3.36);
+  });
+
   it('limits the combined path suggestions to the ten best candidates', () => {
     const paths = suggestedRecipePaths(`uses:${waste}`);
 
