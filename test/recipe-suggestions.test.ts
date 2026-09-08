@@ -4,7 +4,10 @@ import {
   scoreRecipeSuggestion,
   suggestedResourceChains,
   suggestedRecipePaths,
+  suggestedSoleConsumerOutputs,
+  suggestedSoleProducerInputs,
   suggestedVoidResources,
+  suggestionScoreWeights,
 } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
@@ -41,6 +44,44 @@ describe('suggestedResourceChains', () => {
       inputs: ['fluid:angels-gas-oxygen'],
       outputs: ['fluid:angels-water-mineralized'],
     });
+  });
+});
+
+describe('single-recipe interface suggestions', () => {
+  it('suggests the sole recipe which can make a required input', () => {
+    const suggestions = suggestedSoleProducerInputs({
+      entries: [{ recipe: 'speed-module-3' }],
+    });
+
+    expect(suggestions).toContainEqual(
+      expect.objectContaining({
+        target: 'item:speed-module-2',
+        recipes: ['speed-module-2'],
+      }),
+    );
+  });
+
+  it('suggests the sole recipe which can use an output', () => {
+    const suggestions = suggestedSoleConsumerOutputs({
+      entries: [{ recipe: 'bob-speed-processor' }],
+    });
+
+    expect(suggestions).toContainEqual(
+      expect.objectContaining({
+        target: 'item:bob-speed-processor',
+        recipes: ['speed-module-2'],
+      }),
+    );
+  });
+
+  it('gives a sole consumer a high certainty score', () => {
+    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'bob-speed-processor' }] });
+    const soleConsumer = paths.find(
+      (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
+    );
+
+    expect(soleConsumer?.scoreFactors.certainty).toBeGreaterThan(0);
+    expect(soleConsumer?.score).toBeGreaterThan(suggestionScoreWeights.soleProducer / 2);
   });
 });
 

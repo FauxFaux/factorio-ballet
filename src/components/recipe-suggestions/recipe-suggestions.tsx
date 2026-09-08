@@ -17,7 +17,7 @@ import { ResourceIcon } from '../resource.tsx';
 
 interface PathSuggestion {
   resource: ResourceId;
-  kind: 'chain' | 'void';
+  kind: 'chain' | 'input' | 'output' | 'void';
   plan: ResourceChain | VoidPlan;
   score: number;
   scoreFactors: SuggestionScoreFactors;
@@ -27,6 +27,7 @@ interface SuggestionScoreFactors {
   inputs: number;
   outputs: number;
   buildings: number;
+  certainty: number;
 }
 
 const CANDIDATES_PER_RESOURCE = 24;
@@ -40,12 +41,34 @@ export const suggestionScoreWeights = {
   reusedInput: 8,
   reusedOutput: 7,
   suppliedInput: 30,
+  soleProducer: 50,
 } as const;
 
 // Recipe data is loaded once and immutable. Index it and retain each completed path search instead
 // of redoing a full recipe-data pass whenever the current cell changes.
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
+
+/** The one recipe which makes or uses a resource, omitting resources with competing recipes. */
+function indexSoleRecipes(direction: 'ingredients' | 'products'): Map<ResourceId, string> {
+  const producers = new Map<ResourceId, string>();
+  const ambiguous = new Set<ResourceId>();
+  for (const [id, recipe] of Object.entries(staticData.recipes)) {
+    for (const resource of new Set(recipe[direction].map(({ resource }) => resource))) {
+      if (ambiguous.has(resource)) continue;
+      if (producers.has(resource)) {
+        producers.delete(resource);
+        ambiguous.add(resource);
+      } else {
+        producers.set(resource, id);
+      }
+    }
+  }
+  return producers;
+}
+
+const soleProducer = indexSoleRecipes('products');
+const soleConsumer = indexSoleRecipes('ingredients');
 
 function isSingleStepVoidable(resource: ResourceId): boolean {
   return staticVoidPlans(resource, 1)[0]?.recipes.length === 1;
@@ -95,15 +118,17 @@ export function scoreRecipeSuggestion(
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
   presentResources = new Set([...existingInputs, ...existingOutputs]),
+  isSoleProducer = false,
 ): number {
-  const { inputs, outputs, buildings } = scoreRecipeSuggestionFactors(
+  const { inputs, outputs, buildings, certainty } = scoreRecipeSuggestionFactors(
     plan,
     existingInputs,
     existingOutputs,
     presentResources,
+    isSoleProducer,
   );
 
-  return inputs + outputs + buildings;
+  return inputs + outputs + buildings + certainty;
 }
 
 function scoreRecipeSuggestionFactors(
@@ -111,6 +136,7 @@ function scoreRecipeSuggestionFactors(
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
   presentResources: ReadonlySet<ResourceId>,
+  isSoleProducer = false,
 ): SuggestionScoreFactors {
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
@@ -136,6 +162,7 @@ function scoreRecipeSuggestionFactors(
         suggestionScoreWeights.output +
       reusedOutputs * suggestionScoreWeights.reusedOutput,
     buildings: -plan.recipes.length * suggestionScoreWeights.step,
+    certainty: isSoleProducer ? suggestionScoreWeights.soleProducer : 0,
   };
 }
 
@@ -171,6 +198,54 @@ export function suggestedResourceChains(
   );
 }
 
+/** The one available recipe for each input the cell must otherwise import. */
+export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
+  if (!cell) return [];
+
+  return cellInterface(cell).inputs.flatMap((target) => {
+    const id = soleProducer.get(target);
+    const recipe = id && staticData.recipes[id];
+    if (!id || !recipe) return [];
+
+    const inputs = [...new Set(recipe.ingredients.map(({ resource }) => resource))];
+    return [
+      {
+        target,
+        recipes: [id],
+        inputs,
+        outputs: [...new Set(recipe.products.map(({ resource }) => resource))].filter(
+          (resource) => resource !== target && !inputs.includes(resource),
+        ),
+      },
+    ];
+  });
+}
+
+/** The one available recipe for each output the cell must otherwise export. */
+export function suggestedSoleConsumerOutputs(cell?: Cell): ResourceChain[] {
+  if (!cell) return [];
+
+  return cellInterface(cell).outputs.flatMap((source) => {
+    const id = soleConsumer.get(source);
+    const recipe = id && staticData.recipes[id];
+    if (!id || !recipe) return [];
+
+    const ingredients = [...new Set(recipe.ingredients.map(({ resource }) => resource))];
+    return [
+      {
+        // ResourceChain supplies its target. The source is a useful stand-in here because this
+        // direct recipe consumes an output rather than supplying an input.
+        target: source,
+        recipes: [id],
+        inputs: ingredients.filter((resource) => resource !== source),
+        outputs: [...new Set(recipe.products.map(({ resource }) => resource))].filter(
+          (resource) => !ingredients.includes(resource),
+        ),
+      },
+    ];
+  });
+}
+
 /** The ten most useful paths across the resources currently in view. */
 export function suggestedRecipePaths(
   search: string,
@@ -192,52 +267,98 @@ export function suggestedRecipePaths(
     }) ?? []),
   ]);
   const chains = suggestedResourceChains(cell);
+  const soleProducerInputs = suggestedSoleProducerInputs(cell);
+  const soleConsumerOutputs = suggestedSoleConsumerOutputs(cell);
 
-  return suggestedVoidResources(search, cell, resource)
-    .flatMap((id) => {
-      const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
-      const resourceChains = chains.get(id) ?? [];
-      if (
-        !searched.has(id) &&
-        id !== resource &&
-        plans.length === 0 &&
-        resourceChains.length === 0
-      ) {
-        return [];
-      }
-      return [
-        ...plans.map((plan) => {
-          const scoreFactors = scoreRecipeSuggestionFactors(
-            plan,
-            existingInputs,
-            existingOutputs,
-            presentResources,
-          );
-          return {
-            resource: id,
-            kind: 'void' as const,
-            plan,
-            score: scoreFactors.inputs + scoreFactors.outputs + scoreFactors.buildings,
-            scoreFactors,
-          };
-        }),
-        ...resourceChains.map((plan) => {
-          const scoreFactors = scoreRecipeSuggestionFactors(
-            plan,
-            existingInputs,
-            existingOutputs,
-            presentResources,
-          );
-          return {
-            resource: id,
-            kind: 'chain' as const,
-            plan,
-            score: scoreFactors.inputs + scoreFactors.outputs + scoreFactors.buildings,
-            scoreFactors,
-          };
-        }),
-      ];
-    })
+  const resourceSuggestions = suggestedVoidResources(search, cell, resource).flatMap((id) => {
+    const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
+    const resourceChains = chains.get(id) ?? [];
+    if (!searched.has(id) && id !== resource && plans.length === 0 && resourceChains.length === 0) {
+      return [];
+    }
+    return [
+      ...plans.map((plan) => {
+        const scoreFactors = scoreRecipeSuggestionFactors(
+          plan,
+          existingInputs,
+          existingOutputs,
+          presentResources,
+        );
+        return {
+          resource: id,
+          kind: 'void' as const,
+          plan,
+          score:
+            scoreFactors.inputs +
+            scoreFactors.outputs +
+            scoreFactors.buildings +
+            scoreFactors.certainty,
+          scoreFactors,
+        };
+      }),
+      ...resourceChains.map((plan) => {
+        const scoreFactors = scoreRecipeSuggestionFactors(
+          plan,
+          existingInputs,
+          existingOutputs,
+          presentResources,
+        );
+        return {
+          resource: id,
+          kind: 'chain' as const,
+          plan,
+          score:
+            scoreFactors.inputs +
+            scoreFactors.outputs +
+            scoreFactors.buildings +
+            scoreFactors.certainty,
+          scoreFactors,
+        };
+      }),
+    ];
+  });
+  const inputSuggestions = soleProducerInputs.map((plan) => {
+    const scoreFactors = scoreRecipeSuggestionFactors(
+      plan,
+      existingInputs,
+      existingOutputs,
+      presentResources,
+      true,
+    );
+    return {
+      resource: plan.target,
+      kind: 'input' as const,
+      plan,
+      score:
+        scoreFactors.inputs +
+        scoreFactors.outputs +
+        scoreFactors.buildings +
+        scoreFactors.certainty,
+      scoreFactors,
+    };
+  });
+  const outputSuggestions = soleConsumerOutputs.map((plan) => {
+    const scoreFactors = scoreRecipeSuggestionFactors(
+      plan,
+      existingInputs,
+      existingOutputs,
+      presentResources,
+      true,
+    );
+    return {
+      resource: plan.target,
+      kind: 'output' as const,
+      plan,
+      score:
+        scoreFactors.inputs +
+        scoreFactors.outputs +
+        scoreFactors.buildings +
+        scoreFactors.certainty,
+      scoreFactors,
+    };
+  });
+
+  return [...resourceSuggestions, ...inputSuggestions, ...outputSuggestions]
     .toSorted(
       (a, b) =>
         b.score - a.score ||
@@ -284,7 +405,7 @@ export function RecipeSuggestions({
                 </h3>
                 <p class="void-path-score">Score {score.toFixed(1)}</p>
               </div>
-              {kind === 'chain' && isResourceChain(plan) && (
+              {(kind === 'chain' || kind === 'input') && isResourceChain(plan) && (
                 <p class="void-path-flow-summary">
                   <ResourceList resources={plan.inputs} label="Needs" />
                   <span class="void-path-flow-arrow" aria-label="makes">
@@ -306,14 +427,19 @@ export function RecipeSuggestions({
                 <p class="void-path-score-factors">
                   Inputs ({formatScoreFactor(scoreFactors.inputs)}) + outputs (
                   {formatScoreFactor(scoreFactors.outputs)}) + buildings (
-                  {formatScoreFactor(scoreFactors.buildings)}) = {formatScoreFactor(score)}
+                  {formatScoreFactor(scoreFactors.buildings)}) + certainty (
+                  {formatScoreFactor(scoreFactors.certainty)}) = {formatScoreFactor(score)}
                 </p>
                 <ol
                   class="void-path-steps"
                   aria-label={
                     kind === 'chain' && isResourceChain(plan)
                       ? `Path from ${resource} to ${plan.target}`
-                      : `Void path for ${resource}`
+                      : kind === 'input' && isResourceChain(plan)
+                        ? `Recipe which makes ${resource}`
+                        : kind === 'output'
+                          ? `Recipe which uses ${resource}`
+                          : `Void path for ${resource}`
                   }
                 >
                   {plan.recipes.map((id, step) => {
