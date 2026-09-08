@@ -1,5 +1,6 @@
 export {
   beltDirection,
+  beltLaneKey,
   isBeltEntity,
   isInserterEntity,
   isSplitterEntity,

@@ -1,4 +1,4 @@
-import { buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
+import { beltLaneKey, buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
 import type { DesignColumn, DesignDirection, DesignPosition } from '../../design.ts';
 
 type BeltAxis = 'horizontal' | 'vertical';
@@ -101,10 +101,6 @@ function componentHasBeltLoop(
   };
 
   return [...outgoing.values()].some(({ lane }) => visit(lane));
-}
-
-function beltLaneKey(lane: BeltLaneRef): string {
-  return `${lane.entityNumber}:${lane.line}:${lane.lane}:${lane.splitterSide ?? ''}`;
 }
 
 /** Return an unbroken cardinal path, even when pointer events skip over tiles. */

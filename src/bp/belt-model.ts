@@ -29,6 +29,11 @@ export interface BeltLaneRef {
   splitterSide?: 'input' | 'output';
 }
 
+/** A value identity for a lane reference, suitable for maps and sets. */
+export function beltLaneKey(lane: BeltLaneRef): string {
+  return `${lane.entityNumber}:${lane.line}:${lane.lane}:${lane.splitterSide ?? ''}`;
+}
+
 export type BeltConnectionKind = 'forward' | 'turn' | 'sideload' | 'underground' | 'splitter';
 
 export interface BeltConnection {

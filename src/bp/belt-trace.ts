@@ -1,4 +1,4 @@
-import { isSplitterEntity } from './belt-model.ts';
+import { beltLaneKey, isSplitterEntity } from './belt-model.ts';
 import type {
   BeltConnection,
   BeltEntity,
@@ -15,7 +15,7 @@ export function traceBeltToSplitter(graph: BeltGraph, start: BeltLaneRef): BeltT
   const entityByNumber = new Map(graph.entities.map((entity) => [entity.entity_number, entity]));
   const outgoing = connectionsBySource(graph.connections);
   const trace: BeltTrace = { lanes: [start], connections: [], stop: 'end' };
-  const visited = new Set([laneKey(start)]);
+  const visited = new Set([beltLaneKey(start)]);
   let current = start;
 
   while (true) {
@@ -24,7 +24,7 @@ export function traceBeltToSplitter(graph: BeltGraph, start: BeltLaneRef): BeltT
       return trace;
     }
 
-    const next = outgoing.get(laneKey(current)) ?? [];
+    const next = outgoing.get(beltLaneKey(current)) ?? [];
     if (next.length === 0) return trace;
     if (next.length > 1) {
       trace.stop = 'branch';
@@ -35,7 +35,7 @@ export function traceBeltToSplitter(graph: BeltGraph, start: BeltLaneRef): BeltT
     trace.connections.push(connection);
     trace.lanes.push(connection.to);
     current = connection.to;
-    const key = laneKey(current);
+    const key = beltLaneKey(current);
     if (visited.has(key)) {
       trace.stop = 'cycle';
       return trace;
@@ -55,14 +55,14 @@ export function traceBeltPaths(graph: BeltGraph, start: BeltLaneRef): BeltTrace[
     pathConnections: BeltConnection[],
     visited: Set<string>,
   ) => {
-    const next = outgoing.get(laneKey(current)) ?? [];
+    const next = outgoing.get(beltLaneKey(current)) ?? [];
     if (next.length === 0) {
       results.push({ lanes: pathLanes, connections: pathConnections, stop: 'end' });
       return;
     }
 
     for (const connection of next) {
-      const key = laneKey(connection.to);
+      const key = beltLaneKey(connection.to);
       if (visited.has(key)) {
         results.push({
           lanes: [...pathLanes, connection.to],
@@ -80,14 +80,14 @@ export function traceBeltPaths(graph: BeltGraph, start: BeltLaneRef): BeltTrace[
     }
   };
 
-  visit(start, [start], [], new Set([laneKey(start)]));
+  visit(start, [start], [], new Set([beltLaneKey(start)]));
   return results;
 }
 
 function connectionsBySource(connections: BeltConnection[]): Map<string, BeltConnection[]> {
   const result = new Map<string, BeltConnection[]>();
   for (const connection of connections) {
-    const key = laneKey(connection.from);
+    const key = beltLaneKey(connection.from);
     const matching = result.get(key) ?? [];
     matching.push(connection);
     result.set(key, matching);
@@ -98,8 +98,4 @@ function connectionsBySource(connections: BeltConnection[]): Map<string, BeltCon
 function isSplitterEntityNumber(entities: Map<number, BeltEntity>, entityNumber: number): boolean {
   const entity = entities.get(entityNumber);
   return entity !== undefined && isSplitterEntity(entity);
-}
-
-function laneKey(lane: BeltLaneRef): string {
-  return `${lane.entityNumber}:${lane.line}:${lane.lane}:${lane.splitterSide ?? ''}`;
 }

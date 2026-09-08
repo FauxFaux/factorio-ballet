@@ -46,6 +46,13 @@ export {
   type EntityPositionStatus,
 } from './design-entities.tsx';
 export { beltLoopEntityIndexes } from './design-belts.ts';
+export { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
+export type {
+  DesignLaneAnalysis,
+  DesignLaneIssue,
+  LaneContents,
+  LaneInjection,
+} from './design-lanes.ts';
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
 export function DesignColumn({
