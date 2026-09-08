@@ -5,6 +5,7 @@ import type { Cell } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
+import { AddToCell } from '../recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import { isResourceChain, suggestedRecipePaths } from './suggestions.ts';
 
@@ -23,6 +24,8 @@ export function RecipeSuggestions({
   search,
   cell,
   progress,
+  onAdd,
+  inCell,
 }: {
   resource?: ResourceId;
   search: string;
@@ -51,6 +54,12 @@ export function RecipeSuggestions({
                   <ResourceIcon id={resource} /> {resourceName(resource)}
                 </h3>
                 <p class="void-path-score">Score {score.toFixed(1)}</p>
+                {onAdd ? (
+                  <AddToCell
+                    onAdd={() => plan.recipes.forEach(onAdd)}
+                    inCell={plan.recipes.every((id) => inCell?.(id))}
+                  />
+                ) : null}
               </div>
               {(kind === 'chain' || kind === 'input') && isResourceChain(plan) && (
                 <p class="void-path-flow-summary">
@@ -97,6 +106,8 @@ export function RecipeSuggestions({
                           <CompactRecipe
                             match={{ id, recipe, name: recipeName(id) }}
                             progress={progress}
+                            onAdd={onAdd && (() => onAdd(id))}
+                            inCell={inCell?.(id)}
                           />
                         ) : (
                           recipeName(id)

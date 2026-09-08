@@ -29,6 +29,23 @@ describe('CompactRecipe', () => {
     expect(container.querySelector('.recipe-machines')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Add to this cell' })).toBeNull();
   });
+
+  it('adds its recipe when an add action is available', async () => {
+    const user = userEvent.setup();
+    const recipe = staticData.recipes['iron-gear-wheel'];
+    const onAdd = vi.fn();
+    render(
+      <CompactRecipe
+        match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
+        progress={0}
+        onAdd={onAdd}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Add to this cell' }));
+
+    expect(onAdd).toHaveBeenCalledOnce();
+  });
 });
 
 describe('RecipeCard', () => {

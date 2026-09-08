@@ -1,6 +1,12 @@
-import { describe, expect, it } from 'vitest';
+// @vitest-environment happy-dom
+
+import { cleanup, render } from '@testing-library/preact';
+import userEvent from '@testing-library/user-event';
+import { h } from 'preact';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { newCell } from '../src/cell.ts';
 import {
+  RecipeSuggestions,
   scoreRecipeSuggestion,
   suggestedResourceChains,
   suggestedRecipePaths,
@@ -11,6 +17,8 @@ import {
 } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
+
+afterEach(cleanup);
 
 describe('suggestedVoidResources', () => {
   it('includes the resource targeted by a uses search', () => {
@@ -185,5 +193,19 @@ describe('suggestedRecipePaths', () => {
     expect(paths.map((path) => path.score)).toEqual(
       [...paths.map((path) => path.score)].sort((a, b) => b - a),
     );
+  });
+});
+
+describe('RecipeSuggestions', () => {
+  it('adds every recipe in a suggested path from its card button', async () => {
+    const user = userEvent.setup();
+    const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
+    const path = suggestedRecipePaths('', cell)[0]!;
+    const onAdd = vi.fn();
+    const { container } = render(h(RecipeSuggestions, { search: '', cell, progress: 0, onAdd }));
+
+    await user.click(container.querySelector('.void-path-card-head .recipe-add')!);
+
+    expect(onAdd.mock.calls.map(([id]) => id)).toEqual(path.plan.recipes);
   });
 });
