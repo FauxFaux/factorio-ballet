@@ -92,6 +92,75 @@ describe('DesignColumn', () => {
     expect(document.querySelectorAll('.cell-design-assembler-error')).toHaveLength(2);
   });
 
+  it('uses dark orange for an assembler with every item input missing', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'electronic-circuit',
+              position: { x: 0, y: 0 },
+              size: { width: 1, height: 1 },
+            },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const assembler = screen.getByRole('img', {
+      name: 'Electronic circuit assembler at 0, 0',
+    });
+    expect(assembler.classList.contains('cell-design-assembler-all-inputs-missing')).toBe(true);
+    expect(assembler.getAttribute('title')).toBe(
+      'Electronic circuit (0, 0) — missing resources: Wooden board (item:bob-wooden-board), Basic electronic components (item:bob-basic-electronic-components), Solder (item:bob-solder)',
+    );
+  });
+
+  it('uses lighter orange for an assembler with some item inputs missing', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },
+            {
+              kind: 'assembler',
+              recipe: 'bob-wooden-board',
+              position: { x: 0, y: -2 },
+              size: { width: 1, height: 1 },
+            },
+            { kind: 'inserter', position: { x: 0, y: -1 }, direction: 'south' },
+            {
+              kind: 'assembler',
+              recipe: 'electronic-circuit',
+              position: { x: 2, y: 0 },
+              size: { width: 1, height: 1 },
+            },
+            { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const assembler = screen.getByRole('img', {
+      name: 'Electronic circuit assembler at 2, 0',
+    });
+    expect(assembler.classList.contains('cell-design-assembler-some-inputs-missing')).toBe(true);
+    expect(assembler.getAttribute('title')).toBe(
+      'Electronic circuit (2, 0) — missing resources: Basic electronic components (item:bob-basic-electronic-components), Solder (item:bob-solder)',
+    );
+  });
+
   it('scrolls the grid and entities through the same viewport transform', () => {
     render(
       <DesignColumn

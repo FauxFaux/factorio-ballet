@@ -9,7 +9,7 @@ import type {
   DesignPosition,
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
-import type { BeltItemTrace } from './design-belts.ts';
+import type { AssemblerInputStatus, BeltItemTrace } from './design-belts.ts';
 
 export const TILE_SIZE = 12;
 
@@ -195,6 +195,7 @@ export function Inserter({
 export function Assembler({
   assembler,
   status,
+  inputStatus,
   worldOrigin,
   onContextMenu,
   onPointerDown,
@@ -206,6 +207,7 @@ export function Assembler({
 }: {
   assembler: DesignAssembler;
   status: EntityPositionStatus;
+  inputStatus: AssemblerInputStatus | undefined;
   worldOrigin: ViewportPoint;
   onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
@@ -221,13 +223,28 @@ export function Assembler({
   const { width, height } = assembler.size;
   const viewportPosition = worldToViewport(assembler.position, worldOrigin);
   const isOverlapping = status === 'overlap';
+  const itemIngredientCount = new Set(
+    (recipe?.ingredients ?? [])
+      .map(({ resource }) => resource)
+      .filter((resource) => resource.startsWith('item:')),
+  ).size;
+  const missing = inputStatus?.missing ?? [];
+  const inputStatusClass =
+    missing.length === 0
+      ? ''
+      : missing.length === itemIngredientCount
+        ? ' cell-design-assembler-all-inputs-missing'
+        : ' cell-design-assembler-some-inputs-missing';
+  const missingDescription = missing
+    .map((resource) => `${resourceName(resource)} (${resource})`)
+    .join(', ');
 
   return (
     <div
-      class={`cell-design-assembler${isOverlapping ? ' cell-design-assembler-error' : ''}`}
+      class={`cell-design-assembler${inputStatusClass}${isOverlapping ? ' cell-design-assembler-error' : ''}`}
       role="img"
       aria-label={`${name} assembler at ${x}, ${y}${isOverlapping ? ', overlaps another entity' : ''}`}
-      title={`${name} (${x}, ${y})${isOverlapping ? ' — overlaps another entity' : ''}`}
+      title={`${name} (${x}, ${y})${missingDescription ? ` — missing resources: ${missingDescription}` : ''}${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
       onContextMenu={onContextMenu}

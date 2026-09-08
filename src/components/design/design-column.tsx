@@ -10,6 +10,7 @@ import type {
   DesignPosition,
 } from '../../design.ts';
 import {
+  assemblerInputStatuses,
   beltItemTraces,
   beltLoopEntityIndexes,
   paintBelts,
@@ -84,6 +85,7 @@ export function DesignColumn({
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
   const entityStatuses = entityPositionStatuses(column.entities);
+  const assemblerStatuses = assemblerInputStatuses(column, staticData.recipes);
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
   const itemTracesByBelt = beltItemTraces(column, staticData.recipes);
 
@@ -312,6 +314,7 @@ export function DesignColumn({
               key={entityIndex}
               assembler={entity}
               status={entityStatuses[entityIndex]}
+              inputStatus={assemblerStatuses.get(entityIndex)}
               worldOrigin={worldOrigin}
               onContextMenu={(event) => {
                 event.preventDefault();
