@@ -1,6 +1,4 @@
-import {
-  buildBeltGraph,
-} from '../../bp/belt.ts';
+import { buildBeltGraph } from '../../bp/belt.ts';
 import {
   beltLaneKey,
   type BeltGraph,

@@ -1,4 +1,5 @@
 import { useMemo } from 'preact/hooks';
+import { staticData } from '../data/index.ts';
 import { flipDirection, searchMatches, type SearchScope } from '../search.ts';
 import type { State } from '../ts.ts';
 import type { MachineId, ResourceId } from '../types.ts';
@@ -7,6 +8,24 @@ import { ResourceButton } from './resource.tsx';
 import { SearchBox } from './search-box.tsx';
 
 const LIMIT = 20;
+
+/** Resources that have one, and only one, recipe that produces them. */
+const soleProducer = (() => {
+  const producers = new Map<ResourceId, string>();
+  const ambiguous = new Set<ResourceId>();
+  for (const [id, recipe] of Object.entries(staticData.recipes)) {
+    for (const resource of new Set(recipe.products.map((product) => product.resource))) {
+      if (ambiguous.has(resource)) continue;
+      if (producers.has(resource)) {
+        producers.delete(resource);
+        ambiguous.add(resource);
+      } else {
+        producers.set(resource, id);
+      }
+    }
+  }
+  return producers;
+})();
 
 /**
  * Recipes matching a search: `makes:<resource>`, `uses:<resource>`, or free text against
@@ -32,6 +51,29 @@ export function RecipeList({
   inCell?: (recipe: string) => boolean;
 }) {
   const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
+  const displayed = useMemo(() => {
+    /* Removing a resource can bring another recipe into the visible limit. Repeat until every
+       hidden resource has its one producer card visibly shown. */
+    const hidden = new Set<ResourceId>();
+    let changed = true;
+    while (changed) {
+      const visibleRecipes = new Set(
+        found
+          .filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id))
+          .slice(0, LIMIT)
+          .filter((result) => result.kind === 'recipe')
+          .map((result) => result.match.id),
+      );
+      changed = false;
+      for (const [resource, recipe] of soleProducer) {
+        if (visibleRecipes.has(recipe) && !hidden.has(resource)) {
+          hidden.add(resource);
+          changed = true;
+        }
+      }
+    }
+    return found.filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id));
+  }, [found]);
   const onPick = (id: ResourceId) => setSearch(`makes:${id}`);
   const flipped = flipDirection(search);
 
@@ -56,10 +98,10 @@ export function RecipeList({
       </SearchBox>
       {!search.trim() ? (
         <p class="recipe-hint">Search for a resource or recipe.</p>
-      ) : found.length === 0 ? (
+      ) : displayed.length === 0 ? (
         <p class="recipe-hint">No resources or recipes match.</p>
       ) : null}
-      {found.slice(0, LIMIT).map((result) =>
+      {displayed.slice(0, LIMIT).map((result) =>
         result.kind === 'recipe' ? (
           <RecipeCard
             key={`recipe:${result.match.id}`}
@@ -77,12 +119,15 @@ export function RecipeList({
                 onResourcePick?.(id);
                 onPick(id);
               }}
-            />
+            >
+              {' '}
+              (show other recipes)
+            </ResourceButton>
           </div>
         ),
       )}
-      {found.length > LIMIT ? (
-        <p class="recipe-hint">…and {found.length - LIMIT} more; try a narrower search.</p>
+      {displayed.length > LIMIT ? (
+        <p class="recipe-hint">…and {displayed.length - LIMIT} more; try a narrower search.</p>
       ) : null}
     </div>
   );
