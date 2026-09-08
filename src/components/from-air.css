@@ -4,6 +4,13 @@
 .from-air-intro {
   max-width: 48rem;
 }
+.from-air-option {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: fit-content;
+  margin-bottom: 1rem;
+}
 .from-air-stages,
 .from-air-recipes {
   margin: 0;

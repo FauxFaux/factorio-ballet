@@ -78,7 +78,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
         </div>
       </header>
       {us.fa ? (
-        <FromAir />
+        <FromAir mode={field(uss, 'fa')} />
       ) : (
         <>
           <CellList

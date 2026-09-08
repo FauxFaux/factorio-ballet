@@ -44,6 +44,25 @@ describe('fromAirStages', () => {
     expect(stages.flat().map(({ id }) => id)).toEqual(['synthetic:pumping-water', 'wash']);
   });
 
+  it('optionally unlocks infinite mining after its fluid input, but not finite mining', () => {
+    const water = 'fluid:water';
+    const stages = fromAirStages(
+      {
+        recipes: {
+          'synthetic:pumping-water': recipe([], [water], true),
+          'synthetic:mining-coal': recipe([], ['item:finite-coal'], true),
+          'synthetic:mining-infinite-coal': recipe([water], ['item:coal'], true),
+        },
+      },
+      true,
+    );
+
+    expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([
+      ['synthetic:pumping-water'],
+      ['synthetic:mining-infinite-coal'],
+    ]);
+  });
+
   it('lists all products newly added by a recipe only once', () => {
     const air = 'fluid:air';
     const stages = fromAirStages({

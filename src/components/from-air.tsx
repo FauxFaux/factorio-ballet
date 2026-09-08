@@ -1,7 +1,9 @@
 import './from-air.css';
 import { recipeName, resourceName, staticData } from '../data/index.ts';
 import { productAmount } from '../flow.ts';
+import type { State } from '../ts.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';
+import type { UrlState } from '../url-handler.tsx';
 import { recipeIconStyle } from './icon.tsx';
 import { ResourceIcon } from './resource.tsx';
 
@@ -19,8 +21,9 @@ export interface FromAirRecipe {
 export type FromAirStage = FromAirRecipe[];
 
 /** Mining assumes a resource patch. Other synthetic processes describe actual transformations. */
-function usableFromAirRecipe(id: string, recipe: Recipe): boolean {
-  return !(recipe.synthetic && id.startsWith('synthetic:mining-'));
+function usableFromAirRecipe(id: string, recipe: Recipe, infiniteMining: boolean): boolean {
+  if (!(recipe.synthetic && id.startsWith('synthetic:mining-'))) return true;
+  return infiniteMining && id.startsWith('synthetic:mining-infinite-');
 }
 
 type RecipeEntry = [string, Recipe];
@@ -130,10 +133,13 @@ function productiveCycle(
 }
 
 /** Build the recipe closure one layer at a time. */
-export function fromAirStages(data: Pick<StaticData, 'recipes'>): FromAirStage[] {
+export function fromAirStages(
+  data: Pick<StaticData, 'recipes'>,
+  infiniteMining = false,
+): FromAirStage[] {
   const allowed = new Set<ResourceId>();
   const remaining = Object.entries(data.recipes).filter(([id, recipe]) =>
-    usableFromAirRecipe(id, recipe),
+    usableFromAirRecipe(id, recipe, infiniteMining),
   );
   const stages: FromAirStage[] = [];
 
@@ -172,16 +178,25 @@ export function fromAirStages(data: Pick<StaticData, 'recipes'>): FromAirStage[]
 }
 
 /** The dedicated planner for production chains that begin with air. */
-export function FromAir() {
-  const stages = fromAirStages(staticData);
+export function FromAir({ mode: [mode, setMode] }: { mode: State<UrlState['fa']> }) {
+  const infiniteMining = mode === 'infinite-mining';
+  const stages = fromAirStages(staticData, infiniteMining);
 
   return (
     <section class="from-air" aria-labelledby="from-air-title">
       <h2 id="from-air-title">From air</h2>
       <p class="from-air-intro">
-        Resources available at each step, starting with recipes that need no ingredients. Mining is
-        excluded; pumping and other synthetic transformations are included.
+        Resources available at each step, starting with recipes that need no ingredients. Finite
+        mining is excluded; pumping and other synthetic transformations are included.
       </p>
+      <label class="from-air-option">
+        <input
+          type="checkbox"
+          checked={infiniteMining}
+          onChange={(event) => setMode(event.currentTarget.checked ? 'infinite-mining' : true)}
+        />
+        Allow infinite mining recipes
+      </label>
       <ol class="from-air-stages">
         {stages.map((stage, index) => (
           <li class="from-air-stage" key={index}>
