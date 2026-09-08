@@ -20,6 +20,13 @@ interface PathSuggestion {
   kind: 'chain' | 'void';
   plan: ResourceChain | VoidPlan;
   score: number;
+  scoreFactors: SuggestionScoreFactors;
+}
+
+interface SuggestionScoreFactors {
+  inputs: number;
+  outputs: number;
+  buildings: number;
 }
 
 const CANDIDATES_PER_RESOURCE = 24;
@@ -89,6 +96,22 @@ export function scoreRecipeSuggestion(
   existingOutputs: ReadonlySet<ResourceId>,
   presentResources = new Set([...existingInputs, ...existingOutputs]),
 ): number {
+  const { inputs, outputs, buildings } = scoreRecipeSuggestionFactors(
+    plan,
+    existingInputs,
+    existingOutputs,
+    presentResources,
+  );
+
+  return inputs + outputs + buildings;
+}
+
+function scoreRecipeSuggestionFactors(
+  plan: ResourceChain | VoidPlan,
+  existingInputs: ReadonlySet<ResourceId>,
+  existingOutputs: ReadonlySet<ResourceId>,
+  presentResources: ReadonlySet<ResourceId>,
+): SuggestionScoreFactors {
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
   const catalystInputs = additionalCatalystInputs(plan, presentResources).filter(
@@ -103,15 +126,17 @@ export function scoreRecipeSuggestion(
     0,
   );
 
-  return (
-    -plan.recipes.length * suggestionScoreWeights.step -
-    outputs.filter((resource) => !isSingleStepVoidable(resource)).length *
-      suggestionScoreWeights.output -
-    inputComplexity * suggestionScoreWeights.inputComplexity +
-    reusedInputs * suggestionScoreWeights.reusedInput +
-    reusedOutputs * suggestionScoreWeights.reusedOutput +
-    (suppliesInput ? suggestionScoreWeights.suppliedInput : 0)
-  );
+  return {
+    inputs:
+      -inputComplexity * suggestionScoreWeights.inputComplexity +
+      reusedInputs * suggestionScoreWeights.reusedInput +
+      (suppliesInput ? suggestionScoreWeights.suppliedInput : 0),
+    outputs:
+      -outputs.filter((resource) => !isSingleStepVoidable(resource)).length *
+        suggestionScoreWeights.output +
+      reusedOutputs * suggestionScoreWeights.reusedOutput,
+    buildings: -plan.recipes.length * suggestionScoreWeights.step,
+  };
 }
 
 function usedResources(search: string, cell?: Cell): ResourceId[] {
@@ -181,18 +206,36 @@ export function suggestedRecipePaths(
         return [];
       }
       return [
-        ...plans.map((plan) => ({
-          resource: id,
-          kind: 'void' as const,
-          plan,
-          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs, presentResources),
-        })),
-        ...resourceChains.map((plan) => ({
-          resource: id,
-          kind: 'chain' as const,
-          plan,
-          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs, presentResources),
-        })),
+        ...plans.map((plan) => {
+          const scoreFactors = scoreRecipeSuggestionFactors(
+            plan,
+            existingInputs,
+            existingOutputs,
+            presentResources,
+          );
+          return {
+            resource: id,
+            kind: 'void' as const,
+            plan,
+            score: scoreFactors.inputs + scoreFactors.outputs + scoreFactors.buildings,
+            scoreFactors,
+          };
+        }),
+        ...resourceChains.map((plan) => {
+          const scoreFactors = scoreRecipeSuggestionFactors(
+            plan,
+            existingInputs,
+            existingOutputs,
+            presentResources,
+          );
+          return {
+            resource: id,
+            kind: 'chain' as const,
+            plan,
+            score: scoreFactors.inputs + scoreFactors.outputs + scoreFactors.buildings,
+            scoreFactors,
+          };
+        }),
       ];
     })
     .toSorted(
@@ -232,7 +275,7 @@ export function RecipeSuggestions({
           Search for recipes using a resource to find ways to void it or feed a cell input.
         </p>
       ) : (
-        suggestions.map(({ resource, kind, plan, score }) => (
+        suggestions.map(({ resource, kind, plan, score, scoreFactors }) => (
           <article key={`${resource}:${kind}:${plan.recipes.join('|')}`} class="void-path-tile">
             <div class="recipe-card void-path-card">
               <div class="void-path-card-head">
@@ -260,6 +303,11 @@ export function RecipeSuggestions({
                 <summary>
                   Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}
                 </summary>
+                <p class="void-path-score-factors">
+                  Inputs ({formatScoreFactor(scoreFactors.inputs)}) + outputs (
+                  {formatScoreFactor(scoreFactors.outputs)}) + buildings (
+                  {formatScoreFactor(scoreFactors.buildings)}) = {formatScoreFactor(score)}
+                </p>
                 <ol
                   class="void-path-steps"
                   aria-label={
@@ -288,6 +336,10 @@ export function RecipeSuggestions({
       )}
     </section>
   );
+}
+
+function formatScoreFactor(score: number): string {
+  return `${score >= 0 ? '+' : ''}${score.toFixed(1)}`;
 }
 
 /** A compact, icon-only flow list, matching the folded recipe summaries. */
