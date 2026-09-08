@@ -11,9 +11,19 @@
   padding-bottom: 2px;
 }
 
-.compact-recipe .recipe-icon {
+.compact-recipe-icon {
+  display: block;
   width: 1.25rem;
   height: 1.25rem;
+  flex-shrink: 0;
+}
+
+/* iconStyle positions a 32px sprite grid, so preserve that source-sized painting box and scale it
+ * inside this smaller layout wrapper. Shrinking the painted element crops the icon instead. */
+.compact-recipe-icon-sprite {
+  display: block;
+  transform: scale(0.703125);
+  transform-origin: top left;
 }
 
 .compact-recipe .flow-summary {

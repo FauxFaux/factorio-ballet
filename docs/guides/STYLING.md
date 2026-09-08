@@ -77,6 +77,19 @@ such as borders in `px`; use viewport media queries for structural changes rathe
 reproduce full-page zoom. A new component should look unchanged at an 18px root and grow coherently
 at 2560px without its text, icon, or control becoming misaligned.
 
+## Sprite icons at compact sizes
+
+`iconStyle()` in `src/components/icon.tsx` paints a sprite using offsets in its 32px source-grid
+coordinate system. The styled sprite element must therefore remain `1.7778rem` square (32px at the
+18px root). Do **not** make that element smaller: its background offsets remain for a 32px cell, so
+the artwork is cropped instead of scaled.
+
+For a compact icon, create a wrapper at the desired layout dimensions and put a source-sized sprite
+element inside it. Scale the child from `top left`; for example, a 1.25rem box uses
+`transform: scale(0.703125)` on the 1.7778rem child. This keeps the sprite fully visible while its
+wrapper still participates in flex or grid layout at the compact size. See `compact-recipe.css` and
+`progress-slider.css` for the pattern.
+
 ## Component-width fallback
 
 Recipe-row controls also have a container query in `src/components/cell/row.css`. `.cell-middle` is

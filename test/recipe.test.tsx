@@ -21,6 +21,9 @@ describe('CompactRecipe', () => {
     );
 
     expect(container.querySelector('.recipe-card.compact-recipe')).not.toBeNull();
+    expect(
+      container.querySelector('.compact-recipe-icon > .compact-recipe-icon-sprite'),
+    ).not.toBeNull();
     expect(container.querySelector('.flow-summary')).not.toBeNull();
     expect(container.querySelector('.fold-toggle')).toBeNull();
     expect(container.querySelector('.recipe-machines')).toBeNull();

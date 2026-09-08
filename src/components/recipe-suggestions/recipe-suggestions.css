@@ -11,11 +11,15 @@
 .void-path-for {
   margin: 0.5rem 0;
 }
+.void-path-tile + .void-path-tile {
+  margin-top: 1rem;
+}
 .void-path-for {
   display: flex;
   align-items: center;
   gap: 0.35rem;
   font-weight: 600;
+  font-size: inherit;
 }
 .void-path-results {
   display: grid;

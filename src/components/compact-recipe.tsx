@@ -23,7 +23,12 @@ export function CompactRecipe({
   return (
     <div class={`recipe-card compact-recipe${recipe.synthetic ? ' is-synthetic' : ''}`}>
       <div class="recipe-head">
-        <span class="recipe-icon" style={recipeIconStyle(id, recipe)} aria-hidden="true" />
+        <span class="compact-recipe-icon" aria-hidden="true">
+          <span
+            class="recipe-icon compact-recipe-icon-sprite"
+            style={recipeIconStyle(id, recipe)}
+          />
+        </span>
         <span class="recipe-name" title={id}>
           {name}
         </span>

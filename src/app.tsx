@@ -97,7 +97,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
               chosen={chosen}
             />
-            <RecipeSuggestions resource={selectedResource} progress={progress} />
+            <RecipeSuggestions
+              resource={selectedResource}
+              search={recipeSearch[0]}
+              cell={cell}
+              progress={progress}
+            />
           </div>
         </>
       )}

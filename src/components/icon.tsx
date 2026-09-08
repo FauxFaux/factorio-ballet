@@ -10,7 +10,14 @@ export function iconSprite(...keys: string[]): [string, number, number, number] 
   return icons['item:item-unknown'];
 }
 
-/** CSS for a single sprite from the icon spritesheet; the first key which exists wins. */
+/**
+ * CSS for a single sprite from the icon spritesheet; the first key which exists wins.
+ *
+ * The background offsets and size describe the sheet's 32px grid. Apply this to a source-sized
+ * 1.7778rem (32px at the 18px root) element. If an icon needs a smaller layout box, keep this
+ * styled element at that size inside a wrapper and scale it from `top left`; shrinking this element
+ * itself changes the crop rather than scaling the sprite.
+ */
 export function iconStyle(...keys: string[]): string {
   return spriteStyle(iconSprite(...keys));
 }
