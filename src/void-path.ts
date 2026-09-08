@@ -5,6 +5,15 @@ export interface VoidPlan {
   recipes: string[];
 }
 
+/** A short route from one cell edge to another, leaving its side flows at the boundary. */
+export interface ResourceChain extends VoidPlan {
+  target: ResourceId;
+  /** Resources the chain still needs after its source and recipe hand-offs are removed. */
+  inputs: ResourceId[];
+  /** Byproducts left after its target and recipe hand-offs are removed. */
+  outputs: ResourceId[];
+}
+
 interface SearchState extends VoidPlan {
   dispose: ResourceId[];
   supply: ResourceId[];
@@ -15,9 +24,17 @@ interface RecipeIndex {
   producers: Map<ResourceId, string[]>;
 }
 
+interface ChainState {
+  recipes: string[];
+  resource: ResourceId;
+  seen: Set<ResourceId>;
+  complexity: number;
+}
+
 const MAX_STEPS = 9;
 const MAX_RESULTS = 8;
 const MAX_VISITED = 50_000;
+const MAX_CHAIN_STEPS = 6;
 const unique = <T>(values: T[]): T[] => [...new Set(values)];
 
 function terminal(recipe: Recipe): boolean {
@@ -46,6 +63,27 @@ function indexRecipes(recipes: Record<string, Recipe>): RecipeIndex {
   }
 
   return { consumers, producers };
+}
+
+/** The boundary flows left by a chain once its source, target, and internal hand-offs are hidden. */
+function chainEffects(
+  recipes: string[],
+  source: ResourceId,
+  target: ResourceId,
+  data: Pick<StaticData, 'recipes'>,
+) {
+  const used = new Set<ResourceId>();
+  const made = new Set<ResourceId>();
+  for (const id of recipes) {
+    const recipe = data.recipes[id]!;
+    for (const { resource } of recipe.ingredients) used.add(resource);
+    for (const { resource } of recipe.products) made.add(resource);
+  }
+  const isExtra = (resource: ResourceId) => resource !== source && resource !== target;
+  return {
+    inputs: [...used].filter((resource) => isExtra(resource) && !made.has(resource)),
+    outputs: [...made].filter((resource) => isExtra(resource) && !used.has(resource)),
+  };
 }
 
 /** Put source recipes before the transformations which need them. */
@@ -134,6 +172,89 @@ export function voidPlanFinder(data: Pick<StaticData, 'recipes'>) {
     const plans = findVoidPlans(resource, data, index, maxResults);
     cached.set(key, plans);
     return plans;
+  };
+}
+
+/**
+ * Prepare a finder for short chains which turn `source` into one of `targets`.
+ *
+ * Unlike void paths, these chains intentionally leave their other inputs and products open: those
+ * are the small extra boundary flows a user can decide whether to accept.  Exploring the simpler
+ * side flows first makes a chain which consumes a troublesome output and supplies a wanted input
+ * appear before a technically possible but expensive detour.
+ */
+export function resourceChainFinder(
+  data: Pick<StaticData, 'recipes'> & Partial<Pick<StaticData, 'resources'>>,
+) {
+  const index = indexRecipes(data.recipes);
+  const cached = new Map<string, ResourceChain[]>();
+
+  return (source: ResourceId, targets: Iterable<ResourceId>, maxResults = MAX_RESULTS) => {
+    const wanted = new Set(targets);
+    if (!wanted.size || wanted.has(source)) return [];
+
+    const targetKey = [...wanted].sort().join(',');
+    const key = `${source}\u0000${targetKey}\u0000${maxResults}`;
+    const previous = cached.get(key);
+    if (previous) return previous;
+
+    const queue: ChainState[] = [
+      { recipes: [], resource: source, seen: new Set([source]), complexity: 0 },
+    ];
+    const results: ResourceChain[] = [];
+    let queueIndex = 0;
+
+    while (queueIndex < queue.length && results.length < maxResults && queueIndex < MAX_VISITED) {
+      const state = queue[queueIndex++]!;
+      if (state.recipes.length >= MAX_CHAIN_STEPS) continue;
+
+      const next = (index.consumers.get(state.resource) ?? [])
+        .filter((id) => !state.recipes.includes(id))
+        .flatMap((id) => {
+          const recipe = data.recipes[id]!;
+          return recipe.products
+            .filter(({ resource }) => !state.seen.has(resource))
+            .map(({ resource }) => {
+              const sideFlows = [
+                ...recipe.ingredients.filter(({ resource: id }) => id !== state.resource),
+                ...recipe.products.filter(({ resource: id }) => id !== resource),
+              ];
+              return {
+                id,
+                resource,
+                complexity:
+                  state.complexity +
+                  sideFlows.reduce(
+                    (total, { resource: id }) => total + (data.resources?.[id]?.complexity ?? 1),
+                    0,
+                  ),
+              };
+            });
+        })
+        .sort((a, b) => a.complexity - b.complexity || a.id.localeCompare(b.id));
+
+      for (const candidate of next) {
+        const recipes = [...state.recipes, candidate.id];
+        if (wanted.has(candidate.resource)) {
+          results.push({
+            recipes,
+            target: candidate.resource,
+            ...chainEffects(recipes, source, candidate.resource, data),
+          });
+          if (results.length >= maxResults) break;
+        } else {
+          queue.push({
+            recipes,
+            resource: candidate.resource,
+            seen: new Set([...state.seen, candidate.resource]),
+            complexity: candidate.complexity,
+          });
+        }
+      }
+    }
+
+    cached.set(key, results);
+    return results;
   };
 }
 

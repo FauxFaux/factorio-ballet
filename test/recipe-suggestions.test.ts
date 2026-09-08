@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { newCell } from '../src/cell.ts';
-import { suggestedVoidResources } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
+import {
+  suggestedResourceChains,
+  suggestedVoidResources,
+} from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
 
@@ -15,5 +18,26 @@ describe('suggestedVoidResources', () => {
 
     expect(suggestions).toContain(waste);
     expect(suggestions.filter((resource) => resource === waste)).toHaveLength(1);
+  });
+});
+
+describe('suggestedResourceChains', () => {
+  it('turns a cell output into one of its current inputs', () => {
+    const cell = {
+      entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
+    };
+
+    const chains = suggestedResourceChains(cell).get(waste) ?? [];
+
+    expect(chains).toContainEqual({
+      target: 'fluid:angels-liquid-sulfuric-acid',
+      recipes: [
+        'angels-yellow-waste-water-purification',
+        'angels-gas-sulfur-dioxide',
+        'angels-liquid-sulfuric-acid',
+      ],
+      inputs: ['fluid:angels-gas-oxygen'],
+      outputs: ['fluid:angels-water-mineralized'],
+    });
   });
 });
