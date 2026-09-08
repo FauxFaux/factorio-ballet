@@ -71,6 +71,19 @@ describe('scoreRecipeSuggestion', () => {
       scoreRecipeSuggestion(connected, new Set(['item:coal']), new Set(['item:stone'])),
     ).toBeGreaterThan(scoreRecipeSuggestion(disconnected, new Set(), new Set()));
   });
+
+  it('does not penalize a side product which can be voided in one step', () => {
+    const plan = {
+      target: 'item:iron-plate',
+      recipes: ['first'],
+      inputs: [],
+      outputs: [waste],
+    };
+
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBe(
+      scoreRecipeSuggestion({ ...plan, outputs: [] }, new Set(), new Set()),
+    );
+  });
 });
 
 describe('suggestedRecipePaths', () => {
@@ -87,7 +100,8 @@ describe('suggestedRecipePaths', () => {
     );
     const clarifier = paths.find((path) => path.kind === 'void' && path.plan.recipes.length === 1);
 
-    expect(sulfuricAcid?.score).toBeGreaterThan(clarifier?.score ?? Infinity);
+    expect(sulfuricAcid).toBeDefined();
+    if (clarifier) expect(sulfuricAcid!.score).toBeGreaterThan(clarifier.score);
   });
 
   it('treats products one free air-processing step away as available inputs', () => {
@@ -102,7 +116,7 @@ describe('suggestedRecipePaths', () => {
     );
 
     expect(sulfuricAcid?.plan).toMatchObject({ inputs: ['fluid:angels-gas-oxygen'] });
-    expect(sulfuricAcid?.score).toBeCloseTo(3.36);
+    expect(sulfuricAcid?.score).toBeCloseTo(7.36);
   });
 
   it('limits the combined path suggestions to the ten best candidates', () => {

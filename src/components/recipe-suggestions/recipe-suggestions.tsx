@@ -39,6 +39,10 @@ export const suggestionScoreWeights = {
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
 
+function isSingleStepVoidable(resource: ResourceId): boolean {
+  return staticVoidPlans(resource, 1)[0]?.recipes.length === 1;
+}
+
 // Stage one makes water and compressed air without inputs. Treat the products newly unlocked by
 // stage two (such as oxygen) as available when comparing the extra inputs a path needs.
 const freeOneStepProducts = new Set(
@@ -70,7 +74,8 @@ export function scoreRecipeSuggestion(
 
   return (
     -plan.recipes.length * suggestionScoreWeights.step -
-    outputs.length * suggestionScoreWeights.output -
+    outputs.filter((resource) => !isSingleStepVoidable(resource)).length *
+      suggestionScoreWeights.output -
     inputComplexity * suggestionScoreWeights.inputComplexity +
     reusedInputs * suggestionScoreWeights.reusedInput +
     reusedOutputs * suggestionScoreWeights.reusedOutput +
@@ -186,68 +191,80 @@ export function RecipeSuggestions({
           Search for recipes using a resource to find ways to void it or feed a cell input.
         </p>
       ) : (
-        suggestions.map(({ resource, kind, plan, score }, index) => (
+        suggestions.map(({ resource, kind, plan, score }) => (
           <article key={`${resource}:${kind}:${plan.recipes.join('|')}`} class="void-path-tile">
-            <h3 class="void-path-for">
-              <ResourceIcon id={resource} /> {resourceName(resource)}
-            </h3>
-            <p class="void-path-score">Score {score.toFixed(1)}</p>
-            {kind === 'chain' && isResourceChain(plan) && (
-              <p class="void-path-to">
-                Makes <ResourceIcon id={plan.target} /> {resourceName(plan.target)}
-                {plan.inputs.length > 0 && (
-                  <span
-                    class="void-path-extra-flow void-path-extra-inputs"
-                    aria-label={`Additional inputs: ${plan.inputs.map(resourceName).join(', ')}`}
-                  >
-                    <span class="void-path-extra-label">Needs</span>
-                    {plan.inputs.map((id) => (
-                      <span key={id} title={resourceName(id)}>
-                        <ResourceIcon id={id} />
-                      </span>
-                    ))}
-                  </span>
-                )}
-                {plan.outputs.length > 0 && (
-                  <span
-                    class="void-path-extra-flow void-path-extra-outputs"
-                    aria-label={`Additional outputs: ${plan.outputs.map(resourceName).join(', ')}`}
-                  >
-                    <span class="void-path-extra-label">Also makes</span>
-                    {plan.outputs.map((id) => (
-                      <span key={id} title={resourceName(id)}>
-                        <ResourceIcon id={id} />
-                      </span>
-                    ))}
-                  </span>
-                )}
+            <div class="recipe-card void-path-card">
+              <div class="void-path-card-head">
+                <h3 class="void-path-for">
+                  <ResourceIcon id={resource} /> {resourceName(resource)}
+                </h3>
+                <p class="void-path-score">Score {score.toFixed(1)}</p>
+              </div>
+              {kind === 'chain' && isResourceChain(plan) && (
+                <div class="void-path-flows">
+                  <p class="void-path-to">
+                    <span class="void-path-flow-label">Makes</span>
+                    <ResourceIcon id={plan.target} /> {resourceName(plan.target)}
+                  </p>
+                  {plan.inputs.length > 0 && (
+                    <p
+                      class="void-path-extra-flow void-path-extra-inputs"
+                      aria-label={`Additional inputs: ${plan.inputs.map(resourceName).join(', ')}`}
+                    >
+                      <span class="void-path-extra-label">Needs</span>
+                      {plan.inputs.map((id) => (
+                        <span key={id} title={resourceName(id)}>
+                          <ResourceIcon id={id} />
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                  {plan.outputs.length > 0 && (
+                    <p
+                      class="void-path-extra-flow void-path-extra-outputs"
+                      aria-label={`Additional outputs: ${plan.outputs.map(resourceName).join(', ')}`}
+                    >
+                      <span class="void-path-extra-label">Also makes</span>
+                      {plan.outputs.map((id) => (
+                        <span key={id} title={resourceName(id)}>
+                          <ResourceIcon id={id} />
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                </div>
+              )}
+              <p class="void-path-score-explanation">
+                Higher scores favour fewer steps and paths that connect to this cell&apos;s existing
+                inputs and outputs.
               </p>
-            )}
-            <ol class="void-path-results">
-              <li class="void-path-result">
-                <ol
-                  class="void-path-steps"
-                  aria-label={
-                    kind === 'chain' && isResourceChain(plan)
-                      ? `Path from ${resource} to ${plan.target}, ${index + 1}`
-                      : `Void path for ${resource}, ${index + 1}`
-                  }
-                >
-                  {plan.recipes.map((id, step) => {
-                    const recipe = staticData.recipes[id];
-                    if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
-                    return (
-                      <li key={`${id}-${step}`}>
-                        <CompactRecipe
-                          match={{ id, recipe, name: recipeName(id) }}
-                          progress={progress}
-                        />
-                      </li>
-                    );
-                  })}
-                </ol>
-              </li>
-            </ol>
+            </div>
+            <details class="void-path-results">
+              <summary>
+                Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}
+              </summary>
+              <ol
+                class="void-path-steps"
+                aria-label={
+                  kind === 'chain' && isResourceChain(plan)
+                    ? `Path from ${resource} to ${plan.target}`
+                    : `Void path for ${resource}`
+                }
+              >
+                {plan.recipes.map((id, step) => {
+                  const recipe = staticData.recipes[id];
+                  if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
+                  return (
+                    <li key={`${id}-${step}`}>
+                      <CompactRecipe
+                        match={{ id, recipe, name: recipeName(id) }}
+                        progress={progress}
+                      />
+                    </li>
+                  );
+                })}
+              </ol>
+            </details>
           </article>
         ))
       )}
