@@ -3,6 +3,7 @@ import {
   flipDirection,
   parseSearch,
   resolveResources,
+  searchMatches,
   searchRecipes,
   type SearchScope,
 } from '../src/search.ts';
@@ -138,6 +139,25 @@ describe('searchRecipes', () => {
     // and it is the *nearest* thing, above or below, rather than the most advanced one
     const spread = late.map((m) => relevanceOf(m.recipe, 0.8));
     expect(spread).toEqual([...spread].sort((a, b) => a - b));
+  });
+});
+
+describe('searchMatches', () => {
+  it('interleaves free-text resource and recipe matches by relevance', () => {
+    const found = searchMatches('iron-plate', 0);
+    expect(found.map((match) => match.kind)).toContain('resource');
+    expect(found.map((match) => match.kind)).toContain('recipe');
+
+    const relevance = found.map((match) =>
+      relevanceOf(match.kind === 'resource' ? match.match.resource : match.match.recipe, 0),
+    );
+    expect(relevance).toEqual([...relevance].sort((a, b) => a - b));
+  });
+
+  it('keeps directed matches recipe-only', () => {
+    expect(searchMatches('makes:item:iron-plate', 0)).not.toContainEqual(
+      expect.objectContaining({ kind: 'resource' }),
+    );
   });
 });
 

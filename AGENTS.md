@@ -8,13 +8,14 @@ calculation and data-model code lives in `src/*.ts`; UI components and their adj
 mirror features in `test/`, with script-specific tests in `test/scripts/`. Data ingestion and
 analysis utilities belong in `scripts/`.
 
-Read `FACTORIO.md` and `CELL.md` before changing domain or cell behavior. Read `STYLING.md` before
-changing layout, responsive behavior, or shared visual sizing. For ingestion changes, read
-`INGEST.md` first.
+Read `docs/guides/FACTORIO.md` and `docs/guides/CELL.md` before changing domain or cell behavior.
+Read `docs/guides/STYLING.md` before changing layout, responsive behavior, or shared visual sizing.
+For ingestion changes, read `docs/guides/INGEST.md` first.
 
-For heavier tasks, read `CONTEXT.md` for additional architecture, data-model, solver, ingestion, and
-repository-history context. `CONTEXT-UI.md` contains the longer background analysis behind the
-planner's interface direction; consult it when that design context is relevant.
+For heavier tasks, read `docs/guides/CONTEXT.md` for additional architecture, data-model, solver,
+ingestion, and repository-history context. `docs/guides/CONTEXT-UI.md` contains the longer
+background analysis behind the planner's interface direction; consult it when that design context is
+relevant.
 
 ## Build, Test, and Development Commands
 

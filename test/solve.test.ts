@@ -79,8 +79,8 @@ describe('dumbSolver', () => {
     expect(answer.complete).toBe(true);
   });
 
-  /* The FACTORIO.md example's shape: the pinned row is the *last* one, and the count of the row
-   * feeding it follows from what it is short of. */
+  /* The docs/guides/FACTORIO.md example's shape: the pinned row is the *last* one, and the count
+   * of the row feeding it follows from what it is short of. */
   it('scales a producer to feed what a pinned consumer needs', () => {
     const answer = solve(row({ [X]: 2 }), row({ [X]: -12 }, 5));
     expect(answer.counts).toEqual([30, 5]);

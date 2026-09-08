@@ -344,7 +344,7 @@ Keep **Group in this cell**, **Arrange in columns**, and **Split into cells** as
 actions. Preview is transient and cancellable. Applying an arrangement is undoable. An actual split
 needs a review of all resulting cells, their scale, and their material connections.
 
-On narrow screens, stack suggestion cards and interface summaries. Follow `STYLING.md` for
+On narrow screens, stack suggestion cards and interface summaries. Follow `guides/STYLING.md` for
 responsive flow and rem-based sizing. In particular, group identity and repeat count must not depend
 on viewport width. `CellDesign` currently adds blank persisted columns as its surface widens; do not
 use that mechanism to infer groups or create production copies.

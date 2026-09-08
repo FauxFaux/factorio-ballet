@@ -35,8 +35,3 @@
 .resource-is-id {
   font-family: var(--mono);
 }
-
-.resource-list table {
-  border-collapse: collapse;
-  width: 100%;
-}

@@ -6,6 +6,10 @@
   background: var(--code-bg);
 }
 
+.recipe-resource-match {
+  margin: 0 0 6px;
+}
+
 .recipe-head {
   display: flex;
   align-items: center;

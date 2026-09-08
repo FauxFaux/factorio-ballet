@@ -1,8 +1,9 @@
 import { useMemo } from 'preact/hooks';
-import { flipDirection, searchRecipes, type SearchScope } from '../search.ts';
+import { flipDirection, searchMatches, type SearchScope } from '../search.ts';
 import type { State } from '../ts.ts';
 import type { MachineId, ResourceId } from '../types.ts';
 import { RecipeCard } from './recipe.tsx';
+import { ResourceButton } from './resource.tsx';
 import { SearchBox } from './search-box.tsx';
 
 const LIMIT = 20;
@@ -18,6 +19,7 @@ export function RecipeList({
   progress,
   scope,
   onAdd,
+  onResourcePick,
   inCell,
 }: {
   search: State<string>;
@@ -25,9 +27,11 @@ export function RecipeList({
   scope?: SearchScope;
   /** Add a recipe to the cell being worked on; absent when there is nothing to add it to. */
   onAdd?: (recipe: string, machine: MachineId | undefined) => void;
+  /** Select a resource outside the search, for example to show its void paths. */
+  onResourcePick?: (resource: ResourceId) => void;
   inCell?: (recipe: string) => boolean;
 }) {
-  const found = useMemo(() => searchRecipes(search, progress, scope), [search, progress, scope]);
+  const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
   const onPick = (id: ResourceId) => setSearch(`makes:${id}`);
   const flipped = flipDirection(search);
 
@@ -36,7 +40,7 @@ export function RecipeList({
       <SearchBox
         search={[search, setSearch]}
         id="recipe-search"
-        placeholder="makes:item:iron-plate, uses:@out, circuit..."
+        placeholder="Search resources and recipes, makes:item:iron-plate..."
       >
         {flipped ? (
           <button
@@ -51,20 +55,32 @@ export function RecipeList({
         ) : null}
       </SearchBox>
       {!search.trim() ? (
-        <p class="recipe-hint">Pick a resource, or search for a recipe.</p>
+        <p class="recipe-hint">Search for a resource or recipe.</p>
       ) : found.length === 0 ? (
-        <p class="recipe-hint">No recipes match.</p>
+        <p class="recipe-hint">No resources or recipes match.</p>
       ) : null}
-      {found.slice(0, LIMIT).map((match) => (
-        <RecipeCard
-          key={match.id}
-          match={match}
-          onPick={onPick}
-          onAdd={onAdd && ((machine) => onAdd(match.id, machine))}
-          inCell={inCell?.(match.id)}
-          progress={progress}
-        />
-      ))}
+      {found.slice(0, LIMIT).map((result) =>
+        result.kind === 'recipe' ? (
+          <RecipeCard
+            key={`recipe:${result.match.id}`}
+            match={result.match}
+            onPick={onPick}
+            onAdd={onAdd && ((machine) => onAdd(result.match.id, machine))}
+            inCell={inCell?.(result.match.id)}
+            progress={progress}
+          />
+        ) : (
+          <div key={`resource:${result.match.id}`} class="recipe-resource-match">
+            <ResourceButton
+              id={result.match.id}
+              onPick={(id) => {
+                onResourcePick?.(id);
+                onPick(id);
+              }}
+            />
+          </div>
+        ),
+      )}
       {found.length > LIMIT ? (
         <p class="recipe-hint">…and {found.length - LIMIT} more; try a narrower search.</p>
       ) : null}

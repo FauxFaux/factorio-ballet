@@ -17,7 +17,8 @@ import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
  * meant to be closed and understood — a human-sized sub-factory rather than a whole plan. See
- * `CELL.md` for what a cell is for; this file is only its shape and the set arithmetic over it.
+ * `docs/guides/CELL.md` for what a cell is for; this file is only its shape and the set arithmetic
+ * over it.
  *
  * A cell holds no rates yet. Scaling the recipes against each other is the solver's job, and the
  * solver is not in this repo; `CellEntry.count` is where its answer (or the user's pin) will go.

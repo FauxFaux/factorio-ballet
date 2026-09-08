@@ -13,7 +13,6 @@ import { ImportButton } from './components/import-button.tsx';
 import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
-import { ResourceList } from './components/resource-list.tsx';
 import { UnlitFilter } from './components/unlit-module-icon.tsx';
 import { VoidPath } from './components/void-path.tsx';
 
@@ -89,19 +88,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
             setSearch={recipeSearch[1]}
           />
           <div class="columns">
-            <ResourceList
-              search={field(uss, 'rs')}
-              progress={progress}
-              onPick={(id) => {
-                setSelectedResource(id);
-                recipeSearch[1](`makes:${id}`);
-              }}
-            />
             <RecipeList
               search={recipeSearch}
               progress={progress}
               scope={scope}
               onAdd={addRecipe}
+              onResourcePick={setSelectedResource}
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
             />
             <VoidPath resource={selectedResource} />

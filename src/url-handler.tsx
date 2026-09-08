@@ -15,13 +15,11 @@ export interface UrlState {
    * migration is necessary, and teach `unpackUs` to migrate older versions when practical.
    */
   v: 1;
-  /** the ResourceList search box */
-  rs: string;
-  /** the RecipeList search box */
+  /** the combined resource and recipe search box */
   cs: string;
   /** game progress, as a whole percentage; searches favour results near it. See `relevanceOf`. */
   gp: number;
-  /** the cells being planned; see `CELL.md` */
+  /** the cells being planned; see `docs/guides/CELL.md` */
   cl: Cell[];
   /**
    * which of `cl` is being worked on: recipes added from the search go there, and the search's
@@ -50,7 +48,7 @@ export interface UrlState {
   fa?: true | 'infinite-mining';
 }
 
-const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
+const defaultUs: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 
 /** {@link UrlState} as it is written to the hash: see {@link PackedCell} for what changes. */
 type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
@@ -164,7 +162,16 @@ function unpackUs(hash: string): UrlState {
   // @ts-expect-error (fromBase64 is missing from Uint8Array typings)
   const data = Uint8Array.fromBase64(encoded, { alphabet: 'base64url' });
   const str = strFromU8(inflateSync(data, { dictionary: urlDictionary }));
-  const packed = { ...defaultUs, ...JSON.parse(str) } as PackedState;
+  // `rs` was the pre-merged resource search. Carry it into the unified search when an old link
+  // has no recipe search, but do not keep writing the retired field back into new links.
+  const { rs: legacyResourceSearch, ...stored } = JSON.parse(str) as Partial<PackedState> & {
+    rs?: unknown;
+  };
+  const packed = {
+    ...defaultUs,
+    ...stored,
+    cs: stored.cs || (typeof legacyResourceSearch === 'string' ? legacyResourceSearch : ''),
+  } as PackedState;
   return { ...packed, cl: unpackCells(packed.cl ?? []) };
 }
 

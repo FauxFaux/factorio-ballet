@@ -1,11 +1,21 @@
 import { relevanceOf, resourceName, staticData } from './data/index.ts';
-import type { Recipe, ResourceId } from './types.ts';
+import type { Recipe, Resource, ResourceId } from './types.ts';
 
 export interface RecipeMatch {
   id: string;
   recipe: Recipe;
   name: string;
 }
+
+export interface ResourceMatch {
+  id: ResourceId;
+  resource: Resource;
+  name: string;
+}
+
+export type SearchMatch =
+  | { kind: 'recipe'; match: RecipeMatch }
+  | { kind: 'resource'; match: ResourceMatch };
 
 export type Term =
   | { kind: 'makes' | 'uses'; query: string; resources: Set<ResourceId> }
@@ -14,8 +24,8 @@ export type Term =
 /**
  * The open edges of the cell being edited, so a search can be asked about them rather than about a
  * named resource: `makes:@in` is "something which makes anything this cell currently has to be fed"
- * — the search you want while closing a cell up. See `CELL.md`, and {@link SCOPE_QUERIES} for the
- * vocabulary.
+ * — the search you want while closing a cell up. See `docs/guides/CELL.md`, and
+ * {@link SCOPE_QUERIES} for the vocabulary.
  */
 export interface SearchScope {
   in: Set<ResourceId>;
@@ -145,5 +155,50 @@ export function searchRecipes(
       relevanceOf(a.recipe, progress) - relevanceOf(b.recipe, progress) ||
       a.name.localeCompare(b.name) ||
       a.id.localeCompare(b.id),
+  );
+}
+
+/**
+ * Resources matching a free-text search, in the same relevance order as recipes. Directed searches
+ * deliberately have no resource results: `makes:` and `uses:` describe recipe flows, not items.
+ */
+export function searchResources(search: string, progress: number): ResourceMatch[] {
+  const terms = parseSearch(search);
+  if (!terms.length || terms.some((term) => term.kind !== 'text')) return [];
+  const textTerms = terms.filter(
+    (term): term is Extract<Term, { kind: 'text' }> => term.kind === 'text',
+  );
+
+  return (Object.entries(staticData.resources) as [ResourceId, Resource][])
+    .map(([id, resource]) => ({ id, resource, name: resourceName(id) }))
+    .filter(({ id, name }) =>
+      textTerms.every((term) => smatch(id, term.text) || smatch(name, term.text)),
+    )
+    .sort(
+      (a, b) =>
+        relevanceOf(a.resource, progress) - relevanceOf(b.resource, progress) ||
+        a.name.localeCompare(b.name) ||
+        a.id.localeCompare(b.id),
+    );
+}
+
+/** Combine ordinary resource and recipe searches into one relevance-ranked result stream. */
+export function searchMatches(
+  search: string,
+  progress: number,
+  scope?: SearchScope,
+): SearchMatch[] {
+  return [
+    ...searchRecipes(search, progress, scope).map((match): SearchMatch => ({
+      kind: 'recipe',
+      match,
+    })),
+    ...searchResources(search, progress).map((match): SearchMatch => ({ kind: 'resource', match })),
+  ].sort(
+    (a, b) =>
+      relevanceOf(a.kind === 'recipe' ? a.match.recipe : a.match.resource, progress) -
+        relevanceOf(b.kind === 'recipe' ? b.match.recipe : b.match.resource, progress) ||
+      a.match.name.localeCompare(b.match.name) ||
+      a.match.id.localeCompare(b.match.id),
   );
 }

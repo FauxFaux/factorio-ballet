@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { FromAirButton } from '../src/components/from-air-button.tsx';
 import type { UrlState } from '../src/url-handler.tsx';
 
-const initialState: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
+const initialState: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 
 function FromAirButtonExample() {
   const uss = useState(initialState);
