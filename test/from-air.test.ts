@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fromAirStages } from '../src/components/from-air.tsx';
+import { staticData } from '../src/data/index.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[], synthetic = false): Recipe => ({
@@ -51,5 +52,56 @@ describe('fromAirStages', () => {
       },
     });
     expect(stages[0][0].adds).toEqual([air, 'fluid:nitrogen']);
+  });
+
+  it('bootstraps a productive cycle with its circulating resource as an assumed input', () => {
+    const seed = 'item:seed';
+    const plant = 'item:plant';
+    const water = 'fluid:water';
+    const stages = fromAirStages({
+      recipes: {
+        pump: recipe([], [water]),
+        grow: {
+          ...recipe([seed, water], [plant]),
+          ingredients: [
+            { resource: seed, amount: 5 },
+            { resource: water, amount: 10 },
+          ],
+          products: [{ resource: plant, amount: { fixed: 45 }, probability: 1 }],
+        },
+        extract: {
+          ...recipe([plant], [seed]),
+          ingredients: [{ resource: plant, amount: 5 }],
+          products: [{ resource: seed, amount: { fixed: 5.5 }, probability: 1 }],
+        },
+      },
+    });
+
+    const cycle = stages[1][0];
+    expect(cycle.recipes).toEqual(['grow', 'extract']);
+    expect(cycle.assumedInputs).toEqual([seed]);
+    expect(cycle.recipe.ingredients).toEqual([
+      { resource: water, amount: 10 },
+      { resource: plant, amount: 5 },
+    ]);
+    expect(cycle.adds).toEqual([plant, seed]);
+  });
+
+  it('does not bootstrap a cycle which consumes its circulating resources', () => {
+    const a = 'item:a';
+    const b = 'item:b';
+    expect(fromAirStages({ recipes: { one: recipe([a], [b]), two: recipe([b], [a]) } })).toEqual(
+      [],
+    );
+  });
+
+  it('finds the productive swamp seed cycles in the application data', () => {
+    const cycles = fromAirStages(staticData)
+      .flat()
+      .filter(({ recipes }) => recipes !== undefined)
+      .map(({ recipes }) => recipes);
+    for (const tier of [1, 2, 3]) {
+      expect(cycles).toContainEqual([`angels-swamp-${tier}`, `angels-swamp-${tier}-seed`]);
+    }
   });
 });

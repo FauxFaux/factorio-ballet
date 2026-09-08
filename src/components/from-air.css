@@ -54,6 +54,13 @@
   align-items: center;
   gap: 0.35rem;
 }
+.from-air-assumes {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  color: var(--muted);
+}
 @media (max-width: 800px) {
   .from-air-recipe {
     grid-template-columns: 1.7778rem minmax(0, 1fr);
