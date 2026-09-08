@@ -1,4 +1,5 @@
 import './recipe-suggestions.css';
+import { Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
@@ -201,38 +202,19 @@ export function RecipeSuggestions({
                 <p class="void-path-score">Score {score.toFixed(1)}</p>
               </div>
               {kind === 'chain' && isResourceChain(plan) && (
-                <div class="void-path-flows">
-                  <p class="void-path-to">
-                    <span class="void-path-flow-label">Makes</span>
-                    <ResourceIcon id={plan.target} /> {resourceName(plan.target)}
-                  </p>
-                  {plan.inputs.length > 0 && (
-                    <p
-                      class="void-path-extra-flow void-path-extra-inputs"
-                      aria-label={`Additional inputs: ${plan.inputs.map(resourceName).join(', ')}`}
-                    >
-                      <span class="void-path-extra-label">Needs</span>
-                      {plan.inputs.map((id) => (
-                        <span key={id} title={resourceName(id)}>
-                          <ResourceIcon id={id} />
-                        </span>
-                      ))}
-                    </p>
-                  )}
+                <p class="void-path-flow-summary">
+                  <ResourceList resources={plan.inputs} label="Needs" />
+                  <span class="void-path-flow-arrow" aria-label="makes">
+                    ➔
+                  </span>
+                  <ResourceList resources={[plan.target]} label="Makes" />
                   {plan.outputs.length > 0 && (
-                    <p
-                      class="void-path-extra-flow void-path-extra-outputs"
-                      aria-label={`Additional outputs: ${plan.outputs.map(resourceName).join(', ')}`}
-                    >
-                      <span class="void-path-extra-label">Also makes</span>
-                      {plan.outputs.map((id) => (
-                        <span key={id} title={resourceName(id)}>
-                          <ResourceIcon id={id} />
-                        </span>
-                      ))}
-                    </p>
+                    <>
+                      <span class="void-path-also">also</span>
+                      <ResourceList resources={plan.outputs} label="Also makes" />
+                    </>
                   )}
-                </div>
+                </p>
               )}
               <p class="void-path-score-explanation">
                 Higher scores favour fewer steps and paths that connect to this cell&apos;s existing
@@ -269,5 +251,24 @@ export function RecipeSuggestions({
         ))
       )}
     </section>
+  );
+}
+
+/** A compact, icon-only flow list, matching the folded recipe summaries. */
+function ResourceList({ resources, label }: { resources: ResourceId[]; label: string }) {
+  return (
+    <span
+      class="void-path-resource-list"
+      aria-label={`${label}: ${resources.map(resourceName).join(', ')}`}
+    >
+      {resources.map((id, index) => (
+        <Fragment key={id}>
+          {index === 0 ? null : <span class="void-path-resource-separator">+</span>}
+          <span class="void-path-resource" title={resourceName(id)}>
+            <ResourceIcon id={id} />
+          </span>
+        </Fragment>
+      ))}
+    </span>
   );
 }

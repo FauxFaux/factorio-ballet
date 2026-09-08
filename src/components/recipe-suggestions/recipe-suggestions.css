@@ -9,10 +9,8 @@
 }
 .void-path-hint,
 .void-path-for,
-.void-path-to,
 .void-path-score,
-.void-path-score-explanation,
-.void-path-extra-flow {
+.void-path-score-explanation {
   margin: 0.5rem 0;
 }
 .void-path-tile + .void-path-tile {
@@ -44,33 +42,36 @@
   font-size: 0.85rem;
   white-space: nowrap;
 }
-.void-path-flows {
-  display: grid;
-  gap: 0.15rem;
-  margin-top: 0.35rem;
-}
-.void-path-to {
+.void-path-flow-summary {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.35rem;
-  margin: 0;
+  gap: 0 0.35rem;
+  margin: 0.35rem 0 0;
   font-size: 0.9rem;
 }
-.void-path-flow-label,
-.void-path-extra-label {
+.void-path-resource-list {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+.void-path-resource {
+  display: inline-flex;
+  cursor: help;
+}
+.void-path-resource .resource-icon {
+  margin: -8px;
+  transform: scale(0.5);
+}
+.void-path-resource-separator {
+  margin-left: -0.15rem;
+}
+.void-path-flow-arrow {
+  color: var(--accent);
+}
+.void-path-also {
   color: var(--muted);
   font-size: 0.85em;
-}
-.void-path-extra-flow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.2rem;
-  margin: 0;
-}
-.void-path-extra-label {
-  margin-right: 0.15rem;
 }
 .void-path-score-explanation {
   margin-bottom: 0;
