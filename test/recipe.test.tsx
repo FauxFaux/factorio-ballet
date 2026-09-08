@@ -5,28 +5,30 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { staticData } from '../src/data/index.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
+import { CompactRecipe } from '../src/components/compact-recipe.tsx';
 import { RecipeCard } from '../src/components/recipe.tsx';
 
 afterEach(cleanup);
 
-describe('RecipeCard', () => {
+describe('CompactRecipe', () => {
   it('can render a compact, read-only folded summary', () => {
     const recipe = staticData.recipes['iron-gear-wheel'];
     const { container } = render(
-      <RecipeCard
-        compact
+      <CompactRecipe
         match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
         progress={0}
       />,
     );
 
-    expect(container.querySelector('.recipe-card.is-compact')).not.toBeNull();
+    expect(container.querySelector('.recipe-card.compact-recipe')).not.toBeNull();
     expect(container.querySelector('.flow-summary')).not.toBeNull();
     expect(container.querySelector('.fold-toggle')).toBeNull();
     expect(container.querySelector('.recipe-machines')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Add to this cell' })).toBeNull();
   });
+});
 
+describe('RecipeCard', () => {
   it('shows expanded flow rates to two decimal places per second', async () => {
     const user = userEvent.setup();
     const recipe = staticData.recipes['iron-gear-wheel'];

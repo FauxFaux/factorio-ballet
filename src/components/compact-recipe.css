@@ -1,0 +1,21 @@
+/* Void paths are a sequence of recipes, so retain the useful folded rates but none of a search
+ * card's controls or roomy framing. */
+.compact-recipe {
+  margin: 0;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
+
+.compact-recipe .recipe-head {
+  gap: 6px;
+  padding-bottom: 2px;
+}
+
+.compact-recipe .recipe-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.compact-recipe .flow-summary {
+  font-size: 0.8333rem;
+}

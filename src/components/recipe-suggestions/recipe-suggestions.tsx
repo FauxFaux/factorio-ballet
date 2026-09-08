@@ -3,7 +3,7 @@ import { useMemo } from 'preact/hooks';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { voidPlans } from '../../void-path.ts';
-import { RecipeCard } from '../recipe.tsx';
+import { CompactRecipe } from '../compact-recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 
 export function RecipeSuggestions({
@@ -36,8 +36,7 @@ export function RecipeSuggestions({
                     if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
                     return (
                       <li key={`${id}-${step}`}>
-                        <RecipeCard
-                          compact
+                        <CompactRecipe
                           match={{ id, recipe, name: recipeName(id) }}
                           progress={progress}
                         />

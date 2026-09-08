@@ -1,13 +1,13 @@
 import './recipe.css';
 import type { MachineId, ResourceId } from '../types.ts';
-import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
 import { NO_CHOICE, type Chosen } from '../data/index.ts';
 import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
-import { flowTitle, laidOutEffects, recipeFlows, speedOf, type Flow } from '../flow.ts';
+import { laidOutEffects, recipeFlows, speedOf, type Flow } from '../flow.ts';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
+import { FlowSummary } from './recipe-flow-summary.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
 /**
@@ -26,7 +26,6 @@ export function RecipeCard({
   inCell,
   progress,
   chosen,
-  compact = false,
 }: {
   match: RecipeMatch;
   onPick?: (id: ResourceId) => void;
@@ -38,8 +37,6 @@ export function RecipeCard({
   progress: number;
   /** The header's modules and beacon, used to preview a beaconed default machine. */
   chosen?: Chosen;
-  /** A read-only folded summary, for places where recipe selection is not available. */
-  compact?: boolean;
 }) {
   const [open, setOpen] = useState(false);
   /** The machine chosen from this card, whose speed its numbers are quoted at. */
@@ -66,21 +63,6 @@ export function RecipeCard({
     : 1;
   const speed = baseSpeed * beaconSpeed;
   const { ins, outs } = recipeFlows(recipe, machines, speed);
-
-  if (compact) {
-    return (
-      <div class={`recipe-card is-compact${recipe.synthetic ? ' is-synthetic' : ''}`}>
-        <div class="recipe-head">
-          <span class="recipe-icon" style={recipeIconStyle(id, recipe)} aria-hidden="true" />
-          <span class="recipe-name" title={id}>
-            {name}
-          </span>
-          <span class="recipe-duration">{(recipe.duration / speed).toFixed(DURATION_DIGITS)}s</span>
-        </div>
-        <FlowSummary ins={ins} outs={outs} />
-      </div>
-    );
-  }
 
   const classes = ['recipe-card'];
   if (
@@ -190,39 +172,6 @@ function FlowTable({
         ))}
       </tbody>
     </table>
-  );
-}
-
-/** The folded form: `2.0 [iron] + 8.0 [water] → 4.0 [plate]`, names and amounts in tooltips. */
-function FlowSummary({ ins, outs }: { ins: Flow[]; outs: Flow[] }) {
-  return (
-    <p class="flow-summary">
-      <FlowChips flows={ins} />
-      <span class="flow-arrow" aria-label="makes">
-        ➔
-      </span>
-      <FlowChips flows={outs} />
-    </p>
-  );
-}
-
-function FlowChips({ flows }: { flows: Flow[] }) {
-  return (
-    <>
-      {flows.map((flow, i) => (
-        <Fragment key={`${flow.resource}-${i}`}>
-          {i === 0 ? null : <span class="flow-chip-sep">+</span>}
-          <span class="flow-chip" title={flowTitle(flow)}>
-            <abbr class="flow-chip-rate" title={`${flow.fullRate} per second`}>
-              {flow.rate}
-            </abbr>
-            <span class="flow-chip-icon">
-              <ResourceIcon id={flow.resource} />
-            </span>
-          </span>
-        </Fragment>
-      ))}
-    </>
   );
 }
 
