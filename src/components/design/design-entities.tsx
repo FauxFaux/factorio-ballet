@@ -79,6 +79,8 @@ export function Belt({
   onContextMenu,
   onPointerDown,
   onPointerMove,
+  onPointerEnter,
+  onPointerLeave,
 }: {
   belt: DesignBelt;
   status: EntityPositionStatus;
@@ -87,6 +89,8 @@ export function Belt({
   onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
 }) {
   const { x, y } = belt.position;
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
@@ -108,6 +112,8 @@ export function Belt({
       onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       style={{
         left: `${viewportPosition.x}px`,
         top: `${viewportPosition.y}px`,
@@ -132,6 +138,8 @@ export function Inserter({
   onContextMenu,
   onPointerDown,
   onPointerMove,
+  onPointerEnter,
+  onPointerLeave,
 }: {
   inserter: DesignInserter;
   status: EntityPositionStatus;
@@ -139,6 +147,8 @@ export function Inserter({
   onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
 }) {
   const {x, y} = inserter.position;
   const viewportPosition = worldToViewport(inserter.position, worldOrigin);
@@ -156,6 +166,8 @@ export function Inserter({
       onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       style={{
         left: `${viewportPosition.x}px`,
         top: `${viewportPosition.y}px`,
@@ -182,6 +194,8 @@ export function Assembler({
   onPointerMove,
   onPointerUp,
   onLostPointerCapture,
+  onPointerEnter,
+  onPointerLeave,
 }: {
   assembler: DesignAssembler;
   status: EntityPositionStatus;
@@ -191,6 +205,8 @@ export function Assembler({
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerUp: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onLostPointerCapture: () => void;
+  onPointerEnter: () => void;
+  onPointerLeave: () => void;
 }) {
   const recipe = staticData.recipes[assembler.recipe];
   const name = recipeName(assembler.recipe);
@@ -212,6 +228,8 @@ export function Assembler({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onLostPointerCapture={onLostPointerCapture}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
       style={{
         left: `${viewportPosition.x}px`,
         top: `${viewportPosition.y}px`,

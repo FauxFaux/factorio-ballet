@@ -1,7 +1,7 @@
 import './design-column.css';
 import {ArrowRightIcon, ChevronRightIcon, TrashIcon} from '@primer/octicons-react';
 import type { JSX } from 'preact';
-import { useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
 import type {
   DesignColumn as DesignColumnData,
@@ -67,6 +67,7 @@ export function DesignColumn({
   const drag = useRef<PanDrag>();
   const beltDrag = useRef<BeltDrag>();
   const assemblerDrag = useRef<AssemblerDrag>();
+  const hoveredEntityIndex = useRef<number>();
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
@@ -154,10 +155,10 @@ export function DesignColumn({
     }));
   };
 
-  const rotateInserter = (entityIndex: number) => {
+  const rotateEntity = (entityIndex: number) => {
     onChange((current) => {
       const entity = current.entities[entityIndex];
-      if (!entity || entity.kind !== 'inserter') return current;
+      if (!entity || !('direction' in entity)) return current;
       return {
         ...current,
         entities: current.entities.map((currentEntity, currentIndex) =>
@@ -168,6 +169,19 @@ export function DesignColumn({
       };
     });
   };
+
+  useEffect(() => {
+    const rotateHoveredEntity = (event: KeyboardEvent) => {
+      if (!['r', 'p'].includes(event.key) || event.ctrlKey || event.metaKey || event.altKey) return;
+      const entityIndex = hoveredEntityIndex.current;
+      if (entityIndex === undefined) return;
+      event.preventDefault();
+      rotateEntity(entityIndex);
+    };
+
+    window.addEventListener('keydown', rotateHoveredEntity);
+    return () => window.removeEventListener('keydown', rotateHoveredEntity);
+  });
 
   return (
     <section
@@ -320,6 +334,12 @@ export function DesignColumn({
               onLostPointerCapture={() => {
                 assemblerDrag.current = undefined;
               }}
+              onPointerEnter={() => {
+                hoveredEntityIndex.current = entityIndex;
+              }}
+              onPointerLeave={() => {
+                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
+              }}
             />
           ) : entity.kind === 'belt' ? (
             <Belt
@@ -343,6 +363,12 @@ export function DesignColumn({
                 event.stopPropagation();
                 eraseEntity(entityIndex);
               }}
+              onPointerEnter={() => {
+                hoveredEntityIndex.current = entityIndex;
+              }}
+              onPointerLeave={() => {
+                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
+              }}
             />
           ) : entity.kind === 'inserter' ? (
             <Inserter
@@ -362,12 +388,18 @@ export function DesignColumn({
                   eraseEntity(entityIndex);
                   return;
                 }
-                if (cursorMode === 'inserter') rotateInserter(entityIndex);
+                if (cursorMode === 'inserter') rotateEntity(entityIndex);
               }}
               onPointerMove={(event) => {
                 if (cursorMode !== 'erase' || (event.buttons & 1) === 0) return;
                 event.stopPropagation();
                 eraseEntity(entityIndex);
+              }}
+              onPointerEnter={() => {
+                hoveredEntityIndex.current = entityIndex;
+              }}
+              onPointerLeave={() => {
+                if (hoveredEntityIndex.current === entityIndex) hoveredEntityIndex.current = undefined;
               }}
             />
           ) : null,

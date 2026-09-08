@@ -386,6 +386,34 @@ describe('DesignColumn', () => {
     ]);
   });
 
+  it.each(['r', 'p'])('rotates the directional entity under the cursor when %s is pressed', (key) => {
+    let column: DesignColumnData = {
+      entities: [{ kind: 'belt', position: { x: 1, y: 2 }, direction: 'north' }],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    const belt = screen.getByRole('img', {
+      name: 'Transport belt at 1, 2, pointing north',
+    });
+    fireEvent.pointerEnter(belt);
+    expect(fireEvent.keyDown(window, { key })).toBe(false);
+
+    expect(column.entities).toEqual([
+      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+    ]);
+  });
+
   it('marks every belt in a logical belt containing a direct loop as an error', () => {
     const entities: DesignColumnData['entities'] = [
       { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },
