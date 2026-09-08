@@ -4,11 +4,10 @@ import {
   netRates,
   NO_EFFECTS,
   productAmount,
-  rateDigits,
   recipeFlows,
   speedOf,
 } from '../src/flow.ts';
-import { machinesFor, type MachineMatch } from '../src/data/machines.ts';
+import { machinesFor } from '../src/data/machines.ts';
 import { staticData } from '../src/data/index.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];
@@ -37,16 +36,22 @@ describe('recipeFlows', () => {
     const { ins, outs } = recipeFlows(gears, [], 1);
     // 2 plates a craft, half a second a craft: four a second in, two out
     expect(ins).toEqual([
-      { resource: 'item:iron-plate', amount: '2', rate: '4.00', note: undefined },
+      { resource: 'item:iron-plate', amount: '2', fullRate: 4, rate: '4.0', note: undefined },
     ]);
     expect(outs).toEqual([
-      { resource: 'item:iron-gear-wheel', amount: '1', rate: '2.00', note: undefined },
+      {
+        resource: 'item:iron-gear-wheel',
+        amount: '1',
+        fullRate: 2,
+        rate: '2.0',
+        note: undefined,
+      },
     ]);
   });
 
   it('scales with the machine it is quoted at', () => {
-    expect(recipeFlows(gears, [], 0.5).outs[0].rate).toBe('1.00');
-    expect(recipeFlows(gears, [], 2).outs[0].rate).toBe('4.00');
+    expect(recipeFlows(gears, [], 0.5).outs[0].rate).toBe('1.0');
+    expect(recipeFlows(gears, [], 2).outs[0].rate).toBe('4.0');
   });
 
   it('reads a chancy result as what it is worth on average', () => {
@@ -55,7 +60,8 @@ describe('recipeFlows', () => {
     expect(outs[0]).toEqual({
       resource: 'item:uranium-235',
       amount: '1',
-      rate: '0.001',
+      fullRate: 0.007 / 12,
+      rate: '0.0',
       note: '0.7%',
     });
   });
@@ -64,38 +70,12 @@ describe('recipeFlows', () => {
     const { outs } = recipeFlows(mud, [], 1);
     expect(outs[1].amount).toBe('0–3');
     // (0 + 3) / 2 rolled half the time, over the recipe's duration
-    expect(Number(outs[1].rate)).toBeCloseTo(0.75 / mud.duration, 6);
+    expect(outs[1].fullRate).toBeCloseTo(0.75 / mud.duration, 6);
   });
 
   it('notes the temperature an ingredient is wanted at', () => {
     const { ins } = recipeFlows(staticData.recipes['fission-reactor-equipment'], [], 1);
     expect(ins.find(({ resource }) => resource.startsWith('fluid:'))?.note).toBe('≤30°C');
-  });
-});
-
-describe('rateDigits', () => {
-  it('is two decimals for a recipe whose flows are all readable there', () => {
-    expect(rateDigits(gears, machinesFor(gears))).toBe(2);
-  });
-
-  it('is three when any flow would read as 0.00 on any machine it can run in', () => {
-    expect(rateDigits(uranium, [])).toBe(3);
-  });
-
-  it('takes the slowest machine into account, not just the 1× baseline', () => {
-    const slow: MachineMatch[] = [
-      {
-        id: 'snail',
-        machine: {
-          kind: 'assembling-machine',
-          categories: ['crafting'],
-          speed: 0.01,
-          size: { width: 3, height: 3 },
-        },
-      },
-    ];
-    expect(rateDigits(gears, [])).toBe(2);
-    expect(rateDigits(gears, slow)).toBe(3);
   });
 });
 

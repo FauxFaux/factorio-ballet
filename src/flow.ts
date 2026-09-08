@@ -27,12 +27,14 @@ export type { Boost, Effects, Layout, ModuleFill, ModuleWants } from './module-e
 export interface Flow {
   resource: ResourceId;
   amount: string;
+  /** The unrounded per-second rate, for details such as the recipe-card tooltip. */
+  fullRate: number;
+  /** The compact recipe-card display rate, always rounded to one decimal place. */
   rate: string;
   note?: string;
 }
 
 const CRAFTING_SPEED = 1;
-const THREE_DP_BELOW = 0.05;
 type Fmt = (value: number) => string;
 
 export function speedOf(machines: MachineMatch[], id: MachineId | undefined): number {
@@ -75,12 +77,11 @@ export function productAmount(product: Product, productivity: number): number {
 
 export function recipeFlows(
   recipe: Recipe,
-  machines: MachineMatch[],
+  _machines: MachineMatch[],
   speed: number,
 ): { ins: Flow[]; outs: Flow[] } {
   const crafts = speed / recipe.duration;
-  const digits = rateDigits(recipe, machines);
-  const rate = (value: number) => value.toFixed(digits);
+  const rate = (value: number) => value.toFixed(1);
   return {
     ins: recipe.ingredients.map((ingredient) => ingredientFlow(ingredient, crafts, rate)),
     outs: recipe.products.map((product) => productFlow(product, crafts, rate)),
@@ -92,31 +93,25 @@ export function flowTitle(flow: Flow): string {
   return `${resourceName(flow.resource)}: ${flow.amount} per craft${note}`;
 }
 
-export function rateDigits(recipe: Recipe, machines: MachineMatch[]): number {
-  const slowest = Math.min(CRAFTING_SPEED, ...machines.map(({ machine }) => machine.speed));
-  const amounts = [
-    ...recipe.ingredients.map((ingredient) => ingredient.amount),
-    ...recipe.products.map((product) => productAmount(product, 1)),
-  ].filter((amount) => amount > 0);
-  const smallest = (Math.min(...amounts) * slowest) / recipe.duration;
-  return smallest < THREE_DP_BELOW ? 3 : 2;
-}
-
 function ingredientFlow(ingredient: Ingredient, crafts: number, rate: Fmt): Flow {
+  const fullRate = ingredient.amount * crafts;
   return {
     resource: ingredient.resource,
     amount: fmt(ingredient.amount),
-    rate: rate(ingredient.amount * crafts),
+    fullRate,
+    rate: rate(fullRate),
     note: ingredient.temperature && temperatureNote(ingredient.temperature),
   };
 }
 
 function productFlow(product: Product, crafts: number, rate: Fmt): Flow {
   const expected = productAmount(product, 1);
+  const fullRate = expected * crafts;
   return {
     resource: product.resource,
     amount: amountLabel(product.amount),
-    rate: rate(expected * crafts),
+    fullRate,
+    rate: rate(fullRate),
     note: product.probability === 1 ? undefined : `${fmt(product.probability * 100)}%`,
   };
 }

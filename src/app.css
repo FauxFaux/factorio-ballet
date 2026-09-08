@@ -52,6 +52,9 @@
   flex: 0 1 32rem;
   min-width: 0;
   max-width: 32rem;
+  /* Search can replace a full result list with a short hint on every keystroke. Keep this column
+   * at least viewport-height so the content beside and below it does not leap upward mid-search. */
+  min-height: 100vh;
 }
 
 @media (max-width: 800px) {

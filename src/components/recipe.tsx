@@ -175,13 +175,13 @@ function FlowTable({
   );
 }
 
-/** The folded form: `2/s [iron] , 8/s [water] → 4/s [plate]`, names and amounts in tooltips. */
+/** The folded form: `2.0 [iron] + 8.0 [water] → 4.0 [plate]`, names and amounts in tooltips. */
 function FlowSummary({ ins, outs }: { ins: Flow[]; outs: Flow[] }) {
   return (
     <p class="flow-summary">
       <FlowChips flows={ins} />
       <span class="flow-arrow" aria-label="makes">
-        →
+        ➔
       </span>
       <FlowChips flows={outs} />
     </p>
@@ -193,13 +193,14 @@ function FlowChips({ flows }: { flows: Flow[] }) {
     <>
       {flows.map((flow, i) => (
         <Fragment key={`${flow.resource}-${i}`}>
-          {i === 0 ? null : <span class="flow-chip-sep">,</span>}
+          {i === 0 ? null : <span class="flow-chip-sep">+</span>}
           <span class="flow-chip" title={flowTitle(flow)}>
-            <span class="flow-chip-rate">
+            <abbr class="flow-chip-rate" title={`${flow.fullRate} per second`}>
               {flow.rate}
-              <span class="flow-chip-unit">/s</span>
+            </abbr>
+            <span class="flow-chip-icon">
+              <ResourceIcon id={flow.resource} />
             </span>
-            <ResourceIcon id={flow.resource} />
           </span>
         </Fragment>
       ))}
@@ -389,7 +390,9 @@ function FlowRow({
         <ResourceButton id={flow.resource} onPick={onPick} />
         {flow.note ? <span class="flow-note">{flow.note}</span> : null}
       </td>
-      <td class="flow-rate">{flow.rate}/s</td>
+      <td class="flow-rate">
+        <abbr title={`${flow.fullRate} per second`}>{flow.fullRate.toFixed(2)}/s</abbr>
+      </td>
     </tr>
   );
 }

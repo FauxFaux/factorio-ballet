@@ -10,6 +10,23 @@ import { RecipeCard } from '../src/components/recipe.tsx';
 afterEach(cleanup);
 
 describe('RecipeCard', () => {
+  it('shows expanded flow rates to two decimal places per second', async () => {
+    const user = userEvent.setup();
+    const recipe = staticData.recipes['iron-gear-wheel'];
+    const { container } = render(
+      <RecipeCard
+        match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
+        onPick={() => undefined}
+        progress={0}
+      />,
+    );
+
+    await user.click(container.querySelector('[title="Unfold the ingredients"]')!);
+
+    expect(screen.getByText('4.00/s')).toBeDefined();
+    expect(screen.getByText('2.00/s')).toBeDefined();
+  });
+
   it('uses compact fractions for quarter-based machine speeds', () => {
     const recipe = staticData.recipes['iron-gear-wheel'];
     const { container } = render(
