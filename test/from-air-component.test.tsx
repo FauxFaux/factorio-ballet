@@ -11,7 +11,7 @@ function FromAirExample() {
   const mode = useState<UrlState['fa']>(true);
   return (
     <>
-      <FromAir mode={mode} />
+      <FromAir mode={mode} progress={0} />
       <output>{mode[0] === true ? 'ordinary' : mode[0]}</output>
     </>
   );

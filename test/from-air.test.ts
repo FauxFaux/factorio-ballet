@@ -3,12 +3,18 @@ import { fromAirStages } from '../src/components/from-air.tsx';
 import { staticData } from '../src/data/index.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
-const recipe = (ingredients: ResourceId[], products: ResourceId[], synthetic = false): Recipe => ({
+const recipe = (
+  ingredients: ResourceId[],
+  products: ResourceId[],
+  synthetic = false,
+  complexity = 0,
+): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),
   products: products.map((resource) => ({ resource, amount: { fixed: 1 }, probability: 1 })),
   duration: 1,
   categories: ['crafting'],
   synthetic: synthetic || undefined,
+  complexity,
 });
 
 describe('fromAirStages', () => {
@@ -62,6 +68,27 @@ describe('fromAirStages', () => {
       ['synthetic:pumping-water'],
       ['synthetic:mining-infinite-coal'],
     ]);
+  });
+
+  it('excludes recipes beyond the selected game progress', () => {
+    const air = 'fluid:air';
+    const early = 'item:early';
+    const late = 'item:late';
+    const stages = fromAirStages(
+      {
+        recipes: {
+          source: recipe([], [air], false, 0),
+          early: recipe([air], [early], false, 0.2),
+          late: recipe([air], [late], false, 0.8),
+          useEarly: recipe([early], ['item:early-product'], false, 0.2),
+          useLate: recipe([late], ['item:late-product'], false, 0.8),
+        },
+      },
+      false,
+      0.5,
+    );
+
+    expect(stages.flat().map(({ id }) => id)).toEqual(['source', 'early']);
   });
 
   it('lists all products newly added by a recipe only once', () => {

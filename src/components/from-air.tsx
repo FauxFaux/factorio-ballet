@@ -1,5 +1,5 @@
 import './from-air.css';
-import { recipeName, resourceName, staticData } from '../data/index.ts';
+import { complexityOf, recipeName, resourceName, staticData } from '../data/index.ts';
 import { productAmount } from '../flow.ts';
 import type { State } from '../ts.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';
@@ -153,13 +153,14 @@ function productiveCycle(
 export function fromAirStages(
   data: Pick<StaticData, 'recipes'>,
   infiniteMining = false,
+  progress = 1,
 ): FromAirStage[] {
   const allowed = new Set<ResourceId>();
   const remaining = Object.entries(data.recipes).filter(([id, recipe]) =>
-    usableFromAirRecipe(id, recipe, infiniteMining),
+    usableFromAirRecipe(id, recipe, infiniteMining) && complexityOf(recipe) <= progress,
   );
   const inputRecipeIds = new Map<ResourceId, Set<string>>();
-  for (const [id, recipe] of Object.entries(data.recipes)) {
+  for (const [id, recipe] of remaining) {
     for (const { resource } of recipe.ingredients) {
       const ids = inputRecipeIds.get(resource) ?? new Set<string>();
       ids.add(id);
@@ -199,9 +200,15 @@ export function fromAirStages(
 }
 
 /** The dedicated planner for production chains that begin with air. */
-export function FromAir({ mode: [mode, setMode] }: { mode: State<UrlState['fa']> }) {
+export function FromAir({
+  mode: [mode, setMode],
+  progress,
+}: {
+  mode: State<UrlState['fa']>;
+  progress: number;
+}) {
   const infiniteMining = mode === 'infinite-mining';
-  const stages = fromAirStages(staticData, infiniteMining);
+  const stages = fromAirStages(staticData, infiniteMining, progress);
 
   return (
     <section class="from-air" aria-labelledby="from-air-title">
