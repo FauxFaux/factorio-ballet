@@ -329,6 +329,34 @@ describe('DesignColumn', () => {
     ]);
   });
 
+  it('rotates an inserter clockwise when placing inserters', () => {
+    let column: DesignColumnData = {
+      entities: [{ kind: 'inserter', position: { x: 1, y: 2 }, direction: 'north' }],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Place inserters' }));
+    fireEvent.pointerDown(screen.getByRole('img', { name: 'Inserter at 1, 2, pointing north' }), {
+      button: 0,
+      pointerId: 1,
+    });
+
+    expect(column.entities).toEqual([
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+    ]);
+  });
+
   it('marks every belt in a logical belt containing a direct loop as an error', () => {
     const entities: DesignColumnData['entities'] = [
       { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },

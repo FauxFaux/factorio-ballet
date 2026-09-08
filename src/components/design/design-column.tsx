@@ -3,7 +3,11 @@ import {ArrowRightIcon, ChevronRightIcon, TrashIcon} from '@primer/octicons-reac
 import type { JSX } from 'preact';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
-import type { DesignColumn as DesignColumnData, DesignPosition } from '../../design.ts';
+import type {
+  DesignColumn as DesignColumnData,
+  DesignDirection,
+  DesignPosition,
+} from '../../design.ts';
 import {
   beltLoopEntityIndexes,
   paintBelts,
@@ -27,6 +31,13 @@ type AssemblerDrag = {
   x: number;
   y: number;
   position: DesignPosition;
+};
+
+const clockwiseDirection: Record<DesignDirection, DesignDirection> = {
+  north: 'east',
+  east: 'south',
+  south: 'west',
+  west: 'north',
 };
 
 export {
@@ -141,6 +152,21 @@ export function DesignColumn({
       ...current,
       entities: [...current.entities, {kind: 'inserter', position, direction: 'east'}],
     }));
+  };
+
+  const rotateInserter = (entityIndex: number) => {
+    onChange((current) => {
+      const entity = current.entities[entityIndex];
+      if (!entity || entity.kind !== 'inserter') return current;
+      return {
+        ...current,
+        entities: current.entities.map((currentEntity, currentIndex) =>
+          currentIndex === entityIndex
+            ? { ...currentEntity, direction: clockwiseDirection[entity.direction] }
+            : currentEntity,
+        ),
+      };
+    });
   };
 
   return (
@@ -315,9 +341,13 @@ export function DesignColumn({
               status={entityStatuses[entityIndex]}
               worldOrigin={worldOrigin}
               onPointerDown={(event) => {
-                if (event.button !== 0 || cursorMode !== 'erase') return;
+                if (event.button !== 0) return;
                 event.stopPropagation();
-                eraseEntity(entityIndex);
+                if (cursorMode === 'erase') {
+                  eraseEntity(entityIndex);
+                  return;
+                }
+                if (cursorMode === 'inserter') rotateInserter(entityIndex);
               }}
               onPointerMove={(event) => {
                 if (cursorMode !== 'erase' || (event.buttons & 1) === 0) return;
