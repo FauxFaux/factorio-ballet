@@ -76,6 +76,7 @@ export function Belt({
   status,
   hasLoop,
   worldOrigin,
+  onContextMenu,
   onPointerDown,
   onPointerMove,
 }: {
@@ -83,6 +84,7 @@ export function Belt({
   status: EntityPositionStatus;
   hasLoop: boolean;
   worldOrigin: ViewportPoint;
+  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
 }) {
@@ -103,6 +105,7 @@ export function Belt({
       title={`Transport belt (${x}, ${y}), ${belt.direction}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
+      onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       style={{
@@ -126,12 +129,14 @@ export function Inserter({
   inserter,
   status,
   worldOrigin,
+  onContextMenu,
   onPointerDown,
   onPointerMove,
 }: {
   inserter: DesignInserter;
   status: EntityPositionStatus;
   worldOrigin: ViewportPoint;
+  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
 }) {
@@ -148,6 +153,7 @@ export function Inserter({
       title={`Inserter (${x}, ${y}), ${inserter.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
+      onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       style={{
@@ -171,6 +177,7 @@ export function Assembler({
   assembler,
   status,
   worldOrigin,
+  onContextMenu,
   onPointerDown,
   onPointerMove,
   onPointerUp,
@@ -179,6 +186,7 @@ export function Assembler({
   assembler: DesignAssembler;
   status: EntityPositionStatus;
   worldOrigin: ViewportPoint;
+  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
   onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
   onPointerUp: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
@@ -199,6 +207,7 @@ export function Assembler({
       title={`${name} (${x}, ${y})${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
       data-position-status={status}
+      onContextMenu={onContextMenu}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

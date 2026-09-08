@@ -230,6 +230,35 @@ describe('DesignColumn', () => {
     expect(column.entities).toEqual([]);
   });
 
+  it('erases the entity under the cursor on right click', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 8, y: 4 },
+          size: { width: 3, height: 2 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
+    expect(fireEvent.contextMenu(assembler)).toBe(false);
+    expect(column.entities).toEqual([]);
+  });
+
   it('erases entities as the primary pointer moves over them in erase mode', () => {
     let column: DesignColumnData = {
       entities: [

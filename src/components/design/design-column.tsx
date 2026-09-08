@@ -283,6 +283,11 @@ export function DesignColumn({
               assembler={entity}
               status={entityStatuses[entityIndex]}
               worldOrigin={worldOrigin}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                eraseEntity(entityIndex);
+              }}
               onPointerDown={(event) => {
                 if (event.button !== 0) return;
                 event.stopPropagation();
@@ -323,6 +328,11 @@ export function DesignColumn({
               status={entityStatuses[entityIndex]}
               hasLoop={loopBeltIndexes.has(entityIndex)}
               worldOrigin={worldOrigin}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                eraseEntity(entityIndex);
+              }}
               onPointerDown={(event) => {
                 if (event.button !== 0 || cursorMode !== 'erase') return;
                 event.stopPropagation();
@@ -340,6 +350,11 @@ export function DesignColumn({
               inserter={entity}
               status={entityStatuses[entityIndex]}
               worldOrigin={worldOrigin}
+              onContextMenu={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                eraseEntity(entityIndex);
+              }}
               onPointerDown={(event) => {
                 if (event.button !== 0) return;
                 event.stopPropagation();
