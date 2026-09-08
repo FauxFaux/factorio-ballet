@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { staticData } from '../src/data/index.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
-import { voidPlans } from '../src/void-path.ts';
+import { voidPlanFinder, voidPlans } from '../src/void-path.ts';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),
@@ -11,6 +11,13 @@ const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
 });
 
 describe('voidPlans', () => {
+  it('indexes and memoises paths for immutable recipe data', () => {
+    const waste = 'item:waste';
+    const finder = voidPlanFinder({ recipes: { void: recipe([waste], []) } });
+
+    expect(finder(waste)).toBe(finder(waste));
+  });
+
   it('prefers a closed route without unresolved coproducts', () => {
     const waste = 'item:waste';
     const intermediate = 'item:intermediate';

@@ -4,14 +4,18 @@ import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { parseSearch } from '../../search.ts';
-import { voidPlans } from '../../void-path.ts';
+import { voidPlanFinder } from '../../void-path.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 
 interface VoidSuggestion {
   resource: ResourceId;
-  plans: ReturnType<typeof voidPlans>;
+  plans: ReturnType<typeof staticVoidPlans>;
 }
+
+// Recipe data is loaded once and immutable. Index it and retain each completed path search instead
+// of redoing a full recipe-data pass whenever the current cell changes.
+const staticVoidPlans = voidPlanFinder(staticData);
 
 function usedResources(search: string, cell?: Cell): ResourceId[] {
   const scope = cell ? scopeOf(cellInterface(cell)) : undefined;
@@ -49,7 +53,7 @@ export function RecipeSuggestions({
     const searched = new Set(usedResources(search, cell));
     return (
       suggestedVoidResources(search, cell, resource)
-        .map((resource) => ({ resource, plans: voidPlans(resource, staticData) }))
+        .map((resource) => ({ resource, plans: staticVoidPlans(resource) }))
         // A `uses:` query should explain that it cannot be voided; output-only suggestions should not
         // take space unless there is something useful to show.
         .filter(
