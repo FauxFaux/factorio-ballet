@@ -4,20 +4,72 @@ import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { recipeName, resourceName, staticData } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { parseSearch } from '../../search.ts';
-import { resourceChainFinder, voidPlanFinder, type ResourceChain } from '../../void-path.ts';
+import {
+  resourceChainFinder,
+  voidPlanFinder,
+  type ResourceChain,
+  type VoidPlan,
+} from '../../void-path.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 
-interface VoidSuggestion {
+interface PathSuggestion {
   resource: ResourceId;
-  plans: ReturnType<typeof staticVoidPlans>;
-  chains: ResourceChain[];
+  kind: 'chain' | 'void';
+  plan: ResourceChain | VoidPlan;
+  score: number;
 }
+
+const CANDIDATES_PER_RESOURCE = 24;
+const MAX_SUGGESTIONS = 10;
+
+/** Keep these deliberately visible: we expect to tune them after looking at real path rankings. */
+export const suggestionScoreWeights = {
+  step: 10,
+  output: 4,
+  inputComplexity: 6,
+  reusedInput: 8,
+  reusedOutput: 7,
+  suppliedInput: 30,
+} as const;
 
 // Recipe data is loaded once and immutable. Index it and retain each completed path search instead
 // of redoing a full recipe-data pass whenever the current cell changes.
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
+
+function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
+  return 'target' in plan;
+}
+
+/**
+ * Rank a path by the boundary flows it adds to a cell. Closed void paths have no extra boundary
+ * flows, while chains are rewarded for joining edges the cell already has.
+ */
+export function scoreRecipeSuggestion(
+  plan: ResourceChain | VoidPlan,
+  existingInputs: ReadonlySet<ResourceId>,
+  existingOutputs: ReadonlySet<ResourceId>,
+): number {
+  const inputs = isResourceChain(plan) ? plan.inputs : [];
+  const outputs = isResourceChain(plan) ? plan.outputs : [];
+  const reusedInputs = inputs.filter((resource) => existingInputs.has(resource)).length;
+  const reusedOutputs = outputs.filter((resource) => existingOutputs.has(resource)).length;
+  const suppliesInput = isResourceChain(plan) && existingInputs.has(plan.target);
+  const inputComplexity = inputs.reduce(
+    (total, resource) => total + (staticData.resources[resource]?.complexity ?? 1),
+    0,
+  );
+
+  return (
+    -plan.recipes.length * suggestionScoreWeights.step -
+    outputs.length * suggestionScoreWeights.output -
+    inputComplexity * suggestionScoreWeights.inputComplexity +
+    reusedInputs * suggestionScoreWeights.reusedInput +
+    reusedOutputs * suggestionScoreWeights.reusedOutput +
+    (suppliesInput ? suggestionScoreWeights.suppliedInput : 0)
+  );
+}
 
 function usedResources(search: string, cell?: Cell): ResourceId[] {
   const scope = cell ? scopeOf(cellInterface(cell)) : undefined;
@@ -38,14 +90,66 @@ export function suggestedVoidResources(
 }
 
 /** Short routes from a cell output to one of the resources it currently needs. */
-export function suggestedResourceChains(cell?: Cell): Map<ResourceId, ResourceChain[]> {
+export function suggestedResourceChains(
+  cell?: Cell,
+  maxResults = CANDIDATES_PER_RESOURCE,
+): Map<ResourceId, ResourceChain[]> {
   if (!cell) return new Map();
   const { inputs, outputs } = cellInterface(cell);
   return new Map(
     outputs
-      .map((output) => [output, staticResourceChains(output, inputs)] as const)
+      .map((output) => [output, staticResourceChains(output, inputs, maxResults)] as const)
       .filter(([, chains]) => chains.length > 0),
   );
+}
+
+/** The ten most useful paths across the resources currently in view. */
+export function suggestedRecipePaths(
+  search: string,
+  cell?: Cell,
+  resource?: ResourceId,
+): PathSuggestion[] {
+  const searched = new Set(usedResources(search, cell));
+  const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
+  const existingInputs = new Set([...searched, ...inputs]);
+  const existingOutputs = new Set(outputs);
+  const chains = suggestedResourceChains(cell);
+
+  return suggestedVoidResources(search, cell, resource)
+    .flatMap((id) => {
+      const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
+      const resourceChains = chains.get(id) ?? [];
+      if (
+        !searched.has(id) &&
+        id !== resource &&
+        plans.length === 0 &&
+        resourceChains.length === 0
+      ) {
+        return [];
+      }
+      return [
+        ...plans.map((plan) => ({
+          resource: id,
+          kind: 'void' as const,
+          plan,
+          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs),
+        })),
+        ...resourceChains.map((plan) => ({
+          resource: id,
+          kind: 'chain' as const,
+          plan,
+          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs),
+        })),
+      ];
+    })
+    .toSorted(
+      (a, b) =>
+        b.score - a.score ||
+        a.plan.recipes.length - b.plan.recipes.length ||
+        a.resource.localeCompare(b.resource) ||
+        a.plan.recipes.join('|').localeCompare(b.plan.recipes.join('|')),
+    )
+    .slice(0, MAX_SUGGESTIONS);
 }
 
 export function RecipeSuggestions({
@@ -62,119 +166,81 @@ export function RecipeSuggestions({
   cell?: Cell;
   progress: number;
 }) {
-  const suggestions = useMemo<VoidSuggestion[]>(() => {
-    const searched = new Set(usedResources(search, cell));
-    const chains = suggestedResourceChains(cell);
-    return (
-      suggestedVoidResources(search, cell, resource)
-        .map((resource) => ({
-          resource,
-          plans: staticVoidPlans(resource),
-          chains: chains.get(resource) ?? [],
-        }))
-        // A `uses:` query should explain that it cannot be voided; output-only suggestions should not
-        // take space unless there is a void path or a route to a wanted cell input.
-        .filter(
-          ({ resource: id, plans, chains }) =>
-            searched.has(id) || id === resource || plans.length > 0 || chains.length > 0,
-        )
-    );
-  }, [search, cell, resource]);
+  const suggestions = useMemo(
+    () => suggestedRecipePaths(search, cell, resource),
+    [search, cell, resource],
+  );
 
   return (
     <section class="void-path" aria-label="Recipe paths">
-      <h2>Recipe paths</h2>
+      <h2>Top recipe paths</h2>
       {suggestions.length === 0 ? (
         <p class="void-path-hint">
           Search for recipes using a resource to find ways to void it or feed a cell input.
         </p>
       ) : (
-        suggestions.map(({ resource, plans, chains: suggestionChains }) => (
-          <article key={resource} class="void-path-tile">
+        suggestions.map(({ resource, kind, plan, score }, index) => (
+          <article key={`${resource}:${kind}:${plan.recipes.join('|')}`} class="void-path-tile">
             <h3 class="void-path-for">
               <ResourceIcon id={resource} /> {resourceName(resource)}
             </h3>
-            {suggestionChains.length > 0 && (
-              <ol class="void-path-results" aria-label={`Paths from ${resourceName(resource)}`}>
-                {suggestionChains.map((plan, index) => (
-                  <li key={`${plan.target}:${plan.recipes.join('|')}`} class="void-path-result">
-                    <p class="void-path-to">
-                      Makes <ResourceIcon id={plan.target} /> {resourceName(plan.target)}
-                      {plan.inputs.length > 0 && (
-                        <span
-                          class="void-path-extra-flow void-path-extra-inputs"
-                          aria-label={`Additional inputs: ${plan.inputs.map(resourceName).join(', ')}`}
-                        >
-                          <span class="void-path-extra-label">Needs</span>
-                          {plan.inputs.map((id) => (
-                            <span key={id} title={resourceName(id)}>
-                              <ResourceIcon id={id} />
-                            </span>
-                          ))}
-                        </span>
-                      )}
-                      {plan.outputs.length > 0 && (
-                        <span
-                          class="void-path-extra-flow void-path-extra-outputs"
-                          aria-label={`Additional outputs: ${plan.outputs.map(resourceName).join(', ')}`}
-                        >
-                          <span class="void-path-extra-label">Also makes</span>
-                          {plan.outputs.map((id) => (
-                            <span key={id} title={resourceName(id)}>
-                              <ResourceIcon id={id} />
-                            </span>
-                          ))}
-                        </span>
-                      )}
-                    </p>
-                    <ol
-                      class="void-path-steps"
-                      aria-label={`Path from ${resource} to ${plan.target}, ${index + 1}`}
-                    >
-                      {plan.recipes.map((id, step) => {
-                        const recipe = staticData.recipes[id];
-                        if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
-                        return (
-                          <li key={`${id}-${step}`}>
-                            <CompactRecipe
-                              match={{ id, recipe, name: recipeName(id) }}
-                              progress={progress}
-                            />
-                          </li>
-                        );
-                      })}
-                    </ol>
-                  </li>
-                ))}
-              </ol>
+            <p class="void-path-score">Score {score.toFixed(1)}</p>
+            {kind === 'chain' && isResourceChain(plan) && (
+              <p class="void-path-to">
+                Makes <ResourceIcon id={plan.target} /> {resourceName(plan.target)}
+                {plan.inputs.length > 0 && (
+                  <span
+                    class="void-path-extra-flow void-path-extra-inputs"
+                    aria-label={`Additional inputs: ${plan.inputs.map(resourceName).join(', ')}`}
+                  >
+                    <span class="void-path-extra-label">Needs</span>
+                    {plan.inputs.map((id) => (
+                      <span key={id} title={resourceName(id)}>
+                        <ResourceIcon id={id} />
+                      </span>
+                    ))}
+                  </span>
+                )}
+                {plan.outputs.length > 0 && (
+                  <span
+                    class="void-path-extra-flow void-path-extra-outputs"
+                    aria-label={`Additional outputs: ${plan.outputs.map(resourceName).join(', ')}`}
+                  >
+                    <span class="void-path-extra-label">Also makes</span>
+                    {plan.outputs.map((id) => (
+                      <span key={id} title={resourceName(id)}>
+                        <ResourceIcon id={id} />
+                      </span>
+                    ))}
+                  </span>
+                )}
+              </p>
             )}
-            {plans.length === 0 && suggestionChains.length === 0 ? (
-              <p class="void-path-hint">No short closed void path found.</p>
-            ) : plans.length > 0 ? (
-              <ol class="void-path-results">
-                {plans.map((plan, index) => (
-                  <li key={plan.recipes.join('|')} class="void-path-result">
-                    <ol
-                      class="void-path-steps"
-                      aria-label={`Void path for ${resource}, ${index + 1}`}
-                    >
-                      {plan.recipes.map((id, step) => {
-                        const recipe = staticData.recipes[id];
-                        if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
-                        return (
-                          <li key={`${id}-${step}`}>
-                            <CompactRecipe
-                              match={{ id, recipe, name: recipeName(id) }}
-                              progress={progress}
-                            />
-                          </li>
-                        );
-                      })}
-                    </ol>
-                  </li>
-                ))}
-              </ol>
-            ) : null}
+            <ol class="void-path-results">
+              <li class="void-path-result">
+                <ol
+                  class="void-path-steps"
+                  aria-label={
+                    kind === 'chain' && isResourceChain(plan)
+                      ? `Path from ${resource} to ${plan.target}, ${index + 1}`
+                      : `Void path for ${resource}, ${index + 1}`
+                  }
+                >
+                  {plan.recipes.map((id, step) => {
+                    const recipe = staticData.recipes[id];
+                    if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
+                    return (
+                      <li key={`${id}-${step}`}>
+                        <CompactRecipe
+                          match={{ id, recipe, name: recipeName(id) }}
+                          progress={progress}
+                        />
+                      </li>
+                    );
+                  })}
+                </ol>
+              </li>
+            </ol>
           </article>
         ))
       )}

@@ -9,8 +9,13 @@
 }
 .void-path-hint,
 .void-path-for,
-.void-path-to {
+.void-path-to,
+.void-path-score {
   margin: 0.5rem 0;
+}
+.void-path-score {
+  color: var(--muted);
+  font-size: 0.85rem;
 }
 .void-path-tile + .void-path-tile {
   margin-top: 1rem;
