@@ -52,10 +52,13 @@ In addition to the design documents named in `AGENTS.md`, the repo keeps these r
 
 `main.tsx` → `UrlHandler` → `CrashHandler` → `App`. All UI state lives in `UrlState` and is packed
 into the URL hash (`url-handler.tsx`): ids numbered (`pack.ts`) → JSON with sorted keys → deflate
-(with a dictionary, a literal reference state in-file "for stability reasons") → base64url, prefixed
-with `HASH_VERSION`. The dictionary is a state of the current shape, so **adding a field to
-`UrlState` invalidates every existing hash** — bump the version letter whenever the state shape
-changes. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
+(with a frozen literal reference state as its dictionary) → base64url, prefixed with `HASH_VERSION`.
+Do not update that reference state to follow `UrlState`: changing the dictionary makes existing
+hashes impossible to inflate. Evolve URL state compatibly whenever possible by adding optional
+properties and handling their absence. If a compatible change is impossible, bump `UrlState.v` and
+make a reasonable attempt to migrate older schema versions in `unpackUs`. `HASH_VERSION` is reserved
+for compression-dictionary rebuilds, significant static-data compatibility changes, and major
+application versions. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
 `src/pack.ts` is why a hash of a hundred recipes is ~950 characters rather than ~2200: a prototype
 id is a name — the game has no numeric ids — and at 26 characters apiece the names were most of the

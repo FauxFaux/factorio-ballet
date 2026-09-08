@@ -10,6 +10,10 @@ import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts'
 import { COMMON_IDS } from './data/common-ids.ts';
 
 export interface UrlState {
+  /**
+   * Version of the JSON state schema. Prefer backward-compatible additions; bump this only when a
+   * migration is necessary, and teach `unpackUs` to migrate older versions when practical.
+   */
   v: 1;
   /** the ResourceList search box */
   rs: string;
@@ -53,15 +57,18 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
 
 /**
  * The letter every hash starts with, so that a hash written by an older build is refused rather
- * than misread. Bump the letter whenever the shape of `UrlState` changes — the dictionary is
- * derived from a state of the current shape, so a field added to one invalidates every hash anyway.
+ * than misread. This is deliberately independent of ordinary `UrlState` evolution: reserve a new
+ * letter for a rebuilt compression dictionary, a significant static-data compatibility break, or
+ * a major application version. Prefer optional, defaulted state fields for compatible changes. If
+ * that is impossible, bump `UrlState.v` and make a reasonable attempt to migrate older schemas in
+ * `unpackUs`.
  *
  * The rest of it is `pack.ts`'s fingerprint, which does the same job for the dataset: cells are
  * packed as indices into `static.json`'s prototype lists, so regenerating it renumbers every saved
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `x${fingerprint}`;
+const HASH_VERSION = `y${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -140,16 +147,19 @@ export function UrlHandler() {
 }
 
 /**
- * What a full-ish plan looks like once packed, as the deflate dictionary: a hash is a few hundred
+ * A frozen example of what a full-ish plan looks like once packed, used as the deflate dictionary:
+ * a hash is a few hundred
  * bytes, far too short for deflate to learn the key names from the payload itself, so it is handed
  * them.
  *
- * A literal, and in the packed shape rather than run through `packCells` — what earns its place
- * here is the punctuation around the numbers (`{"recipe":`, `,"machine":`, `"entries":[`), and
- * deriving it from real data would tie the dictionary to the dataset those recipes came from. The
- * numbers below are real indices all the same, so that their widths are representative.
+ * Keep this literal unchanged when `UrlState` gains or loses fields: changing the dictionary makes
+ * existing hashes impossible to inflate. It is intentionally typed only as a generic record so
+ * TypeScript does not force it to track the current state schema. What earns its place here is the
+ * punctuation around the numbers (`{"recipe":`, `,"machine":`, `"entries":[`), and deriving it
+ * from real data would tie the dictionary to the dataset those recipes came from. The numbers below
+ * are real indices all the same, so that their widths are representative.
  */
-const referenceState: PackedState = {
+const referenceState: Record<string, unknown> = {
   v: 1,
   rs: 'silicon',
   cs: 'makes:item:copper-plate',

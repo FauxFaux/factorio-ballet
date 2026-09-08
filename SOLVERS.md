@@ -87,7 +87,9 @@ balanced. Calling `matrixSolver.solve` directly bypasses the cell's import/expor
 `cellInterface` classifies resources structurally, independently of solved counts, and moves
 explicit boundaries into `inputs` or `outputs`. Search scopes and the debug JSON use that
 classification. The settings persist through `PackedCell` as resource names. State-shape changes
-require reviewing the URL format and bumping `HASH_VERSION` according to repository guidance.
+must remain backward compatible where possible: add optional properties and handle their absence.
+Otherwise bump `UrlState.v` and attempt a migration; do not bump `HASH_VERSION` merely for a state
+shape change.
 
 ## Uranium case study
 
