@@ -1,0 +1,7 @@
+.from-air-button {
+  background: none;
+}
+
+.from-air-button:hover {
+  background: var(--accent-bg);
+}

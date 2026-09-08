@@ -7,6 +7,8 @@ import type { MachineId, ResourceId } from './types.ts';
 import type { UrlState } from './url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
+import { FromAir } from './components/from-air.tsx';
+import { FromAirButton } from './components/from-air-button.tsx';
 import { ImportButton } from './components/import-button.tsx';
 import { ModuleBar } from './components/module.tsx';
 import { ProgressSlider } from './components/progress-slider.tsx';
@@ -72,33 +74,40 @@ export function App({ uss }: { uss: State<UrlState> }) {
             }
           />
           <DebugButton uss={uss} />
+          <FromAirButton uss={uss} />
         </div>
       </header>
-      <CellList
-        cells={field(uss, 'cl')}
-        active={field(uss, 'ci')}
-        progress={progress}
-        chosen={chosen}
-        setSearch={recipeSearch[1]}
-      />
-      <div class="columns">
-        <ResourceList
-          search={field(uss, 'rs')}
-          progress={progress}
-          onPick={(id) => {
-            setSelectedResource(id);
-            recipeSearch[1](`makes:${id}`);
-          }}
-        />
-        <RecipeList
-          search={recipeSearch}
-          progress={progress}
-          scope={scope}
-          onAdd={addRecipe}
-          inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
-        />
-        <VoidPath resource={selectedResource} />
-      </div>
+      {us.fa ? (
+        <FromAir />
+      ) : (
+        <>
+          <CellList
+            cells={field(uss, 'cl')}
+            active={field(uss, 'ci')}
+            progress={progress}
+            chosen={chosen}
+            setSearch={recipeSearch[1]}
+          />
+          <div class="columns">
+            <ResourceList
+              search={field(uss, 'rs')}
+              progress={progress}
+              onPick={(id) => {
+                setSelectedResource(id);
+                recipeSearch[1](`makes:${id}`);
+              }}
+            />
+            <RecipeList
+              search={recipeSearch}
+              progress={progress}
+              scope={scope}
+              onAdd={addRecipe}
+              inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
+            />
+            <VoidPath resource={selectedResource} />
+          </div>
+        </>
+      )}
     </main>
   );
 }

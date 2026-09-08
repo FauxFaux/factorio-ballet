@@ -38,6 +38,8 @@ export interface UrlState {
    * which belt a future throughput check should use. Absent follows `gp` through `defaultBelt`.
    */
   bt?: BeltChoice;
+  /** Show the from-air planner rather than the usual cell planner. */
+  fa?: true;
 }
 
 const defaultUs: UrlState = { v: 1, rs: '', cs: '', gp: 0, cl: [], ci: 0, mo: {} };
@@ -55,7 +57,7 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `u${fingerprint}`;
+const HASH_VERSION = `w${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);
@@ -233,6 +235,7 @@ const referenceState: PackedState = {
   },
   be: 'bob-beacon-2',
   bt: 'bob-turbo-transport-belt',
+  fa: true,
 };
 
 const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));

@@ -1,0 +1,64 @@
+.from-air {
+  max-width: 64rem;
+}
+.from-air-intro {
+  max-width: 48rem;
+}
+.from-air-stages,
+.from-air-recipes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.from-air-stages {
+  display: grid;
+  gap: 1rem;
+}
+.from-air-stage {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--code-bg);
+}
+.from-air-stage h3 {
+  margin: 0 0 0.5rem;
+}
+.from-air-recipes {
+  display: grid;
+  gap: 0.5rem;
+}
+.from-air-recipe {
+  display: grid;
+  grid-template-columns: 1.7778rem minmax(10rem, 1fr) minmax(0, 2fr);
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+.from-air-recipe-icon {
+  width: 1.7778rem;
+  height: 1.7778rem;
+}
+.from-air-recipe-name {
+  overflow-wrap: anywhere;
+}
+.from-air-adds {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.75rem;
+  min-width: 0;
+}
+.from-air-resource {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+@media (max-width: 800px) {
+  .from-air-recipe {
+    grid-template-columns: 1.7778rem minmax(0, 1fr);
+  }
+  .from-air-adds {
+    grid-column: 2;
+  }
+}
