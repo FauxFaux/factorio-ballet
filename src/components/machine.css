@@ -13,6 +13,18 @@
   border-color: var(--accent);
 }
 
+.machine.is-speed-below {
+  flex-direction: column;
+  align-items: center;
+  padding: 1px;
+}
+
+.machine.is-speed-below .machine-speed {
+  font-size: 0.7778rem;
+  line-height: 1;
+  text-align: center;
+}
+
 /* a chip which is a choice, rather than a list of what could run the recipe */
 button.machine {
   font: inherit;

@@ -16,6 +16,7 @@ export function MachineChip({
   active,
   title,
   compactSpeed = false,
+  speedBelow = false,
   onClick,
   onMouseEnter,
 }: {
@@ -26,11 +27,15 @@ export function MachineChip({
   title?: string;
   /** Use single-character fractions to keep a row of candidate machines compact. */
   compactSpeed?: boolean;
+  /** Place the multiplier below the machine icon, for the recipe machine row. */
+  speedBelow?: boolean;
   onClick?: () => void;
   onMouseEnter?: () => void;
 }) {
   const speed = `${formatMachineSpeed(machine.speed, compactSpeed)}×`;
-  const classes = active ? 'machine is-active' : 'machine';
+  const classes = ['machine', active ? 'is-active' : '', speedBelow ? 'is-speed-below' : '']
+    .filter(Boolean)
+    .join(' ');
   const label = title ?? `${machineName(id)} (${id}) at ${speed}`;
   const inner = (
     <>

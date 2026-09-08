@@ -186,8 +186,7 @@
   color: var(--accent);
 }
 
-/* The machines wrap in the left column; the right one is reserved for the productivity chip, so
- * it stays at the right edge however many lines the machines take. */
+/* The machines and their beacon previews wrap together; productivity stays at the right edge. */
 .recipe-machines {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -235,6 +234,36 @@
 
 .productivity:not(.is-allowed) .productivity-check {
   visibility: hidden;
+}
+
+/* They sit at the end of the machine chip list, in ordinary one-to-three count order. */
+.recipe-beacons {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.recipe-beacon {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1px;
+  background: none;
+  cursor: pointer;
+}
+
+.recipe-beacon:hover {
+  background: var(--accent-bg);
+}
+
+.recipe-beacon.is-active {
+  border-color: var(--accent);
+}
+
+.recipe-beacon-icon {
+  display: inline-block;
+  width: 1.7778rem;
+  height: 1.7778rem;
 }
 
 /* the one control on a search result: put this recipe in the cell being worked on */

@@ -95,6 +95,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
               onAdd={addRecipe}
               onResourcePick={setSelectedResource}
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
+              chosen={chosen}
             />
             <VoidPath resource={selectedResource} />
           </div>

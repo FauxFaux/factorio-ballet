@@ -1,5 +1,6 @@
 import { useMemo } from 'preact/hooks';
 import { staticData } from '../data/index.ts';
+import type { Chosen } from '../data/index.ts';
 import { flipDirection, searchMatches, type SearchScope } from '../search.ts';
 import type { State } from '../ts.ts';
 import type { MachineId, ResourceId } from '../types.ts';
@@ -40,6 +41,7 @@ export function RecipeList({
   onAdd,
   onResourcePick,
   inCell,
+  chosen,
 }: {
   search: State<string>;
   progress: number;
@@ -49,6 +51,8 @@ export function RecipeList({
   /** Select a resource outside the search, for example to show its void paths. */
   onResourcePick?: (resource: ResourceId) => void;
   inCell?: (recipe: string) => boolean;
+  /** The header's resolved module and beacon choices, shared by every search result. */
+  chosen: Chosen;
 }) {
   const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
   const ordered = useMemo(() => {
@@ -119,6 +123,7 @@ export function RecipeList({
             onAdd={onAdd && ((machine) => onAdd(result.match.id, machine))}
             inCell={inCell?.(result.match.id)}
             progress={progress}
+            chosen={chosen}
           />
         ) : (
           <div key={`resource:${result.match.id}`} class="recipe-resource-match">

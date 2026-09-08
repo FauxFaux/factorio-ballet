@@ -3,9 +3,10 @@ import type { MachineId, ResourceId } from '../types.ts';
 import { Fragment } from 'preact';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
+import { NO_CHOICE, type Chosen } from '../data/index.ts';
 import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
-import { flowTitle, recipeFlows, speedOf, type Flow } from '../flow.ts';
-import { recipeIconStyle } from './icon.tsx';
+import { flowTitle, laidOutEffects, recipeFlows, speedOf, type Flow } from '../flow.ts';
+import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 
@@ -24,6 +25,7 @@ export function RecipeCard({
   onAdd,
   inCell,
   progress,
+  chosen,
 }: {
   match: RecipeMatch;
   onPick: (id: ResourceId) => void;
@@ -33,20 +35,44 @@ export function RecipeCard({
   inCell?: boolean;
   /** Overall game progress, used to choose the card's unselected machine. */
   progress: number;
+  /** The header's modules and beacon, used to preview a beaconed default machine. */
+  chosen?: Chosen;
 }) {
   const [open, setOpen] = useState(false);
   /** The machine chosen from this card, whose speed its numbers are quoted at. */
   const [selectedMachine, setSelectedMachine] = useState<MachineId | undefined>(undefined);
   /** The machine under the pointer, which temporarily previews its rates. */
   const [hoveredMachine, setHoveredMachine] = useState<MachineId | undefined>(undefined);
+  /** The beacon count under the pointer, or the count selected with a click. */
+  const [hoveredBeacons, setHoveredBeacons] = useState<number | undefined>(undefined);
+  const [selectedBeacons, setSelectedBeacons] = useState<number | undefined>(undefined);
   const machines = machinesFor(recipe);
   const defaultMachineId = defaultMachine(machines, progress)?.id;
-  const displayedMachine = hoveredMachine ?? selectedMachine ?? defaultMachineId;
-  const speed = speedOf(machines, displayedMachine);
+  /* A machine under the pointer is a direct comparison with its unmodded rate. Keep a clicked
+     beacon choice ready to resume afterwards, but do not combine it with that comparison. */
+  const beaconCount =
+    hoveredMachine === undefined ? (hoveredBeacons ?? selectedBeacons) : undefined;
+  /* A beacon preview intentionally starts from the automatic assembler, rather than augmenting a
+     machine the user happened to inspect. It is a compact comparison with the card's baseline. */
+  const displayedMachine = beaconCount
+    ? defaultMachineId
+    : (hoveredMachine ?? selectedMachine ?? defaultMachineId);
+  const baseSpeed = speedOf(machines, displayedMachine);
+  const beaconSpeed = beaconCount
+    ? beaconedSpeed(machines, defaultMachineId, recipe, chosen ?? NO_CHOICE, beaconCount)
+    : 1;
+  const speed = baseSpeed * beaconSpeed;
   const { ins, outs } = recipeFlows(recipe, machines, speed);
 
   const classes = ['recipe-card'];
-  if (hoveredMachine !== undefined || selectedMachine !== undefined) classes.push('is-previewing');
+  if (
+    hoveredMachine !== undefined ||
+    selectedMachine !== undefined ||
+    hoveredBeacons !== undefined ||
+    selectedBeacons !== undefined
+  ) {
+    classes.push('is-previewing');
+  }
   if (recipe.synthetic) classes.push('is-synthetic');
 
   return (
@@ -84,9 +110,35 @@ export function RecipeCard({
         onChoose={(machine) =>
           setSelectedMachine((current) => (current === machine ? undefined : machine))
         }
+        beacon={chosen?.beacon}
+        beaconCount={beaconCount}
+        onBeaconHover={setHoveredBeacons}
+        onBeaconChoose={(count) =>
+          setSelectedBeacons((current) => (current === count ? undefined : count))
+        }
       />
     </div>
   );
+}
+
+/** The speed multiplier from full selected beacons around an otherwise unmodded default machine. */
+function beaconedSpeed(
+  machines: MachineMatch[],
+  machineId: MachineId | undefined,
+  recipe: RecipeMatch['recipe'],
+  chosen: Chosen,
+  beacons: number,
+): number {
+  const machine = machines.find(({ id }) => id === machineId)?.machine;
+  if (!machine) return 1;
+  return laidOutEffects(
+    machine,
+    undefined,
+    recipe,
+    chosen.modules,
+    { productivity: 0, speed: 0, beacons },
+    chosen.beacon,
+  ).effects.speed;
 }
 
 /** The unfolded form: a row per flow, with amounts per craft and rates per second. */
@@ -166,6 +218,10 @@ function MachineRow({
   displayedMachine,
   onHover,
   onChoose,
+  beacon,
+  beaconCount,
+  onBeaconHover,
+  onBeaconChoose,
 }: {
   machines: MachineMatch[];
   allowProductivity: boolean;
@@ -173,14 +229,26 @@ function MachineRow({
   displayedMachine?: MachineId;
   onHover: (id: MachineId | undefined) => void;
   onChoose: (id: MachineId) => void;
+  /** Omitted until the header has a beacon to put round this machine. */
+  beacon: Chosen['beacon'];
+  /** The hovered or selected count, whose icons and default machine are active. */
+  beaconCount: number | undefined;
+  onBeaconHover: (count: number | undefined) => void;
+  onBeaconChoose: (count: number) => void;
 }) {
   if (machines.length === 0) return null;
 
   return (
     <div class="recipe-machines">
-      {/* Clearing after the pointer leaves the list rather than each chip avoids a flash through the
-          selected/default rates in the gap between adjacent chips. */}
-      <div class="machine-list" onMouseLeave={() => onHover(undefined)}>
+      {/* Clearing after the pointer leaves the combined choices rather than each chip avoids a
+          flash through the selected/default rates in their gaps. */}
+      <div
+        class="machine-list"
+        onMouseLeave={() => {
+          onHover(undefined);
+          onBeaconHover(undefined);
+        }}
+      >
         {machines.map(({ id, machine }) => (
           <MachineChip
             key={id}
@@ -188,12 +256,63 @@ function MachineRow({
             machine={machine}
             active={id === displayedMachine}
             compactSpeed
+            speedBelow
             onClick={() => onChoose(id)}
             onMouseEnter={() => onHover(id)}
           />
         ))}
+        {beacon ? (
+          <BeaconButtons
+            beacon={beacon}
+            active={beaconCount}
+            onHover={(count) => {
+              onHover(undefined);
+              onBeaconHover(count);
+            }}
+            onChoose={onBeaconChoose}
+          />
+        ) : null}
       </div>
       <ProductivityChip allowed={allowProductivity} />
+    </div>
+  );
+}
+
+/** Three additive beacon choices, immediately following the machine row in count order. */
+function BeaconButtons({
+  beacon,
+  active,
+  onHover,
+  onChoose,
+}: {
+  beacon: NonNullable<Chosen['beacon']>;
+  active: number | undefined;
+  onHover: (count: number | undefined) => void;
+  onChoose: (count: number) => void;
+}) {
+  return (
+    <div class="recipe-beacons">
+      {[1, 2, 3].map((count) => {
+        const isActive = active !== undefined && count <= active;
+        const label = `${count} ${count === 1 ? 'beacon' : 'beacons'} around the default assembler`;
+        return (
+          <button
+            key={count}
+            type="button"
+            class={isActive ? 'recipe-beacon is-active' : 'recipe-beacon'}
+            title={label}
+            aria-label={label}
+            onMouseEnter={() => onHover(count)}
+            onClick={() => onChoose(count)}
+          >
+            <span
+              class="recipe-beacon-icon"
+              style={resourceIconStyle(`item:${beacon.item}`)}
+              aria-hidden="true"
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
