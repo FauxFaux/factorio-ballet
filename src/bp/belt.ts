@@ -1,31 +1,3 @@
-export {
-  beltDirection,
-  beltLaneKey,
-  isBeltEntity,
-  isInserterEntity,
-  isSplitterEntity,
-  isTransportBeltEntity,
-  isUndergroundBeltEntity,
-} from './belt-model.ts';
-export type {
-  BeltConnection,
-  BeltConnectionKind,
-  BeltDirection,
-  BeltEntity,
-  BeltGraph,
-  BeltLane,
-  BeltLaneRef,
-  BeltTrace,
-  BeltTraceStop,
-  InserterTransfer,
-  SplitterEntity,
-  SplitterLine,
-  TransportBeltEntity,
-  UndergroundBeltEntity,
-  UndergroundPair,
-} from './belt-model.ts';
-export { traceBeltPaths, traceBeltToSplitter } from './belt-trace.ts';
-
 import type {
   BeltConnection,
   BeltDirection,

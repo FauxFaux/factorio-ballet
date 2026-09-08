@@ -1,4 +1,5 @@
-import { beltLaneKey, buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
+import { buildBeltGraph } from '../../bp/belt.ts';
+import { beltLaneKey, type BeltLaneRef } from '../../bp/belt-model.ts';
 import type {
   DesignAssembler,
   DesignColumn,

@@ -1,11 +1,13 @@
 import {
-  beltLaneKey,
   buildBeltGraph,
+} from '../../bp/belt.ts';
+import {
+  beltLaneKey,
   type BeltGraph,
   type BeltLane,
   type BeltLaneRef,
   type SplitterLine,
-} from '../../bp/belt.ts';
+} from '../../bp/belt-model.ts';
 import type { Entity, Position } from '../../bp/decode.ts';
 import type {
   DesignAssembler,

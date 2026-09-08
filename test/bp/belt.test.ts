@@ -2,11 +2,9 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import {
   buildBeltGraph,
-  isBeltEntity,
-  traceBeltPaths,
-  traceBeltToSplitter,
-  type BeltLaneRef,
 } from '../../src/bp/belt.ts';
+import { isBeltEntity, type BeltLaneRef } from '../../src/bp/belt-model.ts';
+import { traceBeltPaths, traceBeltToSplitter } from '../../src/bp/belt-trace.ts';
 import { decode } from '../../src/bp/decode.ts';
 
 const fixture = decode(
