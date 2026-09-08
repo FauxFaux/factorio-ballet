@@ -48,6 +48,8 @@ export {
   type EntityPositionStatus,
 } from './design-entities.tsx';
 export { beltLoopEntityIndexes } from './design-belts.ts';
+export { assemblerInputStatuses } from './design-belts.ts';
+export type { AssemblerInputStatus } from './design-belts.ts';
 export { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
 export type {
   DesignLaneAnalysis,

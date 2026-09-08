@@ -1,5 +1,10 @@
 import { beltLaneKey, buildBeltGraph, type BeltLaneRef } from '../../bp/belt.ts';
-import type { DesignColumn, DesignDirection, DesignPosition } from '../../design.ts';
+import type {
+  DesignAssembler,
+  DesignColumn,
+  DesignDirection,
+  DesignPosition,
+} from '../../design.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
 import { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
 
@@ -14,6 +19,75 @@ export interface BeltItemTrace {
 }
 
 type RecipeProducts = Readonly<Record<string, Pick<Recipe, 'products'>>>;
+type RecipeIngredients = Readonly<Record<string, Pick<Recipe, 'ingredients'>>>;
+
+export interface AssemblerInputStatus {
+  satisfied: boolean;
+  /** Item ingredients which cannot be taken from any connected belt. */
+  missing: ResourceId[];
+}
+
+/**
+ * Return whether each assembler can take all of its item ingredients from connected belts.
+ *
+ * An inserter can take either lane of its source belt, so one inserter may supply two ingredients.
+ * Empty and mixed lanes do not provide a dependable item. Fluid ingredients are intentionally not
+ * considered here because they are supplied by pipes rather than belts.
+ */
+export function assemblerInputStatuses(
+  column: DesignColumn,
+  recipes: RecipeIngredients & RecipeProducts,
+): Map<number, AssemblerInputStatus> {
+  const analysis = analyzeDesignLanes(column, recipes);
+  const suppliedByAssembler = new Map<number, Set<ResourceId>>();
+  const connectedAssemblers = new Set<number>();
+
+  for (const transfer of analysis.graph.inserterTransfers) {
+    if (transfer.sourceBeltLanes.length === 0) continue;
+    const inserter = column.entities[transfer.inserter.entity_number];
+    if (!inserter || inserter.kind !== 'inserter') continue;
+    const drop = addPosition(inserter.position, directionVector(inserter.direction));
+    const assemblerIndexes = column.entities.flatMap((entity, entityIndex) =>
+      entity.kind === 'assembler' && contains(entity, drop) ? [entityIndex] : [],
+    );
+    if (assemblerIndexes.length !== 1) continue;
+    const assemblerIndex = assemblerIndexes[0];
+
+    connectedAssemblers.add(assemblerIndex);
+    const supplied = suppliedByAssembler.get(assemblerIndex) ?? new Set<ResourceId>();
+    for (const lane of transfer.sourceBeltLanes) {
+      const item = singleLaneItem(analysis.contents.get(beltLaneKey(lane)));
+      if (item) supplied.add(item);
+    }
+    suppliedByAssembler.set(assemblerIndex, supplied);
+  }
+
+  const statuses = new Map<number, AssemblerInputStatus>();
+  column.entities.forEach((entity, entityIndex) => {
+    if (entity.kind !== 'assembler') return;
+    const required = assemblerItemIngredients(entity, recipes);
+    const supplied = suppliedByAssembler.get(entityIndex) ?? new Set<ResourceId>();
+    const missing = required.filter((item) => !supplied.has(item));
+    statuses.set(entityIndex, {
+      satisfied: connectedAssemblers.has(entityIndex) && missing.length === 0,
+      missing,
+    });
+  });
+  return statuses;
+}
+
+function assemblerItemIngredients(
+  assembler: DesignAssembler,
+  recipes: RecipeIngredients,
+): ResourceId[] {
+  return [
+    ...new Set(
+      (recipes[assembler.recipe]?.ingredients ?? [])
+        .map(({ resource }) => resource)
+        .filter((resource): resource is ResourceId => resource.startsWith('item:')),
+    ),
+  ];
+}
 
 /**
  * Return the individually traceable items on each ordinary transport belt.
@@ -90,6 +164,32 @@ function factorioDirection(direction: DesignDirection): 0 | 4 | 8 | 12 {
     case 'west':
       return 12;
   }
+}
+
+function directionVector(direction: DesignDirection): DesignPosition {
+  switch (direction) {
+    case 'north':
+      return { x: 0, y: -1 };
+    case 'east':
+      return { x: 1, y: 0 };
+    case 'south':
+      return { x: 0, y: 1 };
+    case 'west':
+      return { x: -1, y: 0 };
+  }
+}
+
+function addPosition(left: DesignPosition, right: DesignPosition): DesignPosition {
+  return { x: left.x + right.x, y: left.y + right.y };
+}
+
+function contains(assembler: DesignAssembler, point: DesignPosition): boolean {
+  return (
+    point.x >= assembler.position.x &&
+    point.x < assembler.position.x + assembler.size.width &&
+    point.y >= assembler.position.y &&
+    point.y < assembler.position.y + assembler.size.height
+  );
 }
 
 function connectedBeltIndexes(
