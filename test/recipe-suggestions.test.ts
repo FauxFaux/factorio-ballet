@@ -84,6 +84,24 @@ describe('scoreRecipeSuggestion', () => {
       scoreRecipeSuggestion({ ...plan, outputs: [] }, new Set(), new Set()),
     );
   });
+
+  it('penalizes a returned catalyst that is not already at the cell boundary', () => {
+    const plan = { recipes: ['angels-ore8-powder'] };
+    const catalyst = 'item:angels-milling-drum';
+
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeLessThan(
+      scoreRecipeSuggestion(plan, new Set(), new Set([catalyst])),
+    );
+  });
+
+  it('recognizes a returned ingredient as a catalyst even without productivity metadata', () => {
+    const plan = { recipes: ['angels-water-enriched-cooling-1'] };
+    const catalyst = 'fluid:angels-liquid-water-semiheavy-1';
+
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeLessThan(
+      scoreRecipeSuggestion(plan, new Set(), new Set([catalyst])),
+    );
+  });
 });
 
 describe('suggestedRecipePaths', () => {

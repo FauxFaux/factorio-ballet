@@ -55,6 +55,31 @@ function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain 
 }
 
 /**
+ * A catalyst is returned by a recipe, so it disappears from a path's net boundary flows. It still
+ * has to be available to start the path, unless the cell already has it.
+ */
+function additionalCatalystInputs(
+  plan: ResourceChain | VoidPlan,
+  existingResources: ReadonlySet<ResourceId>,
+): ResourceId[] {
+  return [
+    ...new Set(
+      plan.recipes.flatMap((id) => {
+        const recipe = staticData.recipes[id];
+        if (!recipe) return [];
+        const ingredientResources = new Set(recipe.ingredients.map(({ resource }) => resource));
+        return recipe.products
+          .filter(
+            ({ resource, ignoredByProductivity }) =>
+              ignoredByProductivity !== undefined || ingredientResources.has(resource),
+          )
+          .map(({ resource }) => resource);
+      }),
+    ),
+  ].filter((resource) => !existingResources.has(resource));
+}
+
+/**
  * Rank a path by the boundary flows it adds to a cell. Closed void paths have no extra boundary
  * flows, while chains are rewarded for joining edges the cell already has.
  */
@@ -62,13 +87,18 @@ export function scoreRecipeSuggestion(
   plan: ResourceChain | VoidPlan,
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
+  presentResources = new Set([...existingInputs, ...existingOutputs]),
 ): number {
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
-  const reusedInputs = inputs.filter((resource) => existingInputs.has(resource)).length;
+  const catalystInputs = additionalCatalystInputs(plan, presentResources).filter(
+    (resource) => !inputs.includes(resource),
+  );
+  const allInputs = [...inputs, ...catalystInputs];
+  const reusedInputs = allInputs.filter((resource) => existingInputs.has(resource)).length;
   const reusedOutputs = outputs.filter((resource) => existingOutputs.has(resource)).length;
   const suppliesInput = isResourceChain(plan) && existingInputs.has(plan.target);
-  const inputComplexity = inputs.reduce(
+  const inputComplexity = allInputs.reduce(
     (total, resource) => total + (staticData.resources[resource]?.complexity ?? 1),
     0,
   );
@@ -126,6 +156,16 @@ export function suggestedRecipePaths(
   const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
   const existingOutputs = new Set(outputs);
+  const presentResources = new Set([
+    ...existingInputs,
+    ...existingOutputs,
+    ...(cell?.entries.flatMap(({ recipe: id }) => {
+      const recipe = staticData.recipes[id];
+      return recipe
+        ? [...recipe.ingredients, ...recipe.products].map(({ resource }) => resource)
+        : [];
+    }) ?? []),
+  ]);
   const chains = suggestedResourceChains(cell);
 
   return suggestedVoidResources(search, cell, resource)
@@ -145,13 +185,13 @@ export function suggestedRecipePaths(
           resource: id,
           kind: 'void' as const,
           plan,
-          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs),
+          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs, presentResources),
         })),
         ...resourceChains.map((plan) => ({
           resource: id,
           kind: 'chain' as const,
           plan,
-          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs),
+          score: scoreRecipeSuggestion(plan, existingInputs, existingOutputs, presentResources),
         })),
       ];
     })
