@@ -156,8 +156,9 @@ export function fromAirStages(
   progress = 1,
 ): FromAirStage[] {
   const allowed = new Set<ResourceId>();
-  const remaining = Object.entries(data.recipes).filter(([id, recipe]) =>
-    usableFromAirRecipe(id, recipe, infiniteMining) && complexityOf(recipe) <= progress,
+  const remaining = Object.entries(data.recipes).filter(
+    ([id, recipe]) =>
+      usableFromAirRecipe(id, recipe, infiniteMining) && complexityOf(recipe) <= progress,
   );
   const inputRecipeIds = new Map<ResourceId, Set<string>>();
   for (const [id, recipe] of remaining) {

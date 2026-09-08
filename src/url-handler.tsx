@@ -7,6 +7,7 @@ import type { BeaconChoice, BeltChoice } from './data/index.ts';
 import type { ModuleChoice } from './data/modules.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
+import { COMMON_IDS } from './data/common-ids.ts';
 
 export interface UrlState {
   v: 1;
@@ -241,7 +242,7 @@ const referenceState: PackedState = {
   fa: 'infinite-mining',
 };
 
-const urlDictionary = strToU8(JSON.stringify(shallowSortKeys(referenceState)));
+const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(referenceState)));
 
 function packUs(us: UrlState): string {
   const packed: PackedState = { ...us, cl: packCells(us.cl) };

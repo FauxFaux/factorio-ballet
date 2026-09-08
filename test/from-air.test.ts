@@ -31,10 +31,7 @@ describe('fromAirStages', () => {
         blocked: recipe([unreachable], ['item:never']),
       },
     });
-    expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([
-      ['compress'],
-      ['separate'],
-    ]);
+    expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([['compress'], ['separate']]);
   });
 
   it('includes pumping and excludes every synthetic mining recipe', () => {
