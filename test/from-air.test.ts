@@ -28,7 +28,6 @@ describe('fromAirStages', () => {
     expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([
       ['compress'],
       ['separate'],
-      ['smelt'],
     ]);
   });
 
@@ -39,6 +38,7 @@ describe('fromAirStages', () => {
         'synthetic:pumping-water': recipe([], [water], true),
         'synthetic:mining-ore': recipe([], ['item:ore'], true),
         wash: recipe([water], ['item:washed']),
+        useWashed: recipe(['item:washed'], ['item:washed-product']),
       },
     });
     expect(stages.flat().map(({ id }) => id)).toEqual(['synthetic:pumping-water', 'wash']);
@@ -52,6 +52,7 @@ describe('fromAirStages', () => {
           'synthetic:pumping-water': recipe([], [water], true),
           'synthetic:mining-coal': recipe([], ['item:finite-coal'], true),
           'synthetic:mining-infinite-coal': recipe([water], ['item:coal'], true),
+          useCoal: recipe(['item:coal'], ['item:coal-product']),
         },
       },
       true,
@@ -65,12 +66,28 @@ describe('fromAirStages', () => {
 
   it('lists all products newly added by a recipe only once', () => {
     const air = 'fluid:air';
+    const nitrogen = 'fluid:nitrogen';
     const stages = fromAirStages({
       recipes: {
-        separate: recipe([], [air, air, 'fluid:nitrogen']),
+        separate: recipe([], [air, air, nitrogen]),
+        useAir: recipe([air], ['item:air-product']),
+        useNitrogen: recipe([nitrogen], ['item:nitrogen-product']),
       },
     });
-    expect(stages[0][0].adds).toEqual([air, 'fluid:nitrogen']);
+    expect(stages[0][0].adds).toEqual([air, nitrogen]);
+  });
+
+  it('does not display or unlock products with no downstream recipe input', () => {
+    const intermediate = 'item:intermediate';
+    const stages = fromAirStages({
+      recipes: {
+        source: recipe([], [intermediate, 'item:unused']),
+        consume: recipe([intermediate], ['item:final-product']),
+      },
+    });
+
+    expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([['source']]);
+    expect(stages[0][0].adds).toEqual([intermediate]);
   });
 
   it('bootstraps a productive cycle with its circulating resource as an assumed input', () => {

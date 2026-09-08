@@ -32,6 +32,23 @@ function addAmount(amounts: Map<ResourceId, number>, resource: ResourceId, amoun
   amounts.set(resource, (amounts.get(resource) ?? 0) + amount);
 }
 
+/** Resources are only useful to this planner when another recipe can consume them. */
+function usefulProducts(
+  entries: RecipeEntry[],
+  allowed: Set<ResourceId>,
+  inputRecipeIds: Map<ResourceId, Set<string>>,
+): ResourceId[] {
+  const products = new Set<ResourceId>();
+  for (const [id, recipe] of entries) {
+    for (const { resource } of recipe.products) {
+      const consumers = inputRecipeIds.get(resource);
+      if ([...(consumers ?? [])].some((consumerId) => consumerId !== id) && !allowed.has(resource))
+        products.add(resource);
+    }
+  }
+  return [...products];
+}
+
 /** Minimal one- and two-recipe cycles through resources which have not been unlocked yet. */
 function recipeComponents(entries: RecipeEntry[], allowed: Set<ResourceId>): RecipeEntry[][] {
   const components: RecipeEntry[][] = [];
@@ -141,29 +158,33 @@ export function fromAirStages(
   const remaining = Object.entries(data.recipes).filter(([id, recipe]) =>
     usableFromAirRecipe(id, recipe, infiniteMining),
   );
+  const inputRecipeIds = new Map<ResourceId, Set<string>>();
+  for (const [id, recipe] of Object.entries(data.recipes)) {
+    for (const { resource } of recipe.ingredients) {
+      const ids = inputRecipeIds.get(resource) ?? new Set<string>();
+      ids.add(id);
+      inputRecipeIds.set(resource, ids);
+    }
+  }
   const stages: FromAirStage[] = [];
 
   while (true) {
     // Ingredients unlocked here are deliberately unavailable until the next stage.
     const ordinary: FromAirRecipe[] = remaining
       .filter(([, recipe]) => recipe.ingredients.every(({ resource }) => allowed.has(resource)))
-      .map(([id, recipe]) => ({
-        id,
-        recipe,
-        adds: [...new Set(recipe.products.map(({ resource }) => resource))].filter(
-          (resource) => !allowed.has(resource),
-        ),
+      .map((entry) => ({
+        id: entry[0],
+        recipe: entry[1],
+        adds: usefulProducts([entry], allowed, inputRecipeIds),
       }))
       .filter(({ adds }) => adds.length > 0);
     const cycles = recipeComponents(remaining, allowed)
-      .map((component) => productiveCycle(component, allowed))
+      .map((component) => {
+        const cycle = productiveCycle(component, allowed);
+        return cycle && { ...cycle, adds: usefulProducts(component, allowed, inputRecipeIds) };
+      })
       .filter((cycle): cycle is FromAirRecipe => cycle !== undefined)
-      .map((cycle) => ({
-        ...cycle,
-        adds: [...new Set(cycle.recipe.products.map(({ resource }) => resource))].filter(
-          (resource) => !allowed.has(resource),
-        ),
-      }));
+      .filter(({ adds }) => adds.length > 0);
     const stage = [...ordinary, ...cycles];
 
     if (stage.length === 0) return stages;
