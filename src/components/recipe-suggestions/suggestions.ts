@@ -1,5 +1,6 @@
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { staticData } from '../../data/index.ts';
+import { isBarrelling, isUnbarrelling, isVoid } from '../../data/recipes.ts';
 import { parseSearch } from '../../search.ts';
 import type { ResourceId } from '../../types.ts';
 import {
@@ -34,7 +35,8 @@ const staticResourceChains = resourceChainFinder(staticData);
 function indexSoleRecipes(direction: 'ingredients' | 'products') {
   const recipes = new Map<ResourceId, string>();
   const ambiguous = new Set<ResourceId>();
-  for (const [id, recipe] of Object.entries(staticData.recipes))
+  for (const [id, recipe] of Object.entries(staticData.recipes)) {
+    if (isVoid(recipe) || isBarrelling(recipe) || isUnbarrelling(recipe)) continue;
     for (const resource of new Set(recipe[direction].map(({ resource }) => resource))) {
       if (ambiguous.has(resource)) continue;
       if (recipes.has(resource)) {
@@ -42,6 +44,7 @@ function indexSoleRecipes(direction: 'ingredients' | 'products') {
         ambiguous.add(resource);
       } else recipes.set(resource, id);
     }
+  }
   return recipes;
 }
 const soleProducer = indexSoleRecipes('products');

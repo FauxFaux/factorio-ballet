@@ -4,7 +4,7 @@ import { cleanup, render } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { h } from 'preact';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { newCell } from '../src/cell.ts';
+import { cellInterface, newCell } from '../src/cell.ts';
 import {
   RecipeSuggestions,
   scoreRecipeSuggestion,
@@ -66,6 +66,20 @@ describe('single-recipe interface suggestions', () => {
         target: 'item:speed-module-2',
         recipes: ['speed-module-2'],
       }),
+    );
+  });
+
+  it('does not count fluid unbarrelling as a competing producer', () => {
+    const nitrogen = 'fluid:angels-gas-nitrogen' as const;
+    const suggestions = suggestedSoleProducerInputs({
+      entries: [{ recipe: 'bob-silicon-nitride' }],
+    });
+
+    expect(cellInterface({ entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs).toContain(
+      nitrogen,
+    );
+    expect(suggestions).toContainEqual(
+      expect.objectContaining({ target: nitrogen, recipes: ['angels-air-separation'] }),
     );
   });
 

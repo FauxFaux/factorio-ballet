@@ -20,6 +20,8 @@ describe('recipe kinds', () => {
     expect(isUnbarrelling(staticData.recipes['water-barrel'])).toBe(false);
     expect(isUnbarrelling(staticData.recipes['empty-water-barrel'])).toBe(true);
     expect(isBarrelling(staticData.recipes['empty-water-barrel'])).toBe(false);
+    expect(isBarrelling(staticData.recipes['angels-gas-nitrogen-barrel'])).toBe(true);
+    expect(isUnbarrelling(staticData.recipes['empty-angels-gas-nitrogen-barrel'])).toBe(true);
   });
 
   it('detects synthetic recipes from their explicit marker', () => {

@@ -19,10 +19,9 @@ export function isVoid(recipe: Recipe): boolean {
   );
 }
 
-/** Whether a recipe puts a fluid into an empty barrel. */
+/** Whether a recipe puts a fluid into a barrel or canister. */
 export function isBarrelling(recipe: Recipe): boolean {
   return (
-    recipe.ingredients.some(({ resource }) => resource === 'item:barrel') &&
     recipe.ingredients.some(({ resource }) => resource.startsWith('fluid:')) &&
     recipe.products.some(
       ({ resource }) => resource.startsWith('item:') && resource.endsWith('-barrel'),
@@ -30,14 +29,12 @@ export function isBarrelling(recipe: Recipe): boolean {
   );
 }
 
-/** Whether a recipe takes a filled barrel apart into fluid and an empty barrel. */
+/** Whether a recipe takes a filled barrel apart into fluid. */
 export function isUnbarrelling(recipe: Recipe): boolean {
   return (
     recipe.ingredients.some(
       ({ resource }) => resource.startsWith('item:') && resource.endsWith('-barrel'),
-    ) &&
-    recipe.products.some(({ resource }) => resource.startsWith('fluid:')) &&
-    recipe.products.some(({ resource }) => resource === 'item:barrel')
+    ) && recipe.products.some(({ resource }) => resource.startsWith('fluid:'))
   );
 }
 
