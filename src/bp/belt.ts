@@ -1,73 +1,51 @@
+export {
+  beltDirection,
+  isBeltEntity,
+  isInserterEntity,
+  isSplitterEntity,
+  isTransportBeltEntity,
+  isUndergroundBeltEntity,
+} from './belt-model.ts';
+export type {
+  BeltConnection,
+  BeltConnectionKind,
+  BeltDirection,
+  BeltEntity,
+  BeltGraph,
+  BeltLane,
+  BeltLaneRef,
+  BeltTrace,
+  BeltTraceStop,
+  InserterTransfer,
+  SplitterEntity,
+  SplitterLine,
+  TransportBeltEntity,
+  UndergroundBeltEntity,
+  UndergroundPair,
+} from './belt-model.ts';
+export { traceBeltPaths, traceBeltToSplitter } from './belt-trace.ts';
+
+import type {
+  BeltConnection,
+  BeltDirection,
+  BeltEntity,
+  BeltGraph,
+  BeltLane,
+  BeltLaneRef,
+  InserterTransfer,
+  SplitterLine,
+  TransportBeltEntity,
+  UndergroundBeltEntity,
+  UndergroundPair,
+} from './belt-model.ts';
+import {
+  beltDirection,
+  isBeltEntity,
+  isInserterEntity,
+  isSplitterEntity,
+  isUndergroundBeltEntity,
+} from './belt-model.ts';
 import type { Entity, Position } from './decode.ts';
-
-export type BeltDirection = 0 | 4 | 8 | 12;
-export type BeltLane = 'left' | 'right';
-export type SplitterLine = 'left' | 'right';
-
-export interface TransportBeltEntity extends Entity {
-  direction?: BeltDirection;
-}
-
-export interface UndergroundBeltEntity extends TransportBeltEntity {
-  type: 'input' | 'output';
-}
-
-export interface SplitterEntity extends TransportBeltEntity {
-  input_priority?: SplitterLine;
-  output_priority?: SplitterLine;
-  filter?: string;
-}
-
-export type BeltEntity = TransportBeltEntity | UndergroundBeltEntity | SplitterEntity;
-
-/** One of the two item lanes on one belt line. Splitters have two parallel lines. */
-export interface BeltLaneRef {
-  entityNumber: number;
-  line: SplitterLine;
-  lane: BeltLane;
-  /** Splitter inputs and outputs are distinct; omitted for one-tile belt entities. */
-  splitterSide?: 'input' | 'output';
-}
-
-export type BeltConnectionKind = 'forward' | 'turn' | 'sideload' | 'underground' | 'splitter';
-
-export interface BeltConnection {
-  from: BeltLaneRef;
-  to: BeltLaneRef;
-  kind: BeltConnectionKind;
-}
-
-export interface UndergroundPair {
-  inputEntityNumber: number;
-  outputEntityNumber: number;
-  /** Number of tiles from the input through the output, including both endpoint tiles. */
-  span: number;
-}
-
-export interface InserterTransfer {
-  inserter: Entity;
-  source?: Entity;
-  target?: Entity;
-  /** Inserters may pick from either lane of the belt line under their pickup point. */
-  sourceBeltLanes: BeltLaneRef[];
-  /** Inserters drop on one lane, normally the lane farthest from their base. */
-  targetBeltLane?: BeltLaneRef;
-}
-
-export interface BeltGraph {
-  entities: BeltEntity[];
-  connections: BeltConnection[];
-  undergroundPairs: UndergroundPair[];
-  inserterTransfers: InserterTransfer[];
-}
-
-export type BeltTraceStop = 'splitter' | 'end' | 'branch' | 'cycle';
-
-export interface BeltTrace {
-  lanes: BeltLaneRef[];
-  connections: BeltConnection[];
-  stop: BeltTraceStop;
-}
 
 interface SurfacePort {
   entity: BeltEntity;
@@ -79,39 +57,6 @@ interface SurfacePort {
 
 const lanes: BeltLane[] = ['left', 'right'];
 const splitterLines: SplitterLine[] = ['left', 'right'];
-
-export function isTransportBeltEntity(entity: Entity): entity is TransportBeltEntity {
-  return entity.name === 'transport-belt' || entity.name.endsWith('-transport-belt');
-}
-
-export function isUndergroundBeltEntity(entity: Entity): entity is UndergroundBeltEntity {
-  return (
-    (entity.name === 'underground-belt' || entity.name.endsWith('-underground-belt')) &&
-    (entity.type === 'input' || entity.type === 'output')
-  );
-}
-
-export function isSplitterEntity(entity: Entity): entity is SplitterEntity {
-  return entity.name === 'splitter' || entity.name.endsWith('-splitter');
-}
-
-export function isBeltEntity(entity: Entity): entity is BeltEntity {
-  return (
-    isTransportBeltEntity(entity) || isUndergroundBeltEntity(entity) || isSplitterEntity(entity)
-  );
-}
-
-export function isInserterEntity(entity: Entity): boolean {
-  return entity.name === 'inserter' || entity.name.endsWith('-inserter');
-}
-
-export function beltDirection(entity: TransportBeltEntity): BeltDirection {
-  const direction = entity.direction ?? 0;
-  if (direction !== 0 && direction !== 4 && direction !== 8 && direction !== 12) {
-    throw new Error(`unsupported belt direction ${direction} on entity ${entity.entity_number}`);
-  }
-  return direction;
-}
 
 /** Build directed lane connectivity, including splitter choices and underground pairs. */
 export function buildBeltGraph(entities: Entity[]): BeltGraph {
@@ -165,83 +110,6 @@ export function buildBeltGraph(entities: Entity[]): BeltGraph {
     undergroundPairs,
     inserterTransfers: findInserterTransfers(entities, beltEntities),
   };
-}
-
-/**
- * Follow one lane until it reaches a splitter or can no longer be followed unambiguously.
- * The starting lane is included in the result.
- */
-export function traceBeltToSplitter(graph: BeltGraph, start: BeltLaneRef): BeltTrace {
-  const entityByNumber = new Map(graph.entities.map((entity) => [entity.entity_number, entity]));
-  const outgoing = connectionsBySource(graph.connections);
-  const trace: BeltTrace = { lanes: [start], connections: [], stop: 'end' };
-  const visited = new Set([laneKey(start)]);
-  let current = start;
-
-  while (true) {
-    if (isSplitterEntityNumber(entityByNumber, current.entityNumber)) {
-      trace.stop = 'splitter';
-      return trace;
-    }
-
-    const next = outgoing.get(laneKey(current)) ?? [];
-    if (next.length === 0) return trace;
-    if (next.length > 1) {
-      trace.stop = 'branch';
-      return trace;
-    }
-
-    const connection = next[0];
-    trace.connections.push(connection);
-    trace.lanes.push(connection.to);
-    current = connection.to;
-    const key = laneKey(current);
-    if (visited.has(key)) {
-      trace.stop = 'cycle';
-      return trace;
-    }
-    visited.add(key);
-  }
-}
-
-/** Enumerate all possible continuations, stopping each result at an end or repeated lane. */
-export function traceBeltPaths(graph: BeltGraph, start: BeltLaneRef): BeltTrace[] {
-  const outgoing = connectionsBySource(graph.connections);
-  const results: BeltTrace[] = [];
-
-  const visit = (
-    current: BeltLaneRef,
-    pathLanes: BeltLaneRef[],
-    pathConnections: BeltConnection[],
-    visited: Set<string>,
-  ) => {
-    const next = outgoing.get(laneKey(current)) ?? [];
-    if (next.length === 0) {
-      results.push({ lanes: pathLanes, connections: pathConnections, stop: 'end' });
-      return;
-    }
-
-    for (const connection of next) {
-      const key = laneKey(connection.to);
-      if (visited.has(key)) {
-        results.push({
-          lanes: [...pathLanes, connection.to],
-          connections: [...pathConnections, connection],
-          stop: 'cycle',
-        });
-        continue;
-      }
-      visit(
-        connection.to,
-        [...pathLanes, connection.to],
-        [...pathConnections, connection],
-        new Set([...visited, key]),
-      );
-    }
-  };
-
-  visit(start, [start], [], new Set([laneKey(start)]));
-  return results;
 }
 
 function surfaceOutputs(entity: BeltEntity): SurfacePort[] {
@@ -480,22 +348,6 @@ function inserterDropLane(base: Position, drop: Position, target: SurfacePort): 
   return dot(baseOffset, directionVector(target.direction)) < 0 ? 'right' : 'left';
 }
 
-function connectionsBySource(connections: BeltConnection[]): Map<string, BeltConnection[]> {
-  const result = new Map<string, BeltConnection[]>();
-  for (const connection of connections) {
-    const key = laneKey(connection.from);
-    const matching = result.get(key) ?? [];
-    matching.push(connection);
-    result.set(key, matching);
-  }
-  return result;
-}
-
-function isSplitterEntityNumber(entities: Map<number, BeltEntity>, entityNumber: number): boolean {
-  const entity = entities.get(entityNumber);
-  return entity !== undefined && isSplitterEntity(entity);
-}
-
 function laneRef(
   entityNumber: number,
   line: SplitterLine,
@@ -503,10 +355,6 @@ function laneRef(
   splitterSide?: 'input' | 'output',
 ): BeltLaneRef {
   return { entityNumber, line, lane, ...(splitterSide ? { splitterSide } : {}) };
-}
-
-function laneKey(lane: BeltLaneRef): string {
-  return `${lane.entityNumber}:${lane.line}:${lane.lane}:${lane.splitterSide ?? ''}`;
 }
 
 function directionVector(direction: BeltDirection): Position {
