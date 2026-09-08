@@ -216,37 +216,33 @@ export function RecipeSuggestions({
                   )}
                 </p>
               )}
-              <p class="void-path-score-explanation">
-                Higher scores favour fewer steps and paths that connect to this cell&apos;s existing
-                inputs and outputs.
-              </p>
+              <details class="void-path-results">
+                <summary>
+                  Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}
+                </summary>
+                <ol
+                  class="void-path-steps"
+                  aria-label={
+                    kind === 'chain' && isResourceChain(plan)
+                      ? `Path from ${resource} to ${plan.target}`
+                      : `Void path for ${resource}`
+                  }
+                >
+                  {plan.recipes.map((id, step) => {
+                    const recipe = staticData.recipes[id];
+                    if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
+                    return (
+                      <li key={`${id}-${step}`}>
+                        <CompactRecipe
+                          match={{ id, recipe, name: recipeName(id) }}
+                          progress={progress}
+                        />
+                      </li>
+                    );
+                  })}
+                </ol>
+              </details>
             </div>
-            <details class="void-path-results">
-              <summary>
-                Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}
-              </summary>
-              <ol
-                class="void-path-steps"
-                aria-label={
-                  kind === 'chain' && isResourceChain(plan)
-                    ? `Path from ${resource} to ${plan.target}`
-                    : `Void path for ${resource}`
-                }
-              >
-                {plan.recipes.map((id, step) => {
-                  const recipe = staticData.recipes[id];
-                  if (!recipe) return <li key={`${id}-${step}`}>{recipeName(id)}</li>;
-                  return (
-                    <li key={`${id}-${step}`}>
-                      <CompactRecipe
-                        match={{ id, recipe, name: recipeName(id) }}
-                        progress={progress}
-                      />
-                    </li>
-                  );
-                })}
-              </ol>
-            </details>
           </article>
         ))
       )}

@@ -9,8 +9,7 @@
 }
 .void-path-hint,
 .void-path-for,
-.void-path-score,
-.void-path-score-explanation {
+.void-path-score {
   margin: 0.5rem 0;
 }
 .void-path-tile + .void-path-tile {
@@ -73,14 +72,8 @@
   color: var(--muted);
   font-size: 0.85em;
 }
-.void-path-score-explanation {
-  margin-bottom: 0;
-  color: var(--muted);
-  font-size: 0.85rem;
-}
 .void-path-results {
   margin-top: 0.35rem;
-  padding: 0 0.6rem;
 }
 .void-path-results summary {
   cursor: pointer;
