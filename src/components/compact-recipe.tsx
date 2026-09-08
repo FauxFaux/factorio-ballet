@@ -5,15 +5,22 @@ import { recipeFlows, speedOf } from '../flow.ts';
 import type { RecipeMatch } from '../search.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
+import { AddToCell } from './recipe.tsx';
 
-/** A read-only folded recipe summary for contexts where recipe selection is unavailable. */
+/** A folded recipe summary, optionally with the usual control to add it to the current cell. */
 export function CompactRecipe({
   match: { id, recipe, name },
   progress,
+  onAdd,
+  inCell = false,
 }: {
   match: RecipeMatch;
   /** Overall game progress, used to choose the machine whose rates are shown. */
   progress: number;
+  /** Put this recipe, using the automatic machine choice, in the cell being worked on. */
+  onAdd?: () => void;
+  /** Whether that cell already runs it. */
+  inCell?: boolean;
 }) {
   const machines = machinesFor(recipe);
   const machine = defaultMachine(machines, progress)?.id;
@@ -33,6 +40,7 @@ export function CompactRecipe({
           {name}
         </span>
         <span class="recipe-duration">{(recipe.duration / speed).toFixed(2)}s</span>
+        {onAdd ? <AddToCell onAdd={onAdd} inCell={inCell} /> : null}
       </div>
       <FlowSummary ins={ins} outs={outs} />
     </div>

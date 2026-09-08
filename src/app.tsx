@@ -102,6 +102,8 @@ export function App({ uss }: { uss: State<UrlState> }) {
               search={recipeSearch[0]}
               cell={cell}
               progress={progress}
+              onAdd={(recipe) => addRecipe(recipe, undefined)}
+              inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
             />
           </div>
         </>

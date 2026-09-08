@@ -309,8 +309,8 @@ function ProductivityChip({ allowed }: { allowed: boolean }) {
   );
 }
 
-/** The one control on a search result: put this recipe in the cell being worked on. */
-function AddToCell({ onAdd, inCell }: { onAdd: () => void; inCell: boolean }) {
+/** The shared control for putting one or more suggested recipes in the cell being worked on. */
+export function AddToCell({ onAdd, inCell }: { onAdd: () => void; inCell: boolean }) {
   return (
     <button
       type="button"
