@@ -1,5 +1,5 @@
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
-import { staticData } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import { isBarrelling, isUnbarrelling, isVoid } from '../../data/recipes.ts';
 import { parseSearch } from '../../search.ts';
 import type { ResourceId } from '../../types.ts';

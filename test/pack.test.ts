@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../src/cell.ts';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 import { fingerprint, packCells, unpackCells } from '../src/pack.ts';
 
 const recipe = Object.keys(staticData.recipes)[0];

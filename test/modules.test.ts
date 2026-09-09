@@ -9,8 +9,8 @@ import {
   modulesFor,
   modulesIn,
 } from '../src/data/modules.ts';
-import { staticData } from '../src/data/index.ts';
-import { fillSlots, moduleEffects } from '../src/flow.ts';
+import { staticData } from '../src/data/decode.ts';
+import { fillSlots, moduleEffects } from '../src/module-effects.ts';
 
 /** Allows productivity; runs in an assembler. */
 const gears = staticData.recipes['iron-gear-wheel'];

@@ -1,4 +1,5 @@
-import { recipeName, resourceName, staticData } from '../../data/index.ts';
+import { recipeName, resourceName } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';

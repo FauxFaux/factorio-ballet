@@ -2,22 +2,13 @@ import './recipe-suggestions.css';
 import { Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import type { Cell } from '../../cell.ts';
-import { recipeName, resourceName, staticData } from '../../data/index.ts';
+import { recipeName, resourceName } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { AddToCell } from '../recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import { isResourceChain, suggestedRecipePaths } from './suggestions.ts';
-
-export {
-  scoreRecipeSuggestion,
-  suggestedResourceChains,
-  suggestedRecipePaths,
-  suggestedSoleConsumerOutputs,
-  suggestedSoleProducerInputs,
-  suggestedVoidResources,
-  suggestionScoreWeights,
-} from './suggestions.ts';
 
 export function RecipeSuggestions({
   resource,

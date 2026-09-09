@@ -12,18 +12,6 @@ import type {
 } from './types.ts';
 import type { Effects } from './module-effects.ts';
 
-export {
-  fillSlots,
-  laidOutEffects,
-  moduleBoost,
-  moduleEffects,
-  moduleLayout,
-  NO_BOOST,
-  NO_EFFECTS,
-  NO_LAYOUT,
-} from './module-effects.ts';
-export type { Boost, Effects, Layout, ModuleFill, ModuleWants } from './module-effects.ts';
-
 export interface Flow {
   resource: ResourceId;
   amount: string;

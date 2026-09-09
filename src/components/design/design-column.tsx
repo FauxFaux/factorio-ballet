@@ -2,7 +2,7 @@ import './design-column.css';
 import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-react';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
-import { staticData } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import type { DesignColumn as DesignColumnData, DesignEntity } from '../../design.ts';
 import {
   assemblerInputStatuses,
@@ -22,22 +22,6 @@ import {
 } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
 import { RecipeButton } from './recipe-button.tsx';
-
-export {
-  entityPositionStatuses,
-  worldToViewport,
-  type EntityPositionStatus,
-} from './design-entities.tsx';
-export { beltLoopEntityIndexes } from './design-belts.ts';
-export { assemblerInputStatuses } from './design-belts.ts';
-export type { AssemblerInputStatus } from './design-belts.ts';
-export { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
-export type {
-  DesignLaneAnalysis,
-  DesignLaneIssue,
-  LaneContents,
-  LaneInjection,
-} from './design-lanes.ts';
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
 export function DesignColumn({

@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { boundarySuggestions } from '../../src/solve/boundary-suggestions.ts';
-import { dumbSolver, matrixSolver, type SolveRow } from '../../src/solve/index.ts';
+import type { SolveRow } from '../../src/solve/index.ts';
+import { dumbSolver } from '../../src/solve/dumb.ts';
+import { matrixSolver } from '../../src/solve/matrix.ts';
 import type { ResourceId } from '../../src/types.ts';
 
 const X: ResourceId = 'item:x';

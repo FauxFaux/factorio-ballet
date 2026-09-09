@@ -1,5 +1,6 @@
 import './from-air.css';
-import { complexityOf, recipeName, resourceName, staticData } from '../data/index.ts';
+import { complexityOf, recipeName, resourceName } from '../data/index.ts';
+import { staticData } from '../data/decode.ts';
 import { productAmount } from '../flow.ts';
 import type { State } from '../ts.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';

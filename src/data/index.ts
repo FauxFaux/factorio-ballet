@@ -3,10 +3,6 @@ import { staticData } from './decode.ts';
 import { selectPackLandmarks } from './landmarks.ts';
 import type { Landmark } from './landmarks.ts';
 
-export type { Landmark } from './landmarks.ts';
-
-export { staticData };
-
 /** The display name for a resource, falling back to its id. */
 export function resourceName(id: ResourceId): string {
   return staticData.resources[id]?.human ?? id;

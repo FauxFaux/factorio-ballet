@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { h } from 'preact';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cellInterface, newCell } from '../src/cell.ts';
+import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 import {
-  RecipeSuggestions,
   scoreRecipeSuggestion,
   suggestedResourceChains,
   suggestedRecipePaths,
@@ -14,7 +14,7 @@ import {
   suggestedSoleProducerInputs,
   suggestedVoidResources,
   suggestionScoreWeights,
-} from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
+} from '../src/components/recipe-suggestions/suggestions.ts';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
 

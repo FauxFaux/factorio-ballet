@@ -7,7 +7,9 @@ import state from './assets/plutonium.state.json';
 import snapshot from './assets/plutonium.cell.json';
 import { cellInterface, type Cell } from '../src/cell.ts';
 import { resolveChosen, resourceName } from '../src/data/index.ts';
-import { dumbSolver, matrixSolver, solveCell } from '../src/solve/index.ts';
+import { solveCell } from '../src/solve/index.ts';
+import { dumbSolver } from '../src/solve/dumb.ts';
+import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
 
 const cell: Cell = state.cl[0];

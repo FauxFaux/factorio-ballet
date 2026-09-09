@@ -1,5 +1,5 @@
 import { useMemo } from 'preact/hooks';
-import { staticData } from '../data/index.ts';
+import { staticData } from '../data/decode.ts';
 import type { Chosen } from '../data/index.ts';
 import { flipDirection, searchMatches, type SearchScope } from '../search.ts';
 import type { State } from '../ts.ts';

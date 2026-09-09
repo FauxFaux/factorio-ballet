@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 
 describe('the ingested machine geometry', () => {
   it('keeps tile footprints for all production machines', () => {

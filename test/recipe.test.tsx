@@ -3,7 +3,7 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { CompactRecipe } from '../src/components/compact-recipe.tsx';
 import { RecipeCard } from '../src/components/recipe.tsx';

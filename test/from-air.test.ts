@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fromAirStages } from '../src/components/from-air.tsx';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 const recipe = (

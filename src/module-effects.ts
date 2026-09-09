@@ -8,7 +8,7 @@ import {
   type BoostEffect,
   type ChosenModules,
 } from './data/modules.ts';
-import { staticData } from './data/index.ts';
+import { staticData } from './data/decode.ts';
 import type { Beacon, Machine, ModuleId, Recipe } from './types.ts';
 
 export interface Effects {

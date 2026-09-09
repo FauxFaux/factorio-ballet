@@ -3,9 +3,9 @@ import {
   beaconTiers,
   beaconWorth,
   defaultBeacon,
-  staticData,
   type BeaconChoice,
 } from '../data/index.ts';
+import { staticData } from '../data/decode.ts';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Beacon, BeaconId } from '../types.ts';

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 import { voidPlanFinder, voidPlans } from '../src/void-path.ts';
 

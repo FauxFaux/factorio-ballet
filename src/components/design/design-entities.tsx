@@ -1,6 +1,7 @@
 import { ArrowRightIcon, ChevronRightIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
-import { recipeName, resourceName, staticData } from '../../data/index.ts';
+import { recipeName, resourceName } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import type {
   DesignAssembler,
   DesignBelt,

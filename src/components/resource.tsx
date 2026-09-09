@@ -1,6 +1,6 @@
 import './resource.css';
 import type { ComponentChildren } from 'preact';
-import { staticData } from '../data/index.ts';
+import { staticData } from '../data/decode.ts';
 import type { ResourceId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 

@@ -58,8 +58,6 @@ export interface Solver {
   solve(rows: SolveRow[]): Solution;
 }
 
-export { dumbSolver, matrixSolver };
-
 export const SOLVERS: Solver[] = [matrixSolver, dumbSolver];
 
 /** The simultaneous, cycle-capable solver is the application default. */

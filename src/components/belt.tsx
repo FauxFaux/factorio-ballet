@@ -1,4 +1,5 @@
-import { beltName, beltTiers, defaultBelt, staticData, type BeltChoice } from '../data/index.ts';
+import { beltName, beltTiers, defaultBelt, type BeltChoice } from '../data/index.ts';
+import { staticData } from '../data/decode.ts';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Belt, BeltId } from '../types.ts';

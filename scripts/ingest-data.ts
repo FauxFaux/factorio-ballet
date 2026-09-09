@@ -26,8 +26,6 @@ import type {
   StaticData,
 } from '../src/types.ts';
 
-export { packStaticData } from './pack-static-data.ts';
-
 /**
  * Everything with `crafting_categories`, i.e. everything which can run a recipe. `character` is
  * hand crafting, and the only thing covering the mods' manual-only categories. `god-controller`

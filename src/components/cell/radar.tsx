@@ -1,6 +1,7 @@
 import './radar.css';
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
-import { resourceName, staticData } from '../../data/index.ts';
+import { resourceName } from '../../data/index.ts';
+import { staticData } from '../../data/decode.ts';
 import type { ResourceId } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
 import { assemblerColumnLayout, stackAssemblerDistricts } from './radar-layout.ts';

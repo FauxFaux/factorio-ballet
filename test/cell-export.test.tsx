@@ -7,7 +7,9 @@ import state from './assets/uranium.state.json';
 import { cellInterface, type Cell } from '../src/cell.ts';
 import { resolveChosen, resourceName } from '../src/data/index.ts';
 import { packCells, unpackCells } from '../src/pack.ts';
-import { dumbSolver, matrixSolver, solveCell } from '../src/solve/index.ts';
+import { solveCell } from '../src/solve/index.ts';
+import { dumbSolver } from '../src/solve/dumb.ts';
+import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
 
 const uranium: Cell = state.cl[0];

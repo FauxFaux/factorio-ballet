@@ -1,15 +1,16 @@
-import { complexityOf, NO_CHOICE, resourceName, staticData, type Chosen } from './data/index.ts';
+import { complexityOf, NO_CHOICE, resourceName, type Chosen } from './data/index.ts';
+import { staticData } from './data/decode.ts';
 import { defaultMachine, machinesFor } from './data/machines.ts';
+import { netRates } from './flow.ts';
 import {
   laidOutEffects,
-  netRates,
   NO_EFFECTS,
   NO_LAYOUT,
   type Effects,
   type Layout,
   type ModuleFill,
   type ModuleWants,
-} from './flow.ts';
+} from './module-effects.ts';
 import type { SearchScope } from './search.ts';
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';

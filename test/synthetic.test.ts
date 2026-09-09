@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { machinesFor } from '../src/data/machines.ts';
-import { staticData } from '../src/data/index.ts';
+import { staticData } from '../src/data/decode.ts';
 import { searchRecipes } from '../src/search.ts';
 import { energyInMegajoules, powerInMegawatts } from '../scripts/synthetic.ts';
 

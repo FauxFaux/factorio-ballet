@@ -1,16 +1,17 @@
 import { describe, expect, it } from 'vitest';
 import { newCell, type Cell } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
-import { staticData } from '../src/data/index.ts';
-import { netRates, NO_EFFECTS, speedOf } from '../src/flow.ts';
+import { staticData } from '../src/data/decode.ts';
+import { netRates, speedOf } from '../src/flow.ts';
+import { NO_EFFECTS } from '../src/module-effects.ts';
 import {
-  dumbSolver,
   noteFor,
   solveCell,
   type Solution,
   type SolveRow,
   type Solver,
 } from '../src/solve/index.ts';
+import { dumbSolver } from '../src/solve/dumb.ts';
 import type { ResourceId } from '../src/types.ts';
 
 const X = 'item:x' as ResourceId;
