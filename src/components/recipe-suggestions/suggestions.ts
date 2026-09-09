@@ -403,20 +403,27 @@ export function suggestedRecipePaths(
       consumers.get(plan.target)?.length,
     ),
   );
-  return [
+  const ranked = [
     ...resourceSuggestions,
     ...inputSuggestions,
     ...freeInputSuggestions,
     ...outputSuggestions,
     ...fewInputSuggestions,
     ...fewOutputSuggestions,
-  ]
-    .toSorted(
-      (a, b) =>
-        b.score - a.score ||
-        a.plan.recipes.length - b.plan.recipes.length ||
-        a.resource.localeCompare(b.resource) ||
-        a.plan.recipes.join('|').localeCompare(b.plan.recipes.join('|')),
-    )
+  ].toSorted(
+    (a, b) =>
+      b.score - a.score ||
+      a.plan.recipes.length - b.plan.recipes.length ||
+      a.resource.localeCompare(b.resource) ||
+      a.plan.recipes.join('|').localeCompare(b.plan.recipes.join('|')),
+  );
+  const seen = new Set<string>();
+  return ranked
+    .filter(({ resource, kind, plan }) => {
+      const key = `${resource}:${kind}:${plan.recipes.join('|')}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
     .slice(0, MAX_SUGGESTIONS);
 }

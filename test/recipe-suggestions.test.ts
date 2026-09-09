@@ -164,6 +164,19 @@ describe('free input suggestions', () => {
     expect(steam?.scoreFactors.certainty).toBe(suggestionScoreWeights.freeInput);
     expect(steam).toEqual(paths[0]);
   });
+
+  it('does not repeat a free input which is also the sole producer', () => {
+    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-steam-water' }] });
+    const pumpingWater = paths.filter(
+      (path) =>
+        path.kind === 'input' &&
+        path.resource === 'fluid:water' &&
+        path.plan.recipes.join('|') === 'synthetic:pumping-water',
+    );
+
+    expect(pumpingWater).toHaveLength(1);
+    expect(pumpingWater[0]?.scoreFactors.certainty).toBe(suggestionScoreWeights.freeInput);
+  });
 });
 
 describe('few-recipe interface suggestions', () => {
