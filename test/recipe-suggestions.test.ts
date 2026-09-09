@@ -474,7 +474,7 @@ describe('RecipeSuggestions', () => {
     ).toBeTruthy();
   });
 
-  it('adds every recipe in a suggested path from its card button', async () => {
+  it('adds every recipe in a suggested path from its card button in reverse order', async () => {
     const user = userEvent.setup();
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
     const path = suggestedRecipePaths('', cell)[0]!;
@@ -483,6 +483,6 @@ describe('RecipeSuggestions', () => {
 
     await user.click(container.querySelector('.recipe-suggestions-card-head .recipe-add')!);
 
-    expect(onAdd.mock.calls.map(([id]) => id)).toEqual(path.plan.recipes);
+    expect(onAdd.mock.calls.map(([id]) => id)).toEqual([...path.plan.recipes].reverse());
   });
 });

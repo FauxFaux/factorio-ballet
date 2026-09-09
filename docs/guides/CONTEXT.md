@@ -247,8 +247,8 @@ need the cheapest — which is why the two agree on ids. Rocket launches are sti
 ### Cells (`src/cell.ts`, `components/cell/`)
 
 A **cell** is a unit of work in a factory — a handful of recipes whose inputs and outputs are meant
-to be closed and human-sized. `CELL.md` is the intent; `src/cell.ts` is the shape: a `Cell` is
-`{ entries, name? }` and a `CellEntry` is
+to be closed and human-sized. `FACTORIO.md` describes the intent; `src/cell.ts` is the shape: a
+`Cell` is `{ entries, name? }` and a `CellEntry` is
 `{ recipe, machine?, count?, modules?, productivityModules?, speedModules? }`. The cells being
 planned live in `UrlState.cl`, and `UrlState.ci` indexes the one being worked on — recipes added
 from the search go there, and an out-of-range `ci` (which `[]` always is) means none is.

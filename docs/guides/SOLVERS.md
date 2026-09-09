@@ -1,9 +1,9 @@
 # Solver orientation and debugging
 
-Read `FACTORIO.md` and `CELL.md` before changing domain behavior. This document explains how to
-investigate cells whose recipes seem feasible but whose counts or resource balances look wrong. The
-uranium fixtures in `test/assets/` are a concrete example. Read the current implementation and tests
-as well: older architecture comments in `CONTEXT.md` and source files can lag behind changes.
+Read `FACTORIO.md` before changing domain behavior. This document explains how to investigate cells
+whose recipes seem feasible but whose counts or resource balances look wrong. The uranium fixtures
+in `test/assets/` are a concrete example. Read the current implementation and tests as well: older
+architecture comments in `CONTEXT.md` and source files can lag behind changes.
 
 ## Where to look
 

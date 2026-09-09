@@ -82,7 +82,7 @@ export function RecipeSuggestions({
                     ) : null}
                     {onAdd ? (
                       <AddToCell
-                        onAdd={() => plan.recipes.forEach(onAdd)}
+                        onAdd={() => [...plan.recipes].reverse().forEach(onAdd)}
                         inCell={plan.recipes.every((id) => inCell?.(id))}
                       />
                     ) : null}

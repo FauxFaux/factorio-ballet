@@ -25,7 +25,7 @@ export type Term =
 /**
  * The open edges of the cell being edited, so a search can be asked about them rather than about a
  * named resource: `makes:@in` is "something which makes anything this cell currently has to be fed"
- * — the search you want while closing a cell up. See `docs/guides/CELL.md`, and
+ * — the search you want while closing a cell up. See `docs/guides/FACTORIO.md`, and
  * {@link SCOPE_QUERIES} for the vocabulary.
  */
 export interface SearchScope {

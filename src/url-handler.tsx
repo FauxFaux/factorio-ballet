@@ -19,7 +19,7 @@ export interface UrlState {
   cs: string;
   /** game progress, as a whole percentage; searches favour results near it. See `relevanceOf`. */
   gp: number;
-  /** the cells being planned; see `docs/guides/CELL.md` */
+  /** the cells being planned; see `docs/guides/FACTORIO.md` */
   cl: Cell[];
   /**
    * which of `cl` is being worked on: recipes added from the search go there, and the search's
