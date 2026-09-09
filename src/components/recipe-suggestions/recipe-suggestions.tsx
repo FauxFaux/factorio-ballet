@@ -74,6 +74,15 @@ export function RecipeSuggestions({
                   )}
                 </p>
               )}
+              {kind === 'output' && isResourceChain(plan) && (
+                <p class="void-path-flow-summary">
+                  <ResourceList resources={[plan.target, ...plan.inputs]} label="Needs" />
+                  <span class="void-path-flow-arrow" aria-label="makes">
+                    ➔
+                  </span>
+                  <ResourceList resources={plan.outputs} label="Makes" />
+                </p>
+              )}
               <details class="void-path-results">
                 <summary>
                   Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}

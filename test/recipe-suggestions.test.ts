@@ -1,11 +1,12 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render } from '@testing-library/preact';
+import { cleanup, render, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { h } from 'preact';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cellInterface, newCell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
+import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/data/recipes.ts';
 import { staticData } from '../src/data/decode.ts';
 import {
@@ -317,6 +318,32 @@ describe('suggestedRecipePaths', () => {
 });
 
 describe('RecipeSuggestions', () => {
+  it('shows the effects of a suggested output recipe', () => {
+    const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
+    const suggestion = suggestedRecipePaths('', cell).find(
+      (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
+    );
+    expect(suggestion).toBeDefined();
+    if (!suggestion || !('target' in suggestion.plan)) return;
+
+    const { getByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
+    const card = getByRole('heading', {
+      name: `Use ${resourceName(suggestion.resource)}`,
+    }).closest('article');
+    expect(card).not.toBeNull();
+    if (!card) return;
+
+    const { plan } = suggestion;
+    expect(
+      within(card).getByLabelText(
+        `Needs: ${[plan.target, ...plan.inputs].map(resourceName).join(', ')}`,
+      ),
+    ).toBeTruthy();
+    expect(
+      within(card).getByLabelText(`Makes: ${plan.outputs.map(resourceName).join(', ')}`),
+    ).toBeTruthy();
+  });
+
   it('adds every recipe in a suggested path from its card button', async () => {
     const user = userEvent.setup();
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
