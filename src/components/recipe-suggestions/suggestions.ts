@@ -28,8 +28,8 @@ export const suggestionScoreWeights = {
   reusedOutput: 7,
   suppliedInput: 30,
   soleProducer: 50,
-  twoRecipes: 10,
-  threeRecipes: 5,
+  twoRecipes: 30,
+  threeRecipes: 20,
   freeInput: 100,
   void: 10,
 } as const;

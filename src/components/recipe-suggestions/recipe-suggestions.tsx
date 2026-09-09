@@ -42,7 +42,13 @@ export function RecipeSuggestions({
             <div class="recipe-card void-path-card">
               <div class="void-path-card-head">
                 <h3 class="void-path-for">
-                  {kind === 'chain' ? 'Cycle' : kind === 'void' ? 'Void' : 'Make'}{' '}
+                  {kind === 'chain'
+                    ? 'Cycle'
+                    : kind === 'void'
+                      ? 'Void'
+                      : kind === 'output'
+                        ? 'Use'
+                        : 'Make'}{' '}
                   <ResourceIcon id={resource} /> {resourceName(resource)}
                 </h3>
                 <p class="void-path-score">Score {score.toFixed(1)}</p>
