@@ -31,6 +31,7 @@ export const suggestionScoreWeights = {
   twoRecipes: 10,
   threeRecipes: 5,
   freeInput: 100,
+  void: 10,
 } as const;
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
@@ -302,6 +303,7 @@ function pathSuggestion(
 ): PathSuggestion {
   const scoreFactors = calculateScoreFactors(plan, inputs, outputs, present, involvedRecipeCount);
   if (isFreeInput) scoreFactors.certainty += suggestionScoreWeights.freeInput;
+  if (kind === 'void') scoreFactors.certainty += suggestionScoreWeights.void;
   return {
     resource,
     kind,

@@ -251,6 +251,13 @@ describe('scoreRecipeSuggestion', () => {
 });
 
 describe('suggestedRecipePaths', () => {
+  it('gives void suggestions an additional certainty score', () => {
+    const paths = suggestedRecipePaths(`uses:${waste}`);
+    const voidSuggestion = paths.find((path) => path.kind === 'void');
+
+    expect(voidSuggestion?.scoreFactors.certainty).toBe(suggestionScoreWeights.void);
+  });
+
   it('puts a chain which supplies a cell input ahead of a shorter void route', () => {
     const paths = suggestedRecipePaths(`uses:${waste}`, {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
