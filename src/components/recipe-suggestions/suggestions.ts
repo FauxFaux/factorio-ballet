@@ -28,27 +28,36 @@ export const suggestionScoreWeights = {
   reusedOutput: 7,
   suppliedInput: 30,
   soleProducer: 50,
+  twoRecipes: 10,
+  threeRecipes: 5,
 } as const;
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
 
-function indexSoleRecipes(direction: 'ingredients' | 'products') {
-  const recipes = new Map<ResourceId, string>();
-  const ambiguous = new Set<ResourceId>();
+function indexRecipes(direction: 'ingredients' | 'products') {
+  const recipes = new Map<ResourceId, string[]>();
   for (const [id, recipe] of Object.entries(staticData.recipes)) {
     if (isVoid(recipe) || isBarrelling(recipe) || isUnbarrelling(recipe)) continue;
     for (const resource of new Set(recipe[direction].map(({ resource }) => resource))) {
-      if (ambiguous.has(resource)) continue;
-      if (recipes.has(resource)) {
-        recipes.delete(resource);
-        ambiguous.add(resource);
-      } else recipes.set(resource, id);
+      const indexed = recipes.get(resource);
+      if (indexed) indexed.push(id);
+      else recipes.set(resource, [id]);
     }
   }
   return recipes;
 }
-const soleProducer = indexSoleRecipes('products');
-const soleConsumer = indexSoleRecipes('ingredients');
+const producers = indexRecipes('products');
+const consumers = indexRecipes('ingredients');
+const soleProducer = new Map(
+  [...producers].flatMap(([resource, recipes]) =>
+    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+  ),
+);
+const soleConsumer = new Map(
+  [...consumers].flatMap(([resource, recipes]) =>
+    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+  ),
+);
 const freeOneStepProducts = new Set(
   fromAirStages(staticData)[1]?.flatMap(({ adds }) => adds) ?? [],
 );
@@ -90,7 +99,7 @@ function calculateScoreFactors(
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
   present: ReadonlySet<ResourceId>,
-  sole = false,
+  involvedRecipeCount = 0,
 ) {
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
@@ -116,7 +125,14 @@ function calculateScoreFactors(
       outputs.filter((resource) => existingOutputs.has(resource)).length *
         suggestionScoreWeights.reusedOutput,
     buildings: -plan.recipes.length * suggestionScoreWeights.step,
-    certainty: sole ? suggestionScoreWeights.soleProducer : 0,
+    certainty:
+      involvedRecipeCount === 1
+        ? suggestionScoreWeights.soleProducer
+        : involvedRecipeCount === 2
+          ? suggestionScoreWeights.twoRecipes
+          : involvedRecipeCount === 3
+            ? suggestionScoreWeights.threeRecipes
+            : 0,
   };
 }
 export function scoreRecipeSuggestion(
@@ -124,9 +140,15 @@ export function scoreRecipeSuggestion(
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
   present = new Set([...existingInputs, ...existingOutputs]),
-  sole = false,
+  involvedRecipeCount = 0,
 ) {
-  const factors = calculateScoreFactors(plan, existingInputs, existingOutputs, present, sole);
+  const factors = calculateScoreFactors(
+    plan,
+    existingInputs,
+    existingOutputs,
+    present,
+    involvedRecipeCount,
+  );
   return factors.inputs + factors.outputs + factors.buildings + factors.certainty;
 }
 function usedResources(search: string, cell?: Cell) {
@@ -194,6 +216,31 @@ export function suggestedSoleConsumerOutputs(cell?: Cell): ResourceChain[] {
     ];
   });
 }
+function suggestedFewRecipeInterfaces(
+  cell: Cell | undefined,
+  direction: 'inputs' | 'outputs',
+  recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
+): ResourceChain[] {
+  if (!cell) return [];
+  return cellInterface(cell)[direction].flatMap((target) => {
+    const recipes = recipesByResource.get(target);
+    if (!recipes || recipes.length < 2 || recipes.length > 3) return [];
+    return recipes.flatMap((id) => {
+      const recipe = staticData.recipes[id];
+      return recipe ? [directSuggestion(target, id, recipe)] : [];
+    });
+  });
+}
+export function suggestedFewProducerInputs(cell?: Cell): ResourceChain[] {
+  return suggestedFewRecipeInterfaces(cell, 'inputs', producers);
+}
+export function suggestedFewConsumerOutputs(cell?: Cell): ResourceChain[] {
+  return suggestedFewRecipeInterfaces(cell, 'outputs', consumers).map((suggestion) => ({
+    ...suggestion,
+    inputs: suggestion.inputs.filter((resource) => resource !== suggestion.target),
+    outputs: suggestion.outputs.filter((resource) => !suggestion.inputs.includes(resource)),
+  }));
+}
 function pathSuggestion(
   resource: ResourceId,
   kind: PathSuggestion['kind'],
@@ -201,9 +248,9 @@ function pathSuggestion(
   inputs: ReadonlySet<ResourceId>,
   outputs: ReadonlySet<ResourceId>,
   present: ReadonlySet<ResourceId>,
-  sole = false,
+  involvedRecipeCount = 0,
 ): PathSuggestion {
-  const scoreFactors = calculateScoreFactors(plan, inputs, outputs, present, sole);
+  const scoreFactors = calculateScoreFactors(plan, inputs, outputs, present, involvedRecipeCount);
   return {
     resource,
     kind,
@@ -247,12 +294,40 @@ export function suggestedRecipePaths(
     ];
   });
   const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>
-    pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, true),
+    pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
   );
   const outputSuggestions = suggestedSoleConsumerOutputs(cell).map((plan) =>
-    pathSuggestion(plan.target, 'output', plan, existingInputs, existingOutputs, present, true),
+    pathSuggestion(plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
   );
-  return [...resourceSuggestions, ...inputSuggestions, ...outputSuggestions]
+  const fewInputSuggestions = suggestedFewProducerInputs(cell).map((plan) =>
+    pathSuggestion(
+      plan.target,
+      'input',
+      plan,
+      existingInputs,
+      existingOutputs,
+      present,
+      producers.get(plan.target)?.length,
+    ),
+  );
+  const fewOutputSuggestions = suggestedFewConsumerOutputs(cell).map((plan) =>
+    pathSuggestion(
+      plan.target,
+      'output',
+      plan,
+      existingInputs,
+      existingOutputs,
+      present,
+      consumers.get(plan.target)?.length,
+    ),
+  );
+  return [
+    ...resourceSuggestions,
+    ...inputSuggestions,
+    ...outputSuggestions,
+    ...fewInputSuggestions,
+    ...fewOutputSuggestions,
+  ]
     .toSorted(
       (a, b) =>
         b.score - a.score ||

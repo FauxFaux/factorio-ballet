@@ -12,6 +12,7 @@ import {
   scoreRecipeSuggestion,
   suggestedResourceChains,
   suggestedRecipePaths,
+  suggestedFewProducerInputs,
   suggestedSoleConsumerOutputs,
   suggestedSoleProducerInputs,
   suggestedVoidResources,
@@ -109,7 +110,53 @@ describe('single-recipe interface suggestions', () => {
   });
 });
 
+describe('few-recipe interface suggestions', () => {
+  it('suggests each producer for inputs with two or three possible recipes', () => {
+    const copperCable = suggestedFewProducerInputs({
+      entries: [{ recipe: 'small-electric-pole' }],
+    });
+    const ironPlate = suggestedFewProducerInputs({ entries: [{ recipe: 'gun-turret' }] });
+
+    expect(copperCable).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ target: 'item:copper-cable', recipes: ['copper-cable'] }),
+        expect.objectContaining({
+          target: 'item:copper-cable',
+          recipes: ['angels-wire-copper-2'],
+        }),
+      ]),
+    );
+    expect(ironPlate).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ target: 'item:iron-plate', recipes: ['iron-plate'] }),
+        expect.objectContaining({
+          target: 'item:iron-plate',
+          recipes: ['angels-plate-iron'],
+        }),
+        expect.objectContaining({
+          target: 'item:iron-plate',
+          recipes: ['angels-plate-iron-2'],
+        }),
+      ]),
+    );
+  });
+});
+
 describe('scoreRecipeSuggestion', () => {
+  it('gives two- and three-recipe alternatives progressively lower certainty scores', () => {
+    const plan = { recipes: ['first'] };
+    const base = scoreRecipeSuggestion(plan, new Set(), new Set());
+
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set(), undefined, 2) - base).toBe(
+      suggestionScoreWeights.twoRecipes,
+    );
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set(), undefined, 3) - base).toBe(
+      suggestionScoreWeights.threeRecipes,
+    );
+    expect(suggestionScoreWeights.twoRecipes).toBeGreaterThan(suggestionScoreWeights.threeRecipes);
+    expect(suggestionScoreWeights.twoRecipes).toBeLessThan(suggestionScoreWeights.soleProducer);
+  });
+
   it('rewards a chain for supplying an input the cell currently needs', () => {
     const plan = {
       target: 'item:iron-plate',
