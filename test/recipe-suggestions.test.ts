@@ -450,7 +450,7 @@ describe('RecipeSuggestions', () => {
     const onAdd = vi.fn();
     const { container } = render(h(RecipeSuggestions, { search: '', cell, progress: 0, onAdd }));
 
-    await user.click(container.querySelector('.void-path-card-head .recipe-add')!);
+    await user.click(container.querySelector('.recipe-suggestions-card-head .recipe-add')!);
 
     expect(onAdd.mock.calls.map(([id]) => id)).toEqual(path.plan.recipes);
   });

@@ -37,20 +37,23 @@ export function RecipeSuggestions({
     });
   }, [search, cell, resource]);
   return (
-    <section class="void-path" aria-label="Recipe paths">
+    <section class="recipe-suggestions" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>
       {suggestions.length === 0 ? (
-        <p class="void-path-hint">
+        <p class="recipe-suggestions-hint">
           Search for recipes using a resource to find ways to void it or feed a cell input.
         </p>
       ) : (
         suggestions.map(({ resource, kind, plan, score, scoreFactors }) => {
           const direction = kind === 'input' ? 'import' : 'export';
           return (
-            <article key={`${resource}:${kind}:${plan.recipes.join('|')}`} class="void-path-tile">
-              <div class="recipe-card void-path-card">
-                <div class="void-path-card-head">
-                  <h3 class="void-path-for">
+            <article
+              key={`${resource}:${kind}:${plan.recipes.join('|')}`}
+              class="recipe-suggestions-tile"
+            >
+              <div class="recipe-card recipe-suggestions-card">
+                <div class="recipe-suggestions-card-head">
+                  <h3 class="recipe-suggestions-for">
                     {kind === 'chain'
                       ? 'Cycle'
                       : kind === 'void'
@@ -60,12 +63,12 @@ export function RecipeSuggestions({
                           : 'Make'}{' '}
                     <ResourceIcon id={resource} /> {resourceName(resource)}
                   </h3>
-                  <span class="void-path-card-actions">
-                    <p class="void-path-score">Score {score.toFixed(1)}</p>
+                  <span class="recipe-suggestions-card-actions">
+                    <p class="recipe-suggestions-score">Score {score.toFixed(1)}</p>
                     {cell && onMakeExplicit ? (
                       <button
                         type="button"
-                        class="void-path-explicit"
+                        class="recipe-suggestions-explicit"
                         aria-label={`make explicit ${direction}`}
                         title={`Make ${resourceName(resource)} an explicit ${direction}; this prevents suggestions for it from appearing`}
                         onClick={() => onMakeExplicit(resource, direction)}
@@ -86,41 +89,41 @@ export function RecipeSuggestions({
                   </span>
                 </div>
                 {(kind === 'chain' || kind === 'input') && isResourceChain(plan) && (
-                  <p class="void-path-flow-summary">
+                  <p class="recipe-suggestions-flow-summary">
                     <ResourceList resources={plan.inputs} label="Needs" />
-                    <span class="void-path-flow-arrow" aria-label="makes">
+                    <span class="recipe-suggestions-flow-arrow" aria-label="makes">
                       ➔
                     </span>
                     <ResourceList resources={[plan.target]} label="Makes" />
                     {plan.outputs.length > 0 && (
                       <>
-                        <span class="void-path-also">also</span>
+                        <span class="recipe-suggestions-also">also</span>
                         <ResourceList resources={plan.outputs} label="Also makes" />
                       </>
                     )}
                   </p>
                 )}
                 {kind === 'output' && isResourceChain(plan) && (
-                  <p class="void-path-flow-summary">
+                  <p class="recipe-suggestions-flow-summary">
                     <ResourceList resources={[plan.target, ...plan.inputs]} label="Needs" />
-                    <span class="void-path-flow-arrow" aria-label="makes">
+                    <span class="recipe-suggestions-flow-arrow" aria-label="makes">
                       ➔
                     </span>
                     <ResourceList resources={plan.outputs} label="Makes" />
                   </p>
                 )}
-                <details class="void-path-results">
+                <details class="recipe-suggestions-results">
                   <summary>
                     Show {plan.recipes.length} {plan.recipes.length === 1 ? 'recipe' : 'recipes'}
                   </summary>
-                  <p class="void-path-score-factors">
+                  <p class="recipe-suggestions-score-factors">
                     Inputs ({formatScoreFactor(scoreFactors.inputs)}) + outputs (
                     {formatScoreFactor(scoreFactors.outputs)}) + buildings (
                     {formatScoreFactor(scoreFactors.buildings)}) + certainty (
                     {formatScoreFactor(scoreFactors.certainty)}) = {formatScoreFactor(score)}
                   </p>
                   <ol
-                    class="void-path-steps"
+                    class="recipe-suggestions-steps"
                     aria-label={
                       kind === 'chain' && isResourceChain(plan)
                         ? `Path from ${resource} to ${plan.target}`
@@ -166,13 +169,13 @@ function formatScoreFactor(score: number) {
 function ResourceList({ resources, label }: { resources: ResourceId[]; label: string }) {
   return (
     <span
-      class="void-path-resource-list"
+      class="recipe-suggestions-resource-list"
       aria-label={`${label}: ${resources.map(resourceName).join(', ')}`}
     >
       {resources.map((id, index) => (
         <Fragment key={id}>
-          {index === 0 ? null : <span class="void-path-resource-separator">+</span>}
-          <span class="void-path-resource" title={resourceName(id)}>
+          {index === 0 ? null : <span class="recipe-suggestions-resource-separator">+</span>}
+          <span class="recipe-suggestions-resource" title={resourceName(id)}>
             <ResourceIcon id={id} />
           </span>
         </Fragment>
