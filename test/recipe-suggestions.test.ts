@@ -1,10 +1,11 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, within } from '@testing-library/preact';
+import { cleanup, render, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { h } from 'preact';
+import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cellInterface, newCell } from '../src/cell.ts';
+import { cellInterface, newCell, type Cell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/data/recipes.ts';
@@ -24,6 +25,27 @@ import {
 const waste = 'fluid:angels-water-yellow-waste' as const;
 
 afterEach(cleanup);
+
+function SuggestionsExample({ initialCell }: { initialCell: Cell }) {
+  const [cell, setCell] = useState(initialCell);
+  return h(RecipeSuggestions, {
+    search: '',
+    cell,
+    progress: 0,
+    onMakeExplicit: (resource, direction) =>
+      setCell((previous) => ({
+        ...previous,
+        imports:
+          direction === 'import'
+            ? [...(previous.imports ?? []), resource]
+            : previous.imports?.filter((id) => id !== resource),
+        exports:
+          direction === 'export'
+            ? [...(previous.exports ?? []), resource]
+            : previous.exports?.filter((id) => id !== resource),
+      })),
+  });
+}
 
 describe('suggestedVoidResources', () => {
   it('includes the resource targeted by a uses search', () => {
@@ -342,6 +364,35 @@ describe('suggestedRecipePaths', () => {
 });
 
 describe('RecipeSuggestions', () => {
+  it('marks a make suggestion as an explicit import and hides it', async () => {
+    const user = userEvent.setup();
+    render(h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'speed-module-3' }] } }));
+
+    const card = screen
+      .getByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` })
+      .closest('article');
+    expect(card).not.toBeNull();
+    if (!card) return;
+    await user.click(within(card).getByRole('button', { name: 'make explicit import' }));
+
+    expect(
+      screen.queryByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` }),
+    ).toBeNull();
+  });
+
+  it('marks a use suggestion as an explicit export and hides it', async () => {
+    const user = userEvent.setup();
+    render(
+      h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'bob-speed-processor' }] } }),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'make explicit export' }));
+
+    expect(
+      screen.queryByRole('heading', { name: `Use ${resourceName('item:bob-speed-processor')}` }),
+    ).toBeNull();
+  });
+
   it('hides recipes which make an explicitly imported resource', () => {
     const cell = {
       entries: [{ recipe: 'speed-module-3' }],

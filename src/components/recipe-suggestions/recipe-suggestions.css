@@ -26,6 +26,13 @@
   justify-content: space-between;
   gap: 0.5rem;
 }
+.void-path-card-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
 .void-path-for {
   display: flex;
   align-items: center;
@@ -40,6 +47,23 @@
   color: var(--muted);
   font-size: 0.85rem;
   white-space: nowrap;
+}
+.void-path-explicit {
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  line-height: 1;
+  color: var(--text);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 3px 7px;
+  cursor: pointer;
+}
+.void-path-explicit:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
 }
 .void-path-flow-summary {
   display: flex;

@@ -104,6 +104,26 @@ export function App({ uss }: { uss: State<UrlState> }) {
               progress={progress}
               onAdd={(recipe) => addRecipe(recipe, undefined)}
               inCell={(recipe) => !!cell && hasRecipe(cell, recipe)}
+              onMakeExplicit={(resource, direction) =>
+                setUs((previous) => ({
+                  ...previous,
+                  cl: previous.cl.map((candidate, index) =>
+                    index !== previous.ci
+                      ? candidate
+                      : {
+                          ...candidate,
+                          imports:
+                            direction === 'import'
+                              ? [...(candidate.imports ?? []), resource]
+                              : candidate.imports?.filter((id) => id !== resource),
+                          exports:
+                            direction === 'export'
+                              ? [...(candidate.exports ?? []), resource]
+                              : candidate.exports?.filter((id) => id !== resource),
+                        },
+                  ),
+                }))
+              }
             />
           </div>
         </>
