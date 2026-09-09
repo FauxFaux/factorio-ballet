@@ -298,13 +298,49 @@ tangent; a zero horizontal offset from the endpoint gives a vertical exit tangen
 endpoint's x offset mirrors the second half of an old station loop back to the border.
 
 The stacked layout uses the same tangent technique as two short quarter-turn cubics with a straight
-line between them. Each station begins on the left trunk with a vertical tangent, turns onto its
-horizontal platform, then turns down into the right trunk. Translating the start y-coordinate by a
-fixed pitch repeats the S shape. Computing that y from a fixed bottom baseline minus the station
-index makes a partially populated fan grow upward while keeping its lowest station in place.
+line between them. Each ordinary station begins on the left trunk with a vertical tangent, turns
+onto its horizontal platform, then turns down into the right trunk. Translating the start
+y-coordinate by a fixed pitch repeats the S shape. Computing that y from a fixed bottom baseline
+minus the station index makes a partially populated fan grow upward while keeping its lowest station
+in place. The bottom station is the exception described below.
 
 Shared trunks should be emitted separately from the repeated S-curves. Besides avoiding nearly
-coincident copies of the same vertical rail, this permits the left approach to remain present for a
-zero-station input and lets the outermost top and bottom tracks use longer curves to blend back into
-the brick border. Stop markers are geometry too: in a stacked fan their y-coordinate must use the
-same bottom baseline and pitch as their station curve, rather than the old layout's one fixed row.
+coincident copies of the same vertical rail, this lets all input geometry be omitted for a
+zero-station input. A trunk which feeds the repeated curves should end exactly at the outermost
+station's tangent rather than continuing behind it. In particular, the right trunk's top endpoint
+must be derived from the highest rendered station when the fan grows upwards. Stop markers are
+geometry too: in a stacked fan their y-coordinate must use the same bottom baseline and pitch as
+their station curve, rather than the old layout's one fixed row.
+
+At the bottom of the fan, joining a normal station flick to a separate border curve makes the turn
+look pinched. A single cubic from the end of the platform straight to the bottom-border straight is
+smoother. Put its first control point on the platform's y-coordinate and its second on the border's
+y-coordinate: those aligned control points give the curve a horizontal tangent at both ends. With
+two or more stations, the right trunk also keeps its own curve to that border endpoint as an
+additional route; the two curves represent the separate bottom station and shared upper-station
+approaches.
+
+## Resulting stacked input shape
+
+The finished schematic is a fan between two shared verticals, with the exceptional bottom platform
+providing its own exit:
+
+- With no input stations, none of the fan, trunks, or their border attachments is drawn. The outer
+  grid and any old-style output stations remain.
+- Station zero is fixed at `y = 112`; later stations are placed 10 units higher apiece. A partial
+  fan therefore fills from bottom to top rather than changing the positions of existing stations.
+- The left approach bends out of the border onto `x = 8`, descends to `y = 104`, and stops exactly
+  where the bottom station begins. An ordinary station turns from that vertical onto a platform from
+  `x = 16` through `x = 52`, then turns down to meet the right trunk at `x = 60`.
+- The bottom platform replaces that last S flick with one sharper cubic from `(52, 112)` directly to
+  the bottom track at `(76, 123)`. The curve first aims right, pulls close to vertical around
+  `x = 60`, and finishes horizontally along the border.
+- With two or more stations, the right trunk starts at the lower end of the highest station's curve,
+  descends on `x = 60`, and takes its own longer curve to `(76, 123)`. Thus the upper station stack
+  and the bottom station are two distinct paths which merge at the same point on the border. A lone
+  station needs only its direct bottom curve, so it has no right trunk.
+- Each stop dot is at `x = 48`, four units before its platform's right-hand curve, and shares the
+  station's bottom-up y-coordinate.
+
+This input fan is currently the default. Output stations still use the original mirrored-loop
+geometry in `railPath`.

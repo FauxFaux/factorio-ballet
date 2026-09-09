@@ -272,30 +272,34 @@ const stackedStationPitch = 10;
  * stations deliberately retain the original RADAR loops while this input layout is the default.
  */
 export function stackedRailPath(inputCount: number, outputCount: number): string {
-  const rails = [
-    railPath(0, outputCount),
-    // The left trunk remains useful as the brick's approach even when there are no input stations.
-    'M 4 13 c 0 6, 4 7, 4 11 l 0 88 c 0 7, 8 12, 16 12',
-  ];
+  const rails = [railPath(0, outputCount)];
 
   if (inputCount > 0) {
-    rails.push(
-      // The top and bottom of the second trunk blend into the shared outside tracks.
-      'M 4 20 c 0 7, 6 12, 16 12 l 24 0 c 9 0, 16 7, 16 16',
-      'M 60 40 l 0 72 c 0 7, 8 12, 16 12',
-    );
+    const topStationY = stackedStationBottomY - (inputCount - 1) * stackedStationPitch;
+    const rightTrunkTopY = topStationY + 8;
+    rails.push('M 4 13 c 0 6, 4 7, 4 11 l 0 80');
+    if (inputCount > 1) {
+      rails.push(
+        `M 60 ${rightTrunkTopY} l 0 ${stackedStationBottomY - rightTrunkTopY} c 0 7, 8 11, 16 11`,
+      );
+    }
   }
 
   for (let index = 0; index < inputCount; index++) {
     const y = stackedStationBottomY - index * stackedStationPitch;
-    rails.push(`M 8 ${y - 8}`, 'c 0 4, 4 8, 8 8', 'l 36 0', 'c 4 0, 8 4, 8 8');
+    rails.push(
+      `M 8 ${y - 8}`,
+      'c 0 4, 4 8, 8 8',
+      'l 36 0',
+      index === 0 ? 'c 8 0, 8 11, 24 11' : 'c 4 0, 8 4, 8 8',
+    );
   }
 
   return rails.join(' ');
 }
 
 export function stackedInputStationStop(index: number): { x: number; y: number } {
-  return { x: 20, y: stackedStationBottomY - index * stackedStationPitch };
+  return { x: 48, y: stackedStationBottomY - index * stackedStationPitch };
 }
 
 function StationStops({
