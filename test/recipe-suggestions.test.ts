@@ -196,6 +196,37 @@ describe('few-recipe interface suggestions', () => {
       ]),
     );
   });
+
+  it('extends competing producers with their free upstream inputs before scoring them', () => {
+    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-gas-carbon-monoxide' }] });
+    const carbonPlans = paths.filter(
+      (path) => path.kind === 'input' && path.resource === 'item:angels-solid-carbon',
+    );
+    const fromSteam = carbonPlans.find(
+      (path) =>
+        path.plan.recipes.join('|') ===
+        'synthetic:pumping-water|angels-steam-water|angels-solid-carbon',
+    );
+    const directSteam = carbonPlans.find(
+      (path) => path.plan.recipes.join('|') === 'angels-solid-carbon',
+    );
+    const fromOxygen = carbonPlans.find(
+      (path) =>
+        path.plan.recipes.join('|') ===
+        'angels-gas-compressed-air|angels-air-separation|angels-carbon-from-charcoal',
+    );
+
+    expect(fromSteam?.plan).toMatchObject({
+      inputs: ['item:angels-solid-coke'],
+      outputs: [],
+    });
+    expect(fromOxygen?.plan).toMatchObject({
+      inputs: ['item:angels-wood-charcoal'],
+      outputs: ['fluid:angels-gas-nitrogen'],
+    });
+    expect(fromSteam?.score).toBeGreaterThan(directSteam?.score ?? Number.POSITIVE_INFINITY);
+    expect(fromSteam?.score).toBeGreaterThan(fromOxygen?.score ?? Number.POSITIVE_INFINITY);
+  });
 });
 
 describe('scoreRecipeSuggestion', () => {
@@ -334,7 +365,7 @@ describe('suggestedRecipePaths', () => {
     );
 
     expect(sulfuricAcid?.plan).toMatchObject({ inputs: ['fluid:angels-gas-oxygen'] });
-    expect(sulfuricAcid?.score).toBeCloseTo(1.36);
+    expect(sulfuricAcid?.score).toBeCloseTo(22.3604);
   });
 
   it('limits the combined path suggestions to the ten best candidates', () => {
