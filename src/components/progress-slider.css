@@ -8,6 +8,9 @@
 }
 
 .progress-slider legend {
+  display: flex;
+  align-items: center;
+  gap: 0.2222rem;
   padding: 0 0.3333rem;
   color: var(--text-h);
   font-size: 0.7778rem;

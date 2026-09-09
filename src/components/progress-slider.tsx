@@ -2,6 +2,7 @@ import './progress-slider.css';
 import { packLandmarks, resourceName } from '../data/index.ts';
 import type { Landmark } from '../data/landmarks.ts';
 import type { State } from '../ts.ts';
+import { HelpInfo } from './help-info.tsx';
 import { iconStyle } from './icon.tsx';
 
 /**
@@ -40,7 +41,20 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
 
   return (
     <fieldset class="progress-slider">
-      <legend>Overall game progress</legend>
+      <legend>
+        <span>Overall game progress</span>
+        <HelpInfo label="About overall game progress">
+          <p>This lets you set approximately how far through your current save you are.</p>
+          <p>
+            Use the most recent science pack you have unlocked as a guide. Select a pack to jump to
+            that point, or use the slider to place yourself between packs.
+          </p>
+          <p>
+            Your progress affects the default machines and modules, how search results are ordered,
+            and which recipes are suggested.
+          </p>
+        </HelpInfo>
+      </legend>
       <input
         type="range"
         min={0}
