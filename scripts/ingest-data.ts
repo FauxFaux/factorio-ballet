@@ -10,6 +10,8 @@ import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
 import { packStaticData } from './pack-static-data.ts';
 import { placingItems, syntheticRecipes } from './synthetic.ts';
+import { fromAirSuggestionStages } from '../src/from-air.ts';
+import { singleStepVoidableResources } from '../src/void-path.ts';
 import type {
   Beacon,
   Belt,
@@ -129,6 +131,16 @@ async function main() {
   checkCatalysts(recipes);
 
   const sciencePacks = applyComplexity(v, recipes, resources);
+  const fromAir = fromAirSuggestionStages({ recipes });
+  const suggestionPreload = {
+    fromAirRecipeByProduct: Object.fromEntries(
+      fromAir.flatMap((stage) =>
+        stage.flatMap(({ id, adds }) => adds.map((product) => [product, id] as const)),
+      ),
+    ),
+    fromAirOneStepProducts: fromAir[1]?.flatMap(({ adds }) => adds) ?? [],
+    singleStepVoidableResources: [...singleStepVoidableResources({ recipes })],
+  };
 
   const staticData: StaticData = {
     recipes,
@@ -138,6 +150,7 @@ async function main() {
     beacons,
     belts,
     sciencePacks,
+    suggestionPreload,
   };
   const packed = packStaticData(staticData);
   const { recipes: packedRecipes, ...withoutRecipes } = packed;

@@ -116,6 +116,11 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
       ]),
     ),
     sciencePacks: data.sciencePacks,
+    suggestionPreload: {
+      fromAirRecipeByProduct: data.suggestionPreload.f as Record<ResourceId, string>,
+      fromAirOneStepProducts: data.suggestionPreload.o,
+      singleStepVoidableResources: data.suggestionPreload.v,
+    },
   };
 }
 

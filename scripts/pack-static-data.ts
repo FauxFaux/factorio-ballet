@@ -104,6 +104,11 @@ export function packStaticData(data: StaticData): StaticDataPacked {
       ]),
     ),
     sciencePacks: data.sciencePacks,
+    suggestionPreload: {
+      f: data.suggestionPreload.fromAirRecipeByProduct,
+      o: data.suggestionPreload.fromAirOneStepProducts,
+      v: data.suggestionPreload.singleStepVoidableResources,
+    },
   };
 }
 

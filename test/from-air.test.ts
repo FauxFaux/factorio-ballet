@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { fromAirStages } from '../src/components/from-air.tsx';
 import { staticData } from '../src/data/decode.ts';
+import { fromAirSuggestionStages } from '../src/from-air.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 const recipe = (
@@ -18,6 +19,14 @@ const recipe = (
 });
 
 describe('fromAirStages', () => {
+  it('derives the suggestion prefix identically to the full acyclic search', () => {
+    expect(fromAirSuggestionStages(staticData)).toEqual(
+      fromAirStages(staticData, false, 1, { maxStages: 2, includeCycles: false }).map((stage) =>
+        stage.map(({ id, adds }) => ({ id, adds })),
+      ),
+    );
+  });
+
   it('unlocks recipes in discrete stages until no new resource can be made', () => {
     const air = 'fluid:air';
     const oxygen = 'fluid:oxygen';

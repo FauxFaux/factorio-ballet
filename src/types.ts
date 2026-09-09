@@ -32,6 +32,17 @@ export interface StaticData {
    * Which items those are is game data, hence a list here rather than a guess in the UI.
    */
   sciencePacks: ResourceId[];
+
+  /**
+   * Small suggestion indexes derived while ingesting, rather than searching the full recipe graph
+   * when the planner loads. `fromAirRecipeByProduct` holds the recipe selected for each product in
+   * the first two non-cycle from-air stages.
+   */
+  suggestionPreload: {
+    fromAirRecipeByProduct: Record<ResourceId, string>;
+    fromAirOneStepProducts: ResourceId[];
+    singleStepVoidableResources: ResourceId[];
+  };
 }
 
 /** The on-disk form of {@link StaticData}; nested field names are deliberately one character each. */
@@ -79,6 +90,11 @@ export type StaticDataPacked = {
   >;
   belts: Record<string, { h?: string; i?: string; s: number; u: number }>;
   sciencePacks: ResourceId[];
+  suggestionPreload: {
+    f: Record<string, string>;
+    o: ResourceId[];
+    v: ResourceId[];
+  };
 };
 
 type PackedIngredient = { r: number; a: number; t?: PackedTemperature };
