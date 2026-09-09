@@ -27,6 +27,8 @@ export function CellRadar({
   progress: number;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
+  const stacked = inputs.length + outputs.length > 4;
+  const assemblerStartX = stacked ? 68 : 8 + inputs.length * 8;
   return (
     <figure class="cell-radar">
       <figcaption>
@@ -45,10 +47,22 @@ export function CellRadar({
         </desc>
         <rect class="cell-radar-floor" x="0" y="0" width="192" height="128" />
         <RailBorder />
-        <path class="cell-radar-path" d={stackedRailPath(inputs.length, outputs.length)} />
-        <StationStops side="in" resources={inputs} stacked />
+        <path
+          class="cell-radar-path"
+          d={
+            stacked
+              ? stackedRailPath(inputs.length, outputs.length)
+              : railPath(inputs.length, outputs.length)
+          }
+        />
+        <StationStops side="in" resources={inputs} stacked={stacked} />
         <StationStops side="out" resources={outputs} />
-        <AssemblerColumns entries={entries} counts={counts} progress={progress} startX={68} />
+        <AssemblerColumns
+          entries={entries}
+          counts={counts}
+          progress={progress}
+          startX={assemblerStartX}
+        />
       </svg>
     </figure>
   );
