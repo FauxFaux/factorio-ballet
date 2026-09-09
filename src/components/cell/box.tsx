@@ -89,16 +89,16 @@ export function CellBox({
             ↺ auto
           </button>
         ) : null}
-        {!cell.design ? (
-          <button
-            type="button"
-            class="cell-btn"
-            title="Start a blank design for this cell"
-            onClick={() => setCell(withDesign)}
-          >
-            + design
-          </button>
-        ) : null}
+        <button
+          type="button"
+          class={cell.design ? 'cell-btn cell-design-remove' : 'cell-btn'}
+          title={cell.design ? 'Remove this cell’s design' : 'Start a blank design for this cell'}
+          onClick={() =>
+            setCell(cell.design ? (previous) => ({ ...previous, design: undefined }) : withDesign)
+          }
+        >
+          {cell.design ? 'remove design' : '+ design'}
+        </button>
         <CellAsJson cell={cell} iface={iface} solution={solution} />
         <button
           type="button"

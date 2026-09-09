@@ -33,7 +33,12 @@ describe('CellList', () => {
 
     expect(screen.getByRole('region', { name: 'Design' })).toBeTruthy();
     expect(screen.getByRole('heading', { name: 'Column 1' })).toBeTruthy();
-    expect(screen.queryByRole('button', { name: '+ design' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'remove design' })).toBeTruthy();
+
+    await user.click(screen.getByRole('button', { name: 'remove design' }));
+
+    expect(screen.queryByRole('region', { name: 'Design' })).toBeNull();
+    expect(screen.getByRole('button', { name: '+ design' })).toBeTruthy();
   });
 
   it('fills a design column with the solved number of a recipe’s assemblers', async () => {
