@@ -56,6 +56,12 @@ const freeOneStepProducts = new Set(
 export function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
   return 'target' in plan;
 }
+function isRecommendedPlan(plan: ResourceChain | VoidPlan) {
+  return plan.recipes.every((id) => {
+    const recipe = staticData.recipes[id];
+    return recipe && !isBarrelling(recipe) && !isUnbarrelling(recipe);
+  });
+}
 function isSingleStepVoidable(resource: ResourceId) {
   return staticVoidPlans(resource, 1)[0]?.recipes.length === 1;
 }
@@ -232,12 +238,12 @@ export function suggestedRecipePaths(
     const resourceChains = chains.get(id) ?? [];
     if (!searched.has(id) && id !== resource && !plans.length && !resourceChains.length) return [];
     return [
-      ...plans.map((plan) =>
-        pathSuggestion(id, 'void', plan, existingInputs, existingOutputs, present),
-      ),
-      ...resourceChains.map((plan) =>
-        pathSuggestion(id, 'chain', plan, existingInputs, existingOutputs, present),
-      ),
+      ...plans
+        .filter(isRecommendedPlan)
+        .map((plan) => pathSuggestion(id, 'void', plan, existingInputs, existingOutputs, present)),
+      ...resourceChains
+        .filter(isRecommendedPlan)
+        .map((plan) => pathSuggestion(id, 'chain', plan, existingInputs, existingOutputs, present)),
     ];
   });
   const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>

@@ -6,6 +6,8 @@ import { h } from 'preact';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cellInterface, newCell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
+import { isBarrelling, isUnbarrelling } from '../src/data/recipes.ts';
+import { staticData } from '../src/data/decode.ts';
 import {
   scoreRecipeSuggestion,
   suggestedResourceChains,
@@ -207,6 +209,22 @@ describe('suggestedRecipePaths', () => {
     expect(paths.map((path) => path.score)).toEqual(
       [...paths.map((path) => path.score)].sort((a, b) => b - a),
     );
+  });
+
+  it('excludes barrel conversion recipes from void recommendations', () => {
+    const water = 'fluid:water' as const;
+    const paths = suggestedRecipePaths(`uses:${water}`);
+
+    expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('water-barrel');
+    expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('empty-water-barrel');
+    expect(
+      paths
+        .flatMap((path) => path.plan.recipes)
+        .some((id) => {
+          const recipe = staticData.recipes[id]!;
+          return isBarrelling(recipe) || isUnbarrelling(recipe);
+        }),
+    ).toBe(false);
   });
 });
 
