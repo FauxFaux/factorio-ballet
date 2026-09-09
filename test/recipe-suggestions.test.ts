@@ -107,8 +107,7 @@ describe('single-recipe interface suggestions', () => {
       (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
     );
 
-    expect(soleConsumer?.scoreFactors.certainty).toBeGreaterThan(0);
-    expect(soleConsumer?.score).toBeGreaterThan(suggestionScoreWeights.soleProducer / 2);
+    expect(soleConsumer?.scoreFactors.certainty).toBe(suggestionScoreWeights.soleProducer);
   });
 });
 
@@ -205,6 +204,31 @@ describe('scoreRecipeSuggestion', () => {
     );
   });
 
+  it('charges every required input, including zero-complexity resources', () => {
+    const plan = {
+      target: 'item:electronic-circuit' as const,
+      recipes: [],
+      inputs: [
+        'item:bob-wooden-board' as const,
+        'item:bob-basic-electronic-components' as const,
+        'item:bob-solder' as const,
+      ],
+      outputs: [],
+    };
+
+    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeCloseTo(-19.935);
+  });
+
+  it('shows the supplied-input bonus as an output score factor', () => {
+    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'speed-module-3' }] });
+    const suggestion = paths.find(
+      (path) => path.kind === 'input' && path.resource === 'item:speed-module-2',
+    );
+
+    expect(suggestion?.scoreFactors.outputs).toBe(suggestionScoreWeights.suppliedInput);
+    expect(suggestion?.scoreFactors.inputs).toBeLessThan(0);
+  });
+
   it('rewards chains which join the cell interface over equally long alternatives', () => {
     const connected = {
       target: 'item:iron-plate',
@@ -288,7 +312,7 @@ describe('suggestedRecipePaths', () => {
     );
 
     expect(sulfuricAcid?.plan).toMatchObject({ inputs: ['fluid:angels-gas-oxygen'] });
-    expect(sulfuricAcid?.score).toBeCloseTo(7.36);
+    expect(sulfuricAcid?.score).toBeCloseTo(1.36);
   });
 
   it('limits the combined path suggestions to the ten best candidates', () => {

@@ -114,22 +114,22 @@ function calculateScoreFactors(
     ...additionalCatalystInputs(plan, present).filter((resource) => !inputs.includes(resource)),
   ];
   const inputComplexity = allInputs.reduce(
-    (total, resource) => total + (staticData.resources[resource]?.complexity ?? 1),
+    (total, resource) => total + 1 + (staticData.resources[resource]?.complexity ?? 0),
     0,
   );
   return {
     inputs:
       -inputComplexity * suggestionScoreWeights.inputComplexity +
       allInputs.filter((resource) => existingInputs.has(resource)).length *
-        suggestionScoreWeights.reusedInput +
-      (isResourceChain(plan) && existingInputs.has(plan.target)
-        ? suggestionScoreWeights.suppliedInput
-        : 0),
+        suggestionScoreWeights.reusedInput,
     outputs:
       -outputs.filter((resource) => !isSingleStepVoidable(resource)).length *
         suggestionScoreWeights.output +
       outputs.filter((resource) => existingOutputs.has(resource)).length *
-        suggestionScoreWeights.reusedOutput,
+        suggestionScoreWeights.reusedOutput +
+      (isResourceChain(plan) && existingInputs.has(plan.target)
+        ? suggestionScoreWeights.suppliedInput
+        : 0),
     buildings: -plan.recipes.length * suggestionScoreWeights.step,
     certainty:
       involvedRecipeCount === 1
