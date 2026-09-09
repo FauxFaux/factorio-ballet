@@ -25,10 +25,14 @@ export function RecipeSuggestions({
   onAdd?: (recipe: string) => void;
   inCell?: (recipe: string) => boolean;
 }) {
-  const suggestions = useMemo(
-    () => suggestedRecipePaths(search, cell, resource),
-    [search, cell, resource],
-  );
+  const suggestions = useMemo(() => {
+    const imports = new Set(cell?.imports);
+    const exports = new Set(cell?.exports);
+    return suggestedRecipePaths(search, cell, resource).filter((suggestion) => {
+      if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
+      return !exports.has(suggestion.resource);
+    });
+  }, [search, cell, resource]);
   return (
     <section class="void-path" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>

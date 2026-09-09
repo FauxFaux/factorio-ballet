@@ -342,6 +342,30 @@ describe('suggestedRecipePaths', () => {
 });
 
 describe('RecipeSuggestions', () => {
+  it('hides recipes which make an explicitly imported resource', () => {
+    const cell = {
+      entries: [{ recipe: 'speed-module-3' }],
+      imports: ['item:speed-module-2' as const],
+    };
+    const { queryByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
+
+    expect(
+      queryByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` }),
+    ).toBeNull();
+  });
+
+  it('hides recipes which consume an explicitly exported resource', () => {
+    const cell = {
+      entries: [{ recipe: 'bob-speed-processor' }],
+      exports: ['item:bob-speed-processor' as const],
+    };
+    const { queryByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
+
+    expect(
+      queryByRole('heading', { name: `Use ${resourceName('item:bob-speed-processor')}` }),
+    ).toBeNull();
+  });
+
   it('shows the effects of a suggested output recipe', () => {
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
     const suggestion = suggestedRecipePaths('', cell).find(
