@@ -1,7 +1,7 @@
 import './recipe-suggestions.css';
 import { PackageDependenciesIcon, PackageDependentsIcon } from '@primer/octicons-react';
 import { Fragment } from 'preact';
-import { useMemo } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import type { Cell } from '../../cell.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import { staticData } from '../../data/decode.ts';
@@ -9,7 +9,12 @@ import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { AddToCell } from '../recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
-import { isResourceChain, suggestedRecipePaths } from './suggestions.ts';
+import {
+  areRecipeSuggestionsReady,
+  isResourceChain,
+  suggestedRecipePaths,
+  suggestionPrecomputation,
+} from './suggestions.ts';
 
 export function RecipeSuggestions({
   resource,
@@ -28,14 +33,19 @@ export function RecipeSuggestions({
   inCell?: (recipe: string) => boolean;
   onMakeExplicit?: (resource: ResourceId, direction: 'import' | 'export') => void;
 }) {
+  const [suggestionsReady, setSuggestionsReady] = useState(areRecipeSuggestionsReady);
+  useEffect(() => {
+    if (!suggestionsReady) void suggestionPrecomputation.then(() => setSuggestionsReady(true));
+  }, [suggestionsReady]);
   const suggestions = useMemo(() => {
+    if (!suggestionsReady) return [];
     const imports = new Set(cell?.imports);
     const exports = new Set(cell?.exports);
     return suggestedRecipePaths(search, cell, resource).filter((suggestion) => {
       if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
       return !exports.has(suggestion.resource);
     });
-  }, [search, cell, resource]);
+  }, [search, cell, resource, suggestionsReady]);
   return (
     <section class="recipe-suggestions" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>

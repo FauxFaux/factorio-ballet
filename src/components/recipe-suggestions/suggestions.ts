@@ -39,9 +39,64 @@ export const suggestionScoreWeights = {
   synthesisedFreeInput: 10,
   void: 10,
 } as const;
-const staticVoidPlans = voidPlanFinder(staticData);
-const staticResourceChains = resourceChainFinder(staticData);
-const staticSingleStepVoidableResources = singleStepVoidableResources(staticData);
+let precomputationComplete = false;
+let resolvePrecomputation!: () => void;
+export const suggestionPrecomputation = new Promise<void>((resolve) => {
+  resolvePrecomputation = resolve;
+});
+let staticVoidPlans!: ReturnType<typeof voidPlanFinder>;
+let staticResourceChains!: ReturnType<typeof resourceChainFinder>;
+let staticSingleStepVoidableResources!: ReturnType<typeof singleStepVoidableResources>;
+let producers!: Map<ResourceId, string[]>;
+let consumers!: Map<ResourceId, string[]>;
+let soleProducer!: Map<ResourceId, string>;
+let soleConsumer!: Map<ResourceId, string>;
+let freeOneStepProducts!: Set<ResourceId>;
+let freeRecipeByProduct!: Map<ResourceId, ReturnType<typeof fromAirStages>[number][number]>;
+
+export function areRecipeSuggestionsReady() {
+  return precomputationComplete;
+}
+
+function precomputeRecipeSuggestions() {
+  if (precomputationComplete) return;
+  precomputationComplete = true;
+  staticVoidPlans = voidPlanFinder(staticData);
+  staticResourceChains = resourceChainFinder(staticData);
+  staticSingleStepVoidableResources = singleStepVoidableResources(staticData);
+  producers = indexRecipes('products');
+  consumers = indexRecipes('ingredients');
+  soleProducer = new Map(
+    [...producers].flatMap(([resource, recipes]) =>
+      recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+    ),
+  );
+  soleConsumer = new Map(
+    [...consumers].flatMap(([resource, recipes]) =>
+      recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+    ),
+  );
+  // Suggestions only need the ordinary recipes in the first two layers. A complete from-air tree
+  // searches for productive cycles at every layer, which is useful in its dedicated view but far too
+  // much synchronous work to do while loading the planner.
+  const freeProductStages = fromAirStages(staticData, false, 1, {
+    maxStages: 2,
+    includeCycles: false,
+  });
+  freeOneStepProducts = new Set(freeProductStages[1]?.flatMap(({ adds }) => adds) ?? []);
+  freeRecipeByProduct = new Map(
+    freeProductStages.flatMap((stage) =>
+      stage.flatMap((recipe) => recipe.adds.map((product) => [product, recipe] as const)),
+    ),
+  );
+  resolvePrecomputation();
+}
+
+function ensureRecipeSuggestionsPrecomputed() {
+  precomputeRecipeSuggestions();
+}
+
+setTimeout(precomputeRecipeSuggestions, 0);
 
 function indexRecipes(direction: 'ingredients' | 'products') {
   const recipes = new Map<ResourceId, string[]>();
@@ -55,31 +110,6 @@ function indexRecipes(direction: 'ingredients' | 'products') {
   }
   return recipes;
 }
-const producers = indexRecipes('products');
-const consumers = indexRecipes('ingredients');
-const soleProducer = new Map(
-  [...producers].flatMap(([resource, recipes]) =>
-    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
-  ),
-);
-const soleConsumer = new Map(
-  [...consumers].flatMap(([resource, recipes]) =>
-    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
-  ),
-);
-// Suggestions only need the ordinary recipes in the first two layers. A complete from-air tree
-// searches for productive cycles at every layer, which is useful in its dedicated view but far too
-// much synchronous work to do while loading the planner.
-const freeProductStages = fromAirStages(staticData, false, 1, {
-  maxStages: 2,
-  includeCycles: false,
-});
-const freeOneStepProducts = new Set(freeProductStages[1]?.flatMap(({ adds }) => adds) ?? []);
-const freeRecipeByProduct = new Map(
-  freeProductStages.flatMap((stage) =>
-    stage.flatMap((recipe) => recipe.adds.map((product) => [product, recipe] as const)),
-  ),
-);
 
 export function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
   return 'target' in plan;
@@ -91,6 +121,7 @@ function isRecommendedPlan(plan: ResourceChain | VoidPlan) {
   });
 }
 function isSingleStepVoidable(resource: ResourceId) {
+  ensureRecipeSuggestionsPrecomputed();
   return staticSingleStepVoidableResources.has(resource);
 }
 function additionalCatalystInputs(
@@ -188,6 +219,7 @@ export function suggestedResourceChains(
   cell?: Cell,
   maxResults = CANDIDATES_PER_RESOURCE,
 ): Map<ResourceId, ResourceChain[]> {
+  ensureRecipeSuggestionsPrecomputed();
   if (!cell) return new Map();
   const { inputs, outputs } = cellInterface(cell);
   return new Map(
@@ -212,6 +244,7 @@ function directSuggestion(
   };
 }
 export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
+  ensureRecipeSuggestionsPrecomputed();
   if (!cell) return [];
   return cellInterface(cell).inputs.flatMap((target) => {
     const id = soleProducer.get(target);
@@ -225,6 +258,7 @@ export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
  * can be added to a cell, rather than merely treating their product as already available.
  */
 export function suggestedFreeInputs(cell?: Cell): ResourceChain[] {
+  ensureRecipeSuggestionsPrecomputed();
   if (!cell) return [];
   return cellInterface(cell).inputs.flatMap((target) => {
     const plan = freeInputPlan(target);
@@ -267,6 +301,7 @@ function recipePlan(target: ResourceId, recipes: string[]): ResourceChain {
   };
 }
 export function suggestedSoleConsumerOutputs(cell?: Cell): ResourceChain[] {
+  ensureRecipeSuggestionsPrecomputed();
   if (!cell) return [];
   return cellInterface(cell).outputs.flatMap((target) => {
     const id = soleConsumer.get(target);
@@ -287,6 +322,7 @@ function suggestedFewRecipeInterfaces(
   direction: 'inputs' | 'outputs',
   recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
 ): ResourceChain[] {
+  ensureRecipeSuggestionsPrecomputed();
   if (!cell) return [];
   return cellInterface(cell)[direction].flatMap((target) => {
     const recipes = recipesByResource.get(target);
@@ -352,6 +388,7 @@ export function suggestedRecipePaths(
   cell?: Cell,
   resource?: ResourceId,
 ): PathSuggestion[] {
+  ensureRecipeSuggestionsPrecomputed();
   const searched = new Set(usedResources(search, cell));
   const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
