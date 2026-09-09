@@ -10,7 +10,7 @@
     "deploy:snapshot": "npm run build && rsync -av --delete dist/ sek:/srv/ballet.goeswhere.com/snapshot-$(git rev-parse --short HEAD)/",
     "format": "oxfmt",
     "lint": "oxfmt --check && eslint . && tsc -b",
-    "preview": "vite preview",
+    "preview": "vite build && vite preview",
     "split-icons": "node scripts/split-icons.ts",
     "test": "vitest run"
   },
