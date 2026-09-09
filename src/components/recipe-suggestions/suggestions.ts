@@ -5,6 +5,7 @@ import { parseSearch } from '../../search.ts';
 import type { ResourceId } from '../../types.ts';
 import {
   resourceChainFinder,
+  singleStepVoidableResources,
   voidPlanFinder,
   type ResourceChain,
   type VoidPlan,
@@ -40,6 +41,7 @@ export const suggestionScoreWeights = {
 } as const;
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
+const staticSingleStepVoidableResources = singleStepVoidableResources(staticData);
 
 function indexRecipes(direction: 'ingredients' | 'products') {
   const recipes = new Map<ResourceId, string[]>();
@@ -65,7 +67,13 @@ const soleConsumer = new Map(
     recipes.length === 1 ? [[resource, recipes[0]!]] : [],
   ),
 );
-const freeProductStages = fromAirStages(staticData).slice(0, 2);
+// Suggestions only need the ordinary recipes in the first two layers. A complete from-air tree
+// searches for productive cycles at every layer, which is useful in its dedicated view but far too
+// much synchronous work to do while loading the planner.
+const freeProductStages = fromAirStages(staticData, false, 1, {
+  maxStages: 2,
+  includeCycles: false,
+});
 const freeOneStepProducts = new Set(freeProductStages[1]?.flatMap(({ adds }) => adds) ?? []);
 const freeRecipeByProduct = new Map(
   freeProductStages.flatMap((stage) =>
@@ -83,7 +91,7 @@ function isRecommendedPlan(plan: ResourceChain | VoidPlan) {
   });
 }
 function isSingleStepVoidable(resource: ResourceId) {
-  return staticVoidPlans(resource, 1)[0]?.recipes.length === 1;
+  return staticSingleStepVoidableResources.has(resource);
 }
 function additionalCatalystInputs(
   plan: ResourceChain | VoidPlan,

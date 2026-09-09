@@ -88,6 +88,26 @@ describe('fromAirStages', () => {
     expect(stages.flat().map(({ id }) => id)).toEqual(['source', 'early']);
   });
 
+  it('can stop after a bounded number of ordinary stages', () => {
+    const air = 'fluid:air';
+    const oxygen = 'fluid:oxygen';
+    const plate = 'item:plate';
+    const stages = fromAirStages(
+      {
+        recipes: {
+          compress: recipe([], [air]),
+          separate: recipe([air], [oxygen]),
+          smelt: recipe([oxygen], [plate]),
+        },
+      },
+      false,
+      1,
+      { maxStages: 2, includeCycles: false },
+    );
+
+    expect(stages.map((stage) => stage.map(({ id }) => id))).toEqual([['compress'], ['separate']]);
+  });
+
   it('lists all products newly added by a recipe only once', () => {
     const air = 'fluid:air';
     const nitrogen = 'fluid:nitrogen';

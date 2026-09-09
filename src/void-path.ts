@@ -41,6 +41,28 @@ function terminal(recipe: Recipe): boolean {
   return recipe.products.length === 0 || isVoid(recipe);
 }
 
+/**
+ * Resources a single recipe can dispose of without needing any other resource.
+ *
+ * This is the one-step subset of `findVoidPlans`: a terminal recipe closes the dispose side, and
+ * every ingredient must be the resource being disposed of so that it leaves no supply side.
+ */
+export function singleStepVoidableResources(
+  data: Pick<StaticData, 'recipes'>,
+): ReadonlySet<ResourceId> {
+  const resources = new Set<ResourceId>();
+  for (const recipe of Object.values(data.recipes)) {
+    const resource = recipe.ingredients[0]?.resource;
+    if (
+      resource !== undefined &&
+      terminal(recipe) &&
+      recipe.ingredients.every((ingredient) => ingredient.resource === resource)
+    )
+      resources.add(resource);
+  }
+  return resources;
+}
+
 function stateKey({ dispose, supply }: SearchState): string {
   return `${[...dispose].sort().join(',')}|${[...supply].sort().join(',')}`;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { staticData } from '../src/data/decode.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
-import { voidPlanFinder, voidPlans } from '../src/void-path.ts';
+import { singleStepVoidableResources, voidPlanFinder, voidPlans } from '../src/void-path.ts';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),
@@ -11,6 +11,22 @@ const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
 });
 
 describe('voidPlans', () => {
+  it('indexes resources which can be voided without supplying another input', () => {
+    const waste = 'item:waste';
+    const assistedWaste = 'item:assisted-waste';
+    const reagent = 'item:reagent';
+    const voidable = singleStepVoidableResources({
+      recipes: {
+        direct: recipe([waste], []),
+        assisted: recipe([assistedWaste, reagent], []),
+      },
+    });
+
+    expect(voidable.has(waste)).toBe(true);
+    expect(voidable.has(assistedWaste)).toBe(false);
+    expect(voidable.has(reagent)).toBe(false);
+  });
+
   it('indexes and memoises paths for immutable recipe data', () => {
     const waste = 'item:waste';
     const finder = voidPlanFinder({ recipes: { void: recipe([waste], []) } });

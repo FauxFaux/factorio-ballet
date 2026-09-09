@@ -1,4 +1,5 @@
 import './from-air.css';
+import { useMemo } from 'preact/hooks';
 import { complexityOf, recipeName, resourceName } from '../data/index.ts';
 import { staticData } from '../data/decode.ts';
 import { productAmount } from '../flow.ts';
@@ -20,6 +21,13 @@ export interface FromAirRecipe {
 }
 
 export type FromAirStage = FromAirRecipe[];
+
+export interface FromAirStageOptions {
+  /** Stop once this many stages have been found. */
+  maxStages?: number;
+  /** Include productive cycles that need a one-time seed resource. */
+  includeCycles?: boolean;
+}
 
 /** Mining assumes a resource patch. Other synthetic processes describe actual transformations. */
 function usableFromAirRecipe(id: string, recipe: Recipe, infiniteMining: boolean): boolean {
@@ -155,6 +163,7 @@ export function fromAirStages(
   data: Pick<StaticData, 'recipes'>,
   infiniteMining = false,
   progress = 1,
+  { maxStages = Infinity, includeCycles = true }: FromAirStageOptions = {},
 ): FromAirStage[] {
   const allowed = new Set<ResourceId>();
   const remaining = Object.entries(data.recipes).filter(
@@ -181,17 +190,20 @@ export function fromAirStages(
         adds: usefulProducts([entry], allowed, inputRecipeIds),
       }))
       .filter(({ adds }) => adds.length > 0);
-    const cycles = recipeComponents(remaining, allowed)
-      .map((component) => {
-        const cycle = productiveCycle(component, allowed);
-        return cycle && { ...cycle, adds: usefulProducts(component, allowed, inputRecipeIds) };
-      })
-      .filter((cycle): cycle is FromAirRecipe => cycle !== undefined)
-      .filter(({ adds }) => adds.length > 0);
+    const cycles = includeCycles
+      ? recipeComponents(remaining, allowed)
+          .map((component) => {
+            const cycle = productiveCycle(component, allowed);
+            return cycle && { ...cycle, adds: usefulProducts(component, allowed, inputRecipeIds) };
+          })
+          .filter((cycle): cycle is FromAirRecipe => cycle !== undefined)
+          .filter(({ adds }) => adds.length > 0)
+      : [];
     const stage = [...ordinary, ...cycles];
 
     if (stage.length === 0) return stages;
     stages.push(stage);
+    if (stages.length === maxStages) return stages;
     for (const { adds } of stage) for (const resource of adds) allowed.add(resource);
 
     const used = new Set(stage.flatMap(({ id, recipes }) => recipes ?? [id]));
@@ -210,7 +222,10 @@ export function FromAir({
   progress: number;
 }) {
   const infiniteMining = mode === 'infinite-mining';
-  const stages = fromAirStages(staticData, infiniteMining, progress);
+  const stages = useMemo(
+    () => fromAirStages(staticData, infiniteMining, progress),
+    [infiniteMining, progress],
+  );
 
   return (
     <section class="from-air" aria-labelledby="from-air-title">
