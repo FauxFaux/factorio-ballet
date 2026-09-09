@@ -45,15 +45,10 @@ export function CellRadar({
         </desc>
         <rect class="cell-radar-floor" x="0" y="0" width="192" height="128" />
         <RailBorder />
-        <path class="cell-radar-path" d={railPath(inputs.length, outputs.length)} />
-        <StationStops side="in" resources={inputs} />
+        <path class="cell-radar-path" d={stackedRailPath(inputs.length, outputs.length)} />
+        <StationStops side="in" resources={inputs} stacked />
         <StationStops side="out" resources={outputs} />
-        <AssemblerColumns
-          entries={entries}
-          counts={counts}
-          progress={progress}
-          startX={8 + inputs.length * 8}
-        />
+        <AssemblerColumns entries={entries} counts={counts} progress={progress} startX={68} />
       </svg>
     </figure>
   );
@@ -268,14 +263,58 @@ function railPath(inputCount: number, outputCount: number): string {
   return rails.join(' ');
 }
 
-function StationStops({ side, resources }: { side: 'in' | 'out'; resources: ResourceId[] }) {
+const stackedStationBottomY = 112;
+const stackedStationPitch = 10;
+
+/**
+ * A dense input-station fan based on the stacked in-game rail layout. The two shared trunks use a
+ * fixed amount of horizontal space; station S-curves are then added from the bottom upwards. Output
+ * stations deliberately retain the original RADAR loops while this input layout is the default.
+ */
+export function stackedRailPath(inputCount: number, outputCount: number): string {
+  const rails = [
+    railPath(0, outputCount),
+    // The left trunk remains useful as the brick's approach even when there are no input stations.
+    'M 4 13 c 0 6, 4 7, 4 11 l 0 88 c 0 7, 8 12, 16 12',
+  ];
+
+  if (inputCount > 0) {
+    rails.push(
+      // The top and bottom of the second trunk blend into the shared outside tracks.
+      'M 4 20 c 0 7, 6 12, 16 12 l 24 0 c 9 0, 16 7, 16 16',
+      'M 60 40 l 0 72 c 0 7, 8 12, 16 12',
+    );
+  }
+
+  for (let index = 0; index < inputCount; index++) {
+    const y = stackedStationBottomY - index * stackedStationPitch;
+    rails.push(`M 8 ${y - 8}`, 'c 0 4, 4 8, 8 8', 'l 36 0', 'c 4 0, 8 4, 8 8');
+  }
+
+  return rails.join(' ');
+}
+
+export function stackedInputStationStop(index: number): { x: number; y: number } {
+  return { x: 20, y: stackedStationBottomY - index * stackedStationPitch };
+}
+
+function StationStops({
+  side,
+  resources,
+  stacked = false,
+}: {
+  side: 'in' | 'out';
+  resources: ResourceId[];
+  stacked?: boolean;
+}) {
   return (
     <g class="cell-radar-stops">
       {resources.map((resource, index) => {
         const offset = 8 * (index + 1);
         const input = side === 'in';
-        const x = input ? 4 + offset - 2 : 188 - offset + 2;
-        const y = input ? 84 : 38;
+        const stackedStop = input && stacked ? stackedInputStationStop(index) : undefined;
+        const x = stackedStop?.x ?? (input ? 4 + offset - 2 : 188 - offset + 2);
+        const y = stackedStop?.y ?? (input ? 84 : 38);
         return (
           <circle key={resource} cx={x} cy={y} r="1.8">
             <title>{resourceName(resource)}</title>

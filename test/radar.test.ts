@@ -4,6 +4,7 @@ import {
   stackAssemblerDistricts,
   type AssemblerDistrict,
 } from '../src/components/cell/radar-layout.ts';
+import { stackedInputStationStop, stackedRailPath } from '../src/components/cell/radar.tsx';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 describe('assemblerColumnLayout', () => {
@@ -73,5 +74,30 @@ describe('stackAssemblerDistricts', () => {
         district(recipe(['item:plate'], ['item:rod'])),
       ]),
     ).toHaveLength(3);
+  });
+});
+
+describe('stackedRailPath', () => {
+  it('keeps the left input trunk when there are no stations', () => {
+    const path = stackedRailPath(0, 0);
+
+    expect(path).toContain('M 4 13 c 0 6, 4 7, 4 11 l 0 88');
+    expect(path).not.toContain('M 60 40');
+  });
+
+  it('adds input stations from the bottom upwards', () => {
+    const path = stackedRailPath(3, 0);
+
+    expect(path).toContain('M 8 104');
+    expect(path).toContain('M 8 94');
+    expect(path).toContain('M 8 84');
+    expect(stackedInputStationStop(0)).toEqual({ x: 20, y: 112 });
+    expect(stackedInputStationStop(2)).toEqual({ x: 20, y: 92 });
+  });
+
+  it('retains the original output-station loops', () => {
+    const path = stackedRailPath(1, 1);
+
+    expect(path).toContain('M 188 13 c 0 8, -8 12, -8 20 l 0 60');
   });
 });

@@ -276,3 +276,35 @@ Tests for behavioral compatibility should cover: an odd lane count, a fluid at a
 fractional machine count near the one-column threshold, a final half-filled paired block, a station
 that overshoots 30/s, a process cycle reachable from imports, a disconnected cycle, no direct
 exporter, and enough districts to exceed the fixed view box.
+
+## Drawing the schematic rail curves
+
+The radar rail is a diagram, not a scale rendering of Factorio rail pieces. A useful way to derive
+its coordinates from a screenshot is to divide pixel positions by the rendered-size/view-box ratio.
+For example, the stacked-import reference is about 304 pixels wide for a 192-unit view box. Its
+roughly 16-pixel station spacing therefore becomes a convenient 10-unit SVG pitch.
+
+SVG path commands retain a current point. Uppercase commands use absolute coordinates (`M`, `L`),
+while lowercase commands use offsets from that point (`c`, `l`). Several disconnected rails can
+still be one `<path>`: another `M` moves the current point without drawing a joining segment. This
+is why RADAR can concatenate its border junctions, station loops, and trunks into one `d` attribute.
+
+The old `railPath` uses relative cubic Béziers. For `c x1 y1, x2 y2, x y`, both control points and
+the endpoint are relative to the curve's starting point. Its helper accepts the second control point
+relative to the _endpoint_, however, and adds the endpoint offset before serializing it. That makes
+the call describe the tangent at each end instead of requiring callers to do SVG's coordinate
+conversion themselves. A zero horizontal offset on the first control point gives a vertical entry
+tangent; a zero horizontal offset from the endpoint gives a vertical exit tangent. Reversing the
+endpoint's x offset mirrors the second half of an old station loop back to the border.
+
+The stacked layout uses the same tangent technique as two short quarter-turn cubics with a straight
+line between them. Each station begins on the left trunk with a vertical tangent, turns onto its
+horizontal platform, then turns down into the right trunk. Translating the start y-coordinate by a
+fixed pitch repeats the S shape. Computing that y from a fixed bottom baseline minus the station
+index makes a partially populated fan grow upward while keeping its lowest station in place.
+
+Shared trunks should be emitted separately from the repeated S-curves. Besides avoiding nearly
+coincident copies of the same vertical rail, this permits the left approach to remain present for a
+zero-station input and lets the outermost top and bottom tracks use longer curves to blend back into
+the brick border. Stop markers are geometry too: in a stacked fan their y-coordinate must use the
+same bottom baseline and pitch as their station curve, rather than the old layout's one fixed row.
