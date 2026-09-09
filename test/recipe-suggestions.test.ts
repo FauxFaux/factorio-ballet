@@ -13,6 +13,7 @@ import {
   suggestedResourceChains,
   suggestedRecipePaths,
   suggestedFewProducerInputs,
+  suggestedFreeInputs,
   suggestedSoleConsumerOutputs,
   suggestedSoleProducerInputs,
   suggestedVoidResources,
@@ -107,6 +108,39 @@ describe('single-recipe interface suggestions', () => {
 
     expect(soleConsumer?.scoreFactors.certainty).toBeGreaterThan(0);
     expect(soleConsumer?.score).toBeGreaterThan(suggestionScoreWeights.soleProducer / 2);
+  });
+});
+
+describe('free input suggestions', () => {
+  it('suggests the no-cost recipe chain for water and steam inputs', () => {
+    expect(suggestedFreeInputs({ entries: [{ recipe: 'angels-steam-water' }] })).toContainEqual({
+      target: 'fluid:water',
+      recipes: ['synthetic:pumping-water'],
+      inputs: [],
+      outputs: [],
+    });
+    expect(
+      suggestedFreeInputs({ entries: [{ recipe: 'angels-water-gas-shift-1' }] }),
+    ).toContainEqual(
+      expect.objectContaining({
+        target: 'fluid:steam',
+        recipes: ['synthetic:pumping-water', 'angels-steam-water'],
+        inputs: [],
+      }),
+    );
+  });
+
+  it('puts a free chain ahead of ordinary ways to supply the same cell input', () => {
+    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-water-gas-shift-1' }] });
+    const steam = paths.find(
+      (path) =>
+        path.kind === 'input' &&
+        path.resource === 'fluid:steam' &&
+        path.plan.recipes.join('|') === 'synthetic:pumping-water|angels-steam-water',
+    );
+
+    expect(steam?.scoreFactors.certainty).toBe(suggestionScoreWeights.freeInput);
+    expect(steam).toEqual(paths[0]);
   });
 });
 

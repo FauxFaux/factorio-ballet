@@ -30,6 +30,7 @@ export const suggestionScoreWeights = {
   soleProducer: 50,
   twoRecipes: 10,
   threeRecipes: 5,
+  freeInput: 100,
 } as const;
 const staticVoidPlans = voidPlanFinder(staticData);
 const staticResourceChains = resourceChainFinder(staticData);
@@ -58,8 +59,12 @@ const soleConsumer = new Map(
     recipes.length === 1 ? [[resource, recipes[0]!]] : [],
   ),
 );
-const freeOneStepProducts = new Set(
-  fromAirStages(staticData)[1]?.flatMap(({ adds }) => adds) ?? [],
+const freeProductStages = fromAirStages(staticData).slice(0, 2);
+const freeOneStepProducts = new Set(freeProductStages[1]?.flatMap(({ adds }) => adds) ?? []);
+const freeRecipeByProduct = new Map(
+  freeProductStages.flatMap((stage) =>
+    stage.flatMap((recipe) => recipe.adds.map((product) => [product, recipe] as const)),
+  ),
 );
 
 export function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
@@ -200,6 +205,50 @@ export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
     return id && recipe ? [directSuggestion(target, id, recipe)] : [];
   });
 }
+/**
+ * Recipes in the first two from-air stages need no meaningful cell input: a pump can supply water,
+ * and that water can immediately be turned into steam. Keep their actual recipes so the suggestion
+ * can be added to a cell, rather than merely treating their product as already available.
+ */
+export function suggestedFreeInputs(cell?: Cell): ResourceChain[] {
+  if (!cell) return [];
+  return cellInterface(cell).inputs.flatMap((target) => {
+    const recipes: string[] = [];
+    const added = new Set<string>();
+    const addProducer = (resource: ResourceId): boolean => {
+      const producer = freeRecipeByProduct.get(resource);
+      if (!producer) return false;
+      if (!producer.recipe.ingredients.every(({ resource }) => addProducer(resource))) return false;
+      for (const id of producer.recipes ?? [producer.id]) {
+        if (!added.has(id)) {
+          added.add(id);
+          recipes.push(id);
+        }
+      }
+      return true;
+    };
+    if (!addProducer(target)) return [];
+
+    const used = new Set(
+      recipes.flatMap(
+        (id) => staticData.recipes[id]?.ingredients.map(({ resource }) => resource) ?? [],
+      ),
+    );
+    const made = new Set(
+      recipes.flatMap(
+        (id) => staticData.recipes[id]?.products.map(({ resource }) => resource) ?? [],
+      ),
+    );
+    return [
+      {
+        target,
+        recipes,
+        inputs: [...used].filter((resource) => !made.has(resource)),
+        outputs: [...made].filter((resource) => resource !== target && !used.has(resource)),
+      },
+    ];
+  });
+}
 export function suggestedSoleConsumerOutputs(cell?: Cell): ResourceChain[] {
   if (!cell) return [];
   return cellInterface(cell).outputs.flatMap((target) => {
@@ -249,8 +298,10 @@ function pathSuggestion(
   outputs: ReadonlySet<ResourceId>,
   present: ReadonlySet<ResourceId>,
   involvedRecipeCount = 0,
+  isFreeInput = false,
 ): PathSuggestion {
   const scoreFactors = calculateScoreFactors(plan, inputs, outputs, present, involvedRecipeCount);
+  if (isFreeInput) scoreFactors.certainty += suggestionScoreWeights.freeInput;
   return {
     resource,
     kind,
@@ -296,6 +347,9 @@ export function suggestedRecipePaths(
   const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>
     pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
   );
+  const freeInputSuggestions = suggestedFreeInputs(cell).map((plan) =>
+    pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, 0, true),
+  );
   const outputSuggestions = suggestedSoleConsumerOutputs(cell).map((plan) =>
     pathSuggestion(plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
   );
@@ -324,6 +378,7 @@ export function suggestedRecipePaths(
   return [
     ...resourceSuggestions,
     ...inputSuggestions,
+    ...freeInputSuggestions,
     ...outputSuggestions,
     ...fewInputSuggestions,
     ...fewOutputSuggestions,
