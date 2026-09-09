@@ -73,27 +73,23 @@ export function worldToViewport(
 
 /** A transport belt positioned on one design tile. */
 export function Belt({
+  entityIndex,
   belt,
   status,
   hasLoop,
   itemTraces,
   worldOrigin,
-  onContextMenu,
-  onPointerDown,
-  onPointerMove,
   onPointerEnter,
   onPointerLeave,
 }: {
+  entityIndex: number;
   belt: DesignBelt;
   status: EntityPositionStatus;
   hasLoop: boolean;
   itemTraces: BeltItemTrace[];
   worldOrigin: ViewportPoint;
-  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
-  onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerEnter: () => void;
-  onPointerLeave: () => void;
+  onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
+  onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
   const { x, y } = belt.position;
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
@@ -114,11 +110,9 @@ export function Belt({
       aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${itemDescription ? `, ${itemDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
       title={`Transport belt (${x}, ${y}), ${belt.direction}${itemDescription ? ` — ${itemDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
+      data-entity-index={entityIndex}
       data-position-status={status}
       data-item-status={itemTraces.length === 0 ? 'empty' : 'traced-item'}
-      onContextMenu={onContextMenu}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{
@@ -139,23 +133,19 @@ export function Belt({
 
 /** An inserter positioned on one design tile. */
 export function Inserter({
+  entityIndex,
   inserter,
   status,
   worldOrigin,
-  onContextMenu,
-  onPointerDown,
-  onPointerMove,
   onPointerEnter,
   onPointerLeave,
 }: {
+  entityIndex: number;
   inserter: DesignInserter;
   status: EntityPositionStatus;
   worldOrigin: ViewportPoint;
-  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
-  onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerEnter: () => void;
-  onPointerLeave: () => void;
+  onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
+  onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
   const { x, y } = inserter.position;
   const viewportPosition = worldToViewport(inserter.position, worldOrigin);
@@ -169,10 +159,8 @@ export function Inserter({
       aria-label={`Inserter at ${x}, ${y}, pointing ${inserter.direction}${errorDescription}`}
       title={`Inserter (${x}, ${y}), ${inserter.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
+      data-entity-index={entityIndex}
       data-position-status={status}
-      onContextMenu={onContextMenu}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{
@@ -193,29 +181,21 @@ export function Inserter({
 
 /** An assembler positioned on the design world's tile grid. */
 export function Assembler({
+  entityIndex,
   assembler,
   status,
   inputStatus,
   worldOrigin,
-  onContextMenu,
-  onPointerDown,
-  onPointerMove,
-  onPointerUp,
-  onLostPointerCapture,
   onPointerEnter,
   onPointerLeave,
 }: {
+  entityIndex: number;
   assembler: DesignAssembler;
   status: EntityPositionStatus;
   inputStatus: AssemblerInputStatus | undefined;
   worldOrigin: ViewportPoint;
-  onContextMenu: (event: JSX.TargetedMouseEvent<HTMLDivElement>) => void;
-  onPointerDown: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerMove: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onPointerUp: (event: JSX.TargetedPointerEvent<HTMLDivElement>) => void;
-  onLostPointerCapture: () => void;
-  onPointerEnter: () => void;
-  onPointerLeave: () => void;
+  onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
+  onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
   const recipe = staticData.recipes[assembler.recipe];
   const name = recipeName(assembler.recipe);
@@ -246,12 +226,8 @@ export function Assembler({
       aria-label={`${name} assembler at ${x}, ${y}${isOverlapping ? ', overlaps another entity' : ''}`}
       title={`${name} (${x}, ${y})${missingDescription ? ` — missing resources: ${missingDescription}` : ''}${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
+      data-entity-index={entityIndex}
       data-position-status={status}
-      onContextMenu={onContextMenu}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onLostPointerCapture={onLostPointerCapture}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{

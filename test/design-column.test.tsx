@@ -252,12 +252,13 @@ describe('DesignColumn', () => {
 
     const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
     const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 8, 4' });
-    assembler.setPointerCapture = () => undefined;
-    assembler.releasePointerCapture = () => undefined;
+    viewport.setPointerCapture = () => undefined;
+    viewport.releasePointerCapture = () => undefined;
 
     fireEvent.pointerDown(assembler, { button: 0, pointerId: 1, clientX: 20, clientY: 20 });
-    fireEvent.pointerMove(assembler, { pointerId: 1, clientX: 44, clientY: 8 });
-    fireEvent.pointerUp(assembler, { pointerId: 1 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 32, clientY: 20 });
+    fireEvent.pointerMove(viewport, { pointerId: 1, clientX: 44, clientY: 8 });
+    fireEvent.pointerUp(viewport, { pointerId: 1 });
 
     expect(column.entities[0].position).toEqual({ x: 10, y: 3 });
     expect(viewport.style.backgroundPosition).toBe('0px 0px');
@@ -627,6 +628,45 @@ describe('DesignColumn', () => {
       { kind: 'belt', position: { x: 3, y: 3 }, direction: 'south' },
       { kind: 'belt', position: { x: 3, y: 4 }, direction: 'south' },
       { kind: 'belt', position: { x: 3, y: 5 }, direction: 'south' },
+    ]);
+  });
+
+  it('continues a belt drag when the pointer crosses an assembler', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 3, y: 2 },
+          size: { width: 1, height: 1 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Draw belts' }));
+    const viewport = screen.getByRole('region', { name: 'Design viewport for column 1' });
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 3, 2' });
+    viewport.setPointerCapture = () => undefined;
+
+    fireEvent.pointerDown(viewport, { button: 0, pointerId: 1, clientX: 13, clientY: 25 });
+    fireEvent.pointerMove(assembler, { pointerId: 1, clientX: 37, clientY: 25 });
+
+    expect(column.entities.slice(1)).toEqual([
+      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'belt', position: { x: 3, y: 2 }, direction: 'east' },
     ]);
   });
 
