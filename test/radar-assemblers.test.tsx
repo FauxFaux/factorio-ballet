@@ -44,6 +44,54 @@ describe('RadarAssemblers', () => {
     expect(stationBelts.map((belt) => Number(belt.getAttribute('y')))).toEqual([17, 18, 19]);
   });
 
+  it('fans assembler inputs and outputs across their multi-lane belt banks', () => {
+    const { container } = render(
+      <svg>
+        <RadarAssemblers
+          inputs={['item:iron-ore']}
+          outputs={['item:iron-plate']}
+          entries={[{ recipe: 'iron-plate', machine: 'stone-furnace' }]}
+          solution={solution}
+          belt={belt}
+          progress={0}
+          startX={0}
+          stackedStations={false}
+        />
+      </svg>,
+    );
+
+    const horizontalBelts = (resource: string) =>
+      [
+        ...container.querySelectorAll<SVGRectElement>(
+          `[data-resource="${resource}"][data-bus-segment="horizontal"]`,
+        ),
+      ].sort((a, b) => Number(a.getAttribute('y')) - Number(b.getAttribute('y')));
+    const endX = (belt: SVGRectElement) =>
+      Number(belt.getAttribute('x')) + Number(belt.getAttribute('width'));
+
+    const inputEnds = horizontalBelts('item:iron-ore').map(endX);
+    const outputStarts = horizontalBelts('item:iron-plate').map((belt) =>
+      Number(belt.getAttribute('x')),
+    );
+
+    expect(inputEnds[0]).toBeLessThan(inputEnds[1]!);
+    expect(inputEnds[1]).toBeLessThan(inputEnds[2]!);
+    expect(outputStarts[0]).toBeGreaterThan(outputStarts[1]!);
+    expect(outputStarts[1]).toBeGreaterThan(outputStarts[2]!);
+
+    const verticalBelts = (segment: string) =>
+      [...container.querySelectorAll<SVGRectElement>(`[data-bus-segment="${segment}"]`)].sort(
+        (a, b) => Number(a.getAttribute('x')) - Number(b.getAttribute('x')),
+      );
+
+    expect(verticalBelts('vertical-input').map((belt) => Number(belt.getAttribute('y')))).toEqual([
+      17, 18, 19,
+    ]);
+    expect(verticalBelts('vertical-output').map((belt) => Number(belt.getAttribute('y')))).toEqual([
+      19, 18, 17,
+    ]);
+  });
+
   it('extends an input bus to the last wrapped assembler column', () => {
     const { container } = render(
       <svg>

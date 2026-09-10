@@ -140,6 +140,7 @@ export function RadarAssemblers({
                     positionedStart.stack,
                     resource,
                     transport,
+                    routeLane,
                   )
                 : busX[start]!;
           const endColumn = busColumns[end - 1];
@@ -160,7 +161,7 @@ export function RadarAssemblers({
                 : outputStationLaneX + transportLaneWidth / 2
               : endColumn?.inputs.some((flow) => flow.resource === resource) && positionedEnd
                 ? transport === 'belt'
-                  ? positionedEnd.inputBeltX
+                  ? positionedEnd.inputBeltX - routeLane
                   : positionedEnd.inputPipeX
                 : busX[end]!;
           return (
@@ -216,9 +217,13 @@ export function RadarAssemblers({
                 class="cell-radar-belt"
                 key={`stack-in-${beltIndex}`}
                 x={x + beltIndex}
-                y={inputBeltTop}
+                y={fanBankTopY(inputBeltTop, stack.externalInputBelts, beltIndex)}
                 width={0.75}
-                height={assemblerTopY + stack.height - inputBeltTop}
+                height={
+                  assemblerTopY +
+                  stack.height -
+                  fanBankTopY(inputBeltTop, stack.externalInputBelts, beltIndex)
+                }
                 data-bus-routes={inputBeltRoutes}
                 data-bus-segment="vertical-input"
                 data-bus-direction="off-bus"
@@ -325,6 +330,7 @@ function outputTransportDepartureX(
   stack: AssemblerStack,
   resource: ResourceId,
   transport: BusLane['transport'],
+  routeLane: number,
 ) {
   return Math.min(
     ...stack.districts.flatMap(({ layout, outputFlows }) =>
@@ -336,7 +342,8 @@ function outputTransportDepartureX(
               layout.machineWidth +
               layout.outputBeltGap +
               (transport === 'belt' ? layout.outputPipesPerColumn : 0) +
-              transportLaneWidth / 2,
+              transportLaneWidth / 2 +
+              routeLane,
           ]
         : [],
     ),
@@ -350,6 +357,12 @@ function connectionTopY(
   const lane = busConnectionTopLane(busLanes, flows, transport);
   return lane === undefined ? assemblerTopY : busBottomY - lane;
 }
+
+/** Align each vertical belt with its corresponding diagonal bus endpoint. */
+function fanBankTopY(bankTopY: number, beltCount: number, beltIndex: number) {
+  return bankTopY + beltCount - beltIndex - 1;
+}
+
 function busRouteIds(
   bus: BusLayout,
   flows: { resource: ResourceId }[],
@@ -418,9 +431,13 @@ function AssemblerColumn({
                   class="cell-radar-belt"
                   key={`in-${beltIndex}`}
                   x={machineX - layout.inputBeltGap - layout.inputPipesPerColumn - 1 - beltIndex}
-                  y={inputBeltTop}
+                  y={fanBankTopY(inputBeltTop, layout.inputBeltsPerColumn, beltIndex)}
                   width={0.75}
-                  height={y + layout.columnHeights[column]! - inputBeltTop}
+                  height={
+                    y +
+                    layout.columnHeights[column]! -
+                    fanBankTopY(inputBeltTop, layout.inputBeltsPerColumn, beltIndex)
+                  }
                   data-bus-routes={inputBeltRoutes}
                   data-bus-segment="vertical-input"
                   data-bus-direction="off-bus"
@@ -464,9 +481,13 @@ function AssemblerColumn({
                   layout.outputPipesPerColumn +
                   beltIndex
                 }
-                y={outputBeltTop}
+                y={fanBankTopY(outputBeltTop, layout.outputBeltsPerColumn, beltIndex)}
                 width={0.75}
-                height={y + layout.columnHeights[column]! - outputBeltTop}
+                height={
+                  y +
+                  layout.columnHeights[column]! -
+                  fanBankTopY(outputBeltTop, layout.outputBeltsPerColumn, beltIndex)
+                }
                 data-bus-routes={outputBeltRoutes}
                 data-bus-segment="vertical-output"
                 data-bus-direction="onto-bus"
