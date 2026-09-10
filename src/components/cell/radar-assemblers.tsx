@@ -20,7 +20,7 @@ const assemblerTopY = 20;
 const busBottomY = assemblerTopY - 1;
 const stationBeltBottomY = 64;
 const transportLaneWidth = 0.75;
-const stationLanePitch = 1.5;
+const stationLanePitch = 1;
 const stationBusOffset = 2;
 
 /** Draw the solved recipe districts and the bus that connects them. */
@@ -113,19 +113,24 @@ export function RadarAssemblers({
     outputs.map((resource, index) => [resource, stationStop('out', index)]),
   );
   const routeLaneCounts = new Map(bus.routes.map(({ id, laneCount }) => [id, laneCount]));
+  const routeLaneRanks = routeLaneRanksFromTop(bus.lanes);
   return (
     <g class="cell-radar-assemblers">
       <g class="cell-radar-bus">
         {bus.lanes.map(({ id, routeId, resource, transport, routeLane, lane, start, end }) => {
+          const routeLaneRank = routeLaneRanks.get(id) ?? routeLane;
           const startColumn = busColumns[start - 1];
           const positionedStart = positionedStacks[start - 1];
+          const startLaneRank = startColumn
+            ? connectionLaneRanksFromTop(bus.lanes, startColumn.outputs, transport).get(id)
+            : undefined;
           const inputStation = start === 0 ? inputStations.get(resource) : undefined;
           const inputStationLaneX = inputStation
             ? stationLaneX(
                 inputStation.x - stationBusOffset,
                 // Input stations approach the bus from the left, so their lane bank mirrors the
                 // bus: the leftmost vertical belt must meet the topmost horizontal lane.
-                (routeLaneCounts.get(routeId) ?? 1) - routeLane - 1,
+                routeLaneRank,
                 routeLaneCounts.get(routeId) ?? 1,
               )
             : undefined;
@@ -140,18 +145,20 @@ export function RadarAssemblers({
                     positionedStart.stack,
                     resource,
                     transport,
-                    routeLane,
-                    routeLaneCounts.get(routeId) ?? 1,
+                    startLaneRank ?? routeLaneRank,
                   )
                 : busX[start]!;
           const endColumn = busColumns[end - 1];
           const positionedEnd = positionedStacks[end - 1];
+          const endLaneRank = endColumn
+            ? connectionLaneRanksFromTop(bus.lanes, endColumn.inputs, transport).get(id)
+            : undefined;
           const outputStation =
             end === busColumns.length + 1 ? outputStations.get(resource) : undefined;
           const outputStationLaneX = outputStation
             ? stationLaneX(
                 outputStation.x + stationBusOffset,
-                routeLane,
+                (routeLaneCounts.get(routeId) ?? 1) - routeLaneRank - 1,
                 routeLaneCounts.get(routeId) ?? 1,
               )
             : undefined;
@@ -162,7 +169,7 @@ export function RadarAssemblers({
                 : outputStationLaneX + transportLaneWidth / 2
               : endColumn?.inputs.some((flow) => flow.resource === resource) && positionedEnd
                 ? transport === 'belt'
-                  ? positionedEnd.inputBeltX - (routeLaneCounts.get(routeId) ?? 1) + routeLane + 1
+                  ? positionedEnd.inputBeltX - (endLaneRank ?? routeLaneRank)
                   : positionedEnd.inputPipeX
                 : busX[end]!;
           return (
@@ -208,6 +215,7 @@ export function RadarAssemblers({
       {positionedStacks.map(({ stack, x }, stackIndex) => {
         const stackInputFlows = stack.districts.flatMap(({ inputFlows }) => inputFlows);
         const inputBeltTop = connectionTopY(bus.lanes, stackInputFlows, 'belt');
+        const inputBeltTops = connectionLaneTops(bus.lanes, stackInputFlows, 'belt');
         const inputPipeTop = connectionTopY(bus.lanes, stackInputFlows, 'pipe');
         const inputBeltRoutes = busRouteIds(bus, stackInputFlows, 'belt');
         const inputPipeRoutes = busRouteIds(bus, stackInputFlows, 'pipe');
@@ -218,12 +226,10 @@ export function RadarAssemblers({
                 class="cell-radar-belt"
                 key={`stack-in-${beltIndex}`}
                 x={x + beltIndex}
-                y={fanBankTopY(inputBeltTop, stack.externalInputBelts, beltIndex)}
+                y={inputBeltTops.at(-beltIndex - 1) ?? inputBeltTop}
                 width={0.75}
                 height={
-                  assemblerTopY +
-                  stack.height -
-                  fanBankTopY(inputBeltTop, stack.externalInputBelts, beltIndex)
+                  assemblerTopY + stack.height - (inputBeltTops.at(-beltIndex - 1) ?? inputBeltTop)
                 }
                 data-bus-routes={inputBeltRoutes}
                 data-bus-segment="vertical-input"
@@ -265,8 +271,10 @@ export function RadarAssemblers({
                   machineHeight={machineHeight}
                   layout={layout}
                   inputBeltTop={connectionTopY(bus.lanes, inputFlows, 'belt')}
+                  inputBeltTops={connectionLaneTops(bus.lanes, inputFlows, 'belt')}
                   inputPipeTop={connectionTopY(bus.lanes, inputFlows, 'pipe')}
                   outputBeltTop={connectionTopY(bus.lanes, outputFlows, 'belt')}
+                  outputBeltTops={connectionLaneTops(bus.lanes, outputFlows, 'belt')}
                   outputPipeTop={connectionTopY(bus.lanes, outputFlows, 'pipe')}
                   inputBeltRoutes={busRouteIds(bus, inputFlows, 'belt')}
                   inputPipeRoutes={busRouteIds(bus, inputFlows, 'pipe')}
@@ -332,7 +340,6 @@ function outputTransportDepartureX(
   resource: ResourceId,
   transport: BusLane['transport'],
   routeLane: number,
-  routeLaneCount: number,
 ) {
   return Math.min(
     ...stack.districts.flatMap(({ layout, outputFlows }) =>
@@ -345,9 +352,7 @@ function outputTransportDepartureX(
               layout.outputBeltGap +
               (transport === 'belt' ? layout.outputPipesPerColumn : 0) +
               transportLaneWidth / 2 +
-              routeLaneCount -
-              routeLane -
-              1,
+              routeLane,
           ]
         : [],
     ),
@@ -362,14 +367,51 @@ function connectionTopY(
   return lane === undefined ? assemblerTopY : busBottomY - lane;
 }
 
-/** Align each vertical belt with its corresponding diagonal bus endpoint. */
-function fanBankTopY(bankTopY: number, beltCount: number, beltIndex: number) {
-  return bankTopY + beltCount - beltIndex - 1;
+/** Physical bus lanes may be sparse, so retain their actual vertical positions. */
+function connectionLaneTops(
+  busLanes: BusLane[],
+  flows: { resource: ResourceId }[],
+  transport: BusLane['transport'],
+) {
+  return connectionLanesFromTop(busLanes, flows, transport).map((lane) => busBottomY - lane.lane);
 }
 
-/** Output banks run in the opposite direction: their leftmost belt meets the top lane. */
-function fanOutputBankTopY(bankTopY: number, beltIndex: number) {
-  return bankTopY + beltIndex;
+/** A connection bank's physical lanes, ordered from its topmost belt to its bottommost. */
+function connectionLanesFromTop(
+  busLanes: BusLane[],
+  flows: { resource: ResourceId }[],
+  transport: BusLane['transport'],
+) {
+  const resources = new Set(flows.map(({ resource }) => resource));
+  return busLanes
+    .filter((lane) => lane.transport === transport && resources.has(lane.resource))
+    .sort((a, b) => b.lane - a.lane);
+}
+
+/** Index a physical bus lane within the belt bank it connects to. */
+function connectionLaneRanksFromTop(
+  busLanes: BusLane[],
+  flows: { resource: ResourceId }[],
+  transport: BusLane['transport'],
+) {
+  return new Map(
+    connectionLanesFromTop(busLanes, flows, transport).map((lane, index) => [lane.id, index]),
+  );
+}
+
+/** Rank a route's physical lanes from top to bottom, even when other lanes leave gaps. */
+function routeLaneRanksFromTop(busLanes: BusLane[]) {
+  const ranks = new Map<string, number>();
+  const byRoute = new Map<string, BusLane[]>();
+  for (const lane of busLanes) {
+    const lanes = byRoute.get(lane.routeId) ?? [];
+    lanes.push(lane);
+    byRoute.set(lane.routeId, lanes);
+  }
+  for (const lanes of byRoute.values()) {
+    lanes.sort((a, b) => b.lane - a.lane).forEach((lane, rank) => ranks.set(lane.id, rank));
+  }
+  return ranks;
 }
 
 function busRouteIds(
@@ -393,8 +435,10 @@ function AssemblerColumn({
   machineHeight,
   layout,
   inputBeltTop,
+  inputBeltTops,
   inputPipeTop,
   outputBeltTop,
+  outputBeltTops,
   outputPipeTop,
   inputBeltRoutes,
   inputPipeRoutes,
@@ -411,8 +455,10 @@ function AssemblerColumn({
   machineHeight: number;
   layout: ReturnType<typeof assemblerColumnLayout>;
   inputBeltTop: number;
+  inputBeltTops: number[];
   inputPipeTop: number;
   outputBeltTop: number;
+  outputBeltTops: number[];
   outputPipeTop: number;
   inputBeltRoutes: string;
   inputPipeRoutes: string;
@@ -440,10 +486,10 @@ function AssemblerColumn({
                   class="cell-radar-belt"
                   key={`in-${beltIndex}`}
                   x={machineX - layout.inputBeltGap - layout.inputPipesPerColumn - 1 - beltIndex}
-                  y={fanOutputBankTopY(inputBeltTop, beltIndex)}
+                  y={inputBeltTops[beltIndex] ?? inputBeltTop}
                   width={0.75}
                   height={
-                    y + layout.columnHeights[column]! - fanOutputBankTopY(inputBeltTop, beltIndex)
+                    y + layout.columnHeights[column]! - (inputBeltTops[beltIndex] ?? inputBeltTop)
                   }
                   data-bus-routes={inputBeltRoutes}
                   data-bus-segment="vertical-input"
@@ -488,10 +534,10 @@ function AssemblerColumn({
                   layout.outputPipesPerColumn +
                   beltIndex
                 }
-                y={fanOutputBankTopY(outputBeltTop, beltIndex)}
+                y={outputBeltTops[beltIndex] ?? outputBeltTop}
                 width={0.75}
                 height={
-                  y + layout.columnHeights[column]! - fanOutputBankTopY(outputBeltTop, beltIndex)
+                  y + layout.columnHeights[column]! - (outputBeltTops[beltIndex] ?? outputBeltTop)
                 }
                 data-bus-routes={outputBeltRoutes}
                 data-bus-segment="vertical-output"

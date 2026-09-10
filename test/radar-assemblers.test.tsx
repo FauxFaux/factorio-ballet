@@ -116,6 +116,6 @@ describe('RadarAssemblers', () => {
 
     const busEnd = Number(horizontal.getAttribute('x')) + Number(horizontal.getAttribute('width'));
 
-    expect(busEnd).toBe(6.125);
+    expect(busEnd).toBe(6.625);
   });
 });
