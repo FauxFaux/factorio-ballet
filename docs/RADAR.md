@@ -116,7 +116,12 @@ import edge or first producing column to its last consuming column or export edg
 input/output rate determines how many lanes it occupies on the selected belt; a fluid always uses
 one pipe. The intervals are packed greedily into the lowest available vertical slot, and a slot can
 be reused at the same column where its previous resource ends. This lets consecutive hand-offs share
-bus height without merging resources whose lifetimes overlap.
+bus height without merging resources whose lifetimes overlap. Each column's vertical item and fluid
+banks extend upwards to the highest associated belt or pipe on the bus, respectively, so the
+horizontal routes visibly intersect the transport they feed or drain. A route ending at a consumer
+stops at the input bank rather than continuing to the assembler column's centre. Symmetrically, a
+route beginning at a producer starts at its output bank; imported and exported ends still reach the
+stop marker belonging to that resource rather than a shared brick-edge coordinate.
 
 ## Assembler columns and district width
 

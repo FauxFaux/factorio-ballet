@@ -2,11 +2,16 @@ import { describe, expect, it } from 'vitest';
 import {
   assemblerColumnLayout,
   beltsPerAssemblerColumn,
+  busConnectionTopLane,
   busLaneLayout,
   stackAssemblerDistricts,
   type AssemblerDistrict,
 } from '../src/components/cell/radar-layout.ts';
-import { stackedInputStationStop, stackedRailPath } from '../src/components/cell/radar.tsx';
+import {
+  stackedInputStationStop,
+  stackedRailPath,
+  stationStop,
+} from '../src/components/cell/radar.tsx';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 describe('assemblerColumnLayout', () => {
@@ -194,6 +199,11 @@ describe('busLaneLayout', () => {
       { resource: 'item:e', start: 3, end: 4 },
     ]);
     expect(lanes.map(({ lane }) => lane)).toEqual([0, 1, 2, 2, 2, 0]);
+    expect(
+      busConnectionTopLane(lanes, [{ resource: 'item:a' }, { resource: 'item:b' }], 'belt'),
+    ).toBe(2);
+    expect(busConnectionTopLane(lanes, [{ resource: 'item:c' }], 'belt')).toBe(2);
+    expect(busConnectionTopLane(lanes, [{ resource: 'item:missing' }], 'belt')).toBeUndefined();
   });
 
   it('uses one reusable pipe lane for each fluid regardless of throughput', () => {
@@ -221,6 +231,14 @@ describe('busLaneLayout', () => {
 });
 
 describe('stackedRailPath', () => {
+  it('assigns each bus resource to its station stop position', () => {
+    expect(stationStop('in', 0)).toEqual({ x: 10, y: 84 });
+    expect(stationStop('in', 2)).toEqual({ x: 26, y: 84 });
+    expect(stationStop('out', 0)).toEqual({ x: 182, y: 38 });
+    expect(stationStop('out', 2)).toEqual({ x: 166, y: 38 });
+    expect(stationStop('in', 2, true)).toEqual(stackedInputStationStop(2));
+  });
+
   it('omits input trunks and attachments when there are no stations', () => {
     const path = stackedRailPath(0, 0);
 

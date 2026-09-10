@@ -20,6 +20,21 @@ export interface BusLane {
   end: number;
 }
 
+/** The highest bus lane used by one transport bank, if any of its resources reach the bus. */
+export function busConnectionTopLane(
+  busLanes: BusLane[],
+  flows: { resource: ResourceId }[],
+  transport: BusLane['transport'],
+): number | undefined {
+  const resources = new Set(flows.map(({ resource }) => resource));
+  let topLane: number | undefined;
+  for (const busLane of busLanes) {
+    if (busLane.transport !== transport || !resources.has(busLane.resource)) continue;
+    topLane = Math.max(topLane ?? busLane.lane, busLane.lane);
+  }
+  return topLane;
+}
+
 /**
  * Turn resource lifetimes into horizontal bus lanes. An item occupies one lane per whole belt of
  * peak flow; a fluid occupies one pipe. Finished intervals free their vertical lane immediately,
