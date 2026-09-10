@@ -18,7 +18,10 @@ import {
 
 const assemblerTopY = 20;
 const busBottomY = assemblerTopY - 1;
+const stationBeltBottomY = 64;
 const transportLaneWidth = 0.75;
+const stationLanePitch = 1.5;
+const stationBusOffset = 2;
 
 /** Draw the solved recipe districts and the bus that connects them. */
 export function RadarAssemblers({
@@ -99,21 +102,32 @@ export function RadarAssemblers({
   }));
   const bus = busLayout(busColumns, inputs, outputs, belt.itemsPerSecond);
   const busX = [8, ...positionedStacks.map(({ centerX }) => centerX), 184];
-  const inputStationX = new Map(
-    inputs.map((resource, index) => [resource, stationStop('in', index, stackedStations).x]),
+  const inputStations = new Map(
+    inputs.map((resource, index) => [resource, stationStop('in', index, stackedStations)]),
   );
-  const outputStationX = new Map(
-    outputs.map((resource, index) => [resource, stationStop('out', index).x]),
+  const outputStations = new Map(
+    outputs.map((resource, index) => [resource, stationStop('out', index)]),
   );
+  const routeLaneCounts = new Map(bus.routes.map(({ id, laneCount }) => [id, laneCount]));
   return (
     <g class="cell-radar-assemblers">
       <g class="cell-radar-bus">
-        {bus.lanes.map(({ id, routeId, resource, transport, lane, start, end }) => {
+        {bus.lanes.map(({ id, routeId, resource, transport, routeLane, lane, start, end }) => {
           const startColumn = busColumns[start - 1];
           const positionedStart = positionedStacks[start - 1];
+          const inputStation = start === 0 ? inputStations.get(resource) : undefined;
+          const inputStationLaneX = inputStation
+            ? stationLaneX(
+                inputStation.x - stationBusOffset,
+                routeLane,
+                routeLaneCounts.get(routeId) ?? 1,
+              )
+            : undefined;
           const startX =
             start === 0
-              ? (inputStationX.get(resource) ?? busX[start]!)
+              ? inputStationLaneX === undefined
+                ? busX[start]!
+                : inputStationLaneX - transportLaneWidth / 2
               : startColumn?.outputs.some((flow) => flow.resource === resource) && positionedStart
                 ? outputTransportDepartureX(
                     positionedStart.x,
@@ -124,28 +138,62 @@ export function RadarAssemblers({
                 : busX[start]!;
           const endColumn = busColumns[end - 1];
           const positionedEnd = positionedStacks[end - 1];
+          const outputStation =
+            end === busColumns.length + 1 ? outputStations.get(resource) : undefined;
+          const outputStationLaneX = outputStation
+            ? stationLaneX(
+                outputStation.x + stationBusOffset,
+                routeLane,
+                routeLaneCounts.get(routeId) ?? 1,
+              )
+            : undefined;
           const endX =
             end === busColumns.length + 1
-              ? (outputStationX.get(resource) ?? busX[end]!)
+              ? outputStationLaneX === undefined
+                ? busX[end]!
+                : outputStationLaneX + transportLaneWidth / 2
               : endColumn?.inputs.some((flow) => flow.resource === resource) && positionedEnd
                 ? transport === 'belt'
                   ? positionedEnd.inputBeltX
                   : positionedEnd.inputPipeX
                 : busX[end]!;
           return (
-            <rect
-              class={transport === 'belt' ? 'cell-radar-belt' : 'cell-radar-pipe'}
-              key={id}
-              data-bus-route={routeId}
-              data-resource={resource}
-              data-bus-segment="horizontal"
-              x={startX}
-              y={busBottomY - lane}
-              width={Math.max(0, endX - startX)}
-              height={transportLaneWidth}
-            >
-              <title>{resourceName(resource)}</title>
-            </rect>
+            <g key={id}>
+              <rect
+                class={transport === 'belt' ? 'cell-radar-belt' : 'cell-radar-pipe'}
+                data-bus-route={routeId}
+                data-resource={resource}
+                data-bus-segment="horizontal"
+                x={startX}
+                y={busBottomY - lane}
+                width={Math.max(0, endX - startX)}
+                height={transportLaneWidth}
+              >
+                <title>{resourceName(resource)}</title>
+              </rect>
+              {inputStation ? (
+                <StationConnection
+                  x={inputStationLaneX!}
+                  bottomY={stationBeltBottomY}
+                  routeId={routeId}
+                  resource={resource}
+                  transport={transport}
+                  lane={lane}
+                  direction="onto-bus"
+                />
+              ) : null}
+              {outputStation ? (
+                <StationConnection
+                  x={outputStationLaneX!}
+                  bottomY={stationBeltBottomY}
+                  routeId={routeId}
+                  resource={resource}
+                  transport={transport}
+                  lane={lane}
+                  direction="off-bus"
+                />
+              ) : null}
+            </g>
           );
         })}
       </g>
@@ -222,6 +270,45 @@ export function RadarAssemblers({
       })}
     </g>
   );
+}
+
+/** One computed physical lane from a rail station to its matching horizontal bus lane. */
+function StationConnection({
+  x,
+  bottomY,
+  routeId,
+  resource,
+  transport,
+  lane,
+  direction,
+}: {
+  x: number;
+  bottomY: number;
+  routeId: string;
+  resource: ResourceId;
+  transport: BusLane['transport'];
+  lane: number;
+  direction: 'onto-bus' | 'off-bus';
+}) {
+  const topY = busBottomY - lane;
+  return (
+    <rect
+      class={transport === 'belt' ? 'cell-radar-belt' : 'cell-radar-pipe'}
+      data-bus-route={routeId}
+      data-resource={resource}
+      data-bus-segment="station-belt"
+      data-bus-direction={direction}
+      x={x - transportLaneWidth / 2}
+      y={topY}
+      width={transportLaneWidth}
+      height={bottomY - topY}
+    />
+  );
+}
+
+/** Keep each physical lane distinguishable as it leaves a shared station. */
+function stationLaneX(stationX: number, routeLane: number, laneCount: number): number {
+  return stationX + (routeLane - (laneCount - 1) / 2) * stationLanePitch;
 }
 
 function inputTransportArrivalX(stackX: number, lanesThroughBank: number) {
