@@ -81,12 +81,16 @@ export function RadarAssemblers({
     const singleDistrict = stack.districts.length === 1 ? stack.districts[0] : undefined;
     const inputBelts = singleDistrict?.layout.inputBeltsPerColumn ?? stack.externalInputBelts;
     const inputPipes = singleDistrict?.layout.inputPipesPerColumn ?? stack.externalInputPipes;
+    const lastInputColumnOffset = singleDistrict
+      ? (singleDistrict.layout.columnCount - 1) *
+        (singleDistrict.layout.machineWidth + singleDistrict.layout.columnGap)
+      : 0;
     const positioned = {
       stack,
       x,
       centerX: x + stack.width / 2,
-      inputBeltX: inputTransportArrivalX(x, inputBelts),
-      inputPipeX: inputTransportArrivalX(x, inputBelts + inputPipes),
+      inputBeltX: inputTransportArrivalX(x + lastInputColumnOffset, inputBelts),
+      inputPipeX: inputTransportArrivalX(x + lastInputColumnOffset, inputBelts + inputPipes),
     };
     x += stack.width + 4;
     return positioned;
