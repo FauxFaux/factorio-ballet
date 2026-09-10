@@ -123,6 +123,24 @@ stops at the input bank rather than continuing to the assembler column's centre.
 route beginning at a producer starts at its output bank; imported and exported ends still reach the
 stop marker belonging to that resource rather than a shared brick-edge coordinate.
 
+### Bus route data model
+
+`BusLayout` keeps semantic routes separate from their physical lanes. There is one `BusRoute` per
+resource, with a stable ID, peak throughput, transport kind, lane count, and every connection along
+the route. Connections are explicitly typed as `import`, `produce`, `consume`, or `export`; column
+connections retain both the packed column ID and the contributing district IDs, while boundary
+connections retain the assigned station ID and index. Their `busDirection` says whether the leg
+feeds or drains the bus. A producer connection represents transport rising from that district's
+output bank to the bus, while a consumer connection represents transport descending from the bus
+into its input bank. The route's `BusLane` records are the horizontally packed physical lanes and
+point back to the route by ID.
+
+SVG station endpoints and horizontal lanes expose `data-bus-route`; vertical banks expose the
+space-separated `data-bus-routes` they serve, and all transport segments state their segment kind.
+This is intended as the selection boundary for hover/highlight behavior: select a route once, then
+find its stations, horizontal lanes, vertical banks, columns, and districts without reconstructing
+topology from coordinates.
+
 ## Assembler columns and district width
 
 Districts are laid out left-to-right. Within one district, assemblers stack vertically with no

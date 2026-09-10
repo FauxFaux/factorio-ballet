@@ -10,10 +10,11 @@ import { itemRateTotal, recipeConnections } from './connection-calc.ts';
 import {
   assemblerColumnLayout,
   busConnectionTopLane,
-  busLaneLayout,
+  busLayout,
   stackAssemblerDistricts,
   type AssemblerStack,
   type BusLane,
+  type BusLayout,
 } from './radar-layout.ts';
 
 const assemblerTopY = 20;
@@ -237,10 +238,16 @@ function AssemblerColumns({
     return positioned;
   });
   const busColumns = stacks.map((stack) => ({
-    inputs: stack.districts.flatMap(({ inputFlows }) => inputFlows),
-    outputs: stack.districts.flatMap(({ outputFlows }) => outputFlows),
+    id: `column:${stack.districts.map(({ id }) => id).join('+')}`,
+    inputs: stack.districts.flatMap(({ id, inputFlows }) =>
+      inputFlows.map((flow) => ({ ...flow, districtId: id })),
+    ),
+    outputs: stack.districts.flatMap(({ id, outputFlows }) =>
+      outputFlows.map((flow) => ({ ...flow, districtId: id })),
+    ),
   }));
-  const busLanes = busLaneLayout(busColumns, inputs, outputs, belt.itemsPerSecond);
+  const bus = busLayout(busColumns, inputs, outputs, belt.itemsPerSecond);
+  const busLanes = bus.lanes;
   const busX = [8, ...positionedStacks.map(({ centerX }) => centerX), 184];
   const inputStationX = new Map(
     inputs.map((resource, index) => [resource, stationStop('in', index, stackedStations).x]),
@@ -252,8 +259,10 @@ function AssemblerColumns({
     const stackInputFlows = stack.districts.flatMap(({ inputFlows }) => inputFlows);
     const inputBeltTop = connectionTopY(busLanes, stackInputFlows, 'belt');
     const inputPipeTop = connectionTopY(busLanes, stackInputFlows, 'pipe');
+    const inputBeltRoutes = busRouteIds(bus, stackInputFlows, 'belt');
+    const inputPipeRoutes = busRouteIds(bus, stackInputFlows, 'pipe');
     const column = (
-      <g key={stackIndex}>
+      <g key={stackIndex} data-column-id={busColumns[stackIndex]?.id}>
         {Array.from({ length: stack.externalInputBelts }, (_, beltIndex) => (
           <rect
             class="cell-radar-belt"
@@ -262,6 +271,9 @@ function AssemblerColumns({
             y={inputBeltTop}
             width={0.75}
             height={assemblerTopY + stack.height - inputBeltTop}
+            data-bus-routes={inputBeltRoutes}
+            data-bus-segment="vertical-input"
+            data-bus-direction="off-bus"
           />
         ))}
         {Array.from({ length: stack.externalInputPipes }, (_, pipeIndex) => (
@@ -272,6 +284,9 @@ function AssemblerColumns({
             y={inputPipeTop}
             width={0.75}
             height={assemblerTopY + stack.height - inputPipeTop}
+            data-bus-routes={inputPipeRoutes}
+            data-bus-segment="vertical-input"
+            data-bus-direction="off-bus"
           />
         ))}
         {stack.districts.map(
@@ -299,6 +314,11 @@ function AssemblerColumns({
               inputPipeTop={connectionTopY(busLanes, inputFlows, 'pipe')}
               outputBeltTop={connectionTopY(busLanes, outputFlows, 'belt')}
               outputPipeTop={connectionTopY(busLanes, outputFlows, 'pipe')}
+              inputBeltRoutes={busRouteIds(bus, inputFlows, 'belt')}
+              inputPipeRoutes={busRouteIds(bus, inputFlows, 'pipe')}
+              outputBeltRoutes={busRouteIds(bus, outputFlows, 'belt')}
+              outputPipeRoutes={busRouteIds(bus, outputFlows, 'pipe')}
+              districtId={id}
               drawInputBelts={stack.districts.length === 1}
             />
           ),
@@ -311,7 +331,7 @@ function AssemblerColumns({
   return (
     <g class="cell-radar-assemblers">
       <g class="cell-radar-bus">
-        {busLanes.map(({ resource, transport, lane, start, end }, index) => {
+        {busLanes.map(({ id, routeId, resource, transport, lane, start, end }) => {
           const startColumn = busColumns[start - 1];
           const startsAtOutput = startColumn?.outputs.some((flow) => flow.resource === resource);
           const positionedStart = positionedStacks[start - 1];
@@ -340,7 +360,10 @@ function AssemblerColumns({
           return (
             <rect
               class={transport === 'belt' ? 'cell-radar-belt' : 'cell-radar-pipe'}
-              key={`${resource}-${index}`}
+              key={id}
+              data-bus-route={routeId}
+              data-resource={resource}
+              data-bus-segment="horizontal"
               x={startX}
               y={busBottomY - lane}
               width={Math.max(0, endX - startX)}
@@ -394,6 +417,18 @@ function connectionTopY(
   return lane === undefined ? assemblerTopY : busBottomY - lane;
 }
 
+function busRouteIds(
+  bus: BusLayout,
+  flows: { resource: ResourceId }[],
+  transport: BusLane['transport'],
+): string {
+  const resources = new Set(flows.map(({ resource }) => resource));
+  return bus.routes
+    .filter((route) => route.transport === transport && resources.has(route.resource))
+    .map(({ id }) => id)
+    .join(' ');
+}
+
 function AssemblerColumn({
   x,
   y,
@@ -406,6 +441,11 @@ function AssemblerColumn({
   inputPipeTop,
   outputBeltTop,
   outputPipeTop,
+  inputBeltRoutes,
+  inputPipeRoutes,
+  outputBeltRoutes,
+  outputPipeRoutes,
+  districtId,
   drawInputBelts = true,
 }: {
   x: number;
@@ -419,6 +459,11 @@ function AssemblerColumn({
   inputPipeTop: number;
   outputBeltTop: number;
   outputPipeTop: number;
+  inputBeltRoutes: string;
+  inputPipeRoutes: string;
+  outputBeltRoutes: string;
+  outputPipeRoutes: string;
+  districtId: string;
   drawInputBelts?: boolean;
 }) {
   const iconSize = 12;
@@ -426,7 +471,7 @@ function AssemblerColumn({
   const iconY = y + layout.height / 2 - iconSize / 2;
 
   return (
-    <g>
+    <g data-district-id={districtId}>
       {Array.from({ length: layout.columnCount }, (_, column) => {
         const machineX =
           x +
@@ -444,6 +489,9 @@ function AssemblerColumn({
                   y={inputBeltTop}
                   width={0.75}
                   height={y + layout.columnHeights[column]! - inputBeltTop}
+                  data-bus-routes={inputBeltRoutes}
+                  data-bus-segment="vertical-input"
+                  data-bus-direction="off-bus"
                 />
               ))}
             {drawInputBelts &&
@@ -455,6 +503,9 @@ function AssemblerColumn({
                   y={inputPipeTop}
                   width={0.75}
                   height={y + layout.columnHeights[column]! - inputPipeTop}
+                  data-bus-routes={inputPipeRoutes}
+                  data-bus-segment="vertical-input"
+                  data-bus-direction="off-bus"
                 />
               ))}
             {Array.from({ length: layout.outputPipesPerColumn }, (_, pipeIndex) => (
@@ -465,6 +516,9 @@ function AssemblerColumn({
                 y={outputPipeTop}
                 width={0.75}
                 height={y + layout.columnHeights[column]! - outputPipeTop}
+                data-bus-routes={outputPipeRoutes}
+                data-bus-segment="vertical-output"
+                data-bus-direction="onto-bus"
               />
             ))}
             {Array.from({ length: layout.outputBeltsPerColumn }, (_, beltIndex) => (
@@ -481,6 +535,9 @@ function AssemblerColumn({
                 y={outputBeltTop}
                 width={0.75}
                 height={y + layout.columnHeights[column]! - outputBeltTop}
+                data-bus-routes={outputBeltRoutes}
+                data-bus-segment="vertical-output"
+                data-bus-direction="onto-bus"
               />
             ))}
           </g>
@@ -674,7 +731,17 @@ function StationStops({
       {resources.map((resource, index) => {
         const { x, y } = stationStop(side, index, stacked);
         return (
-          <circle key={resource} cx={x} cy={y} r="1.8">
+          <circle
+            key={resource}
+            cx={x}
+            cy={y}
+            r="1.8"
+            data-bus-route={`bus:${resource}`}
+            data-resource={resource}
+            data-bus-segment="station"
+            data-bus-direction={side === 'in' ? 'onto-bus' : 'off-bus'}
+            data-station-id={`station:${side === 'in' ? 'import' : 'export'}:${resource}`}
+          >
             <title>{resourceName(resource)}</title>
           </circle>
         );

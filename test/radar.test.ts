@@ -3,6 +3,7 @@ import {
   assemblerColumnLayout,
   beltsPerAssemblerColumn,
   busConnectionTopLane,
+  busLayout,
   busLaneLayout,
   stackAssemblerDistricts,
   type AssemblerDistrict,
@@ -164,17 +165,19 @@ describe('stackAssemblerDistricts', () => {
 
 describe('busLaneLayout', () => {
   it('routes resources from imports through their last consumer and exports from their producer', () => {
-    const lanes = busLaneLayout(
+    const bus = busLayout(
       [
         {
+          id: 'column:first',
           inputs: [
             { resource: 'item:a', rate: 10 },
             { resource: 'item:b', rate: 10 },
           ],
-          outputs: [{ resource: 'item:c', rate: 10 }],
+          outputs: [{ resource: 'item:c', rate: 10, districtId: 'make-c' }],
         },
         {
-          inputs: [{ resource: 'item:c', rate: 10 }],
+          id: 'column:second',
+          inputs: [{ resource: 'item:c', rate: 10, districtId: 'use-c' }],
           outputs: [{ resource: 'item:d', rate: 10 }],
         },
         {
@@ -189,6 +192,7 @@ describe('busLaneLayout', () => {
       ['item:e'],
       15,
     );
+    const lanes = bus.lanes;
 
     expect(lanes.map(({ resource, start, end }) => ({ resource, start, end }))).toEqual([
       { resource: 'item:b', start: 0, end: 3 },
@@ -204,6 +208,50 @@ describe('busLaneLayout', () => {
     ).toBe(2);
     expect(busConnectionTopLane(lanes, [{ resource: 'item:c' }], 'belt')).toBe(2);
     expect(busConnectionTopLane(lanes, [{ resource: 'item:missing' }], 'belt')).toBeUndefined();
+    expect(bus.routes.find(({ resource }) => resource === 'item:c')).toMatchObject({
+      id: 'bus:item:c',
+      throughput: 10,
+      laneCount: 1,
+      connections: [
+        {
+          id: 'bus:item:c:produce:1',
+          kind: 'produce',
+          busDirection: 'onto-bus',
+          column: 1,
+          columnId: 'column:first',
+          districtIds: ['make-c'],
+          rate: 10,
+        },
+        {
+          id: 'bus:item:c:consume:2',
+          kind: 'consume',
+          busDirection: 'off-bus',
+          column: 2,
+          columnId: 'column:second',
+          districtIds: ['use-c'],
+          rate: 10,
+        },
+      ],
+    });
+    expect(lanes.find(({ resource }) => resource === 'item:c')).toMatchObject({
+      id: 'bus:item:c:lane:0',
+      routeId: 'bus:item:c',
+      routeLane: 0,
+    });
+    expect(bus.routes.find(({ resource }) => resource === 'item:a')?.connections[0]).toMatchObject({
+      kind: 'import',
+      busDirection: 'onto-bus',
+      stationId: 'station:import:item:a',
+      stationIndex: 0,
+    });
+    expect(
+      bus.routes.find(({ resource }) => resource === 'item:e')?.connections.at(-1),
+    ).toMatchObject({
+      kind: 'export',
+      busDirection: 'off-bus',
+      stationId: 'station:export:item:e',
+      stationIndex: 0,
+    });
   });
 
   it('uses one reusable pipe lane for each fluid regardless of throughput', () => {
