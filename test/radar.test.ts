@@ -82,8 +82,17 @@ describe('stackAssemblerDistricts', () => {
     const stacks = stackAssemblerDistricts([district(plate), district(gear)]);
 
     expect(stacks).toHaveLength(1);
-    expect(stacks[0]).toMatchObject({ width: 3, height: 6 });
-    expect(stacks[0]?.districts.map(({ y }) => y)).toEqual([0, 3]);
+    expect(stacks[0]).toMatchObject({ width: 3, height: 8 });
+    expect(stacks[0]?.districts.map(({ y }) => y)).toEqual([0, 5]);
+  });
+
+  it('starts a new stack when the two-cell recipe gap would exceed its height', () => {
+    const plate = district(recipe(['item:ore'], ['item:plate']));
+    const gear = district(recipe(['item:plate'], ['item:gear']));
+    plate.count = 17;
+    gear.count = 16;
+
+    expect(stackAssemblerDistricts([plate, gear])).toHaveLength(2);
   });
 
   it('does not stack when the hand-off has another producer or consumer', () => {

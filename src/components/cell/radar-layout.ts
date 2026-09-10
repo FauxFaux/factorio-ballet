@@ -3,6 +3,7 @@ import { NO_EFFECTS } from '../../module-effects.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
 
 const maxAssemblerStackHeight = 100;
+const stackedDistrictGap = 2;
 
 export function assemblerColumnLayout(
   machineWidth: number,
@@ -96,13 +97,17 @@ export function stackAssemblerDistricts(
     const canStack =
       previous !== undefined &&
       previousDistrict !== undefined &&
-      previous.height + layout.height <= maxAssemblerStackHeight &&
+      previous.height + stackedDistrictGap + layout.height <= maxAssemblerStackHeight &&
       hasExclusiveHandoff(previousDistrict, district.recipe, roles);
 
     if (canStack) {
-      previous.districts.push({ ...district, layout, y: previous.height });
+      previous.districts.push({
+        ...district,
+        layout,
+        y: previous.height + stackedDistrictGap,
+      });
       previous.width = Math.max(previous.width, layout.width);
-      previous.height += layout.height;
+      previous.height += stackedDistrictGap + layout.height;
     } else {
       stacks.push({
         districts: [{ ...district, layout, y: 0 }],
