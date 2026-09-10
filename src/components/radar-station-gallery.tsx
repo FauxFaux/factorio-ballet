@@ -1,5 +1,17 @@
 import { CellRadar } from './cell/radar.tsx';
+import { NO_CHOICE } from '../data/index.ts';
+import type { Solution } from '../solve/index.ts';
 import type { ResourceId } from '../types.ts';
+
+const emptySolution: Solution = {
+  counts: [],
+  rates: [],
+  balance: new Map(),
+  inputRates: [],
+  outputRates: [],
+  complete: true,
+  notes: [],
+};
 
 /** Temporary visual fixture for comparing every supported stacked input count at once. */
 export function RadarStationGallery() {
@@ -22,7 +34,8 @@ export function RadarStationGallery() {
           )}
           outputs={[]}
           entries={[]}
-          counts={[]}
+          solution={emptySolution}
+          belt={NO_CHOICE.belt}
           progress={0}
         />
       ))}

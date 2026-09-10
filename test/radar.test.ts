@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   assemblerColumnLayout,
+  beltsPerAssemblerColumn,
   stackAssemblerDistricts,
   type AssemblerDistrict,
 } from '../src/components/cell/radar-layout.ts';
@@ -24,6 +25,23 @@ describe('assemblerColumnLayout', () => {
     expect(layout.assemblers[32]).toEqual({ column: 0, row: 32 });
     expect(layout.width).toBe(3);
   });
+
+  it('reserves belt space around and between assembler columns', () => {
+    const layout = assemblerColumnLayout(3, 3, 34, 7, 3);
+
+    expect(layout.inputBeltsPerColumn).toBe(4);
+    expect(layout.outputBeltsPerColumn).toBe(2);
+    expect(layout.inputBeltGap).toBe(1);
+    expect(layout.outputBeltGap).toBe(1);
+    expect(layout.columnGap).toBe(8);
+    expect(layout.width).toBe(22);
+  });
+
+  it('reserves one cell between each belt bank and a single assembler column', () => {
+    const layout = assemblerColumnLayout(3, 3, 1, 2, 1);
+
+    expect(layout.width).toBe(8);
+  });
 });
 
 function recipe(ingredients: ResourceId[], products: ResourceId[]): Recipe {
@@ -44,8 +62,17 @@ function district(recipeData: Recipe): AssemblerDistrict {
     machineWidth: 3,
     machineHeight: 3,
     count: 1,
+    inputItemRate: 0,
+    outputItemRate: 0,
   };
 }
+
+describe('beltsPerAssemblerColumn', () => {
+  it('rounds a district item flow up after spreading it over assembler columns', () => {
+    expect(beltsPerAssemblerColumn(91 / 15, 2)).toBe(4);
+    expect(beltsPerAssemblerColumn(0, 2)).toBe(0);
+  });
+});
 
 describe('stackAssemblerDistricts', () => {
   it('stacks adjacent districts joined by an exclusive hand-off', () => {

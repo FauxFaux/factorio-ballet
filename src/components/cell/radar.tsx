@@ -2,8 +2,10 @@ import './radar.css';
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { resourceName } from '../../data/index.ts';
 import { staticData } from '../../data/decode.ts';
-import type { ResourceId } from '../../types.ts';
+import type { Solution } from '../../solve/index.ts';
+import type { Belt, ResourceId } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
+import { itemRateTotal, recipeConnections } from './connection-calc.ts';
 import { assemblerColumnLayout, stackAssemblerDistricts } from './radar-layout.ts';
 
 /**
@@ -16,14 +18,16 @@ export function CellRadar({
   inputs,
   outputs,
   entries,
-  counts,
+  solution,
+  belt,
   progress,
 }: {
   title: string;
   inputs: ResourceId[];
   outputs: ResourceId[];
   entries: CellEntry[];
-  counts: (number | undefined)[];
+  solution: Solution;
+  belt: Belt;
   progress: number;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
@@ -59,7 +63,8 @@ export function CellRadar({
         <StationStops side="out" resources={outputs} />
         <AssemblerColumns
           entries={entries}
-          counts={counts}
+          solution={solution}
+          belt={belt}
           progress={progress}
           startX={assemblerStartX}
         />
@@ -75,18 +80,20 @@ export function CellRadar({
  */
 function AssemblerColumns({
   entries,
-  counts,
+  solution,
+  belt,
   progress,
   startX,
 }: {
   entries: CellEntry[];
-  counts: (number | undefined)[];
+  solution: Solution;
+  belt: Belt;
   progress: number;
   startX: number;
 }) {
   let x = startX;
   const districts = entries
-    .map((entry, index) => ({ entry, count: counts[index], index }))
+    .map((entry, index) => ({ entry, count: solution.counts[index], index }))
     .toReversed()
     .flatMap(({ entry, count: solvedCount, index }) => {
       const recipe = entryRecipe(entry);
@@ -97,6 +104,7 @@ function AssemblerColumns({
       if (!machine) return [];
 
       const count = Math.max(1, Math.ceil(solvedCount ?? 1));
+      const connections = recipeConnections(index, solution);
       return [
         {
           id: `${entry.recipe}-${index}`,
@@ -106,32 +114,36 @@ function AssemblerColumns({
           machineWidth: machine.size.width,
           machineHeight: machine.size.height,
           count,
+          inputItemRate: itemRateTotal(connections.inputs),
+          outputItemRate: itemRateTotal(connections.outputs),
         },
       ];
     });
 
-  const columns = stackAssemblerDistricts(districts).map((stack, stackIndex) => {
-    const column = (
-      <g key={stackIndex}>
-        {stack.districts.map(
-          ({ id, recipeId, recipeName, machineWidth, machineHeight, count, y }) => (
-            <AssemblerColumn
-              key={id}
-              x={x}
-              y={20 + y}
-              recipe={recipeId}
-              recipeName={recipeName}
-              machineWidth={machineWidth}
-              machineHeight={machineHeight}
-              count={count}
-            />
-          ),
-        )}
-      </g>
-    );
-    x += stack.width + 4;
-    return column;
-  });
+  const columns = stackAssemblerDistricts(districts, belt.itemsPerSecond).map(
+    (stack, stackIndex) => {
+      const column = (
+        <g key={stackIndex}>
+          {stack.districts.map(
+            ({ id, recipeId, recipeName, machineWidth, machineHeight, layout, y }) => (
+              <AssemblerColumn
+                key={id}
+                x={x}
+                y={20 + y}
+                recipe={recipeId}
+                recipeName={recipeName}
+                machineWidth={machineWidth}
+                machineHeight={machineHeight}
+                layout={layout}
+              />
+            ),
+          )}
+        </g>
+      );
+      x += stack.width + 4;
+      return column;
+    },
+  );
 
   return <g class="cell-radar-assemblers">{columns}</g>;
 }
@@ -143,7 +155,7 @@ function AssemblerColumn({
   recipeName,
   machineWidth,
   machineHeight,
-  count,
+  layout,
 }: {
   x: number;
   y: number;
@@ -151,20 +163,55 @@ function AssemblerColumn({
   recipeName: string;
   machineWidth: number;
   machineHeight: number;
-  count: number;
+  layout: ReturnType<typeof assemblerColumnLayout>;
 }) {
-  const layout = assemblerColumnLayout(machineWidth, machineHeight, count);
   const iconSize = 12;
   const iconX = x + layout.width / 2 - iconSize / 2;
   const iconY = y + layout.height / 2 - iconSize / 2;
 
   return (
     <g>
+      {Array.from({ length: layout.columnCount }, (_, column) => {
+        const machineX =
+          x +
+          layout.inputBeltsPerColumn +
+          layout.inputBeltGap +
+          column * (machineWidth + layout.columnGap);
+        return (
+          <g key={`belts-${column}`}>
+            {Array.from({ length: layout.inputBeltsPerColumn }, (_, beltIndex) => (
+              <rect
+                class="cell-radar-belt"
+                key={`in-${beltIndex}`}
+                x={machineX - layout.inputBeltGap - 1 - beltIndex}
+                y={y}
+                width={0.75}
+                height={layout.height}
+              />
+            ))}
+            {Array.from({ length: layout.outputBeltsPerColumn }, (_, beltIndex) => (
+              <rect
+                class="cell-radar-belt"
+                key={`out-${beltIndex}`}
+                x={machineX + machineWidth + layout.outputBeltGap + beltIndex}
+                y={y}
+                width={0.75}
+                height={layout.height}
+              />
+            ))}
+          </g>
+        );
+      })}
       {layout.assemblers.map(({ column, row }, index) => (
         <rect
           class="cell-radar-assembler"
           key={index}
-          x={x + column * (machineWidth + 4)}
+          x={
+            x +
+            layout.inputBeltsPerColumn +
+            layout.inputBeltGap +
+            column * (machineWidth + layout.columnGap)
+          }
           y={y + row * machineHeight}
           width={machineWidth}
           height={machineHeight}

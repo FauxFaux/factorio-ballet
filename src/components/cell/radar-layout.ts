@@ -4,9 +4,23 @@ import type { Recipe, ResourceId } from '../../types.ts';
 
 const maxAssemblerStackHeight = 100;
 
-export function assemblerColumnLayout(machineWidth: number, machineHeight: number, count: number) {
+export function assemblerColumnLayout(
+  machineWidth: number,
+  machineHeight: number,
+  count: number,
+  inputBelts = 0,
+  outputBelts = 0,
+) {
   const rowsPerColumn = Math.max(1, Math.floor(maxAssemblerStackHeight / machineHeight));
   const columnCount = Math.ceil(count / rowsPerColumn);
+  const inputBeltsPerColumn = beltsPerAssemblerColumn(inputBelts, columnCount);
+  const outputBeltsPerColumn = beltsPerAssemblerColumn(outputBelts, columnCount);
+  const inputBeltGap = inputBeltsPerColumn > 0 ? 1 : 0;
+  const outputBeltGap = outputBeltsPerColumn > 0 ? 1 : 0;
+  const columnGap = Math.max(
+    4,
+    inputBeltsPerColumn + inputBeltGap + outputBeltGap + outputBeltsPerColumn,
+  );
 
   return {
     assemblers: Array.from({ length: count }, (_, index) => ({
@@ -14,8 +28,25 @@ export function assemblerColumnLayout(machineWidth: number, machineHeight: numbe
       row: index % rowsPerColumn,
     })),
     height: Math.min(count, rowsPerColumn) * machineHeight,
-    width: columnCount * machineWidth + Math.max(0, columnCount - 1) * 4,
+    width:
+      inputBeltsPerColumn +
+      inputBeltGap +
+      columnCount * machineWidth +
+      Math.max(0, columnCount - 1) * columnGap +
+      outputBeltGap +
+      outputBeltsPerColumn,
+    columnCount,
+    columnGap,
+    inputBeltsPerColumn,
+    outputBeltsPerColumn,
+    inputBeltGap,
+    outputBeltGap,
   };
+}
+
+/** Each assembler column gets enough whole belts to carry its share of a district's item flow. */
+export function beltsPerAssemblerColumn(beltCount: number, columnCount: number): number {
+  return Math.ceil(beltCount / columnCount);
 }
 
 export interface AssemblerDistrict {
@@ -27,6 +58,8 @@ export interface AssemblerDistrict {
   machineWidth: number;
   machineHeight: number;
   count: number;
+  inputItemRate: number;
+  outputItemRate: number;
 }
 
 export interface AssemblerStack {
@@ -43,7 +76,10 @@ export interface AssemblerStack {
  * is private to them. A resource which has another maker or user needs its own route, so its
  * districts deliberately remain separate.
  */
-export function stackAssemblerDistricts(districts: AssemblerDistrict[]): AssemblerStack[] {
+export function stackAssemblerDistricts(
+  districts: AssemblerDistrict[],
+  itemsPerSecond = Number.POSITIVE_INFINITY,
+): AssemblerStack[] {
   const roles = resourceRoles(districts);
   const stacks: AssemblerStack[] = [];
 
@@ -52,6 +88,8 @@ export function stackAssemblerDistricts(districts: AssemblerDistrict[]): Assembl
       district.machineWidth,
       district.machineHeight,
       district.count,
+      district.inputItemRate / itemsPerSecond,
+      district.outputItemRate / itemsPerSecond,
     );
     const previous = stacks.at(-1);
     const previousDistrict = previous?.districts.at(-1)?.recipe;

@@ -193,7 +193,8 @@ export function CellBox({
             inputs={iface.inputs}
             outputs={iface.outputs}
             entries={cell.entries}
-            counts={solution.counts}
+            solution={solution}
+            belt={chosen.belt}
             progress={progress}
           />
         </div>

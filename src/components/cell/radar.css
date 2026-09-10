@@ -63,6 +63,10 @@
   stroke-width: 0.5;
 }
 
+.cell-radar-belt {
+  fill: #e7b928;
+}
+
 .cell-radar-recipe-icon {
   overflow: hidden;
 }
