@@ -399,6 +399,19 @@ function connectionLaneRanksFromTop(
   );
 }
 
+/** Spread wrapped assembler columns from the top to the bottom of one bus bank. */
+function bankLaneTop(
+  laneTops: number[],
+  column: number,
+  columnCount: number,
+  beltsPerColumn: number,
+  beltIndex: number,
+) {
+  const lastStart = Math.max(0, laneTops.length - beltsPerColumn);
+  const start = columnCount <= 1 ? 0 : Math.round((column * lastStart) / (columnCount - 1));
+  return laneTops[start + beltIndex];
+}
+
 /** Rank a route's physical lanes from top to bottom, even when other lanes leave gaps. */
 function routeLaneRanksFromTop(busLanes: BusLane[]) {
   const ranks = new Map<string, number>();
@@ -424,6 +437,31 @@ function busRouteIds(
     .filter((route) => route.transport === transport && resources.has(route.resource))
     .map(({ id }) => id)
     .join(' ');
+}
+
+function OutputBelt({
+  x,
+  topY,
+  bottomY,
+  routes,
+}: {
+  x: number;
+  topY: number;
+  bottomY: number;
+  routes: string;
+}) {
+  return (
+    <rect
+      class="cell-radar-belt"
+      x={x}
+      y={topY}
+      width={0.75}
+      height={bottomY - topY}
+      data-bus-routes={routes}
+      data-bus-segment="vertical-output"
+      data-bus-direction="onto-bus"
+    />
+  );
 }
 
 function AssemblerColumn({
@@ -524,8 +562,7 @@ function AssemblerColumn({
               />
             ))}
             {Array.from({ length: layout.outputBeltsPerColumn }, (_, beltIndex) => (
-              <rect
-                class="cell-radar-belt"
+              <OutputBelt
                 key={`out-${beltIndex}`}
                 x={
                   machineX +
@@ -534,14 +571,17 @@ function AssemblerColumn({
                   layout.outputPipesPerColumn +
                   beltIndex
                 }
-                y={outputBeltTops[beltIndex] ?? outputBeltTop}
-                width={0.75}
-                height={
-                  y + layout.columnHeights[column]! - (outputBeltTops[beltIndex] ?? outputBeltTop)
+                topY={
+                  bankLaneTop(
+                    outputBeltTops,
+                    column,
+                    layout.columnCount,
+                    layout.outputBeltsPerColumn,
+                    beltIndex,
+                  ) ?? outputBeltTop
                 }
-                data-bus-routes={outputBeltRoutes}
-                data-bus-segment="vertical-output"
-                data-bus-direction="onto-bus"
+                bottomY={y + layout.columnHeights[column]!}
+                routes={outputBeltRoutes}
               />
             ))}
           </g>

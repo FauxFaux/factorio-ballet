@@ -92,6 +92,36 @@ describe('RadarAssemblers', () => {
     ]);
   });
 
+  it('spreads output belts from wrapped assembler columns across the bus bank', () => {
+    const { container } = render(
+      <svg>
+        <RadarAssemblers
+          inputs={['item:iron-ore']}
+          outputs={['item:iron-plate']}
+          entries={[{ recipe: 'iron-plate', machine: 'stone-furnace' }]}
+          solution={{
+            ...solution,
+            counts: [51],
+            inputRates: [new Map([['item:iron-ore', 1.3]])],
+            outputRates: [new Map([['item:iron-plate', 1.3]])],
+          }}
+          belt={belt}
+          progress={0}
+          startX={16}
+          stackedStations={false}
+        />
+      </svg>,
+    );
+
+    const outputBelts = [
+      ...container.querySelectorAll<SVGRectElement>('[data-bus-segment="vertical-output"]'),
+    ].sort((a, b) => Number(a.getAttribute('x')) - Number(b.getAttribute('x')));
+
+    expect(outputBelts.map((belt) => Number(belt.getAttribute('y')))).toEqual([
+      15, 16, 17, 17, 18, 19,
+    ]);
+  });
+
   it('extends an input bus to the last wrapped assembler column', () => {
     const { container } = render(
       <svg>
