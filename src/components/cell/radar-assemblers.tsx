@@ -123,7 +123,9 @@ export function RadarAssemblers({
           const inputStationLaneX = inputStation
             ? stationLaneX(
                 inputStation.x - stationBusOffset,
-                routeLane,
+                // Input stations approach the bus from the left, so their lane bank mirrors the
+                // bus: the leftmost vertical belt must meet the topmost horizontal lane.
+                (routeLaneCounts.get(routeId) ?? 1) - routeLane - 1,
                 routeLaneCounts.get(routeId) ?? 1,
               )
             : undefined;
