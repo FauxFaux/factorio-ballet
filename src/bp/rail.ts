@@ -51,6 +51,21 @@ export interface RailAlignment {
   matchingRails: number;
 }
 
+export interface StackedRailRow {
+  /** Y coordinate of the row's horizontal station rails. */
+  y: number;
+  minX: number;
+  maxX: number;
+  straightRails: number;
+}
+
+export interface StackedRailLayout {
+  /** Station rows, ordered from top to bottom in blueprint coordinates. */
+  rows: StackedRailRow[];
+  /** Distance between rows. Undefined for a single-row segment. */
+  pitch?: number;
+}
+
 type EndpointOffsets = readonly [
   readonly [x2: number, y2: number],
   readonly [x2: number, y2: number],
@@ -60,7 +75,8 @@ type EndpointOffsets = readonly [
  * Offsets are from the blueprint entity position to its two connection nodes. They are expressed
  * in half tiles, so odd coordinates retain the half-tile joins used by curved and diagonal rail.
  * The curve table is established by the closed rail-circle fixture. The straight and half-
- * diagonal entries are additionally exercised by rail-r and the three brick fixtures.
+ * diagonal entries are additionally exercised by rail-r, the three brick fixtures, and the
+ * stacked station fixtures.
  */
 const endpointOffsets: Partial<Record<`${RailEntityName}:${RailDirection}`, EndpointOffsets>> = {
   'straight-rail:0': [
@@ -70,6 +86,14 @@ const endpointOffsets: Partial<Record<`${RailEntityName}:${RailDirection}`, Endp
   'straight-rail:4': [
     [-2, 0],
     [2, 0],
+  ],
+  'straight-rail:6': [
+    [-2, -2],
+    [2, 2],
+  ],
+  'half-diagonal-rail:0': [
+    [-2, -5],
+    [2, 5],
   ],
   'half-diagonal-rail:4': [
     [-3, 2],
@@ -170,6 +194,11 @@ export function toRailPiece(entity: RailEntity): RailPiece {
     ends[1].connectionPoints.push({ x2: x2 + 3, y2: y2 - 2 });
   } else if (entity.name === 'half-diagonal-rail' && direction === 6) {
     ends[1].connectionPoints.push({ x2: x2 + 5, y2: y2 + 2 });
+  } else if (entity.name === 'half-diagonal-rail' && direction === 0) {
+    // Direction 0 appears in both halves of the stacked layout's junctions. As with directions 4
+    // and 6, the two curve sub-types serialize with different anchors for the same logical ends.
+    ends[0].connectionPoints.push({ x2: x2 - 5, y2: y2 + 2 });
+    ends[1].connectionPoints.push({ x2: x2 + 2, y2: y2 + 3 });
   }
 
   return {
@@ -265,6 +294,57 @@ export function findRailAlignment(reference: Entity[], candidate: Entity[]): Rai
   )[0];
   if (!best) throw new Error('blueprints have no compatible rail pieces');
   return best;
+}
+
+/**
+ * Find the repeated horizontal station rows in a stacked-rail blueprint.
+ *
+ * A row is identified by its run of east-west straight rails and the four direction-12 signals
+ * placed 1.5 tiles below it. This excludes the much longer horizontal rail-grid edge and avoids
+ * depending on entity numbers or absolute fixture coordinates.
+ */
+export function findStackedRailLayout(entities: Entity[]): StackedRailLayout {
+  const horizontalByY = new Map<number, RailEntity[]>();
+  for (const entity of entities.filter(isRailEntity)) {
+    if (entity.name !== 'straight-rail' || railDirection(entity) !== 4) continue;
+    const row = horizontalByY.get(entity.position.y) ?? [];
+    row.push(entity);
+    horizontalByY.set(entity.position.y, row);
+  }
+
+  const rows = [...horizontalByY]
+    .filter(([y, rails]) => {
+      const minX = Math.min(...rails.map(({ position }) => position.x));
+      const maxX = Math.max(...rails.map(({ position }) => position.x));
+      return (
+        entities.filter(
+          (entity) =>
+            entity.name === 'rail-signal' &&
+            entity.direction === 12 &&
+            entity.position.y === y + 1.5 &&
+            entity.position.x >= minX - 1 &&
+            entity.position.x <= maxX + 1,
+        ).length >= 4
+      );
+    })
+    .map(([y, rails]): StackedRailRow => {
+      const xs = rails.map(({ position }) => position.x);
+      return {
+        y,
+        minX: Math.min(...xs),
+        maxX: Math.max(...xs),
+        straightRails: rails.length,
+      };
+    })
+    .sort((a, b) => a.y - b.y);
+
+  if (rows.length === 0) throw new Error('blueprint has no stacked rail station rows');
+  const pitches = new Set(rows.slice(1).map((row, index) => row.y - rows[index].y));
+  if (pitches.size > 1) {
+    throw new Error(`stacked rail rows do not have a uniform pitch: ${[...pitches].join(', ')}`);
+  }
+
+  return { rows, ...(pitches.size === 1 ? { pitch: [...pitches][0] } : {}) };
 }
 
 function railDirection(entity: RailEntity): RailDirection {

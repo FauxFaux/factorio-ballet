@@ -1,7 +1,7 @@
 # Rail blueprint notes
 
-These notes describe the Factorio 2.x rail geometry demonstrated by the fixtures in ``. The fixtures
-are the authority when they disagree with the older `../blueprint.wiki`.
+These notes describe the Factorio 2.x rail geometry demonstrated by the fixtures in this directory.
+The fixtures are the authority when they disagree with the older `../blueprint.wiki`.
 
 ## Blueprint representation
 
@@ -55,10 +55,10 @@ sub-types whose anchors differ by one tile. `RailEnd.connectionPoints` therefore
 keys for one end.
 
 The geometry table currently covers every `(name, direction)` pair present in these fixtures:
-cardinal straight rail (`0`, `4`), half-diagonal rail (`4`, `6`), and all eight orientations of both
-curve prototypes. Other straight and half-diagonal directions deliberately throw an unsupported
-geometry error. We need a small in-game example of each absent orientation before extending the
-table.
+cardinal straight rail (`0`, `4`), the southeast diagonal straight used by the stacked bottom
+junction (`6`), half-diagonal rail (`0`, `4`, `6`), and all eight orientations of both curve
+prototypes. Other straight and half-diagonal directions deliberately throw an unsupported geometry
+error. We need a small in-game example of each absent orientation before extending the table.
 
 ## Small examples
 
@@ -227,12 +227,83 @@ throat up to the last remaining switch and the three paths at `x = -69, -57, -45
 derived graph retains the original layout's four external ends, confirming that no dead-end stubs
 were left by the cut.
 
+## Stacked station fan
+
+### There is no stacked blueprint primitive
+
+“Stacked” describes the layout, not its JSON representation. Factorio serializes every bay as the
+same ordinary entities used elsewhere: straight rails, both curve types, signals, and one electric
+pole. A stack is recognizable because its horizontal station runs occur at a constant **10-tile
+pitch**. Entity numbers only identify references within one document; they do not identify a bay or
+give repeated entities a shared identity.
+
+`findStackedRailLayout()` recognizes a station row without relying on fixture coordinates or entity
+numbers. It finds an east-west straight run with at least four direction-12 rail signals 1.5 tiles
+below it. That excludes the longer bottom edge of the rail grid. It then requires all detected rows
+to have one uniform pitch.
+
+The fixtures demonstrate these rows:
+
+| Fixture                   | Rows | Horizontal rail y coordinates                          |
+| ------------------------- | ---: | ------------------------------------------------------ |
+| `1x-stacked-train-s.json` |    1 | `-507`                                                 |
+| `2x-stacked-train.json`   |    2 | `-457, -447`                                           |
+| `8x-stacked-train.json`   |    8 | `-517, -507, -497, -487, -477, -467, -457, -447`       |
+| `9x-stacked-train.json`   |    9 | `-367, -357, -347, -337, -327, -317, -307, -297, -287` |
+
+The 9x export uses a different absolute selection. Translate it by `(x + 130, y - 160)` to compare
+its stack with the 2x and 8x exports. Conversely, the best overlay from 2x coordinates into the 9x
+fixture is `(-130, +160)`. Absolute positions and entity numbers are therefore not part of the
+repetition rule.
+
+### Base, repeated segment, and grid ownership
+
+The 2x fixture is the base. It owns three things which must not be synthesized by repeating an
+ordinary row:
+
+1. the lowest station's direct route into the bottom junction;
+2. the shared left approach and right return trunk around the bottom two stations;
+3. the straight rails on the left and bottom which belong to the surrounding rail grid.
+
+The 1x S fixture is one ordinary additional station. `findRailAlignment()` places it over the upper
+base row with offset `(0, 50)`. The next row above therefore uses `(0, 40)`, and every later row
+subtracts another 10 from y. To build `N` rows, for `2 <= N <= 9`, copy the segment at:
+
+```text
+(0, 40), (0, 30), ... (0, 40 - 10 × (N - 3))
+```
+
+Thus a 9-row stack uses y offsets `40, 30, 20, 10, 0, -10, -20`. Exact duplicate entities are
+coalesced; each retained copy receives a fresh entity number. The poles are joined to their adjacent
+row poles with copper connector 5.
+
+The segment was selected by hand and deliberately includes small pieces of both shared trunks. It is
+not a self-sufficient tiling unit. Two corrections are required when composing it:
+
+- Between two copied ordinary rows, add the two missing north-south straight rails in the right
+  return trunk.
+- Omit a copied left-trunk straight when it would dangle above the base's shared trunk, and replace
+  the lowest copy's final right-trunk straight with the direction-8 A curve into the base's special
+  bottom junction.
+
+Nine rows reach the top approach. At that height the top ordinary S-curve no longer fits between the
+station and the grid-owned outer vertical. The full 9x fixture shows the required exception: replace
+the top row's four left curves with a compact `A8, B8, B14, A14` approach, followed by one extra
+horizontal straight. This is the blueprint-scale counterpart of the uppermost curve in the schematic
+described by `../RADAR.md`.
+
+The generated document intentionally retains the 2x fixture's grid fragments, so all generated sizes
+have the same eight open rail-grid boundary ends as the base. The separately hand-selected 9x
+reference has only four because its selection includes different portions of the host grid. Compare
+the repeated station rows and junction geometry after alignment; do not expect the two whole JSON
+documents to have identical bounds or entity counts.
+
 ## Repeatable workflow
 
 Use `../../scripts/rail-blueprint.ts` as the executable recipe for this analysis. It contains the
 reusable parts of the one-off research: topology inspection, direct or half-turn overlay matching,
-entity renumbering, reference repair, zlib/base64 encoding, and removal of the rightmost path in
-this 12-tile-pitch fan design.
+entity renumbering, reference repair, zlib/base64 encoding, removal of the rightmost path in the
+12-tile-pitch parallel-path design, and construction of the 10-tile-pitch stacked station fan.
 
 Decode a fresh game export with the earlier general blueprint script:
 
@@ -279,6 +350,22 @@ signals and pole, then renumbers entity references in circuit connections, neigh
 and top-level wires. It aborts if the operation changes the number of open rail ends; that catches
 the dead-end throat stubs produced by removing only the vertical and its curves.
 
+Generate any supported stacked station count as synchronized decoded and importable outputs:
+
+```sh
+node scripts/rail-blueprint.ts stack \
+  docs/blueprints/2x-stacked-train.json \
+  docs/blueprints/1x-stacked-train-s.json \
+  6 \
+  docs/blueprints/6x-stacked-train.json \
+  docs/blueprints/6x-stacked-train.base64
+npx oxfmt docs/blueprints/6x-stacked-train.json
+```
+
+The count must be an integer from 2 through 9. The command reports the detected pitch, entity and
+rail counts, and open rail ends. It preserves the base document's grid fragments and blueprint
+metadata rather than trying to infer a different host brick.
+
 After generating a new fixture, run:
 
 ```sh
@@ -295,7 +382,7 @@ also does not cover elevated rails.
 
 If those features become necessary, the most useful new game exports would be isolated examples of:
 
-1. straight rail in diagonal orientations;
-2. half-diagonal rail in directions other than 4 and 6;
+1. straight rail in diagonal orientations other than 6;
+2. half-diagonal rail in directions other than 0, 4, and 6;
 3. one rail signal and one chain signal on each side of a single straight;
 4. the same signalled examples rotated through the cardinal directions.
