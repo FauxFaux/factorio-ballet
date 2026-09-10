@@ -1,5 +1,4 @@
 import './side.css';
-import { fmt } from '../../ts.ts';
 import type { Solution } from '../../solve/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceButton } from '../resource.tsx';
@@ -47,6 +46,10 @@ export function CellSide({
 }) {
   const side = SIDES[dir];
   const forced = dir === 'in' ? imports : exports;
+  const rates = ids.map((id) =>
+    dir === 'in' ? -(solution.balance.get(id) ?? 0) : (solution.balance.get(id) ?? 0),
+  );
+  const rateDigits = rates.some((rate) => rate > 100) ? 0 : 1;
   const pickResource = (id: ResourceId) => {
     onSelect(id);
     onSearch(side.search(id));
@@ -74,31 +77,31 @@ export function CellSide({
       {ids.length === 0 ? (
         <p class="cell-none">—</p>
       ) : (
-        ids.map((id) => (
+        ids.map((id, index) => (
           <div key={id} class={forced.includes(id) ? 'cell-flow is-forced' : 'cell-flow'}>
-            <ResourceButton id={id} onPick={() => pickResource(id)}>
+            <ResourceButton id={id} onPick={() => pickResource(id)} />
+            <span
+              class="cell-forced"
+              title={
+                forced.includes(id)
+                  ? dir === 'in'
+                    ? 'Explicit import: shortfall is supplied externally'
+                    : 'Explicit export: surplus is allowed to leave this cell'
+                  : undefined
+              }
+            >
               {forced.includes(id) ? (
-                <span
-                  class="cell-forced"
-                  title={
-                    dir === 'in'
-                      ? 'Explicit import: shortfall is supplied externally'
-                      : 'Explicit export: surplus is allowed to leave this cell'
-                  }
-                >
-                  {dir === 'in' ? (
-                    <PackageDependenciesIcon size={32} />
-                  ) : (
-                    <PackageDependentsIcon size={32} />
-                  )}
-                </span>
+                dir === 'in' ? (
+                  <PackageDependenciesIcon size={32} />
+                ) : (
+                  <PackageDependentsIcon size={32} />
+                )
               ) : null}
-            </ResourceButton>
+            </span>
             <EdgeRate
               /* an input is consumed and so negative; both sides read as a rate, not a sign */
-              rate={
-                dir === 'in' ? -(solution.balance.get(id) ?? 0) : (solution.balance.get(id) ?? 0)
-              }
+              rate={rates[index]}
+              digits={rateDigits}
               partial={!solution.complete}
             />
           </div>
@@ -112,14 +115,14 @@ export function CellSide({
  * A rate on one side of the cell. Nothing at all where the solver did not get that far: a zero
  * would read as "none of this crosses the edge", which is a different claim from "not worked out".
  */
-function EdgeRate({ rate, partial }: { rate: number; partial: boolean }) {
+function EdgeRate({ rate, digits, partial }: { rate: number; digits: number; partial: boolean }) {
   if (!(rate > 0)) return null;
   return (
     <span
       class={partial ? 'cell-rate is-partial' : 'cell-rate'}
       title={partial ? 'So far: some rows of this cell are not worked out' : undefined}
     >
-      {fmt(rate)}
+      {rate.toFixed(digits)}
       <span class="cell-rate-unit">/s</span>
     </span>
   );

@@ -21,11 +21,11 @@
   font-style: italic;
 }
 
-/* the resource button and its rate: the rate stays put while the button takes the width */
+/* Resource, boundary marker and rate each get a stable column. */
 .cell-flow {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 1.7778rem auto;
+  align-items: center;
   gap: 4px;
 }
 
@@ -35,10 +35,14 @@
 
 .cell-forced {
   display: flex;
-  flex: none;
-  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
   color: var(--accent);
-  margin-left: auto;
+}
+
+.cell-forced > svg {
+  width: 1.3333rem;
+  height: 1.3333rem;
 }
 
 .cell-rate {
