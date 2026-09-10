@@ -37,41 +37,27 @@ export const suggestionScoreWeights = {
   synthesisedFreeInput: 10,
   void: 10,
 } as const;
-let staticVoidPlans!: ReturnType<typeof voidPlanFinder>;
-let staticResourceChains!: ReturnType<typeof resourceChainFinder>;
-let staticSingleStepVoidableResources!: Set<ResourceId>;
-let producers!: Map<ResourceId, string[]>;
-let consumers!: Map<ResourceId, string[]>;
-let soleProducer!: Map<ResourceId, string>;
-let soleConsumer!: Map<ResourceId, string>;
-let freeOneStepProducts!: Set<ResourceId>;
-let freeRecipeByProduct!: Map<ResourceId, string>;
-
-function precomputeRecipeSuggestions() {
-  staticVoidPlans = voidPlanFinder(staticData);
-  staticResourceChains = resourceChainFinder(staticData);
-  staticSingleStepVoidableResources = new Set(
-    staticData.suggestionPreload.singleStepVoidableResources,
-  );
-  producers = indexRecipes('products');
-  consumers = indexRecipes('ingredients');
-  soleProducer = new Map(
-    [...producers].flatMap(([resource, recipes]) =>
-      recipes.length === 1 ? [[resource, recipes[0]!]] : [],
-    ),
-  );
-  soleConsumer = new Map(
-    [...consumers].flatMap(([resource, recipes]) =>
-      recipes.length === 1 ? [[resource, recipes[0]!]] : [],
-    ),
-  );
-  freeOneStepProducts = new Set(staticData.suggestionPreload.fromAirOneStepProducts);
-  freeRecipeByProduct = new Map(
-    Object.entries(staticData.suggestionPreload.fromAirRecipeByProduct) as [ResourceId, string][],
-  );
-}
-
-precomputeRecipeSuggestions();
+const staticVoidPlans = voidPlanFinder(staticData);
+const staticResourceChains = resourceChainFinder(staticData);
+const staticSingleStepVoidableResources = new Set(
+  staticData.suggestionPreload.singleStepVoidableResources,
+);
+const producers = indexRecipes('products');
+const consumers = indexRecipes('ingredients');
+const soleProducer = new Map(
+  [...producers].flatMap(([resource, recipes]) =>
+    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+  ),
+);
+const soleConsumer = new Map(
+  [...consumers].flatMap(([resource, recipes]) =>
+    recipes.length === 1 ? [[resource, recipes[0]!]] : [],
+  ),
+);
+const freeOneStepProducts = new Set(staticData.suggestionPreload.fromAirOneStepProducts);
+const freeRecipeByProduct = new Map(
+  Object.entries(staticData.suggestionPreload.fromAirRecipeByProduct) as [ResourceId, string][],
+);
 
 function indexRecipes(direction: 'ingredients' | 'products') {
   const recipes = new Map<ResourceId, string[]>();
