@@ -67,6 +67,10 @@
   fill: #e7b928;
 }
 
+.cell-radar-pipe {
+  fill: #17466e;
+}
+
 .cell-radar-recipe-icon {
   overflow: hidden;
 }

@@ -23,6 +23,9 @@ const SIDES = {
   },
 } as const;
 
+/** A two-wagon fluid train carries 100k; this matches the station model's stack equivalent. */
+const FLUID_TRAIN_STACK_SIZE = 1250;
+
 /**
  * One edge of the cell. Clicking a resource searches for the recipes on the other end of it — the
  * producers of an input, the consumers of an output — and the heading's button does the same for
@@ -108,7 +111,12 @@ export function CellSide({
               digits={rateDigits}
               partial={!solution.complete}
               belt={belt}
-              stackSize={staticData.resources[id]?.stackSize}
+              isFluid={id.startsWith('fluid:')}
+              stackSize={
+                id.startsWith('fluid:')
+                  ? FLUID_TRAIN_STACK_SIZE
+                  : staticData.resources[id]?.stackSize
+              }
             />
           </div>
         ))
@@ -126,17 +134,19 @@ function EdgeRate({
   digits,
   partial,
   belt,
+  isFluid,
   stackSize,
 }: {
   rate: number;
   digits: number;
   partial: boolean;
   belt: Belt;
+  isFluid: boolean;
   stackSize?: number;
 }) {
   if (!(rate > 0)) return null;
   const trainLimit = stackSize === undefined ? undefined : 5 * stackSize;
-  const beltLimit = 4 * belt.itemsPerSecond;
+  const beltLimit = isFluid ? undefined : 4 * belt.itemsPerSecond;
   const warning =
     trainLimit !== undefined && rate > trainLimit
       ? {
@@ -145,7 +155,7 @@ function EdgeRate({
             `Over ${trainLimit}/s (five stacks):` +
             ` four two-wagon trains per minute cannot keep one station supplied`,
         }
-      : rate > beltLimit
+      : beltLimit !== undefined && rate > beltLimit
         ? {
             className: ' is-over-belt-capacity',
             title:

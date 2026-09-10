@@ -11,16 +11,26 @@ export function assemblerColumnLayout(
   count: number,
   inputBelts = 0,
   outputBelts = 0,
+  inputPipes = 0,
+  outputPipes = 0,
 ) {
   const rowsPerColumn = Math.max(1, Math.floor(maxAssemblerStackHeight / machineHeight));
   const columnCount = Math.ceil(count / rowsPerColumn);
   const inputBeltsPerColumn = beltsPerAssemblerColumn(inputBelts, columnCount);
   const outputBeltsPerColumn = beltsPerAssemblerColumn(outputBelts, columnCount);
-  const inputBeltGap = inputBeltsPerColumn > 0 ? 1 : 0;
-  const outputBeltGap = outputBeltsPerColumn > 0 ? 1 : 0;
+  const inputPipesPerColumn = beltsPerAssemblerColumn(inputPipes, columnCount);
+  const outputPipesPerColumn = beltsPerAssemblerColumn(outputPipes, columnCount);
+  const inputTransportWidth = inputBeltsPerColumn + inputPipesPerColumn;
+  const outputTransportWidth = outputBeltsPerColumn + outputPipesPerColumn;
+  const inputBeltGap = inputTransportWidth > 0 ? 1 : 0;
+  const outputBeltGap = outputTransportWidth > 0 ? 1 : 0;
+  const columnHeights = Array.from(
+    { length: columnCount },
+    (_, column) => Math.min(rowsPerColumn, count - column * rowsPerColumn) * machineHeight,
+  );
   const columnGap = Math.max(
     4,
-    inputBeltsPerColumn + inputBeltGap + outputBeltGap + outputBeltsPerColumn,
+    inputTransportWidth + inputBeltGap + outputBeltGap + outputTransportWidth,
   );
 
   return {
@@ -30,16 +40,21 @@ export function assemblerColumnLayout(
     })),
     height: Math.min(count, rowsPerColumn) * machineHeight,
     width:
-      inputBeltsPerColumn +
+      inputTransportWidth +
       inputBeltGap +
       columnCount * machineWidth +
       Math.max(0, columnCount - 1) * columnGap +
       outputBeltGap +
-      outputBeltsPerColumn,
+      outputTransportWidth,
     columnCount,
+    columnHeights,
     columnGap,
     inputBeltsPerColumn,
     outputBeltsPerColumn,
+    inputPipesPerColumn,
+    outputPipesPerColumn,
+    inputTransportWidth,
+    outputTransportWidth,
     inputBeltGap,
     outputBeltGap,
   };
@@ -61,6 +76,10 @@ export interface AssemblerDistrict {
   count: number;
   inputItemRate: number;
   outputItemRate: number;
+  inputItemFlows: { resource: ResourceId; rate: number }[];
+  inputFluids: ResourceId[];
+  outputResources: ResourceId[];
+  outputFluids: ResourceId[];
 }
 
 export interface AssemblerStack {
@@ -70,6 +89,8 @@ export interface AssemblerStack {
   })[];
   width: number;
   height: number;
+  externalInputBelts: number;
+  externalInputPipes: number;
 }
 
 /**
@@ -91,6 +112,8 @@ export function stackAssemblerDistricts(
       district.count,
       district.inputItemRate / itemsPerSecond,
       district.outputItemRate / itemsPerSecond,
+      district.inputFluids.length,
+      district.outputFluids.length,
     );
     const previous = stacks.at(-1);
     const previousDistrict = previous?.districts.at(-1)?.recipe;
@@ -113,11 +136,49 @@ export function stackAssemblerDistricts(
         districts: [{ ...district, layout, y: 0 }],
         width: layout.width,
         height: layout.height,
+        externalInputBelts: 0,
+        externalInputPipes: 0,
       });
     }
   }
 
+  for (const stack of stacks) reserveExternalInputBelts(stack, itemsPerSecond);
   return stacks;
+}
+
+/** Inputs not made earlier in this stack share lanes which run from its top to its bottom. */
+function reserveExternalInputBelts(stack: AssemblerStack, itemsPerSecond: number) {
+  if (stack.districts.length === 1) return;
+
+  const produced = new Set<ResourceId>();
+  let externalInputRate = 0;
+  const externalInputFluids = new Set<ResourceId>();
+
+  for (const district of stack.districts) {
+    for (const { resource, rate } of district.inputItemFlows) {
+      if (!produced.has(resource)) externalInputRate += rate;
+    }
+    for (const resource of district.inputFluids) {
+      if (!produced.has(resource)) externalInputFluids.add(resource);
+    }
+    for (const resource of district.outputResources) produced.add(resource);
+  }
+
+  stack.externalInputBelts = Math.ceil(externalInputRate / itemsPerSecond);
+  stack.externalInputPipes = externalInputFluids.size;
+  stack.width = 0;
+  for (const district of stack.districts) {
+    district.layout = assemblerColumnLayout(
+      district.machineWidth,
+      district.machineHeight,
+      district.count,
+      stack.externalInputBelts,
+      district.outputItemRate / itemsPerSecond,
+      stack.externalInputPipes,
+      district.outputFluids.length,
+    );
+    stack.width = Math.max(stack.width, district.layout.width);
+  }
 }
 
 function resourceRoles(districts: AssemblerDistrict[]) {

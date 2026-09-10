@@ -15,6 +15,7 @@ describe('assemblerColumnLayout', () => {
     expect(layout.assemblers).toHaveLength(34);
     expect(layout.assemblers[32]).toEqual({ column: 0, row: 32 });
     expect(layout.assemblers[33]).toEqual({ column: 1, row: 0 });
+    expect(layout.columnHeights).toEqual([99, 3]);
     expect(layout.height).toBe(99);
     expect(layout.width).toBe(10);
   });
@@ -42,6 +43,14 @@ describe('assemblerColumnLayout', () => {
 
     expect(layout.width).toBe(8);
   });
+
+  it('reserves fluid pipes inside the item belt banks', () => {
+    const layout = assemblerColumnLayout(3, 3, 1, 2, 1, 2, 1);
+
+    expect(layout.inputTransportWidth).toBe(4);
+    expect(layout.outputTransportWidth).toBe(2);
+    expect(layout.width).toBe(11);
+  });
 });
 
 function recipe(ingredients: ResourceId[], products: ResourceId[]): Recipe {
@@ -64,6 +73,10 @@ function district(recipeData: Recipe): AssemblerDistrict {
     count: 1,
     inputItemRate: 0,
     outputItemRate: 0,
+    inputItemFlows: [],
+    inputFluids: [],
+    outputResources: [],
+    outputFluids: [],
   };
 }
 
@@ -93,6 +106,36 @@ describe('stackAssemblerDistricts', () => {
     gear.count = 16;
 
     expect(stackAssemblerDistricts([plate, gear])).toHaveLength(2);
+  });
+
+  it('extends only externally supplied input belts through the full stack', () => {
+    const plate = district(recipe(['item:ore'], ['item:plate']));
+    plate.inputItemFlows = [{ resource: 'item:ore', rate: 15 }];
+    plate.outputResources = ['item:plate'];
+    const gear = district(recipe(['item:plate', 'item:coal'], ['item:gear']));
+    gear.inputItemFlows = [
+      { resource: 'item:plate', rate: 30 },
+      { resource: 'item:coal', rate: 16 },
+    ];
+
+    const [stack] = stackAssemblerDistricts([plate, gear], 15);
+
+    expect(stack?.externalInputBelts).toBe(3);
+    expect(stack?.districts.map(({ layout }) => layout.inputBeltsPerColumn)).toEqual([3, 3]);
+  });
+
+  it('reserves one shared pipe per externally supplied fluid type', () => {
+    const steam = district(recipe(['fluid:water'], ['fluid:steam']));
+    steam.inputFluids = ['fluid:water'];
+    steam.outputResources = ['fluid:steam'];
+    steam.outputFluids = ['fluid:steam'];
+    const process = district(recipe(['fluid:steam', 'fluid:lubricant'], ['item:result']));
+    process.inputFluids = ['fluid:steam', 'fluid:lubricant'];
+
+    const [stack] = stackAssemblerDistricts([steam, process], 15);
+
+    expect(stack?.externalInputPipes).toBe(2);
+    expect(stack?.districts.map(({ layout }) => layout.inputPipesPerColumn)).toEqual([2, 2]);
   });
 
   it('does not stack when the hand-off has another producer or consumer', () => {

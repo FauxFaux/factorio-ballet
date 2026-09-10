@@ -105,6 +105,13 @@ function AssemblerColumns({
 
       const count = Math.max(1, Math.ceil(solvedCount ?? 1));
       const connections = recipeConnections(index, solution);
+      const inputItemFlows = connections.inputs.filter(({ resource }) =>
+        resource.startsWith('item:'),
+      );
+      const inputFluids = connections.inputs
+        .map(({ resource }) => resource)
+        .filter((resource) => resource.startsWith('fluid:'));
+      const outputResources = connections.outputs.map(({ resource }) => resource);
       return [
         {
           id: `${entry.recipe}-${index}`,
@@ -116,6 +123,10 @@ function AssemblerColumns({
           count,
           inputItemRate: itemRateTotal(connections.inputs),
           outputItemRate: itemRateTotal(connections.outputs),
+          inputItemFlows,
+          inputFluids,
+          outputResources,
+          outputFluids: outputResources.filter((resource) => resource.startsWith('fluid:')),
         },
       ];
     });
@@ -124,6 +135,26 @@ function AssemblerColumns({
     (stack, stackIndex) => {
       const column = (
         <g key={stackIndex}>
+          {Array.from({ length: stack.externalInputBelts }, (_, beltIndex) => (
+            <rect
+              class="cell-radar-belt"
+              key={`stack-in-${beltIndex}`}
+              x={x + beltIndex}
+              y={20}
+              width={0.75}
+              height={stack.height}
+            />
+          ))}
+          {Array.from({ length: stack.externalInputPipes }, (_, pipeIndex) => (
+            <rect
+              class="cell-radar-pipe"
+              key={`stack-in-pipe-${pipeIndex}`}
+              x={x + stack.externalInputBelts + pipeIndex}
+              y={20}
+              width={0.75}
+              height={stack.height}
+            />
+          ))}
           {stack.districts.map(
             ({ id, recipeId, recipeName, machineWidth, machineHeight, layout, y }) => (
               <AssemblerColumn
@@ -135,6 +166,7 @@ function AssemblerColumns({
                 machineWidth={machineWidth}
                 machineHeight={machineHeight}
                 layout={layout}
+                drawInputBelts={stack.districts.length === 1}
               />
             ),
           )}
@@ -156,6 +188,7 @@ function AssemblerColumn({
   machineWidth,
   machineHeight,
   layout,
+  drawInputBelts = true,
 }: {
   x: number;
   y: number;
@@ -164,6 +197,7 @@ function AssemblerColumn({
   machineWidth: number;
   machineHeight: number;
   layout: ReturnType<typeof assemblerColumnLayout>;
+  drawInputBelts?: boolean;
 }) {
   const iconSize = 12;
   const iconX = x + layout.width / 2 - iconSize / 2;
@@ -174,29 +208,57 @@ function AssemblerColumn({
       {Array.from({ length: layout.columnCount }, (_, column) => {
         const machineX =
           x +
-          layout.inputBeltsPerColumn +
+          layout.inputTransportWidth +
           layout.inputBeltGap +
           column * (machineWidth + layout.columnGap);
         return (
           <g key={`belts-${column}`}>
-            {Array.from({ length: layout.inputBeltsPerColumn }, (_, beltIndex) => (
+            {drawInputBelts &&
+              Array.from({ length: layout.inputBeltsPerColumn }, (_, beltIndex) => (
+                <rect
+                  class="cell-radar-belt"
+                  key={`in-${beltIndex}`}
+                  x={machineX - layout.inputBeltGap - layout.inputPipesPerColumn - 1 - beltIndex}
+                  y={y}
+                  width={0.75}
+                  height={layout.columnHeights[column]}
+                />
+              ))}
+            {drawInputBelts &&
+              Array.from({ length: layout.inputPipesPerColumn }, (_, pipeIndex) => (
+                <rect
+                  class="cell-radar-pipe"
+                  key={`in-pipe-${pipeIndex}`}
+                  x={machineX - layout.inputBeltGap - 1 - pipeIndex}
+                  y={y}
+                  width={0.75}
+                  height={layout.columnHeights[column]}
+                />
+              ))}
+            {Array.from({ length: layout.outputPipesPerColumn }, (_, pipeIndex) => (
               <rect
-                class="cell-radar-belt"
-                key={`in-${beltIndex}`}
-                x={machineX - layout.inputBeltGap - 1 - beltIndex}
+                class="cell-radar-pipe"
+                key={`out-pipe-${pipeIndex}`}
+                x={machineX + machineWidth + layout.outputBeltGap + pipeIndex}
                 y={y}
                 width={0.75}
-                height={layout.height}
+                height={layout.columnHeights[column]}
               />
             ))}
             {Array.from({ length: layout.outputBeltsPerColumn }, (_, beltIndex) => (
               <rect
                 class="cell-radar-belt"
                 key={`out-${beltIndex}`}
-                x={machineX + machineWidth + layout.outputBeltGap + beltIndex}
+                x={
+                  machineX +
+                  machineWidth +
+                  layout.outputBeltGap +
+                  layout.outputPipesPerColumn +
+                  beltIndex
+                }
                 y={y}
                 width={0.75}
-                height={layout.height}
+                height={layout.columnHeights[column]}
               />
             ))}
           </g>
@@ -208,7 +270,7 @@ function AssemblerColumn({
           key={index}
           x={
             x +
-            layout.inputBeltsPerColumn +
+            layout.inputTransportWidth +
             layout.inputBeltGap +
             column * (machineWidth + layout.columnGap)
           }
