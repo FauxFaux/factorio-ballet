@@ -126,6 +126,18 @@ describe('stackAssemblerDistricts', () => {
     expect(stack?.districts.map(({ layout }) => layout.inputBeltsPerColumn)).toEqual([3, 3]);
   });
 
+  it('routes every stacked district around the widest assembler', () => {
+    const plate = district(recipe(['item:ore'], ['item:plate']));
+    plate.machineWidth = 5;
+    const gear = district(recipe(['item:plate'], ['item:gear']));
+    gear.machineWidth = 3;
+
+    const [stack] = stackAssemblerDistricts([plate, gear]);
+
+    expect(stack?.districts.map(({ layout }) => layout.machineWidth)).toEqual([5, 5]);
+    expect(stack?.districts.map(({ layout }) => layout.width)).toEqual([5, 5]);
+  });
+
   it('reserves one shared pipe per externally supplied fluid type', () => {
     const steam = district(recipe(['fluid:water'], ['fluid:steam']));
     steam.inputFluids = ['fluid:water'];

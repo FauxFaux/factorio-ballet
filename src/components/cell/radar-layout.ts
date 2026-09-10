@@ -256,6 +256,7 @@ export function assemblerColumnLayout(
       row: index % rowsPerColumn,
     })),
     height: Math.min(count, rowsPerColumn) * machineHeight,
+    machineWidth,
     width:
       inputTransportWidth +
       inputBeltGap +
@@ -383,10 +384,11 @@ function reserveExternalInputBelts(stack: AssemblerStack, itemsPerSecond: number
 
   stack.externalInputBelts = Math.ceil(externalInputRate / itemsPerSecond);
   stack.externalInputPipes = externalInputFluids.size;
+  const machineWidth = Math.max(...stack.districts.map((district) => district.machineWidth));
   stack.width = 0;
   for (const district of stack.districts) {
     district.layout = assemblerColumnLayout(
-      district.machineWidth,
+      machineWidth,
       district.machineHeight,
       district.count,
       stack.externalInputBelts,

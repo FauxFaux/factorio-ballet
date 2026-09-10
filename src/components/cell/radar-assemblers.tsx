@@ -321,13 +321,13 @@ function outputTransportDepartureX(
   transport: BusLane['transport'],
 ) {
   return Math.min(
-    ...stack.districts.flatMap(({ machineWidth, layout, outputFlows }) =>
+    ...stack.districts.flatMap(({ layout, outputFlows }) =>
       outputFlows.some((flow) => flow.resource === resource)
         ? [
             stackX +
               layout.inputTransportWidth +
               layout.inputBeltGap +
-              machineWidth +
+              layout.machineWidth +
               layout.outputBeltGap +
               (transport === 'belt' ? layout.outputPipesPerColumn : 0) +
               transportLaneWidth / 2,
@@ -403,7 +403,7 @@ function AssemblerColumn({
           x +
           layout.inputTransportWidth +
           layout.inputBeltGap +
-          column * (machineWidth + layout.columnGap);
+          column * (layout.machineWidth + layout.columnGap);
         return (
           <g key={`belts-${column}`}>
             {drawInputBelts &&
@@ -438,7 +438,7 @@ function AssemblerColumn({
               <rect
                 class="cell-radar-pipe"
                 key={`out-pipe-${pipeIndex}`}
-                x={machineX + machineWidth + layout.outputBeltGap + pipeIndex}
+                x={machineX + layout.machineWidth + layout.outputBeltGap + pipeIndex}
                 y={outputPipeTop}
                 width={0.75}
                 height={y + layout.columnHeights[column]! - outputPipeTop}
@@ -453,7 +453,7 @@ function AssemblerColumn({
                 key={`out-${beltIndex}`}
                 x={
                   machineX +
-                  machineWidth +
+                  layout.machineWidth +
                   layout.outputBeltGap +
                   layout.outputPipesPerColumn +
                   beltIndex
@@ -477,7 +477,7 @@ function AssemblerColumn({
             x +
             layout.inputTransportWidth +
             layout.inputBeltGap +
-            column * (machineWidth + layout.columnGap)
+            column * (layout.machineWidth + layout.columnGap)
           }
           y={y + row * machineHeight}
           width={machineWidth}
