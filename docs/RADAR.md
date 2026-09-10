@@ -93,6 +93,24 @@ acknowledging that lane counts above two are not fully handled at
 as a density cue, not literal belt routing: belts are not assigned material identities, joined to
 individual assemblers, or connected to the horizontal bus.
 
+### Current cell adaptation
+
+The implementation in `src/components/cell/radar.tsx` deliberately differs from the source RADAR
+rules above. It uses the belt selected for the current technology progress, sums each recipe's
+solved item rate in each direction, and draws `ceil(total belts / assembler columns)` yellow lanes
+on both sides of every assembler column. Fluids have unlimited modeled throughput, so every distinct
+fluid type needs one dark-blue pipe rather than a rate-derived lane count. Pipes occupy the inside
+of each transport bank, closest to the assembler; item belts are outside them. A one-tile empty gap
+separates each bank from its assemblers, and all of this space contributes to district width.
+
+Wrapped assembler columns give their input and output transport only the height of the assemblers
+actually present in that column. Neighbouring recipes connected by an exclusive hand-off may share a
+vertical stack, with two empty tiles between recipe districts. An input made by an earlier recipe in
+that stack is internally satisfied. Every other item or fluid input joins a shared external bank
+which runs from the top to the bottom of the stack, and the whole stack shifts to reserve its space.
+The shared item count is derived from aggregate external item rate; the shared fluid count is one
+pipe per distinct externally supplied fluid type.
+
 ## Assembler columns and district width
 
 Districts are laid out left-to-right. Within one district, assemblers stack vertically with no

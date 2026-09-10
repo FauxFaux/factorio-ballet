@@ -5,8 +5,10 @@ by applying a set of recipes.
 
 Recipes have inputs, outputs, times, and run in a certain type of building/assembler.
 
-Inputs and outputs are either 'items' or 'fluids'. 'fluids' can have temperatures, and are typically
-more voluminous.
+Inputs and outputs are either 'items' or 'fluids'. Fluids can have temperatures, are typically more
+voluminous, and travel through pipes with unlimited throughput, so each fluid
+type needs only one pipe. Items stay on belts whose progress-dependent throughput ranges from 15 to
+75 items per second.
 
 For example, we may be tasked with creating 'steel', given 'iron ore', and we could first process
 the 'iron ore' into 'iron ingots' in an 'electric furnace', converting 4 'iron ore' into 1 'ingot'
