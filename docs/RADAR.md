@@ -111,6 +111,13 @@ which runs from the top to the bottom of the stack, and the whole stack shifts t
 The shared item count is derived from aggregate external item rate; the shared fluid count is one
 pipe per distinct externally supplied fluid type.
 
+The horizontal bus is derived from those rendered assembler stacks. Each resource spans from its
+import edge or first producing column to its last consuming column or export edge. Its peak solved
+input/output rate determines how many lanes it occupies on the selected belt; a fluid always uses
+one pipe. The intervals are packed greedily into the lowest available vertical slot, and a slot can
+be reused at the same column where its previous resource ends. This lets consecutive hand-offs share
+bus height without merging resources whose lifetimes overlap.
+
 ## Assembler columns and district width
 
 Districts are laid out left-to-right. Within one district, assemblers stack vertically with no

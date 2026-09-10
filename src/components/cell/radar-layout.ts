@@ -5,6 +5,94 @@ import type { Recipe, ResourceId } from '../../types.ts';
 const maxAssemblerStackHeight = 100;
 const stackedDistrictGap = 2;
 
+export interface BusColumn {
+  inputs: { resource: ResourceId; rate: number }[];
+  outputs: { resource: ResourceId; rate: number }[];
+}
+
+export interface BusLane {
+  resource: ResourceId;
+  transport: 'belt' | 'pipe';
+  /** Zero is the lane closest to the assemblers. */
+  lane: number;
+  /** Column boundaries are 0 for imports and columns.length + 1 for exports. */
+  start: number;
+  end: number;
+}
+
+/**
+ * Turn resource lifetimes into horizontal bus lanes. An item occupies one lane per whole belt of
+ * peak flow; a fluid occupies one pipe. Finished intervals free their vertical lane immediately,
+ * including at a column which turns one resource into another.
+ */
+export function busLaneLayout(
+  columns: BusColumn[],
+  imports: Iterable<ResourceId>,
+  exports: Iterable<ResourceId>,
+  itemsPerSecond: number,
+): BusLane[] {
+  const imported = new Set(imports);
+  const exported = new Set(exports);
+  const resources = new Map<
+    ResourceId,
+    {
+      producers: number[];
+      consumers: number[];
+      inputRate: number;
+      outputRate: number;
+    }
+  >();
+  const role = (resource: ResourceId) => {
+    const existing = resources.get(resource);
+    if (existing) return existing;
+    const created = { producers: [], consumers: [], inputRate: 0, outputRate: 0 };
+    resources.set(resource, created);
+    return created;
+  };
+
+  columns.forEach((column, index) => {
+    const columnNumber = index + 1;
+    for (const { resource, rate } of column.inputs) {
+      const resourceRole = role(resource);
+      resourceRole.consumers.push(columnNumber);
+      resourceRole.inputRate += rate;
+    }
+    for (const { resource, rate } of column.outputs) {
+      const resourceRole = role(resource);
+      resourceRole.producers.push(columnNumber);
+      resourceRole.outputRate += rate;
+    }
+  });
+  for (const resource of imported) role(resource);
+  for (const resource of exported) role(resource);
+
+  const requests = [...resources]
+    .flatMap(([resource, resourceRole]) => {
+      const endpoints = [
+        ...(imported.has(resource) ? [0] : []),
+        ...resourceRole.producers,
+        ...resourceRole.consumers,
+        ...(exported.has(resource) ? [columns.length + 1] : []),
+      ];
+      const start = Math.min(...endpoints);
+      const end = Math.max(...endpoints);
+      if (!Number.isFinite(start) || start === end) return [];
+      const transport: BusLane['transport'] = resource.startsWith('fluid:') ? 'pipe' : 'belt';
+      const peakRate = Math.max(resourceRole.inputRate, resourceRole.outputRate);
+      const count = transport === 'pipe' ? 1 : Math.ceil(peakRate / itemsPerSecond);
+      return Array.from({ length: count }, () => ({ resource, transport, start, end }));
+    })
+    .sort((a, b) => a.start - b.start || b.end - a.end || a.resource.localeCompare(b.resource));
+
+  const occupiedUntil: number[] = [];
+  return requests.map((request) => {
+    let lane = occupiedUntil.findIndex((end) => end <= request.start);
+    if (lane < 0) lane = occupiedUntil.length;
+    occupiedUntil[lane] = request.end;
+    return { ...request, lane };
+  });
+}
+
 export function assemblerColumnLayout(
   machineWidth: number,
   machineHeight: number,
@@ -76,9 +164,9 @@ export interface AssemblerDistrict {
   count: number;
   inputItemRate: number;
   outputItemRate: number;
-  inputItemFlows: { resource: ResourceId; rate: number }[];
+  inputFlows: { resource: ResourceId; rate: number }[];
   inputFluids: ResourceId[];
-  outputResources: ResourceId[];
+  outputFlows: { resource: ResourceId; rate: number }[];
   outputFluids: ResourceId[];
 }
 
@@ -155,13 +243,13 @@ function reserveExternalInputBelts(stack: AssemblerStack, itemsPerSecond: number
   const externalInputFluids = new Set<ResourceId>();
 
   for (const district of stack.districts) {
-    for (const { resource, rate } of district.inputItemFlows) {
-      if (!produced.has(resource)) externalInputRate += rate;
+    for (const { resource, rate } of district.inputFlows) {
+      if (resource.startsWith('item:') && !produced.has(resource)) externalInputRate += rate;
     }
     for (const resource of district.inputFluids) {
       if (!produced.has(resource)) externalInputFluids.add(resource);
     }
-    for (const resource of district.outputResources) produced.add(resource);
+    for (const { resource } of district.outputFlows) produced.add(resource);
   }
 
   stack.externalInputBelts = Math.ceil(externalInputRate / itemsPerSecond);

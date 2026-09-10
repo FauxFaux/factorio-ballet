@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   assemblerColumnLayout,
   beltsPerAssemblerColumn,
+  busLaneLayout,
   stackAssemblerDistricts,
   type AssemblerDistrict,
 } from '../src/components/cell/radar-layout.ts';
@@ -73,9 +74,9 @@ function district(recipeData: Recipe): AssemblerDistrict {
     count: 1,
     inputItemRate: 0,
     outputItemRate: 0,
-    inputItemFlows: [],
+    inputFlows: [],
     inputFluids: [],
-    outputResources: [],
+    outputFlows: [],
     outputFluids: [],
   };
 }
@@ -110,10 +111,10 @@ describe('stackAssemblerDistricts', () => {
 
   it('extends only externally supplied input belts through the full stack', () => {
     const plate = district(recipe(['item:ore'], ['item:plate']));
-    plate.inputItemFlows = [{ resource: 'item:ore', rate: 15 }];
-    plate.outputResources = ['item:plate'];
+    plate.inputFlows = [{ resource: 'item:ore', rate: 15 }];
+    plate.outputFlows = [{ resource: 'item:plate', rate: 30 }];
     const gear = district(recipe(['item:plate', 'item:coal'], ['item:gear']));
-    gear.inputItemFlows = [
+    gear.inputFlows = [
       { resource: 'item:plate', rate: 30 },
       { resource: 'item:coal', rate: 16 },
     ];
@@ -127,7 +128,7 @@ describe('stackAssemblerDistricts', () => {
   it('reserves one shared pipe per externally supplied fluid type', () => {
     const steam = district(recipe(['fluid:water'], ['fluid:steam']));
     steam.inputFluids = ['fluid:water'];
-    steam.outputResources = ['fluid:steam'];
+    steam.outputFlows = [{ resource: 'fluid:steam', rate: 100 }];
     steam.outputFluids = ['fluid:steam'];
     const process = district(recipe(['fluid:steam', 'fluid:lubricant'], ['item:result']));
     process.inputFluids = ['fluid:steam', 'fluid:lubricant'];
@@ -153,6 +154,69 @@ describe('stackAssemblerDistricts', () => {
         district(recipe(['item:plate'], ['item:rod'])),
       ]),
     ).toHaveLength(3);
+  });
+});
+
+describe('busLaneLayout', () => {
+  it('routes resources from imports through their last consumer and exports from their producer', () => {
+    const lanes = busLaneLayout(
+      [
+        {
+          inputs: [
+            { resource: 'item:a', rate: 10 },
+            { resource: 'item:b', rate: 10 },
+          ],
+          outputs: [{ resource: 'item:c', rate: 10 }],
+        },
+        {
+          inputs: [{ resource: 'item:c', rate: 10 }],
+          outputs: [{ resource: 'item:d', rate: 10 }],
+        },
+        {
+          inputs: [
+            { resource: 'item:b', rate: 10 },
+            { resource: 'item:d', rate: 10 },
+          ],
+          outputs: [{ resource: 'item:e', rate: 10 }],
+        },
+      ],
+      ['item:a', 'item:b'],
+      ['item:e'],
+      15,
+    );
+
+    expect(lanes.map(({ resource, start, end }) => ({ resource, start, end }))).toEqual([
+      { resource: 'item:b', start: 0, end: 3 },
+      { resource: 'item:b', start: 0, end: 3 },
+      { resource: 'item:a', start: 0, end: 1 },
+      { resource: 'item:c', start: 1, end: 2 },
+      { resource: 'item:d', start: 2, end: 3 },
+      { resource: 'item:e', start: 3, end: 4 },
+    ]);
+    expect(lanes.map(({ lane }) => lane)).toEqual([0, 1, 2, 2, 2, 0]);
+  });
+
+  it('uses one reusable pipe lane for each fluid regardless of throughput', () => {
+    const lanes = busLaneLayout(
+      [
+        {
+          inputs: [{ resource: 'fluid:water', rate: 1_000 }],
+          outputs: [{ resource: 'fluid:steam', rate: 1_000 }],
+        },
+        {
+          inputs: [{ resource: 'fluid:steam', rate: 1_000 }],
+          outputs: [],
+        },
+      ],
+      ['fluid:water'],
+      [],
+      15,
+    );
+
+    expect(lanes).toMatchObject([
+      { resource: 'fluid:water', transport: 'pipe', lane: 0, start: 0, end: 1 },
+      { resource: 'fluid:steam', transport: 'pipe', lane: 0, start: 1, end: 2 },
+    ]);
   });
 });
 

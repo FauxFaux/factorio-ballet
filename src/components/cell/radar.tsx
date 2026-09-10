@@ -6,7 +6,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
 import { itemRateTotal, recipeConnections } from './connection-calc.ts';
-import { assemblerColumnLayout, stackAssemblerDistricts } from './radar-layout.ts';
+import { assemblerColumnLayout, busLaneLayout, stackAssemblerDistricts } from './radar-layout.ts';
 
 /**
  * RADAR's rail view adapted to one cell, which is one brick for now. Its 192-by-128 coordinates
@@ -62,6 +62,8 @@ export function CellRadar({
         <StationStops side="in" resources={inputs} stacked={stacked} />
         <StationStops side="out" resources={outputs} />
         <AssemblerColumns
+          inputs={inputs}
+          outputs={outputs}
           entries={entries}
           solution={solution}
           belt={belt}
@@ -79,12 +81,16 @@ export function CellRadar({
  * than it is.
  */
 function AssemblerColumns({
+  inputs,
+  outputs,
   entries,
   solution,
   belt,
   progress,
   startX,
 }: {
+  inputs: ResourceId[];
+  outputs: ResourceId[];
   entries: CellEntry[];
   solution: Solution;
   belt: Belt;
@@ -105,9 +111,6 @@ function AssemblerColumns({
 
       const count = Math.max(1, Math.ceil(solvedCount ?? 1));
       const connections = recipeConnections(index, solution);
-      const inputItemFlows = connections.inputs.filter(({ resource }) =>
-        resource.startsWith('item:'),
-      );
       const inputFluids = connections.inputs
         .map(({ resource }) => resource)
         .filter((resource) => resource.startsWith('fluid:'));
@@ -123,61 +126,88 @@ function AssemblerColumns({
           count,
           inputItemRate: itemRateTotal(connections.inputs),
           outputItemRate: itemRateTotal(connections.outputs),
-          inputItemFlows,
+          inputFlows: connections.inputs,
           inputFluids,
-          outputResources,
+          outputFlows: connections.outputs,
           outputFluids: outputResources.filter((resource) => resource.startsWith('fluid:')),
         },
       ];
     });
 
-  const columns = stackAssemblerDistricts(districts, belt.itemsPerSecond).map(
-    (stack, stackIndex) => {
-      const column = (
-        <g key={stackIndex}>
-          {Array.from({ length: stack.externalInputBelts }, (_, beltIndex) => (
-            <rect
-              class="cell-radar-belt"
-              key={`stack-in-${beltIndex}`}
-              x={x + beltIndex}
-              y={20}
-              width={0.75}
-              height={stack.height}
+  const stacks = stackAssemblerDistricts(districts, belt.itemsPerSecond);
+  const positionedStacks = stacks.map((stack) => {
+    const positioned = { stack, x, centerX: x + stack.width / 2 };
+    x += stack.width + 4;
+    return positioned;
+  });
+  const busColumns = stacks.map((stack) => ({
+    inputs: stack.districts.flatMap(({ inputFlows }) => inputFlows),
+    outputs: stack.districts.flatMap(({ outputFlows }) => outputFlows),
+  }));
+  const busLanes = busLaneLayout(busColumns, inputs, outputs, belt.itemsPerSecond);
+  const busX = [8, ...positionedStacks.map(({ centerX }) => centerX), 184];
+  const columns = positionedStacks.map(({ stack, x }, stackIndex) => {
+    const column = (
+      <g key={stackIndex}>
+        {Array.from({ length: stack.externalInputBelts }, (_, beltIndex) => (
+          <rect
+            class="cell-radar-belt"
+            key={`stack-in-${beltIndex}`}
+            x={x + beltIndex}
+            y={20}
+            width={0.75}
+            height={stack.height}
+          />
+        ))}
+        {Array.from({ length: stack.externalInputPipes }, (_, pipeIndex) => (
+          <rect
+            class="cell-radar-pipe"
+            key={`stack-in-pipe-${pipeIndex}`}
+            x={x + stack.externalInputBelts + pipeIndex}
+            y={20}
+            width={0.75}
+            height={stack.height}
+          />
+        ))}
+        {stack.districts.map(
+          ({ id, recipeId, recipeName, machineWidth, machineHeight, layout, y }) => (
+            <AssemblerColumn
+              key={id}
+              x={x}
+              y={20 + y}
+              recipe={recipeId}
+              recipeName={recipeName}
+              machineWidth={machineWidth}
+              machineHeight={machineHeight}
+              layout={layout}
+              drawInputBelts={stack.districts.length === 1}
             />
-          ))}
-          {Array.from({ length: stack.externalInputPipes }, (_, pipeIndex) => (
-            <rect
-              class="cell-radar-pipe"
-              key={`stack-in-pipe-${pipeIndex}`}
-              x={x + stack.externalInputBelts + pipeIndex}
-              y={20}
-              width={0.75}
-              height={stack.height}
-            />
-          ))}
-          {stack.districts.map(
-            ({ id, recipeId, recipeName, machineWidth, machineHeight, layout, y }) => (
-              <AssemblerColumn
-                key={id}
-                x={x}
-                y={20 + y}
-                recipe={recipeId}
-                recipeName={recipeName}
-                machineWidth={machineWidth}
-                machineHeight={machineHeight}
-                layout={layout}
-                drawInputBelts={stack.districts.length === 1}
-              />
-            ),
-          )}
-        </g>
-      );
-      x += stack.width + 4;
-      return column;
-    },
-  );
+          ),
+        )}
+      </g>
+    );
+    return column;
+  });
 
-  return <g class="cell-radar-assemblers">{columns}</g>;
+  return (
+    <g class="cell-radar-assemblers">
+      <g class="cell-radar-bus">
+        {busLanes.map(({ resource, transport, lane, start, end }, index) => (
+          <rect
+            class={transport === 'belt' ? 'cell-radar-belt' : 'cell-radar-pipe'}
+            key={`${resource}-${index}`}
+            x={busX[start]}
+            y={19 - lane}
+            width={Math.max(0, busX[end]! - busX[start]!)}
+            height={0.75}
+          >
+            <title>{resourceName(resource)}</title>
+          </rect>
+        ))}
+      </g>
+      {columns}
+    </g>
+  );
 }
 
 function AssemblerColumn({
