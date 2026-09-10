@@ -54,7 +54,7 @@ describe('RadarAssemblers', () => {
           solution={solution}
           belt={belt}
           progress={0}
-          startX={0}
+          startX={16}
           stackedStations={false}
         />
       </svg>,
@@ -74,10 +74,10 @@ describe('RadarAssemblers', () => {
       Number(belt.getAttribute('x')),
     );
 
-    expect(inputEnds[0]).toBeLessThan(inputEnds[1]!);
-    expect(inputEnds[1]).toBeLessThan(inputEnds[2]!);
-    expect(outputStarts[0]).toBeGreaterThan(outputStarts[1]!);
-    expect(outputStarts[1]).toBeGreaterThan(outputStarts[2]!);
+    expect(inputEnds[0]).toBeGreaterThan(inputEnds[1]!);
+    expect(inputEnds[1]).toBeGreaterThan(inputEnds[2]!);
+    expect(outputStarts[0]).toBeLessThan(outputStarts[1]!);
+    expect(outputStarts[1]).toBeLessThan(outputStarts[2]!);
 
     const verticalBelts = (segment: string) =>
       [...container.querySelectorAll<SVGRectElement>(`[data-bus-segment="${segment}"]`)].sort(
@@ -85,10 +85,10 @@ describe('RadarAssemblers', () => {
       );
 
     expect(verticalBelts('vertical-input').map((belt) => Number(belt.getAttribute('y')))).toEqual([
-      17, 18, 19,
+      19, 18, 17,
     ]);
     expect(verticalBelts('vertical-output').map((belt) => Number(belt.getAttribute('y')))).toEqual([
-      19, 18, 17,
+      17, 18, 19,
     ]);
   });
 

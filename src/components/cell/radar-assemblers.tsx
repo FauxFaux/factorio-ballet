@@ -141,6 +141,7 @@ export function RadarAssemblers({
                     resource,
                     transport,
                     routeLane,
+                    routeLaneCounts.get(routeId) ?? 1,
                   )
                 : busX[start]!;
           const endColumn = busColumns[end - 1];
@@ -161,7 +162,7 @@ export function RadarAssemblers({
                 : outputStationLaneX + transportLaneWidth / 2
               : endColumn?.inputs.some((flow) => flow.resource === resource) && positionedEnd
                 ? transport === 'belt'
-                  ? positionedEnd.inputBeltX - routeLane
+                  ? positionedEnd.inputBeltX - (routeLaneCounts.get(routeId) ?? 1) + routeLane + 1
                   : positionedEnd.inputPipeX
                 : busX[end]!;
           return (
@@ -331,6 +332,7 @@ function outputTransportDepartureX(
   resource: ResourceId,
   transport: BusLane['transport'],
   routeLane: number,
+  routeLaneCount: number,
 ) {
   return Math.min(
     ...stack.districts.flatMap(({ layout, outputFlows }) =>
@@ -343,7 +345,9 @@ function outputTransportDepartureX(
               layout.outputBeltGap +
               (transport === 'belt' ? layout.outputPipesPerColumn : 0) +
               transportLaneWidth / 2 +
-              routeLane,
+              routeLaneCount -
+              routeLane -
+              1,
           ]
         : [],
     ),
@@ -361,6 +365,11 @@ function connectionTopY(
 /** Align each vertical belt with its corresponding diagonal bus endpoint. */
 function fanBankTopY(bankTopY: number, beltCount: number, beltIndex: number) {
   return bankTopY + beltCount - beltIndex - 1;
+}
+
+/** Output banks run in the opposite direction: their leftmost belt meets the top lane. */
+function fanOutputBankTopY(bankTopY: number, beltIndex: number) {
+  return bankTopY + beltIndex;
 }
 
 function busRouteIds(
@@ -431,12 +440,10 @@ function AssemblerColumn({
                   class="cell-radar-belt"
                   key={`in-${beltIndex}`}
                   x={machineX - layout.inputBeltGap - layout.inputPipesPerColumn - 1 - beltIndex}
-                  y={fanBankTopY(inputBeltTop, layout.inputBeltsPerColumn, beltIndex)}
+                  y={fanOutputBankTopY(inputBeltTop, beltIndex)}
                   width={0.75}
                   height={
-                    y +
-                    layout.columnHeights[column]! -
-                    fanBankTopY(inputBeltTop, layout.inputBeltsPerColumn, beltIndex)
+                    y + layout.columnHeights[column]! - fanOutputBankTopY(inputBeltTop, beltIndex)
                   }
                   data-bus-routes={inputBeltRoutes}
                   data-bus-segment="vertical-input"
@@ -481,12 +488,10 @@ function AssemblerColumn({
                   layout.outputPipesPerColumn +
                   beltIndex
                 }
-                y={fanBankTopY(outputBeltTop, layout.outputBeltsPerColumn, beltIndex)}
+                y={fanOutputBankTopY(outputBeltTop, beltIndex)}
                 width={0.75}
                 height={
-                  y +
-                  layout.columnHeights[column]! -
-                  fanBankTopY(outputBeltTop, layout.outputBeltsPerColumn, beltIndex)
+                  y + layout.columnHeights[column]! - fanOutputBankTopY(outputBeltTop, beltIndex)
                 }
                 data-bus-routes={outputBeltRoutes}
                 data-bus-segment="vertical-output"
