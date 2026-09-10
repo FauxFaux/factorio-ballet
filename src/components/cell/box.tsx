@@ -115,6 +115,7 @@ export function CellBox({
           dir="in"
           ids={iface.inputs}
           solution={solution}
+          belt={chosen.belt}
           onSearch={onSearch}
           onSelect={selectResource}
           imports={cell.imports}
@@ -182,6 +183,7 @@ export function CellBox({
             dir="out"
             ids={iface.outputs}
             solution={solution}
+            belt={chosen.belt}
             onSearch={onSearch}
             onSelect={selectResource}
             exports={cell.exports}

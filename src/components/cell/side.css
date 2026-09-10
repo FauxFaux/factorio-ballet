@@ -63,3 +63,14 @@
   color: var(--text);
   cursor: help;
 }
+
+/* A station has only so much room for belts, and only so many train stacks per minute. */
+.cell-rate.is-over-belt-capacity {
+  color: #facc15;
+  cursor: help;
+}
+
+.cell-rate.is-over-train-capacity {
+  color: #f87171;
+  cursor: help;
+}

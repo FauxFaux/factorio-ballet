@@ -1,6 +1,7 @@
 import './side.css';
+import { staticData } from '../../data/decode.ts';
 import type { Solution } from '../../solve/index.ts';
-import type { ResourceId } from '../../types.ts';
+import type { Belt, ResourceId } from '../../types.ts';
 import { ResourceButton } from '../resource.tsx';
 import { PackageDependenciesIcon, PackageDependentsIcon } from '@primer/octicons-react';
 
@@ -31,6 +32,7 @@ export function CellSide({
   dir,
   ids,
   solution,
+  belt,
   onSearch,
   onSelect,
   exports = [],
@@ -39,6 +41,8 @@ export function CellSide({
   dir: 'in' | 'out';
   ids: ResourceId[];
   solution: Solution;
+  /** The belt selected in the header, used to flag impractical station throughput. */
+  belt: Belt;
   onSearch: (search: string) => void;
   onSelect: (id: ResourceId) => void;
   exports?: ResourceId[];
@@ -103,6 +107,8 @@ export function CellSide({
               rate={rates[index]}
               digits={rateDigits}
               partial={!solution.complete}
+              belt={belt}
+              stackSize={staticData.resources[id]?.stackSize}
             />
           </div>
         ))
@@ -115,12 +121,45 @@ export function CellSide({
  * A rate on one side of the cell. Nothing at all where the solver did not get that far: a zero
  * would read as "none of this crosses the edge", which is a different claim from "not worked out".
  */
-function EdgeRate({ rate, digits, partial }: { rate: number; digits: number; partial: boolean }) {
+function EdgeRate({
+  rate,
+  digits,
+  partial,
+  belt,
+  stackSize,
+}: {
+  rate: number;
+  digits: number;
+  partial: boolean;
+  belt: Belt;
+  stackSize?: number;
+}) {
   if (!(rate > 0)) return null;
+  const trainLimit = stackSize === undefined ? undefined : 5 * stackSize;
+  const beltLimit = 4 * belt.itemsPerSecond;
+  const warning =
+    trainLimit !== undefined && rate > trainLimit
+      ? {
+          className: ' is-over-train-capacity',
+          title:
+            `Over ${trainLimit}/s (five stacks):` +
+            ` four two-wagon trains per minute cannot keep one station supplied`,
+        }
+      : rate > beltLimit
+        ? {
+            className: ' is-over-belt-capacity',
+            title:
+              `Over ${beltLimit}/s (four ${belt.human ?? belt.item ?? 'selected belt'}s):` +
+              ` this would be hard to belt out of one station`,
+          }
+        : undefined;
   return (
     <span
-      class={partial ? 'cell-rate is-partial' : 'cell-rate'}
-      title={partial ? 'So far: some rows of this cell are not worked out' : undefined}
+      class={`cell-rate${partial ? ' is-partial' : ''}${warning?.className ?? ''}`}
+      title={
+        warning?.title ??
+        (partial ? 'So far: some rows of this cell are not worked out' : undefined)
+      }
     >
       {rate.toFixed(digits)}
       <span class="cell-rate-unit">/s</span>
