@@ -9,7 +9,8 @@ import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { AddToCell } from '../recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
-import { isResourceChain, suggestedRecipePaths } from './suggestions.ts';
+import { isResourceChain } from './suggestion-plans.ts';
+import { suggestedRecipePaths } from './suggestions.ts';
 
 export function RecipeSuggestions({
   resource,

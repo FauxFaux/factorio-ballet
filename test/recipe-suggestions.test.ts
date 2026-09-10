@@ -12,15 +12,17 @@ import { isBarrelling, isUnbarrelling } from '../src/data/recipes.ts';
 import { staticData } from '../src/data/decode.ts';
 import {
   scoreRecipeSuggestion,
-  suggestedResourceChains,
   suggestedRecipePaths,
+  suggestionScoreWeights,
+} from '../src/components/recipe-suggestions/suggestions.ts';
+import {
+  suggestedResourceChains,
   suggestedFewProducerInputs,
   suggestedFreeInputs,
   suggestedSoleConsumerOutputs,
   suggestedSoleProducerInputs,
   suggestedVoidResources,
-  suggestionScoreWeights,
-} from '../src/components/recipe-suggestions/suggestions.ts';
+} from '../src/components/recipe-suggestions/suggestion-plans.ts';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
 
