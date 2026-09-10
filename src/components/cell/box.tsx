@@ -1,5 +1,6 @@
 import './box.css';
-import { useMemo, useState } from 'preact/hooks';
+import { createPortal } from 'preact/compat';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import {
   cellInterface,
   cellTitle,
@@ -57,6 +58,24 @@ export function CellBox({
   );
   const [hoveredRecipe, setHoveredRecipe] = useState<string>();
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
+  const [radarOpen, setRadarOpen] = useState(false);
+  const radarTrigger = useRef<HTMLButtonElement>(null);
+  const radarClose = useRef<HTMLButtonElement>(null);
+
+  const closeRadar = () => {
+    setRadarOpen(false);
+    radarTrigger.current?.focus();
+  };
+
+  useEffect(() => {
+    if (!radarOpen) return;
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') closeRadar();
+    };
+    document.addEventListener('keydown', escape);
+    radarClose.current?.focus();
+    return () => document.removeEventListener('keydown', escape);
+  }, [radarOpen]);
 
   const selectResource = (id: ResourceId | undefined) => {
     setSelectedResource(id);
@@ -196,9 +215,47 @@ export function CellBox({
             solution={solution}
             belt={chosen.belt}
             progress={progress}
+            onExpand={() => setRadarOpen(true)}
+            expandButtonRef={radarTrigger}
           />
         </div>
       </div>
+      {radarOpen
+        ? createPortal(
+            <div class="cell-radar-backdrop" onClick={closeRadar}>
+              <section
+                class="cell-radar-dialog"
+                role="dialog"
+                aria-modal="true"
+                aria-label={`Rail brick for ${cellTitle(cell)}`}
+                onClick={(event) => event.stopPropagation()}
+              >
+                <header class="cell-radar-dialog-head">
+                  <span>Rail brick</span>
+                  <button
+                    ref={radarClose}
+                    type="button"
+                    class="cell-btn"
+                    aria-label="Close rail brick"
+                    onClick={closeRadar}
+                  >
+                    × close
+                  </button>
+                </header>
+                <CellRadar
+                  title={cellTitle(cell)}
+                  inputs={iface.inputs}
+                  outputs={iface.outputs}
+                  entries={cell.entries}
+                  solution={solution}
+                  belt={chosen.belt}
+                  progress={progress}
+                />
+              </section>
+            </div>,
+            document.body,
+          )
+        : null}
       {cell.design ? (
         <CellDesign
           design={cell.design}

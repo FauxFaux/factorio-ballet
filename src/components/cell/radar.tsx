@@ -4,6 +4,7 @@ import { resourceName } from '../../data/index.ts';
 import { staticData } from '../../data/decode.ts';
 import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
+import type { RefObject } from 'preact';
 import { iconSprite } from '../icon.tsx';
 import { itemRateTotal, recipeConnections } from './connection-calc.ts';
 import {
@@ -32,6 +33,8 @@ export function CellRadar({
   solution,
   belt,
   progress,
+  onExpand,
+  expandButtonRef,
 }: {
   title: string;
   inputs: ResourceId[];
@@ -40,6 +43,9 @@ export function CellRadar({
   solution: Solution;
   belt: Belt;
   progress: number;
+  /** Makes the compact overview open its larger, cell-owned view. */
+  onExpand?: () => void;
+  expandButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
   const stacked = inputs.length + outputs.length > 4;
@@ -50,40 +56,107 @@ export function CellRadar({
         <span>Rail brick</span>
         <span class="cell-radar-caption">{title}</span>
       </figcaption>
-      <svg
-        viewBox="0 0 192 128"
-        role="img"
-        aria-label={`Rail brick for ${title}: ${stationSummary}`}
-      >
-        <title>Rail brick for {title}</title>
-        <desc>
-          A cell-sized rail brick. Each input has a station on the left and each output has a
-          station on the right.
-        </desc>
-        <rect class="cell-radar-floor" x="0" y="0" width="192" height="128" />
-        <RailBorder />
-        <path
-          class="cell-radar-path"
-          d={
-            stacked
-              ? stackedRailPath(inputs.length, outputs.length)
-              : railPath(inputs.length, outputs.length)
-          }
-        />
-        <StationStops side="in" resources={inputs} stacked={stacked} />
-        <StationStops side="out" resources={outputs} />
-        <AssemblerColumns
+      {onExpand ? (
+        <button
+          ref={expandButtonRef}
+          type="button"
+          class="cell-radar-expand"
+          aria-label={`Expand rail brick for ${title}`}
+          aria-haspopup="dialog"
+          onClick={onExpand}
+        >
+          <RadarGraphic
+            title={title}
+            stationSummary={stationSummary}
+            inputs={inputs}
+            outputs={outputs}
+            entries={entries}
+            solution={solution}
+            belt={belt}
+            progress={progress}
+            assemblerStartX={assemblerStartX}
+            stacked={stacked}
+            decorative
+          />
+        </button>
+      ) : (
+        <RadarGraphic
+          title={title}
+          stationSummary={stationSummary}
           inputs={inputs}
           outputs={outputs}
           entries={entries}
           solution={solution}
           belt={belt}
           progress={progress}
-          startX={assemblerStartX}
-          stackedStations={stacked}
+          assemblerStartX={assemblerStartX}
+          stacked={stacked}
         />
-      </svg>
+      )}
     </figure>
+  );
+}
+
+function RadarGraphic({
+  title,
+  stationSummary,
+  inputs,
+  outputs,
+  entries,
+  solution,
+  belt,
+  progress,
+  assemblerStartX,
+  stacked,
+  decorative = false,
+}: {
+  title: string;
+  stationSummary: string;
+  inputs: ResourceId[];
+  outputs: ResourceId[];
+  entries: CellEntry[];
+  solution: Solution;
+  belt: Belt;
+  progress: number;
+  assemblerStartX: number;
+  stacked: boolean;
+  decorative?: boolean;
+}) {
+  return (
+    <svg
+      viewBox="0 0 192 128"
+      role={decorative ? undefined : 'img'}
+      aria-hidden={decorative || undefined}
+      aria-label={decorative ? undefined : `Rail brick for ${title}: ${stationSummary}`}
+    >
+      <title>Rail brick for {title}</title>
+      <desc>
+        A cell-sized rail brick. Each input has a station on the left and each output has a station
+        on the right.
+      </desc>
+      <rect class="cell-radar-floor" x="0" y="0" width="192" height="128" />
+      <RailBorder />
+      <path
+        class="cell-radar-path"
+        d={
+          stacked
+            ? stackedRailPath(inputs.length, outputs.length)
+            : railPath(inputs.length, outputs.length)
+        }
+      />
+      <StationStops side="in" resources={inputs} stacked={stacked} />
+      <StationStops side="out" resources={outputs} />
+      <AssemblerColumns
+        inputs={inputs}
+        outputs={outputs}
+        entries={entries}
+        solution={solution}
+        belt={belt}
+        progress={progress}
+        startX={assemblerStartX}
+        stackedStations={stacked}
+      />
+    </svg>
   );
 }
 

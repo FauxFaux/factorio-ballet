@@ -100,6 +100,31 @@ describe('explicit cell imports', () => {
   });
 });
 
+describe('cell rail brick', () => {
+  it('opens a screen-sized view and closes it with Escape', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    const trigger = screen.getByRole('button', { name: /Expand rail brick for/ });
+    await user.click(trigger);
+    expect(screen.getByRole('dialog', { name: /Rail brick for/ })).toBeTruthy();
+
+    await user.keyboard('{Escape}');
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+  });
+});
+
 describe('cell side resource selection', () => {
   it('selects the clicked side resource in play and searches for its recipes', async () => {
     const onSearch = vi.fn();

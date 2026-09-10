@@ -34,6 +34,76 @@
   margin: 0 auto;
 }
 
+.cell-radar-expand {
+  display: block;
+  width: 100%;
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  cursor: zoom-in;
+}
+
+.cell-radar-expand:hover,
+.cell-radar-expand:focus-visible {
+  border-color: var(--accent-border);
+  background: var(--accent-bg);
+  outline: none;
+}
+
+.cell-radar-expand svg {
+  width: 100%;
+}
+
+.cell-radar-backdrop {
+  position: fixed;
+  z-index: 10;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 3vh 3vw;
+  background: rgb(0 0 0 / 72%);
+}
+
+.cell-radar-dialog {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(94vw, 100rem);
+  height: 94vh;
+  padding: 0.75rem;
+  background: var(--code-bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
+
+.cell-radar-dialog-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-size: 0.7778rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cell-radar-dialog .cell-radar {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  margin-top: 0.5rem;
+}
+
+.cell-radar-dialog .cell-radar svg {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  height: 100%;
+}
+
 .cell-radar-floor {
   fill: var(--bg);
   stroke: var(--border);
