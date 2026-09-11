@@ -368,6 +368,21 @@ describe('suggestedRecipePaths', () => {
     if (clarifier) expect(sulfuricAcid!.score).toBeGreaterThan(clarifier.score);
   });
 
+  it('does not surface a cycle for supplying an explicitly imported input', () => {
+    const entries = [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }];
+    const target = 'fluid:angels-liquid-sulfuric-acid' as const;
+    const findCycle = (cell: Cell) =>
+      suggestedRecipePaths(`uses:${waste}`, cell).find(
+        (path) => path.kind === 'chain' && 'target' in path.plan && path.plan.target === target,
+      );
+
+    const ordinaryCycle = findCycle({ entries });
+    const explicitlyImportedCycle = findCycle({ entries, imports: [target] });
+
+    expect(ordinaryCycle?.scoreFactors.outputs).toBe(suggestionScoreWeights.suppliedInput);
+    expect(explicitlyImportedCycle).toBeUndefined();
+  });
+
   it('treats products one free air-processing step away as available inputs', () => {
     const paths = suggestedRecipePaths(`uses:${waste}`, {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],

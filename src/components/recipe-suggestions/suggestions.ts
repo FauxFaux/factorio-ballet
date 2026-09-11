@@ -62,6 +62,7 @@ function calculateScoreFactors(
   existingOutputs: ReadonlySet<ResourceId>,
   present: ReadonlySet<ResourceId>,
   involvedRecipeCount = 0,
+  suppliedInputs = existingInputs,
 ) {
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
@@ -95,7 +96,7 @@ function calculateScoreFactors(
         suggestionScoreWeights.output +
       outputs.filter((resource) => existingOutputs.has(resource)).length *
         suggestionScoreWeights.reusedOutput +
-      (isResourceChain(plan) && existingInputs.has(plan.target)
+      (isResourceChain(plan) && suppliedInputs.has(plan.target)
         ? suggestionScoreWeights.suppliedInput
         : 0),
     buildings: -plan.recipes.length * suggestionScoreWeights.step,
@@ -136,8 +137,16 @@ function pathSuggestion(
   present: ReadonlySet<ResourceId>,
   involvedRecipeCount = 0,
   isFreeInput = false,
+  suppliedInputs = inputs,
 ): PathSuggestion {
-  const scoreFactors = calculateScoreFactors(plan, inputs, outputs, present, involvedRecipeCount);
+  const scoreFactors = calculateScoreFactors(
+    plan,
+    inputs,
+    outputs,
+    present,
+    involvedRecipeCount,
+    suppliedInputs,
+  );
   if (isFreeInput) scoreFactors.certainty += suggestionScoreWeights.freeInput;
   if (isResourceChain(plan)) {
     scoreFactors.certainty +=
@@ -163,6 +172,11 @@ export function suggestedRecipePaths(
   const searched = new Set(usedSearchResources(search, cell));
   const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
+  const nonImportedInputs = new Set([
+    ...freeOneStepProducts,
+    ...searched,
+    ...inputs.filter((id) => !cell?.imports?.includes(id)),
+  ]);
   const existingOutputs = new Set(outputs);
   const present = new Set([
     ...existingInputs,
@@ -185,7 +199,19 @@ export function suggestedRecipePaths(
         .map((plan) => pathSuggestion(id, 'void', plan, existingInputs, existingOutputs, present)),
       ...resourceChains
         .filter(isRecommendedPlan)
-        .map((plan) => pathSuggestion(id, 'chain', plan, existingInputs, existingOutputs, present)),
+        .map((plan) =>
+          pathSuggestion(
+            id,
+            'chain',
+            plan,
+            existingInputs,
+            existingOutputs,
+            present,
+            0,
+            false,
+            nonImportedInputs,
+          ),
+        ),
     ];
   });
   const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>

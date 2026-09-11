@@ -160,7 +160,7 @@ function EdgeRate({
             className: ' is-over-belt-capacity',
             title:
               `Over ${beltLimit}/s (four ${(belt.human ?? belt.item ?? 'selected belt').toLowerCase()}s):` +
-              ` this would be hard to belt out of one station`,
+              ` this would be hard to belt through one standard station`,
           }
         : undefined;
   return (
