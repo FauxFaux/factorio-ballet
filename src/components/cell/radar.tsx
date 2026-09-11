@@ -4,14 +4,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import type { RefObject } from 'preact';
 import { RadarAssemblers } from './radar-assemblers.tsx';
-import {
-  RailBorder,
-  railPath,
-  stackedRailPath,
-  stationFanWidth,
-  StationStops,
-  type StationLayout,
-} from './radar-rail.tsx';
+import { RailBorder, railPath, stackedRailPath, StationStops } from './radar-rail.tsx';
 
 /** RADAR's rail view adapted to one cell. Its 192-by-128 coordinates are deliberately schematic. */
 export function CellRadar({
@@ -23,7 +16,6 @@ export function CellRadar({
   belt,
   progress,
   stackedStations,
-  stationLayout = 'narrow',
   onExpand,
   expandButtonRef,
 }: {
@@ -36,14 +28,12 @@ export function CellRadar({
   progress: number;
   /** Overrides automatic station stacking when a fixed station orientation is required. */
   stackedStations?: boolean;
-  /** Uses the generated rail-blueprint's 12-tile station pitch. */
-  stationLayout?: StationLayout;
   onExpand?: () => void;
   expandButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
   const stacked = stackedStations ?? inputs.length + outputs.length > 4;
-  const assemblerStartX = stacked ? 68 : 8 + stationFanWidth(inputs.length, stationLayout);
+  const assemblerStartX = stacked ? 68 : 8 + inputs.length * 8;
   const props = {
     title,
     stationSummary,
@@ -55,7 +45,6 @@ export function CellRadar({
     progress,
     assemblerStartX,
     stacked,
-    stationLayout,
   };
   return (
     <figure class="cell-radar">
@@ -92,7 +81,6 @@ function RadarGraphic({
   progress,
   assemblerStartX,
   stacked,
-  stationLayout,
   decorative = false,
 }: {
   title: string;
@@ -105,7 +93,6 @@ function RadarGraphic({
   progress: number;
   assemblerStartX: number;
   stacked: boolean;
-  stationLayout: StationLayout;
   decorative?: boolean;
 }) {
   return (
@@ -126,12 +113,12 @@ function RadarGraphic({
         class="cell-radar-path"
         d={
           stacked
-            ? stackedRailPath(inputs.length, outputs.length, stationLayout)
-            : railPath(inputs.length, outputs.length, stationLayout)
+            ? stackedRailPath(inputs.length, outputs.length)
+            : railPath(inputs.length, outputs.length)
         }
       />
-      <StationStops side="in" resources={inputs} stacked={stacked} layout={stationLayout} />
-      <StationStops side="out" resources={outputs} layout={stationLayout} />
+      <StationStops side="in" resources={inputs} stacked={stacked} />
+      <StationStops side="out" resources={outputs} />
       <RadarAssemblers
         inputs={inputs}
         outputs={outputs}
@@ -141,7 +128,6 @@ function RadarGraphic({
         progress={progress}
         startX={assemblerStartX}
         stackedStations={stacked}
-        stationLayout={stationLayout}
       />
     </svg>
   );

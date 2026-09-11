@@ -16,6 +16,9 @@ const emptyGrid = blueprintFrom(decodeDocument(emptyGridString));
 const threePath = blueprintFrom(decodeDocument(threePathString));
 const fourPath = blueprintFrom(decodeDocument(fourPathString));
 
+export const RAIL_BRICK_MAX_STATIONS = 12;
+export const RAIL_BRICK_STATION_PITCH = 12;
+
 /** Build a regular rail brick with independently sized vertical station fans on its left and right. */
 export function buildRailBrick(inputStations: number, outputStations: number): BlueprintDocument {
   validateStationCount(inputStations);
@@ -115,7 +118,7 @@ function extendStationFan(stationCount: number): Blueprint {
   const wires = blueprint.wires ?? [];
 
   for (let pathIndex = 4; pathIndex < stationCount; pathIndex += 1) {
-    const offset = { x: 12 * (pathIndex - 3), y: 0 };
+    const offset = { x: RAIL_BRICK_STATION_PITCH * (pathIndex - 3), y: 0 };
     let copiedPole: Entity | undefined;
     for (const source of branch) {
       const entity = {
@@ -273,8 +276,10 @@ function requiredNumber(numbers: Map<number, number>, oldNumber: number): number
 }
 
 function validateStationCount(count: number) {
-  if (!Number.isInteger(count) || count < 0 || count > 12) {
-    throw new Error(`vertical station count must be an integer from 0 to 12, got ${count}`);
+  if (!Number.isInteger(count) || count < 0 || count > RAIL_BRICK_MAX_STATIONS) {
+    throw new Error(
+      `vertical station count must be an integer from 0 to ${RAIL_BRICK_MAX_STATIONS}, got ${count}`,
+    );
   }
 }
 

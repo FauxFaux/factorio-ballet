@@ -1,0 +1,58 @@
+.rail-blueprint-preview {
+  margin: 10px 0 0;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.rail-blueprint-preview figcaption {
+  display: flex;
+  gap: 0.5rem;
+  align-items: baseline;
+  margin-bottom: 4px;
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-size: 0.7778rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.rail-blueprint-preview-caption {
+  overflow: hidden;
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 0.9em;
+  letter-spacing: normal;
+  text-overflow: ellipsis;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.rail-blueprint-preview svg {
+  display: block;
+  width: min(100%, 42rem);
+  max-height: 15rem;
+  margin: 0 auto;
+}
+
+.rail-blueprint-preview-floor {
+  fill: var(--bg);
+  stroke: var(--border);
+  stroke-width: 1;
+}
+
+.rail-blueprint-preview-border {
+  fill: #8e99a8;
+}
+
+.rail-blueprint-preview-path {
+  fill: none;
+  stroke: #8e99a8;
+  stroke-linejoin: round;
+  stroke-width: 2;
+}
+
+.rail-blueprint-preview-stop {
+  fill: var(--text-h);
+  stroke: var(--bg);
+  stroke-width: 1;
+}

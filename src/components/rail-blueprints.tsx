@@ -1,27 +1,11 @@
 import './rail-blueprints.css';
 import { toWords } from 'ts-number-to-words/src/index.ts';
-import { buildRailBrick, encodeBlueprintDocument } from '../bp/rail-blueprint.ts';
-import { NO_CHOICE } from '../data/index.ts';
-import type { Solution } from '../solve/index.ts';
-import type { ResourceId } from '../types.ts';
-import { CellRadar } from './cell/radar.tsx';
-
-const emptySolution: Solution = {
-  counts: [],
-  rates: [],
-  balance: new Map(),
-  inputRates: [],
-  outputRates: [],
-  complete: true,
-  notes: [],
-};
-
-function stationResources(direction: 'input' | 'output', count: number): ResourceId[] {
-  return Array.from(
-    { length: count },
-    (_, index) => `item:rail-blueprint-${direction}-${index + 1}` as ResourceId,
-  );
-}
+import {
+  buildRailBrick,
+  encodeBlueprintDocument,
+  RAIL_BRICK_MAX_STATIONS,
+} from '../bp/rail-blueprint.ts';
+import { RailBlueprintPreview } from './rail-blueprint-preview.tsx';
 
 /** A standalone rail-brick blueprint sized from the station counts in URL state. */
 export function RailBlueprints({
@@ -49,7 +33,7 @@ export function RailBlueprints({
           <input
             type="range"
             min={0}
-            max={12}
+            max={RAIL_BRICK_MAX_STATIONS}
             step={1}
             value={inputCount}
             list="rail-blueprints-count-ticks"
@@ -61,7 +45,7 @@ export function RailBlueprints({
           <input
             type="range"
             min={0}
-            max={12}
+            max={RAIL_BRICK_MAX_STATIONS}
             step={1}
             value={outputCount}
             list="rail-blueprints-count-ticks"
@@ -69,22 +53,12 @@ export function RailBlueprints({
           />
         </label>
         <datalist id="rail-blueprints-count-ticks">
-          {Array.from({ length: 13 }, (_, count) => (
+          {Array.from({ length: RAIL_BRICK_MAX_STATIONS + 1 }, (_, count) => (
             <option value={count} key={count} />
           ))}
         </datalist>
       </fieldset>
-      <CellRadar
-        title={`${inputCount} input, ${outputCount} output blueprint`}
-        inputs={stationResources('input', inputCount)}
-        outputs={stationResources('output', outputCount)}
-        entries={[]}
-        solution={emptySolution}
-        belt={NO_CHOICE.belt}
-        progress={0}
-        stackedStations={false}
-        stationLayout="wide"
-      />
+      <RailBlueprintPreview size={[inputCount, outputCount]} />
       <label class="rail-blueprints-export">
         Blueprint
         <textarea readOnly rows={6} value={blueprint} />

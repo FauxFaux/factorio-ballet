@@ -14,11 +14,6 @@ describe('stackedRailPath', () => {
     expect(stationStop('in', 2, true)).toEqual(stackedInputStationStop(2));
   });
 
-  it('keeps its 12-tile station pitch as an explicit wide layout', () => {
-    expect(stationStop('in', 2, false, 'wide')).toEqual({ x: 34, y: 84 });
-    expect(stationStop('out', 2, false, 'wide')).toEqual({ x: 158, y: 38 });
-  });
-
   it('omits input trunks and attachments when there are no stations', () => {
     const path = stackedRailPath(0, 0);
     expect(path).not.toContain('M 4 13 c 0 6, 4 7, 4 11 l 0 80');
