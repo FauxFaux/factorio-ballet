@@ -46,7 +46,7 @@ export interface UrlState {
    * admits synthetic recipes for resources whose infinite patches consume an unlocked fluid.
    */
   fa?: true | 'infinite-mining';
-  /** The input and output station counts for the standalone rail-blueprint preview. */
+  /** Rail-blueprint input/output counts; a negative count displays that side as stacked. */
   rb?: [number, number];
 }
 
