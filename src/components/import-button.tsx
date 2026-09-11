@@ -1,8 +1,7 @@
 import './import-button.css';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { useMenu } from './menu.ts';
-import { cellFromConfiguration, decodeImportUrl } from '../import.ts';
-import type { DehydratedGraphConfiguration } from '../import.ts';
+import type { DehydratedGraphConfiguration, ImportedConfiguration } from '../import.ts';
 import type { Cell } from '../cell.ts';
 import procRsLogo from '../assets/logo-vue.svg';
 
@@ -10,16 +9,38 @@ import procRsLogo from '../assets/logo-vue.svg';
 export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void }) {
   const { open, setOpen, box } = useMenu();
   const [url, setUrl] = useState('');
+  const [importModule, setImportModule] = useState<typeof import('../import.ts')>();
+  const [decoded, setDecoded] = useState<ImportedConfiguration | null>();
+  const [error, setError] = useState<string>();
 
-  let decoded: ReturnType<typeof decodeImportUrl> = null;
-  let error: string | undefined;
-  if (url !== '') {
-    try {
-      decoded = decodeImportUrl(url);
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
+  useEffect(() => {
+    let cancelled = false;
+    if (url === '') {
+      setDecoded(undefined);
+      setError(undefined);
+      return;
     }
-  }
+
+    setDecoded(undefined);
+    setError(undefined);
+    void import('../import.ts')
+      .then((module) => {
+        if (cancelled) return;
+        setImportModule(module);
+        try {
+          setDecoded(module.decodeImportUrl(url));
+        } catch (e) {
+          setError(e instanceof Error ? e.message : String(e));
+        }
+      })
+      .catch((e: unknown) => {
+        if (!cancelled) setError(e instanceof Error ? e.message : String(e));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [url]);
 
   return (
     <div class="import-button" ref={box}>
@@ -53,17 +74,22 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
               disabled={decoded.p.length === 0}
               title="Add active proc-rs processes as a cell"
               onClick={() => {
-                onAddCell(cellFromConfiguration(decoded as DehydratedGraphConfiguration));
+                if (importModule === undefined) return;
+                onAddCell(
+                  importModule.cellFromConfiguration(decoded as DehydratedGraphConfiguration),
+                );
                 setOpen(false);
               }}
             >
               Add as cell
             </button>
           ) : null}
-          <label>
-            Decoded JSON
-            <textarea readOnly value={JSON.stringify(decoded, null, 2)} rows={20} cols={60} />
-          </label>
+          {decoded !== undefined ? (
+            <label>
+              Decoded JSON
+              <textarea readOnly value={JSON.stringify(decoded, null, 2)} rows={20} cols={60} />
+            </label>
+          ) : null}
         </div>
       ) : null}
     </div>
