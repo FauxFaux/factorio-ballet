@@ -56,6 +56,8 @@ describe('RailBlueprints', () => {
     fireEvent.input(input, { target: { value: '12' } });
     fireEvent.input(output, { target: { value: '0' } });
 
-    expect(view.getByText('Standard rail brick with 12 input and 0 output stations.')).toBeTruthy();
+    expect(
+      view.getByText('Standard rail brick with twelve input and zero output stations.'),
+    ).toBeTruthy();
   });
 });

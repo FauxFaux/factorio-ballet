@@ -20,6 +20,7 @@
     "fflate": "^0.8",
     "preact": "^10",
     "serialize-error": "^13",
+    "ts-number-to-words": "^2",
     "zod": "^4"
   },
   "devDependencies": {

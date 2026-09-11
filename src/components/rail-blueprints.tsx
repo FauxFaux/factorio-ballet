@@ -1,4 +1,5 @@
 import './rail-blueprints.css';
+import { toWords } from 'ts-number-to-words/src/index.ts';
 import { buildRailBrick, encodeBlueprintDocument } from '../bp/rail-blueprint.ts';
 import { NO_CHOICE } from '../data/index.ts';
 import type { Solution } from '../solve/index.ts';
@@ -38,7 +39,8 @@ export function RailBlueprints({
     <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">
       <h2 id="rail-blueprints-title">Rail blueprints</h2>
       <p>
-        Standard rail brick with {inputCount} input and {outputCount} output stations.
+        Standard rail brick with {toWords(inputCount)} input and {toWords(outputCount)} output
+        stations.
       </p>
       <fieldset class="rail-blueprints-counts">
         <legend>Station counts</legend>
