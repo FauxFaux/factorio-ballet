@@ -15,7 +15,7 @@ describe('RailBlueprints', () => {
     expect(screen.getByRole('img', { name: /3 input and 2 output stations/ })).toBeTruthy();
     expect(
       container.querySelector('[data-resource="item:rail-blueprint-input-3"]')?.getAttribute('cx'),
-    ).toBe('26');
+    ).toBe('34');
     expect(container.querySelector('.cell-radar-path')?.getAttribute('d')).not.toContain(
       'M 4 13 c 0 6, 4 7, 4 11 l 0 80',
     );

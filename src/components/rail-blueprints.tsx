@@ -83,6 +83,7 @@ export function RailBlueprints({
         belt={NO_CHOICE.belt}
         progress={0}
         stackedStations={false}
+        stationLayout="wide"
       />
       <label class="rail-blueprints-export">
         Blueprint

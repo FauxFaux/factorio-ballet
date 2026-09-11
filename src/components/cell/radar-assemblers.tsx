@@ -5,7 +5,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
 import { itemRateTotal, recipeConnections } from './connection-calc.ts';
-import { stationStop } from './radar-rail.tsx';
+import { stationStop, type StationLayout } from './radar-rail.tsx';
 import {
   assemblerColumnLayout,
   busConnectionTopLane,
@@ -33,6 +33,7 @@ export function RadarAssemblers({
   progress,
   startX,
   stackedStations,
+  stationLayout = 'narrow',
 }: {
   inputs: ResourceId[];
   outputs: ResourceId[];
@@ -42,6 +43,7 @@ export function RadarAssemblers({
   progress: number;
   startX: number;
   stackedStations: boolean;
+  stationLayout?: StationLayout;
 }) {
   let x = startX;
   const districts = entries
@@ -107,10 +109,13 @@ export function RadarAssemblers({
   const bus = busLayout(busColumns, inputs, outputs, belt.itemsPerSecond);
   const busX = [8, ...positionedStacks.map(({ centerX }) => centerX), 184];
   const inputStations = new Map(
-    inputs.map((resource, index) => [resource, stationStop('in', index, stackedStations)]),
+    inputs.map((resource, index) => [
+      resource,
+      stationStop('in', index, stackedStations, stationLayout),
+    ]),
   );
   const outputStations = new Map(
-    outputs.map((resource, index) => [resource, stationStop('out', index)]),
+    outputs.map((resource, index) => [resource, stationStop('out', index, false, stationLayout)]),
   );
   const routeLaneCounts = new Map(bus.routes.map(({ id, laneCount }) => [id, laneCount]));
   const routeLaneRanks = routeLaneRanksFromTop(bus.lanes);

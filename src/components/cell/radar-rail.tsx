@@ -1,6 +1,16 @@
 import { resourceName } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 
+export type StationLayout = 'narrow' | 'wide';
+
+function stationOffset(index: number, layout: StationLayout): number {
+  return layout === 'wide' ? 8 + index * 12 : 8 * (index + 1);
+}
+
+export function stationFanWidth(stationCount: number, layout: StationLayout): number {
+  return stationCount === 0 ? 0 : stationOffset(stationCount - 1, layout);
+}
+
 export function RailBorder() {
   return (
     <g class="cell-radar-border">
@@ -12,7 +22,11 @@ export function RailBorder() {
   );
 }
 
-export function railPath(inputCount: number, outputCount: number): string {
+export function railPath(
+  inputCount: number,
+  outputCount: number,
+  layout: StationLayout = 'narrow',
+): string {
   const cubic = (
     [startControlX, startControlY]: [number, number],
     [endControlX, endControlY]: [number, number],
@@ -30,7 +44,7 @@ export function railPath(inputCount: number, outputCount: number): string {
     'M 188 124 a 8 8 0 0 0 8 8',
   ];
   for (let index = 0; index < inputCount; index++) {
-    const offset = 8 * (index + 1);
+    const offset = stationOffset(index, layout);
     const curve = 8 + index;
     rails.push(
       'M 4 13',
@@ -40,7 +54,7 @@ export function railPath(inputCount: number, outputCount: number): string {
     );
   }
   for (let index = 0; index < outputCount; index++) {
-    const offset = -8 * (index + 1);
+    const offset = -stationOffset(index, layout);
     const curve = 8 + index;
     rails.push(
       'M 188 13',
@@ -55,8 +69,12 @@ export function railPath(inputCount: number, outputCount: number): string {
 const stackedStationBottomY = 112;
 const stackedStationPitch = 10;
 
-export function stackedRailPath(inputCount: number, outputCount: number): string {
-  const rails = [railPath(0, outputCount)];
+export function stackedRailPath(
+  inputCount: number,
+  outputCount: number,
+  layout: StationLayout = 'narrow',
+): string {
+  const rails = [railPath(0, outputCount, layout)];
   if (inputCount > 0) {
     const topStationY = stackedStationBottomY - (inputCount - 1) * stackedStationPitch;
     const rightTrunkTopY = topStationY + 8;
@@ -85,9 +103,10 @@ export function stationStop(
   side: 'in' | 'out',
   index: number,
   stacked = false,
+  layout: StationLayout = 'narrow',
 ): { x: number; y: number } {
   if (side === 'in' && stacked) return stackedInputStationStop(index);
-  const offset = 8 * (index + 1);
+  const offset = stationOffset(index, layout);
   return { x: side === 'in' ? 4 + offset - 2 : 188 - offset + 2, y: side === 'in' ? 84 : 38 };
 }
 
@@ -95,15 +114,17 @@ export function StationStops({
   side,
   resources,
   stacked = false,
+  layout = 'narrow',
 }: {
   side: 'in' | 'out';
   resources: ResourceId[];
   stacked?: boolean;
+  layout?: StationLayout;
 }) {
   return (
     <g class="cell-radar-stops">
       {resources.map((resource, index) => {
-        const { x, y } = stationStop(side, index, stacked);
+        const { x, y } = stationStop(side, index, stacked, layout);
         return (
           <circle
             key={resource}

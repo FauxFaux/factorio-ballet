@@ -298,12 +298,13 @@ dots, and icons in that order; see
 corners and colors are defined at
 [`web/components/layout.tsx`, lines 287–304](web/components/layout.tsx#L287-L304).
 
-Assembler layout begins at x equal to 8 plus 8 per input station, and y=16 plus bus width (20 with
-the current constant). With a 100-unit maximum district height, a full stack reaches y=120, just
-inside the bottom border. Horizontal content has no fitting, scaling, wrapping, or clipping
-calculation: enough districts can extend beyond the 192-unit view box. Station rails likewise use
-fixed border coordinates. A robust successor may want to calculate the view box from content bounds
-while keeping the same relative geometry.
+The normal radar uses an 8-tile station pitch, with assembler layout beginning at x equal to 8 plus
+8 per input station, and y=16 plus bus width (20 with the current constant). The rail-blueprint
+preview explicitly uses its generated blueprint's 12-tile pitch instead. With a 100-unit maximum
+district height, a full stack reaches y=120, just inside the bottom border. Horizontal content has
+no fitting, scaling, wrapping, or clipping calculation: enough districts can extend beyond the
+192-unit view box. Station rails likewise use fixed border coordinates. A robust successor may want
+to calculate the view box from content bounds while keeping the same relative geometry.
 
 ## Recommended porting boundary
 
