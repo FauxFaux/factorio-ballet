@@ -10,6 +10,62 @@
   border-top: 1px solid var(--border);
 }
 
+.cell-recipes.is-horizontal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 4px 8px;
+}
+
+.cell-recipe.is-compact {
+  flex: 0 1 auto;
+  padding: 2px 0;
+  border-top: none;
+}
+
+.cell-recipe.is-compact.is-expanded {
+  flex-basis: 100%;
+}
+
+.cell-recipe.is-compact .cell-row-expand {
+  order: 0;
+}
+
+.cell-recipe.is-compact > .recipe-icon {
+  order: 1;
+}
+
+.cell-recipe.is-compact > .cell-warn {
+  order: 2;
+}
+
+.cell-recipe.is-compact > .cell-warn:not(.is-problem) {
+  display: none;
+}
+
+.cell-recipe.is-compact > .cell-count {
+  order: 3;
+}
+
+.cell-compact-recipe-details {
+  order: 4;
+  flex-basis: 100%;
+  min-width: 0;
+  margin-left: 1.7em;
+}
+
+.cell-compact-recipe-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+}
+
+.cell-compact-recipe-details .cell-connections {
+  max-width: 100%;
+  margin-left: 0;
+}
+
 .cell-recipe.is-dragging {
   opacity: 0.4;
 }

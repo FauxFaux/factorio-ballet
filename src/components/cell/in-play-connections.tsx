@@ -30,6 +30,7 @@ export function InPlayConnectionsView({
   onSearch,
   onToggleRecipe,
   onInterfaceHover,
+  showActions = true,
 }: {
   id: ResourceId;
   connections: InternalConnections;
@@ -46,6 +47,7 @@ export function InPlayConnectionsView({
   onSearch: (search: string) => void;
   onToggleRecipe: (recipe: string) => void;
   onInterfaceHover: (resource: ResourceId | undefined) => void;
+  showActions?: boolean;
 }) {
   const resource = staticData.resources[id];
   const details = (
@@ -59,6 +61,7 @@ export function InPlayConnectionsView({
       onToggleExport={onToggleExport}
       imbalance={imbalance}
       suggestion={suggestion}
+      showActions={showActions}
     />
   );
 
@@ -97,6 +100,7 @@ function ResourceDetails({
   onToggleExport,
   imbalance,
   suggestion,
+  showActions,
 }: {
   id: ResourceId;
   stackSize?: number;
@@ -107,6 +111,7 @@ function ResourceDetails({
   onToggleExport?: () => void;
   imbalance?: number;
   suggestion?: BoundarySuggestion;
+  showActions: boolean;
 }) {
   return (
     <div class="cell-in-play-resource-details">
@@ -116,64 +121,16 @@ function ResourceDetails({
         {id}
         {stackSize ? `· stack size ${stackSize}` : ''}
       </span>
-      <span class="cell-in-play-resource-searches">
-        <button
-          type="button"
-          class="cell-btn cell-in-play-resource-action"
-          title={`Search for recipes making ${resourceName(id)} (makes:${id})`}
-          aria-label={`Search for recipes making ${resourceName(id)}`}
-          onClick={() => onSearch(`makes:${id}`)}
-        >
-          ⌕ makes
-        </button>
-        <button
-          type="button"
-          class="cell-btn cell-in-play-resource-action"
-          title={`Search for recipes using ${resourceName(id)} (uses:${id})`}
-          aria-label={`Search for recipes using ${resourceName(id)}`}
-          onClick={() => onSearch(`uses:${id}`)}
-        >
-          ⌕ uses
-        </button>
-        {onToggleImport ? (
-          <button
-            type="button"
-            class="cell-btn cell-in-play-resource-action"
-            aria-pressed={forcedImport}
-            title="Supply this resource's shortfall from outside the cell"
-            onClick={onToggleImport}
-          >
-            {forcedImport ? (
-              <>
-                <PackageIcon /> clear explicit import
-              </>
-            ) : (
-              <>
-                <PackageDependenciesIcon /> import shortfall
-              </>
-            )}
-          </button>
-        ) : null}
-        {onToggleExport ? (
-          <button
-            type="button"
-            class="cell-btn cell-in-play-resource-action"
-            aria-pressed={forcedExport}
-            title="Allow surplus to leave this cell"
-            onClick={onToggleExport}
-          >
-            {forcedExport ? (
-              <>
-                <PackageIcon /> clear explicit export
-              </>
-            ) : (
-              <>
-                <PackageDependentsIcon /> export surplus
-              </>
-            )}
-          </button>
-        ) : null}
-      </span>
+      {showActions ? (
+        <ResourceActions
+          id={id}
+          onSearch={onSearch}
+          forcedExport={forcedExport}
+          forcedImport={forcedImport}
+          onToggleImport={onToggleImport}
+          onToggleExport={onToggleExport}
+        />
+      ) : null}
       {suggestion ? (
         <p class="cell-export-note">
           <WarnIcon /> {boundarySuggestionText(suggestion)}
@@ -197,6 +154,83 @@ function ResourceDetails({
         </p>
       ) : null}
     </div>
+  );
+}
+
+export function ResourceActions({
+  id,
+  onSearch,
+  forcedExport,
+  forcedImport,
+  onToggleImport,
+  onToggleExport,
+}: {
+  id: ResourceId;
+  onSearch: (search: string) => void;
+  forcedExport: boolean;
+  forcedImport: boolean;
+  onToggleImport?: () => void;
+  onToggleExport?: () => void;
+}) {
+  return (
+    <span class="cell-in-play-resource-searches">
+      <button
+        type="button"
+        class="cell-btn cell-in-play-resource-action"
+        title={`Search for recipes making ${resourceName(id)} (makes:${id})`}
+        aria-label={`Search for recipes making ${resourceName(id)}`}
+        onClick={() => onSearch(`makes:${id}`)}
+      >
+        ⌕ makes
+      </button>
+      <button
+        type="button"
+        class="cell-btn cell-in-play-resource-action"
+        title={`Search for recipes using ${resourceName(id)} (uses:${id})`}
+        aria-label={`Search for recipes using ${resourceName(id)}`}
+        onClick={() => onSearch(`uses:${id}`)}
+      >
+        ⌕ uses
+      </button>
+      {onToggleImport ? (
+        <button
+          type="button"
+          class="cell-btn cell-in-play-resource-action"
+          aria-pressed={forcedImport}
+          title="Supply this resource's shortfall from outside the cell"
+          onClick={onToggleImport}
+        >
+          {forcedImport ? (
+            <>
+              <PackageIcon /> clear explicit import
+            </>
+          ) : (
+            <>
+              <PackageDependenciesIcon /> import shortfall
+            </>
+          )}
+        </button>
+      ) : null}
+      {onToggleExport ? (
+        <button
+          type="button"
+          class="cell-btn cell-in-play-resource-action"
+          aria-pressed={forcedExport}
+          title="Allow surplus to leave this cell"
+          onClick={onToggleExport}
+        >
+          {forcedExport ? (
+            <>
+              <PackageIcon /> clear explicit export
+            </>
+          ) : (
+            <>
+              <PackageDependentsIcon /> export surplus
+            </>
+          )}
+        </button>
+      ) : null}
+    </span>
   );
 }
 

@@ -7,7 +7,7 @@ import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { ResourceIcon } from '../resource.tsx';
 import { internalConnections } from './internal-calc.ts';
-import { InPlayConnectionsView } from './in-play-connections.tsx';
+import { InPlayConnectionsView, ResourceActions } from './in-play-connections.tsx';
 import { WarnIcon } from './notes.tsx';
 
 /** Every resource a recipe in this cell consumes or produces, including its open edges. */
@@ -19,6 +19,7 @@ export function InPlayRow({
   outputs,
   exports = [],
   imports = [],
+  vertical,
   onToggleImport,
   onToggleExport,
   onRecipeHover,
@@ -35,6 +36,7 @@ export function InPlayRow({
   outputs: ReadonlySet<ResourceId>;
   exports?: ResourceId[];
   imports?: ResourceId[];
+  vertical: boolean;
   onToggleImport?: (id: ResourceId) => void;
   onToggleExport?: (id: ResourceId) => void;
   onRecipeHover: (recipe: string | undefined) => void;
@@ -58,18 +60,55 @@ export function InPlayRow({
     else onToggleExport?.(suggestion.resource);
   };
   return (
-    <div class="cell-in-play" title="Resources in play in this cell">
+    <div
+      class={vertical ? 'cell-in-play is-vertical' : 'cell-in-play'}
+      title="Resources in play in this cell"
+    >
       {ids.map((id) => {
         return (
-          <InPlayChip
+          <div
+            class={vertical ? 'cell-in-play-entry is-vertical' : 'cell-in-play-entry'}
+            data-in-play-resource={id}
             key={id}
-            id={id}
-            solution={solution}
-            input={inputs.has(id)}
-            output={outputs.has(id)}
-            selected={selected === id}
-            onClick={() => select(id)}
-          />
+          >
+            <InPlayChip
+              id={id}
+              solution={solution}
+              input={inputs.has(id)}
+              output={outputs.has(id)}
+              selected={selected === id}
+              vertical={vertical}
+              onClick={() => select(id)}
+            />
+            {vertical ? (
+              <ResourceActions
+                id={id}
+                onSearch={onSearch}
+                forcedExport={exports.includes(id)}
+                forcedImport={imports.includes(id)}
+                onToggleImport={onToggleImport ? () => onToggleImport(id) : undefined}
+                onToggleExport={onToggleExport ? () => onToggleExport(id) : undefined}
+              />
+            ) : null}
+            {vertical && selected === id ? (
+              <InPlayDetails
+                id={id}
+                recipes={entries.map((entry) => entry.recipe)}
+                solution={solution}
+                input={inputs.has(id)}
+                output={outputs.has(id)}
+                forcedExport={exports.includes(id)}
+                forcedImport={imports.includes(id)}
+                onToggleImport={onToggleImport ? () => onToggleImport(id) : undefined}
+                onToggleExport={onToggleExport ? () => onToggleExport(id) : undefined}
+                onRecipeHover={onRecipeHover}
+                onSearch={onSearch}
+                onToggleRecipe={onToggleRecipe}
+                onInterfaceHover={onInterfaceHover}
+                showActions={false}
+              />
+            ) : null}
+          </div>
         );
       })}
       {solution.boundarySuggestions?.length ? (
@@ -93,7 +132,7 @@ export function InPlayRow({
           </p>
         </div>
       ) : null}
-      {selected ? (
+      {selected && !vertical ? (
         <InPlayDetails
           id={selected}
           recipes={entries.map((entry) => entry.recipe)}
@@ -108,6 +147,7 @@ export function InPlayRow({
           onSearch={onSearch}
           onToggleRecipe={onToggleRecipe}
           onInterfaceHover={onInterfaceHover}
+          showActions
         />
       ) : null}
     </div>
@@ -120,6 +160,7 @@ function InPlayChip({
   input,
   output,
   selected,
+  vertical,
   onClick,
 }: {
   id: ResourceId;
@@ -127,6 +168,7 @@ function InPlayChip({
   input: boolean;
   output: boolean;
   selected: boolean;
+  vertical: boolean;
   onClick: () => void;
 }) {
   const rate = solution.balance.get(id) ?? 0;
@@ -138,31 +180,31 @@ function InPlayChip({
     `${rate > 0 ? 'surplus export' : 'shortfall import'}.`;
 
   return (
-    <div class="cell-in-play-entry" data-in-play-resource={id}>
-      <button
-        type="button"
-        class={selected ? 'cell-in-play-chip cell-btn is-selected' : 'cell-in-play-chip cell-btn'}
-        title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
-        aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
-        aria-pressed={selected}
-        onClick={onClick}
-      >
-        <ResourceIcon id={id} />
-        {unbalanced || suggestion ? (
-          <span
-            class="cell-leftover"
-            title={suggestion ? boundarySuggestionText(suggestion) : imbalanceTitle}
-          >
-            <WarnIcon
-              label={
-                suggestion ? `Review ${suggestion.direction} for ${resourceName(id)}` : undefined
-              }
-            />
-            {unbalanced ? `${rate > 0 ? '+' : '−'}${fmt(Math.abs(rate))}` : null}
-          </span>
-        ) : null}
-      </button>
-    </div>
+    <button
+      type="button"
+      class={selected ? 'cell-in-play-chip cell-btn is-selected' : 'cell-in-play-chip cell-btn'}
+      title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
+      aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
+      aria-pressed={selected}
+      onClick={onClick}
+    >
+      {vertical ? <span aria-hidden="true">{selected ? '▾' : '▸'}</span> : null}
+      <ResourceIcon id={id} />
+      {vertical ? <span class="cell-in-play-name">{resourceName(id)}</span> : null}
+      {unbalanced || suggestion ? (
+        <span
+          class="cell-leftover"
+          title={suggestion ? boundarySuggestionText(suggestion) : imbalanceTitle}
+        >
+          <WarnIcon
+            label={
+              suggestion ? `Review ${suggestion.direction} for ${resourceName(id)}` : undefined
+            }
+          />
+          {unbalanced ? `${rate > 0 ? '+' : '−'}${fmt(Math.abs(rate))}` : null}
+        </span>
+      ) : null}
+    </button>
   );
 }
 
@@ -180,6 +222,7 @@ function InPlayDetails({
   onSearch,
   onToggleRecipe,
   onInterfaceHover,
+  showActions,
 }: {
   id: ResourceId;
   recipes: string[];
@@ -194,6 +237,7 @@ function InPlayDetails({
   onSearch: (search: string) => void;
   onToggleRecipe: (recipe: string) => void;
   onInterfaceHover: (resource: ResourceId | undefined) => void;
+  showActions: boolean;
 }) {
   const connections = useMemo(
     () => internalConnections(id, recipes, solution),
@@ -218,6 +262,7 @@ function InPlayDetails({
       onSearch={onSearch}
       onToggleRecipe={onToggleRecipe}
       onInterfaceHover={onInterfaceHover}
+      showActions={showActions}
     />
   );
 }

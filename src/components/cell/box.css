@@ -83,6 +83,34 @@
   opacity: 0.8;
 }
 
+.cell-section-head {
+  display: flex;
+  align-items: center;
+  min-height: 1.5rem;
+  margin-bottom: 2px;
+}
+
+.cell-resource-section-head {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.cell-section-mode {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 5px;
+  font-size: 0.7222rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cell-section-mode svg {
+  width: 0.8889rem;
+  height: 0.8889rem;
+}
+
 /* inputs, work, outputs: a sankey diagram's shape without the sankey */
 .cell-body {
   display: grid;

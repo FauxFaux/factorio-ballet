@@ -23,6 +23,7 @@ import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
 import { CellAsJson } from './as-json.tsx';
+import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -60,6 +61,8 @@ export function CellBox({
   const [hoveredInterfaceResource, setHoveredInterfaceResource] = useState<ResourceId>();
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
   const [expandedRecipes, setExpandedRecipes] = useState<ReadonlySet<string>>(() => new Set());
+  const [recipesVertical, setRecipesVertical] = useState(true);
+  const [resourcesVertical, setResourcesVertical] = useState(false);
   const [radarOpen, setRadarOpen] = useState(false);
   const radarTrigger = useRef<HTMLButtonElement>(null);
   const radarClose = useRef<HTMLButtonElement>(null);
@@ -153,64 +156,96 @@ export function CellBox({
         />
         <div class="cell-middle">
           <SolverFallbackNotice solution={solution} />
+          <div class="cell-section-head">
+            <button
+              type="button"
+              class="cell-btn cell-section-mode"
+              aria-label={recipesVertical ? 'Show recipes horizontally' : 'Show recipes vertically'}
+              title={recipesVertical ? 'Fold recipes into icons' : 'Unfold recipes into rows'}
+              onClick={() => setRecipesVertical((vertical) => !vertical)}
+            >
+              {recipesVertical ? <FoldIcon /> : <UnfoldIcon />} by recipe
+            </button>
+          </div>
           {cell.entries.length === 0 ? (
             <p class="recipe-hint">Add a recipe from the search.</p>
           ) : (
-            cell.entries.map((entry, i) => (
-              <CellRow
-                key={entry.recipe}
-                entry={entry}
-                entryIndex={i}
-                recipeIds={recipeIds}
-                count={solution.counts[i]}
-                note={noteFor(solution, i)}
-                highlighted={hoveredRecipe === entry.recipe}
-                expanded={expandedRecipes.has(entry.recipe)}
-                solution={solution}
-                progress={progress}
-                chosen={chosen}
-                drag={rowDrag(i)}
-                onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
-                onRemove={() => setCell((prev) => withoutEntry(prev, i))}
-                onSelectResource={selectResource}
-                onToggleExpand={() => toggleRecipeExpansion(entry.recipe)}
-              />
-            ))
+            <div class={recipesVertical ? 'cell-recipes' : 'cell-recipes is-horizontal'}>
+              {cell.entries.map((entry, i) => (
+                <CellRow
+                  key={entry.recipe}
+                  entry={entry}
+                  entryIndex={i}
+                  recipeIds={recipeIds}
+                  count={solution.counts[i]}
+                  note={noteFor(solution, i)}
+                  highlighted={hoveredRecipe === entry.recipe}
+                  expanded={expandedRecipes.has(entry.recipe)}
+                  vertical={recipesVertical}
+                  solution={solution}
+                  progress={progress}
+                  chosen={chosen}
+                  drag={rowDrag(i)}
+                  onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
+                  onRemove={() => setCell((prev) => withoutEntry(prev, i))}
+                  onSelectResource={selectResource}
+                  onToggleExpand={() => toggleRecipeExpansion(entry.recipe)}
+                />
+              ))}
+            </div>
           )}
           {iface.inPlay.length ? (
-            <InPlayRow
-              ids={iface.inPlay}
-              entries={cell.entries}
-              solution={solution}
-              inputs={new Set(iface.inputs)}
-              outputs={new Set(iface.outputs)}
-              exports={cell.exports}
-              imports={cell.imports}
-              onToggleImport={(id) =>
-                setCell((previous) => ({
-                  ...previous,
-                  imports: previous.imports?.includes(id)
-                    ? previous.imports.filter((resource) => resource !== id)
-                    : [...(previous.imports ?? []), id],
-                  exports: previous.exports?.filter((resource) => resource !== id),
-                }))
-              }
-              onToggleExport={(id) =>
-                setCell((previous) => ({
-                  ...previous,
-                  imports: previous.imports?.filter((resource) => resource !== id),
-                  exports: previous.exports?.includes(id)
-                    ? previous.exports.filter((resource) => resource !== id)
-                    : [...(previous.exports ?? []), id],
-                }))
-              }
-              onRecipeHover={setHoveredRecipe}
-              onSearch={onSearch}
-              onToggleRecipe={toggleRecipeExpansion}
-              onInterfaceHover={setHoveredInterfaceResource}
-              selected={selectedResource}
-              onSelect={selectResource}
-            />
+            <>
+              <div class="cell-section-head cell-resource-section-head">
+                <button
+                  type="button"
+                  class="cell-btn cell-section-mode"
+                  aria-label={
+                    resourcesVertical ? 'Show resources horizontally' : 'Show resources vertically'
+                  }
+                  title={
+                    resourcesVertical ? 'Fold resources into icons' : 'Unfold resources into rows'
+                  }
+                  onClick={() => setResourcesVertical((vertical) => !vertical)}
+                >
+                  {resourcesVertical ? <FoldIcon /> : <UnfoldIcon />} by resource
+                </button>
+              </div>
+              <InPlayRow
+                ids={iface.inPlay}
+                entries={cell.entries}
+                solution={solution}
+                inputs={new Set(iface.inputs)}
+                outputs={new Set(iface.outputs)}
+                exports={cell.exports}
+                imports={cell.imports}
+                vertical={resourcesVertical}
+                onToggleImport={(id) =>
+                  setCell((previous) => ({
+                    ...previous,
+                    imports: previous.imports?.includes(id)
+                      ? previous.imports.filter((resource) => resource !== id)
+                      : [...(previous.imports ?? []), id],
+                    exports: previous.exports?.filter((resource) => resource !== id),
+                  }))
+                }
+                onToggleExport={(id) =>
+                  setCell((previous) => ({
+                    ...previous,
+                    imports: previous.imports?.filter((resource) => resource !== id),
+                    exports: previous.exports?.includes(id)
+                      ? previous.exports.filter((resource) => resource !== id)
+                      : [...(previous.exports ?? []), id],
+                  }))
+                }
+                onRecipeHover={setHoveredRecipe}
+                onSearch={onSearch}
+                onToggleRecipe={toggleRecipeExpansion}
+                onInterfaceHover={setHoveredInterfaceResource}
+                selected={selectedResource}
+                onSelect={selectResource}
+              />
+            </>
           ) : null}
           <SolveNotes cell={cell} solution={solution} />
         </div>

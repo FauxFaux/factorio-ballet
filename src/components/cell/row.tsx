@@ -27,6 +27,7 @@ export function CellRow({
   note,
   highlighted,
   expanded,
+  vertical,
   solution,
   progress,
   chosen,
@@ -45,6 +46,7 @@ export function CellRow({
   note: SolveNote | undefined;
   highlighted: boolean;
   expanded: boolean;
+  vertical: boolean;
   /** The other solved rows, used for the expanded in-cell flow breakdown. */
   solution: Solution;
   progress: number;
@@ -64,8 +66,13 @@ export function CellRow({
   );
   /** The solver's complaint about this row, if it has one worth a mark on it. */
   const problem = note !== undefined && isProblem(note) ? note : undefined;
+  const expandLabel = vertical
+    ? `${expanded ? 'Hide' : 'Show'} recipe connections`
+    : `${expanded ? 'Hide' : 'Show'} details for ${recipe?.human ?? entry.recipe}`;
   const rowClass = [
     'cell-recipe',
+    !vertical && 'is-compact',
+    expanded && 'is-expanded',
     highlighted && 'is-highlighted',
     drag.dragging && 'is-dragging',
     drag.dropEdge === 'before' && 'drop-before',
@@ -76,25 +83,12 @@ export function CellRow({
 
   return (
     <div class={rowClass} onDragOver={drag.onDragOver} onDrop={drag.onDrop}>
-      <span
-        class="cell-drag-handle"
-        draggable
-        title="Drag to reorder"
-        aria-label="Reorder this recipe"
-        onDragStart={(e) => {
-          e.dataTransfer?.setData('text/plain', '');
-          if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
-          drag.onDragStart();
-        }}
-        onDragEnd={drag.onDragEnd}
-      >
-        ≡
-      </span>
+      {vertical ? <DragHandle drag={drag} /> : null}
       <button
         type="button"
         class="cell-btn cell-row-expand"
-        title={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
-        aria-label={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
+        title={expandLabel}
+        aria-label={expandLabel}
         aria-expanded={expanded}
         onClick={onToggleExpand}
       >
@@ -103,46 +97,48 @@ export function CellRow({
       <span
         class="recipe-icon"
         style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
+        title={!vertical ? (recipe?.human ?? entry.recipe) : undefined}
         aria-hidden="true"
       />
-      <span class="cell-recipe-name" title={entry.recipe}>
-        {recipe?.human ?? entry.recipe}
-        {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
-      </span>
+      {vertical ? <RecipeName entry={entry} recipe={recipe} /> : null}
       {/* The warning icon sits just left of the machine and keeps its place whether or not there
           is anything to say: a cell is a column of rows read as a table, and a mark which took up
           space only sometimes would shuffle every machine along as the eye went down them. */}
-      <span
-        class={problem ? 'cell-warn is-problem' : 'cell-warn'}
-        title={problem ? noteText(problem) : undefined}
-      >
-        {problem ? <WarnIcon label="Not worked out" /> : null}
-      </span>
+      <RecipeWarning problem={problem} />
       <CountBox entry={entry} count={count} onChange={onChange} />
-      <div class="cell-row-controls">
-        {recipe ? (
-          <>
-            <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
-            <ModuleBoxes
+      {vertical ? (
+        <RecipeControls
+          entry={entry}
+          recipe={recipe}
+          progress={progress}
+          chosen={chosen}
+          onChange={onChange}
+          onRemove={onRemove}
+        />
+      ) : null}
+      {expanded && !vertical ? (
+        <div class="cell-compact-recipe-details">
+          <div class="cell-compact-recipe-head">
+            <DragHandle drag={drag} />
+            <RecipeName entry={entry} recipe={recipe} />
+            <RecipeControls
               entry={entry}
               recipe={recipe}
-              machine={entryMachine(entry, recipe, progress)}
+              progress={progress}
               chosen={chosen}
               onChange={onChange}
+              onRemove={onRemove}
             />
-          </>
-        ) : null}
-        <button
-          type="button"
-          class="cell-btn cell-remove"
-          title="Remove this recipe"
-          aria-label="Remove this recipe"
-          onClick={onRemove}
-        >
-          ×
-        </button>
-      </div>
-      {expanded ? (
+          </div>
+          <RecipeConnections
+            connections={connections}
+            solved={count !== undefined}
+            belt={chosen.belt}
+            recipe={entry.recipe}
+            onSelectResource={onSelectResource}
+          />
+        </div>
+      ) : expanded ? (
         <RecipeConnections
           connections={connections}
           solved={count !== undefined}
@@ -151,6 +147,87 @@ export function CellRow({
           onSelectResource={onSelectResource}
         />
       ) : null}
+    </div>
+  );
+}
+
+function DragHandle({ drag }: { drag: RowDrag }) {
+  return (
+    <span
+      class="cell-drag-handle"
+      draggable
+      title="Drag to reorder"
+      aria-label="Reorder this recipe"
+      onDragStart={(event) => {
+        event.dataTransfer?.setData('text/plain', '');
+        if (event.dataTransfer) event.dataTransfer.effectAllowed = 'move';
+        drag.onDragStart();
+      }}
+      onDragEnd={drag.onDragEnd}
+    >
+      ≡
+    </span>
+  );
+}
+
+function RecipeName({ entry, recipe }: { entry: CellEntry; recipe: Recipe | undefined }) {
+  return (
+    <span class="cell-recipe-name" title={entry.recipe}>
+      {recipe?.human ?? entry.recipe}
+      {recipe ? null : <span class="cell-unknown"> — not in this data</span>}
+    </span>
+  );
+}
+
+function RecipeWarning({ problem }: { problem: SolveNote | undefined }) {
+  return (
+    <span
+      class={problem ? 'cell-warn is-problem' : 'cell-warn'}
+      title={problem ? noteText(problem) : undefined}
+    >
+      {problem ? <WarnIcon label="Not worked out" /> : null}
+    </span>
+  );
+}
+
+function RecipeControls({
+  entry,
+  recipe,
+  progress,
+  chosen,
+  onChange,
+  onRemove,
+}: {
+  entry: CellEntry;
+  recipe: Recipe | undefined;
+  progress: number;
+  chosen: Chosen;
+  onChange: (entry: CellEntry) => void;
+  onRemove: () => void;
+}) {
+  return (
+    <div class="cell-row-controls">
+      {recipe ? (
+        <>
+          <CellMachines entry={entry} recipe={recipe} progress={progress} onChange={onChange} />
+          <ModuleBoxes
+            entry={entry}
+            recipe={recipe}
+            machine={entryMachine(entry, recipe, progress)}
+            chosen={chosen}
+            onChange={onChange}
+          />
+        </>
+      ) : null}
+      <button
+        type="button"
+        class="cell-btn cell-remove"
+        title="Remove this recipe"
+        aria-label="Remove this recipe"
+        onClick={onRemove}
+      >
+        ×
+      </button>
     </div>
   );
 }
