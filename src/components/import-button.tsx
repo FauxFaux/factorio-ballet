@@ -1,20 +1,21 @@
 import './import-button.css';
 import { useState } from 'preact/hooks';
 import { useMenu } from './menu.ts';
-import { cellFromConfiguration, decodeUrl } from '../import.ts';
+import { cellFromConfiguration, decodeImportUrl } from '../import.ts';
+import type { DehydratedGraphConfiguration } from '../import.ts';
 import type { Cell } from '../cell.ts';
 import procRsLogo from '../assets/logo-vue.svg';
 
-/** A small inspector for URLs copied from proc-rs or the address bar. */
+/** A small inspector for URLs copied from proc-rs or FactorioLab. */
 export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void }) {
   const { open, setOpen, box } = useMenu();
   const [url, setUrl] = useState('');
 
-  let decoded: ReturnType<typeof decodeUrl> = null;
+  let decoded: ReturnType<typeof decodeImportUrl> = null;
   let error: string | undefined;
   if (url !== '') {
     try {
-      decoded = decodeUrl(url);
+      decoded = decodeImportUrl(url);
     } catch (e) {
       error = e instanceof Error ? e.message : String(e);
     }
@@ -26,7 +27,7 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
         type="button"
         aria-haspopup="dialog"
         aria-expanded={open}
-        title="import from proc-rs"
+        title="Import from proc-rs or FactorioLab"
         onClick={() => setOpen(!open)}
       >
         <img src={procRsLogo} alt={'proc-rs'} />
@@ -45,14 +46,14 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
             />
           </label>
           {error ? <p class="import-error">Could not decode URL: {error}</p> : null}
-          {decoded ? (
+          {decoded && !('source' in decoded) ? (
             <button
               type="button"
               class="import-add-cell"
               disabled={decoded.p.length === 0}
               title="Add active proc-rs processes as a cell"
               onClick={() => {
-                onAddCell(cellFromConfiguration(decoded));
+                onAddCell(cellFromConfiguration(decoded as DehydratedGraphConfiguration));
                 setOpen(false);
               }}
             >

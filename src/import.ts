@@ -1,4 +1,5 @@
 import { decode } from '@msgpack/msgpack';
+import { unzlibSync } from 'fflate';
 import type { Cell } from './cell.ts';
 
 export interface DataSetConfiguration {
@@ -46,6 +47,20 @@ export interface DehydratedGraphConfiguration {
   u: string;
 }
 
+export interface FactorioLabConfiguration {
+  source: 'factoriolab';
+  /** Dataset and screen are the first two route segments. */
+  dataset: string;
+  screen: string;
+  /** Whether identifiers in the parameters are indexes into the dataset's hash.json. */
+  hashed: boolean;
+  version: string;
+  /** Decoded wire values, preserving repeated parameters as arrays. */
+  parameters: Record<string, string | string[]>;
+}
+
+export type ImportedConfiguration = DehydratedGraphConfiguration | FactorioLabConfiguration;
+
 /**
  * Convert the processes in a proc-rs graph into one cell.
  *
@@ -87,6 +102,54 @@ export function decodeUrl(url: string): DehydratedGraphConfiguration | null {
     p: processes.map(([p, f, d, i, o]) => ({ p, f, d, i, o })),
     u: units,
   };
+}
+
+/** Decode either a proc-rs fragment or a current FactorioLab calculator URL. */
+export function decodeImportUrl(url: string): ImportedConfiguration | null {
+  if (url.includes('s0=')) return decodeUrl(url);
+
+  const parsed = new URL(url, 'https://factoriolab.github.io/');
+  if (parsed.hostname !== 'factoriolab.github.io') return null;
+
+  const route = parsed.pathname.split('/').filter(Boolean);
+  if (route.length < 2) return null;
+
+  const compressed = parsed.searchParams.get('z');
+  const parameters = compressed
+    ? new URLSearchParams(new TextDecoder().decode(unzlibSync(decodeFactorioLabBase64(compressed))))
+    : parsed.searchParams;
+  const version = parameters.get('v') ?? parsed.searchParams.get('v');
+  if (version !== '11')
+    throw new Error(`Unsupported FactorioLab URL version: ${version ?? 'missing'}`);
+
+  return {
+    source: 'factoriolab',
+    dataset: route.at(-2)!,
+    screen: route.at(-1)!,
+    hashed: compressed !== null,
+    version,
+    parameters: collectParameters(parameters),
+  };
+}
+
+function collectParameters(parameters: URLSearchParams): Record<string, string | string[]> {
+  const result: Record<string, string | string[]> = {};
+  for (const [key, value] of parameters) {
+    const previous = result[key];
+    result[key] =
+      previous === undefined
+        ? value
+        : Array.isArray(previous)
+          ? [...previous, value]
+          : [previous, value];
+  }
+  return result;
+}
+
+function decodeFactorioLabBase64(value: string): Uint8Array {
+  const base64 = value.replaceAll('-', '+').replaceAll('.', '/').replaceAll('_', '=');
+  const binary = atob(base64);
+  return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
 function decodeBase64Url(value: string): Uint8Array {
