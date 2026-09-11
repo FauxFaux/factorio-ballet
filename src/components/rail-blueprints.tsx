@@ -17,7 +17,11 @@ export function RailBlueprints({
 }) {
   const blueprint = encodeBlueprintDocument(buildRailBrick(inputCount, outputCount));
   const setCount = (index: 0 | 1, count: number) =>
-    onSizeChange(([inputs, outputs]) => (index === 0 ? [count, outputs] : [inputs, count]));
+    onSizeChange(([inputs, outputs]) => {
+      const otherCount = index === 0 ? outputs : inputs;
+      const constrainedCount = Math.min(count, RAIL_BRICK_MAX_STATIONS - otherCount);
+      return index === 0 ? [constrainedCount, outputs] : [inputs, constrainedCount];
+    });
 
   return (
     <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">

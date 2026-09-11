@@ -10,7 +10,7 @@ describe('rail brick blueprint generation', () => {
     [2, 3],
     [4, 4],
     [5, 7],
-    [12, 12],
+    [16, 16],
   ])('builds a connected regular brick with %i input and %i output stations', (inputs, outputs) => {
     const document = buildRailBrick(inputs, outputs);
     if (!('blueprint' in document)) throw new Error('expected blueprint');
@@ -37,6 +37,6 @@ describe('rail brick blueprint generation', () => {
   });
 
   it('rejects more station paths than the regular brick supports', () => {
-    expect(() => buildRailBrick(13, 2)).toThrow('integer from 0 to 12');
+    expect(() => buildRailBrick(17, 2)).toThrow('integer from 0 to 16');
   });
 });

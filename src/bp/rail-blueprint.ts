@@ -16,7 +16,7 @@ const emptyGrid = blueprintFrom(decodeDocument(emptyGridString));
 const threePath = blueprintFrom(decodeDocument(threePathString));
 const fourPath = blueprintFrom(decodeDocument(fourPathString));
 
-export const RAIL_BRICK_MAX_STATIONS = 12;
+export const RAIL_BRICK_MAX_STATIONS = 16;
 export const RAIL_BRICK_STATION_PITCH = 12;
 
 /** Build a regular rail brick with independently sized vertical station fans on its left and right. */

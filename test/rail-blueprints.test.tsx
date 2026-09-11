@@ -49,15 +49,34 @@ describe('RailBlueprints', () => {
     const input = view.getByRole<HTMLInputElement>('slider', { name: 'Input stations: 3' });
     const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 2' });
     expect(input.min).toBe('0');
-    expect(input.max).toBe('12');
+    expect(input.max).toBe('16');
     expect(input.getAttribute('list')).toBe('rail-blueprints-count-ticks');
-    expect(container.querySelectorAll('#rail-blueprints-count-ticks option')).toHaveLength(13);
+    expect(container.querySelectorAll('#rail-blueprints-count-ticks option')).toHaveLength(17);
 
-    fireEvent.input(input, { target: { value: '12' } });
     fireEvent.input(output, { target: { value: '0' } });
+    fireEvent.input(input, { target: { value: '16' } });
 
     expect(
-      view.getByText('Standard rail brick with twelve input and zero output stations.'),
+      view.getByText('Standard rail brick with sixteen input and zero output stations.'),
+    ).toBeTruthy();
+  });
+
+  it('limits the combined input and output station count to sixteen', () => {
+    function TestRailBlueprints() {
+      const [size, setSize] = useState<[number, number]>([3, 2]);
+      return <RailBlueprints size={size} onSizeChange={setSize} />;
+    }
+
+    const { container } = render(<TestRailBlueprints />);
+    const view = within(container as HTMLElement);
+    const input = view.getByRole<HTMLInputElement>('slider', { name: 'Input stations: 3' });
+    const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 2' });
+
+    fireEvent.input(input, { target: { value: '16' } });
+    fireEvent.input(output, { target: { value: '16' } });
+
+    expect(
+      view.getByText('Standard rail brick with fourteen input and two output stations.'),
     ).toBeTruthy();
   });
 });
