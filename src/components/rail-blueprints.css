@@ -6,6 +6,42 @@
   margin: 0;
 }
 
+.rail-blueprints-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5556rem 1rem;
+  margin: 1rem 0;
+  padding: 0.4444rem 0.6667rem 0.6667rem;
+  border: 1px solid var(--border);
+  border-radius: 0.2222rem;
+}
+
+.rail-blueprints-counts legend {
+  padding: 0 0.3333rem;
+  color: var(--text-h);
+  font-size: 0.7778rem;
+}
+
+.rail-blueprints-counts label {
+  display: grid;
+  gap: 0.2222rem;
+  min-width: 0;
+  font-size: 0.7778rem;
+}
+
+.rail-blueprints-counts input {
+  width: 100%;
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+@media (max-width: 800px) {
+  .rail-blueprints-counts {
+    grid-template-columns: 1fr;
+  }
+}
+
 .rail-blueprints-export {
   display: grid;
   gap: 4px;

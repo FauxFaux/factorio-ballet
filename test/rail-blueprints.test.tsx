@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/preact';
+import { fireEvent, render, screen, within } from '@testing-library/preact';
+import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';
 import { buildRailGraph } from '../src/bp/rail.ts';
@@ -8,7 +9,7 @@ import { RailBlueprints } from '../src/components/rail-blueprints.tsx';
 
 describe('RailBlueprints', () => {
   it('renders a radar with the URL-state station counts', () => {
-    const { container } = render(<RailBlueprints size={[3, 2]} />);
+    const { container } = render(<RailBlueprints size={[3, 2]} onSizeChange={() => [3, 2]} />);
 
     expect(screen.getByRole('heading', { name: 'Rail blueprints' })).toBeTruthy();
     expect(screen.getByRole('img', { name: /3 input and 2 output stations/ })).toBeTruthy();
@@ -34,5 +35,27 @@ describe('RailBlueprints', () => {
           [27, 39, 51, 161, 173].includes(entity.position.x),
       ),
     ).not.toHaveLength(0);
+  });
+
+  it('changes either station count with its ticked slider', () => {
+    function TestRailBlueprints() {
+      const [size, setSize] = useState<[number, number]>([3, 2]);
+      return <RailBlueprints size={size} onSizeChange={setSize} />;
+    }
+
+    const { container } = render(<TestRailBlueprints />);
+    const view = within(container);
+
+    const input = view.getByRole<HTMLInputElement>('slider', { name: 'Input stations: 3' });
+    const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 2' });
+    expect(input.min).toBe('0');
+    expect(input.max).toBe('12');
+    expect(input.getAttribute('list')).toBe('rail-blueprints-count-ticks');
+    expect(container.querySelectorAll('#rail-blueprints-count-ticks option')).toHaveLength(13);
+
+    fireEvent.input(input, { target: { value: '12' } });
+    fireEvent.input(output, { target: { value: '0' } });
+
+    expect(view.getByText('Standard rail brick with 12 input and 0 output stations.')).toBeTruthy();
   });
 });

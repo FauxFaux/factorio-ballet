@@ -80,7 +80,10 @@ export function App({ uss }: { uss: State<UrlState> }) {
         </div>
       </header>
       {us.rb ? (
-        <RailBlueprints size={us.rb} />
+        <RailBlueprints
+          size={us.rb}
+          onSizeChange={(update) => setUs((prev) => ({ ...prev, rb: prev.rb && update(prev.rb) }))}
+        />
       ) : us.fa ? (
         <FromAir mode={field(uss, 'fa')} progress={progress} />
       ) : (
