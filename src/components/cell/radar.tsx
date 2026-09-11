@@ -15,6 +15,7 @@ export function CellRadar({
   solution,
   belt,
   progress,
+  stackedStations,
   onExpand,
   expandButtonRef,
 }: {
@@ -25,11 +26,13 @@ export function CellRadar({
   solution: Solution;
   belt: Belt;
   progress: number;
+  /** Overrides automatic station stacking when a fixed station orientation is required. */
+  stackedStations?: boolean;
   onExpand?: () => void;
   expandButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
-  const stacked = inputs.length + outputs.length > 4;
+  const stacked = stackedStations ?? inputs.length + outputs.length > 4;
   const assemblerStartX = stacked ? 68 : 8 + inputs.length * 8;
   const props = {
     title,

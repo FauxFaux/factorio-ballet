@@ -37,6 +37,7 @@ export function RailBlueprints({ size: [inputCount, outputCount] }: { size: [num
         solution={emptySolution}
         belt={NO_CHOICE.belt}
         progress={0}
+        stackedStations={false}
       />
     </section>
   );
