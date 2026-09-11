@@ -9,6 +9,8 @@ describe('rail brick blueprint generation', () => {
     [1, 1],
     [2, 3],
     [4, 4],
+    [5, 7],
+    [12, 12],
   ])('builds a connected regular brick with %i input and %i output stations', (inputs, outputs) => {
     const document = buildRailBrick(inputs, outputs);
     if (!('blueprint' in document)) throw new Error('expected blueprint');
@@ -21,12 +23,10 @@ describe('rail brick blueprint generation', () => {
         .map((entity) => entity.position.x),
     );
     expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(12);
-    expect([27, 39, 51, 63].filter((x) => verticalXs.has(x))).toEqual(
-      [27, 39, 51, 63].slice(0, inputs),
-    );
-    expect([197, 185, 173, 161].filter((x) => verticalXs.has(x))).toEqual(
-      [197, 185, 173, 161].slice(0, outputs),
-    );
+    const inputXs = Array.from({ length: inputs }, (_, index) => 27 + index * 12);
+    const outputXs = Array.from({ length: outputs }, (_, index) => 197 - index * 12);
+    expect(inputXs.filter((x) => verticalXs.has(x))).toEqual(inputXs);
+    expect(outputXs.filter((x) => verticalXs.has(x))).toEqual(outputXs);
     expect(new Set(entities.map((entity) => entity.entity_number)).size).toBe(entities.length);
     expect(
       document.blueprint.wires?.every(([left, , right]) =>
@@ -37,6 +37,6 @@ describe('rail brick blueprint generation', () => {
   });
 
   it('rejects more station paths than the regular brick supports', () => {
-    expect(() => buildRailBrick(5, 2)).toThrow('integer from 0 to 4');
+    expect(() => buildRailBrick(13, 2)).toThrow('integer from 0 to 12');
   });
 });

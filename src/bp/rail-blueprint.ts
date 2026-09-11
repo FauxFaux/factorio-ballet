@@ -1,4 +1,5 @@
 import { strToU8, zlibSync } from 'fflate';
+import threePathString from '../../docs/blueprints/3x-train-layout.base64?raw';
 import emptyGridString from '../../docs/blueprints/empty-grid-v0.base64?raw';
 import fourPathString from '../../docs/blueprints/4x-train-layout.base64?raw';
 import {
@@ -12,6 +13,7 @@ import {
 import { buildRailGraph } from './rail.ts';
 
 const emptyGrid = blueprintFrom(decodeDocument(emptyGridString));
+const threePath = blueprintFrom(decodeDocument(threePathString));
 const fourPath = blueprintFrom(decodeDocument(fourPathString));
 
 /** Build a regular rail brick with independently sized vertical station fans on its left and right. */
@@ -46,6 +48,7 @@ export function encodeBlueprintDocument(document: BlueprintDocument): string {
 
 function stationFan(stationCount: number): Blueprint {
   if (stationCount === 4) return structuredClone(fourPath);
+  if (stationCount > 4) return extendStationFan(stationCount);
 
   const sourceEntities = fourPath.entities ?? [];
   const externalEnds = new Set(
@@ -96,6 +99,40 @@ function stationFan(stationCount: number): Blueprint {
   }
 
   return compactBlueprint({ ...structuredClone(fourPath), entities });
+}
+
+/** Repeat the complete rightmost C branch isolated by the checked-in three-path derivative. */
+function extendStationFan(stationCount: number): Blueprint {
+  const blueprint = structuredClone(fourPath);
+  const entities = blueprint.entities ?? [];
+  const threePathSignatures = new Set((threePath.entities ?? []).map(entitySignature));
+  const branch = entities.filter((entity) => !threePathSignatures.has(entitySignature(entity)));
+  const branchPole = branch.find((entity) => entity.name === 'big-electric-pole');
+  if (!branchPole) throw new Error('station fan extension has no electric pole');
+
+  let nextEntityNumber = Math.max(0, ...entities.map(({ entity_number }) => entity_number)) + 1;
+  let previousPole = branchPole;
+  const wires = blueprint.wires ?? [];
+
+  for (let pathIndex = 4; pathIndex < stationCount; pathIndex += 1) {
+    const offset = { x: 12 * (pathIndex - 3), y: 0 };
+    let copiedPole: Entity | undefined;
+    for (const source of branch) {
+      const entity = {
+        ...translateEntity(source, offset),
+        entity_number: nextEntityNumber++,
+      };
+      entities.push(entity);
+      if (entity.name === 'big-electric-pole') copiedPole = entity;
+    }
+    if (!copiedPole) throw new Error(`station fan extension path ${pathIndex + 1} has no pole`);
+    wires.push([previousPole.entity_number, 5, copiedPole.entity_number, 5]);
+    previousPole = copiedPole;
+  }
+
+  blueprint.entities = entities;
+  blueprint.wires = wires;
+  return blueprint;
 }
 
 function mergeBlueprint(
@@ -236,8 +273,8 @@ function requiredNumber(numbers: Map<number, number>, oldNumber: number): number
 }
 
 function validateStationCount(count: number) {
-  if (!Number.isInteger(count) || count < 0 || count > 4) {
-    throw new Error(`vertical station count must be an integer from 0 to 4, got ${count}`);
+  if (!Number.isInteger(count) || count < 0 || count > 12) {
+    throw new Error(`vertical station count must be an integer from 0 to 12, got ${count}`);
   }
 }
 

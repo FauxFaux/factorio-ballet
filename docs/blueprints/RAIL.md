@@ -227,6 +227,13 @@ throat up to the last remaining switch and the three paths at `x = -69, -57, -45
 derived graph retains the original layout's four external ends, confirming that no dead-end stubs
 were left by the cut.
 
+The inverse of that cut extends the fan. The 44 entities present in the 4x fixture but absent from
+the 3x derivative are one complete C-shaped branch: 41 rails, two signals, and one electric pole.
+Translate that branch by `(x + 12, y)` for the fifth path, then by another 12 tiles for each later
+path. Join each copied pole to the preceding path's pole with copper connector 5. The application
+uses this rule for regular fans of up to 12 paths; exact duplicate entities are coalesced when the
+input and output fans are merged into the brick.
+
 ## Stacked station fan
 
 ### There is no stacked blueprint primitive

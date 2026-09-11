@@ -44,7 +44,7 @@ describe('RailBlueprints', () => {
     }
 
     const { container } = render(<TestRailBlueprints />);
-    const view = within(container);
+    const view = within(container as HTMLElement);
 
     const input = view.getByRole<HTMLInputElement>('slider', { name: 'Input stations: 3' });
     const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 2' });
