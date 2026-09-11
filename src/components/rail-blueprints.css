@@ -22,12 +22,22 @@
   font-size: 0.7778rem;
 }
 
-.rail-blueprints-count,
-.rail-blueprints-count > label:first-child {
+.rail-blueprints-count {
   display: grid;
   gap: 0.2222rem;
   min-width: 0;
   font-size: 0.7778rem;
+}
+
+.rail-blueprints-count-header {
+  display: flex;
+  gap: 0.6667rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.rail-blueprints-count-header > span:first-child {
+  min-width: 0;
 }
 
 .rail-blueprints-counts input[type="range"] {
@@ -41,6 +51,7 @@
   display: flex;
   gap: 0.3333rem;
   align-items: center;
+  margin-left: auto;
   width: fit-content;
   cursor: pointer;
 }

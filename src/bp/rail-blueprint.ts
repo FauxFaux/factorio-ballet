@@ -2,6 +2,8 @@ import { strToU8, zlibSync } from 'fflate';
 import threePathString from '../../docs/blueprints/3x-train-layout.base64?raw';
 import emptyGridString from '../../docs/blueprints/empty-grid-v0.base64?raw';
 import fourPathString from '../../docs/blueprints/4x-train-layout.base64?raw';
+import stackedSegmentString from '../../docs/blueprints/1x-stacked-train-s.base64?raw';
+import stackedTwoString from '../../docs/blueprints/2x-stacked-train.base64?raw';
 import {
   decodeDocument,
   type Blueprint,
@@ -10,25 +12,37 @@ import {
   type Position,
   type Wire,
 } from './decode.ts';
-import { buildRailGraph } from './rail.ts';
+import { buildRailGraph, findRailAlignment } from './rail.ts';
+import { buildStackedTrain } from './stacked-rail-blueprint.ts';
 
 const emptyGrid = blueprintFrom(decodeDocument(emptyGridString));
 const threePath = blueprintFrom(decodeDocument(threePathString));
 const fourPath = blueprintFrom(decodeDocument(fourPathString));
+const stackedSegmentDocument = decodeDocument(stackedSegmentString);
+const stackedTwoDocument = decodeDocument(stackedTwoString);
 
 export const RAIL_BRICK_MAX_STATIONS = 16;
 export const RAIL_BRICK_STATION_PITCH = 12;
 
-/** Build a regular rail brick with independently sized vertical station fans on its left and right. */
+/** Build a rail brick; a negative input count selects the documented stacked input layout. */
 export function buildRailBrick(inputStations: number, outputStations: number): BlueprintDocument {
-  validateStationCount(inputStations);
+  const stackedInput = inputStations < 0;
+  const inputCount = Math.abs(inputStations);
+  if (stackedInput) validateStackedStationCount(inputCount);
+  else validateStationCount(inputCount);
   validateStationCount(outputStations);
 
   const blueprint = structuredClone(emptyGrid);
-  blueprint.label = `${inputStations} input, ${outputStations} output rail brick`;
+  blueprint.label = `${inputCount}${stackedInput ? ' stacked' : ''} input, ${outputStations} output rail brick`;
 
-  if (inputStations > 0) {
-    mergeBlueprint(blueprint, stationFan(inputStations), (entity) =>
+  if (stackedInput) {
+    const stacked = blueprintFrom(
+      buildStackedTrain(stackedTwoDocument, stackedSegmentDocument, inputCount).document,
+    );
+    const alignment = findRailAlignment(blueprint.entities ?? [], stacked.entities ?? []);
+    mergeBlueprint(blueprint, stacked, (entity) => translateEntity(entity, alignment.offset));
+  } else if (inputCount > 0) {
+    mergeBlueprint(blueprint, stationFan(inputCount), (entity) =>
       translateEntity(entity, { x: 96, y: 736 }),
     );
   }
@@ -280,6 +294,12 @@ function validateStationCount(count: number) {
     throw new Error(
       `vertical station count must be an integer from 0 to ${RAIL_BRICK_MAX_STATIONS}, got ${count}`,
     );
+  }
+}
+
+function validateStackedStationCount(count: number) {
+  if (!Number.isInteger(count) || count < 2 || count > 9) {
+    throw new Error(`stacked station count must be an integer from 2 to 9, got ${count}`);
   }
 }
 

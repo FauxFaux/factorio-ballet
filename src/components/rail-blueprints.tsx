@@ -18,80 +18,79 @@ export function RailBlueprints({
   const inputCount = Math.abs(signedInputCount);
   const outputCount = Math.abs(signedOutputCount);
   const inputStacked = signedInputCount < 0;
-  const outputStacked = signedOutputCount < 0;
-  const blueprint = encodeBlueprintDocument(buildRailBrick(inputCount, outputCount));
+  const blueprint = encodeBlueprintDocument(
+    buildRailBrick(inputStacked ? signedInputCount : inputCount, outputCount),
+  );
   const setCount = (index: 0 | 1, count: number) =>
     onSizeChange(([inputs, outputs]) => {
       const currentCount = index === 0 ? inputs : outputs;
       const otherCount = Math.abs(index === 0 ? outputs : inputs);
-      const currentStacked = currentCount < 0;
-      const otherStacked = (index === 0 ? outputs : inputs) < 0;
+      const currentStacked = index === 0 && currentCount < 0;
+      const otherStacked = index === 1 && inputs < 0;
       const maximum = currentStacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - otherCount;
       const constrainedCount = Math.max(currentStacked ? 2 : 0, Math.min(count, maximum));
-      const signedCount = currentCount < 0 ? -constrainedCount : constrainedCount;
-      return index === 0 ? [signedCount, outputs] : [inputs, signedCount];
+      const signedCount = currentStacked ? -constrainedCount : constrainedCount;
+      return index === 0 ? [signedCount, Math.abs(outputs)] : [inputs, signedCount];
     });
-  const setStacked = (index: 0 | 1, stacked: boolean) =>
+  const setInputStacked = (stacked: boolean) =>
     onSizeChange(([inputs, outputs]) => {
-      const count = Math.abs(index === 0 ? inputs : outputs);
-      const other = index === 0 ? outputs : inputs;
-      const otherCount = Math.abs(other);
-      const otherStacked = other < 0;
+      const count = Math.abs(inputs);
+      const outputCount = Math.abs(outputs);
       const constrainedCount = stacked
         ? Math.max(2, Math.min(count, 9))
-        : Math.min(count, otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - otherCount);
+        : Math.min(count, RAIL_BRICK_MAX_STATIONS - outputCount);
       const signedCount = stacked ? -constrainedCount : constrainedCount;
-      const constrainedOther = stacked && !otherStacked ? Math.min(otherCount, 11) : otherCount;
-      const signedOther = otherStacked ? -constrainedOther : constrainedOther;
-      return index === 0 ? [signedCount, signedOther] : [signedOther, signedCount];
+      return [signedCount, stacked ? Math.min(outputCount, 11) : outputCount];
     });
 
   const inputDescription = `${inputStacked ? 'stacked ' : ''}input`;
-  const outputDescription = `${outputStacked ? 'stacked ' : ''}output`;
 
   return (
     <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">
       <h2 id="rail-blueprints-title">Rail blueprints</h2>
       <p>
         Standard rail brick with {toWords(inputCount)} {inputDescription} and {toWords(outputCount)}{' '}
-        {outputDescription} stations.
+        output stations.
       </p>
       <fieldset class="rail-blueprints-counts">
         <legend>Station counts</legend>
         {(['Input', 'Output'] as const).map((side, index) => {
           const count = index === 0 ? inputCount : outputCount;
-          const stacked = index === 0 ? inputStacked : outputStacked;
-          const otherStacked = index === 0 ? outputStacked : inputStacked;
+          const stacked = index === 0 && inputStacked;
+          const otherStacked = index === 1 && inputStacked;
           return (
             <div class="rail-blueprints-count" key={side}>
-              <label>
+              <div class="rail-blueprints-count-header">
                 <span>
                   {side} stations: {count}
                 </span>
-                <input
-                  type="range"
-                  min={stacked ? 2 : 0}
-                  max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS}
-                  step={1}
-                  value={count}
-                  list="rail-blueprints-count-ticks"
-                  onInput={(event) =>
-                    setCount(index as 0 | 1, Number((event.target as HTMLInputElement).value))
-                  }
-                />
-              </label>
-              <label
-                class={`rail-blueprints-stacked${!stacked && count >= 6 ? ' rail-blueprints-stacked-recommended' : ''}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={stacked}
-                  onChange={(event) =>
-                    setStacked(index as 0 | 1, (event.currentTarget as HTMLInputElement).checked)
-                  }
-                />
-                Stacked
-              </label>
+                {index === 0 && (
+                  <label
+                    class={`rail-blueprints-stacked${!stacked && count >= 6 ? ' rail-blueprints-stacked-recommended' : ''}`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={stacked}
+                      onChange={(event) =>
+                        setInputStacked((event.currentTarget as HTMLInputElement).checked)
+                      }
+                    />
+                    Stacked
+                  </label>
+                )}
+              </div>
+              <input
+                type="range"
+                aria-label={`${side} stations: ${count}`}
+                min={stacked ? 2 : 0}
+                max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS}
+                step={1}
+                value={count}
+                list="rail-blueprints-count-ticks"
+                onInput={(event) =>
+                  setCount(index as 0 | 1, Number((event.target as HTMLInputElement).value))
+                }
+              />
             </div>
           );
         })}
@@ -101,7 +100,7 @@ export function RailBlueprints({
           ))}
         </datalist>
       </fieldset>
-      <RailBlueprintPreview size={[signedInputCount, signedOutputCount]} />
+      <RailBlueprintPreview size={[signedInputCount, outputCount]} />
       <label class="rail-blueprints-export">
         Blueprint
         <textarea readOnly rows={6} value={blueprint} />

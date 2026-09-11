@@ -4,7 +4,7 @@ import { fireEvent, render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';
-import { buildRailGraph } from '../src/bp/rail.ts';
+import { buildRailGraph, findStackedRailLayout } from '../src/bp/rail.ts';
 import { RailBlueprints } from '../src/components/rail-blueprints.tsx';
 
 describe('RailBlueprints', () => {
@@ -80,7 +80,7 @@ describe('RailBlueprints', () => {
     ).toBeTruthy();
   });
 
-  it('stores stacked sides as negative counts and previews their stations vertically', () => {
+  it('stores stacked inputs as negative counts and previews their stations vertically', () => {
     function TestRailBlueprints() {
       const [size, setSize] = useState<[number, number]>([3, 2]);
       return <RailBlueprints size={size} onSizeChange={setSize} />;
@@ -90,12 +90,10 @@ describe('RailBlueprints', () => {
     const view = within(container as HTMLElement);
     const stacked = view.getAllByRole<HTMLInputElement>('checkbox', { name: 'Stacked' });
 
+    expect(stacked).toHaveLength(1);
     fireEvent.click(stacked[0]);
-    fireEvent.click(stacked[1]);
 
-    expect(
-      screen.getByRole('img', { name: /3 stacked input and 2 stacked output stations/ }),
-    ).toBeTruthy();
+    expect(screen.getByRole('img', { name: /3 stacked input and 2 output stations/ })).toBeTruthy();
     expect(container.querySelector('[data-blueprint-station="input:1"]')?.getAttribute('cx')).toBe(
       '48',
     );
@@ -103,17 +101,29 @@ describe('RailBlueprints', () => {
       '102',
     );
     expect(container.querySelector('[data-blueprint-station="output:1"]')?.getAttribute('cx')).toBe(
-      '172',
+      '182',
     );
     const path = container.querySelector('.rail-blueprint-preview-path')?.getAttribute('d');
     expect(path).toContain('M 60 100 l 0 12 c 0 7, 8 11, 16 11');
-    expect(path).toContain('M 132 110 l 0 2 c 0 7, -8 11, -16 11');
+    expect(path).not.toContain('M 132 110 l 0 2 c 0 7, -8 11, -16 11');
 
     const encoded = view.getByRole<HTMLTextAreaElement>('textbox', { name: 'Blueprint' }).value;
-    expect(decodeDocument(encoded)).toHaveProperty(
-      'blueprint.label',
-      '3 input, 2 output rail brick',
-    );
+    const document = decodeDocument(encoded);
+    expect(document).toHaveProperty('blueprint.label', '3 stacked input, 2 output rail brick');
+    if (!('blueprint' in document)) throw new Error('expected blueprint');
+    expect(
+      findStackedRailLayout(
+        document.blueprint.entities?.filter((entity) => entity.position.x < 100) ?? [],
+      ).rows,
+    ).toHaveLength(3);
+    expect(
+      document.blueprint.entities?.some(
+        (entity) =>
+          entity.name === 'straight-rail' &&
+          (entity.direction ?? 0) === 0 &&
+          entity.position.x === 197,
+      ),
+    ).toBe(true);
   });
 
   it('reads negative URL-state counts as stacked and keeps their sign when sliding', () => {
@@ -156,48 +166,6 @@ describe('RailBlueprints', () => {
     expect(output.max).toBe('11');
   });
 
-  it('enforces mixed and unstacked restrictions when stacked is toggled', () => {
-    function TestRailBlueprints() {
-      const [size, setSize] = useState<[number, number]>([12, 3]);
-      return <RailBlueprints size={size} onSizeChange={setSize} />;
-    }
-
-    const { container } = render(<TestRailBlueprints />);
-    const view = within(container as HTMLElement);
-    const stacked = view.getAllByRole<HTMLInputElement>('checkbox', { name: 'Stacked' });
-
-    fireEvent.click(stacked[1]);
-    expect(
-      screen.getByText('Standard rail brick with eleven input and three stacked output stations.'),
-    ).toBeTruthy();
-
-    fireEvent.click(stacked[1]);
-    expect(
-      screen.getByText('Standard rail brick with eleven input and three output stations.'),
-    ).toBeTruthy();
-  });
-
-  it('caps both sides independently at nine when both are stacked', () => {
-    function TestRailBlueprints() {
-      const [size, setSize] = useState<[number, number]>([12, -8]);
-      return <RailBlueprints size={size} onSizeChange={setSize} />;
-    }
-
-    const { container } = render(<TestRailBlueprints />);
-    const view = within(container as HTMLElement);
-    const stacked = view.getAllByRole<HTMLInputElement>('checkbox', { name: 'Stacked' });
-    const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 8' });
-
-    fireEvent.click(stacked[0]);
-    fireEvent.input(output, { target: { value: '16' } });
-
-    expect(
-      screen.getByText(
-        'Standard rail brick with nine stacked input and nine stacked output stations.',
-      ),
-    ).toBeTruthy();
-  });
-
   it('keeps stacked counts between two and nine, including when enabled from zero', () => {
     function TestRailBlueprints() {
       const [size, setSize] = useState<[number, number]>([0, 2]);
@@ -233,9 +201,6 @@ describe('RailBlueprints', () => {
     const stacked = view.getAllByRole<HTMLInputElement>('checkbox', { name: 'Stacked' });
 
     expect(stacked[0].closest('label')?.classList).toContain('rail-blueprints-stacked-recommended');
-    expect(stacked[1].closest('label')?.classList).not.toContain(
-      'rail-blueprints-stacked-recommended',
-    );
 
     fireEvent.click(stacked[0]);
     expect(stacked[0].closest('label')?.classList).not.toContain(

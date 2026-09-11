@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { buildRailBrick, encodeBlueprintDocument } from '../src/bp/rail-blueprint.ts';
 import { decodeDocument } from '../src/bp/decode.ts';
-import { buildRailGraph } from '../src/bp/rail.ts';
+import { buildRailGraph, findStackedRailLayout } from '../src/bp/rail.ts';
 
 describe('rail brick blueprint generation', () => {
   it.each([
@@ -38,5 +38,32 @@ describe('rail brick blueprint generation', () => {
 
   it('rejects more station paths than the regular brick supports', () => {
     expect(() => buildRailBrick(17, 2)).toThrow('integer from 0 to 16');
+  });
+
+  it.each([2, 3, 4, 5, 6, 7, 8, 9])(
+    'builds a %i-row stacked input fan alongside regular outputs',
+    (inputs) => {
+      const document = buildRailBrick(-inputs, 2);
+      if (!('blueprint' in document)) throw new Error('expected blueprint');
+
+      const entities = document.blueprint.entities ?? [];
+      const layout = findStackedRailLayout(entities.filter((entity) => entity.position.x < 100));
+      expect(layout.rows).toHaveLength(inputs);
+      expect(layout.pitch).toBe(10);
+      expect(
+        entities.some(
+          (entity) =>
+            entity.name === 'straight-rail' &&
+            (entity.direction ?? 0) === 0 &&
+            entity.position.x === 197,
+        ),
+      ).toBe(true);
+      expect(decodeDocument(encodeBlueprintDocument(document))).toEqual(document);
+    },
+  );
+
+  it('rejects unsupported stacked input counts', () => {
+    expect(() => buildRailBrick(-1, 2)).toThrow('integer from 2 to 9');
+    expect(() => buildRailBrick(-10, 2)).toThrow('integer from 2 to 9');
   });
 });
