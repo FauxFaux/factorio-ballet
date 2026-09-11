@@ -15,6 +15,8 @@ import { ProgressSlider } from './components/progress-slider.tsx';
 import { RecipeList } from './components/recipe-list.tsx';
 import { UnlitFilter } from './components/unlit-module-icon.tsx';
 import { RecipeSuggestions } from './components/recipe-suggestions/recipe-suggestions.tsx';
+import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
+import { RailBlueprints } from './components/rail-blueprints.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
@@ -74,9 +76,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
           />
           <DebugButton uss={uss} />
           <FromAirButton uss={uss} />
+          <RailBlueprintButton uss={uss} />
         </div>
       </header>
-      {us.fa ? (
+      {us.rb ? (
+        <RailBlueprints size={us.rb} />
+      ) : us.fa ? (
         <FromAir mode={field(uss, 'fa')} progress={progress} />
       ) : (
         <>

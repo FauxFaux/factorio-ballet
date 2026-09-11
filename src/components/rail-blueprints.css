@@ -1,0 +1,7 @@
+.rail-blueprints {
+  max-width: 42rem;
+}
+
+.rail-blueprints > p {
+  margin: 0;
+}

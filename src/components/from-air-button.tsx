@@ -11,7 +11,7 @@ export function FromAirButton({ uss }: { uss: State<UrlState> }) {
       class="from-air-button"
       type="button"
       title="Plan from air"
-      onClick={() => setUs((prev) => ({ ...prev, fa: true }))}
+      onClick={() => setUs((prev) => ({ ...prev, fa: true, rb: undefined }))}
     >
       💨
     </button>
