@@ -38,8 +38,26 @@ describe('decodeImportUrl', () => {
         e: ['*k', '3', '6', '*9', '*BP', '6*BP', '*l'],
         v: '11',
       },
+      decoded: {
+        objectives: [
+          {
+            targetId: 'bob-integrated-electronics',
+            value: '4',
+            unit: '1',
+            machineId: 'bob-assembling-machine-5',
+            moduleIndexes: [0],
+            beaconIndexes: [0],
+          },
+        ],
+      },
     });
     expect(decoded && 'source' in decoded ? decoded.parameters.r : undefined).toHaveLength(17);
+    expect(decoded && 'source' in decoded ? decoded.decoded.recipes[0] : undefined).toMatchObject({
+      recipeId: 'bob-silicon-wafer',
+      machineId: 'bob-assembling-machine-5',
+      moduleIndexes: [0],
+      beaconIndexes: [1],
+    });
   });
 
   it('decodes a bare FactorioLab v11 URL', () => {
@@ -52,6 +70,15 @@ describe('decodeImportUrl', () => {
       hashed: false,
       version: '11',
       parameters: { o: 'iron-plate*60', odr: '0', v: '11' },
+      decoded: {
+        modules: [],
+        beacons: [],
+        objectives: [{ targetId: 'iron-plate', value: '60' }],
+        items: [],
+        recipes: [],
+        machines: [],
+        settings: {},
+      },
     });
   });
 });
