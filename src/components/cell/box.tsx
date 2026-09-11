@@ -57,7 +57,9 @@ export function CellBox({
     setCell((prev) => moveEntry(prev, from, to)),
   );
   const [hoveredRecipe, setHoveredRecipe] = useState<string>();
+  const [hoveredInterfaceResource, setHoveredInterfaceResource] = useState<ResourceId>();
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
+  const [expandedRecipes, setExpandedRecipes] = useState<ReadonlySet<string>>(() => new Set());
   const [radarOpen, setRadarOpen] = useState(false);
   const radarTrigger = useRef<HTMLButtonElement>(null);
   const radarClose = useRef<HTMLButtonElement>(null);
@@ -80,6 +82,15 @@ export function CellBox({
   const selectResource = (id: ResourceId | undefined) => {
     setSelectedResource(id);
     setHoveredRecipe(undefined);
+  };
+
+  const toggleRecipeExpansion = (recipe: string) => {
+    setExpandedRecipes((previous) => {
+      const next = new Set(previous);
+      if (next.has(recipe)) next.delete(recipe);
+      else next.add(recipe);
+      return next;
+    });
   };
 
   return (
@@ -137,6 +148,7 @@ export function CellBox({
           belt={chosen.belt}
           onSearch={onSearch}
           onSelect={selectResource}
+          highlighted={hoveredInterfaceResource}
           imports={cell.imports}
         />
         <div class="cell-middle">
@@ -153,12 +165,15 @@ export function CellBox({
                 count={solution.counts[i]}
                 note={noteFor(solution, i)}
                 highlighted={hoveredRecipe === entry.recipe}
+                expanded={expandedRecipes.has(entry.recipe)}
                 solution={solution}
                 progress={progress}
                 chosen={chosen}
                 drag={rowDrag(i)}
                 onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                 onRemove={() => setCell((prev) => withoutEntry(prev, i))}
+                onSelectResource={selectResource}
+                onToggleExpand={() => toggleRecipeExpansion(entry.recipe)}
               />
             ))
           )}
@@ -191,6 +206,8 @@ export function CellBox({
               }
               onRecipeHover={setHoveredRecipe}
               onSearch={onSearch}
+              onToggleRecipe={toggleRecipeExpansion}
+              onInterfaceHover={setHoveredInterfaceResource}
               selected={selectedResource}
               onSelect={selectResource}
             />
@@ -206,6 +223,7 @@ export function CellBox({
             onSearch={onSearch}
             onSelect={selectResource}
             exports={cell.exports}
+            highlighted={hoveredInterfaceResource}
           />
           <CellRadar
             title={cellTitle(cell)}

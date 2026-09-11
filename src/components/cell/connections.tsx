@@ -1,6 +1,6 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
-import type { Belt } from '../../types.ts';
+import type { Belt, ResourceId } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import {
@@ -16,12 +16,14 @@ export function RecipeConnections({
   solved,
   belt,
   recipe,
+  onSelectResource,
 }: {
   connections: RecipeConnections;
   solved: boolean;
   /** The selected item belt; fluids deliberately have no belt equivalent here. */
   belt: Belt;
   recipe: string;
+  onSelectResource: (resource: ResourceId) => void;
 }) {
   if (!solved) {
     return (
@@ -32,8 +34,20 @@ export function RecipeConnections({
   }
   return (
     <div class="cell-connections cell-recipe-connections">
-      <ConnectionSection title="Inputs" flows={connections.inputs} belt={belt} recipe={recipe} />
-      <ConnectionSection title="Outputs" flows={connections.outputs} belt={belt} recipe={recipe} />
+      <ConnectionSection
+        title="Inputs"
+        flows={connections.inputs}
+        belt={belt}
+        recipe={recipe}
+        onSelectResource={onSelectResource}
+      />
+      <ConnectionSection
+        title="Outputs"
+        flows={connections.outputs}
+        belt={belt}
+        recipe={recipe}
+        onSelectResource={onSelectResource}
+      />
     </div>
   );
 }
@@ -43,16 +57,23 @@ function ConnectionSection({
   flows,
   belt,
   recipe,
+  onSelectResource,
 }: {
   title: string;
   flows: ConnectionFlow[];
   belt: Belt;
   recipe: string;
+  onSelectResource: (resource: ResourceId) => void;
 }) {
   return (
     <section class="cell-connection-section">
       <h3 class="cell-connection-section-title">{title}</h3>
-      <ConnectionTable flows={flows} belt={belt} recipe={recipe} />
+      <ConnectionTable
+        flows={flows}
+        belt={belt}
+        recipe={recipe}
+        onSelectResource={onSelectResource}
+      />
     </section>
   );
 }
@@ -61,10 +82,12 @@ function ConnectionTable({
   flows,
   belt,
   recipe,
+  onSelectResource,
 }: {
   flows: ConnectionFlow[];
   belt: Belt;
   recipe: string;
+  onSelectResource: (resource: ResourceId) => void;
 }) {
   const total = itemRateTotal(flows);
   const rateDecimalPlaces = decimalPlacesForSignificantFigures(
@@ -96,6 +119,7 @@ function ConnectionTable({
           recipe={recipe}
           rateDecimalPlaces={rateDecimalPlaces}
           transportDecimalPlaces={transportDecimalPlaces}
+          onSelectResource={onSelectResource}
           key={flow.resource}
         />
       ))}
@@ -110,6 +134,7 @@ function ConnectionRow({
   recipe,
   rateDecimalPlaces,
   transportDecimalPlaces,
+  onSelectResource,
 }: {
   flow: ConnectionFlow;
   total: number;
@@ -117,6 +142,7 @@ function ConnectionRow({
   recipe: string;
   rateDecimalPlaces: number;
   transportDecimalPlaces: number;
+  onSelectResource: (resource: ResourceId) => void;
 }) {
   const isItem = resource.startsWith('item:');
   const proportion = isItem && total > 0 ? Math.min(rate / total, 1) : 0;
@@ -132,13 +158,16 @@ function ConnectionRow({
         /* The table uses a four-column grid. Keep this blank cell so fluid rows do not shift. */
         <span aria-hidden="true" />
       )}
-      <span
-        class="cell-connection-item"
+      <button
+        type="button"
+        class="cell-connection-item cell-btn"
         title={`${fullRate}/s ${resourceName(resource)} (${resource})`}
+        aria-label={`Show recipes for ${resourceName(resource)}`}
+        onClick={() => onSelectResource(resource)}
       >
         <ResourceIcon id={resource} />
         <span>{resourceName(resource)}</span>
-      </span>
+      </button>
       <ConnectionRate rate={rate} decimalPlaces={rateDecimalPlaces} />
       <MachineRatio
         connectedMachineCount={connectedMachineCount}

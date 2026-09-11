@@ -5,7 +5,7 @@ import type { Chosen } from '../../data/index.ts';
 import { machinesFor } from '../../data/machines.ts';
 import { isProblem, noteText, type Solution, type SolveNote } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
-import type { Recipe } from '../../types.ts';
+import type { Recipe, ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import { MachinePicker } from '../machine.tsx';
 import type { RowDrag } from './drag.ts';
@@ -26,12 +26,15 @@ export function CellRow({
   count,
   note,
   highlighted,
+  expanded,
   solution,
   progress,
   chosen,
   drag,
   onChange,
   onRemove,
+  onSelectResource,
+  onToggleExpand,
 }: {
   entry: CellEntry;
   entryIndex: number;
@@ -41,6 +44,7 @@ export function CellRow({
   count: number | undefined;
   note: SolveNote | undefined;
   highlighted: boolean;
+  expanded: boolean;
   /** The other solved rows, used for the expanded in-cell flow breakdown. */
   solution: Solution;
   progress: number;
@@ -50,9 +54,10 @@ export function CellRow({
   drag: RowDrag;
   onChange: (entry: CellEntry) => void;
   onRemove: () => void;
+  onSelectResource: (resource: ResourceId) => void;
+  onToggleExpand: () => void;
 }) {
   const recipe = entryRecipe(entry);
-  const [expanded, setExpanded] = useState(false);
   const connections = useMemo(
     () => recipeConnections(entryIndex, solution, recipeIds),
     [entryIndex, recipeIds, solution],
@@ -91,7 +96,7 @@ export function CellRow({
         title={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
         aria-label={expanded ? 'Hide recipe connections' : 'Show recipe connections'}
         aria-expanded={expanded}
-        onClick={() => setExpanded((wasExpanded) => !wasExpanded)}
+        onClick={onToggleExpand}
       >
         {expanded ? '▾' : '▸'}
       </button>
@@ -143,6 +148,7 @@ export function CellRow({
           solved={count !== undefined}
           belt={chosen.belt}
           recipe={entry.recipe}
+          onSelectResource={onSelectResource}
         />
       ) : null}
     </div>

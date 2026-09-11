@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { cleanup, render, screen } from '@testing-library/preact';
+import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -151,6 +151,74 @@ describe('cell side resource selection', () => {
     expect(
       document.querySelector(`[data-in-play-resource="${id}"] [aria-pressed="true"]`),
     ).toBeTruthy();
+  });
+
+  it('selects a resource from an expanded recipe connection', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await user.click(screen.getAllByRole('button', { name: 'Show recipe connections' })[0]!);
+    await user.click(screen.getAllByRole('button', { name: /Show recipes for/ })[0]!);
+
+    expect(document.querySelector('[data-in-play-resource] [aria-pressed="true"]')).toBeTruthy();
+  });
+
+  it('toggles a recipe connection from an in-play resource', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-ore')}` }),
+    );
+    await user.click(screen.getAllByRole('button', { name: /Toggle connections for/ })[0]!);
+
+    expect(screen.getByRole('button', { name: 'Hide recipe connections' })).toBeTruthy();
+  });
+
+  it('highlights an interface resource while its in-play marker is hovered', async () => {
+    const user = userEvent.setup();
+    const { container } = render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await user.click(
+      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-ore')}` }),
+    );
+    const marker = screen.getByText('[input]');
+    fireEvent.mouseEnter(marker);
+
+    expect(container.querySelector('.cell-in .cell-flow.is-highlighted')).toBeTruthy();
+
+    fireEvent.mouseLeave(marker);
+    expect(container.querySelector('.cell-flow.is-highlighted')).toBeNull();
   });
 });
 

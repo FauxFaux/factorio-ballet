@@ -38,6 +38,7 @@ export function CellSide({
   belt,
   onSearch,
   onSelect,
+  highlighted,
   exports = [],
   imports = [],
 }: {
@@ -48,6 +49,8 @@ export function CellSide({
   belt: Belt;
   onSearch: (search: string) => void;
   onSelect: (id: ResourceId) => void;
+  /** An interface resource being traced from its in-play details. */
+  highlighted?: ResourceId;
   exports?: ResourceId[];
   imports?: ResourceId[];
 }) {
@@ -85,7 +88,16 @@ export function CellSide({
         <p class="cell-none">—</p>
       ) : (
         ids.map((id, index) => (
-          <div key={id} class={forced.includes(id) ? 'cell-flow is-forced' : 'cell-flow'}>
+          <div
+            key={id}
+            class={[
+              'cell-flow',
+              forced.includes(id) && 'is-forced',
+              highlighted === id && 'is-highlighted',
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
             <ResourceButton id={id} onPick={() => pickResource(id)} />
             <span
               class="cell-forced"

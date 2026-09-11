@@ -28,6 +28,8 @@ export function InPlayConnectionsView({
   suggestion,
   onRecipeHover,
   onSearch,
+  onToggleRecipe,
+  onInterfaceHover,
 }: {
   id: ResourceId;
   connections: InternalConnections;
@@ -42,6 +44,8 @@ export function InPlayConnectionsView({
   suggestion?: BoundarySuggestion;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
+  onToggleRecipe: (recipe: string) => void;
+  onInterfaceHover: (resource: ResourceId | undefined) => void;
 }) {
   const resource = staticData.resources[id];
   const details = (
@@ -75,6 +79,9 @@ export function InPlayConnectionsView({
         inputRate={inputRate}
         outputRate={outputRate}
         onRecipeHover={onRecipeHover}
+        onToggleRecipe={onToggleRecipe}
+        onInterfaceHover={onInterfaceHover}
+        resource={id}
       />
     </div>
   );
@@ -199,12 +206,18 @@ function InPlayConnectionTable({
   inputRate,
   outputRate,
   onRecipeHover,
+  onToggleRecipe,
+  onInterfaceHover,
+  resource,
 }: {
   outputs: InternalFlow[];
   inputs: InternalFlow[];
   inputRate: number | undefined;
   outputRate: number | undefined;
   onRecipeHover: (recipe: string | undefined) => void;
+  onToggleRecipe: (recipe: string) => void;
+  onInterfaceHover: (resource: ResourceId | undefined) => void;
+  resource: ResourceId;
 }) {
   const outputFlows =
     inputRate === undefined
@@ -240,11 +253,23 @@ function InPlayConnectionTable({
           `--cell-in-play-used-by-row: ${rowCount + index + 3}`;
         return (
           <div class="cell-in-play-connection-row" key={index} style={gridRows}>
-            <ConnectionRecipeFlow flow={output} onRecipeHover={onRecipeHover} />
+            <ConnectionRecipeFlow
+              flow={output}
+              onRecipeHover={onRecipeHover}
+              onToggleRecipe={onToggleRecipe}
+              onInterfaceHover={onInterfaceHover}
+              resource={resource}
+            />
             <ConnectionRate flow={output} decimalPlaces={rateDecimalPlaces} />
             <ConnectionConsumptionBar flow={input} total={totalConsumption} />
             <ConnectionRate flow={input} decimalPlaces={rateDecimalPlaces} />
-            <ConnectionRecipeFlow flow={input} onRecipeHover={onRecipeHover} />
+            <ConnectionRecipeFlow
+              flow={input}
+              onRecipeHover={onRecipeHover}
+              onToggleRecipe={onToggleRecipe}
+              onInterfaceHover={onInterfaceHover}
+              resource={resource}
+            />
           </div>
         );
       })}
@@ -257,21 +282,36 @@ type ConnectionFlow = { recipe: string | undefined; rate: number; label?: '[inpu
 function ConnectionRecipeFlow({
   flow,
   onRecipeHover,
+  onToggleRecipe,
+  onInterfaceHover,
+  resource,
 }: {
   flow: ConnectionFlow | undefined;
   onRecipeHover: (recipe: string | undefined) => void;
+  onToggleRecipe: (recipe: string) => void;
+  onInterfaceHover: (resource: ResourceId | undefined) => void;
+  resource: ResourceId;
 }) {
   if (!flow) return <span class="cell-in-play-connection-recipe">—</span>;
   if (!flow.recipe) {
     return (
-      <span class="cell-in-play-connection-recipe cell-in-play-interface-flow">{flow.label}</span>
+      <span
+        class="cell-in-play-connection-recipe cell-in-play-interface-flow"
+        onMouseEnter={() => onInterfaceHover(resource)}
+        onMouseLeave={() => onInterfaceHover(undefined)}
+      >
+        {flow.label}
+      </span>
     );
   }
   const data = staticData.recipes[flow.recipe];
   return (
-    <span
-      class="cell-in-play-connection-recipe"
+    <button
+      type="button"
+      class="cell-in-play-connection-recipe cell-btn"
       title={`${fmt(flow.rate)}/s ${recipeName(flow.recipe)}`}
+      aria-label={`Toggle connections for ${recipeName(flow.recipe)}`}
+      onClick={() => onToggleRecipe(flow.recipe!)}
       onMouseEnter={() => onRecipeHover(flow.recipe)}
       onMouseLeave={() => onRecipeHover(undefined)}
     >
@@ -281,7 +321,7 @@ function ConnectionRecipeFlow({
         aria-hidden="true"
       />
       <span>{recipeName(flow.recipe)}</span>
-    </span>
+    </button>
   );
 }
 

@@ -23,6 +23,8 @@ export function InPlayRow({
   onToggleExport,
   onRecipeHover,
   onSearch,
+  onToggleRecipe,
+  onInterfaceHover,
   selected,
   onSelect,
 }: {
@@ -37,6 +39,8 @@ export function InPlayRow({
   onToggleExport?: (id: ResourceId) => void;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
+  onToggleRecipe: (recipe: string) => void;
+  onInterfaceHover: (resource: ResourceId | undefined) => void;
   selected?: ResourceId;
   onSelect: (id: ResourceId | undefined) => void;
 }) {
@@ -102,6 +106,8 @@ export function InPlayRow({
           onToggleExport={onToggleExport ? () => onToggleExport(selected) : undefined}
           onRecipeHover={onRecipeHover}
           onSearch={onSearch}
+          onToggleRecipe={onToggleRecipe}
+          onInterfaceHover={onInterfaceHover}
         />
       ) : null}
     </div>
@@ -172,6 +178,8 @@ function InPlayDetails({
   onToggleExport,
   onRecipeHover,
   onSearch,
+  onToggleRecipe,
+  onInterfaceHover,
 }: {
   id: ResourceId;
   recipes: string[];
@@ -184,6 +192,8 @@ function InPlayDetails({
   onToggleExport?: () => void;
   onRecipeHover: (recipe: string | undefined) => void;
   onSearch: (search: string) => void;
+  onToggleRecipe: (recipe: string) => void;
+  onInterfaceHover: (resource: ResourceId | undefined) => void;
 }) {
   const connections = useMemo(
     () => internalConnections(id, recipes, solution),
@@ -206,6 +216,8 @@ function InPlayDetails({
       solved={solution.complete}
       onRecipeHover={onRecipeHover}
       onSearch={onSearch}
+      onToggleRecipe={onToggleRecipe}
+      onInterfaceHover={onInterfaceHover}
     />
   );
 }

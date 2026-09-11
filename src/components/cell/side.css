@@ -33,6 +33,10 @@
   min-width: 0;
 }
 
+.cell-flow.is-highlighted {
+  background: var(--accent-bg);
+}
+
 .cell-forced {
   display: flex;
   align-items: center;
