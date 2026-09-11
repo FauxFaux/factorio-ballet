@@ -1,4 +1,5 @@
 import './rail-blueprints.css';
+import { buildRailBrick, encodeBlueprintDocument } from '../bp/rail-blueprint.ts';
 import { NO_CHOICE } from '../data/index.ts';
 import type { Solution } from '../solve/index.ts';
 import type { ResourceId } from '../types.ts';
@@ -23,6 +24,8 @@ function stationResources(direction: 'input' | 'output', count: number): Resourc
 
 /** A standalone rail-brick blueprint sized from the station counts in URL state. */
 export function RailBlueprints({ size: [inputCount, outputCount] }: { size: [number, number] }) {
+  const blueprint = encodeBlueprintDocument(buildRailBrick(inputCount, outputCount));
+
   return (
     <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">
       <h2 id="rail-blueprints-title">Rail blueprints</h2>
@@ -39,6 +42,10 @@ export function RailBlueprints({ size: [inputCount, outputCount] }: { size: [num
         progress={0}
         stackedStations={false}
       />
+      <label class="rail-blueprints-export">
+        Blueprint
+        <textarea readOnly rows={6} value={blueprint} />
+      </label>
     </section>
   );
 }

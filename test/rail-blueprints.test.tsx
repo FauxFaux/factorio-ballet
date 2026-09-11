@@ -2,6 +2,8 @@
 
 import { render, screen } from '@testing-library/preact';
 import { describe, expect, it } from 'vitest';
+import { decodeDocument } from '../src/bp/decode.ts';
+import { buildRailGraph } from '../src/bp/rail.ts';
 import { RailBlueprints } from '../src/components/rail-blueprints.tsx';
 
 describe('RailBlueprints', () => {
@@ -16,5 +18,21 @@ describe('RailBlueprints', () => {
     expect(container.querySelector('.cell-radar-path')?.getAttribute('d')).not.toContain(
       'M 4 13 c 0 6, 4 7, 4 11 l 0 80',
     );
+
+    const encoded = screen.getByRole<HTMLTextAreaElement>('textbox', { name: 'Blueprint' }).value;
+    const document = decodeDocument(encoded);
+    expect(document).toHaveProperty('blueprint.label', '3 input, 2 output rail brick');
+    if (!('blueprint' in document)) throw new Error('expected blueprint');
+
+    const graph = buildRailGraph(document.blueprint.entities ?? []);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(12);
+    expect(
+      document.blueprint.entities?.filter(
+        (entity) =>
+          entity.name === 'straight-rail' &&
+          (entity.direction ?? 0) === 0 &&
+          [27, 39, 51, 161, 173].includes(entity.position.x),
+      ),
+    ).not.toHaveLength(0);
   });
 });

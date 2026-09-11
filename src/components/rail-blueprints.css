@@ -5,3 +5,23 @@
 .rail-blueprints > p {
   margin: 0;
 }
+
+.rail-blueprints-export {
+  display: grid;
+  gap: 4px;
+  margin-top: 1rem;
+  font-size: 0.7778rem;
+}
+
+.rail-blueprints-export textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(100vw - 24px);
+  font-family: var(--mono);
+  font-size: 0.6667rem;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  resize: vertical;
+}
