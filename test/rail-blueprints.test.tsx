@@ -2,7 +2,7 @@
 
 import { fireEvent, render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';
 import { buildRailGraph, findStackedRailLayout } from '../src/bp/rail.ts';
 import { RailBlueprints } from '../src/components/rail-blueprints.tsx';
@@ -35,6 +35,23 @@ describe('RailBlueprints', () => {
           [27, 39, 51, 161, 173].includes(entity.position.x),
       ),
     ).not.toHaveLength(0);
+  });
+
+  it('copies the blueprint and clears its confirmation when the pointer leaves', () => {
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    const { container } = render(<RailBlueprints size={[3, 2]} onSizeChange={() => [3, 2]} />);
+    const view = within(container as HTMLElement);
+
+    const copy = view.getByRole('button', { name: 'Copy' });
+    fireEvent.click(copy);
+
+    expect(writeText).toHaveBeenCalledWith(
+      view.getByRole<HTMLTextAreaElement>('textbox', { name: 'Blueprint' }).value,
+    );
+    expect(view.getByRole('button', { name: 'Copied!' })).toBeTruthy();
+
+    fireEvent.mouseOut(copy);
+    expect(view.getByRole('button', { name: 'Copy' })).toBeTruthy();
   });
 
   it('changes either station count with its ticked slider', () => {

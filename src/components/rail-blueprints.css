@@ -73,6 +73,37 @@
   font-size: 0.7778rem;
 }
 
+.rail-blueprints-export-header {
+  display: flex;
+  gap: 0.5556rem;
+  align-items: center;
+}
+
+.rail-blueprints-copy {
+  display: inline-flex;
+  gap: 0.2222rem;
+  align-items: center;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 0.7778rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.rail-blueprints-copy:hover {
+  background: var(--accent-bg);
+}
+
+.rail-blueprints-copy svg {
+  width: 1em;
+  height: 1em;
+}
+
 .rail-blueprints-export textarea {
   box-sizing: border-box;
   width: 100%;

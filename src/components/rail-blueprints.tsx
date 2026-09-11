@@ -1,4 +1,6 @@
 import './rail-blueprints.css';
+import { CopyIcon } from '@primer/octicons-react';
+import { useState } from 'preact/hooks';
 import { toWords } from 'ts-number-to-words/src/index.ts';
 import {
   buildRailBrick,
@@ -15,6 +17,7 @@ export function RailBlueprints({
   size: [number, number];
   onSizeChange: (update: (size: [number, number]) => [number, number]) => void;
 }) {
+  const [copied, setCopied] = useState(false);
   const inputCount = Math.abs(signedInputCount);
   const outputCount = Math.abs(signedOutputCount);
   const inputStacked = signedInputCount < 0;
@@ -101,10 +104,31 @@ export function RailBlueprints({
         </datalist>
       </fieldset>
       <RailBlueprintPreview size={[signedInputCount, outputCount]} />
-      <label class="rail-blueprints-export">
-        Blueprint
-        <textarea readOnly rows={6} value={blueprint} />
-      </label>
+      <div class="rail-blueprints-export">
+        <div class="rail-blueprints-export-header">
+          <span>Blueprint</span>
+          <button
+            class="rail-blueprints-copy"
+            type="button"
+            onClick={() => {
+              setCopied(true);
+              void navigator.clipboard.writeText(blueprint).catch(() => undefined);
+            }}
+            onMouseOut={(event) => {
+              if (!event.currentTarget.contains(event.relatedTarget as Node)) setCopied(false);
+            }}
+          >
+            {copied ? (
+              'Copied!'
+            ) : (
+              <>
+                <CopyIcon aria-hidden="true" /> Copy
+              </>
+            )}
+          </button>
+        </div>
+        <textarea aria-label="Blueprint" readOnly rows={6} value={blueprint} />
+      </div>
     </section>
   );
 }
