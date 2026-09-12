@@ -13,6 +13,10 @@ const blueprint: Blueprint = {
   entities: [
     { entity_number: 1, name: 'straight-rail', position: { x: 10, y: 20 } },
     { entity_number: 2, name: 'curved-rail-a', position: { x: 30, y: 40 } },
+    { entity_number: 3, name: 'big-electric-pole', position: { x: 40, y: 50 } },
+    { entity_number: 4, name: 'unrecognised-entity', position: { x: 60.5, y: 60.5 } },
+    { entity_number: 5, name: 'rail-signal', position: { x: 70.5, y: 70.5 } },
+    { entity_number: 6, name: 'rail-chain-signal', position: { x: 80.5, y: 80.5 } },
   ],
 };
 
@@ -31,6 +35,35 @@ describe('RailBlueprintPreview', () => {
     expect(container.querySelector('[data-rail-entity="2"]')?.getAttribute('d')).toBe(
       'M 30 42 Q 30 40 29 37.5',
     );
+
+    const pole = container.querySelector('[data-blueprint-entity="3"]');
+    expect(pole?.classList).toContain('rail-blueprint-preview-entity-known');
+    expect(pole?.getAttribute('x')).toBe('39');
+    expect(pole?.getAttribute('y')).toBe('49');
+    expect(pole?.getAttribute('width')).toBe('2');
+    expect(pole?.getAttribute('height')).toBe('2');
+
+    const unknown = container.querySelector('[data-blueprint-entity="4"]');
+    expect(unknown?.classList).toContain('rail-blueprint-preview-entity-unknown');
+    expect(unknown?.getAttribute('x')).toBe('60');
+    expect(unknown?.getAttribute('y')).toBe('60');
+    expect(unknown?.getAttribute('width')).toBe('1');
+    expect(unknown?.getAttribute('height')).toBe('1');
+
+    const regularSignal = container.querySelector('[data-blueprint-entity="5"]');
+    expect(regularSignal?.tagName).toBe('circle');
+    expect(regularSignal?.classList).toContain('rail-blueprint-preview-signal-regular');
+    expect(regularSignal?.getAttribute('cx')).toBe('70.5');
+    expect(regularSignal?.getAttribute('cy')).toBe('70.5');
+    expect(regularSignal?.getAttribute('r')).toBe('1');
+
+    const chainSignal = container.querySelector('[data-blueprint-entity="6"]');
+    expect(chainSignal?.tagName).toBe('circle');
+    expect(chainSignal?.classList).toContain('rail-blueprint-preview-signal-chain');
+    expect(chainSignal?.getAttribute('cx')).toBe('80.5');
+    expect(chainSignal?.getAttribute('cy')).toBe('80.5');
+    expect(chainSignal?.getAttribute('r')).toBe('1');
+    expect(chainSignal?.nextElementSibling).toBeNull();
   });
 
   it('returns an empty canvas for a blueprint without rail entities', () => {

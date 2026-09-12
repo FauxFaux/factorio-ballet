@@ -69,6 +69,32 @@
   stroke-linejoin: round;
 }
 
+.rail-blueprint-preview-entity {
+  stroke-width: 0.3;
+}
+
+.rail-blueprint-preview-entity-known {
+  fill: #163a5f;
+  stroke: #315b85;
+}
+
+.rail-blueprint-preview-entity-unknown {
+  fill: #8a4515;
+  stroke: #bd6a2d;
+}
+
+.rail-blueprint-preview-signal {
+  stroke: none;
+}
+
+.rail-blueprint-preview-signal-regular {
+  fill: #00f060;
+}
+
+.rail-blueprint-preview-signal-chain {
+  fill: #008cff;
+}
+
 .rail-blueprint-preview-piece-bed {
   stroke: #4e5662;
   stroke-width: 2.4;

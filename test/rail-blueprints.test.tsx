@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen, within } from '@testing-library/preact';
+import { fireEvent, render, screen, waitFor, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { describe, expect, it, vi } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';
@@ -32,6 +32,17 @@ describe('RailBlueprints', () => {
     expect(entityPreview.getAttribute('viewBox')).toBe('0 0 192 120');
     expect(entityPreview.querySelectorAll('.rail-blueprint-preview-piece')).toHaveLength(
       graph.pieces.length,
+    );
+    const signalCount =
+      document.blueprint.entities?.filter(
+        ({ name }) => name === 'rail-signal' || name === 'rail-chain-signal',
+      ).length ?? 0;
+    expect(entityPreview.querySelectorAll('.rail-blueprint-preview-entity-known')).toHaveLength(
+      (document.blueprint.entities?.length ?? 0) - graph.pieces.length - signalCount,
+    );
+    expect(entityPreview.querySelector('.rail-blueprint-preview-entity-unknown')).toBeNull();
+    expect(entityPreview.querySelectorAll('.rail-blueprint-preview-signal')).toHaveLength(
+      signalCount,
     );
     expect(
       entityPreview
@@ -115,7 +126,7 @@ describe('RailBlueprints', () => {
     ).toBeTruthy();
   });
 
-  it('stores stacked inputs as negative counts and previews their stations vertically', () => {
+  it('stores stacked inputs as negative counts and previews their stations vertically', async () => {
     function TestRailBlueprints() {
       const [size, setSize] = useState<[number, number]>([3, 2]);
       return <RailBlueprints size={size} onSizeChange={setSize} />;
@@ -142,6 +153,11 @@ describe('RailBlueprints', () => {
     expect(path).toContain('M 60 100 l 0 12 c 0 7, 8 11, 16 11');
     expect(path).not.toContain('M 132 110 l 0 2 c 0 7, -8 11, -16 11');
 
+    await waitFor(() =>
+      expect(
+        decodeDocument(view.getByRole<HTMLTextAreaElement>('textbox', { name: 'Blueprint' }).value),
+      ).toHaveProperty('blueprint.label', '3 stacked input, 2 output rail brick'),
+    );
     const encoded = view.getByRole<HTMLTextAreaElement>('textbox', { name: 'Blueprint' }).value;
     const document = decodeDocument(encoded);
     expect(document).toHaveProperty('blueprint.label', '3 stacked input, 2 output rail brick');

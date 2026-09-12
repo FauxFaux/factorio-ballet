@@ -1,14 +1,22 @@
 import './rail-blueprints.css';
 import { CopyIcon } from '@primer/octicons-react';
-import { useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { toWords } from 'ts-number-to-words/src/index.ts';
 import {
   buildRailBrick,
   encodeBlueprintDocument,
   RAIL_BRICK_MAX_STATIONS,
 } from '../bp/rail-blueprint.ts';
+import type { BlueprintDocument } from '../bp/decode.ts';
 import { RailBlueprintPreview } from './rail-blueprint-preview.tsx';
 import { RailBlueprintSchematicPreview } from './rail-blueprint-schematic-preview.tsx';
+import { debounce } from '../ts.ts';
+
+const updateBlueprint = debounce(
+  (document: BlueprintDocument, setBlueprint: (blueprint: string) => void) =>
+    setBlueprint(encodeBlueprintDocument(document)),
+  20,
+);
 
 /** A standalone rail-brick blueprint sized from the station counts in URL state. */
 export function RailBlueprints({
@@ -22,12 +30,13 @@ export function RailBlueprints({
   const inputCount = Math.abs(signedInputCount);
   const outputCount = Math.abs(signedOutputCount);
   const inputStacked = signedInputCount < 0;
-  const blueprintDocument = buildRailBrick(
-    inputStacked ? signedInputCount : inputCount,
-    outputCount,
+  const blueprintDocument = useMemo(
+    () => buildRailBrick(inputStacked ? signedInputCount : inputCount, outputCount),
+    [inputCount, inputStacked, outputCount, signedInputCount],
   );
   if (!('blueprint' in blueprintDocument)) throw new Error('rail brick builder returned a book');
-  const blueprint = encodeBlueprintDocument(blueprintDocument);
+  const [blueprint, setBlueprint] = useState(() => encodeBlueprintDocument(blueprintDocument));
+  useEffect(() => updateBlueprint(blueprintDocument, setBlueprint), [blueprintDocument]);
   const setCount = (index: 0 | 1, count: number) =>
     onSizeChange(([inputs, outputs]) => {
       const currentCount = index === 0 ? inputs : outputs;
