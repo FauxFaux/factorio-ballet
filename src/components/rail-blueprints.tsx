@@ -30,7 +30,11 @@ export function RailBlueprints({
       const otherCount = Math.abs(index === 0 ? outputs : inputs);
       const currentStacked = index === 0 && currentCount < 0;
       const otherStacked = index === 1 && inputs < 0;
-      const maximum = currentStacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - otherCount;
+      const maximum = currentStacked
+        ? 9
+        : otherStacked
+          ? 11
+          : Math.min(RAIL_BRICK_MAX_STATIONS - 1, RAIL_BRICK_MAX_STATIONS - otherCount);
       const constrainedCount = Math.max(currentStacked ? 2 : 0, Math.min(count, maximum));
       const signedCount = currentStacked ? -constrainedCount : constrainedCount;
       return index === 0 ? [signedCount, Math.abs(outputs)] : [inputs, signedCount];
@@ -41,7 +45,7 @@ export function RailBlueprints({
       const outputCount = Math.abs(outputs);
       const constrainedCount = stacked
         ? Math.max(2, Math.min(count, 9))
-        : Math.min(count, RAIL_BRICK_MAX_STATIONS - outputCount);
+        : Math.min(count, RAIL_BRICK_MAX_STATIONS - 1, RAIL_BRICK_MAX_STATIONS - outputCount);
       const signedCount = stacked ? -constrainedCount : constrainedCount;
       return [signedCount, stacked ? Math.min(outputCount, 11) : outputCount];
     });
@@ -86,7 +90,7 @@ export function RailBlueprints({
                 type="range"
                 aria-label={`${side} stations: ${count}`}
                 min={stacked ? 2 : 0}
-                max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS}
+                max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - 1}
                 step={1}
                 value={count}
                 list="rail-blueprints-count-ticks"

@@ -66,16 +66,17 @@ describe('RailBlueprints', () => {
     const input = view.getByRole<HTMLInputElement>('slider', { name: 'Input stations: 3' });
     const output = view.getByRole<HTMLInputElement>('slider', { name: 'Output stations: 2' });
     expect(input.min).toBe('0');
-    expect(input.max).toBe('16');
+    expect(input.max).toBe('15');
     expect(input.getAttribute('list')).toBe('rail-blueprints-count-ticks');
     expect(container.querySelectorAll('#rail-blueprints-count-ticks option')).toHaveLength(17);
 
     fireEvent.input(output, { target: { value: '0' } });
-    fireEvent.input(input, { target: { value: '16' } });
+    fireEvent.input(input, { target: { value: '15' } });
 
     expect(
-      view.getByText('Standard rail brick with sixteen input and zero output stations.'),
+      view.getByText('Standard rail brick with fifteen input and zero output stations.'),
     ).toBeTruthy();
+    expect(input.max).toBe('15');
   });
 
   it('limits the combined input and output station count to sixteen', () => {
