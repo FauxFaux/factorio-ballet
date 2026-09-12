@@ -220,7 +220,10 @@ export function toRailPiece(entity: RailEntity): RailPiece {
 
   // A half-diagonal end can accept either adjacent curve sub-type. Their blueprint anchors differ
   // by one tile, so both keys describe one logical end rather than two ends.
-  if (entity.name === 'half-diagonal-rail' && direction === 4) {
+  if (entity.name === 'half-diagonal-rail' && direction === 2) {
+    ends[0].connectionPoints.push({ x2: x2 + 2, y2: y2 - 3 });
+    ends[1].connectionPoints.push({ x2: x2 - 2, y2: y2 + 3 });
+  } else if (entity.name === 'half-diagonal-rail' && direction === 4) {
     ends[0].connectionPoints.push({ x2: x2 - 5, y2: y2 + 2 });
     ends[1].connectionPoints.push({ x2: x2 + 3, y2: y2 - 2 });
   } else if (entity.name === 'half-diagonal-rail' && direction === 6) {

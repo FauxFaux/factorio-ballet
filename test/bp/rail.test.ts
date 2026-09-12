@@ -90,8 +90,8 @@ describe('blueprint rail geometry', () => {
     const graph = buildRailGraph(jsonFixture('unplanned-rail-ne-half'));
 
     expect(graph.pieces).toHaveLength(16);
-    expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(5);
-    expect(graph.nodes.filter((node) => node.entityNumbers.length === 2)).toHaveLength(12);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(3);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 2)).toHaveLength(13);
     expect(graph.nodes.filter((node) => node.entityNumbers.length === 3)).toHaveLength(1);
     expect(
       graph.nodes.some((node) => node.entityNumbers.includes(5) && node.entityNumbers.includes(8)),
@@ -100,6 +100,20 @@ describe('blueprint rail geometry', () => {
       graph.nodes.some(
         (node) => node.entityNumbers.includes(11) && node.entityNumbers.includes(14),
       ),
+    ).toBe(true);
+    expect(
+      graph.nodes.some((node) => node.entityNumbers.includes(8) && node.entityNumbers.includes(11)),
+    ).toBe(true);
+  });
+
+  test('joins both curve sub-types through a gentle quarter-circle', () => {
+    const graph = buildRailGraph(jsonFixture('rail-gentle-curve'));
+
+    expect(graph.pieces).toHaveLength(9);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(2);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 2)).toHaveLength(8);
+    expect(
+      graph.nodes.some((node) => node.entityNumbers.includes(6) && node.entityNumbers.includes(7)),
     ).toBe(true);
   });
 

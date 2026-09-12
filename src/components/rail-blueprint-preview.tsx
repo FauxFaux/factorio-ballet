@@ -48,6 +48,19 @@ function isSignalEntity(entity: Entity): boolean {
   return entity.name === 'rail-signal' || entity.name === 'rail-chain-signal';
 }
 
+function beltEntityClass(entity: Entity): string | undefined {
+  if (entity.name === 'splitter' || entity.name.endsWith('-splitter')) {
+    return 'rail-blueprint-preview-entity-splitter';
+  }
+  if (entity.name === 'underground-belt' || entity.name.endsWith('-underground-belt')) {
+    return 'rail-blueprint-preview-entity-underground-belt';
+  }
+  if (staticData.belts[entity.name]) {
+    return 'rail-blueprint-preview-entity-belt';
+  }
+  return undefined;
+}
+
 function railPoint(piece: RailPiece, end: 0 | 1): { x: number; y: number } {
   const point = piece.ends[end].connectionPoints[0];
   return { x: point.x2 / 2, y: point.y2 / 2 };
@@ -132,7 +145,7 @@ export function RailBlueprintPreview({ blueprint }: { blueprint: Blueprint }) {
           <g transform={transform}>
             {rectangles.map(({ entity, known, x, y, width, height }) => (
               <rect
-                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'}`}
+                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'} ${beltEntityClass(entity) ?? ''}`}
                 key={`entity-${entity.entity_number}`}
                 x={x}
                 y={y}
