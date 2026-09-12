@@ -127,3 +127,40 @@
   border-radius: 4px;
   resize: vertical;
 }
+
+.rail-blueprints-import {
+  margin-top: 2rem;
+}
+
+.rail-blueprints-import h2 {
+  margin-bottom: 0.4444rem;
+}
+
+.rail-blueprints-import-input {
+  display: grid;
+  gap: 4px;
+  font-size: 0.7778rem;
+}
+
+.rail-blueprints-import-input textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: calc(100vw - 24px);
+  font-family: var(--mono);
+  font-size: 0.6667rem;
+  color: inherit;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.rail-blueprints-import-error {
+  margin: 0.4444rem 0 0;
+  color: var(--error, #f66);
+  overflow-wrap: anywhere;
+}
+
+.rail-blueprints-import .rail-blueprint-preview {
+  margin-top: 1rem;
+}

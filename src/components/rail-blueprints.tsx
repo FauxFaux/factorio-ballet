@@ -7,7 +7,7 @@ import {
   encodeBlueprintDocument,
   RAIL_BRICK_MAX_STATIONS,
 } from '../bp/rail-blueprint.ts';
-import type { BlueprintDocument } from '../bp/decode.ts';
+import { decode, type BlueprintDocument } from '../bp/decode.ts';
 import { RailBlueprintPreview } from './rail-blueprint-preview.tsx';
 import { RailBlueprintSchematicPreview } from './rail-blueprint-schematic-preview.tsx';
 import { debounce } from '../ts.ts';
@@ -27,6 +27,7 @@ export function RailBlueprints({
   onSizeChange: (update: (size: [number, number]) => [number, number]) => void;
 }) {
   const [copied, setCopied] = useState(false);
+  const [previewString, setPreviewString] = useState('');
   const inputCount = Math.abs(signedInputCount);
   const outputCount = Math.abs(signedOutputCount);
   const inputStacked = signedInputCount < 0;
@@ -37,6 +38,14 @@ export function RailBlueprints({
   if (!('blueprint' in blueprintDocument)) throw new Error('rail brick builder returned a book');
   const [blueprint, setBlueprint] = useState(() => encodeBlueprintDocument(blueprintDocument));
   useEffect(() => updateBlueprint(blueprintDocument, setBlueprint), [blueprintDocument]);
+  const preview = useMemo(() => {
+    if (previewString === '') return undefined;
+    try {
+      return { blueprint: decode(previewString) };
+    } catch (error) {
+      return { error: error instanceof Error ? error.message : String(error) };
+    }
+  }, [previewString]);
   const setCount = (index: 0 | 1, count: number) =>
     onSizeChange(([inputs, outputs]) => {
       const currentCount = index === 0 ? inputs : outputs;
@@ -66,89 +75,114 @@ export function RailBlueprints({
   const inputDescription = `${inputStacked ? 'stacked ' : ''}input`;
 
   return (
-    <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">
-      <h2 id="rail-blueprints-title">Rail blueprints</h2>
-      <p>
-        Standard rail brick with {toWords(inputCount)} {inputDescription} and {toWords(outputCount)}{' '}
-        output stations.
-      </p>
-      <fieldset class="rail-blueprints-counts">
-        <legend>Station counts</legend>
-        {(['Input', 'Output'] as const).map((side, index) => {
-          const count = index === 0 ? inputCount : outputCount;
-          const stacked = index === 0 && inputStacked;
-          const otherStacked = index === 1 && inputStacked;
-          return (
-            <div class="rail-blueprints-count" key={side}>
-              <div class="rail-blueprints-count-header">
-                <span>
-                  {side} stations: {count}
-                </span>
-                {index === 0 && (
-                  <label
-                    class={`rail-blueprints-stacked${!stacked && count >= 6 ? ' rail-blueprints-stacked-recommended' : ''}`}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={stacked}
-                      onChange={(event) =>
-                        setInputStacked((event.currentTarget as HTMLInputElement).checked)
-                      }
-                    />
-                    Stacked
-                  </label>
-                )}
+    <>
+      <section class="rail-blueprints" aria-labelledby="rail-blueprints-title">
+        <h2 id="rail-blueprints-title">Rail blueprints</h2>
+        <p>
+          Standard rail brick with {toWords(inputCount)} {inputDescription} and{' '}
+          {toWords(outputCount)} output stations.
+        </p>
+        <fieldset class="rail-blueprints-counts">
+          <legend>Station counts</legend>
+          {(['Input', 'Output'] as const).map((side, index) => {
+            const count = index === 0 ? inputCount : outputCount;
+            const stacked = index === 0 && inputStacked;
+            const otherStacked = index === 1 && inputStacked;
+            return (
+              <div class="rail-blueprints-count" key={side}>
+                <div class="rail-blueprints-count-header">
+                  <span>
+                    {side} stations: {count}
+                  </span>
+                  {index === 0 && (
+                    <label
+                      class={`rail-blueprints-stacked${!stacked && count >= 6 ? ' rail-blueprints-stacked-recommended' : ''}`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={stacked}
+                        onChange={(event) =>
+                          setInputStacked((event.currentTarget as HTMLInputElement).checked)
+                        }
+                      />
+                      Stacked
+                    </label>
+                  )}
+                </div>
+                <input
+                  type="range"
+                  aria-label={`${side} stations: ${count}`}
+                  min={stacked ? 2 : 0}
+                  max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - 1}
+                  step={1}
+                  value={count}
+                  list="rail-blueprints-count-ticks"
+                  onInput={(event) =>
+                    setCount(index as 0 | 1, Number((event.target as HTMLInputElement).value))
+                  }
+                />
               </div>
-              <input
-                type="range"
-                aria-label={`${side} stations: ${count}`}
-                min={stacked ? 2 : 0}
-                max={stacked ? 9 : otherStacked ? 11 : RAIL_BRICK_MAX_STATIONS - 1}
-                step={1}
-                value={count}
-                list="rail-blueprints-count-ticks"
-                onInput={(event) =>
-                  setCount(index as 0 | 1, Number((event.target as HTMLInputElement).value))
-                }
-              />
-            </div>
-          );
-        })}
-        <datalist id="rail-blueprints-count-ticks">
-          {Array.from({ length: RAIL_BRICK_MAX_STATIONS + 1 }, (_, count) => (
-            <option value={count} key={count} />
-          ))}
-        </datalist>
-      </fieldset>
-      <div class="rail-blueprints-previews">
-        <RailBlueprintSchematicPreview size={[signedInputCount, outputCount]} />
-        <RailBlueprintPreview blueprint={blueprintDocument.blueprint} />
-      </div>
-      <div class="rail-blueprints-export">
-        <div class="rail-blueprints-export-header">
-          <span>Blueprint</span>
-          <button
-            class="rail-blueprints-copy"
-            type="button"
-            onClick={() => {
-              setCopied(true);
-              void navigator.clipboard.writeText(blueprint).catch(() => undefined);
-            }}
-            onMouseOut={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget as Node)) setCopied(false);
-            }}
-          >
-            {copied ? (
-              'Copied!'
-            ) : (
-              <>
-                <CopyIcon aria-hidden="true" /> Copy
-              </>
-            )}
-          </button>
+            );
+          })}
+          <datalist id="rail-blueprints-count-ticks">
+            {Array.from({ length: RAIL_BRICK_MAX_STATIONS + 1 }, (_, count) => (
+              <option value={count} key={count} />
+            ))}
+          </datalist>
+        </fieldset>
+        <div class="rail-blueprints-previews">
+          <RailBlueprintSchematicPreview size={[signedInputCount, outputCount]} />
+          <RailBlueprintPreview blueprint={blueprintDocument.blueprint} />
         </div>
-        <textarea aria-label="Blueprint" readOnly rows={6} value={blueprint} />
-      </div>
-    </section>
+        <div class="rail-blueprints-export">
+          <div class="rail-blueprints-export-header">
+            <span>Blueprint</span>
+            <button
+              class="rail-blueprints-copy"
+              type="button"
+              onClick={() => {
+                setCopied(true);
+                void navigator.clipboard.writeText(blueprint).catch(() => undefined);
+              }}
+              onMouseOut={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget as Node)) setCopied(false);
+              }}
+            >
+              {copied ? (
+                'Copied!'
+              ) : (
+                <>
+                  <CopyIcon aria-hidden="true" /> Copy
+                </>
+              )}
+            </button>
+          </div>
+          <textarea aria-label="Blueprint" readOnly rows={6} value={blueprint} />
+        </div>
+      </section>
+      <section
+        class="rail-blueprints rail-blueprints-import"
+        aria-labelledby="rail-blueprints-import-title"
+      >
+        <h2 id="rail-blueprints-import-title">Blueprint preview</h2>
+        <label class="rail-blueprints-import-input">
+          Blueprint string
+          <textarea
+            aria-label="Blueprint string to preview"
+            value={previewString}
+            onInput={(event) => setPreviewString(event.currentTarget.value)}
+            placeholder="Paste a Factorio blueprint string"
+            rows={6}
+          />
+        </label>
+        {preview && 'error' in preview ? (
+          <p class="rail-blueprints-import-error" role="alert">
+            Could not decode blueprint: {preview.error}
+          </p>
+        ) : preview ? (
+          <RailBlueprintPreview blueprint={preview.blueprint} />
+        ) : null}
+      </section>
+    </>
   );
 }

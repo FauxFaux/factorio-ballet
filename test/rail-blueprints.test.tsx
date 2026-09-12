@@ -4,6 +4,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/pre
 import { useState } from 'preact/hooks';
 import { describe, expect, it, vi } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';
+import { encodeBlueprintDocument } from '../src/bp/rail-blueprint.ts';
 import { buildRailGraph, findStackedRailLayout } from '../src/bp/rail.ts';
 import { RailBlueprints } from '../src/components/rail-blueprints.tsx';
 
@@ -80,6 +81,32 @@ describe('RailBlueprints', () => {
 
     fireEvent.mouseOut(copy);
     expect(view.getByRole('button', { name: 'Copy' })).toBeTruthy();
+  });
+
+  it('renders a pasted blueprint and reports decoding failures', () => {
+    const { container } = render(<RailBlueprints size={[3, 2]} onSizeChange={() => [3, 2]} />);
+    const view = within(container as HTMLElement);
+    const pasted = view.getByRole<HTMLTextAreaElement>('textbox', {
+      name: 'Blueprint string to preview',
+    });
+    const blueprint = encodeBlueprintDocument({
+      blueprint: {
+        item: 'blueprint',
+        version: 0,
+        label: 'Pasted blueprint',
+        entities: [],
+      },
+    });
+
+    fireEvent.input(pasted, { target: { value: blueprint } });
+    expect(
+      view.getByRole('img', { name: 'Rail blueprint entities: Pasted blueprint' }),
+    ).toBeTruthy();
+
+    fireEvent.input(pasted, { target: { value: 'not a blueprint' } });
+    expect(view.getByRole('alert').textContent).toContain(
+      'Could not decode blueprint: unsupported version n',
+    );
   });
 
   it('changes either station count with its ticked slider', () => {
