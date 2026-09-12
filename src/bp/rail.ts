@@ -176,12 +176,18 @@ export function isRailEntity(entity: Entity): entity is RailEntity {
 export function toRailPiece(entity: RailEntity): RailPiece {
   const direction = entity.direction ?? 0;
   const offsets = endpointOffsets[`${entity.name}:${direction}`];
-  if (!offsets) throw new Error(`unsupported rail geometry: ${entity.name} direction ${direction}`);
+  if (!offsets) {
+    throw new Error(
+      `unsupported rail geometry: ${entity.name} direction ${direction} at (${entity.position.x}, ${entity.position.y})`,
+    );
+  }
 
   const x2 = entity.position.x * 2;
   const y2 = entity.position.y * 2;
   if (!Number.isInteger(x2) || !Number.isInteger(y2)) {
-    throw new Error(`rail ${entity.entity_number} is not positioned on the half-tile grid`);
+    throw new Error(
+      `rail ${entity.entity_number} at (${entity.position.x}, ${entity.position.y}) is not positioned on the half-tile grid`,
+    );
   }
 
   const ends = offsets.map(([dx, dy]) => ({

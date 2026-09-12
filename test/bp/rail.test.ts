@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { decode, type Entity } from '../../src/bp/decode.ts';
-import { buildRailGraph, findRailAlignment, isRailEntity } from '../../src/bp/rail.ts';
+import { buildRailGraph, findRailAlignment, isRailEntity, toRailPiece } from '../../src/bp/rail.ts';
 
 const fixturePaths = {
   '3x-train-layout': 'docs/blueprints/3x-train-layout.base64',
@@ -40,6 +40,25 @@ const overlayCount = (
 };
 
 describe('blueprint rail geometry', () => {
+  test('includes the entity location in rail conversion errors', () => {
+    expect(() =>
+      toRailPiece({
+        entity_number: 7,
+        name: 'straight-rail',
+        position: { x: 1, y: 2 },
+        direction: 2,
+      }),
+    ).toThrow('unsupported rail geometry: straight-rail direction 2 at (1, 2)');
+
+    expect(() =>
+      toRailPiece({
+        entity_number: 8,
+        name: 'straight-rail',
+        position: { x: 1.25, y: 2 },
+      }),
+    ).toThrow('rail 8 at (1.25, 2) is not positioned on the half-tile grid');
+  });
+
   test('closes the smallest curved-rail circle at every end', () => {
     const graph = buildRailGraph(fixture('rail-circle').entities ?? []);
 
