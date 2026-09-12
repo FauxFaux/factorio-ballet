@@ -8,6 +8,7 @@ import {
   RAIL_BRICK_MAX_STATIONS,
 } from '../bp/rail-blueprint.ts';
 import { RailBlueprintPreview } from './rail-blueprint-preview.tsx';
+import { RailBlueprintSchematicPreview } from './rail-blueprint-schematic-preview.tsx';
 
 /** A standalone rail-brick blueprint sized from the station counts in URL state. */
 export function RailBlueprints({
@@ -21,9 +22,12 @@ export function RailBlueprints({
   const inputCount = Math.abs(signedInputCount);
   const outputCount = Math.abs(signedOutputCount);
   const inputStacked = signedInputCount < 0;
-  const blueprint = encodeBlueprintDocument(
-    buildRailBrick(inputStacked ? signedInputCount : inputCount, outputCount),
+  const blueprintDocument = buildRailBrick(
+    inputStacked ? signedInputCount : inputCount,
+    outputCount,
   );
+  if (!('blueprint' in blueprintDocument)) throw new Error('rail brick builder returned a book');
+  const blueprint = encodeBlueprintDocument(blueprintDocument);
   const setCount = (index: 0 | 1, count: number) =>
     onSizeChange(([inputs, outputs]) => {
       const currentCount = index === 0 ? inputs : outputs;
@@ -107,7 +111,10 @@ export function RailBlueprints({
           ))}
         </datalist>
       </fieldset>
-      <RailBlueprintPreview size={[signedInputCount, outputCount]} />
+      <div class="rail-blueprints-previews">
+        <RailBlueprintSchematicPreview size={[signedInputCount, outputCount]} />
+        <RailBlueprintPreview blueprint={blueprintDocument.blueprint} />
+      </div>
       <div class="rail-blueprints-export">
         <div class="rail-blueprints-export-header">
           <span>Blueprint</span>

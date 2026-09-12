@@ -1,5 +1,6 @@
 .rail-blueprint-preview {
-  margin: 10px 0 0;
+  min-width: 0;
+  margin: 0;
   padding-top: 8px;
   border-top: 1px solid var(--border);
 }
@@ -34,6 +35,10 @@
   margin: 0 auto;
 }
 
+.rail-blueprint-preview-entities {
+  aspect-ratio: 192 / 120;
+}
+
 .rail-blueprint-preview-floor {
   fill: var(--bg);
   stroke: var(--border);
@@ -55,4 +60,21 @@
   fill: var(--text-h);
   stroke: var(--bg);
   stroke-width: 1;
+}
+
+.rail-blueprint-preview-piece-bed,
+.rail-blueprint-preview-piece {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.rail-blueprint-preview-piece-bed {
+  stroke: #4e5662;
+  stroke-width: 2.4;
+}
+
+.rail-blueprint-preview-piece {
+  stroke: #b8c1cc;
+  stroke-width: 0.8;
 }

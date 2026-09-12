@@ -1,0 +1,162 @@
+import './rail-blueprint-preview.css';
+import { RAIL_BRICK_STATION_PITCH } from '../bp/rail-blueprint.ts';
+
+const viewBoxWidth = 192;
+const firstStationOffset = 8;
+
+function stationOffset(index: number): number {
+  return firstStationOffset + index * RAIL_BRICK_STATION_PITCH;
+}
+
+const stackedStationBottomY = 112;
+const stackedStationPitch = 10;
+
+function stationPosition(side: 'input' | 'output', index: number, stacked: boolean) {
+  if (stacked)
+    return {
+      x: side === 'input' ? 48 : 172,
+      y: stackedStationBottomY - index * stackedStationPitch,
+    };
+  const offset = stationOffset(index);
+  return {
+    x: side === 'input' ? 4 + offset - 2 : 188 - offset + 2,
+    y: side === 'input' ? 84 : 38,
+  };
+}
+
+function stackedPreviewRailPath(side: 'input' | 'output', count: number): string {
+  if (count === 0) return '';
+  const left = side === 'input';
+  const edgeX = left ? 4 : 188;
+  const trunkX = left ? 8 : 184;
+  const direction = left ? 1 : -1;
+  const rails = [`M ${edgeX} 13 c 0 6, ${4 * direction} 7, ${4 * direction} 11 l 0 80`];
+  if (count > 1) {
+    const topStationY = stackedStationBottomY - (count - 1) * stackedStationPitch;
+    const innerTrunkX = left ? 60 : 132;
+    const innerTrunkTopY = topStationY + 8;
+    rails.push(
+      `M ${innerTrunkX} ${innerTrunkTopY} l 0 ${stackedStationBottomY - innerTrunkTopY} c 0 7, ${8 * direction} 11, ${16 * direction} 11`,
+    );
+  }
+  for (let index = 0; index < count; index += 1) {
+    const y = stackedStationBottomY - index * stackedStationPitch;
+    rails.push(
+      `M ${trunkX} ${y - 8}`,
+      `c 0 4, ${4 * direction} 8, ${8 * direction} 8`,
+      `l ${36 * direction} 0`,
+      index === 0
+        ? `c ${8 * direction} 0, ${8 * direction} 11, ${24 * direction} 11`
+        : `c ${4 * direction} 0, ${8 * direction} 4, ${8 * direction} 8`,
+    );
+  }
+  return rails.join(' ');
+}
+
+function curve(
+  [startControlX, startControlY]: [number, number],
+  [endControlX, endControlY]: [number, number],
+  [endX, endY]: [number, number],
+): string {
+  return `c ${startControlX} ${startControlY}, ${endControlX + endX} ${endControlY + endY}, ${endX} ${endY}`;
+}
+
+function previewRailPath(inputCount: number, outputCount: number): string {
+  const rails = [
+    'M 4 13 a 8 8 0 0 1 8 -8',
+    'M 4 115 a 8 8 0 0 0 8 8',
+    'M 188 13 a 8 8 0 0 0 -8 -8',
+    'M 188 115 a 8 8 0 0 1 -8 8',
+    'M 4 4 a 8 8 0 0 0 -8 -8',
+    'M 188 4 a 8 8 0 0 1 8 -8',
+    'M 4 124 a 8 8 0 0 1 -8 8',
+    'M 188 124 a 8 8 0 0 0 8 8',
+  ];
+  for (let index = 0; index < inputCount; index += 1) {
+    const offset = stationOffset(index);
+    const bend = 8 + index;
+    rails.push(
+      'M 4 13',
+      curve([0, bend], [0, -bend], [offset, 20]),
+      'l 0 60',
+      curve([0, bend], [0, -bend], [-offset, 20]),
+    );
+  }
+  for (let index = 0; index < outputCount; index += 1) {
+    const offset = -stationOffset(index);
+    const bend = 8 + index;
+    rails.push(
+      'M 188 13',
+      curve([0, bend], [0, -bend], [offset, 20]),
+      'l 0 60',
+      curve([0, bend], [0, -bend], [-offset, 20]),
+    );
+  }
+  return rails.join(' ');
+}
+
+/** The original schematic preview inferred from station counts. */
+export function RailBlueprintSchematicPreview({
+  size: [signedInputCount, signedOutputCount],
+}: {
+  size: [number, number];
+}) {
+  const inputCount = Math.abs(signedInputCount);
+  const outputCount = Math.abs(signedOutputCount);
+  const inputStacked = signedInputCount < 0;
+  const outputStacked = signedOutputCount < 0;
+  const inputSummary = `${inputCount} ${inputStacked ? 'stacked ' : ''}input`;
+  const outputSummary = `${outputCount} ${outputStacked ? 'stacked ' : ''}output`;
+  const stationSummary = `${inputSummary} and ${outputSummary} stations`;
+  const railPath = [
+    previewRailPath(inputStacked ? 0 : inputCount, outputStacked ? 0 : outputCount),
+    inputStacked ? stackedPreviewRailPath('input', inputCount) : '',
+    outputStacked ? stackedPreviewRailPath('output', outputCount) : '',
+  ].join(' ');
+  return (
+    <figure class="rail-blueprint-preview">
+      <figcaption>
+        <span>Rail brick</span>
+        <span class="rail-blueprint-preview-caption">
+          {inputSummary}, {outputSummary} blueprint
+        </span>
+      </figcaption>
+      <svg
+        viewBox={`0 0 ${viewBoxWidth} 128`}
+        role="img"
+        aria-label={`Rail blueprint: ${stationSummary}`}
+      >
+        <title>Rail blueprint: {stationSummary}</title>
+        <desc>A rail brick with input stations on the left and output stations on the right.</desc>
+        <rect class="rail-blueprint-preview-floor" x="0" y="0" width="192" height="128" />
+        <g class="rail-blueprint-preview-border">
+          <rect x="3" y="4" width="2" height="120" />
+          <rect x="187" y="4" width="2" height="120" />
+          <rect x="0" y="4" width="192" height="2" />
+          <rect x="0" y="122" width="192" height="2" />
+        </g>
+        <path class="rail-blueprint-preview-path" d={railPath} />
+        {(['input', 'output'] as const).flatMap((side) =>
+          Array.from({ length: side === 'input' ? inputCount : outputCount }, (_, index) => {
+            const stacked = side === 'input' ? inputStacked : outputStacked;
+            const { x, y } = stationPosition(side, index, stacked);
+            return (
+              <circle
+                class="rail-blueprint-preview-stop"
+                key={`${side}-${index}`}
+                cx={x}
+                cy={y}
+                r="1.8"
+                data-blueprint-station={`${side}:${index + 1}`}
+              >
+                <title>
+                  {side === 'input' ? 'Input' : 'Output'} station {index + 1}
+                </title>
+              </circle>
+            );
+          }),
+        )}
+      </svg>
+    </figure>
+  );
+}

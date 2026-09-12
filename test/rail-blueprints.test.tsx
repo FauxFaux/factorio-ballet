@@ -26,6 +26,23 @@ describe('RailBlueprints', () => {
     if (!('blueprint' in document)) throw new Error('expected blueprint');
 
     const graph = buildRailGraph(document.blueprint.entities ?? []);
+    const entityPreview = screen.getByRole('img', {
+      name: 'Rail blueprint entities: 3 input, 2 output rail brick',
+    });
+    expect(entityPreview.getAttribute('viewBox')).toBe('0 0 192 120');
+    expect(entityPreview.querySelectorAll('.rail-blueprint-preview-piece')).toHaveLength(
+      graph.pieces.length,
+    );
+    expect(
+      entityPreview
+        .querySelector('.rail-blueprint-preview-piece[data-rail-name="curved-rail-a"]')
+        ?.getAttribute('d'),
+    ).toContain(' Q ');
+    expect(
+      entityPreview
+        .querySelector('.rail-blueprint-preview-piece[data-rail-name="straight-rail"]')
+        ?.getAttribute('d'),
+    ).toContain(' L ');
     expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(12);
     expect(
       document.blueprint.entities?.filter(

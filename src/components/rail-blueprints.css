@@ -6,6 +6,13 @@
   margin: 0;
 }
 
+.rail-blueprints-previews {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 10px;
+}
+
 .rail-blueprints-counts {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -62,6 +69,10 @@
 
 @media (max-width: 800px) {
   .rail-blueprints-counts {
+    grid-template-columns: 1fr;
+  }
+
+  .rail-blueprints-previews {
     grid-template-columns: 1fr;
   }
 }
