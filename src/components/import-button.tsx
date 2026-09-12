@@ -1,15 +1,28 @@
 import './import-button.css';
 import { useEffect, useState } from 'preact/hooks';
 import { useMenu } from './menu.ts';
-import type { DehydratedGraphConfiguration, ImportedConfiguration } from '../import.ts';
+import {
+  cellFromConfiguration,
+  decodeImportUrl,
+  type DehydratedGraphConfiguration,
+  type FactorioLabHashes,
+  type ImportedConfiguration,
+} from '../import.ts';
 import type { Cell } from '../cell.ts';
 import procRsLogo from '../assets/logo-vue.svg';
+
+let bobangHashesPromise: Promise<FactorioLabHashes> | undefined;
+const loadBobangHashes = (): Promise<FactorioLabHashes> =>
+  (bobangHashesPromise ??= import('../assets/factoriolab-bobang-hash.json').then(
+    ({ default: bobang }) => ({ bobang }),
+  ));
+
+setTimeout(() => void loadBobangHashes().catch(() => undefined), 100);
 
 /** A small inspector for URLs copied from proc-rs or FactorioLab. */
 export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void }) {
   const { open, setOpen, box } = useMenu();
   const [url, setUrl] = useState('');
-  const [importModule, setImportModule] = useState<typeof import('../import.ts')>();
   const [decoded, setDecoded] = useState<ImportedConfiguration | null>();
   const [error, setError] = useState<string>();
 
@@ -23,12 +36,11 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
 
     setDecoded(undefined);
     setError(undefined);
-    void import('../import.ts')
-      .then((module) => {
+    void loadFactorioLabHashes(url)
+      .then((hashes) => {
         if (cancelled) return;
-        setImportModule(module);
         try {
-          setDecoded(module.decodeImportUrl(url));
+          setDecoded(decodeImportUrl(url, hashes));
         } catch (e) {
           setError(e instanceof Error ? e.message : String(e));
         }
@@ -74,10 +86,7 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
               disabled={decoded.p.length === 0}
               title="Add active proc-rs processes as a cell"
               onClick={() => {
-                if (importModule === undefined) return;
-                onAddCell(
-                  importModule.cellFromConfiguration(decoded as DehydratedGraphConfiguration),
-                );
+                onAddCell(cellFromConfiguration(decoded as DehydratedGraphConfiguration));
                 setOpen(false);
               }}
             >
@@ -94,4 +103,14 @@ export function ImportButton({ onAddCell }: { onAddCell: (cell: Cell) => void })
       ) : null}
     </div>
   );
+}
+
+async function loadFactorioLabHashes(url: string): Promise<FactorioLabHashes> {
+  const parsed = new URL(url, 'https://factoriolab.github.io/');
+  const route = parsed.pathname.split('/').filter(Boolean);
+  if (parsed.hostname !== 'factoriolab.github.io' || parsed.searchParams.get('z') === null)
+    return {};
+
+  if (route.at(-2) !== 'bobang') return {};
+  return loadBobangHashes();
 }

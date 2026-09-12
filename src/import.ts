@@ -1,6 +1,5 @@
 import { decode } from '@msgpack/msgpack';
 import { unzlibSync } from 'fflate';
-import bobangHashJson from './assets/factoriolab-bobang-hash.json';
 import type { Cell } from './cell.ts';
 
 export interface DataSetConfiguration {
@@ -118,7 +117,10 @@ export function decodeUrl(url: string): DehydratedGraphConfiguration | null {
 }
 
 /** Decode either a proc-rs fragment or a current FactorioLab calculator URL. */
-export function decodeImportUrl(url: string): ImportedConfiguration | null {
+export function decodeImportUrl(
+  url: string,
+  factorioLabHashes: FactorioLabHashes = {},
+): ImportedConfiguration | null {
   if (url.includes('s0=')) return decodeUrl(url);
 
   const parsed = new URL(url, 'https://factoriolab.github.io/');
@@ -142,21 +144,34 @@ export function decodeImportUrl(url: string): ImportedConfiguration | null {
     hashed: compressed !== null,
     version,
     parameters: collectParameters(parameters),
-    decoded: decodeFactorioLabParameters(parameters, route.at(-2)!, compressed !== null),
+    decoded: decodeFactorioLabParameters(
+      parameters,
+      route.at(-2)!,
+      compressed !== null,
+      factorioLabHashes,
+    ),
   };
 }
 
-type HashKind = keyof typeof bobangHashJson;
-type HashTable = Record<HashKind, (string | null)[]>;
-
-const factorioLabHashes: Record<string, HashTable> = {
-  bobang: bobangHashJson,
-};
+export type HashKind =
+  | 'beacons'
+  | 'belts'
+  | 'fuels'
+  | 'items'
+  | 'locations'
+  | 'machines'
+  | 'modules'
+  | 'recipes'
+  | 'technologies'
+  | 'wagons';
+export type HashTable = Record<HashKind, (string | null)[]>;
+export type FactorioLabHashes = Record<string, HashTable>;
 
 function decodeFactorioLabParameters(
   parameters: URLSearchParams,
   dataset: string,
   hashed: boolean,
+  factorioLabHashes: FactorioLabHashes,
 ): FactorioLabDecoded {
   const hash = factorioLabHashes[dataset];
   if (hashed && hash === undefined)

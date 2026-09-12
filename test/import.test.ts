@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { cellFromConfiguration, decodeImportUrl, decodeUrl } from '../src/import.ts';
+import bobang from '../src/assets/factoriolab-bobang-hash.json';
 
 describe('decodeUrl', () => {
   it('decodes the persisted proc-rs URL', () => {
@@ -25,7 +26,7 @@ describe('decodeImportUrl', () => {
       new URL('./assets/factoriolab-cpu.txt', import.meta.url),
       'utf8',
     ).trim();
-    const decoded = decodeImportUrl(url);
+    const decoded = decodeImportUrl(url, { bobang });
 
     expect(decoded).toMatchObject({
       source: 'factoriolab',
@@ -58,6 +59,17 @@ describe('decodeImportUrl', () => {
       moduleIndexes: [0],
       beaconIndexes: [1],
     });
+  });
+
+  it('requires injected hash data for compressed datasets', () => {
+    const url = readFileSync(
+      new URL('./assets/factoriolab-cpu.txt', import.meta.url),
+      'utf8',
+    ).trim();
+
+    expect(() => decodeImportUrl(url)).toThrow(
+      'No bundled FactorioLab hash table for dataset: bobang',
+    );
   });
 
   it('decodes a bare FactorioLab v11 URL', () => {

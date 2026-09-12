@@ -8,7 +8,14 @@ import type { Plugin, ResolvedConfig } from 'vite';
 export default defineConfig(({ mode }) => ({
   // relative, so a build can be served from any path: we deploy to /snapshot-<sha>/
   base: './',
-  plugins: [preact(), preload(), injectIcons(), ...(mode === 'analyze' ? [analyzer()] : [])],
+  plugins: [
+    preact(),
+    preload({
+      shouldPreload: ({ fileName }) => !fileName.startsWith('assets/factoriolab-bobang-hash-'),
+    }),
+    injectIcons(),
+    ...(mode === 'analyze' ? [analyzer()] : []),
+  ],
   test: {
     include: ['test/**/*.test.{ts,tsx}'],
   },
