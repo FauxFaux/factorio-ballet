@@ -83,6 +83,10 @@
   stroke: #bd6a2d;
 }
 
+.rail-blueprint-preview-entity-single-cell {
+  stroke: none;
+}
+
 .rail-blueprint-preview-signal {
   stroke: none;
 }

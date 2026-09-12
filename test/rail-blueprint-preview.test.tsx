@@ -48,6 +48,7 @@ describe('RailBlueprintPreview', () => {
     expect(pole?.getAttribute('width')).toBe('2');
     expect(pole?.getAttribute('height')).toBe('2');
     expect(pole?.getAttribute('style')).toContain('rgb(0 97 145)');
+    expect(pole?.classList).not.toContain('rail-blueprint-preview-entity-single-cell');
 
     const unknown = container.querySelector('[data-blueprint-entity="4"]');
     expect(unknown?.classList).toContain('rail-blueprint-preview-entity-unknown');
@@ -55,6 +56,7 @@ describe('RailBlueprintPreview', () => {
     expect(unknown?.getAttribute('y')).toBe('60');
     expect(unknown?.getAttribute('width')).toBe('1');
     expect(unknown?.getAttribute('height')).toBe('1');
+    expect(unknown?.classList).toContain('rail-blueprint-preview-entity-single-cell');
 
     const regularSignal = container.querySelector('[data-blueprint-entity="5"]');
     expect(regularSignal?.tagName).toBe('circle');

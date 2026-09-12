@@ -139,7 +139,7 @@ export function RailBlueprintPreview({ blueprint }: { blueprint: Blueprint }) {
           <g transform={transform}>
             {rectangles.map(({ entity, known, x, y, width, height, color }) => (
               <rect
-                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'}`}
+                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'} ${width === 1 && height === 1 ? 'rail-blueprint-preview-entity-single-cell' : ''}`}
                 key={`entity-${entity.entity_number}`}
                 x={x}
                 y={y}
