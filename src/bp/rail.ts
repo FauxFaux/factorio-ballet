@@ -115,6 +115,10 @@ const endpointOffsets: Partial<Record<`${RailEntityName}:${RailDirection}`, Endp
     [-2, -5],
     [2, 5],
   ],
+  'half-diagonal-rail:2': [
+    [2, -5],
+    [-2, 5],
+  ],
   'half-diagonal-rail:4': [
     [-3, 2],
     [5, -2],

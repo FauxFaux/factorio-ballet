@@ -20,10 +20,10 @@ const fixture = (name: string) => {
   return decode(readFileSync(path, 'utf8'));
 };
 
-const unplannedRailDirections = () => {
-  const document = JSON.parse(
-    readFileSync('docs/blueprints/unplanned-rail-directions.json', 'utf8'),
-  ) as { blueprint: { entities?: Entity[] } };
+const jsonFixture = (name: string) => {
+  const document = JSON.parse(readFileSync(`docs/blueprints/${name}.json`, 'utf8')) as {
+    blueprint: { entities?: Entity[] };
+  };
   return document.blueprint.entities ?? [];
 };
 
@@ -67,7 +67,7 @@ describe('blueprint rail geometry', () => {
   });
 
   test('converts diagonal straight rails from imported blueprints', () => {
-    const graph = buildRailGraph(unplannedRailDirections());
+    const graph = buildRailGraph(jsonFixture('unplanned-rail-directions'));
 
     expect(graph.pieces).toHaveLength(8);
     expect(
@@ -84,6 +84,23 @@ describe('blueprint rail geometry', () => {
         { connectionPoints: [{ x2: -634, y2: -442 }] },
       ],
     ]);
+  });
+
+  test('joins northeast half-diagonal rails to curves', () => {
+    const graph = buildRailGraph(jsonFixture('unplanned-rail-ne-half'));
+
+    expect(graph.pieces).toHaveLength(16);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 1)).toHaveLength(5);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 2)).toHaveLength(12);
+    expect(graph.nodes.filter((node) => node.entityNumbers.length === 3)).toHaveLength(1);
+    expect(
+      graph.nodes.some((node) => node.entityNumbers.includes(5) && node.entityNumbers.includes(8)),
+    ).toBe(true);
+    expect(
+      graph.nodes.some(
+        (node) => node.entityNumbers.includes(11) && node.entityNumbers.includes(14),
+      ),
+    ).toBe(true);
   });
 
   test('closes the smallest curved-rail circle at every end', () => {
