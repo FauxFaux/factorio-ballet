@@ -83,11 +83,31 @@ const endpointOffsets: Partial<Record<`${RailEntityName}:${RailDirection}`, Endp
     [0, -2],
     [0, 2],
   ],
+  'straight-rail:2': [
+    [-2, 2],
+    [2, -2],
+  ],
   'straight-rail:4': [
     [-2, 0],
     [2, 0],
   ],
   'straight-rail:6': [
+    [-2, -2],
+    [2, 2],
+  ],
+  'straight-rail:8': [
+    [0, -2],
+    [0, 2],
+  ],
+  'straight-rail:10': [
+    [-2, 2],
+    [2, -2],
+  ],
+  'straight-rail:12': [
+    [-2, 0],
+    [2, 0],
+  ],
+  'straight-rail:14': [
     [-2, -2],
     [2, 2],
   ],

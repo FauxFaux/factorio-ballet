@@ -20,6 +20,13 @@ const fixture = (name: string) => {
   return decode(readFileSync(path, 'utf8'));
 };
 
+const unplannedRailDirections = () => {
+  const document = JSON.parse(
+    readFileSync('docs/blueprints/unplanned-rail-directions.json', 'utf8'),
+  ) as { blueprint: { entities?: Entity[] } };
+  return document.blueprint.entities ?? [];
+};
+
 const entityKey = (entity: Entity, x: number, y: number, direction: number) =>
   [entity.name, x, y, direction].join(':');
 
@@ -46,9 +53,9 @@ describe('blueprint rail geometry', () => {
         entity_number: 7,
         name: 'straight-rail',
         position: { x: 1, y: 2 },
-        direction: 2,
+        direction: 1 as never,
       }),
-    ).toThrow('unsupported rail geometry: straight-rail direction 2 at (1, 2)');
+    ).toThrow('unsupported rail geometry: straight-rail direction 1 at (1, 2)');
 
     expect(() =>
       toRailPiece({
@@ -57,6 +64,26 @@ describe('blueprint rail geometry', () => {
         position: { x: 1.25, y: 2 },
       }),
     ).toThrow('rail 8 at (1.25, 2) is not positioned on the half-tile grid');
+  });
+
+  test('converts diagonal straight rails from imported blueprints', () => {
+    const graph = buildRailGraph(unplannedRailDirections());
+
+    expect(graph.pieces).toHaveLength(8);
+    expect(
+      graph.pieces
+        .filter((piece) => piece.name === 'straight-rail' && piece.direction === 2)
+        .map((piece) => piece.ends),
+    ).toEqual([
+      [
+        { connectionPoints: [{ x2: -658, y2: -438 }] },
+        { connectionPoints: [{ x2: -654, y2: -442 }] },
+      ],
+      [
+        { connectionPoints: [{ x2: -638, y2: -438 }] },
+        { connectionPoints: [{ x2: -634, y2: -442 }] },
+      ],
+    ]);
   });
 
   test('closes the smallest curved-rail circle at every end', () => {
