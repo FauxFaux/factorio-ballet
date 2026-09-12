@@ -25,6 +25,9 @@ export interface StaticData {
    */
   belts: Record<BeltId, Belt>;
 
+  /** Every entity prototype with a collision box, for blueprint rendering. */
+  entities: Record<string, StaticEntity>;
+
   /**
    * Every item some technology asks for as a research ingredient, cheapest `complexity` first. They
    * are the only readable landmarks on the complexity scale — "past yellow science" is how a player
@@ -89,6 +92,7 @@ export type StaticDataPacked = {
     }
   >;
   belts: Record<string, { h?: string; i?: string; s: number; u: number }>;
+  entities: Record<string, { z: [number, number]; c: string }>;
   sciencePacks: ResourceId[];
   suggestionPreload: {
     f: Record<string, string>;
@@ -116,6 +120,15 @@ export type MachineId = string;
 export interface MachineSize {
   width: number;
   height: number;
+}
+
+/** An RGB chart colour, normalized from Factorio's accepted 0..1 or 0..255 forms. */
+export type ChartColor = [number, number, number];
+
+/** Geometry and resolved friendly chart colour shared by blueprint entities. */
+export interface StaticEntity {
+  size: MachineSize;
+  chartColor: ChartColor;
 }
 
 /** A tile-centred point on a machine's edge where a pipe can connect. */

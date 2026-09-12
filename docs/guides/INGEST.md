@@ -219,6 +219,23 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
   productivity effect only runs recipes which disallow productivity anyway. `test/modules.test.ts`
   says so, so a future pack breaking that is a failing test rather than a wrong number.
 
+## Notes for entity geometry and chart colours
+
+- `StaticData.entities` contains every non-hidden prototype in the dump with a `collision_box` (970
+  in the checked-in pack), not a maintained list of prototype types. That makes imported blueprint
+  rendering aware of containers, poles, inserters, splitters and modded entity types as well as the
+  production machines already modelled elsewhere.
+- Footprints use the same rule as machines: take the collision-box span and round upward to whole
+  tiles. Prototypes without a collision box have no footprint to ingest and remain unknown to the
+  blueprint preview.
+- The chart colour for a player-owned blueprint entity is its `friendly_map_color`, falling back to
+  `map_color`, then the entries for its prototype type in
+  `utility-constants.chart.default_friendly_color_by_type` / `default_color_by_type`, then
+  `default_friendly_color`. Factorio accepts colour channels in either 0–1 or 0–255 form — this dump
+  uses both — so the ingest normalizes every RGB channel to 0–1. The packed record stores the size
+  as `[width, height]` and colour as six lowercase hexadecimal digits without `#`; decoding restores
+  the named size fields and numeric RGB tuple used by the application.
+
 ## Notes for belts
 
 - **`data.raw['transport-belt']`** — 6 prototypes, none hidden, each placed by an item of its own

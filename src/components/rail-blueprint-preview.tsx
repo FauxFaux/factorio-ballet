@@ -2,20 +2,11 @@ import './rail-blueprint-preview.css';
 import type { Blueprint, Entity } from '../bp/decode.ts';
 import { isRailEntity, toRailPiece, type RailPiece } from '../bp/rail.ts';
 import { staticData } from '../data/decode.ts';
-import type { MachineSize } from '../types.ts';
 
 const brickWidth = 192;
 const brickHeight = 120;
 const brickPadding = 2;
 const signalRadius = 1;
-
-const knownEntitySizes: Record<string, MachineSize> = {
-  'big-electric-pole': { width: 2, height: 2 },
-  'steel-chest': { width: 1, height: 1 },
-  inserter: { width: 1, height: 1 },
-  splitter: { width: 2, height: 1 },
-  'underground-belt': { width: 1, height: 1 },
-};
 
 interface EntityRectangle {
   entity: Entity;
@@ -24,41 +15,29 @@ interface EntityRectangle {
   y: number;
   width: number;
   height: number;
+  color?: string;
 }
 
 function entityRectangle(entity: Entity): EntityRectangle {
-  const knownSize =
-    staticData.machines[entity.name]?.size ??
-    (staticData.belts[entity.name] ? { width: 1, height: 1 } : knownEntitySizes[entity.name]);
-  const sourceSize = knownSize ?? { width: 1, height: 1 };
-  const rotated = (entity.direction ?? 0) % 8 === 4;
+  const known = staticData.entities[entity.name];
+  const sourceSize = known?.size ?? { width: 1, height: 1 };
+  const rotated = (entity.direction ?? 0) % 4 === 2;
   const width = rotated ? sourceSize.height : sourceSize.width;
   const height = rotated ? sourceSize.width : sourceSize.height;
   return {
     entity,
-    known: knownSize !== undefined,
+    known: known !== undefined,
     x: entity.position.x - width / 2,
     y: entity.position.y - height / 2,
     width,
     height,
+    color:
+      known && `rgb(${known.chartColor.map((channel) => Math.round(channel * 255)).join(' ')})`,
   };
 }
 
 function isSignalEntity(entity: Entity): boolean {
   return entity.name === 'rail-signal' || entity.name === 'rail-chain-signal';
-}
-
-function beltEntityClass(entity: Entity): string | undefined {
-  if (entity.name === 'splitter' || entity.name.endsWith('-splitter')) {
-    return 'rail-blueprint-preview-entity-splitter';
-  }
-  if (entity.name === 'underground-belt' || entity.name.endsWith('-underground-belt')) {
-    return 'rail-blueprint-preview-entity-underground-belt';
-  }
-  if (staticData.belts[entity.name]) {
-    return 'rail-blueprint-preview-entity-belt';
-  }
-  return undefined;
 }
 
 function railPoint(piece: RailPiece, end: 0 | 1): { x: number; y: number } {
@@ -76,27 +55,42 @@ export function railPiecePath(piece: RailPiece): string {
   return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
 }
 
-function fitBlueprint(
+export function fitBlueprint(
   pieces: RailPiece[],
   rectangles: EntityRectangle[],
   signals: Entity[],
 ): string | undefined {
-  const points = [
-    ...pieces.flatMap((piece) => [piece.position, railPoint(piece, 0), railPoint(piece, 1)]),
-    ...rectangles.flatMap(({ x, y, width, height }) => [
-      { x, y },
-      { x: x + width, y: y + height },
-    ]),
-    ...signals.flatMap(({ position }) => [
-      { x: position.x - signalRadius, y: position.y - signalRadius },
-      { x: position.x + signalRadius, y: position.y + signalRadius },
-    ]),
-  ];
-  if (points.length === 0) return undefined;
-  const minX = Math.min(...points.map(({ x }) => x));
-  const maxX = Math.max(...points.map(({ x }) => x));
-  const minY = Math.min(...points.map(({ y }) => y));
-  const maxY = Math.max(...points.map(({ y }) => y));
+  let count = 0;
+  let minX = Infinity;
+  let maxX = -Infinity;
+  let minY = Infinity;
+  let maxY = -Infinity;
+
+  const includePoint = (x: number, y: number) => {
+    count++;
+    minX = Math.min(minX, x);
+    maxX = Math.max(maxX, x);
+    minY = Math.min(minY, y);
+    maxY = Math.max(maxY, y);
+  };
+
+  for (const piece of pieces) {
+    includePoint(piece.position.x, piece.position.y);
+    for (const end of [0, 1] as const) {
+      const point = railPoint(piece, end);
+      includePoint(point.x, point.y);
+    }
+  }
+  for (const { x, y, width, height } of rectangles) {
+    includePoint(x, y);
+    includePoint(x + width, y + height);
+  }
+  for (const { position } of signals) {
+    includePoint(position.x - signalRadius, position.y - signalRadius);
+    includePoint(position.x + signalRadius, position.y + signalRadius);
+  }
+
+  if (count === 0) return undefined;
   const width = Math.max(maxX - minX, 1);
   const height = Math.max(maxY - minY, 1);
   const scale = Math.min(
@@ -143,14 +137,15 @@ export function RailBlueprintPreview({ blueprint }: { blueprint: Blueprint }) {
         />
         {transform && (
           <g transform={transform}>
-            {rectangles.map(({ entity, known, x, y, width, height }) => (
+            {rectangles.map(({ entity, known, x, y, width, height, color }) => (
               <rect
-                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'} ${beltEntityClass(entity) ?? ''}`}
+                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'}`}
                 key={`entity-${entity.entity_number}`}
                 x={x}
                 y={y}
                 width={width}
                 height={height}
+                style={color ? { fill: color } : undefined}
                 data-blueprint-entity={entity.entity_number}
                 data-blueprint-name={entity.name}
               />

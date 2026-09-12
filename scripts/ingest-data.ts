@@ -2,7 +2,7 @@
 
 import { resolve } from 'node:path';
 import * as fs from 'node:fs/promises';
-import type { BoundingBox, FluidBox, RawData } from 'factorio-raw-types/prototypes';
+import type { BoundingBox, Color, FluidBox, RawData } from 'factorio-raw-types/prototypes';
 import { BELT_KEYS, ITEM_KEYS } from './raw-keys.ts';
 import { arr, effectLimits, isProduced, RIngredient, RLocale, RProduct } from './raw-validators.ts';
 import { resolveLocale } from './locale.ts';
@@ -15,6 +15,7 @@ import { singleStepVoidableResources } from '../src/void-path.ts';
 import type {
   Beacon,
   Belt,
+  ChartColor,
   Ingredient,
   IngredientTemperature,
   Machine,
@@ -26,6 +27,7 @@ import type {
   Resource,
   ResourceId,
   StaticData,
+  StaticEntity,
 } from '../src/types.ts';
 
 /**
@@ -63,6 +65,7 @@ async function main() {
   const modules = handleModules(v);
   const beacons = handleBeacons(v, locales);
   const belts = handleBelts(v, locales);
+  const entities = handleEntities(v);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
   // `functions.hide` / `OV.disable_recipe`), so hidden entries are dead but still in the dump. A
@@ -149,6 +152,7 @@ async function main() {
     modules,
     beacons,
     belts,
+    entities,
     sciencePacks,
     suggestionPreload,
   };
@@ -156,6 +160,46 @@ async function main() {
   const { recipes: packedRecipes, ...withoutRecipes } = packed;
   await fs.writeFile('static.json', JSON.stringify(withoutRecipes));
   await fs.writeFile('static-recipes.json', JSON.stringify({ recipes: packedRecipes }));
+}
+
+/**
+ * Geometry and friendly chart colours for every entity with a collision box. Walking the dump by
+ * shape keeps this complete when Factorio adds another entity prototype type; non-entity records
+ * do not carry both a prototype `type` and `collision_box`.
+ */
+function handleEntities(v: RawData): Record<string, StaticEntity> {
+  const entities: Record<string, StaticEntity> = {};
+  const chart = v['utility-constants'].default.chart;
+  const fallback = chart.default_friendly_color ?? [0, 0.38, 0.57];
+
+  for (const table of Object.values(v) as Array<Record<string, unknown>>) {
+    for (const prototype of Object.values(table)) {
+      if (!prototype || typeof prototype !== 'object') continue;
+      const p = prototype as Record<string, unknown>;
+      if (typeof p.name !== 'string' || typeof p.type !== 'string' || !p.collision_box) continue;
+      if (p.hidden === true) continue;
+      const color =
+        p.friendly_map_color ??
+        p.map_color ??
+        chart.default_friendly_color_by_type?.[p.type] ??
+        chart.default_color_by_type?.[p.type] ??
+        fallback;
+      entities[p.name] = {
+        size: machineSize(p.collision_box as BoundingBox, p.name),
+        chartColor: chartColor(color as Color),
+      };
+    }
+  }
+
+  console.log(`Entities: ${Object.keys(entities).length}`);
+  return entities;
+}
+
+export function chartColor(color: Color): ChartColor {
+  const values = Array.isArray(color) ? color : [color.r ?? 0, color.g ?? 0, color.b ?? 0];
+  const [r = 0, g = 0, b = 0] = values;
+  const normalize = (value: number) => Math.round((value > 1 ? value / 255 : value) * 1e4) / 1e4;
+  return [normalize(r), normalize(g), normalize(b)];
 }
 
 /**

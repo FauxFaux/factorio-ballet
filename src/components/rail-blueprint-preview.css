@@ -83,24 +83,6 @@
   stroke: #bd6a2d;
 }
 
-.rail-blueprint-preview-entity-belt {
-  /* Factorio chart colour: rgb(80% 63% 28%). */
-  fill: #8f7132;
-  stroke: #b08a3e;
-}
-
-.rail-blueprint-preview-entity-splitter {
-  /* Factorio chart colour: rgb(100% 82% 0%). */
-  fill: #b29200;
-  stroke: #d1ad00;
-}
-
-.rail-blueprint-preview-entity-underground-belt {
-  /* Factorio chart colour: rgb(44% 36% 0%). */
-  fill: #4e4100;
-  stroke: #756000;
-}
-
 .rail-blueprint-preview-signal {
   stroke: none;
 }

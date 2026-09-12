@@ -103,6 +103,21 @@ export function packStaticData(data: StaticData): StaticDataPacked {
         },
       ]),
     ),
+    entities: Object.fromEntries(
+      Object.entries(data.entities).map(([id, entity]) => [
+        id,
+        {
+          z: [entity.size.width, entity.size.height],
+          c: entity.chartColor
+            .map((channel) =>
+              Math.round(channel * 255)
+                .toString(16)
+                .padStart(2, '0'),
+            )
+            .join(''),
+        },
+      ]),
+    ),
     sciencePacks: data.sciencePacks,
     suggestionPreload: {
       f: data.suggestionPreload.fromAirRecipeByProduct,

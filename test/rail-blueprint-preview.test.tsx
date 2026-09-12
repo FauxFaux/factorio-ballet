@@ -4,7 +4,11 @@ import { render, screen } from '@testing-library/preact';
 import { describe, expect, it } from 'vitest';
 import type { Blueprint } from '../src/bp/decode.ts';
 import type { RailPiece } from '../src/bp/rail.ts';
-import { RailBlueprintPreview, railPiecePath } from '../src/components/rail-blueprint-preview.tsx';
+import {
+  fitBlueprint,
+  RailBlueprintPreview,
+  railPiecePath,
+} from '../src/components/rail-blueprint-preview.tsx';
 
 const blueprint: Blueprint = {
   item: 'blueprint',
@@ -17,6 +21,7 @@ const blueprint: Blueprint = {
     { entity_number: 4, name: 'unrecognised-entity', position: { x: 60.5, y: 60.5 } },
     { entity_number: 5, name: 'rail-signal', position: { x: 70.5, y: 70.5 } },
     { entity_number: 6, name: 'rail-chain-signal', position: { x: 80.5, y: 80.5 } },
+    { entity_number: 7, name: 'splitter', position: { x: 90.5, y: 90 }, direction: 2 },
   ],
 };
 
@@ -42,6 +47,7 @@ describe('RailBlueprintPreview', () => {
     expect(pole?.getAttribute('y')).toBe('49');
     expect(pole?.getAttribute('width')).toBe('2');
     expect(pole?.getAttribute('height')).toBe('2');
+    expect(pole?.getAttribute('style')).toContain('rgb(0 97 145)');
 
     const unknown = container.querySelector('[data-blueprint-entity="4"]');
     expect(unknown?.classList).toContain('rail-blueprint-preview-entity-unknown');
@@ -64,6 +70,13 @@ describe('RailBlueprintPreview', () => {
     expect(chainSignal?.getAttribute('cy')).toBe('80.5');
     expect(chainSignal?.getAttribute('r')).toBe('1');
     expect(chainSignal?.nextElementSibling).toBeNull();
+
+    const splitter = container.querySelector('[data-blueprint-entity="7"]');
+    expect(splitter?.getAttribute('x')).toBe('90');
+    expect(splitter?.getAttribute('y')).toBe('89');
+    expect(splitter?.getAttribute('width')).toBe('1');
+    expect(splitter?.getAttribute('height')).toBe('2');
+    expect(splitter?.getAttribute('style')).toContain('rgb(255 209 0)');
   });
 
   it('returns an empty canvas for a blueprint without rail entities', () => {
@@ -87,5 +100,22 @@ describe('RailBlueprintPreview', () => {
     };
 
     expect(railPiecePath(piece)).toBe('M 6 9.5 Q 5 7 3 5');
+  });
+
+  it('fits a blueprint with enough entities to exceed a variadic Math call limit', () => {
+    const rectangles = Array.from({ length: 150_000 }, (_, entityNumber) => ({
+      entity: {
+        entity_number: entityNumber,
+        name: 'unrecognised-entity',
+        position: { x: entityNumber, y: 0 },
+      },
+      known: false,
+      x: entityNumber,
+      y: 0,
+      width: 1,
+      height: 1,
+    }));
+
+    expect(fitBlueprint([], rectangles, [])).toContain('scale(');
   });
 });

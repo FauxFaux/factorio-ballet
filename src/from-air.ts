@@ -1,4 +1,3 @@
-import { complexityOf } from './data/index.ts';
 import type { Recipe, ResourceId, StaticData } from './types.ts';
 
 /**
@@ -10,7 +9,7 @@ export function fromAirSuggestionStages(
 ): Array<Array<{ id: string; adds: ResourceId[] }>> {
   const allowed = new Set<ResourceId>();
   const remaining = Object.entries(data.recipes).filter(
-    ([id, recipe]) => usableFromAirRecipe(id, recipe) && complexityOf(recipe) <= 1,
+    ([id, recipe]) => usableFromAirRecipe(id, recipe) && (recipe.complexity ?? Infinity) <= 1,
   );
   const inputRecipeIds = new Map<ResourceId, Set<string>>();
   for (const [id, recipe] of remaining) {

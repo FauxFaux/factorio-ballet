@@ -1,4 +1,11 @@
-import type { Ingredient, Product, ResourceId, StaticData, StaticDataPacked } from '../types.ts';
+import type {
+  ChartColor,
+  Ingredient,
+  Product,
+  ResourceId,
+  StaticData,
+  StaticDataPacked,
+} from '../types.ts';
 
 const staticDataJson = await import('../assets/static.json');
 const staticRecipesJson = await import('../assets/static-recipes.json');
@@ -112,6 +119,19 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
           item: belt.i,
           itemsPerSecond: belt.s,
           undergroundLength: belt.u,
+        },
+      ]),
+    ),
+    entities: Object.fromEntries(
+      Object.entries(data.entities).map(([id, entity]) => [
+        id,
+        {
+          size: { width: entity.z[0], height: entity.z[1] },
+          chartColor: [
+            Number.parseInt(entity.c.slice(0, 2), 16) / 255,
+            Number.parseInt(entity.c.slice(2, 4), 16) / 255,
+            Number.parseInt(entity.c.slice(4, 6), 16) / 255,
+          ] as ChartColor,
         },
       ]),
     ),
