@@ -10,6 +10,7 @@ import { packCells, unpackCells } from '../src/pack.ts';
 import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
+import { decodeDocument } from '../src/bp/decode.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
 
 const uranium: Cell = state.cl[0];
@@ -101,6 +102,32 @@ describe('explicit cell imports', () => {
 });
 
 describe('cell rail brick', () => {
+  it('copies a blueprint matching the diagram station layout', async () => {
+    const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
+    const iface = cellInterface(uranium);
+    render(
+      <CellBox
+        cell={[uranium, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await userEvent.setup().click(screen.getByRole('button', { name: /Copy rail blueprint/ }));
+
+    expect(writeText).toHaveBeenCalledOnce();
+    const copied = writeText.mock.calls[0]?.[0];
+    expect(copied).toBeTruthy();
+    expect(decodeDocument(copied!)).toHaveProperty(
+      'blueprint.label',
+      `${iface.inputs.length + iface.outputs.length >= 6 ? `${iface.inputs.length} stacked` : iface.inputs.length} input, ${iface.outputs.length} output rail brick`,
+    );
+  });
+
   it('opens a screen-sized view and closes it with Escape', async () => {
     const user = userEvent.setup();
     render(

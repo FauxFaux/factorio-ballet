@@ -1,5 +1,46 @@
 import { resourceName } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
+import { buildRailBrick, encodeBlueprintDocument } from '../../bp/rail-blueprint.ts';
+import { iconStyle } from '../icon.tsx';
+import { useState } from 'preact/hooks';
+
+/** Copies a Factorio blueprint matching the rail diagram's current station layout. */
+export function RailBlueprintCopy({
+  inputCount,
+  outputCount,
+  stacked,
+}: {
+  inputCount: number;
+  outputCount: number;
+  stacked: boolean;
+}) {
+  const [copied, setCopied] = useState(false);
+  const stationSummary = `${inputCount}${stacked ? ' stacked' : ''} input and ${outputCount} output stations`;
+
+  return (
+    <button
+      class="cell-radar-copy"
+      type="button"
+      aria-label={`Copy rail blueprint: ${stationSummary}`}
+      title={`Copy rail blueprint for ${stationSummary}`}
+      onClick={() => {
+        setCopied(true);
+        const blueprint = encodeBlueprintDocument(
+          buildRailBrick(stacked ? -inputCount : inputCount, outputCount),
+        );
+        void navigator.clipboard.writeText(blueprint).catch(() => undefined);
+      }}
+      onMouseOut={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node)) setCopied(false);
+      }}
+    >
+      <span>{copied ? 'Copied!' : 'Copy'}</span>
+      <span class="cell-radar-copy-icon" aria-hidden="true">
+        <span style={iconStyle('item:rail')} />
+      </span>
+    </button>
+  );
+}
 
 export function RailBorder() {
   return (

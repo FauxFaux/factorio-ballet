@@ -4,7 +4,13 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import type { RefObject } from 'preact';
 import { RadarAssemblers } from './radar-assemblers.tsx';
-import { RailBorder, railPath, stackedRailPath, StationStops } from './radar-rail.tsx';
+import {
+  RailBlueprintCopy,
+  RailBorder,
+  railPath,
+  stackedRailPath,
+  StationStops,
+} from './radar-rail.tsx';
 
 /** RADAR's rail view adapted to one cell. Its 192-by-128 coordinates are deliberately schematic. */
 export function CellRadar({
@@ -32,7 +38,7 @@ export function CellRadar({
   expandButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
-  const stacked = stackedStations ?? inputs.length + outputs.length > 4;
+  const stacked = stackedStations ?? inputs.length + outputs.length >= 6;
   const assemblerStartX = stacked ? 68 : 8 + inputs.length * 8;
   const props = {
     title,
@@ -50,6 +56,11 @@ export function CellRadar({
     <figure class="cell-radar">
       <figcaption>
         <span>Rail brick</span>
+        <RailBlueprintCopy
+          inputCount={inputs.length}
+          outputCount={outputs.length}
+          stacked={stacked}
+        />
         <span class="cell-radar-caption">{title}</span>
       </figcaption>
       {onExpand ? (

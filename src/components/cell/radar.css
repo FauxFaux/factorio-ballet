@@ -17,6 +17,7 @@
 }
 
 .cell-radar-caption {
+  min-width: 0;
   overflow: hidden;
   color: var(--text);
   font-family: var(--sans);
@@ -25,6 +26,43 @@
   text-overflow: ellipsis;
   text-transform: none;
   white-space: nowrap;
+}
+
+.cell-radar-copy {
+  display: inline-flex;
+  gap: 0.2222rem;
+  align-items: center;
+  flex: none;
+  padding: 1px 3px;
+  font: inherit;
+  font-size: 0.9em;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.cell-radar-copy:hover,
+.cell-radar-copy:focus-visible {
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+  outline: none;
+}
+
+.cell-radar-copy-icon {
+  width: 0.8889rem;
+  height: 0.8889rem;
+  overflow: hidden;
+}
+
+.cell-radar-copy-icon > span {
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
+  transform: scale(0.5);
+  transform-origin: top left;
 }
 
 .cell-radar svg {
