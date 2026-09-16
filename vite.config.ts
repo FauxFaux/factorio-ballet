@@ -3,6 +3,7 @@ import preact from '@preact/preset-vite';
 import { analyzer } from 'vite-bundle-analyzer';
 import preload from 'vite-plugin-preload';
 import type { Plugin, ResolvedConfig } from 'vite';
+import { readFile } from 'node:fs/promises';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
@@ -14,12 +15,29 @@ export default defineConfig(({ mode }) => ({
       shouldPreload: ({ fileName }) => !fileName.startsWith('assets/factoriolab-bobang-hash-'),
     }),
     injectIcons(),
+    copyKnownVersions(),
     ...(mode === 'analyze' ? [analyzer()] : []),
   ],
   test: {
     include: ['test/**/*.test.{ts,tsx}'],
   },
 }));
+
+function copyKnownVersions(): Plugin {
+  return {
+    name: 'copy-known-versions',
+    apply: 'build',
+    async generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'known-versions.json',
+        source: JSON.stringify(
+          JSON.parse(await readFile('src/assets/known-versions.json', 'utf8')),
+        ),
+      });
+    },
+  };
+}
 
 function injectIcons(): Plugin {
   const placeholder = 'INJECT_ICONS_ARRAY';

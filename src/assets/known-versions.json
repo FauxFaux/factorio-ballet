@@ -1,0 +1,99 @@
+{
+  "versions": [
+    {
+      "id": "64b4f6c",
+      "date": "2026-09-15T22:53:51+01:00",
+      "hash_version": "y${fingerprint}"
+    },
+    {
+      "id": "4abd6dc",
+      "date": "2026-09-12T12:30:34+01:00",
+      "hash_version": "y${fingerprint}"
+    },
+    {
+      "id": "41158c9",
+      "date": "2026-09-11T21:55:11+01:00",
+      "hash_version": "y${fingerprint}"
+    },
+    {
+      "id": "9023723",
+      "date": "2026-09-10T20:44:22+01:00",
+      "hash_version": "y${fingerprint}"
+    },
+    {
+      "id": "18060e5",
+      "date": "2026-09-08T20:19:48+01:00",
+      "hash_version": "y${fingerprint}"
+    },
+    {
+      "id": "93ea123",
+      "date": "2026-09-08T13:09:16+01:00",
+      "hash_version": "x${fingerprint}"
+    },
+    {
+      "id": "1c78dd7",
+      "date": "2026-09-08T12:58:36+01:00",
+      "hash_version": "w${fingerprint}"
+    },
+    {
+      "id": "88e5e29",
+      "date": "2026-09-08T12:40:38+01:00",
+      "hash_version": "w${fingerprint}"
+    },
+    {
+      "id": "fcf24ce",
+      "date": "2026-09-08T10:52:36+01:00",
+      "hash_version": "u${fingerprint}"
+    },
+    {
+      "id": "394401c",
+      "date": "2026-09-07T21:16:29+01:00",
+      "hash_version": "u${fingerprint}"
+    },
+    {
+      "id": "a303144",
+      "date": "2026-09-07T15:03:53+01:00",
+      "hash_version": "t${fingerprint}"
+    },
+    {
+      "id": "f686b29",
+      "date": "2026-09-07T14:39:49+01:00",
+      "hash_version": "t${fingerprint}"
+    },
+    {
+      "id": "699dba3",
+      "date": "2026-09-07T12:41:53+01:00",
+      "hash_version": "r${fingerprint}"
+    },
+    {
+      "id": "d091285",
+      "date": "2026-09-07T10:04:48+01:00",
+      "hash_version": "r${fingerprint}"
+    },
+    {
+      "id": "e9bb880",
+      "date": "2026-09-04T20:37:32+01:00",
+      "hash_version": "p${fingerprint}"
+    },
+    {
+      "id": "fdfd2fe",
+      "date": "2026-09-04T14:53:01+01:00",
+      "hash_version": "p${fingerprint}"
+    },
+    {
+      "id": "3288d6e",
+      "date": "2026-09-03T23:21:33+01:00",
+      "hash_version": "p${fingerprint}"
+    },
+    {
+      "id": "71b0621",
+      "date": "2026-08-25T20:07:02+01:00",
+      "hash_version": "p${fingerprint}"
+    },
+    {
+      "id": "bcd5f27",
+      "date": "2026-08-24T21:14:00+01:00",
+      "hash_version": "o${fingerprint}"
+    }
+  ]
+}
