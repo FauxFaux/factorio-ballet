@@ -6,7 +6,7 @@ import type { Cell } from './cell.ts';
 import type { BeaconChoice, BeltChoice } from './data/index.ts';
 import type { ModuleChoice } from './data/modules.ts';
 import { CrashHandler } from './crash-handler.tsx';
-import { fingerprint, packCells, unpackCells, type PackedCell } from './pack.ts';
+import { packCells, unpackCells, type PackedCell } from './pack.ts';
 import { COMMON_IDS, REFERENCE_STATE } from './data/common-ids.ts';
 
 export interface UrlState {
@@ -63,12 +63,11 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * that is impossible, bump `UrlState.v` and make a reasonable attempt to migrate older schemas in
  * `unpackUs`.
  *
- * The rest of it is `pack.ts`'s fingerprint, which does the same job for the dataset: cells are
- * packed as indices into `static.json`'s prototype lists, so regenerating it renumbers every saved
- * plan. That half moves on its own, because the ingest is a script which knows nothing about this
- * file and no-one would remember.
+ * The rest is `pack.ts`'s fingerprint, which does the same job for the dataset: cells are packed
+ * as indices into `static.json`'s prototype lists, so regenerating it renumbers every saved plan.
+ * Keep it in sync with the dataset using `scripts/check-hash-version.ts`, run by `npm run lint`.
  */
-export const HASH_VERSION = `y${fingerprint}`;
+export const HASH_VERSION = `yr4q`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);

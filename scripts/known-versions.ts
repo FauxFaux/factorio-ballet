@@ -6,7 +6,7 @@ import { promisify } from 'node:util';
 
 const execFileAsync = promisify(execFile);
 const SNAPSHOT_ID = /(?:^|\s)snapshot-([0-9a-f]+)\/?\s*$/gim;
-const HASH_VERSION = /^const HASH_VERSION = `([^`]+)`;/m;
+const HASH_VERSION = /^(?:export )?const HASH_VERSION = `([^`]+)`;/m;
 
 interface KnownVersion {
   id: string;
@@ -54,9 +54,13 @@ async function main() {
   if (uniqueIds.length === 0)
     throw new Error(`${input ?? 'rsync listing'}: no snapshot git hashes found`);
 
-  const versions = (await Promise.all(uniqueIds.map(versionFor))).filter(
-    (version): version is KnownVersion => version !== undefined,
-  );
+  const staticSnapshots = JSON.parse(
+    await fs.readFile('scripts/known-static-snapshots.json', 'utf8'),
+  ) as { versions: KnownVersion[] };
+  const staticVersions = new Map(staticSnapshots.versions.map((version) => [version.id, version]));
+  const versions = (
+    await Promise.all(uniqueIds.map((id) => staticVersions.get(id) ?? versionFor(id)))
+  ).filter((version): version is KnownVersion => version !== undefined);
   versions.sort((a, b) => b.date.localeCompare(a.date));
   await fs.writeFile(
     'src/assets/known-versions.json',

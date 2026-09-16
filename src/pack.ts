@@ -15,10 +15,9 @@ import type { ResourceId } from './types.ts';
  * into `Object.keys` costs three digits instead, and a plan of a hundred recipes packs to a
  * third of what it did.
  *
- * The index is a fact about one dataset and not about the game, which is why {@link fingerprint} is
- * in the hash's version prefix: regenerating `static.json` renumbers everything, and an old hash
- * read against the new numbering would quietly name the wrong recipes. It is checked rather than
- * bumped by hand because the ingest is a script and the version letter is in another file.
+ * The index is a fact about one dataset and not about the game, so the hash version protects it:
+ * regenerating `static.json` renumbers everything, and an old hash read against the new numbering
+ * would quietly name the wrong recipes.
  */
 export interface PackedCell {
   entries: PackedEntry[];
@@ -284,23 +283,3 @@ function unpackModules(packed: [PackedId, number][] | undefined): ModuleFill | u
   if (!packed?.length) return undefined;
   return Object.fromEntries(packed.map(([module, count]) => [moduleIds.toName(module), count]));
 }
-
-/**
- * A short digest of every id {@link packCells} numbers, in the order it numbers them. Two datasets
- * agreeing on this agree on what every index means; two which do not must not read each other's
- * hashes, so this goes in the hash's version prefix and an old URL fails the way an unrecognised
- * one does — a page saying to start fresh, rather than a plan of the wrong recipes.
- */
-export const fingerprint: string = (() => {
-  // FNV-1a, over the ids with a separator so that reordering or resplitting them shows up.
-  let hash = 0x811c9dc5;
-  for (const names of [staticData.recipes, staticData.machines, staticData.modules]) {
-    for (const name of Object.keys(names)) {
-      for (let i = 0; i < name.length; i++) {
-        hash = Math.imul(hash ^ name.charCodeAt(i), 0x01000193);
-      }
-      hash = Math.imul(hash ^ 0x1f, 0x01000193);
-    }
-  }
-  return (hash >>> 0).toString(36).padStart(3, '0').slice(-3);
-})();
