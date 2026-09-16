@@ -68,7 +68,7 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  * plan. That half moves on its own, because the ingest is a script which knows nothing about this
  * file and no-one would remember.
  */
-const HASH_VERSION = `y${fingerprint}`;
+export const HASH_VERSION = `y${fingerprint}`;
 
 const setHash = debounce((v: UrlState) => {
   window.location.hash = packUs(v);

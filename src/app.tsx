@@ -17,6 +17,7 @@ import { UnlitFilter } from './components/unlit-module-icon.tsx';
 import { RecipeSuggestions } from './components/recipe-suggestions/recipe-suggestions.tsx';
 import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
 import { RailBlueprints } from './components/rail-blueprints.tsx';
+import { SwitchVersion } from './components/switch-version.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
@@ -75,6 +76,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
             }
           />
           <DebugButton uss={uss} />
+          <SwitchVersion />
           <FromAirButton uss={uss} />
           <RailBlueprintButton uss={uss} />
         </div>

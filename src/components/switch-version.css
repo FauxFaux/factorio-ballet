@@ -1,0 +1,62 @@
+.switch-version {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.switch-version > button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.switch-version > button:hover {
+  background: var(--accent-bg);
+}
+
+.switch-version-menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 2px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: max-content;
+  background: var(--bg);
+  border: 1px solid var(--accent-border);
+  border-radius: 6px;
+  padding: 3px;
+  box-shadow: 0 4px 12px rgb(0 0 0 / 35%);
+}
+
+.switch-version-menu a,
+.switch-version-current {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 3px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.switch-version-menu a:hover {
+  background: var(--accent-bg);
+}
+
+.switch-version-menu code {
+  font: inherit;
+  font-family: var(--mono);
+}
+
+.switch-version-current {
+  font-style: italic;
+}
+
+.switch-version-incompatible {
+  opacity: 0.5;
+}
