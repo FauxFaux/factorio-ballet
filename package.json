@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build",
     "bundle:analyze": "tsc -b && vite build --mode analyze",
     "deploy:snapshot": "npm run build && rsync -av --delete dist/ sek:/srv/ballet.goeswhere.com/snapshot-$(git rev-parse --short HEAD)/",
+    "deploy": "npm run deploy:snapshot && rsync -av dist/ sek:/srv/ballet.goeswhere.com/",
     "format": "oxfmt",
     "lint": "oxfmt --check && eslint . && tsc -b && node scripts/check-hash-version.ts",
     "preview": "vite build && vite preview",
