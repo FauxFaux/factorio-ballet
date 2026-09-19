@@ -13,6 +13,7 @@ import {
 } from './module-effects.ts';
 import type { SearchScope } from './search.ts';
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
+import { newCellLayout, type CellLayout } from './layout.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
 
 /**
@@ -34,6 +35,8 @@ export interface Cell {
   name?: string;
   /** The cell's optional factory-design surface and its persisted blueprint columns. */
   design?: FactoryDesign;
+  /** The cell's optional high-level factory-layout surface. */
+  layout?: CellLayout;
 }
 
 /**
@@ -223,6 +226,11 @@ export function withRecipe(cell: Cell, recipe: string, machine?: MachineId): Cel
 /** Adds this cell's factory-design surface with its first blank blueprint column. */
 export function withDesign(cell: Cell): Cell {
   return cell.design ? cell : { ...cell, design: newFactoryDesign() };
+}
+
+/** Adds this cell's empty factory-layout surface. */
+export function withLayout(cell: Cell): Cell {
+  return cell.layout ? cell : { ...cell, layout: newCellLayout() };
 }
 
 export function withEntry(cell: Cell, index: number, entry: CellEntry): Cell {

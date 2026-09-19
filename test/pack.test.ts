@@ -27,6 +27,7 @@ describe('packCells', () => {
       },
       {
         entries: [],
+        layout: {},
         design: {
           columns: [
             {

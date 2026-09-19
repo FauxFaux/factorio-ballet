@@ -2,6 +2,7 @@ import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data/decode.ts';
 import type { ModuleFill } from './module-effects.ts';
 import type { DesignColumn, DesignDirection, DesignEntity, FactoryDesign } from './design.ts';
+import type { CellLayout } from './layout.ts';
 import type { ResourceId } from './types.ts';
 
 /**
@@ -25,6 +26,7 @@ export interface PackedCell {
   imports?: ResourceId[];
   name?: string;
   design?: PackedFactoryDesign;
+  layout?: CellLayout;
 }
 
 interface PackedFactoryDesign {
@@ -99,22 +101,24 @@ const moduleIds = idTable(Object.keys(staticData.modules));
 
 export function packCells(cells: Cell[]): PackedCell[] {
   return cells.map((cell) => {
-    const { design, ...rest } = cell;
+    const { design, layout, ...rest } = cell;
     return {
       ...rest,
       entries: cell.entries.map(packEntry),
       ...(design ? { design: packDesign(design) } : {}),
+      ...(layout ? { layout } : {}),
     };
   });
 }
 
 export function unpackCells(cells: PackedCell[]): Cell[] {
   return cells.map((cell) => {
-    const { design, ...rest } = cell;
+    const { design, layout, ...rest } = cell;
     return {
       ...rest,
       entries: (cell.entries ?? []).map(unpackEntry),
       ...(design ? { design: unpackDesign(design) } : {}),
+      ...(layout ? { layout } : {}),
     };
   });
 }

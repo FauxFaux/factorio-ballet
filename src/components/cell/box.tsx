@@ -7,6 +7,7 @@ import {
   moveEntry,
   resetMachines,
   withDesign,
+  withLayout,
   withEntry,
   withoutEntry,
   type Cell,
@@ -22,6 +23,7 @@ import { CellRadar } from './radar.tsx';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
+import { CellLayoutSurface } from '../layout/layout.tsx';
 import { CellAsJson } from './as-json.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
 
@@ -131,6 +133,16 @@ export function CellBox({
           }
         >
           {cell.design ? 'remove design' : '+ design'}
+        </button>
+        <button
+          type="button"
+          class={cell.layout ? 'cell-btn cell-layout-remove' : 'cell-btn'}
+          title={cell.layout ? 'Remove this cell’s layout' : 'Start a blank layout for this cell'}
+          onClick={() =>
+            setCell(cell.layout ? (previous) => ({ ...previous, layout: undefined }) : withLayout)
+          }
+        >
+          {cell.layout ? 'remove layout' : '+ layout'}
         </button>
         <CellAsJson cell={cell} iface={iface} solution={solution} />
         <button
@@ -324,6 +336,7 @@ export function CellBox({
           }
         />
       ) : null}
+      {cell.layout ? <CellLayoutSurface layout={cell.layout} /> : null}
     </section>
   );
 }

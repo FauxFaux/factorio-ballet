@@ -41,6 +41,23 @@ describe('CellList', () => {
     expect(screen.getByRole('button', { name: '+ design' })).toBeTruthy();
   });
 
+  it('adds an empty blue layout surface', async () => {
+    const user = userEvent.setup();
+    render(<CellListExample />);
+
+    await user.click(screen.getByRole('button', { name: '+ layout' }));
+
+    expect(screen.getByRole('region', { name: 'Layout' }).classList.contains('cell-layout')).toBe(
+      true,
+    );
+    expect(screen.getByRole('button', { name: 'remove layout' })).toBeTruthy();
+
+    await user.click(screen.getByRole('button', { name: 'remove layout' }));
+
+    expect(screen.queryByRole('region', { name: 'Layout' })).toBeNull();
+    expect(screen.getByRole('button', { name: '+ layout' })).toBeTruthy();
+  });
+
   it('fills a design column with the solved number of a recipe’s assemblers', async () => {
     const user = userEvent.setup();
     render(<CellListExample cell={newCell('copper-cable')} />);

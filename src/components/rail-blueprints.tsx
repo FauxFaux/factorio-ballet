@@ -1,7 +1,7 @@
 import './rail-blueprints.css';
 import { CopyIcon } from '@primer/octicons-react';
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { toWords } from 'ts-number-to-words/src/index.ts';
+import { toWords } from 'ts-number-to-words';
 import {
   buildRailBrick,
   encodeBlueprintDocument,
