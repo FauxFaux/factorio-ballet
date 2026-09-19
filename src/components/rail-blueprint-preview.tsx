@@ -1,5 +1,5 @@
 import './rail-blueprint-preview.css';
-import type { Blueprint, Entity } from '../bp/decode.ts';
+import type { Blueprint, Entity, Position } from '../bp/decode.ts';
 import { isRailEntity, toRailPiece, type RailPiece } from '../bp/rail.ts';
 import { staticData } from '../data/decode.ts';
 
@@ -120,11 +120,36 @@ export function centreBlueprint(
   rectangles: EntityRectangle[],
   signals: Entity[],
 ): string | undefined {
+  const offset = centreBlueprintOffset(pieces, rectangles, signals);
+  return offset && `translate(${offset.x} ${offset.y})`;
+}
+
+/** Offset an unscaled blueprint into the fixed 192 by 128 cell-layout grid. */
+function centreBlueprintOffset(
+  pieces: RailPiece[],
+  rectangles: EntityRectangle[],
+  signals: Entity[],
+): Position | undefined {
   const bounds = blueprintBounds(pieces, rectangles, signals);
   if (!bounds) return undefined;
   const width = Math.max(bounds.maxX - bounds.minX, 1);
   const height = Math.max(bounds.maxY - bounds.minY, 1);
-  return `translate(${(brickWidth - width) / 2 - bounds.minX} ${(layoutHeight - height) / 2 - bounds.minY})`;
+  return {
+    x: (brickWidth - width) / 2 - bounds.minX,
+    y: (layoutHeight - height) / 2 - bounds.minY,
+  };
+}
+
+/** The translation used by an embedded rail preview, exposed for aligned layout overlays. */
+export function embeddedBlueprintOffset(blueprint: Blueprint): Position | undefined {
+  const entities = blueprint.entities ?? [];
+  return centreBlueprintOffset(
+    entities.filter(isRailEntity).map(toRailPiece),
+    entities
+      .filter((entity) => !isRailEntity(entity) && !isSignalEntity(entity))
+      .map(entityRectangle),
+    entities.filter(isSignalEntity),
+  );
 }
 
 /** A game-unit rendering of the rail entities in a decoded Factorio blueprint. */

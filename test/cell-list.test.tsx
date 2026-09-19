@@ -67,13 +67,48 @@ describe('CellList', () => {
 
   it('uses the radar’s automatic stacked-input mode for a layout rail blueprint', () => {
     const inputs = Array.from({ length: 6 }, () => 'item:iron-plate' as ResourceId);
-    render(<CellLayoutSurface layout={{}} inputs={inputs} outputs={[]} />);
+    const { container } = render(<CellLayoutSurface layout={{}} inputs={inputs} outputs={[]} />);
 
     expect(
       screen.getByRole('img', {
         name: 'Rail blueprint entities: 6 stacked input, 0 output rail brick',
       }),
     ).toBeTruthy();
+    expect(container.querySelector('[data-layout-station="1"]')?.getAttribute('transform')).toBe(
+      'translate(48 112)',
+    );
+  });
+
+  it('places solid-request footprints on the rendered input rails', () => {
+    const inputs = Array.from({ length: 2 }, () => 'item:iron-plate' as ResourceId);
+    const { container } = render(<CellLayoutSurface layout={{}} inputs={inputs} outputs={[]} />);
+
+    expect(screen.getByLabelText('2 input station footprints')).toBeTruthy();
+    expect(container.querySelector('[data-layout-station="1"]')?.getAttribute('transform')).toBe(
+      'translate(9 89)',
+    );
+    expect(container.querySelector('[data-layout-station="2"]')?.getAttribute('transform')).toBe(
+      'translate(21 81)',
+    );
+    expect(container.querySelectorAll('[data-layout-building]')).toHaveLength(8);
+    expect(container.querySelector('[data-layout-building="-2,-17"]')?.getAttribute('x')).toBe(
+      '-4',
+    );
+    expect(container.querySelector('[data-layout-building="6,-17"]')?.getAttribute('x')).toBe('3');
+    expect(container.querySelector('[data-layout-building="-2,-17"]')?.getAttribute('width')).toBe(
+      '5',
+    );
+    expect(container.querySelector('[data-layout-building="6,-17"]')?.getAttribute('width')).toBe(
+      '5',
+    );
+    expect(container.querySelector('[data-layout-building="-2,-17"]')?.getAttribute('y')).toBe(
+      '-20.5',
+    );
+    expect(container.querySelector('[data-layout-building="-2,-17"]')?.getAttribute('height')).toBe(
+      '7',
+    );
+    expect(container.querySelector('[data-layout-splitter="5,4.5"]')?.getAttribute('x')).toBe('4');
+    expect(container.querySelector('[data-layout-splitter="7,4.5"]')?.getAttribute('x')).toBe('6');
   });
 
   it('fills a design column with the solved number of a recipe’s assemblers', async () => {

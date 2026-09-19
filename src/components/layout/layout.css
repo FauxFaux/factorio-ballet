@@ -53,6 +53,33 @@
   pointer-events: none;
 }
 
+/* The coarse station plan uses the same 192 by 128 game-tile coordinates as the rail SVG. */
+.cell-layout-stations {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.cell-layout-station-building {
+  fill: #0874a4;
+  stroke: #075987;
+  stroke-width: 0.35;
+}
+
+.cell-layout-station-belt,
+.cell-layout-station-splitter {
+  fill: #b28d20;
+  stroke: #e7bf39;
+  stroke-width: 0.35;
+}
+
+.cell-layout-station-splitter {
+  fill: #f3c928;
+}
+
 /* In the two-column range, a full-width canvas can become too tall for a typical laptop viewport.
  * 112.5vh is three quarters of the viewport height at the 192:128 canvas ratio. */
 @media (min-width: 801px) and (max-width: 1400px) {

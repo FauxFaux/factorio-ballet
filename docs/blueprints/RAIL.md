@@ -234,6 +234,39 @@ path. Join each copied pole to the preceding path's pole with copper connector 5
 uses this rule for regular fans of up to 12 paths; exact duplicate entities are coalesced when the
 input and output fans are merged into the brick.
 
+## Solid-request station footprint
+
+`solid-request-1.json` is the reference for a single south-facing request station. Its `train-stop`
+(entity 90) is at `(-299, 257)`, direction `8`; the coordinates below are offsets from that stop.
+This makes the plan reusable at any station marker without depending on the blueprint's absolute
+placement.
+
+The associated north--south station rail is one tile to the east of the stop centre: its straight
+rail anchors are at `(2, -24)` through `(2, 4)`, every two tiles. The production and belt hardware
+is on the east side of that rail. From top to bottom the arrangement is:
+
+| Part                        | Relative placement                                                                                                             |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Four `angels-silo`s         | Centres `(-2, -17)`, `(6, -17)`, `(-2, -10)`, `(6, -10)`; two paired rows straddle the rail.                                   |
+| Bulk inserters              | Between the silo pairs alongside the rail at `x = 0.5` and `3.5`, plus the two-belt pickup rows at `x = -3.5, -2.5, 6.5, 7.5`. |
+| Power and signals           | Medium poles at `x = -1.5, 5.5`; rail signals at `(0.5, -20.5)`, `(0.5, -13.5)`, `(0.5, -6.5)`, and `(0.5, 1.5)`.              |
+| Control and belt transition | Begins below the silos at `y = -6.5`; the main belt/combinator fan occupies `x = -3.5..7.5`, `y = -6.5..3.5`.                  |
+| Upper splitter group        | Centres `(6, -1.5)`, `(5, -2.5)`, `(7, -2.5)`.                                                                                 |
+| Lower splitter group        | Centre `(6, 1.5)`, then the two terminal lower-right splitters below.                                                          |
+
+The terminal lower-right `fast-splitter`s are entities 111 and 113. Their exact **entity-anchor**
+offsets are `(5, 4.5)` and `(7, 4.5)`, both direction `8`. Each is a 2-by-1 horizontal footprint, so
+they occupy `[4, 6) × [4, 5)` and `[6, 8) × [4, 5)` respectively. They must remain two separate
+adjacent rectangles; combining them loses the station's belt split.
+
+The cell layout intentionally renders only a coarse guide for this blueprint: four blue 4-by-7
+production rectangles, on both sides of the track, and yellow belt blocks at those stop-relative
+coordinates. It has no camera transform. In the ordinary fan, each guide is translated from its
+actual rendered vertical rail: two tiles west of that rail and four tiles above its lower end. This
+preserves the fan's deliberately uneven stop heights (the leftmost stop is lower). The stacked
+fixture needs a separate rotated footprint treatment; until then it retains the radar's schematic
+stop placement.
+
 ## Stacked station fan
 
 ### There is no stacked blueprint primitive
