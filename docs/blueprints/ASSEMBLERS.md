@@ -1,12 +1,28 @@
 # Tileable assembler blueprints
 
-This note describes the solid-item transport pattern demonstrated by `ass-3s-in-1s-out.base64` and
-its one-fluid extension in `ass-3s-1f-in-1s-out.base64`. The matching JSON files are easier to
-inspect and are the authoritative entity lists; both exchange strings decode to their JSON exactly.
+This note describes the solid-item transport pattern demonstrated by `ass-3s-in-1s-out.base64`, its
+one-fluid extension in `ass-3s-1f-in-1s-out.base64`, and the rectangular chemical-plant pattern in
+`chem-2f2s-in-1f1s-out.base64`. It also records the compact two-assembler snake in
+`ass-2s-in-1s-out-snake.base64`. The matching JSON files are easier to inspect and are the
+authoritative entity lists; all four exchange strings decode to their JSON exactly.
 
-The fixture is a transport kernel rather than a complete powered factory. It contains one 3x3
-assembling machine, belts, and inserters, but no recipe, filters, modules, power poles, or circuit
-conditions.
+The filename counts describe transport lines, not resource types: `s` is one solid belt and `f` is
+one independent fluid pipe. A solid belt has two lanes and can therefore carry two dependable item
+types under the one-item-per-lane rule used here.
+
+The fixtures are transport kernels rather than complete factories. None sets recipes, filters,
+modules, or circuit conditions. The first three also omit power; the snake includes one medium
+electric pole as part of its fixed layout.
+
+| Fixture                  | Machines per tile | Tile size | Repeat vector | Inputs                  | Outputs                                       | Intended use             |
+| ------------------------ | ----------------: | --------- | ------------- | ----------------------- | --------------------------------------------- | ------------------------ |
+| `ass-3s-in-1s-out`       |                 1 | 9x3       | `(0,3)`       | 3 solid belts           | 1 solid belt, one lane populated              | generator template       |
+| `ass-3s-1f-in-1s-out`    |                 1 | 10x3      | `(0,3)`       | 3 solid belts, 1 fluid  | 1 solid belt, one lane populated              | generator template       |
+| `chem-2f2s-in-1f1s-out`  |                 1 | 15x3      | `(0,3)`       | 2 solid belts, 2 fluids | 1 solid belt with one lane populated, 1 fluid | geometry reference       |
+| `ass-2s-in-1s-out-snake` |                 2 | 7x6       | `(0,6)`       | 2 solid belts           | 1 solid belt, both lanes populated            | fixed validation fixture |
+
+The table gives normalized reusable-tile dimensions. A finite fixture may include boundary plumbing
+outside those dimensions, as the chemical-plant example does.
 
 ## Coordinates and directions
 
@@ -94,20 +110,22 @@ lane-balancing pattern.
 
 ## Choosing a pattern from item rates
 
-Counts per craft determine rates; rates determine transport. For a proposed run of `n` identical
-assemblers, compute the per-second rate of every solid ingredient and product after machine speed,
-modules, and productivity have been applied.
+Counts per craft determine rates; rates determine transport. For a proposed run of `n` repeated
+tiles, compute the per-second rate of every solid ingredient and product for every assembler after
+machine speed, modules, and productivity have been applied.
 
 For a belt whose `itemsPerSecond` is `B`, treat each lane as a bin of capacity `B / 2`:
 
-1. Multiply every per-assembler solid rate by `n` to obtain the peak rate entering an input belt at
-   the supply end, or leaving the output belt after the last assembler.
+1. Sum the rates of the assemblers in one tile, respecting which lane each output inserter targets,
+   then multiply by `n` to obtain the peak rate at the end of the repeated belt.
 2. Assign each input item to one lane. Do not split an item across lanes unless the generated
    upstream routing also performs that split.
 3. Use the smallest canonical input pattern whose lane assignment fits. Reject the three-input-belt
    kernel if more than six distinct solid inputs are required or if the rates do not fit its six
    lanes.
-4. Require the one solid output to fit `B / 2`, because all copies insert onto the same output lane.
+4. In the one-assembler kernels, require the solid output to fit `B / 2`, because all copies insert
+   onto the same lane. A pattern proven to populate both lanes, such as the snake, may use `B` in
+   total, but each lane must still fit `B / 2` independently.
 5. Separately check the local transfer rate through every inserter. Belt capacity does not prove
    that an inserter can move the required items between a belt and one assembler.
 
@@ -196,26 +214,204 @@ check that both members have the same prototype, lie on one axis, face the requi
 and are within that prototype's underground distance. It must make the equivalent reach check for
 the underground belt pair using `Belt.undergroundLength`.
 
+### The rectangular `chem-2f2s-in-1f1s-out` pattern
+
+`chem-2f2s-in-1f1s-out.json` contains two complete copies of a more complicated repeating unit. The
+second chemical plant and all of its transport entities are translations of the first by `(0, 3)`.
+Each branch-oriented copy has 28 entities. Grouping every underground endpoint with the machine
+branch that motivated it makes that copy appear to protrude beyond its three rows, but entity
+ownership is only a human convention: the blueprint format has no such grouping. Reassigning each
+seam endpoint to the adjacent spatial tile gives a regular 15x3 repeating rectangle.
+
+For the first copy, take the corner immediately left of blueprint position `(2.5, 21.5)` as local
+`(0, 0)`. Its chemical plant faces east, has centre `(6.5, 1.5)`, and occupies cells `(5,0)` through
+`(7,2)`. The solid transport is:
+
+| Role                  | Geometry                                                              |
+| --------------------- | --------------------------------------------------------------------- |
+| far-west solid input  | northbound belt at `x=2`, read by the long-handed inserter at `(4,1)` |
+| near-west solid input | northbound belt at `x=3`, read by the normal inserter at `(4,2)`      |
+| east solid output     | southbound belt at `x=9`, fed by the normal inserter at `(8,1)`       |
+
+The plant uses three of its four rotated corner fluid connections. Each branch begins with a
+pipe-to-ground immediately outside the plant, tunnels beneath the solid belts, and reaches its own
+vertical trunk:
+
+| Fluid role | Plant-side endpoint | Trunk-side endpoint | Branch pipe | What it crosses             |
+| ---------- | ------------------- | ------------------- | ----------- | --------------------------- |
+| input A    | `(4,0)`, east       | `(1,0)`, west       | `(0,0)`     | both input belts at `x=2,3` |
+| input B    | `(8,0)`, west       | `(11,0)`, east      | `(12,0)`    | the output belt at `x=9`    |
+| output     | `(8,2)`, west       | `(13,2)`, east      | `(14,2)`    | the output belt at `x=9`    |
+
+The unused west-lower fluid connection coincides with the solid-input inserter site at `(4,2)`.
+Generation must select connection points that the recipe and machine allow before it claims those
+cells for inserters.
+
+The three fluid trunks use different row phases:
+
+- Input A's trunk is at `x=0`. Its branch pipe is in row 0, with pipe-to-ground endpoints at
+  `(0,-1)` facing south and `(0,1)` facing north.
+- Input B's trunk is at `x=12`. Its branch pipe is also in row 0, with endpoints at `(12,-1)` and
+  `(12,1)`.
+- The output trunk is at `x=14`. Its branch pipe is in row 2, with endpoints at `(14,1)` facing
+  south and `(14,3)` facing north.
+
+The vertical trunks are continuous across copies through underground pairs rather than adjacent
+ordinary pipes. For example, the first copy's lower Input A endpoint at `(0,1)` pairs with the next
+copy's translated upper endpoint at `(0,2)`. The first copy's lower fluid-output endpoint at
+`(14,3)` similarly pairs with the next copy's upper output endpoint at `(14,4)`. Input B follows the
+same phase as Input A. These are three independent pipe networks and must never be joined.
+
+#### Rectangular ownership of seam endpoints
+
+The fixture's original branch-oriented grouping associates the two input endpoints in row `-1` and
+the output endpoint in row 3 with the machine in rows `0..2`:
+
+```text
+row -1: input-A endpoint at x=0; input-B endpoint at x=12
+rows 0..2: belts, inserters, plant, horizontal fluid branches, and branch pipes
+row  3: fluid-output endpoint at x=14
+```
+
+For generation, use the simpler spatial convention: a tile owns every entity whose centre is in its
+half-open three-row rectangle. The endpoint at `(14,3)` belongs to the tile below, where it is row
+0; the endpoints at `(0,-1)` and `(12,-1)` belong to the tile above, where they are row 2. Under
+this ownership, one 15x3 tile contains 28 entities:
+
+| Trunk                | Row 0                                        | Row 1                 | Row 2                                       |
+| -------------------- | -------------------------------------------- | --------------------- | ------------------------------------------- |
+| input A, `x=0`       | branch pipe                                  | north-facing endpoint | south-facing endpoint for the machine below |
+| input B, `x=12`      | branch pipe                                  | north-facing endpoint | south-facing endpoint for the machine below |
+| fluid output, `x=14` | north-facing endpoint from the machine above | south-facing endpoint | branch pipe                                 |
+
+The remaining entities—the two input belts, output belt, inserters, chemical plant, and horizontal
+fluid branches—already lie in rows `0..2`. This produces one ordinary rectangular entity set which
+can be translated by `(0,3)` without special overlap rules.
+
+The exterior endpoints in the finite two-machine fixture are boundary plumbing left by the original
+branch-oriented grouping. They show how the first and last fluid branches are capped, but they need
+not be considered part of the reusable interior tile. In an indefinitely repeated layout, the same
+physical endpoints are simply owned by the neighboring 15x3 rectangle.
+
+For a candidate rectangular unit `U` and translation vector `t`, validate at least `U-t`, `U`, and
+`U+t`:
+
+1. No translated surface footprints overlap.
+2. Every solid belt has the intended surface connection across the seam.
+3. Every fluid seam endpoint pairs with the intended endpoint in the neighboring copy.
+4. No underground endpoint instead pairs with a nearer compatible endpoint from the wrong branch or
+   copy.
+5. Underground spans remain within the selected belt or pipe prototype's reach.
+
+When emitting several copies, generate each rectangular tile's owned entities once. Add boundary
+plumbing only at the ends of a finite run when it is needed to complete an underground pair; do not
+emit the same seam endpoint from both neighbors. This convention makes collision checks, clipping,
+and an `n`-copy entity count much easier to reason about than the fixture author's branch-oriented
+grouping.
+
+This fixture also exposes a data-model requirement for generation.
+`Machine.fluidboxConnectionPoints` currently preserves physical points as one flat list; it does not
+retain which points belong to the same fluid box or whether that box accepts input or output. A
+generator for two independent fluid inputs and one fluid output needs that association from
+prototype data, a richer assembler specification, or an explicit caller-provided mapping. Geometry
+alone cannot safely assign the three fluids to the four chemical-plant connections.
+
+### The fixed `2s-in-1s-out-snake` kernel
+
+`ass-2s-in-1s-out-snake.json` is a useful validation fixture rather than a family from which to
+derive smaller variants. It fits two 3x3 assembling machines, two solid input belts, one solid
+output belt, and one medium electric pole into a regular 7x6 tile. Translating it by `(0,6)` repeats
+the layout vertically.
+
+Normalize the blueprint's top-left corner to `(0,0)`. The upper machine occupies `(2,0)` through
+`(4,2)` and the lower machine occupies `(2,3)` through `(4,5)`. They touch along the boundary
+between rows 2 and 3. The two outer columns, `x=0` and `x=6`, carry all three logical belts by
+alternating surface and underground sections.
+
+#### The two input belts
+
+Input A is a straight northbound underground belt in column `x=0`:
+
+- its input endpoint is `(0,5)` and its output endpoint is `(0,0)`, a six-cell inclusive span;
+- the lower assembler reads the input endpoint through the inserter at `(1,5)`; and
+- the upper assembler reads the output endpoint through the inserter at `(1,0)`.
+
+The output snake occupies surface belts in the same column between those endpoints, but it does not
+connect to Input A because Input A passes beneath them.
+
+Input B is the corresponding northbound underground line in column `x=6`, phased across the tile
+boundary. Within one tile its exposed endpoints are `(6,3)`, an output read by the lower assembler,
+and `(6,2)`, an input read by the upper assembler. The output feeds directly into the adjacent
+input. That input then pairs with `(6,3)` in the copy above, not with `(6,3)` in its own tile. A
+single fixture therefore contains two apparently unpaired endpoints; the pair exists only in the
+periodic layout.
+
+Both assemblers can read both lanes of both input belts. The fixed kernel consequently supports up
+to four dependable solid ingredient lanes, subject to belt and inserter throughput.
+
+#### The output snake
+
+The output belt enters the tile northbound at `(6,5)`, crosses to the west below the lower
+assembler, runs north along `x=0`, then crosses back to the east above the upper assembler:
+
+```text
+(6,5) north -> (6,4) west
+             -> underground from (5,4) to (1,4)
+             -> (0,4) north -> (0,3) north -> (0,2) north -> (0,1) east
+             -> underground from (1,1) to (5,1)
+             -> (6,1) north -> (6,0) north -> next tile
+```
+
+Both horizontal underground pairs have an inclusive span of five cells. The vertical Input A pair
+has a span of six. All fit within the fixture's fast underground belt reach.
+
+The lower assembler's east-facing inserter at `(1,3)` drops onto `(0,3)`. Because the inserter is
+east of that northbound belt, it populates the belt's left lane. The upper assembler's west-facing
+inserter at `(5,0)` drops onto `(6,0)` from the opposite side and populates the right lane. Thus two
+copies of the same recipe automatically contribute equally to opposite lanes of one logical output
+belt. Unlike the one-assembler kernels, the snake can use the full belt throughput without a second
+output pattern or lane balancer, provided the two assemblers have equal production rates and their
+inserters can sustain those rates.
+
+The fixture deliberately uses fast transport belts, fast underground belts, assembling machine 3s,
+ordinary inserters, and a medium electric pole. Since this is a fixed validation case, validation
+should preserve those prototypes and all 25 entities rather than treating the layout as a generic
+source for belt-count or machine-tier variants.
+
+Validation must build at least three translated copies before checking underground pairing and belt
+connectivity. Checking the isolated 25-entity document would incorrectly report Input B's endpoints
+as unpaired. In the periodic graph, verify that:
+
+- each assembler has transfers from both independent input belts;
+- the output snake is one continuous belt through both horizontal underground pairs and both tile
+  seams;
+- the lower and upper output inserters target opposite lanes of that same belt;
+- Input A does not connect to the surface output segments sharing column `x=0`;
+- Input B pairs only with the intended endpoint in the neighboring tile; and
+- translated entity footprints remain collision-free.
+
 ## Validation requirements
 
 A generated kernel should be checked before encoding:
 
-- no entity footprints overlap;
+- construct the periodic neighborhood `U-t`, `U`, and `U+t`, where `t` is the repeat vector;
+- no entity footprints overlap within that neighborhood;
 - every inserter pickup and drop resolves using that inserter prototype's actual reach;
 - every required solid ingredient has a belt-to-machine transfer;
 - the sole solid product has a machine-to-belt transfer;
 - assigned lane rates and local inserter rates stay within their capacities;
-- every through-belt connects across both `+pitch` and `-pitch` copies;
-- every through-pipe connects across both `+pitch` and `-pitch` copies;
-- underground pipe and belt endpoints form valid, in-range pairs;
-- the two translated copies have no collisions;
+- output inserters populate the lanes assumed by the rate calculation;
+- every through-belt and through-pipe connects across both periodic seams;
+- each intended belt and fluid network remains independent from the others;
+- every underground endpoint has exactly its intended compatible, in-range partner, including pairs
+  which cross a seam;
 - required, rotated fluid connection points remain reachable by pipes; and
 - encoding and decoding preserves the complete blueprint document.
 
 There is a subtle limitation in the current belt analyzer: `findInserterTransfers` uses explicit
 `pickup_position` and `drop_position` when present, but otherwise defaults every inserter to a
 one-tile reach. Factorio does not serialize the ordinary two-tile offsets on the long-handed
-inserters in this fixture. Analyzing the fixture without prototype reach data therefore associates
-the far-west long inserter with the near-west belt and the output long inserter with the near-east
-belt. Generation and validation must resolve reach from the inserter prototype (or emit explicit
-endpoint offsets in an internal entity model) before trusting those transfer associations.
+inserters in these fixtures. Analyzing them without prototype reach data therefore associates, for
+example, the far-west long inserter with the near-west belt and the output long inserter with the
+near-east belt. Generation and validation must resolve reach from the inserter prototype (or emit
+explicit endpoint offsets in an internal entity model) before trusting those transfer associations.

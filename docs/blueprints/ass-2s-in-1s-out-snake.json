@@ -1,0 +1,246 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "assembling-machine-3"
+        },
+        "index": 1
+      },
+      {
+        "signal": {
+          "name": "fast-transport-belt"
+        },
+        "index": 2
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "inserter",
+        "position": {
+          "x": 267.5,
+          "y": -66.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 2,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 266.5,
+          "y": -66.5
+        },
+        "type": "output"
+      },
+      {
+        "entity_number": 3,
+        "name": "inserter",
+        "position": {
+          "x": 271.5,
+          "y": -66.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 4,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 272.5,
+          "y": -66.5
+        }
+      },
+      {
+        "entity_number": 5,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 267.5,
+          "y": -65.5
+        },
+        "direction": 4,
+        "type": "input"
+      },
+      {
+        "entity_number": 6,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 266.5,
+          "y": -64.5
+        }
+      },
+      {
+        "entity_number": 7,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 266.5,
+          "y": -65.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 8,
+        "name": "assembling-machine-3",
+        "position": {
+          "x": 269.5,
+          "y": -65.5
+        },
+        "recipe": "military-science-pack",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 9,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 271.5,
+          "y": -65.5
+        },
+        "direction": 4,
+        "type": "output"
+      },
+      {
+        "entity_number": 10,
+        "name": "inserter",
+        "position": {
+          "x": 271.5,
+          "y": -64.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 11,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 272.5,
+          "y": -65.5
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 272.5,
+          "y": -64.5
+        },
+        "type": "input"
+      },
+      {
+        "entity_number": 13,
+        "name": "inserter",
+        "position": {
+          "x": 267.5,
+          "y": -63.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 14,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 267.5,
+          "y": -62.5
+        },
+        "direction": 12,
+        "type": "output"
+      },
+      {
+        "entity_number": 15,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 266.5,
+          "y": -63.5
+        }
+      },
+      {
+        "entity_number": 16,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 266.5,
+          "y": -62.5
+        }
+      },
+      {
+        "entity_number": 17,
+        "name": "assembling-machine-3",
+        "position": {
+          "x": 269.5,
+          "y": -62.5
+        },
+        "recipe": "military-science-pack",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 18,
+        "name": "inserter",
+        "position": {
+          "x": 271.5,
+          "y": -63.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 19,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 271.5,
+          "y": -62.5
+        },
+        "direction": 12,
+        "type": "input"
+      },
+      {
+        "entity_number": 20,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 272.5,
+          "y": -63.5
+        },
+        "type": "output"
+      },
+      {
+        "entity_number": 21,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 272.5,
+          "y": -62.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 22,
+        "name": "inserter",
+        "position": {
+          "x": 267.5,
+          "y": -61.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 23,
+        "name": "fast-underground-belt",
+        "position": {
+          "x": 266.5,
+          "y": -61.5
+        },
+        "type": "input"
+      },
+      {
+        "entity_number": 24,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 271.5,
+          "y": -61.5
+        }
+      },
+      {
+        "entity_number": 25,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 272.5,
+          "y": -61.5
+        }
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}
