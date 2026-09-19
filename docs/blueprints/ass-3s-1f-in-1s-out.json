@@ -1,0 +1,200 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "assembling-machine-2"
+        },
+        "index": 1
+      },
+      {
+        "signal": {
+          "name": "transport-belt"
+        },
+        "index": 2
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "transport-belt",
+        "position": {
+          "x": 4.5,
+          "y": 13.5
+        }
+      },
+      {
+        "entity_number": 2,
+        "name": "transport-belt",
+        "position": {
+          "x": 5.5,
+          "y": 13.5
+        }
+      },
+      {
+        "entity_number": 3,
+        "name": "long-handed-inserter",
+        "position": {
+          "x": 10.5,
+          "y": 13.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 4,
+        "name": "transport-belt",
+        "position": {
+          "x": 11.5,
+          "y": 13.5
+        }
+      },
+      {
+        "entity_number": 5,
+        "name": "pipe",
+        "position": {
+          "x": 13.5,
+          "y": 13.5
+        }
+      },
+      {
+        "entity_number": 6,
+        "name": "underground-belt",
+        "position": {
+          "x": 12.5,
+          "y": 13.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 7,
+        "name": "transport-belt",
+        "position": {
+          "x": 4.5,
+          "y": 14.5
+        }
+      },
+      {
+        "entity_number": 8,
+        "name": "transport-belt",
+        "position": {
+          "x": 4.5,
+          "y": 15.5
+        }
+      },
+      {
+        "entity_number": 9,
+        "name": "transport-belt",
+        "position": {
+          "x": 5.5,
+          "y": 14.5
+        }
+      },
+      {
+        "entity_number": 10,
+        "name": "transport-belt",
+        "position": {
+          "x": 5.5,
+          "y": 15.5
+        }
+      },
+      {
+        "entity_number": 11,
+        "name": "inserter",
+        "position": {
+          "x": 6.5,
+          "y": 15.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 12,
+        "name": "long-handed-inserter",
+        "position": {
+          "x": 6.5,
+          "y": 14.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 13,
+        "name": "assembling-machine-2",
+        "position": {
+          "x": 8.5,
+          "y": 14.5
+        }
+      },
+      {
+        "entity_number": 14,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 10.5,
+          "y": 14.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 15,
+        "name": "inserter",
+        "position": {
+          "x": 10.5,
+          "y": 15.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 16,
+        "name": "transport-belt",
+        "position": {
+          "x": 11.5,
+          "y": 14.5
+        }
+      },
+      {
+        "entity_number": 17,
+        "name": "transport-belt",
+        "position": {
+          "x": 11.5,
+          "y": 15.5
+        }
+      },
+      {
+        "entity_number": 18,
+        "name": "pipe",
+        "position": {
+          "x": 13.5,
+          "y": 15.5
+        }
+      },
+      {
+        "entity_number": 19,
+        "name": "pipe",
+        "position": {
+          "x": 13.5,
+          "y": 14.5
+        }
+      },
+      {
+        "entity_number": 20,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 12.5,
+          "y": 14.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 21,
+        "name": "underground-belt",
+        "position": {
+          "x": 12.5,
+          "y": 15.5
+        },
+        "direction": 8,
+        "type": "output"
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958467584
+  }
+}
