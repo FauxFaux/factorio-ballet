@@ -1,8 +1,61 @@
 .cell-layout {
-  width: 8rem;
-  aspect-ratio: 1;
+  --cell-layout-grid: cornflowerblue;
+  --cell-layout-grid-major: lightsteelblue;
+
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 192 / 128;
   margin-top: 8px;
-  background: #2563eb;
+  background-color: midnightblue;
+  background-image:
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--cell-layout-grid-major) 50%, transparent) 0 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--cell-layout-grid-major) 50%, transparent) 0 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to right,
+      color-mix(in srgb, var(--cell-layout-grid) 30%, transparent) 0 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--cell-layout-grid) 30%, transparent) 0 1px,
+      transparent 1px
+    );
+  /* The fixed canvas represents 192 by 128 Factorio tiles. Percentage sizing keeps each tile
+   * square as the responsive surface changes size, without a camera transform. */
+  background-size:
+    7.8125% 11.71875%,
+    7.8125% 11.71875%,
+    0.5208333333% 0.78125%,
+    0.5208333333% 0.78125%;
   border: 1px solid #60a5fa;
   border-radius: 4px;
+}
+
+/* In the two-column range, a full-width canvas can become too tall for a typical laptop viewport.
+ * 112.5vh is three quarters of the viewport height at the 192:128 canvas ratio. */
+@media (min-width: 801px) and (max-width: 1400px) {
+  .cell-layout {
+    width: min(100%, 112.5vh);
+    margin-right: auto;
+    margin-left: auto;
+  }
+}
+
+/* Keep the canvas usable as one continuous surface on smaller screens. Once the cell has room,
+ * preserve a stable 1400px working area and centre it. */
+@media (min-width: 1401px) {
+  .cell-layout {
+    width: 1400px;
+    max-width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+  }
 }
