@@ -111,6 +111,29 @@ describe('CellList', () => {
     expect(container.querySelector('[data-layout-splitter="7,4.5"]')?.getAttribute('x')).toBe('6');
   });
 
+  it('places solid-provide footprints on the rendered output rails', () => {
+    const outputs = Array.from({ length: 2 }, () => 'item:iron-plate' as ResourceId);
+    const { container } = render(<CellLayoutSurface layout={{}} inputs={[]} outputs={outputs} />);
+
+    expect(screen.getByLabelText('2 output station footprints')).toBeTruthy();
+    expect(
+      container.querySelector('[data-layout-output-station="1"]')?.getAttribute('transform'),
+    ).toBe('translate(183 39)');
+    expect(
+      container.querySelector('[data-layout-output-station="2"]')?.getAttribute('transform'),
+    ).toBe('translate(171 47)');
+    expect(container.querySelectorAll('[data-layout-output-building]')).toHaveLength(4);
+    expect(
+      container.querySelector('[data-layout-output-building="-6,10"]')?.getAttribute('x'),
+    ).toBe('-8');
+    expect(
+      container.querySelector('[data-layout-output-building="-6,10"]')?.getAttribute('y'),
+    ).toBe('6.5');
+    expect(
+      container.querySelector('[data-layout-output-belt="north"]')?.getAttribute('width'),
+    ).toBe('4');
+  });
+
   it('fills a design column with the solved number of a recipe’s assemblers', async () => {
     const user = userEvent.setup();
     render(<CellListExample cell={newCell('copper-cable')} />);

@@ -2,7 +2,12 @@ import './layout.css';
 import { useMemo } from 'preact/hooks';
 import { buildRailBrick } from '../../bp/rail-blueprint.ts';
 import { RailBlueprintPreview } from '../rail-blueprint-preview.tsx';
-import { InputStationFootprints, inputStationFootprintStops } from './station-footprint.tsx';
+import {
+  InputStationFootprints,
+  OutputStationFootprints,
+  inputStationFootprintStops,
+  outputStationFootprintStops,
+} from './station-footprint.tsx';
 import type { CellLayout } from '../../layout.ts';
 import type { ResourceId } from '../../types.ts';
 import { stackedRailStations } from '../cell/rail-mode.ts';
@@ -29,11 +34,16 @@ export function CellLayoutSurface({
     () => inputStationFootprintStops(blueprint.blueprint, inputs.length, stackedStations),
     [blueprint, inputs.length, stackedStations],
   );
+  const outputStationStops = useMemo(
+    () => outputStationFootprintStops(blueprint.blueprint, outputs.length),
+    [blueprint, outputs.length],
+  );
 
   return (
     <section class="cell-layout" aria-label="Layout">
       <RailBlueprintPreview blueprint={blueprint.blueprint} embedded />
       <InputStationFootprints stops={stationStops} />
+      <OutputStationFootprints stops={outputStationStops} />
     </section>
   );
 }

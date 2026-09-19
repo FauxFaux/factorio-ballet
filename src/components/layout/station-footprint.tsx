@@ -69,6 +69,40 @@ function SolidRequestFootprint() {
   );
 }
 
+/** A coarse version of the north-facing solid-provide station. */
+function SolidProvideFootprint() {
+  return (
+    <g class="cell-layout-station-footprint">
+      {/* The two silo anchors at (-6, +10) and (-6, +17), widened towards the rail. */}
+      <rect
+        class="cell-layout-station-building"
+        x="-8"
+        y="6.5"
+        width="5"
+        height="7"
+        data-layout-output-building="-6,10"
+      />
+      <rect
+        class="cell-layout-station-building"
+        x="-8"
+        y="13.5"
+        width="5"
+        height="7"
+        data-layout-output-building="-6,17"
+      />
+      {/* Three belts and the northern underground-belt endpoint span (-8, +4) to (-4, +5). */}
+      <rect
+        class="cell-layout-station-belt"
+        x="-8"
+        y="2"
+        width="4"
+        height="4"
+        data-layout-output-belt="north"
+      />
+    </g>
+  );
+}
+
 /**
  * Locate ordinary input stops on their actual vertical station rails. The first path reaches
  * farther down the fan, so its stop is lower than the following paths. This deliberately does
@@ -99,6 +133,23 @@ export function inputStationFootprintStops(
   return Array.from({ length: count }, (_, index) => stationStop('in', index, stacked));
 }
 
+/** Locate output stops at the upper end of their rendered vertical station rails. */
+export function outputStationFootprintStops(blueprint: Blueprint, count: number): Position[] {
+  const offset = embeddedBlueprintOffset(blueprint);
+  if (!offset) return [];
+  return Array.from({ length: count }, (_, index) => {
+    const railX = 197 - index * 12;
+    const rails = (blueprint.entities ?? []).filter(
+      (entity) =>
+        entity.name === 'straight-rail' &&
+        (entity.direction ?? 0) === 0 &&
+        entity.position.x === railX,
+    );
+    const upperRail = Math.min(...rails.map((rail) => rail.position.y));
+    return { x: railX + 2 + offset.x, y: upperRail + 4 + offset.y };
+  });
+}
+
 /** Render one solid-request footprint beside every input train stop. */
 export function InputStationFootprints({ stops }: { stops: Position[] }) {
   return (
@@ -110,6 +161,27 @@ export function InputStationFootprints({ stops }: { stops: Position[] }) {
       {stops.map((stop, index) => (
         <g key={index} transform={`translate(${stop.x} ${stop.y})`} data-layout-station={index + 1}>
           <SolidRequestFootprint />
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+/** Render one solid-provide footprint beside every output train stop. */
+export function OutputStationFootprints({ stops }: { stops: Position[] }) {
+  return (
+    <svg
+      class="cell-layout-stations"
+      viewBox="0 0 192 128"
+      aria-label={`${stops.length} output station ${stops.length === 1 ? 'footprint' : 'footprints'}`}
+    >
+      {stops.map((stop, index) => (
+        <g
+          key={index}
+          transform={`translate(${stop.x} ${stop.y})`}
+          data-layout-output-station={index + 1}
+        >
+          <SolidProvideFootprint />
         </g>
       ))}
     </svg>

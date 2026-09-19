@@ -267,6 +267,33 @@ preserves the fan's deliberately uneven stop heights (the leftmost stop is lower
 fixture needs a separate rotated footprint treatment; until then it retains the radar's schematic
 stop placement.
 
+## Solid-provide station footprint
+
+`solid-provide-1.json` is the complementary output-station reference. Its north-facing `train-stop`
+(entity 5) is at `(577, -399)`, direction `0`; all positions below are offsets from that stop. The
+station rail is two tiles west of the stop centre, at `x = -2`, with straight-rail anchors from
+`y = -4` through `20`.
+
+The two `angels-silo` storehouses have centres `(-6, 10)` and `(-6, 17)`. Their native 4-by-4
+footprints are `[-8, -4) × [8, 12)` and `[-8, -4) × [15, 19)`. The layout guide widens each toward
+the rail and extends it vertically, drawing blue 5-by-7 rectangles `[-8, -3) × [6.5, 13.5)` and
+`[-8, -3) × [13.5, 20.5)`.
+
+The four northmost belt entities form one horizontal row immediately south of the stop. Their exact
+entity-anchor offsets, all direction `8`, are:
+
+| Entity                     | Offset        |
+| -------------------------- | ------------- |
+| `fast-transport-belt` 7    | `(-7.5, 4.5)` |
+| `fast-transport-belt` 8    | `(-6.5, 4.5)` |
+| `fast-transport-belt` 9    | `(-5.5, 4.5)` |
+| `fast-underground-belt` 10 | `(-4.5, 4.5)` |
+
+Together their tile footprints cover `[-8, -4) × [4, 5)`, rendered as the output station's one
+yellow belt rectangle. In the ordinary output fan, the layout locates a stop two tiles east and four
+tiles below the upper end of its actual rendered vertical station rail, so the footprint stays
+aligned with the blueprint rather than the radar schematic.
+
 ## Stacked station fan
 
 ### There is no stacked blueprint primitive

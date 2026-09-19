@@ -17,64 +17,61 @@
     "entities": [
       {
         "entity_number": 1,
-        "name": "fast-splitter",
-        "position": {
-          "x": -825,
-          "y": 99.5
-        },
-        "direction": 8
-      },
-      {
-        "entity_number": 2,
-        "name": "fast-splitter",
-        "position": {
-          "x": -823,
-          "y": 99.5
-        },
-        "direction": 8
-      },
-      {
-        "entity_number": 3,
         "name": "straight-rail",
         "position": {
-          "x": -819,
-          "y": 99
+          "x": 575,
+          "y": -403
         }
       },
       {
-        "entity_number": 4,
-        "name": "fast-transport-belt",
+        "entity_number": 2,
+        "name": "straight-rail",
         "position": {
-          "x": -825.5,
-          "y": 101.5
+          "x": 575,
+          "y": -401
+        }
+      },
+      {
+        "entity_number": 3,
+        "name": "rail-signal",
+        "position": {
+          "x": 576.5,
+          "y": -400.5
         },
         "direction": 8
+      },
+      {
+        "entity_number": 4,
+        "name": "straight-rail",
+        "position": {
+          "x": 575,
+          "y": -399
+        }
       },
       {
         "entity_number": 5,
-        "name": "fast-transport-belt",
+        "name": "train-stop",
         "position": {
-          "x": -825.5,
-          "y": 100.5
+          "x": 577,
+          "y": -399
         },
-        "direction": 8
+        "station": "Provide Solid",
+        "manual_trains_limit": 2
       },
       {
         "entity_number": 6,
-        "name": "fast-underground-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -824.5,
-          "y": 101.5
-        },
-        "direction": 8,
-        "type": "input"
+          "x": 575,
+          "y": -397
+        }
       },
       {
         "entity_number": 7,
         "name": "fast-transport-belt",
         "position": {
-          "x": -822.5,
-          "y": 100.5
+          "x": 569.5,
+          "y": -394.5
         },
         "direction": 8
       },
@@ -82,44 +79,44 @@
         "entity_number": 8,
         "name": "fast-transport-belt",
         "position": {
-          "x": -822.5,
-          "y": 101.5
+          "x": 570.5,
+          "y": -394.5
         },
         "direction": 8
       },
       {
         "entity_number": 9,
+        "name": "fast-transport-belt",
+        "position": {
+          "x": 571.5,
+          "y": -394.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 10,
         "name": "fast-underground-belt",
         "position": {
-          "x": -823.5,
-          "y": 101.5
+          "x": 572.5,
+          "y": -394.5
         },
         "direction": 8,
         "type": "input"
       },
       {
-        "entity_number": 10,
-        "name": "fast-splitter",
-        "position": {
-          "x": -824,
-          "y": 100.5
-        },
-        "direction": 8
-      },
-      {
         "entity_number": 11,
         "name": "straight-rail",
         "position": {
-          "x": -819,
-          "y": 101
+          "x": 575,
+          "y": -395
         }
       },
       {
         "entity_number": 12,
         "name": "fast-transport-belt",
         "position": {
-          "x": -824.5,
-          "y": 102.5
+          "x": 569.5,
+          "y": -393.5
         },
         "direction": 8
       },
@@ -127,828 +124,338 @@
         "entity_number": 13,
         "name": "fast-transport-belt",
         "position": {
-          "x": -825.5,
-          "y": 102.5
+          "x": 569.5,
+          "y": -392.5
         },
-        "direction": 4
+        "direction": 8
       },
       {
         "entity_number": 14,
         "name": "fast-transport-belt",
         "position": {
-          "x": -822.5,
-          "y": 102.5
+          "x": 570.5,
+          "y": -393.5
         },
-        "direction": 12
+        "direction": 8
       },
       {
         "entity_number": 15,
         "name": "fast-transport-belt",
         "position": {
-          "x": -823.5,
-          "y": 102.5
+          "x": 571.5,
+          "y": -393.5
         },
         "direction": 8
       },
       {
         "entity_number": 16,
-        "name": "fast-splitter",
+        "name": "fast-transport-belt",
         "position": {
-          "x": -824,
-          "y": 103.5
+          "x": 571.5,
+          "y": -392.5
         },
         "direction": 8
       },
       {
         "entity_number": 17,
-        "name": "straight-rail",
+        "name": "fast-transport-belt",
         "position": {
-          "x": -819,
-          "y": 103
-        }
+          "x": 570.5,
+          "y": -392.5
+        },
+        "direction": 8
       },
       {
         "entity_number": 18,
-        "name": "fast-transport-belt",
+        "name": "medium-electric-pole",
         "position": {
-          "x": -825.5,
-          "y": 105.5
-        },
-        "direction": 8
+          "x": 572.5,
+          "y": -393.5
+        }
       },
       {
         "entity_number": 19,
-        "name": "fast-transport-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -824.5,
-          "y": 104.5
-        },
-        "direction": 12
+          "x": 575,
+          "y": -393
+        }
       },
       {
         "entity_number": 20,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -825.5,
-          "y": 104.5
-        },
-        "direction": 8
+          "x": 569.5,
+          "y": -391.5
+        }
       },
       {
         "entity_number": 21,
         "name": "fast-underground-belt",
         "position": {
-          "x": -824.5,
-          "y": 105.5
+          "x": 571.5,
+          "y": -391.5
         },
         "direction": 8,
-        "type": "output"
+        "type": "input"
       },
       {
         "entity_number": 22,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -822.5,
-          "y": 105.5
-        },
-        "direction": 8
+          "x": 570.5,
+          "y": -391.5
+        }
       },
       {
         "entity_number": 23,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -822.5,
-          "y": 104.5
+          "x": 573.5,
+          "y": -391.5
         },
-        "direction": 8
+        "direction": 12,
+        "pickup_position": [-1, 1]
       },
       {
         "entity_number": 24,
-        "name": "fast-underground-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -823.5,
-          "y": 105.5
+          "x": 573.5,
+          "y": -390.5
         },
-        "direction": 8,
-        "type": "output"
+        "direction": 12
       },
       {
         "entity_number": 25,
-        "name": "fast-transport-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -823.5,
-          "y": 104.5
-        },
-        "direction": 4
+          "x": 575,
+          "y": -391
+        }
       },
       {
         "entity_number": 26,
-        "name": "straight-rail",
+        "name": "angels-silo",
         "position": {
-          "x": -819,
-          "y": 105
+          "x": 571,
+          "y": -389
         }
       },
       {
         "entity_number": 27,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -825.5,
-          "y": 107.5
+          "x": 573.5,
+          "y": -388.5
         },
-        "direction": 8
+        "direction": 12
       },
       {
         "entity_number": 28,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -824.5,
-          "y": 107.5
+          "x": 573.5,
+          "y": -389.5
         },
-        "direction": 8
+        "direction": 12
       },
       {
         "entity_number": 29,
-        "name": "fast-splitter",
+        "name": "straight-rail",
         "position": {
-          "x": -825,
-          "y": 106.5
-        },
-        "direction": 8
+          "x": 575,
+          "y": -389
+        }
       },
       {
         "entity_number": 30,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -823.5,
-          "y": 107.5
+          "x": 573.5,
+          "y": -386.5
         },
-        "direction": 8
+        "direction": 12,
+        "pickup_position": [-1, -1]
       },
       {
         "entity_number": 31,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -822.5,
-          "y": 107.5
+          "x": 573.5,
+          "y": -387.5
         },
-        "direction": 4
+        "direction": 12
       },
       {
         "entity_number": 32,
-        "name": "fast-splitter",
+        "name": "medium-electric-pole",
         "position": {
-          "x": -823,
-          "y": 106.5
-        },
-        "direction": 8
+          "x": 572.5,
+          "y": -386.5
+        }
       },
       {
         "entity_number": 33,
-        "name": "fast-transport-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -821.5,
-          "y": 107.5
-        },
-        "direction": 8
+          "x": 575,
+          "y": -387
+        }
       },
       {
         "entity_number": 34,
-        "name": "straight-rail",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -819,
-          "y": 107
+          "x": 571.5,
+          "y": -384.5
         }
       },
       {
         "entity_number": 35,
-        "name": "fast-transport-belt",
+        "name": "fast-underground-belt",
         "position": {
-          "x": -825.5,
-          "y": 109.5
+          "x": 571.5,
+          "y": -385.5
         },
-        "direction": 8
+        "direction": 8,
+        "type": "output"
       },
       {
         "entity_number": 36,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -824.5,
-          "y": 108.5
-        },
-        "direction": 8
+          "x": 572.5,
+          "y": -384.5
+        }
       },
       {
         "entity_number": 37,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -824.5,
-          "y": 109.5
+          "x": 573.5,
+          "y": -384.5
         },
-        "direction": 4
+        "direction": 12,
+        "pickup_position": [-1, 1]
       },
       {
         "entity_number": 38,
-        "name": "fast-transport-belt",
+        "name": "fast-underground-belt",
         "position": {
-          "x": -825.5,
-          "y": 108.5
+          "x": 572.5,
+          "y": -385.5
         },
-        "direction": 8
+        "direction": 8,
+        "type": "output"
       },
       {
         "entity_number": 39,
-        "name": "fast-transport-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -823.5,
-          "y": 109.5
-        },
-        "direction": 8
+          "x": 575,
+          "y": -385
+        }
       },
       {
         "entity_number": 40,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -823.5,
-          "y": 108.5
+          "x": 573.5,
+          "y": -382.5
         },
-        "direction": 4
+        "direction": 12
       },
       {
         "entity_number": 41,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -822.5,
-          "y": 109.5
+          "x": 573.5,
+          "y": -383.5
         },
-        "direction": 8
+        "direction": 12
       },
       {
         "entity_number": 42,
-        "name": "fast-transport-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -822.5,
-          "y": 108.5
-        },
-        "direction": 8
+          "x": 575,
+          "y": -383
+        }
       },
       {
         "entity_number": 43,
-        "name": "fast-transport-belt",
+        "name": "angels-silo",
         "position": {
-          "x": -821.5,
-          "y": 109.5
-        },
-        "direction": 8
+          "x": 571,
+          "y": -382
+        }
       },
       {
         "entity_number": 44,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -821.5,
-          "y": 108.5
+          "x": 573.5,
+          "y": -380.5
         },
-        "direction": 8
+        "direction": 12
       },
       {
         "entity_number": 45,
-        "name": "rail-signal",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -820.5,
-          "y": 109.5
-        }
+          "x": 573.5,
+          "y": -381.5
+        },
+        "direction": 12
       },
       {
         "entity_number": 46,
         "name": "straight-rail",
         "position": {
-          "x": -819,
-          "y": 109
+          "x": 575,
+          "y": -381
         }
       },
       {
         "entity_number": 47,
-        "name": "fast-transport-belt",
+        "name": "bob-red-bulk-inserter",
         "position": {
-          "x": -825.5,
-          "y": 110.5
+          "x": 573.5,
+          "y": -379.5
         },
-        "direction": 4
+        "direction": 12,
+        "pickup_position": [-1, -1]
       },
       {
         "entity_number": 48,
-        "name": "fast-transport-belt",
+        "name": "medium-electric-pole",
         "position": {
-          "x": -824.5,
-          "y": 110.5
-        },
-        "direction": 8
+          "x": 572.5,
+          "y": -379.5
+        }
       },
       {
         "entity_number": 49,
-        "name": "fast-underground-belt",
+        "name": "straight-rail",
         "position": {
-          "x": -824.5,
-          "y": 111.5
-        },
-        "direction": 8,
-        "type": "input"
+          "x": 575,
+          "y": -379
+        }
       },
       {
         "entity_number": 50,
-        "name": "fast-transport-belt",
-        "position": {
-          "x": -823.5,
-          "y": 110.5
-        },
-        "direction": 8
-      },
-      {
-        "entity_number": 51,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -823.5,
-          "y": 111.5
-        },
-        "direction": 8,
-        "type": "input"
-      },
-      {
-        "entity_number": 52,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -822.5,
-          "y": 110.5
-        },
-        "direction": 8,
-        "type": "input"
-      },
-      {
-        "entity_number": 53,
-        "name": "inserter",
-        "position": {
-          "x": -822.5,
-          "y": 111.5
-        }
-      },
-      {
-        "entity_number": 54,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -821.5,
-          "y": 110.5
-        },
-        "direction": 8,
-        "type": "input"
-      },
-      {
-        "entity_number": 55,
-        "name": "inserter",
-        "position": {
-          "x": -821.5,
-          "y": 111.5
-        }
-      },
-      {
-        "entity_number": 56,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -820.5,
-          "y": 110.5
-        }
-      },
-      {
-        "entity_number": 57,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 111
-        }
-      },
-      {
-        "entity_number": 58,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -825.5,
-          "y": 112.5
-        }
-      },
-      {
-        "entity_number": 59,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 112.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 60,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 113.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 61,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 113
-        }
-      },
-      {
-        "entity_number": 62,
-        "name": "angels-silo",
-        "position": {
-          "x": -823,
-          "y": 114
-        }
-      },
-      {
-        "entity_number": 63,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 115.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 64,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 114.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 65,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 115
-        }
-      },
-      {
-        "entity_number": 66,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -824.5,
-          "y": 117.5
-        },
-        "direction": 8,
-        "type": "input"
-      },
-      {
-        "entity_number": 67,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -824.5,
-          "y": 116.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 68,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -825.5,
-          "y": 117.5
-        }
-      },
-      {
-        "entity_number": 69,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -823.5,
-          "y": 117.5
-        },
-        "direction": 8,
-        "type": "input"
-      },
-      {
-        "entity_number": 70,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -823.5,
-          "y": 116.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 71,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -822.5,
-          "y": 117.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 72,
-        "name": "inserter",
-        "position": {
-          "x": -822.5,
-          "y": 116.5
-        },
-        "direction": 8,
-        "drop_position": [-0.203125, -1.19921875]
-      },
-      {
-        "entity_number": 73,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -821.5,
-          "y": 117.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 74,
-        "name": "inserter",
-        "position": {
-          "x": -821.5,
-          "y": 116.5
-        },
-        "direction": 8,
-        "drop_position": [-0.203125, -1.19921875]
-      },
-      {
-        "entity_number": 75,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -820.5,
-          "y": 117.5
-        }
-      },
-      {
-        "entity_number": 76,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 117
-        }
-      },
-      {
-        "entity_number": 77,
-        "name": "inserter",
-        "position": {
-          "x": -824.5,
-          "y": 118.5
-        }
-      },
-      {
-        "entity_number": 78,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -825.5,
-          "y": 119.5
-        }
-      },
-      {
-        "entity_number": 79,
-        "name": "inserter",
-        "position": {
-          "x": -823.5,
-          "y": 118.5
-        }
-      },
-      {
-        "entity_number": 80,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 119.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 81,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 119
-        }
-      },
-      {
-        "entity_number": 82,
-        "name": "angels-silo",
-        "position": {
-          "x": -823,
-          "y": 121
-        }
-      },
-      {
-        "entity_number": 83,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 120.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 84,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 121.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 85,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 121
-        }
-      },
-      {
-        "entity_number": 86,
-        "name": "inserter",
-        "position": {
-          "x": -824.5,
-          "y": 123.5
-        },
-        "direction": 8,
-        "control_behavior": {
-          "circuit_condition": {
-            "first_signal": {
-              "type": "virtual",
-              "name": "signal-anything"
-            },
-            "constant": 0,
-            "comparator": ">"
-          }
-        }
-      },
-      {
-        "entity_number": 87,
-        "name": "inserter",
-        "position": {
-          "x": -823.5,
-          "y": 123.5
-        },
-        "direction": 8,
-        "control_behavior": {
-          "circuit_condition": {
-            "first_signal": {
-              "type": "virtual",
-              "name": "signal-anything"
-            },
-            "constant": 0,
-            "comparator": ">"
-          }
-        }
-      },
-      {
-        "entity_number": 88,
-        "name": "inserter",
-        "position": {
-          "x": -820.5,
-          "y": 122.5
-        },
-        "direction": 12
-      },
-      {
-        "entity_number": 89,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 123
-        }
-      },
-      {
-        "entity_number": 90,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -824.5,
-          "y": 124.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 91,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -825.5,
-          "y": 124.5
-        }
-      },
-      {
-        "entity_number": 92,
-        "name": "fast-underground-belt",
-        "position": {
-          "x": -823.5,
-          "y": 124.5
-        },
-        "direction": 8,
-        "type": "output"
-      },
-      {
-        "entity_number": 93,
-        "name": "medium-electric-pole",
-        "position": {
-          "x": -820.5,
-          "y": 124.5
-        }
-      },
-      {
-        "entity_number": 94,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 125
-        }
-      },
-      {
-        "entity_number": 95,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 127
-        }
-      },
-      {
-        "entity_number": 96,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 129
-        }
-      },
-      {
-        "entity_number": 97,
-        "name": "train-stop",
-        "position": {
-          "x": -821,
-          "y": 131
-        },
-        "direction": 8,
-        "control_behavior": {
-          "train_stopped_signal": {
-            "type": "virtual",
-            "name": "signal-T"
-          }
-        },
-        "station": "Provide Solid x",
-        "manual_trains_limit": 1
-      },
-      {
-        "entity_number": 98,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 131
-        }
-      },
-      {
-        "entity_number": 99,
-        "name": "big-electric-pole",
-        "position": {
-          "x": -822,
-          "y": 133
-        }
-      },
-      {
-        "entity_number": 100,
         "name": "rail-signal",
         "position": {
-          "x": -820.5,
-          "y": 132.5
-        }
-      },
-      {
-        "entity_number": 101,
-        "name": "straight-rail",
-        "position": {
-          "x": -819,
-          "y": 133
-        }
+          "x": 576.5,
+          "y": -378.5
+        },
+        "direction": 8
       }
     ],
     "wires": [
-      [56, 5, 75, 5],
-      [58, 5, 75, 5],
-      [58, 5, 78, 5],
-      [68, 5, 75, 5],
-      [68, 5, 91, 5],
-      [68, 5, 78, 5],
-      [75, 5, 93, 5],
-      [78, 5, 93, 5],
-      [86, 1, 87, 1],
-      [91, 5, 93, 5],
-      [93, 1, 97, 1]
+      [18, 5, 32, 5],
+      [32, 5, 48, 5]
     ],
     "item": "blueprint",
     "version": 562949958205441
