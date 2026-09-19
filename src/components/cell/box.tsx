@@ -20,6 +20,7 @@ import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
 import { CellRadar } from './radar.tsx';
+import { stackedRailStations } from './rail-mode.ts';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
@@ -54,6 +55,7 @@ export function CellBox({
   onSearch: (search: string) => void;
 }) {
   const iface = useMemo(() => cellInterface(cell), [cell]);
+  const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const recipeIds = useMemo(() => cell.entries.map(({ recipe }) => recipe), [cell.entries]);
   const rowDrag = useRowDrag(cell.entries.length, (from, to) =>
@@ -280,6 +282,7 @@ export function CellBox({
             solution={solution}
             belt={chosen.belt}
             progress={progress}
+            stackedStations={stackedStations}
             onExpand={() => setRadarOpen(true)}
             expandButtonRef={radarTrigger}
           />
@@ -315,6 +318,7 @@ export function CellBox({
                   solution={solution}
                   belt={chosen.belt}
                   progress={progress}
+                  stackedStations={stackedStations}
                 />
               </section>
             </div>,
@@ -337,7 +341,12 @@ export function CellBox({
         />
       ) : null}
       {cell.layout ? (
-        <CellLayoutSurface layout={cell.layout} inputs={iface.inputs} outputs={iface.outputs} />
+        <CellLayoutSurface
+          layout={cell.layout}
+          inputs={iface.inputs}
+          outputs={iface.outputs}
+          stackedStations={stackedStations}
+        />
       ) : null}
     </section>
   );

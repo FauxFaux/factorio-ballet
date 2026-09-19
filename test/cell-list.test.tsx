@@ -5,8 +5,10 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CellList } from '../src/components/cell-list.tsx';
+import { CellLayoutSurface } from '../src/components/layout/layout.tsx';
 import { newCell, type Cell } from '../src/cell.ts';
 import { NO_CHOICE } from '../src/data/index.ts';
+import type { ResourceId } from '../src/types.ts';
 
 afterEach(cleanup);
 
@@ -61,6 +63,17 @@ describe('CellList', () => {
 
     expect(screen.queryByRole('region', { name: 'Layout' })).toBeNull();
     expect(screen.getByRole('button', { name: '+ layout' })).toBeTruthy();
+  });
+
+  it('uses the radar’s automatic stacked-input mode for a layout rail blueprint', () => {
+    const inputs = Array.from({ length: 6 }, () => 'item:iron-plate' as ResourceId);
+    render(<CellLayoutSurface layout={{}} inputs={inputs} outputs={[]} />);
+
+    expect(
+      screen.getByRole('img', {
+        name: 'Rail blueprint entities: 6 stacked input, 0 output rail brick',
+      }),
+    ).toBeTruthy();
   });
 
   it('fills a design column with the solved number of a recipe’s assemblers', async () => {

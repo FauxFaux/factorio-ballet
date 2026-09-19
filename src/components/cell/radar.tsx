@@ -4,6 +4,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import type { RefObject } from 'preact';
 import { RadarAssemblers } from './radar-assemblers.tsx';
+import { stackedRailStations } from './rail-mode.ts';
 import {
   RailBlueprintCopy,
   RailBorder,
@@ -38,7 +39,7 @@ export function CellRadar({
   expandButtonRef?: RefObject<HTMLButtonElement>;
 }) {
   const stationSummary = `${inputs.length} input and ${outputs.length} output stations`;
-  const stacked = stackedStations ?? inputs.length + outputs.length >= 6;
+  const stacked = stackedStations ?? stackedRailStations(inputs.length, outputs.length);
   const assemblerStartX = stacked ? 68 : 8 + inputs.length * 8;
   const props = {
     title,
