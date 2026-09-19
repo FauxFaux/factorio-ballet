@@ -5,6 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { Blueprint } from '../src/bp/decode.ts';
 import type { RailPiece } from '../src/bp/rail.ts';
 import {
+  centreBlueprint,
   fitBlueprint,
   RailBlueprintPreview,
   railPiecePath,
@@ -119,5 +120,20 @@ describe('RailBlueprintPreview', () => {
     }));
 
     expect(fitBlueprint([], rectangles, [])).toContain('scale(');
+  });
+
+  it('centres a blueprint at game-unit scale without fitting it', () => {
+    const rectangles = [
+      {
+        entity: { entity_number: 1, name: 'unrecognised-entity', position: { x: 10, y: 20 } },
+        known: false,
+        x: 10,
+        y: 20,
+        width: 20,
+        height: 10,
+      },
+    ];
+
+    expect(centreBlueprint([], rectangles, [])).toBe('translate(76 39)');
   });
 });

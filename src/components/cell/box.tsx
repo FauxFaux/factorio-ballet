@@ -336,7 +336,9 @@ export function CellBox({
           }
         />
       ) : null}
-      {cell.layout ? <CellLayoutSurface layout={cell.layout} /> : null}
+      {cell.layout ? (
+        <CellLayoutSurface layout={cell.layout} inputs={iface.inputs} outputs={iface.outputs} />
+      ) : null}
     </section>
   );
 }

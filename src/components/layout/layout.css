@@ -3,6 +3,8 @@
   --cell-layout-grid-major: lightsteelblue;
 
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
   width: 100%;
   aspect-ratio: 192 / 128;
   margin-top: 8px;
@@ -37,6 +39,18 @@
     0.5208333333% 0.78125%;
   border: 1px solid #60a5fa;
   border-radius: 4px;
+}
+
+/* The rail renderer uses the same 192 by 128 game-unit coordinate space as the grid. It is
+ * centred there at game-unit scale and the layout boundary clips anything outside it. */
+.cell-layout-blueprint-entities {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 /* In the two-column range, a full-width canvas can become too tall for a typical laptop viewport.

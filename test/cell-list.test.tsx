@@ -41,15 +41,20 @@ describe('CellList', () => {
     expect(screen.getByRole('button', { name: '+ design' })).toBeTruthy();
   });
 
-  it('adds an empty blue layout surface', async () => {
+  it('adds a layout surface with its rail blueprint centred in the grid', async () => {
     const user = userEvent.setup();
-    render(<CellListExample />);
+    render(<CellListExample cell={newCell('copper-cable')} />);
 
     await user.click(screen.getByRole('button', { name: '+ layout' }));
 
     expect(screen.getByRole('region', { name: 'Layout' }).classList.contains('cell-layout')).toBe(
       true,
     );
+    const blueprint = screen.getByRole('img', {
+      name: 'Rail blueprint entities: 1 input, 1 output rail brick',
+    });
+    expect(blueprint.classList.contains('cell-layout-blueprint-entities')).toBe(true);
+    expect(blueprint.getAttribute('viewBox')).toBe('0 0 192 128');
     expect(screen.getByRole('button', { name: 'remove layout' })).toBeTruthy();
 
     await user.click(screen.getByRole('button', { name: 'remove layout' }));

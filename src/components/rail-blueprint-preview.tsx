@@ -5,6 +5,7 @@ import { staticData } from '../data/decode.ts';
 
 const brickWidth = 192;
 const brickHeight = 120;
+const layoutHeight = 128;
 const brickPadding = 2;
 const signalRadius = 1;
 
@@ -55,11 +56,11 @@ export function railPiecePath(piece: RailPiece): string {
   return `M ${start.x} ${start.y} L ${end.x} ${end.y}`;
 }
 
-export function fitBlueprint(
+function blueprintBounds(
   pieces: RailPiece[],
   rectangles: EntityRectangle[],
   signals: Entity[],
-): string | undefined {
+): { minX: number; maxX: number; minY: number; maxY: number } | undefined {
   let count = 0;
   let minX = Infinity;
   let maxX = -Infinity;
@@ -90,7 +91,18 @@ export function fitBlueprint(
     includePoint(position.x + signalRadius, position.y + signalRadius);
   }
 
-  if (count === 0) return undefined;
+  return count === 0 ? undefined : { minX, maxX, minY, maxY };
+}
+
+/** Scale a blueprint to the standalone preview canvas. */
+export function fitBlueprint(
+  pieces: RailPiece[],
+  rectangles: EntityRectangle[],
+  signals: Entity[],
+): string | undefined {
+  const bounds = blueprintBounds(pieces, rectangles, signals);
+  if (!bounds) return undefined;
+  const { minX, maxX, minY, maxY } = bounds;
   const width = Math.max(maxX - minX, 1);
   const height = Math.max(maxY - minY, 1);
   const scale = Math.min(
@@ -102,32 +114,55 @@ export function fitBlueprint(
   return `translate(${x} ${y}) scale(${scale})`;
 }
 
+/** Centre a blueprint at game-unit scale in the fixed 192 by 128 cell-layout grid. */
+export function centreBlueprint(
+  pieces: RailPiece[],
+  rectangles: EntityRectangle[],
+  signals: Entity[],
+): string | undefined {
+  const bounds = blueprintBounds(pieces, rectangles, signals);
+  if (!bounds) return undefined;
+  const width = Math.max(bounds.maxX - bounds.minX, 1);
+  const height = Math.max(bounds.maxY - bounds.minY, 1);
+  return `translate(${(brickWidth - width) / 2 - bounds.minX} ${(layoutHeight - height) / 2 - bounds.minY})`;
+}
+
 /** A game-unit rendering of the rail entities in a decoded Factorio blueprint. */
-export function RailBlueprintPreview({ blueprint }: { blueprint: Blueprint }) {
+export function RailBlueprintPreview({
+  blueprint,
+  embedded = false,
+}: {
+  blueprint: Blueprint;
+  /** Omits the standalone figure chrome so the rendering can sit over another tile surface. */
+  embedded?: boolean;
+}) {
   const entities = blueprint.entities ?? [];
   const pieces = entities.filter(isRailEntity).map(toRailPiece);
   const signals = entities.filter(isSignalEntity);
   const rectangles = entities
     .filter((entity) => !isRailEntity(entity) && !isSignalEntity(entity))
     .map(entityRectangle);
-  const transform = fitBlueprint(pieces, rectangles, signals);
+  const transform = embedded
+    ? centreBlueprint(pieces, rectangles, signals)
+    : fitBlueprint(pieces, rectangles, signals);
   const label = blueprint.label ?? 'Untitled blueprint';
-  return (
-    <figure class="rail-blueprint-preview">
-      <figcaption>
-        <span>Blueprint rails</span>
-      </figcaption>
-      <svg
-        class="rail-blueprint-preview-entities"
-        viewBox={`0 0 ${brickWidth} ${brickHeight}`}
-        role="img"
-        aria-label={`Rail blueprint entities: ${label}`}
-      >
-        <title>{label} rail entities</title>
-        <desc>
-          {pieces.length} rail pieces, {signals.length} signals, and {rectangles.length} other
-          entities positioned from the Factorio blueprint.
-        </desc>
+  const drawing = (
+    <svg
+      class={
+        embedded
+          ? 'rail-blueprint-preview-entities cell-layout-blueprint-entities'
+          : 'rail-blueprint-preview-entities'
+      }
+      viewBox={`0 0 ${brickWidth} ${embedded ? layoutHeight : brickHeight}`}
+      role="img"
+      aria-label={`Rail blueprint entities: ${label}`}
+    >
+      <title>{label} rail entities</title>
+      <desc>
+        {pieces.length} rail pieces, {signals.length} signals, and {rectangles.length} other
+        entities positioned from the Factorio blueprint.
+      </desc>
+      {!embedded ? (
         <rect
           class="rail-blueprint-preview-floor"
           x="0"
@@ -135,52 +170,62 @@ export function RailBlueprintPreview({ blueprint }: { blueprint: Blueprint }) {
           width={brickWidth}
           height={brickHeight}
         />
-        {transform && (
-          <g transform={transform}>
-            {rectangles.map(({ entity, known, x, y, width, height, color }) => (
-              <rect
-                class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'} ${width === 1 && height === 1 ? 'rail-blueprint-preview-entity-single-cell' : ''}`}
-                key={`entity-${entity.entity_number}`}
-                x={x}
-                y={y}
-                width={width}
-                height={height}
-                style={color ? { fill: color } : undefined}
-                data-blueprint-entity={entity.entity_number}
-                data-blueprint-name={entity.name}
-              />
-            ))}
-            {pieces.map((piece) => (
-              <path
-                class="rail-blueprint-preview-piece-bed"
-                key={`bed-${piece.entityNumber}`}
-                d={railPiecePath(piece)}
-              />
-            ))}
-            {pieces.map((piece) => (
-              <path
-                class="rail-blueprint-preview-piece"
-                key={piece.entityNumber}
-                d={railPiecePath(piece)}
-                data-rail-entity={piece.entityNumber}
-                data-rail-name={piece.name}
-                data-rail-direction={piece.direction}
-              />
-            ))}
-            {signals.map((signal) => (
-              <circle
-                class={`rail-blueprint-preview-signal rail-blueprint-preview-signal-${signal.name === 'rail-signal' ? 'regular' : 'chain'}`}
-                key={`signal-${signal.entity_number}`}
-                cx={signal.position.x}
-                cy={signal.position.y}
-                r={signalRadius}
-                data-blueprint-entity={signal.entity_number}
-                data-blueprint-name={signal.name}
-              />
-            ))}
-          </g>
-        )}
-      </svg>
+      ) : null}
+      {transform && (
+        <g transform={transform}>
+          {rectangles.map(({ entity, known, x, y, width, height, color }) => (
+            <rect
+              class={`rail-blueprint-preview-entity rail-blueprint-preview-entity-${known ? 'known' : 'unknown'} ${width === 1 && height === 1 ? 'rail-blueprint-preview-entity-single-cell' : ''}`}
+              key={`entity-${entity.entity_number}`}
+              x={x}
+              y={y}
+              width={width}
+              height={height}
+              style={color ? { fill: color } : undefined}
+              data-blueprint-entity={entity.entity_number}
+              data-blueprint-name={entity.name}
+            />
+          ))}
+          {pieces.map((piece) => (
+            <path
+              class="rail-blueprint-preview-piece-bed"
+              key={`bed-${piece.entityNumber}`}
+              d={railPiecePath(piece)}
+            />
+          ))}
+          {pieces.map((piece) => (
+            <path
+              class="rail-blueprint-preview-piece"
+              key={piece.entityNumber}
+              d={railPiecePath(piece)}
+              data-rail-entity={piece.entityNumber}
+              data-rail-name={piece.name}
+              data-rail-direction={piece.direction}
+            />
+          ))}
+          {signals.map((signal) => (
+            <circle
+              class={`rail-blueprint-preview-signal rail-blueprint-preview-signal-${signal.name === 'rail-signal' ? 'regular' : 'chain'}`}
+              key={`signal-${signal.entity_number}`}
+              cx={signal.position.x}
+              cy={signal.position.y}
+              r={signalRadius}
+              data-blueprint-entity={signal.entity_number}
+              data-blueprint-name={signal.name}
+            />
+          ))}
+        </g>
+      )}
+    </svg>
+  );
+
+  if (embedded) return drawing;
+  return (
+    <figure class="rail-blueprint-preview">
+      <figcaption>
+        <span>Blueprint rails</span>
+      </figcaption>
+      {drawing}
     </figure>
   );
 }
