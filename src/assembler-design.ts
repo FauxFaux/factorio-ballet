@@ -30,19 +30,25 @@ const longOutputPositions = [
   { x: 6, y: 0 },
 ];
 
-// Ordered so every prefix is the canonical two- or three-input pattern from ASSEMBLERS.md.
-const inputSites: InputSite[] = [
-  { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
-  { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
-  { beltX: 0, position: { x: 2, y: 1 }, direction: 'east', reach: 2 },
+// Two normal inserters can read each near belt; the far-west belt has one long inserter site.
+const wideInputSiteGroups: InputSite[][] = [
+  [
+    { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
+    { beltX: 1, position: { x: 2, y: 0 }, direction: 'east' },
+  ],
+  [
+    { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
+    { beltX: 7, position: { x: 6, y: 0 }, direction: 'west' },
+  ],
+  [{ beltX: 0, position: { x: 2, y: 1 }, direction: 'east', reach: 2 }],
 ];
 
 /**
  * Generate the compact, vertically tileable solid-item design supported by the current model.
  *
  * The model cannot yet describe fluid connections or filtered multi-product output, so those
- * problems deliberately have no solution. This kernel gives each declared solid input its own
- * belt and may add more belts when transfer throughput requires them.
+ * problems deliberately have no solution. Each input belt may carry two solid resources, one per
+ * lane, and the kernel adds belts when lane count or transfer throughput requires them.
  */
 export function generateAssemblerDesign(
   problem: KernelProblem,
@@ -63,7 +69,7 @@ export function generateAssemblerDesign(
 
   const inputRates = positiveRates(problem.inputs.solids);
   const outputRates = positiveRates(problem.outputs.solids);
-  if (!inputRates || !outputRates || inputRates.length > 3 || outputRates.length !== 1) {
+  if (!inputRates || !outputRates || inputRates.length > 6 || outputRates.length !== 1) {
     return undefined;
   }
 
@@ -79,23 +85,16 @@ export function generateAssemblerDesign(
     compactInputInserterCount <= compactInputSites.length &&
     compactOutputInserterCount <= compactOutputPositions.length;
 
-  const inputBeltCount = compact
-    ? 1
-    : [2, 3].find(
-        (count) =>
-          count >= inputRates.length &&
-          inputRate <= count * throughput.beltItemsPerSecond &&
-          inputRate <= inputTransferCapacity(count, throughput),
-      );
   const outputInserterItemsPerSecond = compact
     ? throughput.inserterItemsPerSecond
     : throughput.longInserterItemsPerSecond;
   const outputInserterCount = Math.ceil(outputRate / outputInserterItemsPerSecond);
-  if (!inputBeltCount || outputInserterCount > longOutputPositions.length) return undefined;
+  if (outputInserterCount > longOutputPositions.length) return undefined;
 
   const selectedInputSites = compact
     ? compactInputSites.slice(0, compactInputInserterCount)
-    : inputSites.slice(0, inputBeltCount);
+    : wideInputSites(inputRates, throughput, outputInserterCount);
+  if (!selectedInputSites) return undefined;
   const assemblerX = compact ? 2 : 3;
   const outputBeltX = compact ? 6 : 8;
   const outputPositions = compact ? compactOutputPositions : longOutputPositions;
@@ -132,13 +131,28 @@ function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
   return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
 }
 
-function inputTransferCapacity(beltCount: number, throughput: AssemblerDesignThroughput): number {
-  const normalInserters = Math.min(beltCount, 2);
-  const longInserters = Math.max(0, beltCount - normalInserters);
-  return (
-    normalInserters * throughput.inserterItemsPerSecond +
-    longInserters * throughput.longInserterItemsPerSecond
-  );
+function wideInputSites(
+  inputRates: number[],
+  throughput: AssemblerDesignThroughput,
+  outputInserterCount: number,
+): InputSite[] | undefined {
+  const beltCount = Math.ceil(inputRates.length / 2);
+  if (beltCount < 2 || beltCount > wideInputSiteGroups.length) return undefined;
+
+  const selected: InputSite[] = [];
+  for (let beltIndex = 0; beltIndex < beltCount; beltIndex += 1) {
+    const rate = sum(inputRates.slice(beltIndex * 2, beltIndex * 2 + 2));
+    if (rate > throughput.beltItemsPerSecond) return undefined;
+
+    const allSites = wideInputSiteGroups[beltIndex];
+    const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
+    const itemsPerSecond =
+      beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
+    const inserterCount = Math.ceil(rate / itemsPerSecond);
+    if (inserterCount > sites.length) return undefined;
+    selected.push(...sites.slice(0, inserterCount));
+  }
+  return selected;
 }
 
 function positiveRates(rates: ResourceRates): number[] | undefined {

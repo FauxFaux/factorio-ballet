@@ -31,11 +31,11 @@ describe('generateAssemblerDesign', () => {
     expect(designBounds(entities)).toEqual({ minX: 0, maxX: 7, minY: 0, maxY: 3 });
   });
 
-  it('uses two input inserters for Problem 2 without overlapping entities', () => {
+  it('uses one input inserter for Problem 2 when it exactly matches throughput', () => {
     const design = generateAssemblerDesign(kernelProblems[1]!, throughput);
     const entities = design?.columns[0].entities ?? [];
 
-    expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(3);
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(2);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
@@ -81,15 +81,15 @@ describe('generateAssemblerDesign', () => {
     expect(generateAssemblerDesign(kernelProblems[2]!, throughput)).toBeUndefined();
   });
 
-  it('uses the long input inserter for a three-input, four-belt solution', () => {
+  it('packs three inputs onto two belts, with one mixed belt', () => {
     const design = generateAssemblerDesign(kernelProblems[4]!, throughput);
     const entities = design?.columns[0].entities ?? [];
 
-    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(12);
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(9);
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
       { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 2, y: 0 }, direction: 'east' },
       { kind: 'inserter', position: { x: 6, y: 2 }, direction: 'west' },
-      { kind: 'inserter', position: { x: 2, y: 1 }, direction: 'east', reach: 2 },
       { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },
     ]);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));

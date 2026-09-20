@@ -383,7 +383,7 @@ describe('DesignColumn', () => {
     expect(belt.querySelector('[data-direction="east"]')).not.toBeNull();
   });
 
-  it('colours a belt with a traced item and identifies its side in the tooltip', () => {
+  it('identifies a traced item and its side without success-highlighting the belt', () => {
     render(
       <DesignColumn
         index={0}
@@ -409,7 +409,8 @@ describe('DesignColumn', () => {
     const belt = screen.getByRole('img', {
       name: 'Transport belt at 2, 0, pointing east, right side: Iron gear wheel (item:iron-gear-wheel)',
     });
-    expect(belt.classList.contains('cell-design-belt-item')).toBe(true);
+    expect(belt.getAttribute('data-item-status')).toBe('traced-item');
+    expect(belt.classList.contains('cell-design-belt-item')).toBe(false);
     expect(belt.getAttribute('title')).toBe(
       'Transport belt (2, 0), east — right side: Iron gear wheel (item:iron-gear-wheel)',
     );

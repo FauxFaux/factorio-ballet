@@ -57,7 +57,7 @@ export function DesignScene({
   const entityStatuses = entityPositionStatuses(column.entities);
   const assemblerStatuses = assemblerInputStatuses(column, recipes);
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
-  const itemTracesByBelt = beltItemTraces(column, recipes);
+  const itemTracesByBelt = beltItemTraces(column, recipes, items !== undefined);
   if (items) {
     for (const [beltIndex, inputTraces] of beltInputItemTraces(column, recipes)) {
       const outputTraces = itemTracesByBelt.get(beltIndex) ?? [];

@@ -115,7 +115,7 @@ export function Belt({
 
   return (
     <div
-      class={`cell-design-belt cell-design-belt-${itemTraces.length === 0 ? 'empty' : 'item'}${isError ? ' cell-design-belt-error' : ''}`}
+      class={`cell-design-belt${isError ? ' cell-design-belt-error' : ''}`}
       role="img"
       aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${itemDescription ? `, ${itemDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
       title={`Transport belt (${x}, ${y}), ${belt.direction}${itemDescription ? ` — ${itemDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}

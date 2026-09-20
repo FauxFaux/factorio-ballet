@@ -98,16 +98,38 @@ describe('App', () => {
     for (const belt of outputBelts) {
       expect(belt.querySelectorAll('.cell-design-belt-lane')).toHaveLength(2);
     }
-    const tracedOutputBelts = outputBelts.filter((belt) =>
-      belt.getAttribute('title')?.includes('item 2, 2/s'),
-    );
-    expect(tracedOutputBelts).toHaveLength(2);
-    for (const belt of tracedOutputBelts) {
+    for (const belt of outputBelts) {
+      expect(belt.getAttribute('title')).toContain('item 2, 2/s');
       expect(
         [...belt.querySelectorAll<HTMLElement>('.cell-design-belt-lane')].some(
           (lane) => lane.style.backgroundColor === CARBON_LIGHT_SHORT.Green60,
         ),
       ).toBe(true);
+    }
+    const fifthPreview = within(articles[4]!).getByRole('region', { name: 'Problem 5 preview' });
+    const mixedInputBelts = within(fifthPreview).getAllByRole('img', {
+      name: /Transport belt at 1, \d, pointing north/,
+    });
+    expect(mixedInputBelts).toHaveLength(3);
+    for (const belt of mixedInputBelts) {
+      expect(belt.getAttribute('title')).toContain('left side: item 1, 5/s');
+      expect(belt.getAttribute('title')).toContain('right side: item 2, 5/s');
+      expect(
+        belt.querySelector<HTMLElement>('.cell-design-belt-lane[data-side="left"]')?.style
+          .backgroundColor,
+      ).toBe(CARBON_LIGHT_SHORT.Red50);
+      expect(
+        belt.querySelector<HTMLElement>('.cell-design-belt-lane[data-side="right"]')?.style
+          .backgroundColor,
+      ).toBe(CARBON_LIGHT_SHORT.Green60);
+    }
+    const rightInputBelts = within(fifthPreview).getAllByRole('img', {
+      name: /Transport belt at 7, \d, pointing north/,
+    });
+    expect(rightInputBelts).toHaveLength(3);
+    for (const belt of rightInputBelts) {
+      expect(belt.getAttribute('title')).toContain('left side: item 3, 8/s');
+      expect(belt.getAttribute('title')).toContain('right side: item 3, 8/s');
     }
     expect(screen.queryByText('item 1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();

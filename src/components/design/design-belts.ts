@@ -1,5 +1,5 @@
 import { buildBeltGraph } from '../../bp/belt.ts';
-import { beltLaneKey, type BeltLaneRef } from '../../bp/belt-model.ts';
+import { beltLaneKey, type BeltGraph, type BeltLaneRef } from '../../bp/belt-model.ts';
 import type {
   DesignAssembler,
   DesignColumn,
@@ -105,8 +105,9 @@ function assemblerItemIngredients(
 export function beltItemTraces(
   column: DesignColumn,
   recipes: RecipeProducts,
+  wrapBoundary = false,
 ): Map<number, BeltItemTrace[]> {
-  const { contents } = analyzeDesignLanes(column, recipes);
+  const { contents, graph } = analyzeDesignLanes(column, recipes);
   const traces = new Map<number, BeltItemTrace[]>();
 
   column.entities.forEach((entity, entityIndex) => {
@@ -120,7 +121,34 @@ export function beltItemTraces(
     traces.set(entityIndex, beltTraces);
   });
 
-  return traces;
+  return wrapBoundary ? wrapBeltItemTraces(column, graph, traces) : traces;
+}
+
+/** Extend known output items upstream as if each belt wraps across the design boundary. */
+function wrapBeltItemTraces(
+  column: DesignColumn,
+  graph: BeltGraph,
+  traces: Map<number, BeltItemTrace[]>,
+): Map<number, BeltItemTrace[]> {
+  const { adjacent, lanes } = beltLaneTopology(graph);
+  const itemsByLane = new Map<string, Set<ResourceId>>();
+  for (const [entityNumber, beltTraces] of traces) {
+    for (const { item, side } of beltTraces) {
+      markLaneComponent(itemsByLane, adjacent, { entityNumber, line: 'left', lane: side }, item);
+    }
+  }
+
+  const wrapped = new Map<number, BeltItemTrace[]>();
+  for (const [key, items] of itemsByLane) {
+    const lane = lanes.get(key);
+    if (!lane || items.size !== 1 || column.entities[lane.entityNumber]?.kind !== 'belt') continue;
+    const beltTraces = wrapped.get(lane.entityNumber) ?? [];
+    if (!beltTraces.some(({ side }) => side === lane.lane)) {
+      beltTraces.push({ item: items.values().next().value!, side: lane.lane });
+      wrapped.set(lane.entityNumber, beltTraces);
+    }
+  }
+  return wrapped;
 }
 
 /**
@@ -135,25 +163,9 @@ export function beltInputItemTraces(
   recipes: RecipeIngredients & RecipeProducts,
 ): Map<number, BeltItemTrace[]> {
   const analysis = analyzeDesignLanes(column, recipes);
-  const adjacent = new Map<string, Set<string>>();
-  const lanes = new Map<string, BeltLaneRef>();
-  for (const { from, to } of analysis.graph.connections) {
-    const fromKey = beltLaneKey(from);
-    const toKey = beltLaneKey(to);
-    appendSet(adjacent, fromKey, toKey);
-    appendSet(adjacent, toKey, fromKey);
-    lanes.set(fromKey, from);
-    lanes.set(toKey, to);
-  }
-  for (const entity of analysis.graph.entities) {
-    if (entity.name === 'splitter' || entity.name.endsWith('-splitter')) continue;
-    for (const lane of ['left', 'right'] as const) {
-      const ref: BeltLaneRef = { entityNumber: entity.entity_number, line: 'left', lane };
-      lanes.set(beltLaneKey(ref), ref);
-    }
-  }
-
+  const { adjacent, lanes } = beltLaneTopology(analysis.graph);
   const itemsByLane = new Map<string, Set<ResourceId>>();
+
   const inputGroupsByAssembler = new Map<
     number,
     Map<string, { lanes: BeltLaneRef[]; assembler: DesignAssembler }>
@@ -177,7 +189,9 @@ export function beltInputItemTraces(
       .map((lane) => laneComponentKey(beltLaneKey(lane), adjacent))
       .sort()
       .join('|');
-    const inputGroups = inputGroupsByAssembler.get(entityIndex) ?? new Map();
+    const inputGroups =
+      inputGroupsByAssembler.get(entityIndex) ??
+      new Map<string, { lanes: BeltLaneRef[]; assembler: DesignAssembler }>();
     if (!inputGroups.has(groupKey)) inputGroups.set(groupKey, { lanes: [], assembler });
     const group = inputGroups.get(groupKey)!;
     for (const lane of transfer.sourceBeltLanes) {
@@ -206,9 +220,17 @@ export function beltInputItemTraces(
       continue;
     }
 
+    let itemIndex = 0;
     groups.forEach((group, groupIndex) => {
-      const item = items.length === 1 ? items[0] : items[groupIndex % items.length];
-      for (const lane of group.lanes) markLaneComponent(itemsByLane, adjacent, lane, item);
+      const groupsAfterThis = groups.length - groupIndex - 1;
+      const itemCount = Math.min(group.lanes.length, items.length - itemIndex - groupsAfterThis);
+      const groupItems = items.slice(itemIndex, itemIndex + itemCount);
+      itemIndex += itemCount;
+
+      group.lanes.forEach((lane, laneIndex) => {
+        const item = groupItems.length === 1 ? groupItems[0] : groupItems[laneIndex];
+        if (item) markLaneComponent(itemsByLane, adjacent, lane, item);
+      });
     });
   }
 
@@ -223,6 +245,30 @@ export function beltInputItemTraces(
     }
   }
   return traces;
+}
+
+function beltLaneTopology(graph: BeltGraph): {
+  adjacent: Map<string, Set<string>>;
+  lanes: Map<string, BeltLaneRef>;
+} {
+  const adjacent = new Map<string, Set<string>>();
+  const lanes = new Map<string, BeltLaneRef>();
+  for (const { from, to } of graph.connections) {
+    const fromKey = beltLaneKey(from);
+    const toKey = beltLaneKey(to);
+    appendSet(adjacent, fromKey, toKey);
+    appendSet(adjacent, toKey, fromKey);
+    lanes.set(fromKey, from);
+    lanes.set(toKey, to);
+  }
+  for (const entity of graph.entities) {
+    if (entity.name === 'splitter' || entity.name.endsWith('-splitter')) continue;
+    for (const lane of ['left', 'right'] as const) {
+      const ref: BeltLaneRef = { entityNumber: entity.entity_number, line: 'left', lane };
+      lanes.set(beltLaneKey(ref), ref);
+    }
+  }
+  return { adjacent, lanes };
 }
 
 function laneComponentKey(start: string, adjacent: Map<string, Set<string>>): string {
