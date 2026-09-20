@@ -1,7 +1,14 @@
 .kernel-design {
-  max-width: 48rem;
+  max-width: 92rem;
 }
 
 .kernel-design > p {
   margin-top: 0;
+}
+
+.kernel-design-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1rem;
 }
