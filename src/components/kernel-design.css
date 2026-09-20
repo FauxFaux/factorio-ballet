@@ -6,6 +6,33 @@
   margin-top: 0;
 }
 
+.kernel-design-throughput {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  width: fit-content;
+  margin: 0 0 1rem;
+  padding: 0.6rem 0.75rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.kernel-design-throughput > div {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.kernel-design-throughput dt {
+  color: var(--text-muted);
+}
+
+.kernel-design-throughput dd {
+  margin: 0;
+  color: var(--text-h);
+  font-variant-numeric: tabular-nums;
+}
+
 .kernel-design-cards {
   display: flex;
   flex-wrap: wrap;

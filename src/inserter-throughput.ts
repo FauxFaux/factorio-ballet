@@ -132,7 +132,15 @@ export function inserterItemsPerSecond(
  * non-stack prototype produces the highest estimate.
  */
 export function inserterItemsPerSecondAtProgress(progress: number, reach = 1): number {
-  const belt = defaultBelt(progress).belt;
+  return inserterItemsPerSecondForBeltAtProgress(progress, defaultBelt(progress).belt, reach);
+}
+
+/** Estimate the best unlocked inserter's transfer rate against a caller-selected belt. */
+export function inserterItemsPerSecondForBeltAtProgress(
+  progress: number,
+  belt: Belt,
+  reach = 1,
+): number {
   const capacityBonus = staticData.inserterCapacityBonuses.findLast(
     ([complexity]) => complexity <= progress,
   );

@@ -3,6 +3,7 @@ import { staticData } from '../src/data/decode.ts';
 import {
   inserterItemsPerSecond,
   inserterItemsPerSecondAtProgress,
+  inserterItemsPerSecondForBeltAtProgress,
 } from '../src/inserter-throughput.ts';
 import type { Belt, Inserter, InserterCapacityBonus } from '../src/types.ts';
 
@@ -85,5 +86,29 @@ describe('inserterItemsPerSecond', () => {
     );
 
     expect(inserterItemsPerSecondAtProgress(0.55, 2)).toBeCloseTo(expected);
+  });
+
+  it('uses a chosen belt while resolving the inserter and capacity bonus from progress', () => {
+    const progress = 0.55;
+    const belt = staticData.belts['bob-basic-transport-belt'];
+    const expected = Math.max(
+      ...Object.values(staticData.inserters)
+        .filter(
+          (inserter) =>
+            (staticData.resources[`item:${inserter.item}`]?.complexity ?? Infinity) <= progress &&
+            inserter.maxBeltStackSize === undefined &&
+            inserter.grabLessToMatchBeltStack !== true &&
+            inserter.waitForFullHand !== true,
+        )
+        .map((inserter) =>
+          inserterItemsPerSecond(
+            inserter,
+            staticData.inserterCapacityBonuses.findLast(([complexity]) => complexity <= progress),
+            belt,
+          ),
+        ),
+    );
+
+    expect(inserterItemsPerSecondForBeltAtProgress(progress, belt)).toBeCloseTo(expected);
   });
 });

@@ -1,9 +1,11 @@
 import type { FactoryDesign, DesignEntity } from './design.ts';
 import type { KernelProblem, ResourceRates } from './kernel-problems.ts';
 
-/** Fixed transport capabilities used by the first assembler-kernel generator. */
-export const ASSEMBLER_DESIGN_BELT_ITEMS_PER_SECOND = 30;
-export const ASSEMBLER_DESIGN_INSERTER_ITEMS_PER_SECOND = 8;
+/** Transport capabilities selected for one assembler-kernel generation pass. */
+export interface AssemblerDesignThroughput {
+  beltItemsPerSecond: number;
+  inserterItemsPerSecond: number;
+}
 
 const maximumInputInserters = 2;
 const maximumOutputInserters = 1;
@@ -15,7 +17,18 @@ const maximumOutputInserters = 1;
  * output, so those problems deliberately have no solution. A single input belt can carry at most
  * two solid resources, one on each lane.
  */
-export function generateAssemblerDesign(problem: KernelProblem): FactoryDesign | undefined {
+export function generateAssemblerDesign(
+  problem: KernelProblem,
+  throughput: AssemblerDesignThroughput,
+): FactoryDesign | undefined {
+  if (
+    !Number.isFinite(throughput.beltItemsPerSecond) ||
+    throughput.beltItemsPerSecond <= 0 ||
+    !Number.isFinite(throughput.inserterItemsPerSecond) ||
+    throughput.inserterItemsPerSecond <= 0
+  ) {
+    return undefined;
+  }
   if (problem.assemblers.length !== 1) return undefined;
   if (hasRates(problem.inputs.fluids) || hasRates(problem.outputs.fluids)) return undefined;
 
@@ -27,15 +40,12 @@ export function generateAssemblerDesign(problem: KernelProblem): FactoryDesign |
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
-  if (
-    inputRate > ASSEMBLER_DESIGN_BELT_ITEMS_PER_SECOND ||
-    outputRate > ASSEMBLER_DESIGN_BELT_ITEMS_PER_SECOND
-  ) {
+  if (inputRate > throughput.beltItemsPerSecond || outputRate > throughput.beltItemsPerSecond) {
     return undefined;
   }
 
-  const inputInserters = requiredInserters(inputRate);
-  const outputInserters = requiredInserters(outputRate);
+  const inputInserters = requiredInserters(inputRate, throughput.inserterItemsPerSecond);
+  const outputInserters = requiredInserters(outputRate, throughput.inserterItemsPerSecond);
   if (inputInserters > maximumInputInserters || outputInserters > maximumOutputInserters) {
     return undefined;
   }
@@ -73,8 +83,8 @@ function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
   return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
 }
 
-function requiredInserters(itemsPerSecond: number): number {
-  return Math.ceil(itemsPerSecond / ASSEMBLER_DESIGN_INSERTER_ITEMS_PER_SECOND);
+function requiredInserters(itemsPerSecond: number, inserterItemsPerSecond: number): number {
+  return Math.ceil(itemsPerSecond / inserterItemsPerSecond);
 }
 
 function positiveRates(rates: ResourceRates): number[] | undefined {

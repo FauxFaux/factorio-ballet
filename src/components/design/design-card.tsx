@@ -5,15 +5,23 @@ import type {
   ResourceRates,
 } from '../../kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../data/colours.ts';
-import { generateAssemblerDesign } from '../../assembler-design.ts';
+import { generateAssemblerDesign, type AssemblerDesignThroughput } from '../../assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { DesignPreview } from './design-preview.tsx';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
-export function DesignCard({ index, problem }: { index: number; problem: KernelProblem }) {
+export function DesignCard({
+  index,
+  problem,
+  throughput,
+}: {
+  index: number;
+  problem: KernelProblem;
+  throughput: AssemblerDesignThroughput;
+}) {
   const title = problem.name;
   const resourceColours = resourceColoursFor(problem);
-  const design = generateAssemblerDesign(problem);
+  const design = generateAssemblerDesign(problem, throughput);
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>

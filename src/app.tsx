@@ -92,7 +92,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
           onSizeChange={(update) => setUs((prev) => ({ ...prev, rb: prev.rb && update(prev.rb) }))}
         />
       ) : us.kd ? (
-        <KernelDesign />
+        <KernelDesign progress={progress} chosen={chosen} />
       ) : us.fa ? (
         <FromAir mode={field(uss, 'fa')} progress={progress} />
       ) : (
