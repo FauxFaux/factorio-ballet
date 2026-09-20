@@ -95,11 +95,11 @@ describe('generateAssemblerDesign', () => {
     ]);
   });
 
-  it('splits Problem 3 across two belts with two inserters each', () => {
+  it('splits Problem 3 across two belts with five regular inserters', () => {
     const design = generateAssemblerDesign(kernelProblems[2]!, {
       beltItemsPerSecond: 30,
-      inserterItemsPerSecond: 7.9,
-      longInserterItemsPerSecond: 3.95,
+      inserterItemsPerSecond: 5.89,
+      longInserterItemsPerSecond: 2.945,
     });
     const entities = design?.columns[0].entities ?? [];
 
@@ -107,6 +107,7 @@ describe('generateAssemblerDesign', () => {
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
       { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
       { kind: 'inserter', position: { x: 2, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 2, y: 1 }, direction: 'east' },
       { kind: 'inserter', position: { x: 6, y: 2 }, direction: 'west' },
       { kind: 'inserter', position: { x: 6, y: 0 }, direction: 'west' },
       { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },

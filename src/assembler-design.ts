@@ -37,6 +37,7 @@ const wideInputSiteGroups: InputSite[][] = [
   [
     { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
     { beltX: 1, position: { x: 2, y: 0 }, direction: 'east' },
+    { beltX: 1, position: { x: 2, y: 1 }, direction: 'east' },
   ],
   [
     { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
@@ -282,7 +283,12 @@ function wideInputSites(
     if (rate > throughput.beltItemsPerSecond) return undefined;
 
     const allSites = wideInputSiteGroups[beltIndex];
-    const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
+    const sites =
+      beltIndex === 0 && beltCount === 3
+        ? allSites.slice(0, 2)
+        : beltIndex === 1 && outputInserterCount === 2
+          ? allSites.slice(0, 1)
+          : allSites;
     const itemsPerSecond =
       beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
     const inserterCount = Math.ceil(rate / itemsPerSecond);
@@ -300,7 +306,9 @@ function splitSingleInputAcrossBelts(
   const selected: InputSite[] = [];
   let remaining = rate;
 
-  for (let beltIndex = 0; beltIndex < wideInputSiteGroups.length && remaining > 0; beltIndex += 1) {
+  // A third belt would claim the middle west site for its long inserter. Since long inserters are
+  // slower, replacing that site's normal inserter cannot increase single-item transfer capacity.
+  for (let beltIndex = 0; beltIndex < 2 && remaining > 0; beltIndex += 1) {
     const allSites = wideInputSiteGroups[beltIndex];
     const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
     const itemsPerSecond =

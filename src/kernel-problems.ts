@@ -37,7 +37,7 @@ interface ResourceMix {
 const problemShapes: ProblemShape[] = [
   { inputs: [5], outputs: [2] },
   { inputs: [8], outputs: [3] },
-  { inputs: [25], outputs: [3] },
+  { inputs: [25], outputs: [2] },
   { inputs: [5, 5], outputs: [2] },
   { inputs: [5, 5, 8], outputs: [2] },
   { inputs: [5, 5, 5], outputs: [2, 2] },
