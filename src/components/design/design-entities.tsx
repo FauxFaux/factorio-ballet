@@ -11,6 +11,8 @@ import type {
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
 import type { AssemblerInputStatus, BeltItemTrace } from './design-belts.ts';
+import type { DesignSceneItems } from './design-scene.tsx';
+import { fmt } from '../../ts.ts';
 
 export const TILE_SIZE = 12;
 
@@ -79,6 +81,7 @@ export function Belt({
   status,
   hasLoop,
   itemTraces,
+  items,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -88,6 +91,7 @@ export function Belt({
   status: EntityPositionStatus;
   hasLoop: boolean;
   itemTraces: BeltItemTrace[];
+  items?: DesignSceneItems;
   worldOrigin: ViewportPoint;
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
@@ -97,7 +101,12 @@ export function Belt({
   const isOverlapping = status === 'overlap';
   const isError = isOverlapping || hasLoop;
   const itemDescription = itemTraces
-    .map(({ item, side }) => `${side} side: ${resourceName(item)} (${item})`)
+    .map(({ item, side }) => {
+      const details = items?.[item];
+      return details
+        ? `${side} side: ${details.name}, ${fmt(details.rate)}/s`
+        : `${side} side: ${resourceName(item)} (${item})`;
+    })
     .join('; ');
   const errorDescription = [
     ...(isOverlapping ? ['overlaps another entity'] : []),
@@ -114,6 +123,7 @@ export function Belt({
       data-entity-index={entityIndex}
       data-position-status={status}
       data-item-status={itemTraces.length === 0 ? 'empty' : 'traced-item'}
+      data-direction={belt.direction}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{
@@ -123,6 +133,19 @@ export function Belt({
         height: `${TILE_SIZE}px`,
       }}
     >
+      {items &&
+        (['left', 'right'] as const).map((side) => {
+          const trace = itemTraces.find((candidate) => candidate.side === side);
+          return (
+            <span
+              key={side}
+              class="cell-design-belt-lane"
+              data-side={side}
+              style={{ backgroundColor: trace ? items[trace.item]?.colour : undefined }}
+              aria-hidden="true"
+            />
+          );
+        })}
       <ChevronRightIcon
         className="cell-design-belt-arrow"
         aria-hidden="true"
@@ -152,13 +175,15 @@ export function Inserter({
   const viewportPosition = worldToViewport(inserter.position, worldOrigin);
   const isOverlapping = status === 'overlap';
   const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+  const isLong = inserter.reach === 2;
+  const name = isLong ? 'Long inserter' : 'Inserter';
 
   return (
     <div
-      class={`cell-design-inserter${isOverlapping ? ' cell-design-inserter-error' : ''}`}
+      class={`cell-design-inserter${isLong ? ' cell-design-inserter-long' : ''}${isOverlapping ? ' cell-design-inserter-error' : ''}`}
       role="img"
-      aria-label={`Inserter at ${x}, ${y}, pointing ${inserter.direction}${errorDescription}`}
-      title={`Inserter (${x}, ${y}), ${inserter.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
+      aria-label={`${name} at ${x}, ${y}, pointing ${inserter.direction}${errorDescription}`}
+      title={`${name} (${x}, ${y}), ${inserter.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
       data-position={`${x},${y}`}
       data-entity-index={entityIndex}
       data-position-status={status}

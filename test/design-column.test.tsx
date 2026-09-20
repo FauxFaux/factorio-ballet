@@ -434,6 +434,26 @@ describe('DesignColumn', () => {
     expect(inserter.querySelector('[data-direction="north"]')).not.toBeNull();
   });
 
+  it('identifies an inserter with two-tile pickup and drop reach', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [{ kind: 'inserter', position: { x: 1, y: 2 }, direction: 'north', reach: 2 }],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const inserter = screen.getByRole('img', {
+      name: 'Long inserter at 1, 2, pointing north',
+    });
+    expect(inserter.classList.contains('cell-design-inserter-long')).toBe(true);
+  });
+
   it('places one east-facing inserter for each grid click without dragging', () => {
     let column: DesignColumnData = { entities: [] };
     render(

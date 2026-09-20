@@ -6,7 +6,7 @@ import type {
   DesignDirection,
   DesignPosition,
 } from '../../design.ts';
-import type { Recipe, ResourceId } from '../../types.ts';
+import type { ResourceId } from '../../types.ts';
 import { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
 
 type BeltAxis = 'horizontal' | 'vertical';
@@ -19,8 +19,12 @@ export interface BeltItemTrace {
   side: 'left' | 'right';
 }
 
-type RecipeProducts = Readonly<Record<string, Pick<Recipe, 'products'>>>;
-type RecipeIngredients = Readonly<Record<string, Pick<Recipe, 'ingredients'>>>;
+type RecipeProducts = Readonly<
+  Record<string, { products: ReadonlyArray<{ resource: ResourceId }> }>
+>;
+type RecipeIngredients = Readonly<
+  Record<string, { ingredients: ReadonlyArray<{ resource: ResourceId }> }>
+>;
 
 export interface AssemblerInputStatus {
   satisfied: boolean;
@@ -47,7 +51,10 @@ export function assemblerInputStatuses(
     if (transfer.sourceBeltLanes.length === 0) continue;
     const inserter = column.entities[transfer.inserter.entity_number];
     if (!inserter || inserter.kind !== 'inserter') continue;
-    const drop = addPosition(inserter.position, directionVector(inserter.direction));
+    const drop = addPosition(
+      inserter.position,
+      scalePosition(directionVector(inserter.direction), inserter.reach ?? 1),
+    );
     const assemblerIndexes = column.entities.flatMap((entity, entityIndex) =>
       entity.kind === 'assembler' && contains(entity, drop) ? [entityIndex] : [],
     );
@@ -117,6 +124,83 @@ export function beltItemTraces(
 }
 
 /**
+ * Resolve recipe inputs onto the belt lanes from which inserters collect them.
+ *
+ * Unlike produced items, an input entering a design has no upstream assembler to inject it into
+ * the lane graph. A caller which knows the boundary flows can use this to seed those lanes: one
+ * input may occupy both lanes, while two inputs use one lane each.
+ */
+export function beltInputItemTraces(
+  column: DesignColumn,
+  recipes: RecipeIngredients & RecipeProducts,
+): Map<number, BeltItemTrace[]> {
+  const analysis = analyzeDesignLanes(column, recipes);
+  const adjacent = new Map<string, Set<string>>();
+  const lanes = new Map<string, BeltLaneRef>();
+  for (const { from, to } of analysis.graph.connections) {
+    const fromKey = beltLaneKey(from);
+    const toKey = beltLaneKey(to);
+    appendSet(adjacent, fromKey, toKey);
+    appendSet(adjacent, toKey, fromKey);
+    lanes.set(fromKey, from);
+    lanes.set(toKey, to);
+  }
+  for (const entity of analysis.graph.entities) {
+    if (entity.name === 'splitter' || entity.name.endsWith('-splitter')) continue;
+    for (const lane of ['left', 'right'] as const) {
+      const ref: BeltLaneRef = { entityNumber: entity.entity_number, line: 'left', lane };
+      lanes.set(beltLaneKey(ref), ref);
+    }
+  }
+
+  const itemsByLane = new Map<string, Set<ResourceId>>();
+  for (const transfer of analysis.graph.inserterTransfers) {
+    if (transfer.sourceBeltLanes.length === 0) continue;
+    const inserter = column.entities[transfer.inserter.entity_number];
+    if (!inserter || inserter.kind !== 'inserter') continue;
+    const drop = addPosition(inserter.position, directionVector(inserter.direction));
+    const assemblers = column.entities.filter(
+      (entity): entity is DesignAssembler => entity.kind === 'assembler' && contains(entity, drop),
+    );
+    if (assemblers.length !== 1) continue;
+    const items = assemblerItemIngredients(assemblers[0], recipes);
+    if (items.length === 0 || items.length > transfer.sourceBeltLanes.length) continue;
+
+    transfer.sourceBeltLanes.forEach((lane, index) => {
+      const item = items.length === 1 ? items[0] : items[index];
+      if (!item) return;
+      const pending = [beltLaneKey(lane)];
+      const visited = new Set<string>();
+      while (pending.length > 0) {
+        const key = pending.pop()!;
+        if (visited.has(key)) continue;
+        visited.add(key);
+        appendSet(itemsByLane, key, item);
+        for (const next of adjacent.get(key) ?? []) pending.push(next);
+      }
+    });
+  }
+
+  const traces = new Map<number, BeltItemTrace[]>();
+  for (const [key, items] of itemsByLane) {
+    const lane = lanes.get(key);
+    if (!lane || items.size !== 1 || column.entities[lane.entityNumber]?.kind !== 'belt') continue;
+    const beltTraces = traces.get(lane.entityNumber) ?? [];
+    if (!beltTraces.some(({ side }) => side === lane.lane)) {
+      beltTraces.push({ item: items.values().next().value!, side: lane.lane });
+      traces.set(lane.entityNumber, beltTraces);
+    }
+  }
+  return traces;
+}
+
+function appendSet<Key, Value>(map: Map<Key, Set<Value>>, key: Key, value: Value) {
+  const values = map.get(key) ?? new Set<Value>();
+  values.add(value);
+  map.set(key, values);
+}
+
+/**
  * Return every design-belt index belonging to a logical belt which contains a directed loop.
  * A sideload joins its source and target into the same logical belt, so an upstream sideload is
  * also marked when another section of that belt loops.
@@ -182,6 +266,10 @@ function directionVector(direction: DesignDirection): DesignPosition {
 
 function addPosition(left: DesignPosition, right: DesignPosition): DesignPosition {
   return { x: left.x + right.x, y: left.y + right.y };
+}
+
+function scalePosition(position: DesignPosition, factor: number): DesignPosition {
+  return { x: position.x * factor, y: position.y * factor };
 }
 
 function contains(assembler: DesignAssembler, point: DesignPosition): boolean {

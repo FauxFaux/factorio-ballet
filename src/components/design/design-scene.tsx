@@ -2,6 +2,7 @@ import { staticData } from '../../data/decode.ts';
 import type { DesignColumn, DesignEntity } from '../../design.ts';
 import {
   assemblerInputStatuses,
+  beltInputItemTraces,
   beltItemTraces,
   beltLoopEntityIndexes,
   type AssemblerInputStatus,
@@ -15,6 +16,25 @@ import {
   type EntityPositionStatus,
   type ViewportPoint,
 } from './design-entities.tsx';
+import type { ResourceId } from '../../types.ts';
+
+export interface DesignSceneItem {
+  name: string;
+  colour: string;
+  rate: number;
+}
+
+export type DesignSceneItems = Readonly<Record<string, DesignSceneItem>>;
+
+export type DesignSceneRecipes = Readonly<
+  Record<
+    string,
+    {
+      ingredients: { resource: ResourceId }[];
+      products: { resource: ResourceId }[];
+    }
+  >
+>;
 
 const ignoreEntity = (_entityIndex: number) => undefined;
 
@@ -22,18 +42,33 @@ const ignoreEntity = (_entityIndex: number) => undefined;
 export function DesignScene({
   column,
   worldOrigin,
+  recipes = staticData.recipes,
+  items,
   onEntityEnter = ignoreEntity,
   onEntityLeave = ignoreEntity,
 }: {
   column: DesignColumn;
   worldOrigin: ViewportPoint;
+  recipes?: DesignSceneRecipes;
+  items?: DesignSceneItems;
   onEntityEnter?: (entityIndex: number) => void;
   onEntityLeave?: (entityIndex: number) => void;
 }) {
   const entityStatuses = entityPositionStatuses(column.entities);
-  const assemblerStatuses = assemblerInputStatuses(column, staticData.recipes);
+  const assemblerStatuses = assemblerInputStatuses(column, recipes);
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
-  const itemTracesByBelt = beltItemTraces(column, staticData.recipes);
+  const itemTracesByBelt = beltItemTraces(column, recipes);
+  if (items) {
+    for (const [beltIndex, inputTraces] of beltInputItemTraces(column, recipes)) {
+      const outputTraces = itemTracesByBelt.get(beltIndex) ?? [];
+      itemTracesByBelt.set(beltIndex, [
+        ...outputTraces,
+        ...inputTraces.filter(
+          (input) => !outputTraces.some((output) => output.side === input.side),
+        ),
+      ]);
+    }
+  }
 
   return (
     <>
@@ -46,6 +81,7 @@ export function DesignScene({
           assemblerInputStatus={assemblerStatuses.get(entityIndex)}
           beltHasLoop={loopBeltIndexes.has(entityIndex)}
           beltItemTraces={itemTracesByBelt.get(entityIndex) ?? []}
+          items={items}
           worldOrigin={worldOrigin}
           onPointerEnter={onEntityEnter}
           onPointerLeave={onEntityLeave}
@@ -62,6 +98,7 @@ function DesignEntityView({
   assemblerInputStatus,
   beltHasLoop,
   beltItemTraces,
+  items,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -72,6 +109,7 @@ function DesignEntityView({
   assemblerInputStatus: AssemblerInputStatus | undefined;
   beltHasLoop: boolean;
   beltItemTraces: BeltItemTrace[];
+  items: DesignSceneItems | undefined;
   worldOrigin: ViewportPoint;
   onPointerEnter: (entityIndex: number) => void;
   onPointerLeave: (entityIndex: number) => void;
@@ -100,6 +138,7 @@ function DesignEntityView({
           status={status}
           hasLoop={beltHasLoop}
           itemTraces={beltItemTraces}
+          items={items}
           worldOrigin={worldOrigin}
           {...hoverHandlers}
         />

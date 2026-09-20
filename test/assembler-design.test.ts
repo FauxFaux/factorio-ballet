@@ -3,23 +3,27 @@ import { generateAssemblerDesign } from '../src/assembler-design.ts';
 import { entityPositionStatuses } from '../src/components/design/design-entities.tsx';
 import { kernelProblems } from '../src/kernel-problems.ts';
 
-const throughput = { beltItemsPerSecond: 30, inserterItemsPerSecond: 8 };
+const throughput = {
+  beltItemsPerSecond: 30,
+  inserterItemsPerSecond: 8,
+  longInserterItemsPerSecond: 4,
+};
 
 describe('generateAssemblerDesign', () => {
   it('uses one input inserter for Problem 1', () => {
     const design = generateAssemblerDesign(kernelProblems[0]!, throughput);
 
     expect(design?.columns[0].entities.filter((entity) => entity.kind === 'inserter')).toEqual([
-      { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
-      { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },
     ]);
     expect(design?.columns[0].entities.filter((entity) => entity.kind === 'belt')).toEqual([
-      { kind: 'belt', position: { x: 0, y: 0 }, direction: 'north' },
-      { kind: 'belt', position: { x: 0, y: 1 }, direction: 'north' },
-      { kind: 'belt', position: { x: 0, y: 2 }, direction: 'north' },
-      { kind: 'belt', position: { x: 6, y: 0 }, direction: 'south' },
-      { kind: 'belt', position: { x: 6, y: 1 }, direction: 'south' },
-      { kind: 'belt', position: { x: 6, y: 2 }, direction: 'south' },
+      { kind: 'belt', position: { x: 1, y: 0 }, direction: 'north' },
+      { kind: 'belt', position: { x: 1, y: 1 }, direction: 'north' },
+      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'north' },
+      { kind: 'belt', position: { x: 8, y: 0 }, direction: 'south' },
+      { kind: 'belt', position: { x: 8, y: 1 }, direction: 'south' },
+      { kind: 'belt', position: { x: 8, y: 2 }, direction: 'south' },
     ]);
   });
 
@@ -33,6 +37,20 @@ describe('generateAssemblerDesign', () => {
 
   it('has no solution for Problem 3 because its input needs too many inserters', () => {
     expect(generateAssemblerDesign(kernelProblems[2]!, throughput)).toBeUndefined();
+  });
+
+  it('uses the long input inserter for a three-input, four-belt solution', () => {
+    const design = generateAssemblerDesign(kernelProblems[4]!, throughput);
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(12);
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 6, y: 2 }, direction: 'west' },
+      { kind: 'inserter', position: { x: 2, y: 1 }, direction: 'east', reach: 2 },
+      { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
   it('has no solution for fluid transport or multiple solid outputs', () => {

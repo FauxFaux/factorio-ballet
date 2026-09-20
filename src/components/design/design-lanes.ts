@@ -14,7 +14,7 @@ import type {
   DesignEntity,
   DesignPosition,
 } from '../../design.ts';
-import type { Recipe, ResourceId } from '../../types.ts';
+import type { ResourceId } from '../../types.ts';
 
 export interface LaneInjection {
   inserterIndex: number;
@@ -59,7 +59,9 @@ export function singleLaneItem(contents: LaneContents | undefined): ResourceId |
   return contents?.size === 1 ? contents.keys().next().value : undefined;
 }
 
-type RecipeProducts = Readonly<Record<string, Pick<Recipe, 'products'>>>;
+type RecipeProducts = Readonly<
+  Record<string, { products: ReadonlyArray<{ resource: ResourceId }> }>
+>;
 
 const beltLanes: BeltLane[] = ['left', 'right'];
 const splitterLines: SplitterLine[] = ['left', 'right'];
@@ -110,7 +112,7 @@ function toBeltGraphEntity(entity: DesignEntity, entityIndex: number): Entity[] 
         },
       ];
     case 'inserter': {
-      const offset = directionVector(entity.direction);
+      const offset = scale(directionVector(entity.direction), entity.reach ?? 1);
       return [
         {
           ...base,
@@ -139,7 +141,7 @@ function findLaneInjections(
 
   entities.forEach((entity, inserterIndex) => {
     if (entity.kind !== 'inserter') return;
-    const offset = directionVector(entity.direction);
+    const offset = scale(directionVector(entity.direction), entity.reach ?? 1);
     const pickup = subtract(entity.position, offset);
     const drop = add(entity.position, offset);
     const assemblers = entities.flatMap((candidate, assemblerIndex) =>

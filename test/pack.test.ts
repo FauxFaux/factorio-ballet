@@ -48,7 +48,12 @@ describe('packCells', () => {
                 { kind: 'splitter', position: { x: 5, y: 3 }, direction: 'south' },
                 { kind: 'pipe', position: { x: 2, y: 2 } },
                 { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'south' },
-                { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+                {
+                  kind: 'inserter',
+                  position: { x: 1, y: 2 },
+                  direction: 'east',
+                  reach: 2,
+                },
               ],
             },
           ],

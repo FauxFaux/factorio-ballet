@@ -15,7 +15,7 @@ import type { UrlState } from '../src/url-handler.tsx';
 const kernelDesignState: UrlState = {
   v: 1,
   cs: '',
-  gp: 0,
+  gp: 100,
   cl: [],
   ci: 0,
   mo: {},
@@ -41,6 +41,7 @@ describe('App', () => {
     const throughput = {
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
     };
     const solutionCount = kernelProblems.filter((problem) =>
       generateAssemblerDesign(problem, throughput),
@@ -57,6 +58,10 @@ describe('App', () => {
     expect(
       within(throughputSummary).getByText(`${fmt(throughput.inserterItemsPerSecond)} items/s`),
     ).toBeTruthy();
+    expect(within(throughputSummary).getByText('Long inserter throughput')).toBeTruthy();
+    expect(
+      within(throughputSummary).getByText(`${fmt(throughput.longInserterItemsPerSecond)} items/s`),
+    ).toBeTruthy();
     const articles = screen.getAllByRole('article');
     expect(articles).toHaveLength(kernelProblems.length);
     expect(screen.queryAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(
@@ -66,13 +71,43 @@ describe('App', () => {
       kernelProblems.length - solutionCount,
     );
     expect(within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' })).toBeTruthy();
-    expect(within(articles[1]!).getByText('[no solution]')).toBeTruthy();
-    expect(within(articles[2]!).getByText('[no solution]')).toBeTruthy();
     expect(screen.getAllByText('Assemblers')).toHaveLength(kernelProblems.length);
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(92);
     expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(36);
     for (const icon of within(articles[0]!).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
+    }
+    const firstPreview = within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' });
+    const inputBelts = within(firstPreview).getAllByRole('img', {
+      name: /Transport belt at 1, \d, pointing north/,
+    });
+    expect(inputBelts).toHaveLength(3);
+    for (const belt of inputBelts) {
+      expect(belt.getAttribute('title')).toContain('left side: item 1, 5/s');
+      expect(belt.getAttribute('title')).toContain('right side: item 1, 5/s');
+      const lanes = belt.querySelectorAll('.cell-design-belt-lane');
+      expect(lanes).toHaveLength(2);
+      for (const lane of lanes) {
+        expect((lane as HTMLElement).style.backgroundColor).toBe(CARBON_LIGHT_SHORT.Red50);
+      }
+    }
+    const outputBelts = within(firstPreview).getAllByRole('img', {
+      name: /Transport belt at 8, \d, pointing south/,
+    });
+    expect(outputBelts).toHaveLength(3);
+    for (const belt of outputBelts) {
+      expect(belt.querySelectorAll('.cell-design-belt-lane')).toHaveLength(2);
+    }
+    const tracedOutputBelts = outputBelts.filter((belt) =>
+      belt.getAttribute('title')?.includes('item 2, 2/s'),
+    );
+    expect(tracedOutputBelts).toHaveLength(2);
+    for (const belt of tracedOutputBelts) {
+      expect(
+        [...belt.querySelectorAll<HTMLElement>('.cell-design-belt-lane')].some(
+          (lane) => lane.style.backgroundColor === CARBON_LIGHT_SHORT.Green60,
+        ),
+      ).toBe(true);
     }
     expect(screen.queryByText('item 1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();

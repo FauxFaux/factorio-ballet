@@ -5,17 +5,29 @@ import type { KernelProblem, ResourceRates } from './kernel-problems.ts';
 export interface AssemblerDesignThroughput {
   beltItemsPerSecond: number;
   inserterItemsPerSecond: number;
+  longInserterItemsPerSecond: number;
 }
 
-const maximumInputInserters = 2;
-const maximumOutputInserters = 1;
+interface InputSite {
+  beltX: number;
+  position: { x: number; y: number };
+  direction: 'east' | 'west';
+  reach?: 2;
+}
+
+// Ordered so every prefix is the canonical one-, two-, or three-input pattern from ASSEMBLERS.md.
+const inputSites: InputSite[] = [
+  { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
+  { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
+  { beltX: 0, position: { x: 2, y: 1 }, direction: 'east', reach: 2 },
+];
 
 /**
  * Generate the compact, vertically tileable solid-item design supported by the current model.
  *
- * The model cannot yet describe fluid connections, lane routing, or filtered multi-product
- * output, so those problems deliberately have no solution. A single input belt can carry at most
- * two solid resources, one on each lane.
+ * The model cannot yet describe fluid connections or filtered multi-product output, so those
+ * problems deliberately have no solution. This kernel gives each declared solid input its own
+ * belt and may add more belts when transfer throughput requires them.
  */
 export function generateAssemblerDesign(
   problem: KernelProblem,
@@ -25,7 +37,9 @@ export function generateAssemblerDesign(
     !Number.isFinite(throughput.beltItemsPerSecond) ||
     throughput.beltItemsPerSecond <= 0 ||
     !Number.isFinite(throughput.inserterItemsPerSecond) ||
-    throughput.inserterItemsPerSecond <= 0
+    throughput.inserterItemsPerSecond <= 0 ||
+    !Number.isFinite(throughput.longInserterItemsPerSecond) ||
+    throughput.longInserterItemsPerSecond <= 0
   ) {
     return undefined;
   }
@@ -34,57 +48,66 @@ export function generateAssemblerDesign(
 
   const inputRates = positiveRates(problem.inputs.solids);
   const outputRates = positiveRates(problem.outputs.solids);
-  if (!inputRates || !outputRates || inputRates.length > 2 || outputRates.length !== 1) {
+  if (!inputRates || !outputRates || inputRates.length > 3 || outputRates.length !== 1) {
     return undefined;
   }
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
-  if (inputRate > throughput.beltItemsPerSecond || outputRate > throughput.beltItemsPerSecond) {
+  if (
+    outputRate > throughput.beltItemsPerSecond ||
+    outputRate > throughput.longInserterItemsPerSecond
+  ) {
     return undefined;
   }
 
-  const inputInserters = requiredInserters(inputRate, throughput.inserterItemsPerSecond);
-  const outputInserters = requiredInserters(outputRate, throughput.inserterItemsPerSecond);
-  if (inputInserters > maximumInputInserters || outputInserters > maximumOutputInserters) {
-    return undefined;
-  }
+  const inputBeltCount = [1, 2, 3].find(
+    (count) =>
+      count >= inputRates.length &&
+      inputRate <= count * throughput.beltItemsPerSecond &&
+      inputRate <= inputTransferCapacity(count, throughput),
+  );
+  if (!inputBeltCount) return undefined;
+
+  const selectedInputSites = inputSites.slice(0, inputBeltCount);
 
   const entities: DesignEntity[] = [
-    ...verticalBelt(0, 'north'),
-    ...inputInserterPositions.slice(0, inputInserters).map((position) => ({
+    ...selectedInputSites.flatMap(({ beltX }) => verticalBelt(beltX, 'north')),
+    ...selectedInputSites.map(({ position, direction, reach }) => ({
       kind: 'inserter' as const,
       position,
-      direction: 'east' as const,
+      direction,
+      ...(reach ? { reach } : {}),
     })),
     {
       kind: 'assembler',
-      position: { x: 2, y: 0 },
+      position: { x: 3, y: 0 },
       size: { width: 3, height: 3 },
       recipe: problem.assemblers[0].name,
     },
     {
       kind: 'inserter',
-      position: { x: 5, y: 1 },
+      position: { x: 6, y: 1 },
       direction: 'east',
+      reach: 2,
     },
-    ...verticalBelt(6, 'south'),
+    ...verticalBelt(8, 'south'),
   ];
 
   return { columns: [{ entities }] };
 }
 
-const inputInserterPositions = [
-  { x: 1, y: 0 },
-  { x: 1, y: 2 },
-];
-
 function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
   return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
 }
 
-function requiredInserters(itemsPerSecond: number, inserterItemsPerSecond: number): number {
-  return Math.ceil(itemsPerSecond / inserterItemsPerSecond);
+function inputTransferCapacity(beltCount: number, throughput: AssemblerDesignThroughput): number {
+  const normalInserters = Math.min(beltCount, 2);
+  const longInserters = Math.max(0, beltCount - normalInserters);
+  return (
+    normalInserters * throughput.inserterItemsPerSecond +
+    longInserters * throughput.longInserterItemsPerSecond
+  );
 }
 
 function positiveRates(rates: ResourceRates): number[] | undefined {

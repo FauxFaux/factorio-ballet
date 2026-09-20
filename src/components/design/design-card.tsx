@@ -8,6 +8,8 @@ import { CARBON_LIGHT_SHORT } from '../../data/colours.ts';
 import { generateAssemblerDesign, type AssemblerDesignThroughput } from '../../assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { DesignPreview } from './design-preview.tsx';
+import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
+import type { ResourceId } from '../../types.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
@@ -22,6 +24,7 @@ export function DesignCard({
   const title = problem.name;
   const resourceColours = resourceColoursFor(problem);
   const design = generateAssemblerDesign(problem, throughput);
+  const { recipes, items } = designSceneFlows(problem, resourceColours);
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>
@@ -36,7 +39,12 @@ export function DesignCard({
       </aside>
       <div class="design-card-grid">
         {design ? (
-          <DesignPreview column={design.columns[0]} label={`${title} preview`} />
+          <DesignPreview
+            column={design.columns[0]}
+            label={`${title} preview`}
+            recipes={recipes}
+            items={items}
+          />
         ) : (
           <span class="design-card-no-solution">[no solution]</span>
         )}
@@ -147,4 +155,37 @@ function resourceColoursFor(problem: KernelProblem): ResourceColours {
       palette[index % palette.length],
     ]),
   );
+}
+
+function designSceneFlows(
+  problem: KernelProblem,
+  colours: ResourceColours,
+): { recipes: DesignSceneRecipes; items: DesignSceneItems } {
+  const itemId = (name: string): ResourceId => `item:${name}`;
+  const recipes = Object.fromEntries(
+    problem.assemblers.map((assembler) => [
+      assembler.name,
+      {
+        ingredients: Object.keys(assembler.inputPerSecond)
+          .filter((name) => name.startsWith('item '))
+          .map((name) => ({ resource: itemId(name) })),
+        products: Object.keys(assembler.outputPerSecond)
+          .filter((name) => name.startsWith('item '))
+          .map((name) => ({ resource: itemId(name) })),
+      },
+    ]),
+  );
+  const rates = Object.assign(
+    {},
+    ...problem.assemblers.map((assembler) => ({
+      ...assembler.inputPerSecond,
+      ...assembler.outputPerSecond,
+    })),
+  ) as ResourceRates;
+  const items = Object.fromEntries(
+    Object.entries(rates)
+      .filter(([name]) => name.startsWith('item '))
+      .map(([name, rate]) => [itemId(name), { name, rate, colour: colours[name] }]),
+  );
+  return { recipes, items };
 }

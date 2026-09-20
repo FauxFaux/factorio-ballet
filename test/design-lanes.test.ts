@@ -84,6 +84,34 @@ describe('design belt lane analysis', () => {
     expect(analysis.issues).toEqual([]);
   });
 
+  it('uses explicit two-tile pickup and drop positions for a long inserter', () => {
+    const analysis = analyzeDesignLanes(
+      {
+        entities: [
+          {
+            kind: 'assembler',
+            recipe: 'gears',
+            position: { x: 0, y: 0 },
+            size: { width: 1, height: 1 },
+          },
+          { kind: 'inserter', position: { x: 2, y: 0 }, direction: 'east', reach: 2 },
+          { kind: 'belt', position: { x: 4, y: 0 }, direction: 'east' },
+        ],
+      },
+      recipes,
+    );
+
+    expect(analysis.injections).toEqual([
+      {
+        assemblerIndex: 0,
+        inserterIndex: 1,
+        item: 'item:iron-gear-wheel',
+        target: lane(2, 'right'),
+      },
+    ]);
+    expect(analysis.issues).toEqual([]);
+  });
+
   it('places on the lane farthest from an inserter beside the belt', () => {
     const makeColumn = (direction: DesignDirection): DesignColumn => ({
       entities: [

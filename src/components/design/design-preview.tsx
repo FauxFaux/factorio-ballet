@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { DesignColumn, DesignEntity } from '../../design.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { DesignScene } from './design-scene.tsx';
+import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 
 const previewPadding = TILE_SIZE;
 const maximumPreviewScale = 3;
@@ -69,7 +70,17 @@ export function fitDesignPreview(
 }
 
 /** A fitted, read-only rendering of a design column. */
-export function DesignPreview({ column, label }: { column: DesignColumn; label: string }) {
+export function DesignPreview({
+  column,
+  label,
+  recipes,
+  items,
+}: {
+  column: DesignColumn;
+  label: string;
+  recipes?: DesignSceneRecipes;
+  items?: DesignSceneItems;
+}) {
   const viewport = useRef<HTMLDivElement>(null);
   const [viewportSize, setViewportSize] = useState<ViewportPoint>({ x: 0, y: 0 });
 
@@ -109,7 +120,7 @@ export function DesignPreview({ column, label }: { column: DesignColumn; label: 
           transform: `scale(${scale})`,
         }}
       >
-        <DesignScene column={column} worldOrigin={origin} />
+        <DesignScene column={column} worldOrigin={origin} recipes={recipes} items={items} />
       </div>
     </div>
   );

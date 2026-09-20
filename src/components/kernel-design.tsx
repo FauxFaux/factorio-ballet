@@ -10,6 +10,7 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
   const throughput = {
     beltItemsPerSecond: chosen.belt.itemsPerSecond,
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
+    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
   };
 
   return (
@@ -23,6 +24,10 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
         <div>
           <dt>Inserter throughput</dt>
           <dd>{fmt(throughput.inserterItemsPerSecond)} items/s</dd>
+        </div>
+        <div>
+          <dt>Long inserter throughput</dt>
+          <dd>{fmt(throughput.longInserterItemsPerSecond)} items/s</dd>
         </div>
       </dl>
       <p>Design reusable factory kernels for the following production problems.</p>

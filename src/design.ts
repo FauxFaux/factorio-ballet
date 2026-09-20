@@ -54,6 +54,8 @@ export interface DesignUndergroundPipe extends DesignEntityBase {
 export interface DesignInserter extends DesignEntityBase {
   kind: 'inserter';
   direction: DesignDirection;
+  /** Pickup and drop distance in tiles. Omitted for an ordinary one-tile inserter. */
+  reach?: 1 | 2;
 }
 
 /** An entity the simplified factory blueprint can place on a {@link DesignColumn}. */
