@@ -195,7 +195,12 @@ export function beltInputItemTraces(
     if (!inputGroups.has(groupKey)) inputGroups.set(groupKey, { lanes: [], assembler });
     const group = inputGroups.get(groupKey)!;
     for (const lane of transfer.sourceBeltLanes) {
-      if (!group.lanes.some((candidate) => beltLaneKey(candidate) === beltLaneKey(lane))) {
+      const componentKey = laneComponentKey(beltLaneKey(lane), adjacent);
+      if (
+        !group.lanes.some(
+          (candidate) => laneComponentKey(beltLaneKey(candidate), adjacent) === componentKey,
+        )
+      ) {
         group.lanes.push(lane);
       }
     }
@@ -254,6 +259,31 @@ export function beltInputItemTraces(
     }
   }
   return traces;
+}
+
+/** Count the distinct connected belt lanes allocated to each traced item. */
+export function beltItemLaneCounts(
+  column: DesignColumn,
+  recipes: RecipeProducts,
+  traces: ReadonlyMap<number, BeltItemTrace[]>,
+): Map<ResourceId, number> {
+  const { graph } = analyzeDesignLanes(column, recipes);
+  const { adjacent } = beltLaneTopology(graph);
+  const componentsByItem = new Map<ResourceId, Set<string>>();
+
+  for (const [entityNumber, beltTraces] of traces) {
+    for (const { item, side } of beltTraces) {
+      appendSet(
+        componentsByItem,
+        item,
+        laneComponentKey(beltLaneKey({ entityNumber, line: 'left', lane: side }), adjacent),
+      );
+    }
+  }
+
+  return new Map(
+    [...componentsByItem].map(([item, components]) => [item, components.size] as const),
+  );
 }
 
 function beltLaneTopology(graph: BeltGraph): {

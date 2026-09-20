@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   assemblerInputStatuses,
   beltInputItemTraces,
+  beltItemLaneCounts,
 } from '../src/components/design/design-belts.ts';
 import type { DesignColumn, DesignEntity } from '../src/design.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
@@ -105,6 +106,39 @@ describe('assembler belt inputs', () => {
             { item: 'item:iron-plate', side: 'right' },
           ],
         ],
+      ]),
+    );
+  });
+
+  it('seeds a mixed belt once when two inserters read different cells of it', () => {
+    const column: DesignColumn = {
+      entities: [
+        { kind: 'belt', position: { x: 0, y: 0 }, direction: 'north' },
+        { kind: 'belt', position: { x: 0, y: 1 }, direction: 'north' },
+        { kind: 'belt', position: { x: 0, y: 2 }, direction: 'north' },
+        { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+        { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+        assembler('circuits', { x: 2, y: 0 }, { width: 3, height: 3 }),
+      ],
+    };
+
+    const traces = beltInputItemTraces(column, recipes);
+
+    expect(traces).toEqual(
+      new Map(
+        [0, 1, 2].map((entityIndex) => [
+          entityIndex,
+          [
+            { item: 'item:iron-plate', side: 'left' },
+            { item: 'item:copper-plate', side: 'right' },
+          ],
+        ]),
+      ),
+    );
+    expect(beltItemLaneCounts(column, recipes, traces)).toEqual(
+      new Map([
+        ['item:iron-plate', 1],
+        ['item:copper-plate', 1],
       ]),
     );
   });

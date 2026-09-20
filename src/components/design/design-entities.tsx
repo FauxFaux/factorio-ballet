@@ -7,6 +7,7 @@ import type {
   DesignBelt,
   DesignEntity,
   DesignInserter,
+  DesignPipe,
   DesignPosition,
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
@@ -202,6 +203,48 @@ export function Inserter({
         data-direction={inserter.direction}
       />
     </div>
+  );
+}
+
+/** A one-tile section of fluid pipe. */
+export function Pipe({
+  entityIndex,
+  pipe,
+  status,
+  worldOrigin,
+  onPointerEnter,
+  onPointerLeave,
+}: {
+  entityIndex: number;
+  pipe: DesignPipe;
+  status: EntityPositionStatus;
+  worldOrigin: ViewportPoint;
+  onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
+  onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
+}) {
+  const { x, y } = pipe.position;
+  const viewportPosition = worldToViewport(pipe.position, worldOrigin);
+  const isOverlapping = status === 'overlap';
+  const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+
+  return (
+    <div
+      class={`cell-design-pipe${isOverlapping ? ' cell-design-pipe-error' : ''}`}
+      role="img"
+      aria-label={`Pipe at ${x}, ${y}${errorDescription}`}
+      title={`Pipe (${x}, ${y})${isOverlapping ? ' — overlaps another entity' : ''}`}
+      data-position={`${x},${y}`}
+      data-entity-index={entityIndex}
+      data-position-status={status}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      style={{
+        left: `${viewportPosition.x}px`,
+        top: `${viewportPosition.y}px`,
+        width: `${TILE_SIZE}px`,
+        height: `${TILE_SIZE}px`,
+      }}
+    />
   );
 }
 

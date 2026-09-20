@@ -10,6 +10,8 @@ import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { DesignPreview } from './design-preview.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
+import type { DesignColumn } from '../../design.ts';
+import { beltInputItemTraces, beltItemLaneCounts, beltItemTraces } from './design-belts.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
@@ -25,6 +27,9 @@ export function DesignCard({
   const resourceColours = resourceColoursFor(problem);
   const design = generateAssemblerDesign(problem, throughput);
   const { recipes, items } = designSceneFlows(problem, resourceColours);
+  const stackLimit = design
+    ? beltStackLimit(design.columns[0], recipes, problem, throughput.beltItemsPerSecond)
+    : undefined;
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>
@@ -35,6 +40,12 @@ export function DesignCard({
           outputs={problem.outputs}
           resourceColours={resourceColours}
         />
+        {stackLimit !== undefined && (
+          <dl class="design-card-stack-limit" aria-label="Max column height">
+            <dt>Max column height</dt>
+            <dd>×{stackLimit}</dd>
+          </dl>
+        )}
         <AssemblerList assemblers={problem.assemblers} resourceColours={resourceColours} />
       </aside>
       <div class="design-card-grid">
@@ -188,4 +199,31 @@ function designSceneFlows(
       .map(([name, rate]) => [itemId(name), { name, rate, colour: colours[name] }]),
   );
   return { recipes, items };
+}
+
+function beltStackLimit(
+  column: DesignColumn,
+  recipes: DesignSceneRecipes,
+  problem: KernelProblem,
+  beltItemsPerSecond: number,
+): number | undefined {
+  const inputLanes = beltItemLaneCounts(column, recipes, beltInputItemTraces(column, recipes));
+  const outputLanes = beltItemLaneCounts(column, recipes, beltItemTraces(column, recipes, true));
+  const laneItemsPerSecond = beltItemsPerSecond / 2;
+  const limits = [
+    ...sideStackLimits(problem.inputs.solids, inputLanes, laneItemsPerSecond),
+    ...sideStackLimits(problem.outputs.solids, outputLanes, laneItemsPerSecond),
+  ];
+  return limits.length > 0 ? Math.floor(Math.min(...limits)) : undefined;
+}
+
+function sideStackLimits(
+  rates: ResourceRates,
+  laneCounts: ReadonlyMap<ResourceId, number>,
+  laneItemsPerSecond: number,
+): number[] {
+  return Object.entries(rates).map(([resource, rate]) => {
+    const lanes = laneCounts.get(`item:${resource}`) ?? 0;
+    return (lanes * laneItemsPerSecond) / rate;
+  });
 }

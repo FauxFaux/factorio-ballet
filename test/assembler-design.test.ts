@@ -128,8 +128,95 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
-  it('has no solution for fluid transport or multiple solid outputs', () => {
+  it.each([
+    [6, [], [{ position: { x: 4, y: 1 }, direction: 'east' }]],
+    [
+      7,
+      [{ position: { x: 4, y: 2 }, direction: 'west' }],
+      [{ position: { x: 4, y: 1 }, direction: 'east', reach: 2 }],
+    ],
+    [
+      8,
+      [
+        { position: { x: 4, y: 2 }, direction: 'west' },
+        { position: { x: 4, y: 0 }, direction: 'west' },
+      ],
+      [{ position: { x: 4, y: 1 }, direction: 'east', reach: 2 }],
+    ],
+  ] as const)('reserves the left pipe trunk for Problem %s', (problemIndex, inputs, outputs) => {
+    const design = generateAssemblerDesign(kernelProblems[problemIndex]!, throughput);
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
+      { kind: 'pipe', position: { x: 0, y: 0 } },
+      { kind: 'pipe', position: { x: 0, y: 1 } },
+      { kind: 'pipe', position: { x: 0, y: 2 } },
+    ]);
+    expect(entities).toContainEqual({
+      kind: 'assembler',
+      position: { x: 1, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: 'Assembler 1',
+    });
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      ...inputs.map((inserter) => ({ kind: 'inserter', ...inserter })),
+      ...outputs.map((inserter) => ({ kind: 'inserter', ...inserter })),
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it.each([
+    [10, 1],
+    [11, 1],
+    [12, 3],
+    [13, 1],
+  ] as const)(
+    'uses the left pipe trunk and right input belt for Problem %s',
+    (problemIndex, inserterCount) => {
+      const design = generateAssemblerDesign(kernelProblems[problemIndex]!, {
+        beltItemsPerSecond: 30,
+        inserterItemsPerSecond: 12,
+        longInserterItemsPerSecond: 6,
+      });
+      const entities = design?.columns[0].entities ?? [];
+
+      expect(entities.filter((entity) => entity.kind === 'pipe')).toHaveLength(3);
+      expect(entities.filter((entity) => entity.kind === 'belt')).toEqual([
+        { kind: 'belt', position: { x: 5, y: 0 }, direction: 'north' },
+        { kind: 'belt', position: { x: 5, y: 1 }, direction: 'north' },
+        { kind: 'belt', position: { x: 5, y: 2 }, direction: 'north' },
+      ]);
+      expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(inserterCount);
+      expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    },
+  );
+
+  it('adds a far right input belt for Problem 15', () => {
+    const design = generateAssemblerDesign(kernelProblems[14]!, {
+      beltItemsPerSecond: 30,
+      inserterItemsPerSecond: 12,
+      longInserterItemsPerSecond: 6,
+    });
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'belt')).toEqual([
+      { kind: 'belt', position: { x: 5, y: 0 }, direction: 'north' },
+      { kind: 'belt', position: { x: 5, y: 1 }, direction: 'north' },
+      { kind: 'belt', position: { x: 5, y: 2 }, direction: 'north' },
+      { kind: 'belt', position: { x: 6, y: 0 }, direction: 'north' },
+      { kind: 'belt', position: { x: 6, y: 1 }, direction: 'north' },
+      { kind: 'belt', position: { x: 6, y: 2 }, direction: 'north' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 4, y: 2 }, direction: 'west' },
+      { kind: 'inserter', position: { x: 4, y: 1 }, direction: 'west', reach: 2 },
+      { kind: 'inserter', position: { x: 4, y: 0 }, direction: 'west', reach: 2 },
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('has no solution for multiple solid outputs or simultaneous fluid input and output', () => {
     expect(generateAssemblerDesign(kernelProblems[5]!, throughput)).toBeUndefined();
-    expect(generateAssemblerDesign(kernelProblems[6]!, throughput)).toBeUndefined();
+    expect(generateAssemblerDesign(kernelProblems[16]!, throughput)).toBeUndefined();
   });
 });

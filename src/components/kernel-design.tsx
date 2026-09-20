@@ -30,7 +30,7 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
           <dd>{fmt(throughput.longInserterItemsPerSecond)} items/s</dd>
         </div>
       </dl>
-      <p>Design reusable factory kernels for the following production problems.</p>
+      <p>Built in solver's results for various situations.</p>
       <div class="kernel-design-cards" aria-label="Kernel problems">
         {kernelProblems.map((problem, index) => (
           <DesignCard key={problem.name} index={index} problem={problem} throughput={throughput} />

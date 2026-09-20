@@ -67,7 +67,13 @@ export function generateAssemblerDesign(
     return undefined;
   }
   if (problem.assemblers.length !== 1) return undefined;
-  if (hasRates(problem.inputs.fluids) || hasRates(problem.outputs.fluids)) return undefined;
+  const hasFluidInput = hasRates(problem.inputs.fluids);
+  const hasFluidOutput = hasRates(problem.outputs.fluids);
+  if (hasFluidInput && hasFluidOutput) return undefined;
+  if (hasFluidInput) {
+    return generateFluidInputDesign(problem, throughput);
+  }
+  if (hasFluidOutput) return generateFluidOutputDesign(problem, throughput);
 
   const inputRates = positiveRates(problem.inputs.solids);
   const outputRates = positiveRates(problem.outputs.solids);
@@ -122,6 +128,131 @@ export function generateAssemblerDesign(
       position,
       direction: 'east' as const,
       ...(compact ? {} : { reach: 2 as const }),
+    })),
+    ...verticalBelt(outputBeltX, 'south'),
+  ];
+
+  return { columns: [{ entities }] };
+}
+
+function generateFluidOutputDesign(
+  problem: KernelProblem,
+  throughput: AssemblerDesignThroughput,
+): FactoryDesign | undefined {
+  const inputRates = positiveRates(problem.inputs.solids);
+  const solidOutputRates = optionalPositiveRates(problem.outputs.solids);
+  const fluidOutputRates = positiveRates(problem.outputs.fluids);
+  if (
+    !inputRates ||
+    inputRates.length > 4 ||
+    !solidOutputRates ||
+    solidOutputRates.length !== 0 ||
+    !fluidOutputRates ||
+    fluidOutputRates.length !== 1
+  ) {
+    return undefined;
+  }
+
+  const nearInputRate = sum(inputRates.slice(0, 2));
+  const farInputRate = sum(inputRates.slice(2, 4));
+  if (
+    nearInputRate > throughput.beltItemsPerSecond ||
+    farInputRate > throughput.beltItemsPerSecond
+  ) {
+    return undefined;
+  }
+
+  const nearInserterCount = Math.ceil(nearInputRate / throughput.inserterItemsPerSecond);
+  const farInserterCount = Math.ceil(farInputRate / throughput.longInserterItemsPerSecond);
+  if (nearInserterCount + farInserterCount > 3) return undefined;
+  const nearInserterYs = [2, 0, 1].slice(0, nearInserterCount);
+  const farInserterYs = [1, 0, 2]
+    .filter((y) => !nearInserterYs.includes(y))
+    .slice(0, farInserterCount);
+  if (farInserterYs.length !== farInserterCount) return undefined;
+
+  const entities: DesignEntity[] = [
+    ...[0, 1, 2].map((y): DesignEntity => ({ kind: 'pipe', position: { x: 0, y } })),
+    ...verticalBelt(5, 'north'),
+    ...(farInputRate > 0 ? verticalBelt(6, 'north') : []),
+    ...nearInserterYs.map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 4, y },
+      direction: 'west',
+    })),
+    ...farInserterYs.map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 4, y },
+      direction: 'west',
+      reach: 2,
+    })),
+    {
+      kind: 'assembler',
+      position: { x: 1, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: problem.assemblers[0].name,
+    },
+  ];
+
+  return { columns: [{ entities }] };
+}
+
+function generateFluidInputDesign(
+  problem: KernelProblem,
+  throughput: AssemblerDesignThroughput,
+): FactoryDesign | undefined {
+  const fluidInputRates = positiveRates(problem.inputs.fluids);
+  const inputRates = optionalPositiveRates(problem.inputs.solids);
+  const outputRates = positiveRates(problem.outputs.solids);
+  if (
+    !fluidInputRates ||
+    fluidInputRates.length !== 1 ||
+    !inputRates ||
+    inputRates.length > 2 ||
+    !outputRates ||
+    outputRates.length !== 1
+  ) {
+    return undefined;
+  }
+
+  const inputRate = sum(inputRates);
+  const outputRate = sum(outputRates);
+  const hasSolidInput = inputRates.length > 0;
+  if (inputRate > throughput.beltItemsPerSecond || outputRate > throughput.beltItemsPerSecond) {
+    return undefined;
+  }
+
+  const inputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
+  const outputItemsPerSecond = hasSolidInput
+    ? throughput.longInserterItemsPerSecond
+    : throughput.inserterItemsPerSecond;
+  const outputInserterCount = Math.ceil(outputRate / outputItemsPerSecond);
+  if (inputInserterCount + outputInserterCount > 3) return undefined;
+
+  const inputYs = [2, 0, 1].slice(0, inputInserterCount);
+  const outputYs = [1, 0, 2].filter((y) => !inputYs.includes(y)).slice(0, outputInserterCount);
+  if (outputYs.length !== outputInserterCount) return undefined;
+
+  const outputBeltX = hasSolidInput ? 6 : 5;
+  const entities: DesignEntity[] = [
+    ...[0, 1, 2].map((y): DesignEntity => ({ kind: 'pipe', position: { x: 0, y } })),
+    ...(hasSolidInput ? verticalBelt(5, 'north') : []),
+    ...inputYs.map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 4, y },
+      direction: 'west',
+    })),
+    {
+      kind: 'assembler',
+      position: { x: 1, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: problem.assemblers[0].name,
+    },
+    ...outputYs.map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 4, y },
+      direction: 'east',
+      ...(hasSolidInput ? { reach: 2 } : {}),
     })),
     ...verticalBelt(outputBeltX, 'south'),
   ];
@@ -189,6 +320,11 @@ function positiveRates(rates: ResourceRates): number[] | undefined {
   return values.length > 0 && values.every((rate) => Number.isFinite(rate) && rate > 0)
     ? values
     : undefined;
+}
+
+function optionalPositiveRates(rates: ResourceRates): number[] | undefined {
+  const values = Object.values(rates);
+  return values.every((rate) => Number.isFinite(rate) && rate > 0) ? values : undefined;
 }
 
 function hasRates(rates: ResourceRates): boolean {

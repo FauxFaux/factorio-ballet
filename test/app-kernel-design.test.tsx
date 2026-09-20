@@ -71,6 +71,9 @@ describe('App', () => {
       kernelProblems.length - solutionCount,
     );
     expect(within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' })).toBeTruthy();
+    expect(within(articles[0]!).getByLabelText('Max column height').textContent).toContain('×6');
+    expect(within(articles[3]!).getByLabelText('Max column height').textContent).toContain('×3');
+    expect(within(articles[4]!).getByLabelText('Max column height').textContent).toContain('×3');
     expect(screen.getAllByText('Assemblers')).toHaveLength(kernelProblems.length);
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(92);
     expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(36);
@@ -131,6 +134,26 @@ describe('App', () => {
       expect(belt.getAttribute('title')).toContain('left side: item 3, 8/s');
       expect(belt.getAttribute('title')).toContain('right side: item 3, 8/s');
     }
+    const problem7Preview = within(articles[6]!).getByRole('region', {
+      name: 'Problem 7 preview',
+    });
+    expect(within(problem7Preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(
+      3,
+    );
+    for (const problemIndex of [10, 11, 12, 13]) {
+      const preview = within(articles[problemIndex]!).getByRole('region', {
+        name: `Problem ${problemIndex + 1} preview`,
+      });
+      expect(within(preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(3);
+    }
+    const problem15Preview = within(articles[14]!).getByRole('region', {
+      name: 'Problem 15 preview',
+    });
+    expect(
+      within(problem15Preview).getAllByRole('img', {
+        name: /Transport belt at 6, \d, pointing north/,
+      }),
+    ).toHaveLength(3);
     expect(screen.queryByText('item 1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();
   });

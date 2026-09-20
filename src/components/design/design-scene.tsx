@@ -13,6 +13,7 @@ import {
   Belt,
   entityPositionStatuses,
   Inserter,
+  Pipe,
   type EntityPositionStatus,
   type ViewportPoint,
 } from './design-entities.tsx';
@@ -148,6 +149,16 @@ function DesignEntityView({
         <Inserter
           entityIndex={entityIndex}
           inserter={entity}
+          status={status}
+          worldOrigin={worldOrigin}
+          {...hoverHandlers}
+        />
+      );
+    case 'pipe':
+      return (
+        <Pipe
+          entityIndex={entityIndex}
+          pipe={entity}
           status={status}
           worldOrigin={worldOrigin}
           {...hoverHandlers}
