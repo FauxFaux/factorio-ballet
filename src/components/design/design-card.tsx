@@ -5,6 +5,7 @@ import type {
   ResourceRates,
 } from '../../kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../data/colours.ts';
+import { generateAssemblerDesign } from '../../assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { DesignPreview } from './design-preview.tsx';
 
@@ -12,6 +13,7 @@ import { DesignPreview } from './design-preview.tsx';
 export function DesignCard({ index, problem }: { index: number; problem: KernelProblem }) {
   const title = problem.name;
   const resourceColours = resourceColoursFor(problem);
+  const design = generateAssemblerDesign(problem);
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>
@@ -25,7 +27,11 @@ export function DesignCard({ index, problem }: { index: number; problem: KernelP
         <AssemblerList assemblers={problem.assemblers} resourceColours={resourceColours} />
       </aside>
       <div class="design-card-grid">
-        <DesignPreview column={problem.design.columns[0]} label={`${title} preview`} />
+        {design ? (
+          <DesignPreview column={design.columns[0]} label={`${title} preview`} />
+        ) : (
+          <span class="design-card-no-solution">[no solution]</span>
+        )}
       </div>
     </article>
   );

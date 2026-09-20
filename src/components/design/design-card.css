@@ -113,7 +113,15 @@
 }
 
 .design-card-grid {
+  display: grid;
+  place-items: stretch;
   min-width: 0;
+}
+
+.design-card-no-solution {
+  place-self: center;
+  color: var(--text-muted);
+  font-size: 0.8333rem;
 }
 
 .design-card-grid .design-preview {
