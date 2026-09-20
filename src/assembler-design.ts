@@ -15,6 +15,9 @@ interface InputSite {
   reach?: 2;
 }
 
+const edgeRows = [2, 0, 1];
+const outputRows = [1, 0, 2];
+
 const compactInputSites: InputSite[] = [
   { beltX: 0, position: { x: 1, y: 2 }, direction: 'east' },
   { beltX: 0, position: { x: 1, y: 0 }, direction: 'east' },
@@ -32,7 +35,8 @@ const longOutputPositions = [
   { x: 6, y: 0 },
 ];
 
-// Two normal inserters can read each near belt; the far-west belt has one long inserter site.
+// Three normal inserters can read the west near belt when its middle site is not occupied by the
+// far-west belt's long inserter. The east middle site belongs to the output inserter.
 const wideInputSiteGroups: InputSite[][] = [
   [
     { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
@@ -47,11 +51,12 @@ const wideInputSiteGroups: InputSite[][] = [
 ];
 
 /**
- * Generate the compact, vertically tileable solid-item design supported by the current model.
+ * Generate a vertically tileable assembler design supported by the current transport kernels.
  *
- * The model cannot yet describe fluid connections or filtered multi-product output, so those
- * problems deliberately have no solution. Each input belt may carry two solid resources, one per
- * lane, and the kernel adds belts when lane count or transfer throughput requires them.
+ * The fluid kernels support one trunk and the solid kernels support one product. Filtered
+ * multi-product output and simultaneous fluid input/output deliberately have no solution. Each
+ * input belt may carry two solid resources, one per lane, and the kernel adds belts when lane
+ * count or transfer throughput requires them.
  */
 export function generateAssemblerDesign(
   problem: KernelProblem,
@@ -98,7 +103,8 @@ export function generateAssemblerDesign(
     ? throughput.inserterItemsPerSecond
     : throughput.longInserterItemsPerSecond;
   const outputInserterCount = Math.ceil(outputRate / outputInserterItemsPerSecond);
-  if (outputInserterCount > longOutputPositions.length) return undefined;
+  const outputPositions = compact ? compactOutputPositions : longOutputPositions;
+  if (outputInserterCount > outputPositions.length) return undefined;
 
   const selectedInputSites = compact
     ? compactInputSites.slice(0, compactInputInserterCount)
@@ -106,7 +112,6 @@ export function generateAssemblerDesign(
   if (!selectedInputSites) return undefined;
   const assemblerX = compact ? 2 : 3;
   const outputBeltX = compact ? 6 : 8;
-  const outputPositions = compact ? compactOutputPositions : longOutputPositions;
 
   const entities: DesignEntity[] = [
     ...[...new Set(selectedInputSites.map(({ beltX }) => beltX))].flatMap((beltX) =>
@@ -118,12 +123,7 @@ export function generateAssemblerDesign(
       direction,
       ...(reach ? { reach } : {}),
     })),
-    {
-      kind: 'assembler',
-      position: { x: assemblerX, y: 0 },
-      size: { width: 3, height: 3 },
-      recipe: problem.assemblers[0].name,
-    },
+    assembler(problem, assemblerX),
     ...outputPositions.slice(0, outputInserterCount).map((position) => ({
       kind: 'inserter' as const,
       position,
@@ -166,14 +166,14 @@ function generateFluidOutputDesign(
   const nearInserterCount = Math.ceil(nearInputRate / throughput.inserterItemsPerSecond);
   const farInserterCount = Math.ceil(farInputRate / throughput.longInserterItemsPerSecond);
   if (nearInserterCount + farInserterCount > 3) return undefined;
-  const nearInserterYs = [2, 0, 1].slice(0, nearInserterCount);
-  const farInserterYs = [1, 0, 2]
+  const nearInserterYs = edgeRows.slice(0, nearInserterCount);
+  const farInserterYs = outputRows
     .filter((y) => !nearInserterYs.includes(y))
     .slice(0, farInserterCount);
   if (farInserterYs.length !== farInserterCount) return undefined;
 
   const entities: DesignEntity[] = [
-    ...[0, 1, 2].map((y): DesignEntity => ({ kind: 'pipe', position: { x: 0, y } })),
+    ...pipeTrunk(),
     ...verticalBelt(5, 'north'),
     ...(farInputRate > 0 ? verticalBelt(6, 'north') : []),
     ...nearInserterYs.map((y): DesignEntity => ({
@@ -187,12 +187,7 @@ function generateFluidOutputDesign(
       direction: 'west',
       reach: 2,
     })),
-    {
-      kind: 'assembler',
-      position: { x: 1, y: 0 },
-      size: { width: 3, height: 3 },
-      recipe: problem.assemblers[0].name,
-    },
+    assembler(problem, 1),
   ];
 
   return { columns: [{ entities }] };
@@ -230,25 +225,20 @@ function generateFluidInputDesign(
   const outputInserterCount = Math.ceil(outputRate / outputItemsPerSecond);
   if (inputInserterCount + outputInserterCount > 3) return undefined;
 
-  const inputYs = [2, 0, 1].slice(0, inputInserterCount);
-  const outputYs = [1, 0, 2].filter((y) => !inputYs.includes(y)).slice(0, outputInserterCount);
+  const inputYs = edgeRows.slice(0, inputInserterCount);
+  const outputYs = outputRows.filter((y) => !inputYs.includes(y)).slice(0, outputInserterCount);
   if (outputYs.length !== outputInserterCount) return undefined;
 
   const outputBeltX = hasSolidInput ? 6 : 5;
   const entities: DesignEntity[] = [
-    ...[0, 1, 2].map((y): DesignEntity => ({ kind: 'pipe', position: { x: 0, y } })),
+    ...pipeTrunk(),
     ...(hasSolidInput ? verticalBelt(5, 'north') : []),
     ...inputYs.map((y): DesignEntity => ({
       kind: 'inserter',
       position: { x: 4, y },
       direction: 'west',
     })),
-    {
-      kind: 'assembler',
-      position: { x: 1, y: 0 },
-      size: { width: 3, height: 3 },
-      recipe: problem.assemblers[0].name,
-    },
+    assembler(problem, 1),
     ...outputYs.map((y): DesignEntity => ({
       kind: 'inserter',
       position: { x: 4, y },
@@ -263,6 +253,19 @@ function generateFluidInputDesign(
 
 function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
   return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
+}
+
+function pipeTrunk(): DesignEntity[] {
+  return [0, 1, 2].map((y) => ({ kind: 'pipe', position: { x: 0, y } }));
+}
+
+function assembler(problem: KernelProblem, x: number): DesignEntity {
+  return {
+    kind: 'assembler',
+    position: { x, y: 0 },
+    size: { width: 3, height: 3 },
+    recipe: problem.assemblers[0].name,
+  };
 }
 
 function wideInputSites(
@@ -311,8 +314,7 @@ function splitSingleInputAcrossBelts(
   for (let beltIndex = 0; beltIndex < 2 && remaining > 0; beltIndex += 1) {
     const allSites = wideInputSiteGroups[beltIndex];
     const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
-    const itemsPerSecond =
-      beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
+    const itemsPerSecond = throughput.inserterItemsPerSecond;
     const beltCapacity = Math.min(throughput.beltItemsPerSecond, sites.length * itemsPerSecond);
     const assignedRate = Math.min(remaining, beltCapacity);
     const inserterCount = Math.ceil(assignedRate / itemsPerSecond);

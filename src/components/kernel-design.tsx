@@ -1,5 +1,6 @@
 import './kernel-design.css';
 import type { Chosen } from '../data/index.ts';
+import { generateAssemblerDesign } from '../assembler-design.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../inserter-throughput.ts';
 import { kernelProblems } from '../kernel-problems.ts';
 import { fmt } from '../ts.ts';
@@ -12,6 +13,13 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
     longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
   };
+  const sortedProblems = kernelProblems
+    .map((problem, index) => ({ problem, index }))
+    .toSorted(
+      (left, right) =>
+        Number(!generateAssemblerDesign(left.problem, throughput)) -
+        Number(!generateAssemblerDesign(right.problem, throughput)),
+    );
 
   return (
     <section class="kernel-design" aria-labelledby="kernel-design-title">
@@ -32,7 +40,7 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
       </dl>
       <p>Built in solver's results for various situations.</p>
       <div class="kernel-design-cards" aria-label="Kernel problems">
-        {kernelProblems.map((problem, index) => (
+        {sortedProblems.map(({ problem, index }) => (
           <DesignCard key={problem.name} index={index} problem={problem} throughput={throughput} />
         ))}
       </div>

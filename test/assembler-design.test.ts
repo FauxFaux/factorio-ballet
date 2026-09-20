@@ -95,6 +95,28 @@ describe('generateAssemblerDesign', () => {
     ]);
   });
 
+  it('uses all three compact output sites when the output rate requires them', () => {
+    const problem = {
+      ...kernelProblems[0]!,
+      outputs: { solids: { 'item 2': 15 }, fluids: {} },
+    };
+    const design = generateAssemblerDesign(problem, {
+      beltItemsPerSecond: 30,
+      inserterItemsPerSecond: 5.28,
+      longInserterItemsPerSecond: 2.64,
+    });
+    const outputInserters =
+      design?.columns[0].entities.filter(
+        (entity) => entity.kind === 'inserter' && entity.position.x === 5,
+      ) ?? [];
+
+    expect(outputInserters).toEqual([
+      { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 5, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 5, y: 2 }, direction: 'east' },
+    ]);
+  });
+
   it('splits Problem 3 across two belts with five regular inserters', () => {
     const design = generateAssemblerDesign(kernelProblems[2]!, {
       beltItemsPerSecond: 30,
@@ -130,22 +152,22 @@ describe('generateAssemblerDesign', () => {
   });
 
   it.each([
-    [6, [], [{ position: { x: 4, y: 1 }, direction: 'east' }]],
+    [7, [], [{ position: { x: 4, y: 1 }, direction: 'east' }]],
     [
-      7,
+      8,
       [{ position: { x: 4, y: 2 }, direction: 'west' }],
       [{ position: { x: 4, y: 1 }, direction: 'east', reach: 2 }],
     ],
     [
-      8,
+      9,
       [
         { position: { x: 4, y: 2 }, direction: 'west' },
         { position: { x: 4, y: 0 }, direction: 'west' },
       ],
       [{ position: { x: 4, y: 1 }, direction: 'east', reach: 2 }],
     ],
-  ] as const)('reserves the left pipe trunk for Problem %s', (problemIndex, inputs, outputs) => {
-    const design = generateAssemblerDesign(kernelProblems[problemIndex]!, throughput);
+  ] as const)('reserves the left pipe trunk for Problem %s', (problemNumber, inputs, outputs) => {
+    const design = generateAssemblerDesign(kernelProblems[problemNumber - 1]!, throughput);
     const entities = design?.columns[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
@@ -167,14 +189,14 @@ describe('generateAssemblerDesign', () => {
   });
 
   it.each([
-    [10, 1],
     [11, 1],
-    [12, 3],
-    [13, 1],
+    [12, 1],
+    [13, 3],
+    [14, 1],
   ] as const)(
     'uses the left pipe trunk and right input belt for Problem %s',
-    (problemIndex, inserterCount) => {
-      const design = generateAssemblerDesign(kernelProblems[problemIndex]!, {
+    (problemNumber, inserterCount) => {
+      const design = generateAssemblerDesign(kernelProblems[problemNumber - 1]!, {
         beltItemsPerSecond: 30,
         inserterItemsPerSecond: 12,
         longInserterItemsPerSecond: 6,

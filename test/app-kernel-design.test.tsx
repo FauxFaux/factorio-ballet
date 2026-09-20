@@ -63,6 +63,10 @@ describe('App', () => {
       within(throughputSummary).getByText(`${fmt(throughput.longInserterItemsPerSecond)} items/s`),
     ).toBeTruthy();
     const articles = screen.getAllByRole('article');
+    const articleForProblem = (problemNumber: number) =>
+      screen
+        .getByRole('heading', { name: `Problem ${problemNumber}`, level: 3 })
+        .closest('article')!;
     expect(articles).toHaveLength(kernelProblems.length);
     expect(screen.queryAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(
       solutionCount,
@@ -70,17 +74,41 @@ describe('App', () => {
     expect(screen.queryAllByText('[no solution]')).toHaveLength(
       kernelProblems.length - solutionCount,
     );
-    expect(within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' })).toBeTruthy();
-    expect(within(articles[0]!).getByLabelText('Max column height').textContent).toContain('×6');
-    expect(within(articles[3]!).getByLabelText('Max column height').textContent).toContain('×3');
-    expect(within(articles[4]!).getByLabelText('Max column height').textContent).toContain('×3');
+    const noSolutionTitles = screen
+      .queryAllByText('[no solution]')
+      .map(
+        (element) =>
+          within(element.closest('article')!).getByRole('heading', { level: 3 }).textContent,
+      );
+    const expectedNoSolutionTitles = kernelProblems.flatMap((problem, index) =>
+      generateAssemblerDesign(problem, throughput) ? [] : [`Problem ${index + 1}`],
+    );
+    const cardTitles = articles.map(
+      (article) => within(article).getByRole('heading', { level: 3 }).textContent,
+    );
+    expect(noSolutionTitles).toEqual(expectedNoSolutionTitles);
+    expect(cardTitles.slice(solutionCount)).toEqual(noSolutionTitles);
+    expect(
+      within(articleForProblem(1)).getByRole('region', { name: 'Problem 1 preview' }),
+    ).toBeTruthy();
+    expect(within(articleForProblem(1)).getByLabelText('Max column height').textContent).toContain(
+      '×6',
+    );
+    expect(within(articleForProblem(4)).getByLabelText('Max column height').textContent).toContain(
+      '×3',
+    );
+    expect(within(articleForProblem(5)).getByLabelText('Max column height').textContent).toContain(
+      '×3',
+    );
     expect(screen.getAllByText('Assemblers')).toHaveLength(kernelProblems.length);
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(92);
     expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(36);
-    for (const icon of within(articles[0]!).getAllByTitle('item 1')) {
+    for (const icon of within(articleForProblem(1)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }
-    const firstPreview = within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' });
+    const firstPreview = within(articleForProblem(1)).getByRole('region', {
+      name: 'Problem 1 preview',
+    });
     const inputBelts = within(firstPreview).getAllByRole('img', {
       name: /Transport belt at 0, \d, pointing north/,
     });
@@ -109,7 +137,9 @@ describe('App', () => {
         ),
       ).toBe(true);
     }
-    const fifthPreview = within(articles[4]!).getByRole('region', { name: 'Problem 5 preview' });
+    const fifthPreview = within(articleForProblem(5)).getByRole('region', {
+      name: 'Problem 5 preview',
+    });
     const mixedInputBelts = within(fifthPreview).getAllByRole('img', {
       name: /Transport belt at 1, \d, pointing north/,
     });
@@ -134,19 +164,19 @@ describe('App', () => {
       expect(belt.getAttribute('title')).toContain('left side: item 3, 8/s');
       expect(belt.getAttribute('title')).toContain('right side: item 3, 8/s');
     }
-    const problem7Preview = within(articles[6]!).getByRole('region', {
+    const problem7Preview = within(articleForProblem(7)).getByRole('region', {
       name: 'Problem 7 preview',
     });
     expect(within(problem7Preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(
       3,
     );
-    for (const problemIndex of [10, 11, 12, 13]) {
-      const preview = within(articles[problemIndex]!).getByRole('region', {
-        name: `Problem ${problemIndex + 1} preview`,
+    for (const problemNumber of [11, 12, 13, 14]) {
+      const preview = within(articleForProblem(problemNumber)).getByRole('region', {
+        name: `Problem ${problemNumber} preview`,
       });
       expect(within(preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(3);
     }
-    const problem15Preview = within(articles[14]!).getByRole('region', {
+    const problem15Preview = within(articleForProblem(15)).getByRole('region', {
       name: 'Problem 15 preview',
     });
     expect(
