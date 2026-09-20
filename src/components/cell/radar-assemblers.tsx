@@ -4,16 +4,10 @@ import { staticData } from '../../data/decode.ts';
 import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import { itemRateTotal, recipeConnections } from './connection-calc.ts';
+import { stackAssemblerDistricts, type AssemblerStack } from './assembler-layout.ts';
 import { RadarAssemblerColumn } from './radar-assembler-column.tsx';
 import { stationStop } from './radar-rail.tsx';
-import {
-  busConnectionTopLane,
-  busLayout,
-  stackAssemblerDistricts,
-  type AssemblerStack,
-  type BusLane,
-  type BusLayout,
-} from './radar-layout.ts';
+import { busConnectionTopLane, busLayout, type BusLane, type BusLayout } from './radar-layout.ts';
 
 const assemblerTopY = 20;
 const busBottomY = assemblerTopY - 1;

@@ -43,7 +43,7 @@ export function DesignCard({
               <HelpInfo label="About maximum column height">
                 The number of times you could stack this blueprint (kernel) on top of itself,
                 without running out of belt throughput on the allocated belts.
-                </HelpInfo>
+              </HelpInfo>
               Max column height
             </dt>
             <dd>×{stackLimit}</dd>
