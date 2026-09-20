@@ -138,6 +138,10 @@ function wideInputSites(
   throughput: AssemblerDesignThroughput,
   outputInserterCount: number,
 ): InputSite[] | undefined {
+  if (inputRates.length === 1) {
+    return splitSingleInputAcrossBelts(inputRates[0], throughput, outputInserterCount);
+  }
+
   const beltCount = Math.ceil(inputRates.length / 2);
   if (beltCount < 2 || beltCount > wideInputSiteGroups.length) return undefined;
 
@@ -155,6 +159,29 @@ function wideInputSites(
     selected.push(...sites.slice(0, inserterCount));
   }
   return selected;
+}
+
+function splitSingleInputAcrossBelts(
+  rate: number,
+  throughput: AssemblerDesignThroughput,
+  outputInserterCount: number,
+): InputSite[] | undefined {
+  const selected: InputSite[] = [];
+  let remaining = rate;
+
+  for (let beltIndex = 0; beltIndex < wideInputSiteGroups.length && remaining > 0; beltIndex += 1) {
+    const allSites = wideInputSiteGroups[beltIndex];
+    const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
+    const itemsPerSecond =
+      beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
+    const beltCapacity = Math.min(throughput.beltItemsPerSecond, sites.length * itemsPerSecond);
+    const assignedRate = Math.min(remaining, beltCapacity);
+    const inserterCount = Math.ceil(assignedRate / itemsPerSecond);
+    selected.push(...sites.slice(0, inserterCount));
+    remaining -= assignedRate;
+  }
+
+  return remaining <= Number.EPSILON ? selected : undefined;
 }
 
 function positiveRates(rates: ResourceRates): number[] | undefined {

@@ -207,6 +207,15 @@ export function beltInputItemTraces(
     const items = assemblerItemIngredients(groups[0].assembler, recipes);
     if (items.length === 0) continue;
 
+    if (items.length === 1) {
+      for (const group of groups) {
+        for (const lane of group.lanes) {
+          markLaneComponent(itemsByLane, adjacent, lane, items[0]);
+        }
+      }
+      continue;
+    }
+
     if (groups.length === 1) {
       if (items.length > groups[0].lanes.length) continue;
       groups[0].lanes.forEach((lane, index) => {

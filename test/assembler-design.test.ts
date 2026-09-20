@@ -95,8 +95,23 @@ describe('generateAssemblerDesign', () => {
     ]);
   });
 
-  it('has no solution for Problem 3 because its input needs too many inserters', () => {
-    expect(generateAssemblerDesign(kernelProblems[2]!, throughput)).toBeUndefined();
+  it('splits Problem 3 across two belts with two inserters each', () => {
+    const design = generateAssemblerDesign(kernelProblems[2]!, {
+      beltItemsPerSecond: 30,
+      inserterItemsPerSecond: 7.9,
+      longInserterItemsPerSecond: 3.95,
+    });
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(9);
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 2, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 6, y: 2 }, direction: 'west' },
+      { kind: 'inserter', position: { x: 6, y: 0 }, direction: 'west' },
+      { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
   it('packs three inputs onto two belts, with one mixed belt', () => {

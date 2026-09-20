@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { assemblerInputStatuses } from '../src/components/design/design-belts.ts';
+import {
+  assemblerInputStatuses,
+  beltInputItemTraces,
+} from '../src/components/design/design-belts.ts';
 import type { DesignColumn, DesignEntity } from '../src/design.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
@@ -23,6 +26,10 @@ const recipes: Record<string, Pick<Recipe, 'ingredients' | 'products'>> = {
       ingredient('item:copper-plate'),
       ingredient('fluid:water'),
     ],
+    products: [product('item:electronic-circuit')],
+  },
+  ironUser: {
+    ingredients: [ingredient('item:iron-plate')],
     products: [product('item:electronic-circuit')],
   },
 };
@@ -70,8 +77,43 @@ describe('assembler belt inputs', () => {
       missing: ['item:iron-plate', 'item:copper-plate'],
     });
   });
+
+  it('seeds a split single input onto both input belts', () => {
+    const column: DesignColumn = {
+      entities: [
+        { kind: 'belt', position: { x: 1, y: 0 }, direction: 'north' },
+        { kind: 'belt', position: { x: 7, y: 0 }, direction: 'north' },
+        assembler('ironUser', { x: 3, y: 0 }, { width: 3, height: 1 }),
+        { kind: 'inserter', position: { x: 2, y: 0 }, direction: 'east' },
+        { kind: 'inserter', position: { x: 6, y: 0 }, direction: 'west' },
+      ],
+    };
+
+    expect(beltInputItemTraces(column, recipes)).toEqual(
+      new Map([
+        [
+          0,
+          [
+            { item: 'item:iron-plate', side: 'left' },
+            { item: 'item:iron-plate', side: 'right' },
+          ],
+        ],
+        [
+          1,
+          [
+            { item: 'item:iron-plate', side: 'left' },
+            { item: 'item:iron-plate', side: 'right' },
+          ],
+        ],
+      ]),
+    );
+  });
 });
 
-function assembler(recipe: string, position: { x: number; y: number }): DesignEntity {
-  return { kind: 'assembler', recipe, position, size: { width: 1, height: 1 } };
+function assembler(
+  recipe: string,
+  position: { x: number; y: number },
+  size = { width: 1, height: 1 },
+): DesignEntity {
+  return { kind: 'assembler', recipe, position, size };
 }
