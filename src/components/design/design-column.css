@@ -1,4 +1,5 @@
-.cell-design-column {
+.cell-design-column,
+.design-preview {
   --cell-design-major-grid-size: calc(var(--cell-design-tile-size) * 15);
   --cell-design-paper: midnightblue;
   --cell-design-grid: cornflowerblue;
@@ -7,7 +8,9 @@
   --cell-design-control-border: steelblue;
   --cell-design-control-hover: royalblue;
   --cell-design-control-text: aliceblue;
+}
 
+.cell-design-column {
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -25,13 +28,8 @@
   gap: 6px;
 }
 
-.cell-design-viewport {
-  position: relative;
-  flex: 1;
-  min-height: 0;
-  overflow: hidden;
-  touch-action: none;
-  cursor: grab;
+.cell-design-viewport,
+.design-preview-world {
   background-color: var(--cell-design-paper);
   background-image:
     linear-gradient(
@@ -59,6 +57,15 @@
     var(--cell-design-major-grid-size) var(--cell-design-major-grid-size),
     var(--cell-design-tile-size) var(--cell-design-tile-size),
     var(--cell-design-tile-size) var(--cell-design-tile-size);
+}
+
+.cell-design-viewport {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  touch-action: none;
+  cursor: grab;
 }
 
 .cell-design-viewport:active {

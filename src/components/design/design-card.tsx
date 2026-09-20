@@ -1,18 +1,9 @@
 import './design-card.css';
-import type { CellEntry } from '../../cell.ts';
 import type { FactoryDesign } from '../../design.ts';
-import { DesignColumn } from './design-column.tsx';
+import { DesignPreview } from './design-preview.tsx';
 
-/** A single kernel-design workspace, with room for its controls and future layout editor. */
-export function DesignCard({
-  index,
-  design,
-  onDesignChange,
-}: {
-  index: number;
-  design: FactoryDesign;
-  onDesignChange: (update: (design: FactoryDesign) => FactoryDesign) => void;
-}) {
+/** A read-only summary of a single kernel design. */
+export function DesignCard({ index, design }: { index: number; design: FactoryDesign }) {
   const title = `Design ${index + 1}`;
 
   return (
@@ -24,23 +15,8 @@ export function DesignCard({
         </div>
       </aside>
       <div class="design-card-grid">
-        <DesignColumn
-          index={0}
-          column={design.columns[0]}
-          entries={emptyEntries}
-          counts={emptyCounts}
-          progress={0}
-          onChange={(update) =>
-            onDesignChange((previous) => ({
-              ...previous,
-              columns: [update(previous.columns[0]), ...previous.columns.slice(1)],
-            }))
-          }
-        />
+        <DesignPreview column={design.columns[0]} label={`${title} preview`} />
       </div>
     </article>
   );
 }
-
-const emptyEntries: CellEntry[] = [];
-const emptyCounts: (number | undefined)[] = [];

@@ -19,6 +19,7 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Kernel design' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Rail blueprints' })).toBeNull();
     expect(screen.getAllByRole('article')).toHaveLength(10);
-    expect(screen.getAllByRole('region', { name: /Design viewport/ })).toHaveLength(10);
+    expect(screen.getAllByRole('region', { name: /Design \d+ preview/ })).toHaveLength(10);
+    expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();
   });
 });

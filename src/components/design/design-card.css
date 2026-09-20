@@ -43,11 +43,9 @@
   min-width: 0;
 }
 
-.design-card-grid .cell-design-column {
+.design-card-grid .design-preview {
   height: 100%;
   box-sizing: border-box;
-  border: 0;
-  border-radius: 0;
 }
 
 @media (max-width: 800px) {
