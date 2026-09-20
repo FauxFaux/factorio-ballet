@@ -15,6 +15,8 @@ async function preloadImage(url: string) {
 }
 
 function preloadImages() {
+  if (typeof Image === 'undefined') return;
+
   void (async () => {
     await preloadImage(iconsUiUrl);
     await preloadImage(icons0Url);

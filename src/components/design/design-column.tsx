@@ -2,25 +2,10 @@ import './design-column.css';
 import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-react';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
-import { staticData } from '../../data/decode.ts';
-import type { DesignColumn as DesignColumnData, DesignEntity } from '../../design.ts';
-import {
-  assemblerInputStatuses,
-  beltItemTraces,
-  beltLoopEntityIndexes,
-  type AssemblerInputStatus,
-  type BeltItemTrace,
-} from './design-belts.ts';
-import {
-  Assembler,
-  Belt,
-  entityPositionStatuses,
-  Inserter,
-  TILE_SIZE,
-  type EntityPositionStatus,
-  type ViewportPoint,
-} from './design-entities.tsx';
+import type { DesignColumn as DesignColumnData } from '../../design.ts';
+import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
+import { DesignScene } from './design-scene.tsx';
 import { RecipeButton } from './recipe-button.tsx';
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
@@ -43,10 +28,6 @@ export function DesignColumn({
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
   const [cursorMode, setCursorMode] = useState<CursorMode>('pan');
-  const entityStatuses = entityPositionStatuses(column.entities);
-  const assemblerStatuses = assemblerInputStatuses(column, staticData.recipes);
-  const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
-  const itemTracesByBelt = beltItemTraces(column, staticData.recipes);
 
   useLayoutEffect(() => {
     const element = viewport.current;
@@ -141,85 +122,13 @@ export function DesignColumn({
           setPan((current) => ({ x: current.x - event.deltaX, y: current.y - event.deltaY }));
         }}
       >
-        {column.entities.map((entity, entityIndex) => (
-          <DesignEntityView
-            key={entityIndex}
-            entity={entity}
-            entityIndex={entityIndex}
-            status={entityStatuses[entityIndex]}
-            assemblerInputStatus={assemblerStatuses.get(entityIndex)}
-            beltHasLoop={loopBeltIndexes.has(entityIndex)}
-            beltItemTraces={itemTracesByBelt.get(entityIndex) ?? []}
-            worldOrigin={worldOrigin}
-            onPointerEnter={interactions.onEntityEnter}
-            onPointerLeave={interactions.onEntityLeave}
-          />
-        ))}
+        <DesignScene
+          column={column}
+          worldOrigin={worldOrigin}
+          onEntityEnter={interactions.onEntityEnter}
+          onEntityLeave={interactions.onEntityLeave}
+        />
       </div>
     </section>
   );
-}
-
-function DesignEntityView({
-  entity,
-  entityIndex,
-  status,
-  assemblerInputStatus,
-  beltHasLoop,
-  beltItemTraces,
-  worldOrigin,
-  onPointerEnter,
-  onPointerLeave,
-}: {
-  entity: DesignEntity;
-  entityIndex: number;
-  status: EntityPositionStatus;
-  assemblerInputStatus: AssemblerInputStatus | undefined;
-  beltHasLoop: boolean;
-  beltItemTraces: BeltItemTrace[];
-  worldOrigin: ViewportPoint;
-  onPointerEnter: (entityIndex: number) => void;
-  onPointerLeave: (entityIndex: number) => void;
-}) {
-  const hoverHandlers = {
-    onPointerEnter: () => onPointerEnter(entityIndex),
-    onPointerLeave: () => onPointerLeave(entityIndex),
-  };
-  switch (entity.kind) {
-    case 'assembler':
-      return (
-        <Assembler
-          entityIndex={entityIndex}
-          assembler={entity}
-          status={status}
-          inputStatus={assemblerInputStatus}
-          worldOrigin={worldOrigin}
-          {...hoverHandlers}
-        />
-      );
-    case 'belt':
-      return (
-        <Belt
-          entityIndex={entityIndex}
-          belt={entity}
-          status={status}
-          hasLoop={beltHasLoop}
-          itemTraces={beltItemTraces}
-          worldOrigin={worldOrigin}
-          {...hoverHandlers}
-        />
-      );
-    case 'inserter':
-      return (
-        <Inserter
-          entityIndex={entityIndex}
-          inserter={entity}
-          status={status}
-          worldOrigin={worldOrigin}
-          {...hoverHandlers}
-        />
-      );
-    default:
-      return null;
-  }
 }
