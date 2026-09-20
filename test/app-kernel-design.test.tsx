@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/preact';
+import { render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/app.tsx';
@@ -19,12 +19,12 @@ describe('App', () => {
 
     expect(screen.getByRole('heading', { name: 'Kernel design' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Rail blueprints' })).toBeNull();
-    expect(screen.getAllByRole('article')).toHaveLength(3);
-    expect(screen.getAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(3);
-    expect(screen.getAllByText('Assemblers')).toHaveLength(3);
-    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(16);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(6);
-    for (const icon of screen.getAllByTitle('item 1')) {
+    expect(screen.getAllByRole('article')).toHaveLength(24);
+    expect(screen.getAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(24);
+    expect(screen.getAllByText('Assemblers')).toHaveLength(24);
+    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(96);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(48);
+    for (const icon of within(screen.getAllByRole('article')[0]!).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }
     expect(screen.queryByText('item 1')).toBeNull();

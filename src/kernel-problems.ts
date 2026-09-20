@@ -24,54 +24,68 @@ export interface KernelProblem {
   design: FactoryDesign;
 }
 
-/** Starter tasks for the standalone kernel workspace. */
-export const kernelProblems: KernelProblem[] = [
-  {
-    name: 'Problem 1',
-    inputs: {
-      solids: { 'item 1': 5, 'item 2': 1 },
-      fluids: { 'fluid 3': 200 },
-    },
-    outputs: { solids: { 'item 4': 2 }, fluids: {} },
-    assemblers: [
-      {
-        name: 'Assembler 1',
-        inputPerSecond: { 'item 1': 5, 'item 2': 1, 'fluid 3': 200 },
-        outputPerSecond: { 'item 4': 2 },
-      },
-    ],
-    design: newFactoryDesign(),
-  },
-  {
-    name: 'Problem 2',
-    inputs: {
-      solids: { 'item 1': 3 },
-      fluids: { 'fluid 1': 40 },
-    },
-    outputs: { solids: { 'item 2': 1 }, fluids: { 'fluid 2': 10 } },
-    assemblers: [
-      {
-        name: 'Assembler 1',
-        inputPerSecond: { 'item 1': 3, 'fluid 1': 40 },
-        outputPerSecond: { 'item 2': 1, 'fluid 2': 10 },
-      },
-    ],
-    design: newFactoryDesign(),
-  },
-  {
-    name: 'Problem 3',
-    inputs: {
-      solids: { 'item 1': 1, 'item 2': 2 },
-      fluids: {},
-    },
-    outputs: { solids: { 'item 3': 1 }, fluids: {} },
-    assemblers: [
-      {
-        name: 'Assembler 1',
-        inputPerSecond: { 'item 1': 1, 'item 2': 2 },
-        outputPerSecond: { 'item 3': 1 },
-      },
-    ],
-    design: newFactoryDesign(),
-  },
+interface ProblemShape {
+  inputs: number[];
+  outputs: number[];
+}
+
+interface ResourceMix {
+  fluidInput: boolean;
+  fluidOutput: boolean;
+}
+
+const problemShapes: ProblemShape[] = [
+  { inputs: [5], outputs: [2] },
+  { inputs: [10], outputs: [3] },
+  { inputs: [25], outputs: [3] },
+  { inputs: [5, 5], outputs: [2] },
+  { inputs: [5, 5, 5], outputs: [2] },
+  { inputs: [5, 5, 5], outputs: [2, 2] },
 ];
+
+const resourceMixes: ResourceMix[] = [
+  { fluidInput: false, fluidOutput: false },
+  { fluidInput: true, fluidOutput: false },
+  { fluidInput: false, fluidOutput: true },
+  { fluidInput: true, fluidOutput: true },
+];
+
+function resourceRates(prefix: string, rates: number[], startIndex = 1): ResourceRates {
+  return Object.fromEntries(rates.map((rate, index) => [`${prefix} ${startIndex + index}`, rate]));
+}
+
+function makeProblem(shape: ProblemShape, mix: ResourceMix, problemIndex: number): KernelProblem {
+  const solidInputRates = mix.fluidInput ? shape.inputs.slice(1) : shape.inputs;
+  const fluidInputRates = mix.fluidInput ? shape.inputs.slice(0, 1) : [];
+  const solidOutputRates = mix.fluidOutput ? shape.outputs.slice(1) : shape.outputs;
+  const fluidOutputRates = mix.fluidOutput ? shape.outputs.slice(0, 1) : [];
+  const inputs: KernelFlows = {
+    solids: resourceRates('item', solidInputRates),
+    fluids: resourceRates('fluid', fluidInputRates),
+  };
+  const outputs: KernelFlows = {
+    solids: resourceRates('item', solidOutputRates, solidInputRates.length + 1),
+    fluids: resourceRates('fluid', fluidOutputRates, fluidInputRates.length + 1),
+  };
+
+  return {
+    name: `Problem ${problemIndex + 1}`,
+    inputs,
+    outputs,
+    assemblers: [
+      {
+        name: 'Assembler 1',
+        inputPerSecond: { ...inputs.solids, ...inputs.fluids },
+        outputPerSecond: { ...outputs.solids, ...outputs.fluids },
+      },
+    ],
+    design: newFactoryDesign(),
+  };
+}
+
+/** Starter tasks for the standalone kernel workspace, ordered by increasing complexity. */
+export const kernelProblems: KernelProblem[] = resourceMixes.flatMap((mix, mixIndex) =>
+  problemShapes.map((shape, shapeIndex) =>
+    makeProblem(shape, mix, mixIndex * problemShapes.length + shapeIndex),
+  ),
+);
