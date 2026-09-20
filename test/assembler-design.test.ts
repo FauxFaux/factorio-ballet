@@ -56,6 +56,27 @@ describe('generateAssemblerDesign', () => {
     expect(designBounds(entities)).toEqual({ minX: 0, maxX: 7, minY: 0, maxY: 3 });
   });
 
+  it('adds a second short output inserter before rejecting a compact design', () => {
+    const problem = {
+      ...kernelProblems[0]!,
+      outputs: { solids: { 'item 2': 10 }, fluids: {} },
+    };
+    const design = generateAssemblerDesign(problem, {
+      beltItemsPerSecond: 30,
+      inserterItemsPerSecond: 5.28,
+      longInserterItemsPerSecond: 2.64,
+    });
+    const outputInserters =
+      design?.columns[0].entities.filter(
+        (entity) => entity.kind === 'inserter' && entity.position.x === 5,
+      ) ?? [];
+
+    expect(outputInserters).toEqual([
+      { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 5, y: 0 }, direction: 'east' },
+    ]);
+  });
+
   it('has no solution for Problem 3 because its input needs too many inserters', () => {
     expect(generateAssemblerDesign(kernelProblems[2]!, throughput)).toBeUndefined();
   });

@@ -154,30 +154,61 @@ export function beltInputItemTraces(
   }
 
   const itemsByLane = new Map<string, Set<ResourceId>>();
+  const inputGroupsByAssembler = new Map<
+    number,
+    Map<string, { lanes: BeltLaneRef[]; assembler: DesignAssembler }>
+  >();
   for (const transfer of analysis.graph.inserterTransfers) {
     if (transfer.sourceBeltLanes.length === 0) continue;
     const inserter = column.entities[transfer.inserter.entity_number];
     if (!inserter || inserter.kind !== 'inserter') continue;
-    const drop = addPosition(inserter.position, directionVector(inserter.direction));
-    const assemblers = column.entities.filter(
-      (entity): entity is DesignAssembler => entity.kind === 'assembler' && contains(entity, drop),
+    const drop = addPosition(
+      inserter.position,
+      scalePosition(directionVector(inserter.direction), inserter.reach ?? 1),
+    );
+    const assemblers = column.entities.flatMap((entity, entityIndex) =>
+      entity.kind === 'assembler' && contains(entity, drop)
+        ? [{ assembler: entity, entityIndex }]
+        : [],
     );
     if (assemblers.length !== 1) continue;
-    const items = assemblerItemIngredients(assemblers[0], recipes);
-    if (items.length === 0 || items.length > transfer.sourceBeltLanes.length) continue;
-
-    transfer.sourceBeltLanes.forEach((lane, index) => {
-      const item = items.length === 1 ? items[0] : items[index];
-      if (!item) return;
-      const pending = [beltLaneKey(lane)];
-      const visited = new Set<string>();
-      while (pending.length > 0) {
-        const key = pending.pop()!;
-        if (visited.has(key)) continue;
-        visited.add(key);
-        appendSet(itemsByLane, key, item);
-        for (const next of adjacent.get(key) ?? []) pending.push(next);
+    const { assembler, entityIndex } = assemblers[0];
+    const groupKey = transfer.sourceBeltLanes
+      .map((lane) => laneComponentKey(beltLaneKey(lane), adjacent))
+      .sort()
+      .join('|');
+    const inputGroups = inputGroupsByAssembler.get(entityIndex) ?? new Map();
+    if (!inputGroups.has(groupKey)) inputGroups.set(groupKey, { lanes: [], assembler });
+    const group = inputGroups.get(groupKey)!;
+    for (const lane of transfer.sourceBeltLanes) {
+      if (!group.lanes.some((candidate) => beltLaneKey(candidate) === beltLaneKey(lane))) {
+        group.lanes.push(lane);
       }
+    }
+    inputGroupsByAssembler.set(entityIndex, inputGroups);
+  }
+
+  for (const inputGroups of inputGroupsByAssembler.values()) {
+    const groups = [...inputGroups.values()];
+    const items = assemblerItemIngredients(groups[0].assembler, recipes);
+    if (items.length === 0) continue;
+
+    if (groups.length === 1) {
+      if (items.length > groups[0].lanes.length) continue;
+      groups[0].lanes.forEach((lane, index) => {
+        markLaneComponent(
+          itemsByLane,
+          adjacent,
+          lane,
+          items.length === 1 ? items[0] : items[index],
+        );
+      });
+      continue;
+    }
+
+    groups.forEach((group, groupIndex) => {
+      const item = items.length === 1 ? items[0] : items[groupIndex % items.length];
+      for (const lane of group.lanes) markLaneComponent(itemsByLane, adjacent, lane, item);
     });
   }
 
@@ -192,6 +223,33 @@ export function beltInputItemTraces(
     }
   }
   return traces;
+}
+
+function laneComponentKey(start: string, adjacent: Map<string, Set<string>>): string {
+  return [...laneComponent(start, adjacent)].sort()[0] ?? start;
+}
+
+function markLaneComponent(
+  itemsByLane: Map<string, Set<ResourceId>>,
+  adjacent: Map<string, Set<string>>,
+  lane: BeltLaneRef,
+  item: ResourceId,
+) {
+  for (const key of laneComponent(beltLaneKey(lane), adjacent)) {
+    appendSet(itemsByLane, key, item);
+  }
+}
+
+function laneComponent(start: string, adjacent: Map<string, Set<string>>): Set<string> {
+  const pending = [start];
+  const visited = new Set<string>();
+  while (pending.length > 0) {
+    const key = pending.pop()!;
+    if (visited.has(key)) continue;
+    visited.add(key);
+    for (const next of adjacent.get(key) ?? []) pending.push(next);
+  }
+  return visited;
 }
 
 function appendSet<Key, Value>(map: Map<Key, Set<Value>>, key: Key, value: Value) {

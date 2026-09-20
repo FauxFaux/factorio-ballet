@@ -20,6 +20,16 @@ const compactInputSites: InputSite[] = [
   { beltX: 0, position: { x: 1, y: 0 }, direction: 'east' },
 ];
 
+const compactOutputPositions = [
+  { x: 5, y: 1 },
+  { x: 5, y: 0 },
+];
+
+const longOutputPositions = [
+  { x: 6, y: 1 },
+  { x: 6, y: 0 },
+];
+
 // Ordered so every prefix is the canonical two- or three-input pattern from ASSEMBLERS.md.
 const inputSites: InputSite[] = [
   { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
@@ -62,11 +72,12 @@ export function generateAssemblerDesign(
   if (outputRate > throughput.beltItemsPerSecond) return undefined;
 
   const compactInputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
+  const compactOutputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
   const compact =
     inputRates.length <= 2 &&
     inputRate <= throughput.beltItemsPerSecond &&
     compactInputInserterCount <= compactInputSites.length &&
-    outputRate <= throughput.inserterItemsPerSecond;
+    compactOutputInserterCount <= compactOutputPositions.length;
 
   const inputBeltCount = compact
     ? 1
@@ -76,21 +87,18 @@ export function generateAssemblerDesign(
           inputRate <= count * throughput.beltItemsPerSecond &&
           inputRate <= inputTransferCapacity(count, throughput),
       );
-  if (!inputBeltCount || (!compact && outputRate > throughput.longInserterItemsPerSecond)) {
-    return undefined;
-  }
+  const outputInserterItemsPerSecond = compact
+    ? throughput.inserterItemsPerSecond
+    : throughput.longInserterItemsPerSecond;
+  const outputInserterCount = Math.ceil(outputRate / outputInserterItemsPerSecond);
+  if (!inputBeltCount || outputInserterCount > longOutputPositions.length) return undefined;
 
   const selectedInputSites = compact
     ? compactInputSites.slice(0, compactInputInserterCount)
     : inputSites.slice(0, inputBeltCount);
-  const outputInserterItemsPerSecond = compact
-    ? throughput.inserterItemsPerSecond
-    : throughput.longInserterItemsPerSecond;
-  if (outputRate > outputInserterItemsPerSecond) return undefined;
-
   const assemblerX = compact ? 2 : 3;
-  const outputInserterX = compact ? 5 : 6;
   const outputBeltX = compact ? 6 : 8;
+  const outputPositions = compact ? compactOutputPositions : longOutputPositions;
 
   const entities: DesignEntity[] = [
     ...[...new Set(selectedInputSites.map(({ beltX }) => beltX))].flatMap((beltX) =>
@@ -108,12 +116,12 @@ export function generateAssemblerDesign(
       size: { width: 3, height: 3 },
       recipe: problem.assemblers[0].name,
     },
-    {
-      kind: 'inserter',
-      position: { x: outputInserterX, y: 1 },
-      direction: 'east',
+    ...outputPositions.slice(0, outputInserterCount).map((position) => ({
+      kind: 'inserter' as const,
+      position,
+      direction: 'east' as const,
       ...(compact ? {} : { reach: 2 as const }),
-    },
+    })),
     ...verticalBelt(outputBeltX, 'south'),
   ];
 
