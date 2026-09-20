@@ -122,6 +122,27 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
         },
       ]),
     ),
+    inserters: Object.fromEntries(
+      Object.entries(data.inserters).map(([id, inserter]) => [
+        id,
+        {
+          human: inserter.h,
+          item: inserter.i,
+          rotationSpeed: inserter.r,
+          extensionSpeed: inserter.e,
+          pickupPosition: { x: inserter.p[0], y: inserter.p[1] },
+          insertPosition: { x: inserter.d[0], y: inserter.d[1] },
+          baseStackSize: inserter.z,
+          bulk: inserter.b,
+          stackSizeBonus: inserter.s,
+          maxBeltStackSize: inserter.m,
+          grabLessToMatchBeltStack: inserter.g,
+          waitForFullHand: inserter.w,
+          startingDistance: inserter.x,
+          usesInserterStackSizeBonus: inserter.u,
+        },
+      ]),
+    ),
     entities: Object.fromEntries(
       Object.entries(data.entities).map(([id, entity]) => [
         id,

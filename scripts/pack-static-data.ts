@@ -103,6 +103,27 @@ export function packStaticData(data: StaticData): StaticDataPacked {
         },
       ]),
     ),
+    inserters: Object.fromEntries(
+      Object.entries(data.inserters).map(([id, inserter]) => [
+        id,
+        {
+          h: inserter.human,
+          i: inserter.item,
+          r: inserter.rotationSpeed,
+          e: inserter.extensionSpeed,
+          p: [inserter.pickupPosition.x, inserter.pickupPosition.y],
+          d: [inserter.insertPosition.x, inserter.insertPosition.y],
+          z: inserter.baseStackSize,
+          b: inserter.bulk,
+          s: inserter.stackSizeBonus,
+          m: inserter.maxBeltStackSize,
+          g: inserter.grabLessToMatchBeltStack,
+          w: inserter.waitForFullHand,
+          x: inserter.startingDistance,
+          u: inserter.usesInserterStackSizeBonus,
+        },
+      ]),
+    ),
     entities: Object.fromEntries(
       Object.entries(data.entities).map(([id, entity]) => [
         id,

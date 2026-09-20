@@ -5411,6 +5411,116 @@
       "u": 23
     }
   },
+  "inserters": {
+    "inserter": {
+      "h": "Inserter",
+      "i": "inserter",
+      "r": 0.02,
+      "e": 0.05,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "fast-inserter": {
+      "h": "Express inserter",
+      "i": "fast-inserter",
+      "r": 0.06,
+      "e": 0.15,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "burner-inserter": {
+      "h": "Burner inserter",
+      "i": "burner-inserter",
+      "r": 0.013,
+      "e": 0.035,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "bulk-inserter": {
+      "h": "Express bulk inserter",
+      "i": "bulk-inserter",
+      "r": 0.06,
+      "e": 0.15,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 2,
+      "b": true,
+      "x": 0.85
+    },
+    "bob-steam-inserter": {
+      "h": "Steam powered inserter",
+      "i": "bob-steam-inserter",
+      "r": 0.05,
+      "e": 0.125,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "bob-express-inserter": {
+      "h": "Ultimate inserter",
+      "i": "bob-express-inserter",
+      "r": 0.1,
+      "e": 0.25,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "bob-express-bulk-inserter": {
+      "h": "Ultimate bulk inserter",
+      "i": "bob-express-bulk-inserter",
+      "r": 0.1,
+      "e": 0.25,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 2,
+      "b": true,
+      "x": 0.85
+    },
+    "bob-red-inserter": {
+      "h": "Fast inserter",
+      "i": "long-handed-inserter",
+      "r": 0.04,
+      "e": 0.1,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1,
+      "x": 0.7
+    },
+    "bob-red-bulk-inserter": {
+      "h": "Fast bulk inserter",
+      "i": "bob-red-bulk-inserter",
+      "r": 0.04,
+      "e": 0.1,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 2,
+      "b": true,
+      "x": 0.85
+    },
+    "bob-turbo-inserter": {
+      "h": "Turbo inserter",
+      "i": "bob-turbo-inserter",
+      "r": 0.08,
+      "e": 0.2,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 1
+    },
+    "bob-turbo-bulk-inserter": {
+      "h": "Turbo bulk inserter",
+      "i": "bob-turbo-bulk-inserter",
+      "r": 0.08,
+      "e": 0.2,
+      "p": [0, -1],
+      "d": [0, 1.2],
+      "z": 2,
+      "b": true,
+      "x": 0.85
+    }
+  },
   "entities": {
     "wooden-chest": { "z": [1, 1], "c": "006191" },
     "iron-chest": { "z": [1, 1], "c": "006191" },

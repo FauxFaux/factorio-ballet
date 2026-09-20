@@ -17,6 +17,8 @@ import type {
   Belt,
   ChartColor,
   Ingredient,
+  Inserter,
+  InserterPosition,
   IngredientTemperature,
   Machine,
   MachineKind,
@@ -65,6 +67,7 @@ async function main() {
   const modules = handleModules(v);
   const beacons = handleBeacons(v, locales);
   const belts = handleBelts(v, locales);
+  const inserters = handleInserters(v, locales);
   const entities = handleEntities(v);
 
   // Mods disable content by setting `hidden` on the prototype rather than deleting it (e.g. Angel's
@@ -131,6 +134,7 @@ async function main() {
   checkModules(modules, machines, resources);
   checkBeacons(beacons, v);
   checkBelts(belts, v, resources);
+  checkInserters(inserters, resources);
   checkCatalysts(recipes);
 
   const sciencePacks = applyComplexity(v, recipes, resources);
@@ -152,6 +156,7 @@ async function main() {
     modules,
     beacons,
     belts,
+    inserters,
     entities,
     sciencePacks,
     suggestionPreload,
@@ -616,6 +621,84 @@ function checkBelts(
   }
   if (odd.length > 0) {
     console.log(`Belt-shaped entities running at no belt's speed: ${odd.length}`, odd.slice(0, 20));
+  }
+}
+
+/**
+ * Short-range item movers. The speed fields remain in the game's turns/tiles-per-tick units: a
+ * rate calculator needs the tick-level values because the game rounds a completed swing to an
+ * even number of ticks. `baseStackSize` is deliberately only the unresearched hand; research is a
+ * force property, while `stack_size_bonus` is the Space Age stack inserter's prototype addition.
+ */
+function handleInserters(v: RawData, locales: Record<string, RLocale>): Record<string, Inserter> {
+  const inserters: Record<string, Inserter> = {};
+  const placedBy = placingItems(v);
+  const round = (value: number) => Number.parseFloat(value.toPrecision(3));
+  let hidden = 0;
+  let unplaceable = 0;
+
+  for (const [id, inserter] of Object.entries(v.inserter ?? {})) {
+    if (inserter.hidden) {
+      hidden++;
+      continue;
+    }
+    const item = placedBy.get(id);
+    // Bob's leaves the old long-handed entity visible but repoints its item at bob-red-inserter.
+    // A blueprint generator cannot construct that orphan, so unlike `entities` it is not an option.
+    if (!item) {
+      unplaceable++;
+      continue;
+    }
+    const stackSizeBonus = inserter.stack_size_bonus;
+    inserters[id] = {
+      human: resolveLocale(id, locales, 'entity'),
+      item,
+      rotationSpeed: round(inserter.rotation_speed),
+      extensionSpeed: round(inserter.extension_speed),
+      pickupPosition: inserterPosition(inserter.pickup_position, round),
+      insertPosition: inserterPosition(inserter.insert_position, round),
+      // The game gives a bulk hand one extra item, then a stack inserter adds its prototype bonus.
+      baseStackSize: 1 + (inserter.bulk ? 1 : 0) + (stackSizeBonus ?? 0),
+      bulk: inserter.bulk || undefined,
+      stackSizeBonus,
+      maxBeltStackSize: inserter.max_belt_stack_size,
+      grabLessToMatchBeltStack: inserter.grab_less_to_match_belt_stack || undefined,
+      waitForFullHand: inserter.wait_for_full_hand || undefined,
+      startingDistance:
+        inserter.starting_distance === undefined ? undefined : round(inserter.starting_distance),
+      usesInserterStackSizeBonus: inserter.uses_inserter_stack_size_bonus,
+    };
+  }
+
+  console.log(
+    `Inserters: ${Object.keys(inserters).length}` +
+      ` (dropped ${hidden} hidden, ${unplaceable} with no placing item)`,
+  );
+  return inserters;
+}
+
+function inserterPosition(
+  position: { x: number; y: number } | [number, number],
+  round: (value: number) => number,
+): InserterPosition {
+  return Array.isArray(position)
+    ? { x: round(position[0]), y: round(position[1]) }
+    : { x: round(position.x), y: round(position.y) };
+}
+
+/** An inserter without its placing item is a half-entity a generated blueprint cannot build. */
+function checkInserters(
+  inserters: Record<string, Inserter>,
+  resources: Record<ResourceId, Resource>,
+) {
+  const itemless = Object.entries(inserters).filter(
+    ([, inserter]) => inserter.item === undefined || !(`item:${inserter.item}` in resources),
+  );
+  if (itemless.length > 0) {
+    console.log(
+      `Inserters with no item: ${itemless.length}`,
+      itemless.map(([id]) => id).slice(0, 20),
+    );
   }
 }
 

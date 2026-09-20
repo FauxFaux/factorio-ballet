@@ -25,6 +25,12 @@ export interface StaticData {
    */
   belts: Record<BeltId, Belt>;
 
+  /**
+   * Short-range item movers, keyed by bare prototype id. Their speeds and reach constrain a
+   * blueprint's transfers; `baseStackSize` is the hand before a force's researched bonuses.
+   */
+  inserters: Record<InserterId, Inserter>;
+
   /** Every entity prototype with a collision box, for blueprint rendering. */
   entities: Record<string, StaticEntity>;
 
@@ -92,6 +98,25 @@ export type StaticDataPacked = {
     }
   >;
   belts: Record<string, { h?: string; i?: string; s: number; u: number }>;
+  inserters: Record<
+    string,
+    {
+      h?: string;
+      i?: string;
+      r: number;
+      e: number;
+      p: [number, number];
+      d: [number, number];
+      z: number;
+      b?: true;
+      s?: number;
+      m?: number;
+      g?: true;
+      w?: true;
+      x?: number;
+      u?: boolean;
+    }
+  >;
   entities: Record<string, { z: [number, number]; c: string }>;
   sciencePacks: ResourceId[];
   suggestionPreload: {
@@ -145,6 +170,9 @@ export type BeaconId = string;
 
 /** A transport belt's prototype id, e.g. `fast-transport-belt`. */
 export type BeltId = string;
+
+/** An inserter's prototype id, e.g. `fast-inserter`. */
+export type InserterId = string;
 
 export interface Recipe {
   human?: string;
@@ -395,4 +423,43 @@ export interface Belt {
    * `related_underground_belt` prototype field.
    */
   undergroundLength: number;
+}
+
+/** A point relative to an inserter's tile-centred base. */
+export interface InserterPosition {
+  x: number;
+  y: number;
+}
+
+/**
+ * An inserter's movement, reach and prototype-level hand mechanics. Rotation and extension are
+ * stated per game tick; multiply by 60 for their per-second values. The hand capacity can then be
+ * raised by the player's researched force bonuses, which are intentionally not represented here.
+ */
+export interface Inserter {
+  human?: string;
+  /** The item which places it; bare prototype id, as `Machine.item` is. */
+  item?: string;
+  /** Full turns per game tick, rather than degrees or radians per second. */
+  rotationSpeed: number;
+  /** Arm extension/retraction in tiles per game tick. */
+  extensionSpeed: number;
+  pickupPosition: InserterPosition;
+  insertPosition: InserterPosition;
+  /** Hand capacity before force research: 1 normally, 2 for bulk, 6 for the Space Age stack inserter. */
+  baseStackSize: number;
+  /** Enables bulk capacity rules; absent is the game's ordinary inserter behaviour. */
+  bulk?: true;
+  /** Extra prototype hand capacity, e.g. 4 on the Space Age stack inserter. */
+  stackSizeBonus?: number;
+  /** Stack inserters can make belt stacks no larger than this. */
+  maxBeltStackSize?: number;
+  /** Stack inserter mechanics: take no more than a destination belt stack needs. */
+  grabLessToMatchBeltStack?: true;
+  /** Stack inserter mechanics: wait rather than swing a partial hand. */
+  waitForFullHand?: true;
+  /** Initial arm-extension distance, when a prototype overrides the game's default. */
+  startingDistance?: number;
+  /** Whether the force's ordinary inserter stack-size bonus applies. */
+  usesInserterStackSizeBonus?: boolean;
 }

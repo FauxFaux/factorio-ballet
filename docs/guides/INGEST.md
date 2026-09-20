@@ -236,6 +236,46 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
   as `[width, height]` and colour as six lowercase hexadecimal digits without `#`; decoding restores
   the named size fields and numeric RGB tuple used by the application.
 
+## Notes for inserters
+
+Inserters need more than one prototype field before a blueprint generator can make a transfer-rate
+guarantee. `data.raw.inserter` is the source; it is not among the machine types because it does not
+carry `crafting_categories`.
+
+- **`rotation_speed` is turns per game tick**, not degrees or radians per second. At the normal 60
+  ticks/s, convert a raw value `r` to `60r` turns/s, `21,600r` degrees/s, or `120πr` radians/s. Thus
+  the Space Age reference's `0.014` standard inserter is 0.84 turns/s (302.4°/s), and its `0.04`
+  fast/bulk/stack inserters are 2.4 turns/s (864°/s). Keep the raw turns-per-tick value if modelling
+  the game: rotation is tick-discrete, and a full pickup-and-drop turn must take an even number of
+  ticks, so a nominal odd duration is rounded down to the next lower even duration.
+  `extension_speed` is separately in tiles per tick and matters for non-default pickup/drop
+  distances.
+- **There is no `stack_size` or `inserter_stack_size` on an inserter prototype.** `hand_size`, when
+  present, is arm artwork geometry, not the number of items it carries. The force's effective
+  capacity comes from technology effects of type `inserter-stack-size-bonus` and
+  `bulk-inserter-capacity-bonus`, so it cannot be recovered from the placed entity or from
+  `data.raw.inserter` alone. Read the selected force's researched technologies (and any relevant
+  quality/space-age rules) when evaluating a real blueprint.
+- `bulk: true` opts into bulk hand-capacity mechanics. With no capacity research, ordinary inserters
+  (burner, standard, long-handed, and fast) carry one item and a bulk inserter carries two. The
+  capacity technology can make those hands 2, 3, 4, 8, 12, or other values depending on the force
+  and game/mod version; those are runtime capacities, not prototype defaults to ingest. In the
+  checked-in Bob's/Angel's dump, 4 of 12 inserter prototypes set `bulk`.
+- Space Age's `stack-inserter` is also `bulk`, but has explicit `stack_size_bonus: 4`,
+  `max_belt_stack_size: 4`, `grab_less_to_match_belt_stack`, and `wait_for_full_hand`. It therefore
+  is not interchangeable with the ordinary bulk inserter: its base hand is six, it waits for a full
+  hand, and it can create belt stacks. Those fields are absent from the checked-in non-Space-Age
+  dump, so support for them must be optional.
+
+The ingest preserves `rotation_speed`, `extension_speed`, pickup and insert positions, `bulk`, and
+the Space Age-only stack fields in `StaticData.inserters`, rounding numeric floats to three
+significant figures. It derives only an unresearched `baseStackSize`; do not emit one universal
+researched `stackSize` unless the app also chooses and records a force/research state, otherwise it
+would silently claim a throughput the saved game may not have. As with belts and beacons, an
+inserter with no placing item is omitted: Bob's leaves the original `long-handed-inserter` entity
+visible but repoints its item at `bob-red-inserter`, so a generated blueprint cannot construct the
+orphan.
+
 ## Notes for belts
 
 - **`data.raw['transport-belt']`** — 6 prototypes, none hidden, each placed by an item of its own
