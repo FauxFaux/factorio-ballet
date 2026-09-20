@@ -3,7 +3,7 @@
   grid-template-columns: minmax(12rem, 1fr) minmax(0, 3fr);
   flex: 0 1 30rem;
   width: min(30rem, 100%);
-  height: 20rem;
+  min-height: 24rem;
   box-sizing: border-box;
   overflow: hidden;
   background: var(--code-bg);
@@ -12,31 +12,79 @@
   box-shadow: var(--shadow);
 }
 
-.design-card-controls {
+.design-card-description {
   min-width: 0;
   padding: 1rem;
   border-right: 1px solid var(--border);
 }
 
-.design-card-controls h3 {
+.design-card-description h3,
+.design-card-description h4,
+.design-card-description h5 {
   margin: 0;
   color: var(--text-h);
+}
+
+.design-card-description h3 {
   font-size: 1rem;
 }
 
-.design-card-control-space {
-  min-height: 10rem;
+.design-card-flow,
+.design-card-assembler-flow {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-size: 0.8333rem;
+  line-height: 1.35;
+}
+
+.design-card-flow {
   margin-top: 1rem;
-  padding: 0.75rem;
-  color: var(--text);
+}
+
+.design-card-flow,
+.design-card-assembler {
+  min-width: 0;
+  padding: 0.5rem;
   background: var(--bg);
-  border: 1px dashed var(--border);
+  border: 1px solid var(--border);
   border-radius: 4px;
 }
 
-.design-card-control-space p {
-  margin: 0;
+.design-card-description h4 {
   font-size: 0.8333rem;
+}
+
+.design-card-assemblers {
+  margin-top: 0.75rem;
+}
+
+.design-card-assemblers > h4 {
+  margin-bottom: 0.4rem;
+}
+
+.design-card-assembler + .design-card-assembler {
+  margin-top: 0.5rem;
+}
+
+.design-card-assembler h5 {
+  font-size: 0.8333rem;
+}
+
+.design-card-assembler-flow {
+  margin-top: 0.35rem;
+  font-size: 0.6944rem;
+}
+
+.design-card-flow-arrow {
+  color: var(--accent);
+  font-size: 1.2em;
+}
+
+.design-card-rate-summary {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .design-card-grid {
@@ -50,6 +98,15 @@
 
 @media (max-width: 800px) {
   .design-card {
-    grid-template-columns: minmax(9rem, 1fr) minmax(0, 2fr);
+    grid-template-columns: 1fr;
+  }
+
+  .design-card-description {
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .design-card-grid .design-preview {
+    height: 12rem;
   }
 }

@@ -72,16 +72,18 @@ export function App({ uss }: { uss: State<UrlState> }) {
           />
         </div>
         <div class="app-head-advanced">
-          <ImportButton
-            onAddCell={(cell) =>
-              setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
-            }
-          />
-          <DebugButton uss={uss} />
           <SwitchVersion />
-          <FromAirButton uss={uss} />
-          <RailBlueprintButton uss={uss} />
-          <KernelDesignButton uss={uss} />
+          <div class="app-head-actions">
+            <ImportButton
+              onAddCell={(cell) =>
+                setUs((prev) => ({ ...prev, cl: [...prev.cl, cell], ci: prev.cl.length }))
+              }
+            />
+            <DebugButton uss={uss} />
+            <FromAirButton uss={uss} />
+            <RailBlueprintButton uss={uss} />
+            <KernelDesignButton uss={uss} />
+          </div>
         </div>
       </header>
       {us.rb ? (
