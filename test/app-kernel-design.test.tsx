@@ -4,6 +4,7 @@ import { render, screen } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/app.tsx';
+import { CARBON_LIGHT_SHORT } from '../src/data/colours.ts';
 import type { UrlState } from '../src/url-handler.tsx';
 
 const kernelDesignState: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {}, kd: {} };
@@ -21,7 +22,12 @@ describe('App', () => {
     expect(screen.getAllByRole('article')).toHaveLength(3);
     expect(screen.getAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(3);
     expect(screen.getAllByText('Assemblers')).toHaveLength(3);
-    expect(screen.getAllByText('5 item 1 + 1 item 2 + 200 fluid 3')).toHaveLength(2);
+    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(16);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(6);
+    for (const icon of screen.getAllByTitle('item 1')) {
+      expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
+    }
+    expect(screen.queryByText('item 1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();
   });
 });

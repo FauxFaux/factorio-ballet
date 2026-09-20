@@ -1,6 +1,29 @@
 const { icons } = await import('../data/decode-icons.ts');
 import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 
+/** A plain fluid droplet for fluids which have a colour, but no icon artwork. */
+export function GenericFluidIcon({ color }: { color: string }) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 48 56" role="img" aria-label="Fluid" focusable="false">
+      <path
+        fill={color}
+        d="M21.5 7.5C20.1 13.4 9.5 28.6 9.5 36.5c0 7.5 5.4 13 12.5 13s12.5-5.5 12.5-13c0-7.9-10.7-23.1-13-29Z"
+      />
+    </svg>
+  );
+}
+
+/** A plain, top-lit cube for solids which have a colour, but no icon artwork. */
+export function GenericSolidIcon({ color }: { color: string }) {
+  return (
+    <svg width="32" height="32" viewBox="0 0 54 54" role="img" aria-label="Solid" focusable="false">
+      <path fill={color} d="M27 4 48 16 27 28 6 16Z" />
+      <path fill={color} fill-opacity="0.72" d="m6 16 21 12v23L6 39Z" />
+      <path fill={color} fill-opacity="0.46" d="m27 28 21-12v23L27 51Z" />
+    </svg>
+  );
+}
+
 /** Look up an icon sprite without exposing the decoded sprite table to eager modules. */
 export function iconSprite(...keys: string[]): [string, number, number, number] {
   for (const key of keys) {
