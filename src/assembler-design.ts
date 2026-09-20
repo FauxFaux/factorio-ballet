@@ -18,11 +18,13 @@ interface InputSite {
 const compactInputSites: InputSite[] = [
   { beltX: 0, position: { x: 1, y: 2 }, direction: 'east' },
   { beltX: 0, position: { x: 1, y: 0 }, direction: 'east' },
+  { beltX: 0, position: { x: 1, y: 1 }, direction: 'east' },
 ];
 
 const compactOutputPositions = [
   { x: 5, y: 1 },
   { x: 5, y: 0 },
+  { x: 5, y: 2 },
 ];
 
 const longOutputPositions = [

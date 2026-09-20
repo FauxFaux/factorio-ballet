@@ -56,6 +56,24 @@ describe('generateAssemblerDesign', () => {
     expect(designBounds(entities)).toEqual({ minX: 0, maxX: 7, minY: 0, maxY: 3 });
   });
 
+  it('uses all three assembler edge tiles when pulling 8/s with 3/s inserters', () => {
+    const design = generateAssemblerDesign(kernelProblems[1]!, {
+      beltItemsPerSecond: 15,
+      inserterItemsPerSecond: 3,
+      longInserterItemsPerSecond: 1.5,
+    });
+    const inputInserters =
+      design?.columns[0].entities.filter(
+        (entity) => entity.kind === 'inserter' && entity.position.x === 1,
+      ) ?? [];
+
+    expect(inputInserters).toEqual([
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 1, y: 1 }, direction: 'east' },
+    ]);
+  });
+
   it('adds a second short output inserter before rejecting a compact design', () => {
     const problem = {
       ...kernelProblems[0]!,
