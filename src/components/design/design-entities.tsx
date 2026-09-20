@@ -11,7 +11,7 @@ import type {
   DesignPosition,
 } from '../../design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
-import type { AssemblerInputStatus, BeltItemTrace } from './design-belts.ts';
+import type { AssemblerInputStatus, BeltItemTrace } from './design-belt-traces.ts';
 import type { DesignSceneItems } from './design-scene.tsx';
 import { fmt } from '../../ts.ts';
 

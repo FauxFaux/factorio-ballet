@@ -1,17 +1,14 @@
 import './design-card.css';
-import type {
-  AssemblerSpecification,
-  KernelProblem,
-  ResourceRates,
-} from '../../kernel-problems.ts';
+import type { KernelProblem, ResourceRates } from '../../kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../data/colours.ts';
 import { generateAssemblerDesign, type AssemblerDesignThroughput } from '../../assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
+import { HelpInfo } from '../help-info.tsx';
 import { DesignPreview } from './design-preview.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
 import type { DesignColumn } from '../../design.ts';
-import { beltInputItemTraces, beltItemLaneCounts, beltItemTraces } from './design-belts.ts';
+import { beltInputItemTraces, beltItemLaneCounts, beltItemTraces } from './design-belt-traces.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
@@ -42,11 +39,16 @@ export function DesignCard({
         />
         {stackLimit !== undefined && (
           <dl class="design-card-stack-limit" aria-label="Max column height">
-            <dt>Max column height</dt>
+            <dt>
+              <HelpInfo label="About maximum column height">
+                The number of times you could stack this blueprint (kernel) on top of itself,
+                without running out of belt throughput on the allocated belts.
+                </HelpInfo>
+              Max column height
+            </dt>
             <dd>×{stackLimit}</dd>
           </dl>
         )}
-        <AssemblerList assemblers={problem.assemblers} resourceColours={resourceColours} />
       </aside>
       <div class="design-card-grid">
         {design ? (
@@ -82,32 +84,6 @@ function FlowSummary({
         rates={{ ...outputs.solids, ...outputs.fluids }}
         resourceColours={resourceColours}
       />
-    </section>
-  );
-}
-
-function AssemblerList({
-  assemblers,
-  resourceColours,
-}: {
-  assemblers: AssemblerSpecification[];
-  resourceColours: ResourceColours;
-}) {
-  return (
-    <section class="design-card-assemblers" aria-label="Assembler specifications">
-      <h4>Assemblers</h4>
-      {assemblers.map((assembler) => (
-        <div class="design-card-assembler" key={assembler.name}>
-          <h5>{assembler.name}</h5>
-          <div class="design-card-assembler-flow">
-            <RateSummary rates={assembler.inputPerSecond} resourceColours={resourceColours} />
-            <span class="design-card-flow-arrow" aria-hidden="true">
-              →
-            </span>
-            <RateSummary rates={assembler.outputPerSecond} resourceColours={resourceColours} />
-          </div>
-        </div>
-      ))}
     </section>
   );
 }

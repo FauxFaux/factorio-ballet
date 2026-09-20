@@ -4,10 +4,10 @@ import {
   assemblerInputStatuses,
   beltInputItemTraces,
   beltItemTraces,
-  beltLoopEntityIndexes,
   type AssemblerInputStatus,
   type BeltItemTrace,
-} from './design-belts.ts';
+} from './design-belt-traces.ts';
+import { beltLoopEntityIndexes } from './design-belts.ts';
 import {
   Assembler,
   Belt,

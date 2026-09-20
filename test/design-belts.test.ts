@@ -3,7 +3,7 @@ import {
   assemblerInputStatuses,
   beltInputItemTraces,
   beltItemLaneCounts,
-} from '../src/components/design/design-belts.ts';
+} from '../src/components/design/design-belt-traces.ts';
 import type { DesignColumn, DesignEntity } from '../src/design.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 

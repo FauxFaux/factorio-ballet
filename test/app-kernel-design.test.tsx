@@ -100,9 +100,12 @@ describe('App', () => {
     expect(within(articleForProblem(5)).getByLabelText('Max column height').textContent).toContain(
       '×3',
     );
-    expect(screen.getAllByText('Assemblers')).toHaveLength(kernelProblems.length);
-    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(92);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(36);
+    expect(
+      within(articleForProblem(1)).getByRole('button', { name: 'About maximum column height' }),
+    ).toBeTruthy();
+    expect(screen.queryByText('Assemblers')).toBeNull();
+    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(18);
     for (const icon of within(articleForProblem(1)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }
