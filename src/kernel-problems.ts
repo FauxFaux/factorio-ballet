@@ -50,15 +50,17 @@ const resourceMixes: ResourceMix[] = [
   { fluidInput: true, fluidOutput: true },
 ];
 
+const FLUID_RATE = 200;
+
 function resourceRates(prefix: string, rates: number[], startIndex = 1): ResourceRates {
   return Object.fromEntries(rates.map((rate, index) => [`${prefix} ${startIndex + index}`, rate]));
 }
 
 function makeProblem(shape: ProblemShape, mix: ResourceMix, problemIndex: number): KernelProblem {
   const solidInputRates = mix.fluidInput ? shape.inputs.slice(1) : shape.inputs;
-  const fluidInputRates = mix.fluidInput ? shape.inputs.slice(0, 1) : [];
+  const fluidInputRates = mix.fluidInput ? [FLUID_RATE] : [];
   const solidOutputRates = mix.fluidOutput ? shape.outputs.slice(1) : shape.outputs;
-  const fluidOutputRates = mix.fluidOutput ? shape.outputs.slice(0, 1) : [];
+  const fluidOutputRates = mix.fluidOutput ? [FLUID_RATE] : [];
   const inputs: KernelFlows = {
     solids: resourceRates('item', solidInputRates),
     fluids: resourceRates('fluid', fluidInputRates),
@@ -84,8 +86,11 @@ function makeProblem(shape: ProblemShape, mix: ResourceMix, problemIndex: number
 }
 
 /** Starter tasks for the standalone kernel workspace, ordered by increasing complexity. */
-export const kernelProblems: KernelProblem[] = resourceMixes.flatMap((mix, mixIndex) =>
-  problemShapes.map((shape, shapeIndex) =>
-    makeProblem(shape, mix, mixIndex * problemShapes.length + shapeIndex),
-  ),
-);
+export const kernelProblems: KernelProblem[] = resourceMixes
+  .flatMap((mix) =>
+    (mix.fluidInput
+      ? problemShapes.filter((_, index) => index !== 1 && index !== 2)
+      : problemShapes
+    ).map((shape) => ({ shape, mix })),
+  )
+  .map(({ shape, mix }, problemIndex) => makeProblem(shape, mix, problemIndex));

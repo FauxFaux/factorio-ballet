@@ -20,15 +20,15 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Kernel design' })).toBeTruthy();
     expect(screen.queryByRole('heading', { name: 'Rail blueprints' })).toBeNull();
     const articles = screen.getAllByRole('article');
-    expect(articles).toHaveLength(24);
+    expect(articles).toHaveLength(20);
     expect(screen.getAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(3);
-    expect(screen.getAllByText('[no solution]')).toHaveLength(21);
+    expect(screen.getAllByText('[no solution]')).toHaveLength(17);
     expect(within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' })).toBeTruthy();
     expect(within(articles[1]!).getByRole('region', { name: 'Problem 2 preview' })).toBeTruthy();
     expect(within(articles[2]!).getByText('[no solution]')).toBeTruthy();
-    expect(screen.getAllByText('Assemblers')).toHaveLength(24);
-    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(96);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(48);
+    expect(screen.getAllByText('Assemblers')).toHaveLength(20);
+    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(92);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(36);
     for (const icon of within(articles[0]!).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }
