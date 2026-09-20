@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { generateAssemblerDesign } from '../src/assembler-design.ts';
 import { entityPositionStatuses } from '../src/components/design/design-entities.tsx';
+import { designBounds } from '../src/components/design/design-preview.tsx';
 import { kernelProblems } from '../src/kernel-problems.ts';
 
 const throughput = {
@@ -12,19 +13,22 @@ const throughput = {
 describe('generateAssemblerDesign', () => {
   it('uses one input inserter for Problem 1', () => {
     const design = generateAssemblerDesign(kernelProblems[0]!, throughput);
+    const entities = design?.columns[0].entities ?? [];
 
-    expect(design?.columns[0].entities.filter((entity) => entity.kind === 'inserter')).toEqual([
-      { kind: 'inserter', position: { x: 2, y: 2 }, direction: 'east' },
-      { kind: 'inserter', position: { x: 6, y: 1 }, direction: 'east', reach: 2 },
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'east' },
     ]);
-    expect(design?.columns[0].entities.filter((entity) => entity.kind === 'belt')).toEqual([
-      { kind: 'belt', position: { x: 1, y: 0 }, direction: 'north' },
-      { kind: 'belt', position: { x: 1, y: 1 }, direction: 'north' },
-      { kind: 'belt', position: { x: 1, y: 2 }, direction: 'north' },
-      { kind: 'belt', position: { x: 8, y: 0 }, direction: 'south' },
-      { kind: 'belt', position: { x: 8, y: 1 }, direction: 'south' },
-      { kind: 'belt', position: { x: 8, y: 2 }, direction: 'south' },
+    expect(entities.filter((entity) => entity.kind === 'belt')).toEqual([
+      { kind: 'belt', position: { x: 0, y: 0 }, direction: 'north' },
+      { kind: 'belt', position: { x: 0, y: 1 }, direction: 'north' },
+      { kind: 'belt', position: { x: 0, y: 2 }, direction: 'north' },
+      { kind: 'belt', position: { x: 6, y: 0 }, direction: 'south' },
+      { kind: 'belt', position: { x: 6, y: 1 }, direction: 'south' },
+      { kind: 'belt', position: { x: 6, y: 2 }, direction: 'south' },
     ]);
+    expect(entities).not.toContainEqual(expect.objectContaining({ kind: 'inserter', reach: 2 }));
+    expect(designBounds(entities)).toEqual({ minX: 0, maxX: 7, minY: 0, maxY: 3 });
   });
 
   it('uses two input inserters for Problem 2 without overlapping entities', () => {
@@ -33,6 +37,23 @@ describe('generateAssemblerDesign', () => {
 
     expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(3);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('adds a second inserter on the compact input belt when one cannot carry the rate', () => {
+    const design = generateAssemblerDesign(kernelProblems[1]!, {
+      beltItemsPerSecond: 30,
+      inserterItemsPerSecond: 5.28,
+      longInserterItemsPerSecond: 2.64,
+    });
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'east' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(6);
+    expect(designBounds(entities)).toEqual({ minX: 0, maxX: 7, minY: 0, maxY: 3 });
   });
 
   it('has no solution for Problem 3 because its input needs too many inserters', () => {

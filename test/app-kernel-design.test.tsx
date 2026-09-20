@@ -79,7 +79,7 @@ describe('App', () => {
     }
     const firstPreview = within(articles[0]!).getByRole('region', { name: 'Problem 1 preview' });
     const inputBelts = within(firstPreview).getAllByRole('img', {
-      name: /Transport belt at 1, \d, pointing north/,
+      name: /Transport belt at 0, \d, pointing north/,
     });
     expect(inputBelts).toHaveLength(3);
     for (const belt of inputBelts) {
@@ -92,7 +92,7 @@ describe('App', () => {
       }
     }
     const outputBelts = within(firstPreview).getAllByRole('img', {
-      name: /Transport belt at 8, \d, pointing south/,
+      name: /Transport belt at 6, \d, pointing south/,
     });
     expect(outputBelts).toHaveLength(3);
     for (const belt of outputBelts) {

@@ -169,12 +169,14 @@
 
 .cell-design-belt[data-direction="east"] .cell-design-belt-lane[data-side="left"],
 .cell-design-belt[data-direction="west"] .cell-design-belt-lane[data-side="right"] {
-  top: calc(33.333% - 1px);
+  /* Absolute percentages use the 10px padding box. Include the two 1px borders so the line's
+     centre sits one third of the way across the complete 12px belt. */
+  top: calc(33.333% - 1.333px);
 }
 
 .cell-design-belt[data-direction="east"] .cell-design-belt-lane[data-side="right"],
 .cell-design-belt[data-direction="west"] .cell-design-belt-lane[data-side="left"] {
-  top: calc(66.667% - 1px);
+  top: calc(66.667% - 0.667px);
 }
 
 .cell-design-belt[data-direction="north"] .cell-design-belt-lane,
@@ -184,14 +186,14 @@
   height: 100%;
 }
 
-.cell-design-belt[data-direction="south"] .cell-design-belt-lane[data-side="left"],
-.cell-design-belt[data-direction="north"] .cell-design-belt-lane[data-side="right"] {
-  left: calc(33.333% - 1px);
-}
-
 .cell-design-belt[data-direction="south"] .cell-design-belt-lane[data-side="right"],
 .cell-design-belt[data-direction="north"] .cell-design-belt-lane[data-side="left"] {
-  left: calc(66.667% - 1px);
+  left: calc(33.333% - 1.333px);
+}
+
+.cell-design-belt[data-direction="south"] .cell-design-belt-lane[data-side="left"],
+.cell-design-belt[data-direction="north"] .cell-design-belt-lane[data-side="right"] {
+  left: calc(66.667% - 0.667px);
 }
 
 .cell-design-belt-arrow[data-direction="south"] {

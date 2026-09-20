@@ -15,7 +15,12 @@ interface InputSite {
   reach?: 2;
 }
 
-// Ordered so every prefix is the canonical one-, two-, or three-input pattern from ASSEMBLERS.md.
+const compactInputSites: InputSite[] = [
+  { beltX: 0, position: { x: 1, y: 2 }, direction: 'east' },
+  { beltX: 0, position: { x: 1, y: 0 }, direction: 'east' },
+];
+
+// Ordered so every prefix is the canonical two- or three-input pattern from ASSEMBLERS.md.
 const inputSites: InputSite[] = [
   { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
   { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
@@ -54,25 +59,43 @@ export function generateAssemblerDesign(
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
-  if (
-    outputRate > throughput.beltItemsPerSecond ||
-    outputRate > throughput.longInserterItemsPerSecond
-  ) {
+  if (outputRate > throughput.beltItemsPerSecond) return undefined;
+
+  const compactInputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
+  const compact =
+    inputRates.length <= 2 &&
+    inputRate <= throughput.beltItemsPerSecond &&
+    compactInputInserterCount <= compactInputSites.length &&
+    outputRate <= throughput.inserterItemsPerSecond;
+
+  const inputBeltCount = compact
+    ? 1
+    : [2, 3].find(
+        (count) =>
+          count >= inputRates.length &&
+          inputRate <= count * throughput.beltItemsPerSecond &&
+          inputRate <= inputTransferCapacity(count, throughput),
+      );
+  if (!inputBeltCount || (!compact && outputRate > throughput.longInserterItemsPerSecond)) {
     return undefined;
   }
 
-  const inputBeltCount = [1, 2, 3].find(
-    (count) =>
-      count >= inputRates.length &&
-      inputRate <= count * throughput.beltItemsPerSecond &&
-      inputRate <= inputTransferCapacity(count, throughput),
-  );
-  if (!inputBeltCount) return undefined;
+  const selectedInputSites = compact
+    ? compactInputSites.slice(0, compactInputInserterCount)
+    : inputSites.slice(0, inputBeltCount);
+  const outputInserterItemsPerSecond = compact
+    ? throughput.inserterItemsPerSecond
+    : throughput.longInserterItemsPerSecond;
+  if (outputRate > outputInserterItemsPerSecond) return undefined;
 
-  const selectedInputSites = inputSites.slice(0, inputBeltCount);
+  const assemblerX = compact ? 2 : 3;
+  const outputInserterX = compact ? 5 : 6;
+  const outputBeltX = compact ? 6 : 8;
 
   const entities: DesignEntity[] = [
-    ...selectedInputSites.flatMap(({ beltX }) => verticalBelt(beltX, 'north')),
+    ...[...new Set(selectedInputSites.map(({ beltX }) => beltX))].flatMap((beltX) =>
+      verticalBelt(beltX, 'north'),
+    ),
     ...selectedInputSites.map(({ position, direction, reach }) => ({
       kind: 'inserter' as const,
       position,
@@ -81,17 +104,17 @@ export function generateAssemblerDesign(
     })),
     {
       kind: 'assembler',
-      position: { x: 3, y: 0 },
+      position: { x: assemblerX, y: 0 },
       size: { width: 3, height: 3 },
       recipe: problem.assemblers[0].name,
     },
     {
       kind: 'inserter',
-      position: { x: 6, y: 1 },
+      position: { x: outputInserterX, y: 1 },
       direction: 'east',
-      reach: 2,
+      ...(compact ? {} : { reach: 2 as const }),
     },
-    ...verticalBelt(8, 'south'),
+    ...verticalBelt(outputBeltX, 'south'),
   ];
 
   return { columns: [{ entities }] };
