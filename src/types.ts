@@ -31,6 +31,13 @@ export interface StaticData {
    */
   inserters: Record<InserterId, Inserter>;
 
+  /**
+   * Finite technology unlocks which increase inserter hand capacity, as
+   * `[complexity, ordinaryBonus, bulkBonus]`, earliest first. The bonuses are cumulative at that
+   * point, so research state chooses the final row at or below its progress.
+   */
+  inserterCapacityBonuses: InserterCapacityBonus[];
+
   /** Every entity prototype with a collision box, for blueprint rendering. */
   entities: Record<string, StaticEntity>;
 
@@ -117,6 +124,7 @@ export type StaticDataPacked = {
       u?: boolean;
     }
   >;
+  inserterCapacityBonuses: InserterCapacityBonus[];
   entities: Record<string, { z: [number, number]; c: string }>;
   sciencePacks: ResourceId[];
   suggestionPreload: {
@@ -173,6 +181,9 @@ export type BeltId = string;
 
 /** An inserter's prototype id, e.g. `fast-inserter`. */
 export type InserterId = string;
+
+/** A finite inserter-capacity technology unlock with cumulative bonuses. */
+export type InserterCapacityBonus = [number, number, number];
 
 export interface Recipe {
   human?: string;

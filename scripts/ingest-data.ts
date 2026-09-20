@@ -18,6 +18,7 @@ import type {
   ChartColor,
   Ingredient,
   Inserter,
+  InserterCapacityBonus,
   InserterPosition,
   IngredientTemperature,
   Machine,
@@ -137,7 +138,7 @@ async function main() {
   checkInserters(inserters, resources);
   checkCatalysts(recipes);
 
-  const sciencePacks = applyComplexity(v, recipes, resources);
+  const { sciencePacks, inserterCapacityBonuses } = applyComplexity(v, recipes, resources);
   const fromAir = fromAirSuggestionStages({ recipes });
   const suggestionPreload = {
     fromAirRecipeByProduct: Object.fromEntries(
@@ -157,6 +158,7 @@ async function main() {
     beacons,
     belts,
     inserters,
+    inserterCapacityBonuses,
     entities,
     sciencePacks,
     suggestionPreload,
@@ -218,8 +220,8 @@ function applyComplexity(
   v: RawData,
   recipes: Record<string, Recipe>,
   resources: Record<ResourceId, Resource>,
-): ResourceId[] {
-  const { progress, recipeProgress, packs } = analyse(v);
+): { sciencePacks: ResourceId[]; inserterCapacityBonuses: InserterCapacityBonus[] } {
+  const { progress, recipeProgress, packs, techCost, max } = analyse(v);
   const round = (x: number) => Math.round(x * 1e4) / 1e4;
   let unreachable = 0;
 
@@ -239,7 +241,55 @@ function applyComplexity(
     `Science packs: ${packs.length}`,
     packs.map((id) => resources[id]?.human ?? id),
   );
-  return packs;
+  return {
+    sciencePacks: packs,
+    inserterCapacityBonuses: inserterCapacityBonuses(v, techCost, max),
+  };
+}
+
+/**
+ * Each finite research which changes an inserter hand, in the same 0..1 progress scale as recipes
+ * and resources. Effects with the same rounded progress are one step for the slider, so combine
+ * them, then accumulate the results. Infinite research has no one-time hand capacity to unlock and
+ * is deliberately excluded.
+ */
+function inserterCapacityBonuses(
+  v: RawData,
+  techCost: Map<string, number>,
+  maxCost: number,
+): InserterCapacityBonus[] {
+  const byProgress = new Map<number, InserterCapacityBonus>();
+  const round = (value: number) => Math.round(value * 1e4) / 1e4;
+
+  for (const [id, tech] of Object.entries(v.technology)) {
+    if (tech.hidden || tech.unit?.count === undefined) continue;
+    let ordinary = 0;
+    let bulk = 0;
+    for (const effect of arr(tech.effects ?? [])) {
+      if (effect.type === 'inserter-stack-size-bonus') ordinary += effect.modifier;
+      if (effect.type === 'bulk-inserter-capacity-bonus') bulk += effect.modifier;
+    }
+    if (ordinary === 0 && bulk === 0) continue;
+    const cost = techCost.get(id);
+    if (cost === undefined || !isFinite(cost)) continue;
+    const progress = round(Math.log10(1 + cost) / Math.log10(1 + maxCost));
+    const previous = byProgress.get(progress);
+    byProgress.set(progress, [
+      progress,
+      ordinary + (previous?.[1] ?? 0),
+      bulk + (previous?.[2] ?? 0),
+    ]);
+  }
+
+  let ordinary = 0;
+  let bulk = 0;
+  return [...byProgress.values()]
+    .sort(([a], [b]) => a - b)
+    .map(([progress, ordinaryBonus, bulkBonus]) => {
+      ordinary += ordinaryBonus;
+      bulk += bulkBonus;
+      return [progress, ordinary, bulk];
+    });
 }
 
 /**

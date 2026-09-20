@@ -143,6 +143,7 @@ function decodeStaticData(data: StaticDataPacked): StaticData {
         },
       ]),
     ),
+    inserterCapacityBonuses: data.inserterCapacityBonuses,
     entities: Object.fromEntries(
       Object.entries(data.entities).map(([id, entity]) => [
         id,

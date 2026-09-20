@@ -42,4 +42,21 @@ describe('the ingested inserters', () => {
       expect(staticData.resources[`item:${inserter.item}`]?.human, id).toBeTruthy();
     }
   });
+
+  it('puts finite hand-capacity research on the same game-progress scale as everything else', () => {
+    expect(staticData.inserterCapacityBonuses).toEqual([
+      [0.2711, 1, 0],
+      [0.3125, 1, 1],
+      [0.3277, 1, 2],
+      [0.3391, 1, 3],
+      [0.4841, 2, 3],
+      [0.508, 2, 4],
+      [0.5259, 2, 5],
+      [0.6867, 3, 5],
+      [0.6973, 3, 7],
+      [0.7192, 3, 9],
+      [0.7363, 4, 9],
+      [0.757, 4, 11],
+    ]);
+  });
 });

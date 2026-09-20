@@ -276,6 +276,13 @@ inserter with no placing item is omitted: Bob's leaves the original `long-handed
 visible but repoints its item at `bob-red-inserter`, so a generated blueprint cannot construct the
 orphan.
 
+`StaticData.inserterCapacityBonuses` separately records the finite capacity-research unlocks as
+`[complexity, ordinaryBonus, bulkBonus]`, in progress order. The two bonus numbers are the
+cumulative bonus at that point, not the resulting hand size: select the final row at or below a
+force's progress to model its research. Its complexity is the same technology-closure scale as
+resources and recipes. Infinite research is omitted because it has no fixed one-time capacity
+increase.
+
 ## Notes for belts
 
 - **`data.raw['transport-belt']`** — 6 prototypes, none hidden, each placed by an item of its own

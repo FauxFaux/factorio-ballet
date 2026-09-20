@@ -124,6 +124,7 @@ export function packStaticData(data: StaticData): StaticDataPacked {
         },
       ]),
     ),
+    inserterCapacityBonuses: data.inserterCapacityBonuses,
     entities: Object.fromEntries(
       Object.entries(data.entities).map(([id, entity]) => [
         id,
