@@ -1,0 +1,7 @@
+.kernel-design {
+  max-width: 48rem;
+}
+
+.kernel-design > p {
+  margin-top: 0;
+}

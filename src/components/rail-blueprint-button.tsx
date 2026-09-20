@@ -12,7 +12,12 @@ export function RailBlueprintButton({ uss }: { uss: State<UrlState> }) {
       type="button"
       title="Show rail blueprint"
       onClick={() =>
-        setUs((prev) => ({ ...prev, fa: undefined, rb: prev.rb ? undefined : [3, 2] }))
+        setUs((prev) => ({
+          ...prev,
+          fa: undefined,
+          kd: undefined,
+          rb: prev.rb ? undefined : [3, 2],
+        }))
       }
     >
       🚂

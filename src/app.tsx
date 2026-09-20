@@ -17,6 +17,8 @@ import { UnlitFilter } from './components/unlit-module-icon.tsx';
 import { RecipeSuggestions } from './components/recipe-suggestions/recipe-suggestions.tsx';
 import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
 import { RailBlueprints } from './components/rail-blueprints.tsx';
+import { KernelDesignButton } from './components/kernel-design-button.tsx';
+import { KernelDesign } from './components/kernel-design.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
@@ -79,6 +81,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
           <SwitchVersion />
           <FromAirButton uss={uss} />
           <RailBlueprintButton uss={uss} />
+          <KernelDesignButton uss={uss} />
         </div>
       </header>
       {us.rb ? (
@@ -86,6 +89,8 @@ export function App({ uss }: { uss: State<UrlState> }) {
           size={us.rb}
           onSizeChange={(update) => setUs((prev) => ({ ...prev, rb: prev.rb && update(prev.rb) }))}
         />
+      ) : us.kd ? (
+        <KernelDesign />
       ) : us.fa ? (
         <FromAir mode={field(uss, 'fa')} progress={progress} />
       ) : (

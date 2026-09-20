@@ -48,6 +48,9 @@ export interface UrlState {
   fa?: true | 'infinite-mining';
   /** Rail-blueprint input/output counts; a negative count displays that side as stacked. */
   rb?: [number, number];
+  /** Show the standalone kernel-design workspace rather than a planner page. */
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- persisted as an empty object
+  kd?: {};
 }
 
 const defaultUs: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };

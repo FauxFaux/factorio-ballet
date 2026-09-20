@@ -1,0 +1,21 @@
+.kernel-design-button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.kernel-design-button-icon {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.kernel-design-button:hover {
+  background: var(--accent-bg);
+}
