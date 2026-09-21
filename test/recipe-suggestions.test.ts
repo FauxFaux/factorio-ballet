@@ -8,7 +8,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cellInterface, newCell, type Cell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 import { resourceName } from '../src/data/index.ts';
-import { isBarrelling, isUnbarrelling } from '../src/data/recipes.ts';
+import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
 import { staticData } from '../src/data/decode.ts';
 import {
   scoreRecipeSuggestion,

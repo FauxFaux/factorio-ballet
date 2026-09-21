@@ -1,6 +1,6 @@
 import { decode } from '@msgpack/msgpack';
 import { unzlibSync } from 'fflate';
-import type { Cell } from './cell.ts';
+import type { Cell } from '../cell.ts';
 
 export interface DataSetConfiguration {
   /** Dataset id (`d.id`). */

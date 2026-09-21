@@ -8,7 +8,7 @@ import {
   entityPositionStatuses,
   worldToViewport,
 } from '../src/components/design/design-entities.tsx';
-import type { DesignColumn as DesignColumnData } from '../src/design.ts';
+import type { DesignColumn as DesignColumnData } from '../src/compute/design.ts';
 
 afterEach(cleanup);
 

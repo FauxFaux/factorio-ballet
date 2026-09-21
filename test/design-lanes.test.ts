@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { beltLaneKey, type BeltLaneRef } from '../src/bp/belt-model.ts';
 import { analyzeDesignLanes, singleLaneItem } from '../src/components/design/design-lanes.ts';
-import type { DesignColumn, DesignDirection, DesignEntity } from '../src/design.ts';
+import type { DesignColumn, DesignDirection, DesignEntity } from '../src/compute/design.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
 
 const item = (resource: ResourceId): Recipe['products'][number] => ({

@@ -1,7 +1,7 @@
 import './design-column.css';
 import './design-preview.css';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
-import type { DesignColumn, DesignEntity } from '../../design.ts';
+import type { DesignColumn, DesignEntity } from '../../compute/design.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { DesignScene } from './design-scene.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';

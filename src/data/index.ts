@@ -1,7 +1,7 @@
 import type { Beacon, BeaconId, Belt, BeltId, ModuleId, ResourceId } from '../types.ts';
 import { staticData } from './decode.ts';
-import { selectPackLandmarks } from './landmarks.ts';
-import type { Landmark } from './landmarks.ts';
+import { selectPackLandmarks } from '../compute/landmarks.ts';
+import type { Landmark } from '../compute/landmarks.ts';
 
 /** The display name for a resource, falling back to its id. */
 export function resourceName(id: ResourceId): string {

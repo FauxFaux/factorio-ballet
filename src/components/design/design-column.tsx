@@ -2,7 +2,7 @@ import './design-column.css';
 import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-react';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
-import type { DesignColumn as DesignColumnData } from '../../design.ts';
+import type { DesignColumn as DesignColumnData } from '../../compute/design.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
 import { DesignScene } from './design-scene.tsx';

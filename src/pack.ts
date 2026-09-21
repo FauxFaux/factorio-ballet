@@ -1,8 +1,13 @@
 import type { Cell, CellEntry } from './cell.ts';
 import { staticData } from './data/decode.ts';
 import type { ModuleFill } from './module-effects.ts';
-import type { DesignColumn, DesignDirection, DesignEntity, FactoryDesign } from './design.ts';
-import type { CellLayout } from './layout.ts';
+import type {
+  DesignColumn,
+  DesignDirection,
+  DesignEntity,
+  FactoryDesign,
+} from './compute/design.ts';
+import type { CellLayout } from './compute/layout.ts';
 import type { ResourceId } from './types.ts';
 
 /**

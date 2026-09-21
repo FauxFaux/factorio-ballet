@@ -1,6 +1,6 @@
 import { buildBeltGraph } from '../../bp/belt.ts';
 import { beltLaneKey, type BeltLaneRef } from '../../bp/belt-model.ts';
-import type { DesignColumn, DesignDirection, DesignPosition } from '../../design.ts';
+import type { DesignColumn, DesignDirection, DesignPosition } from '../../compute/design.ts';
 
 type BeltAxis = 'horizontal' | 'vertical';
 

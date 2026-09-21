@@ -12,8 +12,8 @@ import { packStaticData } from './pack-static-data.ts';
 import { placingItems, syntheticRecipes } from './synthetic.ts';
 import { checkBelts, handleBelts } from './ingest/belts.ts';
 import { checkInserters, handleInserters, inserterCapacityBonuses } from './ingest/inserters.ts';
-import { fromAirSuggestionStages } from '../src/from-air.ts';
-import { singleStepVoidableResources } from '../src/void-path.ts';
+import { fromAirSuggestionStages } from '../src/compute/from-air.ts';
+import { singleStepVoidableResources } from '../src/compute/void-path.ts';
 import type {
   Beacon,
   ChartColor,

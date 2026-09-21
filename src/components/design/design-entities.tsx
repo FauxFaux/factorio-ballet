@@ -9,7 +9,7 @@ import type {
   DesignInserter,
   DesignPipe,
   DesignPosition,
-} from '../../design.ts';
+} from '../../compute/design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
 import type { AssemblerInputStatus, BeltItemTrace } from './design-belt-traces.ts';
 import type { DesignSceneItems } from './design-scene.tsx';

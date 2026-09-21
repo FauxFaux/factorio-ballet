@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { staticData } from '../src/data/decode.ts';
 import type { Recipe, ResourceId } from '../src/types.ts';
-import { singleStepVoidableResources, voidPlanFinder, voidPlans } from '../src/void-path.ts';
+import {
+  singleStepVoidableResources,
+  voidPlanFinder,
+  voidPlans,
+} from '../src/compute/void-path.ts';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),

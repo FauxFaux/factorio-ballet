@@ -100,19 +100,25 @@ integer machine counts, laid out on a 2d grid, within the bounds of the 192x128 
 3. modulisation: kernels are stacked to make modules (maybe these would have been called "cells" in
    a different world), so we have the right number of assemblers and belts total; and we know where
    the inputs and outputs for each module are to be connected. Here may be a good time to
-   [recommend how to split up the modules](../../src/split.ts), to avoid a pure column layout; but
-   it may be that realistically the only recourse the user has is to provide better kernels.
-4. modules are placed and belts routed inside [a real 2d grid](../../src/components/layout/layout.tsx),
-   connecting the input stations and modules; modules and other modules, and modules and output stations,
+   [recommend how to split up the modules](../../src/compute/split.ts), to avoid a pure column
+   layout; but it may be that realistically the only recourse the user has is to provide better
+   kernels.
+4. modules are placed and belts routed inside
+   [a real 2d grid](../../src/components/layout/layout.tsx), connecting the input stations and
+   modules; modules and other modules, and modules and output stations,
 5. with an appropriate number of belts, handling splitting and merging.
 
-An input station provides four belts per station, and an output station accepts up to four belts per station.
+An input station provides four belts per station, and an output station accepts up to four belts per
+station.
 
-There's a visual-only implementation of this for the [radar](../../src/components/radar/radar-assemblers.tsx),
-which:
- * assumes kernels are always possible and a fixed width (this is too optimistic),
- * stacks kernels all the way up to the brick height (with some allowance for belt throughput), which 
-   limits other routing options, and forces the belt bussing.
- * merges modules if they are immediately adjacent in the planning list, and totally cover a set; all of the outputs of one module are consumed by the next, and that's the only consumer.
- * ignores errors, like trying to feed twelve belts into one
- * does not actually use real coordinates, just visual svg drawings, and hence cannot be mapped into game units
+There's a visual-only implementation of this for the
+[radar](../../src/components/radar/radar-assemblers.tsx), which:
+
+- assumes kernels are always possible and a fixed width (this is too optimistic),
+- stacks kernels all the way up to the brick height (with some allowance for belt throughput), which
+  limits other routing options, and forces the belt bussing.
+- merges modules if they are immediately adjacent in the planning list, and totally cover a set; all
+  of the outputs of one module are consumed by the next, and that's the only consumer.
+- ignores errors, like trying to feed twelve belts into one
+- does not actually use real coordinates, just visual svg drawings, and hence cannot be mapped into
+  game units

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DebugButton } from '../src/components/debug-button.tsx';
-import type { UrlState } from '../src/url-handler.tsx';
+import type { UrlState } from '../src/boot/url-handler.tsx';
 
 const initialState: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 

@@ -4,7 +4,7 @@ import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.t
 import { resolveChosen } from './data/index.ts';
 import { field, type State } from './ts.ts';
 import type { MachineId, ResourceId } from './types.ts';
-import type { UrlState } from './url-handler.tsx';
+import type { UrlState } from './boot/url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
 import { FromAir } from './components/from-air.tsx';

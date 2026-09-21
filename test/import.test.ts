@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { cellFromConfiguration, decodeImportUrl, decodeUrl } from '../src/import.ts';
+import { cellFromConfiguration, decodeImportUrl, decodeUrl } from '../src/compute/import.ts';
 import bobang from '../src/assets/factoriolab-bobang-hash.json';
 
 describe('decodeUrl', () => {

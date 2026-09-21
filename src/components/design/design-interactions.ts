@@ -1,6 +1,11 @@
 import type { JSX } from 'preact';
 import { useEffect, useRef, type Dispatch, type StateUpdater } from 'preact/hooks';
-import type { DesignColumn, DesignDirection, DesignEntity, DesignPosition } from '../../design.ts';
+import type {
+  DesignColumn,
+  DesignDirection,
+  DesignEntity,
+  DesignPosition,
+} from '../../compute/design.ts';
 import { paintBelts, straightBeltPath, type BeltDrag } from './design-belts.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 

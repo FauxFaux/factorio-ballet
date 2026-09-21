@@ -2,7 +2,7 @@ import './split-proposals.css';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName } from '../../data/index.ts';
 import type { Solution } from '../../solve/index.ts';
-import { proposedSplits } from '../../split.ts';
+import { proposedSplits } from '../../compute/split.ts';
 import type { Belt } from '../../types.ts';
 import { useMemo } from 'preact/hooks';
 

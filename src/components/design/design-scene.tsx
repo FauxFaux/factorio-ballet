@@ -1,5 +1,5 @@
 import { staticData } from '../../data/decode.ts';
-import type { DesignColumn, DesignEntity } from '../../design.ts';
+import type { DesignColumn, DesignEntity } from '../../compute/design.ts';
 import {
   assemblerInputStatuses,
   beltInputItemTraces,

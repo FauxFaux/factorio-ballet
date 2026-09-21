@@ -2,10 +2,10 @@ import './from-air.css';
 import { useMemo } from 'preact/hooks';
 import { complexityOf, recipeName, resourceName } from '../data/index.ts';
 import { staticData } from '../data/decode.ts';
-import { productAmount } from '../flow.ts';
+import { productAmount } from '../compute/flow.ts';
 import type { State } from '../ts.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';
-import type { UrlState } from '../url-handler.tsx';
+import type { UrlState } from '../boot/url-handler.tsx';
 import { recipeIconStyle } from './icon.tsx';
 import { ResourceIcon } from './resource.tsx';
 

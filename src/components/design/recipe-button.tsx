@@ -1,7 +1,12 @@
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { recipeName } from '../../data/index.ts';
 import { staticData } from '../../data/decode.ts';
-import type { DesignAssembler, DesignColumn, DesignEntity, DesignPosition } from '../../design.ts';
+import type {
+  DesignAssembler,
+  DesignColumn,
+  DesignEntity,
+  DesignPosition,
+} from '../../compute/design.ts';
 import { recipeIconStyle } from '../icon.tsx';
 
 /** A solved recipe's assembler-count control within a design column. */

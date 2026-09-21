@@ -1,13 +1,13 @@
 import './design-card.css';
-import type { KernelProblem, ResourceRates } from '../../kernel-problems.ts';
-import { CARBON_LIGHT_SHORT } from '../../data/colours.ts';
+import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
+import { CARBON_LIGHT_SHORT } from '../../compute/colours.ts';
 import { generateAssemblerDesign, type AssemblerDesignThroughput } from '../../assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { HelpInfo } from '../help-info.tsx';
 import { DesignPreview } from './design-preview.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
-import type { DesignColumn } from '../../design.ts';
+import type { DesignColumn } from '../../compute/design.ts';
 import { beltInputItemTraces, beltItemLaneCounts, beltItemTraces } from './design-belt-traces.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */

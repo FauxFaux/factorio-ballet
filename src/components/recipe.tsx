@@ -4,7 +4,7 @@ import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../search.ts';
 import { NO_CHOICE, type Chosen } from '../data/index.ts';
 import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
-import { recipeFlows, speedOf, type Flow } from '../flow.ts';
+import { recipeFlows, speedOf, type Flow } from '../compute/flow.ts';
 import { laidOutEffects } from '../module-effects.ts';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';

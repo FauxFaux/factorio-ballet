@@ -7,7 +7,7 @@ import {
   DesignPreview,
   fitDesignPreview,
 } from '../src/components/design/design-preview.tsx';
-import type { DesignEntity } from '../src/design.ts';
+import type { DesignEntity } from '../src/compute/design.ts';
 
 const entities: DesignEntity[] = [
   {

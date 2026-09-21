@@ -307,7 +307,7 @@ increase.
   at all; a barrel is an item like any other.
 
 `FACTORIO.md` explains why productivity is one of the three things that make the maths hard; the
-arithmetic over this data is `moduleEffects` and `productAmount` in `src/flow.ts`.
+arithmetic over this data is `moduleEffects` and `productAmount` in `../../src/compute/flow.ts`.
 
 ## Notes for reactors and fuel cells
 

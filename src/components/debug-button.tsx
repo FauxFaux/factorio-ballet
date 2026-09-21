@@ -1,7 +1,7 @@
 import './debug-button.css';
 import { useMenu } from './menu.ts';
 import type { State } from '../ts.ts';
-import type { UrlState } from '../url-handler.tsx';
+import type { UrlState } from '../boot/url-handler.tsx';
 
 /**
  * A window into `UrlState` for whoever is poking at a hash by hand: the JSON it packs into the URL,

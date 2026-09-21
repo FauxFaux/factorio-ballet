@@ -104,25 +104,26 @@ land between 53% and 58%). `src/data/decode.ts` loads `src/assets/static.json` a
 Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
 `craft:<name>`) via `components/resource.tsx`.
 
-`src/flow.ts` is the arithmetic between a `Recipe` and a card: amounts per craft, rates per second
-at a given machine's speed, and the decimal precision, decided once per recipe over every machine it
-could run in so the numbers do not change width as the pointer moves along the machine list. No
-scaling of one recipe against another — that is the solver's, and it is not here.
+`../../src/compute/flow.ts` is the arithmetic between a `Recipe` and a card: amounts per craft,
+rates per second at a given machine's speed, and the decimal precision, decided once per recipe over
+every machine it could run in so the numbers do not change width as the pointer moves along the
+machine list. No scaling of one recipe against another — that is the solver's, and it is not here.
 
 **Modules** are the 15 of the pack's 30 which change speed or productivity; efficiency and pollution
 modules are not ingested, because there is no power or pollution model for them to pay into.
 `StaticData.modules` is keyed by bare prototype id — a module is an item, so its name, icon, stack
 size and complexity are already on the `item:<id>` resource, and `Module` carries only `category`,
 `tier` and the two effects. Effects are the fraction added _per module_ and are linear in the number
-of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³. `moduleEffects` (`src/flow.ts`)
-does that sum and returns the two multipliers, one on the machine's speed and one on everything the
-recipe produces; `fillSlots` is the "and what if I fill all three slots with these" case.
-`modulesFor` (`src/data/modules.ts`) is which modules a machine will take on a recipe, and is where
-the three ways of overstating throughput live: `Machine.allowedModuleCategories` refuses a module
-outright (absent means all — that absence is the only home Angel's bio-yield modules have),
-`Machine.allowedEffects` ignores the effects it omits rather than refusing the module (which is why
-speed modules work in an oil refinery, whose list has no `quality`), and productivity does nothing
-at all unless `Recipe.allowProductivity`, which only 335 of 2330 recipes set. See `INGEST.md`.
+of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³. `moduleEffects`
+(`../../src/compute/flow.ts`) does that sum and returns the two multipliers, one on the machine's
+speed and one on everything the recipe produces; `fillSlots` is the "and what if I fill all three
+slots with these" case. `modulesFor` (`src/data/modules.ts`) is which modules a machine will take on
+a recipe, and is where the three ways of overstating throughput live:
+`Machine.allowedModuleCategories` refuses a module outright (absent means all — that absence is the
+only home Angel's bio-yield modules have), `Machine.allowedEffects` ignores the effects it omits
+rather than refusing the module (which is why speed modules work in an oil refinery, whose list has
+no `quality`), and productivity does nothing at all unless `Recipe.allowProductivity`, which only
+335 of 2330 recipes set. See `INGEST.md`.
 
 What is in a machine is `CellEntry.modules`, a `ModuleFill` of how many of each: the order the user
 chose them in is the order they fill the slots, and `moduleEffects` drops whatever no longer fits
@@ -143,10 +144,10 @@ at all, which is the game's rule and the reason a pump cannot be beaconed.
 
 A row states **how many modules of each family it wants**, not where they go: two counts,
 `CellEntry.productivityModules` and `CellEntry.speedModules`, laid out by `moduleLayout`
-(`src/flow.ts`) over the slots the row's own loadout left. The two are asked separately because the
-game answers them separately — a productivity module has nowhere to be but the machine's own slots,
-so that count is capped there, while speed has beacons and so no ceiling — and wanting both at once
-is the ordinary case rather than an exotic one.
+(`../../src/compute/flow.ts`) over the slots the row's own loadout left. The two are asked
+separately because the game answers them separately — a productivity module has nowhere to be but
+the machine's own slots, so that count is capped there, while speed has beacons and so no ceiling —
+and wanting both at once is the ordinary case rather than an exotic one.
 
 **Which family** either count is spent on is the machine's answer and not the row's. `moduleFor`
 (`src/data/modules.ts`) picks, among the families named for that effect, the best module the header

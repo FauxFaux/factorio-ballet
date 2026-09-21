@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { newCell, type Cell } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { staticData } from '../src/data/decode.ts';
-import { netRates, speedOf } from '../src/flow.ts';
+import { netRates, speedOf } from '../src/compute/flow.ts';
 import { NO_EFFECTS } from '../src/module-effects.ts';
 import {
   noteFor,

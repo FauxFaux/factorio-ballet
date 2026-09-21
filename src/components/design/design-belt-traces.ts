@@ -4,7 +4,7 @@ import type {
   DesignColumn,
   DesignDirection,
   DesignPosition,
-} from '../../design.ts';
+} from '../../compute/design.ts';
 import type { ResourceId } from '../../types.ts';
 import { analyzeDesignLanes, singleLaneItem } from './design-lanes.ts';
 

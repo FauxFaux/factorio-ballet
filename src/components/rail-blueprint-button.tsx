@@ -1,6 +1,6 @@
 import './rail-blueprint-button.css';
 import type { State } from '../ts.ts';
-import type { UrlState } from '../url-handler.tsx';
+import type { UrlState } from '../boot/url-handler.tsx';
 
 /** Toggles the standalone preview of the standard three-in, two-out rail blueprint. */
 export function RailBlueprintButton({ uss }: { uss: State<UrlState> }) {

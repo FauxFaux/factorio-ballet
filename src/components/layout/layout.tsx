@@ -8,7 +8,7 @@ import {
   inputStationFootprintStops,
   outputStationFootprintStops,
 } from './station-footprint.tsx';
-import type { CellLayout } from '../../layout.ts';
+import type { CellLayout } from '../../compute/layout.ts';
 import type { ResourceId } from '../../types.ts';
 import { stackedRailStations } from '../cell/rail-mode.ts';
 

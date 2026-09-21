@@ -13,7 +13,7 @@ import type {
   DesignDirection,
   DesignEntity,
   DesignPosition,
-} from '../../design.ts';
+} from '../../compute/design.ts';
 import type { ResourceId } from '../../types.ts';
 
 export interface LaneInjection {

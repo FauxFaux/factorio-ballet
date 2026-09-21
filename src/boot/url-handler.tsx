@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'preact/hooks';
-import { debounce } from './ts.ts';
+import { debounce } from '../ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
-import { App } from './app.tsx';
-import type { Cell } from './cell.ts';
-import type { BeaconChoice, BeltChoice } from './data/index.ts';
-import type { ModuleChoice } from './data/modules.ts';
+import { App } from '../app.tsx';
+import type { Cell } from '../cell.ts';
+import type { BeaconChoice, BeltChoice } from '../data';
+import type { ModuleChoice } from '../data/modules.ts';
 import { CrashHandler } from './crash-handler.tsx';
-import { packCells, unpackCells, type PackedCell } from './pack.ts';
-import { COMMON_IDS, REFERENCE_STATE } from './data/common-ids.ts';
+import { packCells, unpackCells, type PackedCell } from '../pack.ts';
+import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
 
 export interface UrlState {
   /**

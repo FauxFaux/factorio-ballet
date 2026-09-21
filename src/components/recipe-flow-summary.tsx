@@ -1,5 +1,5 @@
 import { Fragment } from 'preact';
-import { flowTitle, type Flow } from '../flow.ts';
+import { flowTitle, type Flow } from '../compute/flow.ts';
 import { ResourceIcon } from './resource.tsx';
 
 /** The folded form: `2.0 [iron] + 8.0 [water] → 4.0 [plate]`, names and amounts in tooltips. */

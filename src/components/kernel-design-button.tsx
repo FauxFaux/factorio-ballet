@@ -1,7 +1,7 @@
 import './kernel-design-button.css';
 import gnuIcon from '../assets/heckert-gnu.webp';
 import type { State } from '../ts.ts';
-import type { UrlState } from '../url-handler.tsx';
+import type { UrlState } from '../boot/url-handler.tsx';
 
 /** Opens the standalone workspace for designing a reusable factory kernel. */
 export function KernelDesignButton({ uss }: { uss: State<UrlState> }) {

@@ -8,9 +8,13 @@ calculation and data-model code lives in `src/*.ts`; UI components and their adj
 mirror features in `test/`, with script-specific tests in `test/scripts/`. Data ingestion and
 analysis utilities belong in `scripts/`.
 
-Read `docs/guides/FACTORIO.md` before changing domain or cell behavior. Read
-`docs/guides/STYLING.md` before changing layout, responsive behavior, or shared visual sizing. For
-ingestion changes, read `docs/guides/INGEST.md` first.
+`src/boot` is for application startup. `src/solve` is algorithms for solving a cell. `src/compute`
+is for pure functions producing insight. `src/bp` is related to modelling the real game as
+blueprints. `src/data` is for managing and loading of static datasets.
+
+Read `docs/guides/FACTORIO.md` before changing domain, cell, kernel, or layout behavior. Read
+`docs/guides/STYLING.md` before changing page layout, responsive behavior, or shared visual sizing.
+For ingestion changes, read `docs/guides/INGEST.md` first.
 
 For heavier tasks, read `docs/guides/CONTEXT.md` for additional architecture, data-model, solver,
 ingestion, and repository-history context. `docs/guides/CONTEXT-UI.md` contains the longer

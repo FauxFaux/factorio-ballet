@@ -1,9 +1,9 @@
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { staticData } from '../../data/decode.ts';
-import { isBarrelling, isUnbarrelling, isVoid } from '../../data/recipes.ts';
+import { isBarrelling, isUnbarrelling, isVoid } from '../../compute/recipes.ts';
 import { parseSearch } from '../../search.ts';
 import type { ResourceId } from '../../types.ts';
-import { resourceChainFinder, type ResourceChain, type VoidPlan } from '../../void-path.ts';
+import { resourceChainFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
 
 export interface SynthesisedResourceChain extends ResourceChain {
   /** Number of free boundary inputs made internal by this suggestion. */

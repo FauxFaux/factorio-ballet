@@ -1,5 +1,5 @@
-import { isVoid } from './data/recipes.ts';
-import type { Recipe, ResourceId, StaticData } from './types.ts';
+import { isVoid } from './recipes.ts';
+import type { Recipe, ResourceId, StaticData } from '../types.ts';
 
 export interface VoidPlan {
   recipes: string[];

@@ -1,7 +1,7 @@
-import type { CellEntry } from './cell.ts';
-import { recipeName, resourceName } from './data/index.ts';
-import type { Solution } from './solve/index.ts';
-import type { Belt, ResourceId } from './types.ts';
+import type { CellEntry } from '../cell.ts';
+import { recipeName, resourceName } from '../data';
+import type { Solution } from '../solve';
+import type { Belt, ResourceId } from '../types.ts';
 
 const EPSILON = 1e-7;
 

@@ -1,4 +1,4 @@
-import type { Recipe, ResourceId, StaticData } from './types.ts';
+import type { Recipe, ResourceId, StaticData } from '../types.ts';
 
 /**
  * The small, acyclic prefix of the from-air search used by recipe suggestions. The full from-air

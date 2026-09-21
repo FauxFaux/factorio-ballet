@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { kernelProblems, type KernelFlows } from '../src/kernel-problems.ts';
+import { kernelProblems, type KernelFlows } from '../src/compute/kernel-problems.ts';
 
 function rates(flows: KernelFlows): number[][] {
   return [Object.values(flows.solids), Object.values(flows.fluids)];

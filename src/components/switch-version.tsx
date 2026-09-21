@@ -2,7 +2,7 @@ import './switch-version.css';
 import { useEffect, useState } from 'preact/hooks';
 import * as z from 'zod/mini';
 import knownVersionsData from '../assets/known-versions.json';
-import { HASH_VERSION } from '../url-handler.tsx';
+import { HASH_VERSION } from '../boot/url-handler.tsx';
 import { useMenu } from './menu.ts';
 
 const KnownVersion = z.strictObject({

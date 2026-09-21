@@ -5,12 +5,12 @@ import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/app.tsx';
 import { generateAssemblerDesign } from '../src/assembler-design.ts';
-import { CARBON_LIGHT_SHORT } from '../src/data/colours.ts';
+import { CARBON_LIGHT_SHORT } from '../src/compute/colours.ts';
 import { resolveChosen } from '../src/data/index.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../src/inserter-throughput.ts';
-import { kernelProblems } from '../src/kernel-problems.ts';
+import { kernelProblems } from '../src/compute/kernel-problems.ts';
 import { fmt } from '../src/ts.ts';
-import type { UrlState } from '../src/url-handler.tsx';
+import type { UrlState } from '../src/boot/url-handler.tsx';
 
 const kernelDesignState: UrlState = {
   v: 1,

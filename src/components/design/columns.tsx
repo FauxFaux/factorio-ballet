@@ -2,7 +2,7 @@ import './columns.css';
 import { DesignColumn } from './design-column.tsx';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
-import type { FactoryDesign } from '../../design.ts';
+import type { FactoryDesign } from '../../compute/design.ts';
 import type { Setter } from '../../ts.ts';
 
 /** A cell's construction area, with one persisted blueprint for each created column. */

@@ -1,6 +1,6 @@
 import './from-air-button.css';
 import type { State } from '../ts.ts';
-import type { UrlState } from '../url-handler.tsx';
+import type { UrlState } from '../boot/url-handler.tsx';
 
 /** Opens the standalone planner for processes that start from air. */
 export function FromAirButton({ uss }: { uss: State<UrlState> }) {

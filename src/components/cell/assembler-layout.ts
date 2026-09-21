@@ -1,4 +1,4 @@
-import { netRates } from '../../flow.ts';
+import { netRates } from '../../compute/flow.ts';
 import { NO_EFFECTS } from '../../module-effects.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
 

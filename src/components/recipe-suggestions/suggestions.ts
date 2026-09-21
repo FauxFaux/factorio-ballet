@@ -1,8 +1,8 @@
 import { cellInterface, type Cell } from '../../cell.ts';
 import { staticData } from '../../data/decode.ts';
-import { isBarrelling, isUnbarrelling } from '../../data/recipes.ts';
+import { isBarrelling, isUnbarrelling } from '../../compute/recipes.ts';
 import type { ResourceId } from '../../types.ts';
-import { voidPlanFinder, type ResourceChain, type VoidPlan } from '../../void-path.ts';
+import { voidPlanFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
 import {
   consumerCount,
   isResourceChain,

@@ -1,6 +1,6 @@
-import type { MachineMatch } from './data/machines.ts';
-import { resourceName } from './data/index.ts';
-import { fmt } from './ts.ts';
+import type { MachineMatch } from '../data/machines.ts';
+import { resourceName } from '../data';
+import { fmt } from '../ts.ts';
 import type {
   Ingredient,
   IngredientTemperature,
@@ -9,8 +9,8 @@ import type {
   ProductAmount,
   Recipe,
   ResourceId,
-} from './types.ts';
-import type { Effects } from './module-effects.ts';
+} from '../types.ts';
+import type { Effects } from '../module-effects.ts';
 
 export interface Flow {
   resource: ResourceId;
