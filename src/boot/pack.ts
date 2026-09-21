@@ -50,6 +50,7 @@ interface PackedDesignColumn {
  */
 type PackedDesignEntity =
   | DesignEntity
+  | [0, number, number, number, number, PackedId, PackedId | null, number | null]
   | [0, number, number, number, number, PackedId]
   | [1, number, number, string]
   | [2, number, number, number, number]
@@ -170,7 +171,18 @@ function packDesignEntity(entity: Exclude<DesignEntity, { kind: 'belt' }>): Pack
   const { x, y } = entity.position;
   switch (entity.kind) {
     case 'assembler':
-      return [0, x, y, entity.size.width, entity.size.height, recipeIds.toId(entity.recipe)];
+      return entity.machine || entity.direction
+        ? [
+            0,
+            x,
+            y,
+            entity.size.width,
+            entity.size.height,
+            recipeIds.toId(entity.recipe),
+            entity.machine ? machineIds.toId(entity.machine) : null,
+            entity.direction ? directions.indexOf(entity.direction) : null,
+          ]
+        : [0, x, y, entity.size.width, entity.size.height, recipeIds.toId(entity.recipe)];
     case 'underground-belt':
       return [2, x, y, directions.indexOf(entity.direction), entity.end === 'output' ? 1 : 0];
     case 'splitter':
@@ -202,15 +214,24 @@ function unpackDesignEntity(entity: Exclude<PackedDesignEntity, DesignEntity>): 
   const [kind, x, y] = entity;
   const position = { x, y };
   switch (kind) {
-    case 0:
+    case 0: {
+      const packedMachine = entity[6];
+      const packedDirection = entity[7];
       return [
         {
           kind: 'assembler',
           position,
           size: { width: entity[3], height: entity[4] },
           recipe: recipeIds.toName(entity[5]),
+          ...(packedMachine !== undefined && packedMachine !== null
+            ? { machine: machineIds.toName(packedMachine) }
+            : {}),
+          ...(packedDirection !== undefined && packedDirection !== null
+            ? { direction: directions[packedDirection] }
+            : {}),
         },
       ];
+    }
     case 1: {
       const belts: DesignEntity[] = [];
       let beltPosition = position;

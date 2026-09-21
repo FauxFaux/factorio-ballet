@@ -31,8 +31,9 @@ export interface AssemblerInputStatus {
  * Return whether each assembler can take all of its item ingredients from connected belts.
  *
  * An inserter can take either lane of its source belt, so one inserter may supply two ingredients.
- * Empty and mixed lanes do not provide a dependable item. Fluid ingredients are intentionally not
- * considered here because they are supplied by pipes rather than belts.
+ * Empty and mixed lanes do not provide a dependable item. Fluid ingredients remain intentionally
+ * unvalidated: the machine data has physical connection points, but not the fluid-box identity or
+ * input/output role needed to assign recipe fluids to those points.
  */
 export function assemblerInputStatuses(
   column: DesignColumn,

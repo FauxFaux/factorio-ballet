@@ -42,6 +42,45 @@ describe('DesignColumn', () => {
     expect(assembler.querySelector('.cell-design-assembler-icon')).not.toBeNull();
   });
 
+  it('draws the selected machine fluidbox connections as outward blue arrows', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              direction: 'east',
+              position: { x: 0, y: 0 },
+              size: { width: 3, height: 3 },
+            },
+          ],
+        }}
+        entries={[{ recipe: 'copper-cable', machine: 'chemical-plant' }]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 0, 0' });
+    const arrows = [...assembler.querySelectorAll('.cell-design-fluidbox-arrow')];
+    expect(
+      arrows.map((arrow) => [
+        arrow.getAttribute('data-fluidbox-position'),
+        arrow.getAttribute('data-direction'),
+        (arrow as HTMLElement).style.left,
+        (arrow as HTMLElement).style.top,
+      ]),
+    ).toEqual([
+      ['1,-1', 'east', '24px', '0px'],
+      ['1,1', 'east', '24px', '24px'],
+      ['-1,-1', 'west', '0px', '0px'],
+      ['-1,1', 'west', '0px', '24px'],
+    ]);
+  });
+
   it('maps negative world coordinates relative to the viewport world origin', () => {
     expect(worldToViewport({ x: -3, y: -2 }, { x: 100, y: 80 })).toEqual({ x: 64, y: 56 });
   });
@@ -573,6 +612,44 @@ describe('DesignColumn', () => {
       ]);
     },
   );
+
+  it('rotates an assembler clockwise and swaps a rectangular footprint', () => {
+    let column: DesignColumnData = {
+      entities: [
+        {
+          kind: 'assembler',
+          recipe: 'copper-cable',
+          position: { x: 1, y: 2 },
+          size: { width: 3, height: 2 },
+        },
+      ],
+    };
+    render(
+      <DesignColumn
+        index={0}
+        column={column}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={(update) => {
+          column = update(column);
+        }}
+      />,
+    );
+
+    fireEvent.pointerEnter(screen.getByRole('img', { name: 'Copper wire assembler at 1, 2' }));
+    fireEvent.keyDown(window, { key: 'r' });
+
+    expect(column.entities).toEqual([
+      {
+        kind: 'assembler',
+        recipe: 'copper-cable',
+        position: { x: 1, y: 2 },
+        size: { width: 2, height: 3 },
+        direction: 'east',
+      },
+    ]);
+  });
 
   it('marks every belt in a logical belt containing a direct loop as an error', () => {
     const entities: DesignColumnData['entities'] = [

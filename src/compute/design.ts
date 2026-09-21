@@ -1,3 +1,5 @@
+import type { MachineId } from '../types.ts';
+
 /** A cardinal direction on the design grid, independent of Factorio's encoded directions. */
 export type DesignDirection = 'north' | 'east' | 'south' | 'west';
 
@@ -24,6 +26,10 @@ export interface DesignAssembler extends DesignEntityBase {
   size: DesignSize;
   /** The recipe prototype id, as used by {@link CellEntry}. */
   recipe: string;
+  /** The machine prototype whose footprint and fluid-box geometry this assembler uses. */
+  machine?: MachineId;
+  /** Its rotation from the prototype's north-facing geometry. Absent means north. */
+  direction?: DesignDirection;
 }
 
 export interface DesignBelt extends DesignEntityBase {

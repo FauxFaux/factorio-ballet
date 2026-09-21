@@ -5,6 +5,7 @@ import { staticData } from '../../data/decode.ts';
 import type {
   DesignAssembler,
   DesignBelt,
+  DesignDirection,
   DesignEntity,
   DesignInserter,
   DesignPipe,
@@ -18,6 +19,12 @@ import { fmt } from '../../ts.ts';
 export const TILE_SIZE = 12;
 
 export type ViewportPoint = { x: number; y: number };
+
+export interface AssemblerFluidboxConnection {
+  /** Centre-relative point after applying the assembler's rotation. */
+  position: DesignPosition;
+  direction: DesignDirection;
+}
 
 /** The placement and connection validity currently known for an entity. */
 export type EntityPositionStatus = 'valid' | 'overlap' | 'disconnected';
@@ -254,6 +261,7 @@ export function Assembler({
   assembler,
   status,
   inputStatus,
+  fluidboxConnections,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -262,6 +270,7 @@ export function Assembler({
   assembler: DesignAssembler;
   status: EntityPositionStatus;
   inputStatus: AssemblerInputStatus | undefined;
+  fluidboxConnections: AssemblerFluidboxConnection[];
   worldOrigin: ViewportPoint;
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
@@ -306,6 +315,21 @@ export function Assembler({
         height: `${height * TILE_SIZE}px`,
       }}
     >
+      {fluidboxConnections.map(({ position, direction }, index) => (
+        <span
+          key={`${position.x},${position.y},${index}`}
+          className="cell-design-fluidbox-arrow"
+          aria-hidden="true"
+          data-direction={direction}
+          data-fluidbox-position={`${position.x},${position.y}`}
+          style={{
+            left: `${(width / 2 + position.x - 0.5) * TILE_SIZE}px`,
+            top: `${(height / 2 + position.y - 0.5) * TILE_SIZE}px`,
+          }}
+        >
+          <ArrowRightIcon aria-hidden="true" />
+        </span>
+      ))}
       <span class="cell-design-assembler-icon" aria-hidden="true">
         <span
           class="cell-design-assembler-sprite"

@@ -1,7 +1,7 @@
 import './design-column.css';
 import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-react';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
-import type { CellEntry } from '../../cell.ts';
+import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import type { DesignColumn as DesignColumnData } from '../../compute/design.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
@@ -58,6 +58,13 @@ export function DesignColumn({
     setPan,
     onChange,
   });
+  const machinesByRecipe = Object.fromEntries(
+    entries.flatMap((entry) => {
+      const recipe = entryRecipe(entry);
+      const machine = recipe ? entryMachine(entry, recipe, progress) : undefined;
+      return machine ? ([[entry.recipe, machine]] as const) : [];
+    }),
+  );
 
   return (
     <section
@@ -125,6 +132,7 @@ export function DesignColumn({
         <DesignScene
           column={column}
           worldOrigin={worldOrigin}
+          machinesByRecipe={machinesByRecipe}
           onEntityEnter={interactions.onEntityEnter}
           onEntityLeave={interactions.onEntityLeave}
         />

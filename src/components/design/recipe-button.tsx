@@ -32,7 +32,15 @@ export function RecipeButton({
     (entity): entity is DesignAssembler =>
       entity.kind === 'assembler' && entity.recipe === entry.recipe,
   );
-  const disabled = target === undefined || !machine || current.length === target;
+  const currentMatchesMachine =
+    machine !== undefined &&
+    current.every(
+      (assembler) =>
+        assembler.machine === machineId &&
+        sizesEqual(assembler.size, rotatedSize(machine.size, assembler.direction)),
+    );
+  const disabled =
+    target === undefined || !machine || (current.length === target && currentMatchesMachine);
   const name = recipeName(entry.recipe);
 
   return (
@@ -51,8 +59,10 @@ export function RecipeButton({
           : `Set ${name} assemblers to ${target}`
       }
       onClick={() => {
-        if (target === undefined || !machine) return;
-        onChange((previous) => reconcileAssemblers(previous, entry.recipe, target, machine.size));
+        if (target === undefined || !machine || !machineId) return;
+        onChange((previous) =>
+          reconcileAssemblers(previous, entry.recipe, machineId, target, machine.size),
+        );
       }}
     >
       <span class="cell-design-recipe-icon" aria-hidden="true">
@@ -68,22 +78,27 @@ export function RecipeButton({
 function reconcileAssemblers(
   column: DesignColumn,
   recipe: string,
+  machine: string,
   count: number,
   size: DesignAssembler['size'],
 ): DesignColumn {
   const matching = column.entities.filter(
     (entity): entity is DesignAssembler => entity.kind === 'assembler' && entity.recipe === recipe,
   );
-  const retained = matching.slice(0, count).map((assembler) => ({ ...assembler, size }));
+  const retained = matching.slice(0, count).map((assembler) => ({
+    ...assembler,
+    machine,
+    size: rotatedSize(size, assembler.direction),
+  }));
   const occupied = [
     ...column.entities.filter((entity) => entity.kind !== 'assembler' || entity.recipe !== recipe),
     ...retained,
   ].map(entityBounds);
   const assemblers = Array.from({ length: count }, (_, index) => {
     const existing = matching[index];
-    if (existing) return { ...existing, size };
+    if (existing) return { ...existing, machine, size: rotatedSize(size, existing.direction) };
     const position = nearestFreePosition(size, occupied);
-    const assembler: DesignAssembler = { kind: 'assembler', recipe, size, position };
+    const assembler: DesignAssembler = { kind: 'assembler', recipe, machine, size, position };
     occupied.push(entityBounds(assembler));
     return assembler;
   });
@@ -96,6 +111,19 @@ function reconcileAssemblers(
       ...assemblers,
     ],
   };
+}
+
+function rotatedSize(
+  size: DesignAssembler['size'],
+  direction: DesignAssembler['direction'],
+): DesignAssembler['size'] {
+  return direction === 'east' || direction === 'west'
+    ? { width: size.height, height: size.width }
+    : size;
+}
+
+function sizesEqual(left: DesignAssembler['size'], right: DesignAssembler['size']): boolean {
+  return left.width === right.width && left.height === right.height;
 }
 
 interface DesignBounds {

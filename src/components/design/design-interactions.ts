@@ -55,10 +55,21 @@ export function useDesignInteractions({
   const rotateEntity = (entityIndex: number) => {
     onChange((column) => {
       const entity = column.entities[entityIndex];
-      if (!entity || !('direction' in entity)) return column;
-      const direction = clockwiseDirection[entity.direction];
+      if (!entity || (!('direction' in entity) && entity.kind !== 'assembler')) return column;
+      const currentDirection = entity.direction ?? 'north';
+      const direction = clockwiseDirection[currentDirection];
       if (entity.kind === 'inserter') inserterDirection.current = direction;
-      return replaceEntity(column, entityIndex, { ...entity, direction });
+      return replaceEntity(
+        column,
+        entityIndex,
+        entity.kind === 'assembler'
+          ? {
+              ...entity,
+              direction,
+              size: { width: entity.size.height, height: entity.size.width },
+            }
+          : { ...entity, direction },
+      );
     });
   };
 

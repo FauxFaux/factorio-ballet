@@ -22,7 +22,7 @@ export function DesignCard({
   problem: KernelProblem;
   throughput: AssemblerDesignThroughput;
 }) {
-  const title = problem.name;
+  const title = problem.assemblers.map(({ name }) => name).join(', ');
   const resourceColours = resourceColoursFor(problem);
   const design = generateAssemblerDesign(problem, throughput);
   const { recipes, items } = designSceneFlows(problem, resourceColours);

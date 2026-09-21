@@ -92,7 +92,6 @@ function AssemblerDesignSummary({
   const inputs = splitRates(inputRates);
   const outputs = splitRates(outputRates);
   const problem: KernelProblem = {
-    name: recipe,
     inputs,
     outputs,
     assemblers: [

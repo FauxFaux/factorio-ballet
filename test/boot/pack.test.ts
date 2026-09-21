@@ -37,6 +37,8 @@ describe('packCells', () => {
                   position: { x: 2, y: 3 },
                   size: { width: 3, height: 3 },
                   recipe: 'copper-cable',
+                  machine,
+                  direction: 'east',
                 },
                 { kind: 'belt', position: { x: 1, y: 3 }, direction: 'east' },
                 {

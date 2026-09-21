@@ -8,7 +8,11 @@ import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
 import { CARBON_LIGHT_SHORT } from '../../src/compute/colours.ts';
 import { resolveChosen } from '../../src/data';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../src/data/inserter-throughput.ts';
-import { kernelProblems } from '../../src/compute/kernel-problems.ts';
+import {
+  allKernelProblems,
+  kernelProblems,
+  type KernelProblem,
+} from '../../src/compute/kernel-problems.ts';
 import { fmt } from '../../src/ts.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
 
@@ -51,7 +55,12 @@ describe('App', () => {
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
     };
-    const solutionCount = kernelProblems.filter((problem) =>
+    const sortedProblems = allKernelProblems.toSorted(
+      (left, right) =>
+        Number(!generateAssemblerDesign(left, throughput)) -
+        Number(!generateAssemblerDesign(right, throughput)),
+    );
+    const solutionCount = allKernelProblems.filter((problem) =>
       generateAssemblerDesign(problem, throughput),
     ).length;
 
@@ -71,54 +80,52 @@ describe('App', () => {
       within(throughputSummary).getByText(`${fmt(throughput.longInserterItemsPerSecond)} items/s`),
     ).toBeTruthy();
     const articles = screen.getAllByRole('article');
-    const articleForProblem = (problemNumber: number) =>
-      screen
-        .getByRole('heading', { name: `Problem ${problemNumber}`, level: 3 })
-        .closest('article')!;
-    expect(articles).toHaveLength(kernelProblems.length);
-    expect(screen.queryAllByRole('region', { name: /Problem \d+ preview/ })).toHaveLength(
+    const articleForProblem = (problem: KernelProblem) =>
+      articles[sortedProblems.indexOf(problem)]!;
+    expect(articles).toHaveLength(allKernelProblems.length);
+    expect(screen.queryAllByRole('region', { name: 'Assembler 1 preview' })).toHaveLength(
       solutionCount,
     );
     expect(screen.queryAllByText('[no solution]')).toHaveLength(
-      kernelProblems.length - solutionCount,
-    );
-    const noSolutionTitles = screen
-      .queryAllByText('[no solution]')
-      .map(
-        (element) =>
-          within(element.closest('article')!).getByRole('heading', { level: 3 }).textContent,
-      );
-    const expectedNoSolutionTitles = kernelProblems.flatMap((problem, index) =>
-      generateAssemblerDesign(problem, throughput) ? [] : [`Problem ${index + 1}`],
+      allKernelProblems.length - solutionCount,
     );
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
-    expect(noSolutionTitles).toEqual(expectedNoSolutionTitles);
-    expect(cardTitles.slice(solutionCount)).toEqual(noSolutionTitles);
+    expect(cardTitles).toEqual(allKernelProblems.map(() => 'Assembler 1'));
     expect(
-      within(articleForProblem(1)).getByRole('region', { name: 'Problem 1 preview' }),
+      articles.slice(solutionCount).every((article) => within(article).getByText('[no solution]')),
+    ).toBe(true);
+    const firstSolidProblem = kernelProblems.solid[0]!;
+    expect(
+      within(articleForProblem(firstSolidProblem)).getByRole('region', {
+        name: 'Assembler 1 preview',
+      }),
     ).toBeTruthy();
-    expect(within(articleForProblem(1)).getByLabelText('Max column height').textContent).toContain(
-      '×6',
-    );
-    expect(within(articleForProblem(4)).getByLabelText('Max column height').textContent).toContain(
-      '×3',
-    );
-    expect(within(articleForProblem(5)).getByLabelText('Max column height').textContent).toContain(
-      '×3',
-    );
     expect(
-      within(articleForProblem(1)).getByRole('button', { name: 'About maximum column height' }),
+      within(articleForProblem(firstSolidProblem)).getByLabelText('Max column height').textContent,
+    ).toContain('×6');
+    expect(
+      within(articleForProblem(kernelProblems.solid[3]!)).getByLabelText('Max column height')
+        .textContent,
+    ).toContain('×3');
+    expect(
+      within(articleForProblem(kernelProblems.solid[4]!)).getByLabelText('Max column height')
+        .textContent,
+    ).toContain('×3');
+    expect(
+      within(articleForProblem(firstSolidProblem)).getByRole('button', {
+        name: 'About maximum column height',
+      }),
     ).toBeTruthy();
     expect(screen.queryByText('Assemblers')).toBeNull();
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
     expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(18);
-    for (const icon of within(articleForProblem(1)).getAllByTitle('item 1')) {
+    for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }
-    const firstPreview = within(articleForProblem(1)).getByRole('region', {
-      name: 'Problem 1 preview',
+    const firstPreview = within(articleForProblem(firstSolidProblem)).getByRole('region', {
+      name: 'Assembler 1 preview',
     });
     const inputBelts = within(firstPreview).getAllByRole('img', {
       name: /Transport belt at 0, \d, pointing north/,
@@ -148,8 +155,8 @@ describe('App', () => {
         ),
       ).toBe(true);
     }
-    const fifthPreview = within(articleForProblem(5)).getByRole('region', {
-      name: 'Problem 5 preview',
+    const fifthPreview = within(articleForProblem(kernelProblems.solid[4]!)).getByRole('region', {
+      name: 'Assembler 1 preview',
     });
     const mixedInputBelts = within(fifthPreview).getAllByRole('img', {
       name: /Transport belt at 1, \d, pointing north/,
@@ -175,23 +182,27 @@ describe('App', () => {
       expect(belt.getAttribute('title')).toContain('left side: item 3, 8/s');
       expect(belt.getAttribute('title')).toContain('right side: item 3, 8/s');
     }
-    const problem7Preview = within(articleForProblem(7)).getByRole('region', {
-      name: 'Problem 7 preview',
+    const fluidOnlyInputPreview = within(
+      articleForProblem(kernelProblems.fluidInput[0]!),
+    ).getByRole('region', {
+      name: 'Assembler 1 preview',
     });
-    expect(within(problem7Preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(
-      3,
-    );
-    for (const problemNumber of [11, 12, 13, 14]) {
-      const preview = within(articleForProblem(problemNumber)).getByRole('region', {
-        name: `Problem ${problemNumber} preview`,
+    expect(
+      within(fluidOnlyInputPreview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ }),
+    ).toHaveLength(3);
+    for (const problem of kernelProblems.fluidOutput.slice(0, 4)) {
+      const preview = within(articleForProblem(problem)).getByRole('region', {
+        name: 'Assembler 1 preview',
       });
       expect(within(preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(3);
     }
-    const problem15Preview = within(articleForProblem(15)).getByRole('region', {
-      name: 'Problem 15 preview',
+    const fiveInputFluidOutputPreview = within(
+      articleForProblem(kernelProblems.fluidOutput[4]!),
+    ).getByRole('region', {
+      name: 'Assembler 1 preview',
     });
     expect(
-      within(problem15Preview).getAllByRole('img', {
+      within(fiveInputFluidOutputPreview).getAllByRole('img', {
         name: /Transport belt at 6, \d, pointing north/,
       }),
     ).toHaveLength(3);
