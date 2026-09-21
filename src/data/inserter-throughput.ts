@@ -1,6 +1,6 @@
-import type { Belt, Inserter, InserterCapacityBonus } from './types.ts';
-import { staticData } from './data/decode.ts';
-import { defaultBelt } from './data/index.ts';
+import type { Belt, Inserter, InserterCapacityBonus } from '../types.ts';
+import { staticData } from './decode.ts';
+import { defaultBelt } from './index.ts';
 
 type ThroughputGrid = ReadonlyArray<{
   rotationSpeed: number;

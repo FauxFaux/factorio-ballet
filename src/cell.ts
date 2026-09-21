@@ -10,8 +10,8 @@ import {
   type Layout,
   type ModuleFill,
   type ModuleWants,
-} from './module-effects.ts';
-import type { SearchScope } from './search.ts';
+} from './data/module-effects.ts';
+import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';

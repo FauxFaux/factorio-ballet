@@ -1,14 +1,14 @@
-import type { Cell, CellEntry } from './cell.ts';
-import { staticData } from './data/decode.ts';
-import type { ModuleFill } from './module-effects.ts';
+import type { Cell, CellEntry } from '../cell.ts';
+import { staticData } from '../data/decode.ts';
+import type { ModuleFill } from '../data/module-effects.ts';
 import type {
   DesignColumn,
   DesignDirection,
   DesignEntity,
   FactoryDesign,
-} from './compute/design.ts';
-import type { CellLayout } from './compute/layout.ts';
-import type { ResourceId } from './types.ts';
+} from '../compute/design.ts';
+import type { CellLayout } from '../compute/layout.ts';
+import type { ResourceId } from '../types.ts';
 
 /**
  * The cells as they go into the URL hash: the same shape, with each recipe and machine prototype

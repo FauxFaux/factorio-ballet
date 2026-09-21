@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { flowTitle, netRates, productAmount, recipeFlows, speedOf } from '../src/compute/flow.ts';
-import { NO_EFFECTS } from '../src/module-effects.ts';
+import { NO_EFFECTS } from '../src/data/module-effects.ts';
 import { machinesFor } from '../src/data/machines.ts';
 import { staticData } from '../src/data/decode.ts';
 

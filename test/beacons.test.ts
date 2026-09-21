@@ -9,7 +9,7 @@ import {
 } from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
 import { chosenModule, SPEED_CATEGORY, type ChosenModules } from '../src/data/modules.ts';
-import { laidOutEffects, moduleBoost, moduleLayout } from '../src/module-effects.ts';
+import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
 import { solveCell } from '../src/solve/index.ts';
 import type { Machine } from '../src/types.ts';
 

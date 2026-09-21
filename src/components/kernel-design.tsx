@@ -1,7 +1,7 @@
 import './kernel-design.css';
 import type { Chosen } from '../data/index.ts';
-import { generateAssemblerDesign } from '../assembler-design.ts';
-import { inserterItemsPerSecondForBeltAtProgress } from '../inserter-throughput.ts';
+import { generateAssemblerDesign } from '../compute/assembler-design.ts';
+import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
 import { kernelProblems } from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
 import { DesignCard } from './design/design-card.tsx';

@@ -2,7 +2,7 @@ import './recipe.css';
 import './compact-recipe.css';
 import { defaultMachine, machinesFor } from '../data/machines.ts';
 import { recipeFlows, speedOf } from '../compute/flow.ts';
-import type { RecipeMatch } from '../search.ts';
+import type { RecipeMatch } from '../data/search.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { AddToCell } from './recipe.tsx';

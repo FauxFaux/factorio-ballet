@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import state from './assets/uranium.state.json';
 import { cellInterface, type Cell } from '../src/cell.ts';
 import { resolveChosen, resourceName } from '../src/data/index.ts';
-import { packCells, unpackCells } from '../src/pack.ts';
+import { packCells, unpackCells } from '../src/boot/pack.ts';
 import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';

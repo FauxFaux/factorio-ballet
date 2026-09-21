@@ -1,5 +1,5 @@
 import { netRates } from '../../compute/flow.ts';
-import { NO_EFFECTS } from '../../module-effects.ts';
+import { NO_EFFECTS } from '../../data/module-effects.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
 
 const maxAssemblerStackHeight = 100;

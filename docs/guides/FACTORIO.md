@@ -90,13 +90,13 @@ integer machine counts, laid out on a 2d grid, within the bounds of the 192x128 
 1. place the stations using [a fixed template](../../src/bp/rail-blueprint.ts), given the overall
    input/output rates; constraining our grid from the edges.
 2. produce a kernel design; an insertion plan for an assembler, or a set of assemblers; we can have
-   [stock plans for many common cases](../../src/assembler-design.ts), but will allow the user to
-   [provide complex alternatives](../../src/components/design/design-column.tsx); such as a kernel
-   containing multiple assemblers and handling intermediates themselves. This is sometimes called
-   "direct insertion". e.g. if you have two assemblers that are matched 1:1, it makes sense to take
-   the inputs from the left belt, feed the left assembler, then immediately insert directly from the
-   left to right assembler, then take the actual output products and put them on a belt. In the base
-   game (space age), this is common for circuits, with a 3:2 ratio.
+   [stock plans for many common cases](../../src/compute/assembler-design.ts), but will allow the
+   user to [provide complex alternatives](../../src/components/design/design-column.tsx); such as a
+   kernel containing multiple assemblers and handling intermediates themselves. This is sometimes
+   called "direct insertion". e.g. if you have two assemblers that are matched 1:1, it makes sense
+   to take the inputs from the left belt, feed the left assembler, then immediately insert directly
+   from the left to right assembler, then take the actual output products and put them on a belt. In
+   the base game (space age), this is common for circuits, with a 3:2 ratio.
 3. modulisation: kernels are stacked to make modules (maybe these would have been called "cells" in
    a different world), so we have the right number of assemblers and belts total; and we know where
    the inputs and outputs for each module are to be connected. Here may be a good time to

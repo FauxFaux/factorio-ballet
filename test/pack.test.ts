@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../src/cell.ts';
 import { staticData } from '../src/data/decode.ts';
-import { packCells, unpackCells } from '../src/pack.ts';
+import { packCells, unpackCells } from '../src/boot/pack.ts';
 
 const recipe = Object.keys(staticData.recipes)[0];
 const machine = Object.keys(staticData.machines)[0];

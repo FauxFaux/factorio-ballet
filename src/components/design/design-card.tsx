@@ -1,7 +1,10 @@
 import './design-card.css';
 import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../compute/colours.ts';
-import { generateAssemblerDesign, type AssemblerDesignThroughput } from '../../assembler-design.ts';
+import {
+  generateAssemblerDesign,
+  type AssemblerDesignThroughput,
+} from '../../compute/assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
 import { HelpInfo } from '../help-info.tsx';
 import { DesignPreview } from './design-preview.tsx';

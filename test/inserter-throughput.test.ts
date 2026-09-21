@@ -4,7 +4,7 @@ import {
   inserterItemsPerSecond,
   inserterItemsPerSecondAtProgress,
   inserterItemsPerSecondForBeltAtProgress,
-} from '../src/inserter-throughput.ts';
+} from '../src/data/inserter-throughput.ts';
 import type { Belt, Inserter, InserterCapacityBonus } from '../src/types.ts';
 
 const fastInserter: Inserter = {

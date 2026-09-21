@@ -1,7 +1,7 @@
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
 import { staticData } from '../../data/decode.ts';
 import { isBarrelling, isUnbarrelling, isVoid } from '../../compute/recipes.ts';
-import { parseSearch } from '../../search.ts';
+import { parseSearch } from '../../data/search.ts';
 import type { ResourceId } from '../../types.ts';
 import { resourceChainFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
 

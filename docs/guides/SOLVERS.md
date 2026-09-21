@@ -7,21 +7,21 @@ architecture comments in `CONTEXT.md` and source files can lag behind changes.
 
 ## Where to look
 
-| File                                            | Responsibility                                                                          |
-| ----------------------------------------------- | --------------------------------------------------------------------------------------- |
-| `src/cell.ts`                                   | Cell entries, explicit imports/exports, machine/effect resolution, structural interface |
-| `../../src/compute/flow.ts`                     | Per-craft amounts, probability/productivity, gross and net per-machine rates            |
-| `src/solve/index.ts`                            | Solver contract, `solveCell` adapter, explicit boundary handling, note text             |
-| `src/solve/matrix.ts`                           | Simultaneous balance equations, pins, validation, fallback                              |
-| `src/solve/rref.ts`                             | Dependency-free row reduction and rank decisions                                        |
-| `src/solve/dumb.ts`                             | One-pass-per-row demand/surplus propagation                                             |
-| `src/components/cell/box.tsx`                   | Resolves the solution and updates cell boundary settings                                |
-| `src/components/cell/in-play.tsx`               | Resource chips and leftover warnings                                                    |
-| `src/components/cell/in-play-connections.tsx`   | Resource flows, import/export controls and explanations                                 |
-| `src/components/cell/side.tsx`                  | Cell inputs/outputs and forced-boundary highlights                                      |
-| `src/components/cell/notes.tsx`                 | Recipe notes and the cell-wide matrix fallback notice                                   |
-| `src/components/cell/as-json.tsx`               | Debug JSON projection; not the complete solver state                                    |
-| `src/pack.ts`, `../../src/boot/url-handler.tsx` | Cell persistence and versioned URL encoding                                             |
+| File                                                       | Responsibility                                                                          |
+| ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `src/cell.ts`                                              | Cell entries, explicit imports/exports, machine/effect resolution, structural interface |
+| `../../src/compute/flow.ts`                                | Per-craft amounts, probability/productivity, gross and net per-machine rates            |
+| `src/solve/index.ts`                                       | Solver contract, `solveCell` adapter, explicit boundary handling, note text             |
+| `src/solve/matrix.ts`                                      | Simultaneous balance equations, pins, validation, fallback                              |
+| `src/solve/rref.ts`                                        | Dependency-free row reduction and rank decisions                                        |
+| `src/solve/dumb.ts`                                        | One-pass-per-row demand/surplus propagation                                             |
+| `src/components/cell/box.tsx`                              | Resolves the solution and updates cell boundary settings                                |
+| `src/components/cell/in-play.tsx`                          | Resource chips and leftover warnings                                                    |
+| `src/components/cell/in-play-connections.tsx`              | Resource flows, import/export controls and explanations                                 |
+| `src/components/cell/side.tsx`                             | Cell inputs/outputs and forced-boundary highlights                                      |
+| `src/components/cell/notes.tsx`                            | Recipe notes and the cell-wide matrix fallback notice                                   |
+| `src/components/cell/as-json.tsx`                          | Debug JSON projection; not the complete solver state                                    |
+| `../../src/boot/pack.ts`, `../../src/boot/url-handler.tsx` | Cell persistence and versioned URL encoding                                             |
 
 ## Arithmetic and contracts
 

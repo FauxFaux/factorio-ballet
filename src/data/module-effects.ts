@@ -7,9 +7,9 @@ import {
   takesCategory,
   type BoostEffect,
   type ChosenModules,
-} from './data/modules.ts';
-import { staticData } from './data/decode.ts';
-import type { Beacon, Machine, ModuleId, Recipe } from './types.ts';
+} from './modules.ts';
+import { staticData } from './decode.ts';
+import type { Beacon, Machine, ModuleId, Recipe } from '../types.ts';
 
 export interface Effects {
   speed: number;

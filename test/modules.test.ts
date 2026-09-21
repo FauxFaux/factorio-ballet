@@ -10,7 +10,7 @@ import {
   modulesIn,
 } from '../src/data/modules.ts';
 import { staticData } from '../src/data/decode.ts';
-import { fillSlots, moduleEffects } from '../src/module-effects.ts';
+import { fillSlots, moduleEffects } from '../src/data/module-effects.ts';
 
 /** Allows productivity; runs in an assembler. */
 const gears = staticData.recipes['iron-gear-wheel'];

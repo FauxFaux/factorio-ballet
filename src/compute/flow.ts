@@ -10,7 +10,7 @@ import type {
   Recipe,
   ResourceId,
 } from '../types.ts';
-import type { Effects } from '../module-effects.ts';
+import type { Effects } from '../data/module-effects.ts';
 
 export interface Flow {
   resource: ResourceId;

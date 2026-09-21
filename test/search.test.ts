@@ -6,7 +6,7 @@ import {
   searchMatches,
   searchRecipes,
   type SearchScope,
-} from '../src/search.ts';
+} from '../src/data/search.ts';
 import { packLandmarks, relevanceOf } from '../src/data/index.ts';
 
 describe('resolveResources', () => {

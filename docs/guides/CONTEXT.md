@@ -60,15 +60,15 @@ make a reasonable attempt to migrate older schema versions in `unpackUs`. `HASH_
 for compression-dictionary rebuilds, significant static-data compatibility changes, and major
 application versions. State flows down as `State<T> = [value, setter]` tuples (`ts.ts`).
 
-`src/pack.ts` is why a hash of a hundred recipes is ~950 characters rather than ~2200: a prototype
-id is a name — the game has no numeric ids — and at 26 characters apiece the names were most of the
-payload, so `packCells` swaps each for its position in the dataset's `Object.keys`. That position is
-a fact about one `static.json`, so the second half of `HASH_VERSION` is a fingerprint of every id
-`pack.ts` numbers, and a regenerated dataset invalidates old hashes automatically rather than
-silently reading them as the wrong recipes. Two things the shape is careful about: an id the dataset
-does not have packs as the name it already was, so a stale URL survives a round trip through the
-app; and `modules` packs as pairs rather than an object, because a loadout's order is the order it
-fills the slots and JS enumerates integer-like object keys in numeric order whatever you insert.
+`../../src/boot/pack.ts` is why a hash of a hundred recipes is ~950 characters rather than ~2200: a
+prototype id is a name — the game has no numeric ids — and at 26 characters apiece the names were
+most of the payload, so `packCells` swaps each for its position in the dataset's `Object.keys`. That
+position is a fact about one `static.json`, so the second half of `HASH_VERSION` is a fingerprint of
+every id `pack.ts` numbers, and a regenerated dataset invalidates old hashes automatically rather
+than silently reading them as the wrong recipes. Two things the shape is careful about: an id the
+dataset does not have packs as the name it already was, so a stale URL survives a round trip through
+the app; and `modules` packs as pairs rather than an object, because a loadout's order is the order
+it fills the slots and JS enumerates integer-like object keys in numeric order whatever you insert.
 
 Styles are plain CSS, one file per component, imported by the component itself
 (`components/cell/row.tsx` → `components/cell/row.css`) — Vite concatenates them into one bundle in

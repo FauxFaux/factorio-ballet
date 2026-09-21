@@ -1,5 +1,5 @@
-import type { FactoryDesign, DesignEntity } from './compute/design.ts';
-import type { KernelProblem, ResourceRates } from './compute/kernel-problems.ts';
+import type { FactoryDesign, DesignEntity } from './design.ts';
+import type { KernelProblem, ResourceRates } from './kernel-problems.ts';
 
 /** Transport capabilities selected for one assembler-kernel generation pass. */
 export interface AssemblerDesignThroughput {

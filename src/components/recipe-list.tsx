@@ -1,7 +1,7 @@
 import { useMemo } from 'preact/hooks';
 import { staticData } from '../data/decode.ts';
 import type { Chosen } from '../data/index.ts';
-import { flipDirection, searchMatches, type SearchScope } from '../search.ts';
+import { flipDirection, searchMatches, type SearchScope } from '../data/search.ts';
 import type { State } from '../ts.ts';
 import type { MachineId, ResourceId } from '../types.ts';
 import { RecipeCard } from './recipe.tsx';

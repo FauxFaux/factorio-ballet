@@ -2,12 +2,12 @@
 
 import { render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../src/app.tsx';
-import { generateAssemblerDesign } from '../src/assembler-design.ts';
+import { generateAssemblerDesign } from '../src/compute/assembler-design.ts';
 import { CARBON_LIGHT_SHORT } from '../src/compute/colours.ts';
 import { resolveChosen } from '../src/data/index.ts';
-import { inserterItemsPerSecondForBeltAtProgress } from '../src/inserter-throughput.ts';
+import { inserterItemsPerSecondForBeltAtProgress } from '../src/data/inserter-throughput.ts';
 import { kernelProblems } from '../src/compute/kernel-problems.ts';
 import { fmt } from '../src/ts.ts';
 import type { UrlState } from '../src/boot/url-handler.tsx';
@@ -28,7 +28,15 @@ function KernelDesignApp() {
 }
 
 describe('App', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
   it('shows the kernel-design page when URL state enables it', () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise(() => undefined)),
+    );
     render(<KernelDesignApp />);
 
     const progress = kernelDesignState.gp / 100;
