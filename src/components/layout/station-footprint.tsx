@@ -1,6 +1,6 @@
 import type { Blueprint, Position } from '../../bp/decode.ts';
 import { embeddedBlueprintOffset } from '../rail-blueprint-preview.tsx';
-import { stationStop } from '../cell/radar-rail.tsx';
+import { stationStop } from '../radar/radar-rail.tsx';
 
 /**
  * A deliberately coarse version of the solid-request station in

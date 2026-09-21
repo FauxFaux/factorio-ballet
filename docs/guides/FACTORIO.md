@@ -108,7 +108,7 @@ integer machine counts, laid out on a 2d grid, within the bounds of the 192x128 
 
 An input station provides four belts per station, and an output station accepts up to four belts per station.
 
-There's a visual-only implementation of this for the [radar](../../src/components/cell/radar-assemblers.tsx),
+There's a visual-only implementation of this for the [radar](../../src/components/radar/radar-assemblers.tsx),
 which:
  * assumes kernels are always possible and a fixed width (this is too optimistic),
  * stacks kernels all the way up to the brick height (with some allowance for belt throughput), which 

@@ -19,7 +19,7 @@ import type { ResourceId } from '../../types.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
-import { CellRadar } from './radar.tsx';
+import { CellRadar } from '../radar/radar.tsx';
 import { stackedRailStations } from './rail-mode.ts';
 import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';

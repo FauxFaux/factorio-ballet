@@ -1,9 +1,9 @@
 // @vitest-environment happy-dom
 import { cleanup, render } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
-import { RadarAssemblers } from '../src/components/cell/radar-assemblers.tsx';
-import type { Solution } from '../src/solve/index.ts';
-import type { Belt } from '../src/types.ts';
+import { RadarAssemblers } from '../../../src/components/radar/radar-assemblers.tsx';
+import type { Solution } from '../../../src/solve/index.ts';
+import type { Belt } from '../../../src/types.ts';
 
 afterEach(cleanup);
 

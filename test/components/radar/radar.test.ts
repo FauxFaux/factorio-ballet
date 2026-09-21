@@ -3,7 +3,7 @@ import {
   busConnectionTopLane,
   busLayout,
   busLaneLayout,
-} from '../src/components/cell/radar-layout.ts';
+} from '../../../src/components/radar/radar-layout.ts';
 
 describe('busLaneLayout', () => {
   it('routes resources from imports through their last consumer and exports from their producer', () => {

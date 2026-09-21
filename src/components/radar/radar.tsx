@@ -4,7 +4,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import type { RefObject } from 'preact';
 import { RadarAssemblers } from './radar-assemblers.tsx';
-import { stackedRailStations } from './rail-mode.ts';
+import { stackedRailStations } from '../cell/rail-mode.ts';
 import {
   RailBlueprintCopy,
   RailBorder,

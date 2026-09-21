@@ -95,7 +95,7 @@ individual assemblers, or connected to the horizontal bus.
 
 ### Current cell adaptation
 
-The implementation in `src/components/cell/radar.tsx` deliberately differs from the source RADAR
+The implementation in `src/components/radar/radar.tsx` deliberately differs from the source RADAR
 rules above. It uses the belt selected for the current technology progress, sums each recipe's
 solved item rate in each direction, and draws `ceil(total belts / assembler columns)` yellow lanes
 on both sides of every assembler column. Fluids have unlimited modeled throughput, so every distinct

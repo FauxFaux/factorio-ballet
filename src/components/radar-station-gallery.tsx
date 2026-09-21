@@ -1,4 +1,4 @@
-import { CellRadar } from './cell/radar.tsx';
+import { CellRadar } from './radar/radar.tsx';
 import { NO_CHOICE } from '../data/index.ts';
 import type { Solution } from '../solve/index.ts';
 import type { ResourceId } from '../types.ts';

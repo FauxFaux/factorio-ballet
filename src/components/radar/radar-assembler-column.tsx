@@ -1,6 +1,6 @@
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
-import { assemblerColumnLayout } from './assembler-layout.ts';
+import { assemblerColumnLayout } from '../cell/assembler-layout.ts';
 
 function bankLaneTop(
   laneTops: number[],

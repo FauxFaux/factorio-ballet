@@ -3,7 +3,7 @@ import {
   stackedInputStationStop,
   stackedRailPath,
   stationStop,
-} from '../src/components/cell/radar-rail.tsx';
+} from '../../../src/components/radar/radar-rail.tsx';
 
 describe('stackedRailPath', () => {
   it('assigns each bus resource to its station stop position', () => {
