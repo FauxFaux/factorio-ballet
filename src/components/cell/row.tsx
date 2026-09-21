@@ -135,6 +135,10 @@ export function CellRow({
             solved={count !== undefined}
             belt={chosen.belt}
             recipe={entry.recipe}
+            inputRates={solution.inputRates[entryIndex]}
+            outputRates={solution.outputRates[entryIndex]}
+            machineCount={count}
+            progress={progress}
             onSelectResource={onSelectResource}
           />
         </div>
@@ -144,6 +148,10 @@ export function CellRow({
           solved={count !== undefined}
           belt={chosen.belt}
           recipe={entry.recipe}
+          inputRates={solution.inputRates[entryIndex]}
+          outputRates={solution.outputRates[entryIndex]}
+          machineCount={count}
+          progress={progress}
           onSelectResource={onSelectResource}
         />
       ) : null}

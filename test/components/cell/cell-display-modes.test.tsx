@@ -74,4 +74,28 @@ describe('cell display modes', () => {
     expect(container.querySelector('.cell-in-play.is-vertical')).toBeNull();
     expect(screen.getByRole('button', { name: `Hide recipes for ${name}` })).toBeTruthy();
   });
+
+  it('summarizes the generated assembler design in a recipe expander', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[{ entries: [{ recipe: 'iron-plate' }] }, () => {}]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
+
+    const summary = screen.getByLabelText('Assembler design');
+    expect(within(summary).getByText('Kernel size')).toBeTruthy();
+    expect(within(summary).getByText(/\d+×\d+ tiles/)).toBeTruthy();
+    expect(within(summary).getByText('Max column height')).toBeTruthy();
+    expect(within(summary).getByText('Columns/modules needed')).toBeTruthy();
+    expect(within(summary).getAllByText(/^×\d+$/)).toHaveLength(2);
+  });
 });

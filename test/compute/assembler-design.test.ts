@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
+import { physicalStackLimit } from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
 import { kernelProblems } from '../../src/compute/kernel-problems.ts';
@@ -11,6 +12,21 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it('limits five-tile kernels to the physical height of the brick', () => {
+    expect(
+      physicalStackLimit({
+        entities: [
+          {
+            kind: 'assembler',
+            position: { x: 0, y: 0 },
+            size: { width: 7, height: 5 },
+            recipe: 'test',
+          },
+        ],
+      }),
+    ).toBe(20);
+  });
+
   it('uses one input inserter for Problem 1', () => {
     const design = generateAssemblerDesign(kernelProblems[0]!, throughput);
     const entities = design?.columns[0].entities ?? [];

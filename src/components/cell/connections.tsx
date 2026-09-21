@@ -1,8 +1,14 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
+import { generateAssemblerDesign } from '../../compute/assembler-design.ts';
+import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
+import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
+import { designBounds } from '../design/design-preview.tsx';
+import type { DesignSceneRecipes } from '../design/design-scene.tsx';
+import { beltStackLimit } from '../design/design-stack-limit.ts';
 import {
   itemRateTotal,
   simplifiedMachineRatio,
@@ -16,6 +22,10 @@ export function RecipeConnections({
   solved,
   belt,
   recipe,
+  inputRates,
+  outputRates,
+  machineCount,
+  progress,
   onSelectResource,
 }: {
   connections: RecipeConnections;
@@ -23,6 +33,10 @@ export function RecipeConnections({
   /** The selected item belt; fluids deliberately have no belt equivalent here. */
   belt: Belt;
   recipe: string;
+  inputRates: Map<ResourceId, number> | undefined;
+  outputRates: Map<ResourceId, number> | undefined;
+  machineCount: number | undefined;
+  progress: number;
   onSelectResource: (resource: ResourceId) => void;
 }) {
   if (!solved) {
@@ -48,8 +62,101 @@ export function RecipeConnections({
         recipe={recipe}
         onSelectResource={onSelectResource}
       />
+      <AssemblerDesignSummary
+        inputRates={inputRates}
+        outputRates={outputRates}
+        machineCount={machineCount}
+        belt={belt}
+        recipe={recipe}
+        progress={progress}
+      />
     </div>
   );
+}
+
+function AssemblerDesignSummary({
+  inputRates,
+  outputRates,
+  machineCount,
+  belt,
+  recipe,
+  progress,
+}: {
+  inputRates: Map<ResourceId, number> | undefined;
+  outputRates: Map<ResourceId, number> | undefined;
+  machineCount: number | undefined;
+  belt: Belt;
+  recipe: string;
+  progress: number;
+}) {
+  const inputs = splitRates(inputRates);
+  const outputs = splitRates(outputRates);
+  const problem: KernelProblem = {
+    name: recipe,
+    inputs,
+    outputs,
+    assemblers: [
+      {
+        name: recipe,
+        inputPerSecond: { ...inputs.solids, ...inputs.fluids },
+        outputPerSecond: { ...outputs.solids, ...outputs.fluids },
+      },
+    ],
+    design: { columns: [{ entities: [] }] },
+  };
+  const throughput = {
+    beltItemsPerSecond: belt.itemsPerSecond,
+    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt),
+    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt, 2),
+  };
+  const design = generateAssemblerDesign(problem, throughput);
+  if (!design) {
+    return <p class="cell-assembler-design">Assembler design: no solution</p>;
+  }
+
+  const column = design.columns[0];
+  const bounds = designBounds(column.entities)!;
+  const recipes: DesignSceneRecipes = {
+    [recipe]: {
+      ingredients: [...(inputRates?.keys() ?? [])].map((resource) => ({ resource })),
+      products: [...(outputRates?.keys() ?? [])].map((resource) => ({ resource })),
+    },
+  };
+  const maxHeight = beltStackLimit(column, recipes, problem, belt.itemsPerSecond);
+  if (maxHeight < 1 || machineCount === undefined) {
+    return <p class="cell-assembler-design">Assembler design: no solution</p>;
+  }
+  const moduleCount = Math.ceil(machineCount / maxHeight);
+
+  return (
+    <dl class="cell-assembler-design" aria-label="Assembler design">
+      <div>
+        <dt>Kernel size</dt>
+        <dd>
+          {bounds.maxX - bounds.minX}×{bounds.maxY - bounds.minY} tiles
+        </dd>
+      </div>
+      <div>
+        <dt>Max column height</dt>
+        <dd>×{maxHeight}</dd>
+      </div>
+      <div>
+        <dt>Columns/modules needed</dt>
+        <dd>×{moduleCount}</dd>
+      </div>
+    </dl>
+  );
+}
+
+function splitRates(rates: Map<ResourceId, number> | undefined): {
+  solids: ResourceRates;
+  fluids: ResourceRates;
+} {
+  const entries = [...(rates ?? [])].filter(([, rate]) => rate > 0);
+  return {
+    solids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('item:'))),
+    fluids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('fluid:'))),
+  };
 }
 
 function ConnectionSection({

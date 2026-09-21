@@ -123,6 +123,31 @@
   max-width: calc(100% - 2.1em);
 }
 
+.cell-assembler-design {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
+.cell-assembler-design > div {
+  display: flex;
+  gap: 0.5em;
+}
+
+.cell-assembler-design dt {
+  color: var(--text-h);
+  font-weight: bold;
+}
+
+.cell-assembler-design dd {
+  margin: 0;
+  font-family: var(--mono);
+}
+
 .cell-connection-section-title {
   display: none;
   margin: 0;

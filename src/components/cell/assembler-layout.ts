@@ -2,7 +2,7 @@ import { netRates } from '../../compute/flow.ts';
 import { NO_EFFECTS } from '../../data/module-effects.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
 
-const maxAssemblerStackHeight = 100;
+export const MAX_ASSEMBLER_STACK_HEIGHT = 100;
 const stackedDistrictGap = 2;
 
 export function assemblerColumnLayout(
@@ -14,7 +14,7 @@ export function assemblerColumnLayout(
   inputPipes = 0,
   outputPipes = 0,
 ) {
-  const rowsPerColumn = Math.max(1, Math.floor(maxAssemblerStackHeight / machineHeight));
+  const rowsPerColumn = Math.max(1, Math.floor(MAX_ASSEMBLER_STACK_HEIGHT / machineHeight));
   const columnCount = Math.ceil(count / rowsPerColumn);
   const inputBeltsPerColumn = beltsPerAssemblerColumn(inputBelts, columnCount);
   const outputBeltsPerColumn = beltsPerAssemblerColumn(outputBelts, columnCount);
@@ -121,7 +121,7 @@ export function stackAssemblerDistricts(
     const canStack =
       previous !== undefined &&
       previousDistrict !== undefined &&
-      previous.height + stackedDistrictGap + layout.height <= maxAssemblerStackHeight &&
+      previous.height + stackedDistrictGap + layout.height <= MAX_ASSEMBLER_STACK_HEIGHT &&
       hasExclusiveHandoff(previousDistrict, district.recipe, roles);
 
     if (canStack) {
