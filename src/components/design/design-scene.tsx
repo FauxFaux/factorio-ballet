@@ -16,13 +16,13 @@ import {
 import { beltLoopEntityIndexes } from './design-belts.ts';
 import {
   Assembler,
-  type AssemblerFluidboxConnection,
   Belt,
   entityPositionStatuses,
   Inserter,
   Pipe,
   type EntityPositionStatus,
   type ViewportPoint,
+  TILE_SIZE,
 } from './design-entities.tsx';
 import type { Machine, ResourceId } from '../../types.ts';
 
@@ -133,21 +133,32 @@ function DesignEntityView({
     onPointerLeave: () => onPointerLeave(entityIndex),
   };
   switch (entity.kind) {
-    case 'assembler':
-      return (
-        <Assembler
-          entityIndex={entityIndex}
-          assembler={entity}
-          status={status}
-          inputStatus={assemblerInputStatus}
-          fluidboxConnections={assemblerFluidboxConnections(
-            entity,
-            machinesByRecipe[entity.recipe],
-          )}
-          worldOrigin={worldOrigin}
-          {...hoverHandlers}
-        />
+    case 'assembler': {
+      const fluidboxConnections = assemblerFluidboxConnections(
+        entity,
+        machinesByRecipe[entity.recipe],
       );
+      return (
+        <>
+          <Assembler
+            entityIndex={entityIndex}
+            assembler={entity}
+            status={status}
+            inputStatus={assemblerInputStatus}
+            worldOrigin={worldOrigin}
+            {...hoverHandlers}
+          />
+          {fluidboxConnections.map((connection, index) => (
+            <FluidboxConnectionArrow
+              key={`${connection.position.x},${connection.position.y},${index}`}
+              assembler={entity}
+              connection={connection}
+              worldOrigin={worldOrigin}
+            />
+          ))}
+        </>
+      );
+    }
     case 'belt':
       return (
         <Belt
@@ -184,6 +195,42 @@ function DesignEntityView({
     default:
       return null;
   }
+}
+
+interface AssemblerFluidboxConnection {
+  /** Centre-relative point after applying the assembler's rotation. */
+  position: DesignPosition;
+  direction: DesignDirection;
+}
+
+function FluidboxConnectionArrow({
+  assembler,
+  connection,
+  worldOrigin,
+}: {
+  assembler: DesignAssembler;
+  connection: AssemblerFluidboxConnection;
+  worldOrigin: ViewportPoint;
+}) {
+  const left =
+    worldOrigin.x +
+    (assembler.position.x + assembler.size.width / 2 + connection.position.x - 0.5) * TILE_SIZE;
+  const top =
+    worldOrigin.y +
+    (assembler.position.y + assembler.size.height / 2 + connection.position.y - 0.5) * TILE_SIZE;
+
+  return (
+    <svg
+      class="cell-design-fluidbox-arrow"
+      aria-hidden="true"
+      data-direction={connection.direction}
+      data-fluidbox-position={`${connection.position.x},${connection.position.y}`}
+      style={{ left: `${left}px`, top: `${top}px` }}
+      viewBox="0 0 12 12"
+    >
+      <path d="M 10.5 6 L 2.5 1.5 L 2.5 10.5 Z" />
+    </svg>
+  );
 }
 
 /** Return the machine's north-facing fluid-box points transformed to this assembler's rotation. */

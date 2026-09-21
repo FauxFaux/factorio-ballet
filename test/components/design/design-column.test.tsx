@@ -42,7 +42,7 @@ describe('DesignColumn', () => {
     expect(assembler.querySelector('.cell-design-assembler-icon')).not.toBeNull();
   });
 
-  it('draws the selected machine fluidbox connections as outward blue arrows', () => {
+  it('draws the selected machine fluidbox connections as outward blue triangles', () => {
     render(
       <DesignColumn
         index={0}
@@ -64,8 +64,11 @@ describe('DesignColumn', () => {
       />,
     );
 
-    const assembler = screen.getByRole('img', { name: 'Copper wire assembler at 0, 0' });
-    const arrows = [...assembler.querySelectorAll('.cell-design-fluidbox-arrow')];
+    screen.getByRole('img', { name: 'Copper wire assembler at 0, 0' });
+    const arrows = [...document.querySelectorAll('.cell-design-fluidbox-arrow')];
+    expect(arrows.every((arrow) => arrow.tagName === 'svg' && arrow.querySelector('path'))).toBe(
+      true,
+    );
     expect(
       arrows.map((arrow) => [
         arrow.getAttribute('data-fluidbox-position'),

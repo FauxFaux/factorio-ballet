@@ -291,24 +291,21 @@
   width: var(--cell-design-tile-size);
   height: var(--cell-design-tile-size);
   color: #3ba7ff;
+  fill: currentColor;
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 85%));
+  overflow: hidden;
   pointer-events: none;
 }
 
-.cell-design-fluidbox-arrow > svg {
-  width: 100%;
-  height: 100%;
-}
-
-.cell-design-fluidbox-arrow[data-direction="south"] > svg {
+.cell-design-fluidbox-arrow[data-direction="south"] {
   transform: rotate(90deg);
 }
 
-.cell-design-fluidbox-arrow[data-direction="west"] > svg {
+.cell-design-fluidbox-arrow[data-direction="west"] {
   transform: rotate(180deg);
 }
 
-.cell-design-fluidbox-arrow[data-direction="north"] > svg {
+.cell-design-fluidbox-arrow[data-direction="north"] {
   transform: rotate(270deg);
 }
 
