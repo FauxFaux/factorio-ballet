@@ -80,3 +80,39 @@ slots.
 Not built: the catalyst-specific rules for a catalyst which goes round a cycle of two recipes, and
 any notion of a cell's rates being a _target_ — you scale the cell by pinning a machine count, not
 by asking for 9 steel a second.
+
+## Designs, kernels, and layouts
+
+To produce a brick (city-block), we're trying a four-stage process, that proceeds after the cell's
+calculation is settled. We're converting the theoretical flows (using decimal machines) into real
+integer machine counts, laid out on a 2d grid, within the bounds of the 192x128 brick.
+
+1. place the stations using [a fixed template](../../src/bp/rail-blueprint.ts), given the overall
+   input/output rates; constraining our grid from the edges.
+2. produce a kernel design; an insertion plan for an assembler, or a set of assemblers; we can have
+   [stock plans for many common cases](../../src/assembler-design.ts), but will allow the user to
+   [provide complex alternatives](../../src/components/design/design-column.tsx); such as a kernel
+   containing multiple assemblers and handling intermediates themselves. This is sometimes called
+   "direct insertion". e.g. if you have two assemblers that are matched 1:1, it makes sense to take
+   the inputs from the left belt, feed the left assembler, then immediately insert directly from the
+   left to right assembler, then take the actual output products and put them on a belt. In the base
+   game (space age), this is common for circuits, with a 3:2 ratio.
+3. modulisation: kernels are stacked to make modules (maybe these would have been called "cells" in
+   a different world), so we have the right number of assemblers and belts total; and we know where
+   the inputs and outputs for each module are to be connected. Here may be a good time to
+   [recommend how to split up the modules](../../src/split.ts), to avoid a pure column layout; but
+   it may be that realistically the only recourse the user has is to provide better kernels.
+4. modules are placed and belts routed inside [a real 2d grid](../../src/components/layout/layout.tsx),
+   connecting the input stations and modules; modules and other modules, and modules and output stations,
+5. with an appropriate number of belts, handling splitting and merging.
+
+An input station provides four belts per station, and an output station accepts up to four belts per station.
+
+There's a visual-only implementation of this for the [radar](../../src/components/cell/radar-assemblers.tsx),
+which:
+ * assumes kernels are always possible and a fixed width (this is too optimistic),
+ * stacks kernels all the way up to the brick height (with some allowance for belt throughput), which 
+   limits other routing options, and forces the belt bussing.
+ * merges modules if they are immediately adjacent in the planning list, and totally cover a set; all of the outputs of one module are consumed by the next, and that's the only consumer.
+ * ignores errors, like trying to feed twelve belts into one
+ * does not actually use real coordinates, just visual svg drawings, and hence cannot be mapped into game units
