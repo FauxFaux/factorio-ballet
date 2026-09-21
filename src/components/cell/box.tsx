@@ -26,6 +26,7 @@ import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
 import { CellLayoutSurface } from '../layout/layout.tsx';
 import { CellAsJson } from './as-json.tsx';
+import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
 
 /**
@@ -341,12 +342,15 @@ export function CellBox({
         />
       ) : null}
       {cell.layout ? (
-        <CellLayoutSurface
-          layout={cell.layout}
-          inputs={iface.inputs}
-          outputs={iface.outputs}
-          stackedStations={stackedStations}
-        />
+        <div class="cell-layout-row">
+          <CellLayoutSurface
+            layout={cell.layout}
+            inputs={iface.inputs}
+            outputs={iface.outputs}
+            stackedStations={stackedStations}
+          />
+          <SplitProposals entries={cell.entries} solution={solution} belt={chosen.belt} />
+        </div>
       ) : null}
     </section>
   );

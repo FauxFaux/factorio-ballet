@@ -1,0 +1,88 @@
+.cell-split-proposals {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+}
+
+.cell-split-proposals h3 {
+  margin: 0 0 6px;
+  color: var(--text-h);
+  font-family: var(--heading);
+  font-size: 0.7778rem;
+  font-weight: normal;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.cell-split-proposal {
+  padding: 6px;
+  background: color-mix(in srgb, var(--accent-bg) 35%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.cell-split-proposal + .cell-split-proposal {
+  margin-top: 6px;
+}
+
+.cell-split-proposal header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 8px;
+  color: var(--text-h);
+  font-size: 0.7778rem;
+}
+
+.cell-split-proposal header span,
+.cell-split-group-size,
+.cell-split-group-recipes {
+  color: var(--text);
+  font-size: 0.6667rem;
+}
+
+.cell-split-proposal > p {
+  margin: 3px 0 5px;
+  font-size: 0.6667rem;
+  line-height: 1.35;
+}
+
+.cell-split-proposal ol {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cell-split-proposal li {
+  display: grid;
+  min-width: 0;
+  padding-left: 6px;
+  border-left: 2px solid var(--accent-border);
+}
+
+.cell-split-group-name {
+  overflow: hidden;
+  color: var(--text-h);
+  font-size: 0.7222rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-split-group-size {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cell-split-group-recipes {
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+.cell-split-ratios {
+  padding-top: 4px;
+  border-top: 1px solid var(--border);
+}

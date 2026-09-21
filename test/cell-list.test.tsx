@@ -26,6 +26,19 @@ function CellListExample({ cell = newCell() }: { cell?: Cell }) {
   );
 }
 
+const splitProposalEntries: Cell['entries'] = [
+  'bob-processing-electronics',
+  'bob-silicon-nitride',
+  'bob-silicon-powder',
+  'bob-silicon-wafer',
+  'angels-mono-silicon',
+  'angels-mono-silicon-seed',
+  'angels-liquid-molten-silicon',
+  'angels-chemical-void-angels-gas-oxygen',
+  'angels-air-separation',
+  'angels-gas-compressed-air',
+].map((recipe, index) => ({ recipe, count: index === 0 ? 15 : undefined }));
+
 describe('CellList', () => {
   it('adds a blank design with numbered placeholder columns', async () => {
     const user = userEvent.setup();
@@ -63,6 +76,28 @@ describe('CellList', () => {
 
     expect(screen.queryByRole('region', { name: 'Layout' })).toBeNull();
     expect(screen.getByRole('button', { name: '+ layout' })).toBeTruthy();
+  });
+
+  it('places split proposals beside an existing layout', () => {
+    render(
+      <CellListExample
+        cell={{
+          entries: splitProposalEntries,
+          layout: {},
+        }}
+      />,
+    );
+
+    const layout = screen.getByRole('region', { name: 'Layout' });
+    const proposals = screen.getByRole('region', { name: 'Proposed splits' });
+    expect(layout.parentElement).toBe(proposals.parentElement);
+    expect(layout.parentElement?.classList.contains('cell-layout-row')).toBe(true);
+  });
+
+  it('does not display split proposals without a layout', () => {
+    render(<CellListExample cell={{ entries: splitProposalEntries }} />);
+
+    expect(screen.queryByRole('region', { name: 'Proposed splits' })).toBeNull();
   });
 
   it('uses the radar’s automatic stacked-input mode for a layout rail blueprint', () => {

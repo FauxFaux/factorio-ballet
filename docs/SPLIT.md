@@ -1,662 +1,296 @@
-# Suggesting cell groupings before layout
+# Decomposing a solved cell before layout
 
-Working design notes based on [the CPU cell snapshot](cells/cpu.json). This is a proposal for
-grouping and layout assistance, not an implementation of automatic splitting.
+These rules turn a solved recipe graph into logical units before placing machines on a
+two-dimensional grid. They are working design rules, not an automatic splitter specification. The
+examples use [`cpu-15-1.cell.json`](../cpu-15-1.cell.json) and the transport kernels described in
+[`blueprints/ASSEMBLERS.md`](blueprints/ASSEMBLERS.md).
 
-## Initial observations
+A unit is a placement commitment: its machines and short internal routes should remain near one
+another. It need not become a separately solved `Cell`, occupy one design column, or use one
+blueprint kernel. Keep those decisions separate.
 
-- The nitrogen utility is compressed air, air separation, and oxygen disposal. It needs
-  `ceil(4.09424) + ceil(1.25977) + ceil(0.76767) = 8` machines, no material inputs, and one nitrogen
-  pipe output at 307.068/s. Disposal belongs inside the group.
-- Wafer production needs 24.98959 machines for 300 electronics machines: approximately one to
-  twelve. Wafers move at 205.71429/s, while their mono-silicon input moves at 17.49271/s. At 30
-  items/s per belt, that is seven belts versus one. This is a strong reason to put wafer production
-  beside electronics and transport mono-silicon over the longer distance.
-- The snapshot imports silicon ingots; there is no ingot-making recipe to assign. Nitrogen feeds
-  nitride and mono-silicon **seed** production; mono-silicon itself takes seeds and molten silicon.
-- Grouping must consider both a small, understandable boundary and the cost of transporting
-  materials inside the group. Merely minimizing edges cut would select the entire cell.
-- A logical group, a repeated assembly module, a physical design column, and a separately solved
-  `Cell` are distinct decisions. Suggestions should be inspectable before any of those changes.
+## Read the solved cell as a flow graph
 
-All calculations here use the requested approximation: a machine occupies 3×3 tiles; a belt carries
-30 items/s in a one-tile-wide strip; each distinct fluid uses one pipe strip regardless of rate.
-Infinite fluid throughput is a planning assumption. Machines' service space and actual connection
-geometry still need consideration during layout.
+Use one node per recipe entry and one network per material. Preserve fractional workloads and gross
+rates from the solution. Round each recipe's workload up only when calculating installed machines;
+rounding capacity must not create extra material demand or production.
 
-## What the snapshot suggests
+Represent imports and exports as outside nodes. This matters for resources with several users:
+nitrogen has one producer and two consumers, while imported silicon ingots have two consumers. Do
+not turn either network into pairwise edges carrying the full rate, since that duplicates flow.
 
-Counts below are installed machines: round up each recipe separately, then sum. Keep the original
-fractional counts for all rate calculations. Rounding up capacity does not create extra demand or
-production; some machines will be idle for part of the time.
+For each possible boundary record:
 
-| Candidate group              | Recipes                                 | Machines | Material inputs → outputs                                   |   Boundary strips, in + out |
-| ---------------------------- | --------------------------------------- | -------: | ----------------------------------------------------------- | --------------------------: |
-| Nitrogen utility             | Compressed air, separation, oxygen void |        8 | Nothing → nitrogen                                          |                  0 + 1 pipe |
-| Mono-silicon                 | Melting, seeds, mono-silicon            |       17 | Ingots + nitrogen → mono-silicon                            |    1 belt + 1 pipe + 1 belt |
-| Silicon nitride              | Powder, nitride                         |       17 | Ingots + nitrogen → nitride                                 |   1 belt + 1 pipe + 2 belts |
-| Combined silicon preparation | Both preceding groups                   |       34 | Ingots + nitrogen → mono-silicon + nitride                  |  2 belts + 1 pipe + 3 belts |
-| Electronics finishing        | Wafers, processing electronics          |      325 | Mono-silicon + nitride + platinum wire + acid → electronics | 9 belts + 1 pipe + 12 belts |
+- material and item/fluid kind;
+- total rate and direction;
+- item trunk width at the selected belt capacity;
+- number of local branches and their rates; and
+- compatible temperature and fluid-box requirements for fluids.
 
-The full cell has 367 installed machines, or 3,303 tiles of machine area under the 3×3 assumption.
-Nitrogen accounts for only 72 of those tiles. Finishing accounts for 2,925, so discovering a
-finishing group is only the beginning of arranging it.
+Under the simple planning model used below, an item flow of rate `q` needs `ceil(q / beltCapacity)`
+full-belt trunks and each distinct fluid needs one pipe. This is only a corridor estimate. A
+concrete kernel must also satisfy lane, inserter, and port constraints.
 
-Two reasonable coarse alternatives are:
+## Grouping rules
 
-1. **Three groups:** nitrogen utility, combined silicon preparation, electronics finishing. This
-   shares the ingot supply and nitrogen distribution inside silicon preparation.
-2. **Four groups:** nitrogen utility, mono-silicon, nitride, electronics finishing. Each silicon
-   branch has one output and 17 machines, making the individual groups easier to place. Nitrogen now
-   branches to two groups.
+Apply these as candidate generators, not as an ordered list of absolute laws. Keep several
+non-dominated alternatives when the rules disagree.
 
-The mono-silicon and nitride branches do not supply one another. Combining them is justified by
-shared inputs and nearby placement, not by a direct recipe dependency. A generator that considers
-only producer–consumer neighbours will miss this three-group alternative.
+### 1. Close small utilities and their disposal paths
 
-For the three-group alternative, nitrogen crosses between groups at 307.068/s on one pipe,
-mono-silicon at 17.49271/s on one belt, and nitride at 34.28571/s on two belts. These are four
-transport strips across three material connections. Nitrogen remains one output connection at the
-utility boundary in the four-group alternative too; its two downstream branches have separate
-lengths and destinations. Do not count two full-rate nitrogen exports from the utility.
+Group a no-input source with its transformations and mandatory byproduct sinks when the result has
+few outputs and a small footprint. A sink is part of producing the useful output, not an unrelated
+consumer to place later.
 
-### Why the wafer boundary is particularly valuable
+This identifies compressed air, air separation, and oxygen voiding as one eight-machine nitrogen
+utility. It has no material input, internally disposes of oxygen, and exposes only one nitrogen
+pipe. It is a good custom design which may sit at an edge or corner of the eventual grid.
 
-| Material               | Total rate/s | Belts at 30/s | Role                    |
-| ---------------------- | -----------: | ------------: | ----------------------- |
-| Mono-silicon           |     17.49271 |             1 | Input to wafer making   |
-| Wafers                 |    205.71429 |             7 | Input to electronics    |
-| Silicon nitride        |     34.28571 |             2 | Other electronics input |
-| Platinum wire          |    171.42857 |             6 | Other electronics input |
-| Processing electronics |          336 |            12 | Final export            |
+Prefer utility candidates with:
 
-Moving the wafer recipe downstream replaces a long seven-strip connection with a long one-strip
-connection. For the same route length `D`, this changes that corridor from `7D` to `D` tiles. It
-saves `6D` there, before accounting for changes to the local distribution routes and placement. The
-205.71429/s wafer flow still exists and needs short routes within finishing.
+- no inputs, or one simple fuel/utility input;
+- one useful output network;
+- every unavoidable byproduct closed locally; and
+- a footprint small enough that making it a custom block is cheaper than forcing it into a generic
+  repeated stack.
 
-The wafer recipe has one input and one output. Electronics has four inputs and one output; the
-combined group's interface still includes nitride, platinum, and acid. Grouping wafers does not
-remove those supplies or the twelve-belt final export.
+### 2. Put an expanding transformation near its consumer
 
-### Repeated finishing modules
+For a transformation `A -> B`, compare the transport width on both sides. If `B` is much wider than
+`A`, carry `A` over the long distance and make `B` beside its consumer. For a compressing
+transformation, normally do the reverse.
 
-The exact solved machine ratio is `1 wafer : 12.005 electronics`. A natural physical template is one
-wafer machine beside twelve electronics machines, repeated 25 times. Each copy allocates
-`24.98958767 / 25 = 0.99958351` wafer-machine workload and twelve electronics machines. One
-installed wafer machine is about 99.958% utilized, and the whole arrangement still installs 25 wafer
-machines plus 300 electronics machines.
+The CPU snapshot consumes mono-silicon at `19.09091/s` to make wafers at `252/s`. At `30/s` that is
+one incoming mono-silicon belt versus nine wafer belts. Wafer machines therefore belong beside the
+CPU assemblers, even though the two recipes need very different machine counts. The wide wafer flow
+should be short and internal.
 
-| One module          |   Rate/s | Connection   |
-| ------------------- | -------: | ------------ |
-| Mono-silicon input  |  0.69971 | 1 belt       |
-| Nitride input       |  1.37143 | 1 belt       |
-| Platinum wire input |  6.85714 | 1 belt       |
-| Sulfuric acid input | 13.71429 | 1 pipe       |
-| Electronics output  |    13.44 | 1 belt       |
-| Wafers, internal    |  8.22857 | 1 short belt |
+Evaluate the whole recipe interface when applying this rule. Moving wafers downstream does not make
+platinum, nitride, sulfuric acid, or the CPU output disappear.
 
-That is 13 machines and 117 tiles of machine area per copy, before belts, inserters, pipes, beacons,
-and gaps. It is a capacity-compatible template, not yet a proven floor plan. Compare it with larger
-copies, such as two wafer machines and 24 electronics machines, including a smaller remainder module
-when necessary.
+### 3. Gather siblings which share an outside supply
 
-Twenty-five independent output branches require 25 belts locally even though their combined output
-fits on twelve trunk belts. The same effect applies to inputs. Cost the branch lengths, merges, and
-trunks separately. Repetition can reduce wafer travel while increasing distribution overhead; a
-ratio alone cannot choose the best module size.
+Recipes need not have a producer-consumer edge to deserve adjacency. If they are the only consumers
+of an imported resource, a shared receiving block can remove a fork from the factory-wide trunk and
+present smaller derived flows to the rest of the design.
 
-Keep these copies as a repeated layout inside finishing initially. Creating 25 independently
-editable solver cells would add considerable bookkeeping to what is one repeated design.
+Molten-silicon and silicon-powder production are the only silicon-ingot consumers. Together they are
+three installed machines and consume all `38.48011/s` of ingots. Treat them as a strong candidate
+for a small ingot-conversion hub, exporting molten silicon by pipe and powder on a belt.
 
-## Represent the problem at two scales
+Shared input alone is not enough to merge large branches. Count the routes saved, the fan-out still
+required, and the distance to each output's consumer. A shared receiving edge can justify adjacency
+without requiring both branches to become one independently solved cell.
 
-Start from the current solved cell, with a node for each recipe entry and a material network joining
-its producers and consumers. Include explicit outside sources and destinations for cell imports,
-exports, and unresolved surplus or demand. Resource nodes are useful here: nitrogen has one producer
-and two consumers, and ingots have an outside producer and two consumers. A plain unweighted recipe
-graph loses the rates, transport type, and shared distribution.
+### 4. Internalize tiny intermediate loops and feeds
 
-Each recipe node needs its resolved machine, loadout, fractional workload, installed capacity, and
-gross input/output rates. Keep entry identity separate from recipe identity in the proposed model:
-later allocation may put part of the same recipe's workload in several layout groups.
+Keep a low-rate intermediate with a consuming stack when that removes a dedicated boundary line. The
+seed recipe uses only `0.28409` machine of work and its entire `2.98295/s` output feeds
+mono-silicon. The default is therefore to put seed production with the 24 installed mono-silicon
+machines, exposing molten silicon and nitrogen as inputs and mono-silicon as the output.
 
-There are then two operations:
+There is a legitimate alternative: seed production may sit next to the single molten-silicon machine
+because both are tiny and both handle molten silicon. Preserve this as a layout alternative when
+their fluid ports make a compact custom design possible. It creates a long seed route to the
+mono-silicon stack, so prefer it only when the physical saving outweighs that extra boundary.
 
-- **Group whole recipe entries:** identify utilities, chains, and adjacent production stages. This
-  is a small search over ten nodes in this example.
-- **Allocate workload among repeated modules:** split the 300 electronics and 24.98959 wafer
-  workloads into co-located copies. Grouping whole recipes alone cannot express this locality.
+This illustrates a general tie-breaker: place a tiny producer with the consumer of its product
+unless sharing a difficult fluid connection or machine-specific custom design is more valuable.
 
-A hierarchy supports both: the cell contains the utility, silicon preparation, and finishing;
-finishing contains repeated modules. A design column is a place to arrange these, not their
-identity. A group can occupy several columns; a column can contain several small groups.
+### 5. Co-locate consumers with wide or awkward feeds
 
-### Flows are obligations, not inferred pairwise allocations
-
-For this snapshot every internally produced material has a unique producer, so assigning its output
-to the consumer demands is straightforward. In general there may be several producers and consumers.
-Preserve their supply/demand amounts and choose allocations explicitly, initially preferring local
-consumption and then short inter-group routes. A transportation-flow subproblem can allocate a fixed
-material once approximate group positions exist. Integer belt counts make the complete cost
-discontinuous; a linear distance allocation is a starting approximation to refine, not an exact
-solution to that cost.
-
-Do not create a complete producer–consumer graph with the full rate on every edge. It duplicates
-production and grossly overprices shared materials. Likewise, the JSON `ratio` is the sum of
-counterpart machine counts relative to this row, not a flow allocation or a general template ratio.
-Derive templates from assigned rates and per-machine capacity.
-
-Gross flows remain important for catalysts and returned tools. A zero net resource balance does not
-mean zero physical movement. A group's net balance gives its minimum outside requirement under local
-matching; actual boundary traffic must follow the chosen allocation. A forced route which imports
-and exports the same resource needs both directions recorded. Fluid temperature compatibility must
-also be preserved rather than treating every flow with one resource id as interchangeable.
-
-## Generate candidates, then evaluate arrangements
-
-### Candidate generation
-
-Use several simple generators whose suggestions can explain themselves:
-
-1. **Small utility closures.** Grow backwards from an exported resource through its producers,
-   adding byproduct consumers where this closes an extra boundary. Include sinks and no-input
-   sources. Prefer few input resources, one output, and a small installed footprint. This finds
-   compressed air + separation + oxygen void without recipe-name rules.
-2. **Costly handoffs.** Seed a producer–consumer pair when its shared item connection is wide, then
-   grow the group while its interface and size remain useful. Wafers + electronics is the strongest
-   example. Also compare moving a transformation towards its supplier or consumer by evaluating the
-   boundary on either side: expansion favours downstream placement, compression often favours
-   upstream placement. Include all the recipe's other inputs and outputs.
-3. **Chains and branches.** Grow connected subsets around a terminal output, stopping at cheap cuts.
-   This proposes melting + seeds + mono-silicon and powder + nitride. Also propose merges of groups
-   sharing outside supplies, so combined silicon preparation is considered.
-4. **Cycles.** Identify strongly connected components and seed candidates containing their
-   recirculation. Keeping these together is a preference, not an absolute rule: a very large cycle
-   may need splitting, with every return connection and any startup requirement exposed.
-5. **Repeated modules.** After a strong co-location pair or group is found, enumerate small integer
-   capacities around its solved ratios. For each capacity vector solve or allocate feasible
-   workloads, count the copies and remainder, and evaluate rounding and distribution. Retain several
-   sizes rather than choosing the closest ratio mechanically.
-
-For ten entries, enumerate all `2^10 - 2 = 1,022` nonempty proper subsets as a small reference
-search. Cache each subset's balance, rounded machine count, boundary widths, and connectivity. This
-catches candidates that greedy growth misses. A read-only enumeration of this snapshot found exactly
-one multi-recipe subset with no inputs, one output, and at most 32 installed machines: the
-eight-machine nitrogen utility. The threshold is an illustrative utility filter, not a universal
-limit on groups.
-
-For larger cells, use those seeds plus bounded beam search or greedy merges, retaining multiple
-alternatives. Follow with single-entry moves, swaps, and split/merge refinements. Canonicalize
-membership and use stable tie-breaking so reordering recipe rows does not change suggestions. Keep
-pinned groups fixed. Use a search budget and return the best candidates found with an honest
-heuristic status.
-
-Candidates overlap: wafer + electronics conflicts with a candidate containing every silicon recipe
-including wafers. Select a compatible partition before showing an overall plan. Every workload must
-appear exactly once across its groups, except where explicit fractional allocations sum to the
-original workload.
-
-For small cells, a subset dynamic program can choose compatible groups under an additive group
-score: choose a candidate containing the first remaining entry, then recurse on the remainder.
-Retain several partitions for geometric evaluation. That score can price interface endpoints, size
-preferences, and complexity, but shared routes and positions are not additive. A minimum under that
-proxy is not a globally optimal layout. Always include the unchanged cell as a baseline.
-
-### Boundary and footprint measures
-
-Let `q` be the assigned positive rate of material `r` on a particular route segment. Its width is:
+After closing obvious chains, rank remaining handoffs by the cost of crossing a unit boundary:
 
 ```text
-width(r, q) = 0                         when q is effectively zero
-              ceil(q / beltCapacity)   for an item
-              1                        for a fluid
-
-machineArea(group) = sum(installedCount(recipe) × machineWidth × machineHeight)
-routeArea(segment) = width(material, segmentRate) × segmentLength
+handoff cost ~= trunk width * expected distance
+              + branch/merge cost
+              + crossing and port penalties
 ```
 
-Use a relative/absolute tolerance before comparisons and ceilings so floating-point noise at 30/s
-does not create a second belt. Keep rate precision until rendering. Sum widths per distinct material
-and direction: three products each moving 10/s occupy three strips under this model, even though
-their sum is one belt's capacity. Two lanes sharing different items would be a separate transport
-policy, outside the requested approximation.
+This makes wafer-to-CPU the strongest solid-item co-location in this snapshot. It also makes
+nitride-to-CPU a useful adjacency: `42/s` of nitride would otherwise cross the layout on two
+30-item/s trunks, while powder feeding nitride is only `26.25/s` on one trunk. Put the nitride stack
+on the CPU side of that transformation and carry powder to it.
 
-Report distinct material counts as well as widths. The cell contract's 1–8 understandable resources
-is a useful preference; electronics finishing has five distinct boundary resources but 22 strips.
-One number cannot represent both mental complexity and physical width.
+Fluids have unlimited rate only in the simplified throughput model. A pipe still consumes a route,
+needs a compatible machine port, may cross belts, and may have to branch. Never score it as free.
 
-Do not treat an unlimited-throughput pipe as free. It occupies space, has length, connects to
-specific machine sides, and may branch. Oxygen and compressed air are internal pipe networks in the
-nitrogen utility and need layout space even though neither crosses its boundary.
+### 6. Use solved ratios to form repeated modules
 
-Use resolved `Machine.size` from the app when available. The JSON snapshot omits machine ids,
-loadouts, and dimensions, so the numbers above use only the requested 3×3 approximation. Never infer
-actual machine sizes from its counts.
+Once recipes should be adjacent, derive module sizes from their solved workloads. Do not use the
+JSON `ratio` field as a template ratio; derive ratios from the counts or assigned rates.
 
-### Avoid a score which always chooses one giant cell
-
-Minimizing cut edges or cut transport width alone makes putting everything together the easy winner.
-Enforcing equally sized groups is also a poor match: an eight-machine utility should not be inflated
-to match a 325-machine finishing stage.
-
-Compare candidates on several explicit measures:
-
-- Boundary resource count and belt/pipe widths, with separate input/output summaries.
-- Estimated total transport area, including internal routing, distribution branches, outside
-  imports/exports, and return flows.
-- Largest group dimensions/area, fit in the user's available space, and reserved service space.
-- Additional machines caused by dividing workloads, plus underutilized capacity.
-- Number of distinct group designs, repeat count, and complexity of each interface.
-- Congestion, crossings, detours, and unrouteable ports from the coarse layout.
-
-Keep a small Pareto set: discard a plan only when another is no worse on the selected measures and
-better on at least one. Offer named preferences such as “simpler interfaces”, “shorter transport”,
-and “smaller modules”. They select among tradeoffs rather than exposing arbitrary algorithm weights.
-A requested footprint or maximum group size can be a hard constraint; otherwise size is a
-preference, and the unsplit alternative remains valid.
-
-A possible internal ranking for a chosen preference is:
+Nitride and CPU workload have the exact ratio:
 
 ```text
-score = estimatedRouteArea
-      + sizePenalty + interfacePenalty + extraMachinePenalty
-      + distinctDesignPenalty + congestionPenalty
+26.25 : 15 = 7 : 4
 ```
 
-Convert penalties to documented comparable units or normalize them against the unchanged plan;
-calibrate on example cells. Show the underlying measurements and reasons to the user, not a spurious
-“87% optimal” score. A single proposed extraction can be valuable even when there is no confident
-recommendation for the remaining cell.
+A natural finishing arrangement is therefore three full `7 nitride + 4 CPU` modules and one
+remainder containing `5.25` nitride workloads in six installed machines beside three CPUs. This uses
+the existing 27 installed nitride machines and 15 CPUs without adding capacity.
 
-### A cheap geometric second pass
+The remainder can be arranged as `NNN CC NNN C`, as suggested: six nitride machines distributed
+around three CPU machines. It is a good local ordering, but not a ratio to repeat blindly. Repeating
+`6 nitride + 3 CPU` five times would install 30 nitride machines, three more than the whole-cell
+solution needs.
 
-For the best few partitions, try several rectangle shapes and input/output side assignments for each
-group, using machine area plus configurable service allowance. Place them on a coarse grid with flow
-direction as a starting order; try moving and rotating groups. Include fixed outside ports when
-supplied. Otherwise compare several outside-port placements and label the estimate as dependent on
-those assumptions.
+For every proposed module size:
 
-Estimate routes with Manhattan paths, then reserve corridor width on a coarse occupancy grid.
-Allocate each segment's rate: a shared trunk carries the total demand downstream, while each branch
-carries only its own demand. Charge a shared segment once. Distinct fluids may not merge, and
-distinct item strips may not overlap without an explicitly modelled crossing. Test whether the
-required widths fit the chosen sides and corridor space; reroute or reject failed candidates.
+1. allocate fractional workload to the copy;
+2. round each recipe within that copy;
+3. sum installed machines across all copies and the remainder;
+4. reject or penalize extra machines and idle capacity; and
+5. separately price its branches, merges, and shared trunks.
 
-Internal routing must receive the same treatment, even if initially represented by templates and
-estimated lengths. Otherwise merging groups falsely makes their transport cost disappear. Also
-include the costs of external platinum and electronics transport; in this example they are large
-enough to influence the orientation of finishing.
+Exact small ratios are good seeds, not proof of a good floor plan. Enumerate nearby sizes and keep a
+remainder rather than distorting every copy to avoid one.
 
-The first pass need not place every assembler. It should identify obvious congestion and return
-plausible envelopes and ports for later detailed placement. Missing inserter throughput, fluidbox
-assignment, beacon coverage, or crossing rules limit confidence in a buildable result. Preserve the
-solved machine effects when comparing candidates, and flag any layout that cannot supply the assumed
-beacons rather than silently changing its rates.
+### 7. Do not force every adjacent recipe into the same repeated tile
 
-## UI proposals
-
-### Start with two specific suggestions
-
-Place a “Suggest groups” action beside the cell's design controls. Its first result can be two
-compact, inspectable cards:
-
-> **Nitrogen supply · 8 machines**  
-> No material inputs · nitrogen 307.07/s · 1 pipe out  
-> Includes oxygen disposal. A small utility that can sit beside the main production.  
-> Preview group · Keep together
-
-> **Make wafers beside electronics**  
-> Carry mono-silicon on 1 belt instead of wafers on 7 over the longer route.  
-> Try 25 modules of 1 wafer machine + 12 electronics machines.  
-> Preview modules · Compare sizes
-
-Previewing a suggestion highlights its recipe rows and draws its boundary input/output list. Show
-installed counts beside fractional workloads in the detail, and give every material its rate and
-required strip count. Explain which internal connections become local. This should work with
-keyboard focus and selection as well as hover; colour is additional information.
-
-For broader exploration, offer three-group and four-group alternatives with the same metrics,
-including the unchanged layout. A small group graph can show nitrogen's branch and the two silicon
-outputs; line labels should state both material and width. Avoid a giant graph of all 367 machines
-at this stage.
-
-### Use the design surface to make the proposal tangible
-
-`src/components/design/design-column.tsx` currently draws only a column heading on the grid. It
-could show a provisional group rectangle with a name, machine total, boundary port labels, and a “25
-×” repeat badge for finishing modules. Selecting the rectangle opens the relevant recipes and
-routing assumptions. A toggle between “Groups” and “Machines” would let the same surface gain detail
-later without immediately rendering every entity.
-
-The parent `CellDesign` should own the proposal selection and assignments. Pass resolved groups,
-selected state, and callbacks down to columns; keep search and scoring outside rendering code.
-`CellBox` already has the cell and solution but currently passes only `design` and `setDesign` to
-`CellDesign`, so the new preview needs an explicit data path for the solution and choices.
-
-Useful controls after preview are “Keep together”, “Keep apart”, moving an entry to another group,
-changing a module's repeat size, and naming a group. Provide menu/keyboard equivalents for dragging.
-Show the resulting interface and extra capacity immediately. Accepted constraints should survive
-recomputation; machine, module, belt, or rate changes should mark estimates stale and recompute them
-without silently replacing an accepted arrangement.
-
-Keep **Group in this cell**, **Arrange in columns**, and **Split into cells** as separately named
-actions. Preview is transient and cancellable. Applying an arrangement is undoable. An actual split
-needs a review of all resulting cells, their scale, and their material connections.
-
-On narrow screens, stack suggestion cards and interface summaries. Follow `guides/STYLING.md` for
-responsive flow and rem-based sizing. In particular, group identity and repeat count must not depend
-on viewport width. `CellDesign` currently adds blank persisted columns as its surface widens; do not
-use that mechanism to infer groups or create production copies.
-
-## Integration and the meaning of an actual split
-
-The existing code provides most inputs for analysis:
-
-- `src/solve/index.ts`: `Solution.counts` and gross `inputRates`/`outputRates`; multiply each
-  per-machine rate by the solved count exactly once. The JSON snapshot already contains totals.
-- `src/components/cell/connection-calc.ts`: useful current presentation of counterpart recipes, but
-  its counterpart machine totals are not allocated transport edges.
-- `src/cell.ts`: `cellInterface` classifies resources using recipe-local netting and set membership.
-  Group scoring needs quantitative allocated boundary flows, so cannot use that classification
-  alone.
-- `src/data/index.ts` and `src/types.ts`: the chosen belt capacity and resolved machine sizes. The
-  current connections display has a 1,200/s fluid comparison convention; the requested
-  unlimited-throughput grouping model should explicitly use one pipe per active fluid network.
-- `src/design.ts`: physical entities and columns, without logical groups or workload allocations.
-
-Proposed pure analysis functions could live under `src/split/`, with a solved-flow adapter,
-candidate generation, group evaluation, partition search, and later a coarse routing evaluator. No
-additional production solver is needed to score subsets at the existing solution's rates.
-
-A proposal needs member entry references, optional allocated workloads, computed boundary flows,
-installed counts, metrics, explanation reasons, and a fingerprint of the source solution and
-transport assumptions. A selected plan additionally needs group ids, repetition, placement
-constraints, and eventual assignments to columns. These are proposed concepts, not current APIs. Do
-not serialize the full search cache or derived rates. Persist accepted membership, allocation
-intent, and constraints, then derive the preview again. Extend packing and URL compatibility
-handling deliberately when accepted grouping state is introduced.
-
-Moving entries into new `Cell` objects is not sufficient to preserve the factory. Each current cell
-is solved independently, and a newly isolated unpinned cell can be seeded at one machine. There is
-no persisted cross-cell flow constraint to keep nitrogen production aligned with both consumers.
-Keeping only the original pin on electronics therefore changes the other cells' scale.
-
-An initial “Split into cells” implementation can preserve the reviewed snapshot by copying the
-resolved machine/loadout choices and pinning **all** child workloads to their original solved
-counts. Preserve original user choices where explicit, and make newly frozen auto choices/counts
-visible. Verify every child's external rates and that the sum of all children retains the parent's
-balance. This creates fixed snapshots: changing demand in one child will not resize the others.
-State that consequence before applying, and provide undo.
-
-For ongoing coupled editing, introduce cross-cell material demands or a parent plan that solves the
-whole recipe system and allocates its result to child groups. Prefer that parent solution for layout
-grouping now; actual independent cells can follow once their scale semantics are defined. The
-exported CPU JSON is enough to analyze the snapshot, but lacks the choices needed to reconstruct
-equivalent editable cells on its own.
-
-When a cell already has placed entities, any split must explicitly map them and their routes to the
-resulting groups or flag the unresolved assignments. Do not discard an existing design or guess
-ownership of a belt merely because a recipe moved.
-
-## A unified solver, with optional explicit connections
-
-The preferred direction is one solver model which can solve either a whole connected plan or a
-selected cell with boundary conditions. Start with global balancing and derived cell interfaces;
-leave room for explicit material connections where they express a supply decision. These are
-complementary capabilities. We do not need to require the user to wire every cell before the CPU
-example can remain balanced after splitting.
-
-There are three separate questions:
-
-1. **Production:** how much work does each recipe perform?
-2. **Supply allocation:** which producer supplies each consumer, and at what rate?
-3. **Physical routing:** where do those allocated materials travel?
-
-A global material balance often answers the first without uniquely answering the second. The layout
-eventually needs all three. An automatically inferred connection should therefore be shown as an
-allocation proposal, not as a supply commitment the user already made.
-
-### Start by solving across cell boundaries
-
-For the CPU example, flatten the entries from its nitrogen, silicon, and finishing cells into one
-solve, preserving the pin of 300 electronics machines. Balance every internal material across those
-entries together. Project the resulting counts and rates back onto their owning cells. Nitrogen
-production still covers both demands, and moving wafer entries between cells does not change their
-solved counts. No cell-to-cell references are necessary for this result.
-
-The current `Solver.solve(rows)` is already independent of `Cell`. The main architectural change is
-to compile rows at plan scope, retain a mapping from each row to its owning cell/entry, and render
-projections of one solution. `CellBox` would receive its projected result rather than independently
-calling `solveCell` for a globally managed cell. Local and global solvers must not compete to write
-answers for the same entries.
-
-In this mode a cell's quantitative inputs and outputs are derived from its solved work and the
-chosen allocation. A group with net nitrogen demand displays an input even though nitrogen is
-balanced globally. Show whether each flow is supplied by another cell, imported from outside the
-plan, or still unallocated. Keep gross transit/return flows where the allocation requires them; net
-balances alone cannot describe every interface.
-
-This gives a useful invariant: moving an entry between organizational cells, without changing its
-coefficients or any constraints, must leave the global production solution unchanged. Changing
-supply permissions, a local contract, or layout capacity is a different operation and can
-legitimately change the solution.
-
-### A global solve needs a declared scope
-
-“Global” should mean one production plan, not automatically every cell visible on the page. Two
-alternative electronics designs should not accidentally supply each other just because they use the
-same resource ids. The page may contain one coupled plan alongside independent cells or experiments.
-Preserve the existing independent behavior when loading an old collection of cells unless the user
-chooses to connect them into a plan.
-
-Represent solve scope separately from layout membership. A plan can initially be a set of cell ids
-whose compatible materials share supply automatically. An independent cell is a scope containing one
-cell. Later, a shared resource pool can identify which cells are allowed to exchange a resource
-within a scope. Fluid temperature compatibility remains a constraint.
-
-Disconnected parts of a plan need independent scale constraints. The current solver seeds only the
-first row when no counts are pinned; flattening several unrelated cells is not enough to give each
-one a meaningful scale. Detect unconstrained components and report what target or pin is missing, or
-explicitly carry forward their previous local scale. Do not seed every child cell after splitting a
-connected factory: those extra equations would usually overconstrain it.
-
-### When display-only interfaces are sufficient
-
-| Situation                                                  | Global balance with derived interfaces                                      | Additional intent needed                                               |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| One nitrogen utility supplies both silicon branches        | Determines the shared production rate; consumer demands determine the split | None for production; route branches later                              |
-| Two cells produce the same material with spare freedom     | Determines total supply needed, possibly not each producer's workload       | Pin a workload, choose a supplier, or state an optimization preference |
-| A consumer must use a particular source                    | Global totals cannot enforce that choice                                    | A source restriction or dedicated material pool                        |
-| An existing factory has a fixed supply limit               | A count pin fixes work, not a maximum available capacity                    | A capacity constraint and a policy for any shortfall                   |
-| A cell imports a material which is also produced elsewhere | Automatically closing the resource can erase the intended import            | An explicit outside-import allowance or requirement                    |
-| Two designs are being compared                             | Sharing supply makes the comparison misleading                              | Separate solve scopes                                                  |
-
-Thus the first release can have derived interfaces, but the model should distinguish those results
-from editable boundary requirements. “Show inputs” is a view; “take nitrogen only from Air supply”
-or “export 336 electronics/s” changes the problem being solved.
-
-### Explicit references should constrain supply, not copy recipes
-
-An explicit link can say “this cell takes nitrogen from that cell”. It references stable cell ids
-and a material, with optional rate/capacity constraints. It does not embed a second copy of the
-supplier or recursively solve it once per consumer. There is one nitrogen utility workload even when
-two cells refer to it. References may form cycles; solve the resulting equations simultaneously
-rather than requiring a dependency tree.
-
-Useful supply choices are:
-
-- **Auto from this plan:** allocate among permitted suppliers, and expose ambiguity if neither
-  constraints nor an explicit selection policy determine their workloads.
-- **Only from a named cell or pool:** a hard source restriction.
-- **Prefer a named cell:** a soft allocation preference, with any fallback made visible.
-- **From outside the plan:** an explicitly allowed or fixed external supply.
-
-An “allowed supplier” link alone does not necessarily determine a rate; an “only supplier” link also
-excludes other sources. Make that distinction clear. In an explicit supply mode, omitted routes must
-not be silently recreated by the automatic resource pool, or a hard source choice has no effect. A
-preference can intentionally allow fallback through that pool.
-
-The UI could make a derived input's source label editable: `Nitrogen · Auto (Air supply)` becomes
-`Nitrogen · Only Air supply`. Keep the automatically solved rate as an answer unless the user adds a
-rate target or limit. An unresolved input should remain visible with an actionable note. There
-should be no obligation to fill out source pickers for the unambiguous CPU example.
-
-Links should live in the parent plan, or in one other authoritative collection, so incoming and
-outgoing lists are views of the same records. Use stable ids rather than array positions or cell
-names. Removing a referenced cell must expose a broken commitment or remove it through an explicit
-edit; it must not quietly attach the consumer to whichever cell occupies that index.
-
-### One constraint model can express both approaches
-
-Let `x[j]` be the fractional workload of recipe entry `j`, and `a[r,j]` its net rate of material `r`
-per machine. For a cell `c`, define its net production:
+Wafer and CPU workload has the exact but relatively large ratio:
 
 ```text
-net[c,r] = sum(a[r,j] × x[j] for entries j in c)
-
-net[c,r] + incoming[c,r] + outsideImport[c,r]
-         - outgoing[c,r] - outsideExport[c,r] = 0
+27.272727... : 15 = 20 : 11
 ```
 
-With unrestricted sharing, eliminate the unknown inter-cell transfers and sum this equation over the
-whole scope. Each internal transfer cancels, giving the familiar global balance. Cell boundaries are
-then a projection plus a subsequent supply allocation. With explicit connections, introduce
-nonnegative transfer variables `f[source,destination,material]` only on permitted routes and retain
-the cell equations. The same `f` contributes to its source's outgoing total and its destination's
-incoming total, so shared supply cannot be counted twice.
+Splitting the CPUs as `4 + 4 + 4 + 3` and giving each module independent wafer capacity requires
+`8 + 8 + 8 + 6 = 30` wafer machines. A shared wafer bank needs only 28. Prefer a wafer stack running
+along the CPU modules, or compare one `20 wafer + 11 CPU` module plus an `8 wafer + 4 CPU`
+remainder. Logical co-location does not require identical repetition boundaries.
 
-External imports/exports are permitted only by the scope's boundary policy. Initially, the current
-convention of treating one-sided materials as open edges can be a convenience default. An internal
-material normally has zero outside exchange unless explicitly opened. Do not add unrestricted
-import/export variables for every material: that would let the solver bypass the factory or absorb
-conflicting pins by inventing outside supply and disposal. Avoid meaningless simultaneous imports
-and exports unless they represent an intentional transit arrangement.
+The same distinction applies generally:
 
-Derived rates, equality targets, fixed workloads, available capacities, and preferences need
-distinct representations. In particular, the existing `CellEntry.count` is an equality pin. “I have
-eight machines available” means an upper bound, not a requirement to run eight machines
-continuously. Machine placement still rounds capacity; production stays continuous.
+- a **unit** says which routes should remain local;
+- a **stack** repeats one recipe using one transport kernel;
+- a **module** combines adjacent stacks at a useful capacity ratio; and
+- a **custom design** handles a small utility, awkward ports, or a remainder.
 
-The present RREF solver covers uniquely determined equality systems. It can support the simple
-flattened CPU solve, but nonnegative allocation choices, capacity inequalities, and objectives need
-a constrained feasibility/optimization backend, or honest diagnostics when unsupported. A linear
-program is a possible next backend for production and transfer allocation; integer machine counts
-and belt-width ceilings remain a separate layout/capacity problem initially. Keep one problem
-representation with explicit backend capabilities rather than allowing a fallback to ignore
-constraints it cannot represent.
+A unit may contain several stacks and a custom remainder. This hierarchy prevents a useful
+co-location decision from manufacturing unnecessary machines.
 
-Production can be unique while supplier allocation is ambiguous. Report these statuses separately;
-“machine counts solved” need not imply “connections chosen”. An explicit link may resolve an
-ambiguity, but it can also create an infeasible plan, and the diagnostic should point to the
-involved cell, resource, and constraint.
+### 8. Treat kernel feasibility as a hard gate
 
-### Preserve local solving through boundary conditions
+Only assign a stack to a kernel after its per-machine and cumulative rates are known. Follow the
+checks in `ASSEMBLERS.md`:
 
-A local solve can use the same compiler and backend with a smaller scope. What makes it local is how
-the outside world is represented, not a different balancing algorithm. Keep the following options
-open without deciding that every one needs a permanent UI mode:
+- assign each solid ingredient to a dependable belt lane;
+- keep every lane within `B / 2` unless explicit routing splits the item across lanes;
+- account for the actual lane targeted by every output inserter;
+- check cumulative rate at the end of a stack, not only one machine;
+- check local inserter throughput separately from belt throughput;
+- reserve every required fluid connection before solid infrastructure; and
+- validate the periodic neighborhood, including underground pairs across module seams.
 
-| Local operation                             | Boundary treatment                                                                                         | Effect on the surrounding plan                              |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Inspect a cell                              | Project the global solution                                                                                | None; no additional solve                                   |
-| Design a cell independently                 | Explicit local imports/exports and a local pin or target; optionally assume permitted inputs are unlimited | None until attached to a plan                               |
-| Try a change while holding neighbours fixed | Fix every allocated boundary transfer to the current global result                                         | Preview only; neighbours retain their work                  |
-| Redesign behind a contract                  | Solve against declared output requirements, input allowances, and capacities                               | Must revalidate globally before accepting changed transfers |
+The CPU recipe has three solid inputs, one fluid input, and one solid output, so it topologically
+resembles the `3s-1f-in-1s-out` kernel. Its per-machine rates are:
 
-“Hold the boundary fixed” is particularly useful for trying different machines or internal recipes
-while preserving what the rest of the factory receives and provides. Start by freezing all boundary
-transfers, including byproducts and return flows. This is deliberately strict and can make a
-productivity change infeasible because it changes the required inputs. A later variant can hold
-output deliveries fixed while treating the available inputs as limits; that needs inequality support
-and may release some supply back to the surrounding plan.
+| Flow           | Rate/s |
+| -------------- | -----: |
+| Wafer input    |   16.8 |
+| Platinum input |     14 |
+| Nitride input  |    2.8 |
+| Sulfuric acid  |     28 |
+| CPU output     |   30.8 |
 
-A local sandbox may assume unlimited acid or nitrogen only when those inputs are declared open.
-Label that assumption. A successful sandbox solution is not evidence that the parent has enough
-supply. On applying a local edit, recompile and solve the global problem, then show changed
-neighbouring workloads or any unmet constraints. Preserve user pins and supply restrictions. Do not
-write the local answer into the global solution as though the neighbours had agreed.
+Topology is not capacity. On a `30/s` belt, the wafer input exceeds one lane's `15/s`, and the
+one-sided output kernel can carry only `15/s`; even a full belt cannot carry one machine's `30.8/s`
+output. On a `60/s` belt the one-sided output still fails narrowly at `30.8/s`. The fixed
+two-assembler snake also lacks the fluid input required by this recipe. These facts do not forbid a
+CPU stack; they require a different belt tier, lane pattern, fluid extension, or custom kernel.
 
-Merely freezing boundary transfers does not detach the cell; it creates a conditional local problem.
-Conversely, making a cell independent removes its participation in shared supply and requires the
-parent to recheck every affected consumer. Those should be distinct actions.
+The snapshot does not record selected machine prototypes, transport tier, inserter capabilities, or
+fluid-box geometry. Grouping may therefore recommend adjacency, but it must label a concrete kernel
+as unresolved until those choices are available.
 
-This also avoids iterating independent cell solvers until their rates happen to converge. Cross-cell
-cycles and shared byproducts belong in the simultaneous global solve. Local previews are conditional
-answers, not an alternative propagation algorithm for the full factory.
+### 9. Score the boundary and the inside
 
-### Hierarchical solving can come later
+Minimizing cut edges always prefers one giant unit. Conversely, minimizing group size can create a
+forest of branches and rounding waste. Compare candidates on at least:
 
-A stable cell design can eventually expose a contract or a scalable production profile to its
-parent. A fixed-ratio profile has one scale variable: its internal workloads and boundary rates all
-multiply by that scale. This suits a repeated wafer/electronics module whose ratio and loadouts are
-fixed. Store one template and explicit instances/repetition; referencing a supplier must never
-implicitly instantiate another copy of it.
+- boundary resource count and trunk widths, separated into inputs and outputs;
+- estimated route length for boundary trunks and local branches;
+- installed machines, extra machines caused by repetition, and utilization;
+- number of distinct stack and custom designs;
+- approximate footprint and usable sides for ports; and
+- likely crossings, merges, fan-out, and fluid/belt conflicts.
 
-Not every cell is a one-variable profile. Alternative recipes, independently adjustable outputs,
-capacities, and user pins may leave several degrees of freedom. A locally underdetermined cell can
-still become determined by the parent's demands. Do not force a local seed just to turn it into a
-profile, or export one arbitrary locally solved ratio as its only possible behavior.
+Internal transport does not become free when recipes share a unit. Estimate it using a candidate
+stack/module arrangement. Keep a small Pareto set rather than hiding the tradeoff in one unexplained
+score.
 
-Flattening entry-level equations across cells is the simplest reliable first implementation. Later,
-eliminating internal variables can produce a smaller boundary constraint system while retaining the
-cell's actual feasible behavior. That is an optimization of the unified model, not a prerequisite
-for grouping or a reason to commit now to opaque independently solved cells.
+### 10. Defer two-dimensional choices, but preserve their requirements
 
-### A staged path which keeps the options open
+Pre-layout decomposition should decide affinity and interfaces, not absolute coordinates. It should
+still emit enough information for layout:
 
-1. Introduce explicit plan membership and stable cell/entry identity. Compile one production problem
-   for each solve scope, with diagnostics mapped back to their originating rows.
-2. Globally solve the flattened CPU entries and derive per-cell interfaces. Splitting or merging
-   organizational cells preserves rates without freezing every child count. This is preferable to
-   the snapshot workaround above once global solving is available.
-3. Add local sandbox and fixed-boundary previews using the same problem representation. Start with
-   equality conditions supported by the current backend.
-4. Add editable boundary targets and supplier restrictions, exposing transfer variables where
-   required. Add a suitable backend when capacities or allocation objectives are introduced.
-5. Add reusable contracts/profiles if they help repetition, independent editing, or solver size.
+- recipes and allocated workloads in each unit;
+- required stack/module candidates and custom remainders;
+- boundary materials, rates, trunk widths, and preferred sides;
+- internal high-volume handoffs which must remain short;
+- shared networks which must branch to several units; and
+- unresolved kernel, machine-port, or transport-tier requirements.
 
-Checks specific to this direction should cover regrouping invariance, one shared supplier serving
-two consumers, isolated plans using identical materials, explicit source restrictions which cannot
-be bypassed through auto supply, intentional imports of internally produced materials, cross-cell
-cycles, unique production with ambiguous allocation, and missing scale constraints. Also check that
-a local fixed-boundary preview leaves neighbours unchanged, that applying a changed boundary
-triggers global validation, and that reordering/removing cells preserves or clearly breaks stable
-references. Keep serialization changes and existing independent-cell behavior part of the migration
-tests.
+Do not infer unit membership from design columns. A unit may span columns, and one column may
+contain several small custom units.
 
-## Suggested delivery and checks
+## Recommended decomposition for the 15-CPU snapshot
 
-1. Add pure subset analysis and explainable suggestions, using the existing solved cell. Show
-   boundary tables and highlighted members, with no persisted changes or solver changes.
-2. Add compatible partition previews, user membership constraints, and repeated workload templates.
-   Compare the three/four-group CPU alternatives and several finishing module sizes.
-3. Add coarse envelopes and routing, then translate accepted arrangements into design columns and
-   detailed entities. Use those routes to refine rankings.
-4. Add actual child-cell creation with explicit snapshot or coupled-solve semantics, URL
-   persistence, and undo.
+The following is a useful first plan, not a uniquely optimal partition:
 
-Behavioral regression cases for implementation:
+| Unit                 | Installed machines | Local work                                      | Main boundary                                       |
+| -------------------- | -----------------: | ----------------------------------------------- | --------------------------------------------------- |
+| Nitrogen utility     |                  8 | compressed air, separation, oxygen void         | no input; nitrogen pipe out                         |
+| Ingot conversion hub |                  3 | molten silicon, silicon powder                  | ingots in; molten pipe and powder belt out          |
+| Mono-silicon stack   |                 25 | seed and mono-silicon                           | molten + nitrogen in; mono-silicon out              |
+| Finishing campus     |                 70 | wafers, silicon nitride, processing electronics | mono, powder, nitrogen, platinum, acid in; CPUs out |
 
-- This snapshot finds the eight-machine nitrogen utility, including oxygen disposal, with no input
-  and exactly one output pipe; balances near `1e-13` produce no phantom interfaces.
-- Wafer relocation exposes one mono-silicon belt instead of seven wafer belts; all other finishing
-  inputs and the twelve-belt output remain in its boundary.
-- Twenty-five 1:12 templates preserve every solved rate and install 325 finishing machines; local
-  branch widths and shared trunk widths are counted separately.
-- Three 10/s products need three strips; 200/s needs seven; rates on either side of a belt threshold
-  round correctly. Changing belt tier reranks using its actual capacity.
-- Multiple suppliers do not duplicate a consumer's demand; nitrogen fan-out conserves the producer's
-  rate; catalysts retain their gross internal transport; cycles retain return paths.
-- Temperature-incompatible flows do not disappear through netting. Partial or conflicting solutions
-  expose uncertainty and cannot claim a balanced, ready-to-split plan. Check solver problem notes
-  and residuals as well as `complete`, which only says every row has a count.
-- Candidate generation is stable under row reorder, accepted constraints hold, overlapping
-  suggestions cannot duplicate work, and every allocation sums to its source workload.
-- A whole-cell candidate cannot erase internal route cost. A smaller interface can lose to an
-  alternative when its internal detours, extra machines, or outside routes are worse.
-- Preview/cancel leaves the cell intact; apply/undo and URL round trips preserve choices,
-  constraints, designs, and active-cell selection; viewport resizing does not alter membership.
+The finishing campus is intentionally a campus rather than one repeated module. Use:
 
-For these notes, the numerical tables and utility-subset result were calculated directly from the
-working `docs/cells/cpu.json` with Node. No grouping UI or solver behavior is implemented here.
+- a shared 28-machine wafer stack along the CPU side, keeping `252/s` of wafers local;
+- three `7 nitride + 4 CPU` neighborhoods;
+- one custom `6 nitride + 3 CPU` remainder carrying only `5.25` nitride workloads; and
+- shared platinum, acid, and CPU trunks sized for the whole campus, with short branches to each
+  neighborhood.
+
+This plan leaves three meaningful alternatives to compare during coarse layout:
+
+1. Move seed production to the ingot-conversion hub if its molten-silicon plumbing is substantially
+   cleaner there.
+2. Attach powder production to the nitride stack instead of the ingot hub if one extra ingot branch
+   is cheaper than the powder route.
+3. Use the `20 wafer + 11 CPU` ratio to make two larger finishing modules if that routes better than
+   a shared wafer bank.
+
+At a planning belt capacity of `30/s`, the important whole-cell flows are:
+
+| Material        | Rate/s | Full-belt trunks | Placement consequence                |
+| --------------- | -----: | ---------------: | ------------------------------------ |
+| Silicon ingots  |  38.48 |                2 | terminate once at the conversion hub |
+| Silicon powder  |  26.25 |                1 | cheaper to carry than nitride        |
+| Mono-silicon    |  19.09 |                1 | carry to the finishing campus        |
+| Wafers          |    252 |                9 | keep inside finishing                |
+| Silicon nitride |     42 |                2 | make beside CPU neighborhoods        |
+| Platinum wire   |    210 |                7 | reserve a major external trunk       |
+| Processing CPUs |    462 |               16 | reserve the dominant export edge     |
+
+These are full-trunk estimates, not direct kernel capacities. Lane assignment may require more local
+lines, while a different selected belt tier will change every item width and may rerank the
+alternatives.
+
+## Invariants for a future implementation
+
+- Every original workload is allocated exactly once; split allocations sum to the original count.
+- Regrouping does not change solved production rates.
+- Installed capacity is rounded per independently buildable stack or module, never globally after
+  discarding the copies.
+- A producer's shared output is conserved across its consumers; fan-out does not duplicate supply.
+- Boundary calculation preserves gross catalyst and return flows and fluid temperature.
+- A proposed module distinguishes its local branches from its shared trunks.
+- An infeasible or unverified kernel cannot be presented as buildable.
+- The unchanged cell remains a baseline, and accepted affinity constraints survive recomputation.
+
+Actually creating independently solved child cells is a later operation. The current solver would
+otherwise rescale unpinned children independently. Until plan-wide solving or explicit boundary
+contracts exist, these units should remain organizational and physical groupings within the one
+solved cell.
