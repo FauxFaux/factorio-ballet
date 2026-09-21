@@ -1,1 +1,2 @@
 - plan support for datasets
+- work out why INGEST.md wants to update INGEST.md instead of do it

@@ -236,6 +236,85 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
   as `[width, height]` and colour as six lowercase hexadecimal digits without `#`; decoding restores
   the named size fields and numeric RGB tuple used by the application.
 
+### Assembler fluid boxes and recipe connections
+
+Do not treat an assembler's pipe positions as one untyped set. There are three nested relationships
+in the prototype data, and a fourth link from a recipe into them:
+
+```text
+recipe fluid ingredient/product --fluidbox_index--> machine fluid box
+                                                    |-- production_type
+                                                    `-- pipe connection(s)
+                                                        |-- flow_direction
+                                                        `-- position/direction
+```
+
+`FluidBox.production_type` describes how the owning crafting machine uses the whole box. Its values
+are `input`, `output`, `input-output`, and `none`, with absent meaning `none`. A fluid box may have
+several `pipe_connections`; those connections are alternative physical access points to the same
+fluid, not separate recipe slots. Consequently, grouping must survive ingestion. Flattening the
+connections first makes it impossible to tell, for example, that two ports expose one ingredient
+slot rather than two independent ingredients.
+
+Each `PipeConnectionDefinition.flow_direction` describes the allowed flow at that individual
+physical port. It is `input`, `output`, or `input-output`, with absent meaning `input-output`. This
+is more precise than the containing box's `production_type` for drawing a connection marker: use the
+connection value to choose the marker's colour/direction, while retaining `production_type` for
+recipe compatibility. The two values need not be identical. In the checked-in Bob's/Angel's dump,
+the three Angel's electric boilers have an `input` fluid box whose two physical connections are
+`input-output`.
+
+Keep the connection's geometry beside its flow direction. `position` is relative to the entity
+centre and `direction` is the direction in which the connection faces when the entity faces north;
+Factorio rotates or mirrors the effective values with the entity. The type also permits four
+orientation-specific `positions` instead of one `position` (the pumpjack is the documented example).
+The current dump uses one array `position` for every crafting-machine connection, and
+`fluidboxConnectionPoints()` deliberately rejects the other form. A richer representation should
+continue rejecting unsupported geometry rather than silently dropping a port.
+
+On the recipe side, a fluid ingredient or product may set `fluidbox_index`. The index is **1-based
+and has separate input and output namespaces**: ingredient index 1 selects the first input fluid
+box, while product index 1 selects the first output fluid box. It is not the raw zero-based array
+offset in `fluid_boxes`. `input-output` boxes participate on the applicable side. The field defaults
+to `0`, which means the recipe did not select a particular box; preserve that as unspecified rather
+than converting it into an array index. Never infer the link from coordinates or from the order of
+the flattened connections.
+
+The representation needed by layout work is therefore shaped like this (names are illustrative, not
+a committed schema):
+
+```ts
+interface MachineFluidBox {
+  productionType: "none" | "input" | "output" | "input-output";
+  connections: Array<{
+    position: { x: number; y: number };
+    direction: number;
+    flowDirection: "input" | "output" | "input-output";
+  }>;
+}
+
+interface RecipeFluid {
+  // Undefined means the raw value was absent/0; positive values remain 1-based.
+  fluidboxIndex?: number;
+}
+```
+
+Resolve a recipe onto a machine in two stages. First classify the recipe value as input
+(`ingredients`) or output (`products`) and use its positive `fluidboxIndex` to select within that
+side's ordered fluid-box list. Then expand the selected box to its physical `connections`. This lets
+the planner answer both distinct questions: _which ports display input/output arrows?_ from
+`flowDirection`, and _which ports carry this particular recipe fluid?_ from the recipe index,
+production side, box grouping, and finally the box's connections.
+
+The current code cannot perform that resolution. `fluidboxConnectionPoints()` flattens every box to
+`{x, y}`, `RIngredient` and `RProduct` accept `fluidbox_index` only as ignored unknown data, and
+`toIng` / `toProd` discard it. When replacing that model, update all four boundaries together: raw
+validators, recipe resource types, machine types, and packed/decode data. Retain the raw box order,
+because the recipe indices refer to it after separating input from output. Add completeness checks
+for a positive recipe index with no corresponding box on every compatible machine, and tests
+covering one box with multiple connections plus boxes whose connection flow differs from their
+production type.
+
 ## Notes for inserters
 
 Inserters need more than one prototype field before a blueprint generator can make a transfer-rate
