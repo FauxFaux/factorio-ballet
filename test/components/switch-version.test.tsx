@@ -3,7 +3,7 @@
 import { cleanup, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { SwitchVersion } from '../src/components/switch-version.tsx';
+import { SwitchVersion } from '../../src/components/switch-version.tsx';
 
 describe('SwitchVersion', () => {
   afterEach(() => {

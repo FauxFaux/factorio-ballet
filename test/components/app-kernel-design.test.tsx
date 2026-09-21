@@ -3,14 +3,14 @@
 import { render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { App } from '../src/app.tsx';
-import { generateAssemblerDesign } from '../src/compute/assembler-design.ts';
-import { CARBON_LIGHT_SHORT } from '../src/compute/colours.ts';
-import { resolveChosen } from '../src/data/index.ts';
-import { inserterItemsPerSecondForBeltAtProgress } from '../src/data/inserter-throughput.ts';
-import { kernelProblems } from '../src/compute/kernel-problems.ts';
-import { fmt } from '../src/ts.ts';
-import type { UrlState } from '../src/boot/url-handler.tsx';
+import { App } from '../../src/app.tsx';
+import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
+import { CARBON_LIGHT_SHORT } from '../../src/compute/colours.ts';
+import { resolveChosen } from '../../src/data';
+import { inserterItemsPerSecondForBeltAtProgress } from '../../src/data/inserter-throughput.ts';
+import { kernelProblems } from '../../src/compute/kernel-problems.ts';
+import { fmt } from '../../src/ts.ts';
+import type { UrlState } from '../../src/boot/url-handler.tsx';
 
 const kernelDesignState: UrlState = {
   v: 1,

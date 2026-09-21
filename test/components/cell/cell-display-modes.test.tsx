@@ -2,10 +2,10 @@
 import { cleanup, render, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
-import state from './assets/uranium.state.json';
-import type { Cell } from '../src/cell.ts';
-import { resolveChosen, resourceName } from '../src/data/index.ts';
-import { CellBox } from '../src/components/cell/box.tsx';
+import state from '../../assets/uranium.state.json';
+import type { Cell } from '../../../src/cell.ts';
+import { resolveChosen, resourceName } from '../../../src/data';
+import { CellBox } from '../../../src/components/cell/box.tsx';
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen({}, undefined, undefined, state.gp);

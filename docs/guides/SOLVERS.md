@@ -156,8 +156,9 @@ It does not recommend underdetermined trials, combinations of boundaries, or cha
 
 1. Preserve the user's state and debug fixtures. Resolve the same progress, machines, modules and
    beacons as the UI. `solveCell` defaults to `NO_CHOICE`; calling it without the saved header's
-   resolved `Chosen` can reproduce different rates. `test/cell-export.test.tsx` shows how to resolve
-   the uranium fixture using `resolveChosen`.
+   resolved `Chosen` can reproduce different rates.
+   `../../test/components/cell/cell-export.test.tsx` shows how to resolve the uranium fixture using
+   `resolveChosen`.
 2. Run both solvers through `solveCell` and inspect `counts`, all `notes` (including fallback
    `failure`), and `[...solution.balance]`. Maps stringify as `{}` unless explicitly converted.
 3. Identify each resource's producers, consumers and desired boundary direction. Write its balance

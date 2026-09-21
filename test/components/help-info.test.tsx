@@ -4,7 +4,7 @@ import { cleanup, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { HelpInfo } from '../src/components/help-info.tsx';
+import { HelpInfo } from '../../src/components/help-info.tsx';
 
 describe('HelpInfo', () => {
   afterEach(cleanup);

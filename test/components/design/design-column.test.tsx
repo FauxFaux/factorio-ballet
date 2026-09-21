@@ -2,13 +2,13 @@
 
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
-import { DesignColumn } from '../src/components/design/design-column.tsx';
-import { beltLoopEntityIndexes } from '../src/components/design/design-belts.ts';
+import { DesignColumn } from '../../../src/components/design/design-column.tsx';
+import { beltLoopEntityIndexes } from '../../../src/components/design/design-belts.ts';
 import {
   entityPositionStatuses,
   worldToViewport,
-} from '../src/components/design/design-entities.tsx';
-import type { DesignColumn as DesignColumnData } from '../src/compute/design.ts';
+} from '../../../src/components/design/design-entities.tsx';
+import type { DesignColumn as DesignColumnData } from '../../../src/compute/design.ts';
 
 afterEach(cleanup);
 

@@ -6,8 +6,8 @@ import {
   designBounds,
   DesignPreview,
   fitDesignPreview,
-} from '../src/components/design/design-preview.tsx';
-import type { DesignEntity } from '../src/compute/design.ts';
+} from '../../../src/components/design/design-preview.tsx';
+import type { DesignEntity } from '../../../src/compute/design.ts';
 
 const entities: DesignEntity[] = [
   {

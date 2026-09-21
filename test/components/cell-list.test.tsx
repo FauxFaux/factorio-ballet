@@ -4,11 +4,11 @@ import { cleanup, render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it } from 'vitest';
-import { CellList } from '../src/components/cell-list.tsx';
-import { CellLayoutSurface } from '../src/components/layout/layout.tsx';
-import { newCell, type Cell } from '../src/cell.ts';
-import { NO_CHOICE } from '../src/data/index.ts';
-import type { ResourceId } from '../src/types.ts';
+import { CellList } from '../../src/components/cell-list.tsx';
+import { CellLayoutSurface } from '../../src/components/layout/layout.tsx';
+import { newCell, type Cell } from '../../src/cell.ts';
+import { NO_CHOICE } from '../../src/data';
+import type { ResourceId } from '../../src/types.ts';
 
 afterEach(cleanup);
 

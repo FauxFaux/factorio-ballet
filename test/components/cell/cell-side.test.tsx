@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 import { cleanup, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
-import { CellSide } from '../src/components/cell/side.tsx';
-import { staticData } from '../src/data/decode.ts';
-import type { Solution } from '../src/solve/index.ts';
-import type { Belt, ResourceId } from '../src/types.ts';
+import { CellSide } from '../../../src/components/cell/side.tsx';
+import { staticData } from '../../../src/data/decode.ts';
+import type { Solution } from '../../../src/solve';
+import type { Belt, ResourceId } from '../../../src/types.ts';
 
 afterEach(cleanup);
 
