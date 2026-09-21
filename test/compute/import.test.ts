@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import { cellFromConfiguration, decodeImportUrl, decodeUrl } from '../src/compute/import.ts';
-import bobang from '../src/assets/factoriolab-bobang-hash.json';
+import { cellFromConfiguration, decodeImportUrl, decodeUrl } from '../../src/compute/import.ts';
+import bobang from '../../src/assets/factoriolab-bobang-hash.json';
 
 describe('decodeUrl', () => {
   it('decodes the persisted proc-rs URL', () => {
@@ -23,7 +23,7 @@ describe('decodeUrl', () => {
 describe('decodeImportUrl', () => {
   it('inflates a compressed FactorioLab v11 URL and preserves its wire parameters', () => {
     const url = readFileSync(
-      new URL('./assets/factoriolab-cpu.txt', import.meta.url),
+      new URL('../assets/factoriolab-cpu.txt', import.meta.url),
       'utf8',
     ).trim();
     const decoded = decodeImportUrl(url, { bobang });
@@ -63,7 +63,7 @@ describe('decodeImportUrl', () => {
 
   it('requires injected hash data for compressed datasets', () => {
     const url = readFileSync(
-      new URL('./assets/factoriolab-cpu.txt', import.meta.url),
+      new URL('../assets/factoriolab-cpu.txt', import.meta.url),
       'utf8',
     ).trim();
 

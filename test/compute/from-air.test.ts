@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { fromAirStages } from '../src/components/from-air.tsx';
-import { staticData } from '../src/data/decode.ts';
-import { fromAirSuggestionStages } from '../src/compute/from-air.ts';
-import type { Recipe, ResourceId } from '../src/types.ts';
+import { fromAirStages } from '../../src/components/from-air.tsx';
+import { staticData } from '../../src/data/decode.ts';
+import { fromAirSuggestionStages } from '../../src/compute/from-air.ts';
+import type { Recipe, ResourceId } from '../../src/types.ts';
 
 const recipe = (
   ingredients: ResourceId[],

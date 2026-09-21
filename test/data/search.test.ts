@@ -6,8 +6,8 @@ import {
   searchMatches,
   searchRecipes,
   type SearchScope,
-} from '../src/data/search.ts';
-import { packLandmarks, relevanceOf } from '../src/data/index.ts';
+} from '../../src/data/search.ts';
+import { packLandmarks, relevanceOf } from '../../src/data/index.ts';
 
 describe('resolveResources', () => {
   it('takes an exact resource id alone', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
-import type { Cell } from '../src/cell.ts';
-import { staticData } from '../src/data/decode.ts';
-import { packCells, unpackCells } from '../src/boot/pack.ts';
+import type { Cell } from '../../src/cell.ts';
+import { staticData } from '../../src/data/decode.ts';
+import { packCells, unpackCells } from '../../src/boot/pack.ts';
 
 const recipe = Object.keys(staticData.recipes)[0];
 const machine = Object.keys(staticData.machines)[0];
@@ -132,7 +132,7 @@ describe('packCells', () => {
 
   it('substantially shrinks a belt-heavy design', () => {
     const state = JSON.parse(
-      readFileSync(new URL('assets/belts.state.json', import.meta.url), 'utf8'),
+      readFileSync(new URL('../assets/belts.state.json', import.meta.url), 'utf8'),
     ) as { cl: Cell[] };
     const originalLength = JSON.stringify(state.cl).length;
     const packed = packCells(state.cl);

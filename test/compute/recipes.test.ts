@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { isBarrelling, isSynthetic, isUnbarrelling, isVoid } from '../src/compute/recipes.ts';
-import { staticData } from '../src/data/decode.ts';
+import { isBarrelling, isSynthetic, isUnbarrelling, isVoid } from '../../src/compute/recipes.ts';
+import { staticData } from '../../src/data/decode.ts';
 
 describe('recipe kinds', () => {
   it('detects void recipes', () => {

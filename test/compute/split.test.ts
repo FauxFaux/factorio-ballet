@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import type { CellEntry } from '../src/cell.ts';
-import type { Solution } from '../src/solve/index.ts';
-import { proposedSplits } from '../src/compute/split.ts';
-import type { ResourceId } from '../src/types.ts';
+import type { CellEntry } from '../../src/cell.ts';
+import type { Solution } from '../../src/solve/index.ts';
+import { proposedSplits } from '../../src/compute/split.ts';
+import type { ResourceId } from '../../src/types.ts';
 
 const recipeRows = [
   {

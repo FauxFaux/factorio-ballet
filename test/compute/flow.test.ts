@@ -1,8 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { flowTitle, netRates, productAmount, recipeFlows, speedOf } from '../src/compute/flow.ts';
-import { NO_EFFECTS } from '../src/data/module-effects.ts';
-import { machinesFor } from '../src/data/machines.ts';
-import { staticData } from '../src/data/decode.ts';
+import {
+  flowTitle,
+  netRates,
+  productAmount,
+  recipeFlows,
+  speedOf,
+} from '../../src/compute/flow.ts';
+import { NO_EFFECTS } from '../../src/data/module-effects.ts';
+import { machinesFor } from '../../src/data/machines.ts';
+import { staticData } from '../../src/data/decode.ts';
 
 const gears = staticData.recipes['iron-gear-wheel'];
 /** Three results, the rarest of them 0.0055% of a craft: the reason for the third decimal. */

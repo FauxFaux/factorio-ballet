@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../src/data/decode.ts';
+import { staticData } from '../../src/data/decode.ts';
 import {
   inserterItemsPerSecond,
   inserterItemsPerSecondAtProgress,
   inserterItemsPerSecondForBeltAtProgress,
-} from '../src/data/inserter-throughput.ts';
-import type { Belt, Inserter, InserterCapacityBonus } from '../src/types.ts';
+} from '../../src/data/inserter-throughput.ts';
+import type { Belt, Inserter, InserterCapacityBonus } from '../../src/types.ts';
 
 const fastInserter: Inserter = {
   rotationSpeed: 0.04,

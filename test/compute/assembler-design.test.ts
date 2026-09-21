@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { generateAssemblerDesign } from '../src/compute/assembler-design.ts';
-import { entityPositionStatuses } from '../src/components/design/design-entities.tsx';
-import { designBounds } from '../src/components/design/design-preview.tsx';
-import { kernelProblems } from '../src/compute/kernel-problems.ts';
+import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
+import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
+import { designBounds } from '../../src/components/design/design-preview.tsx';
+import { kernelProblems } from '../../src/compute/kernel-problems.ts';
 
 const throughput = {
   beltItemsPerSecond: 30,
