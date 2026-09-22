@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { describe, expect, it } from 'vitest';
-import { KernelDesignButton } from '../../src/components/kernel-design-button.tsx';
+import { KernelDebugButton } from '../../src/components/kernel-debug-button.tsx';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
 
 const initialState: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };
@@ -13,13 +13,13 @@ function KernelDesignButtonExample() {
   const uss = useState(initialState);
   return (
     <>
-      <KernelDesignButton uss={uss} />
+      <KernelDebugButton uss={uss} />
       <output>{uss[0].kd ? 'kernel design' : 'normal'}</output>
     </>
   );
 }
 
-describe('KernelDesignButton', () => {
+describe('KernelDebugButton', () => {
   it('toggles the kernel-design URL state', async () => {
     const user = userEvent.setup();
     render(<KernelDesignButtonExample />);

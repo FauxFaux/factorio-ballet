@@ -4,8 +4,8 @@ import {
   beltsPerAssemblerColumn,
   stackAssemblerDistricts,
   type AssemblerDistrict,
-} from '../src/components/cell/assembler-layout.ts';
-import type { Recipe, ResourceId } from '../src/types.ts';
+} from '../../../src/components/radar/radar-assembler-layout.ts';
+import type { Recipe, ResourceId } from '../../../src/types.ts';
 
 describe('assemblerColumnLayout', () => {
   it('wraps assemblers that exceed the radar height into another column', () => {

@@ -1,4 +1,4 @@
-import './kernel-design.css';
+import './kernel-debug.css';
 import type { Chosen } from '../data/index.ts';
 import { generateAssemblerDesign, isAssemblerDesignFailure } from '../compute/assembler-design.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';

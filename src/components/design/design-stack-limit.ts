@@ -3,7 +3,7 @@ import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems
 import type { ResourceId } from '../../types.ts';
 import type { DesignSceneRecipes } from './design-scene.tsx';
 import { beltInputItemTraces, beltItemLaneCounts, beltItemTraces } from './design-belt-traces.ts';
-import { MAX_ASSEMBLER_STACK_HEIGHT } from '../cell/assembler-layout.ts';
+import { MAX_ASSEMBLER_STACK_HEIGHT } from '../radar/radar-assembler-layout.ts';
 
 /** Maximum copies which fit both the kernel's belt lanes and the brick's physical height. */
 export function beltStackLimit(

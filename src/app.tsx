@@ -17,7 +17,7 @@ import { UnlitFilter } from './components/unlit-module-icon.tsx';
 import { RecipeSuggestions } from './components/recipe-suggestions/recipe-suggestions.tsx';
 import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
 import { RailBlueprints } from './components/rail-blueprints.tsx';
-import { KernelDesignButton } from './components/kernel-design-button.tsx';
+import { KernelDebugButton } from './components/kernel-debug-button.tsx';
 import { KernelDebug } from './components/kernel-debug.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
 
@@ -82,7 +82,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
             <DebugButton uss={uss} />
             <FromAirButton uss={uss} />
             <RailBlueprintButton uss={uss} />
-            <KernelDesignButton uss={uss} />
+            <KernelDebugButton uss={uss} />
           </div>
         </div>
       </header>
