@@ -6,8 +6,7 @@ import { allKernelProblems } from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
 import { DesignCard } from './design/design-card.tsx';
 
-/** The standalone workspace where a reusable factory kernel will be composed. */
-export function KernelDesign({ progress, chosen }: { progress: number; chosen: Chosen }) {
+export function KernelDebug({ progress, chosen }: { progress: number; chosen: Chosen }) {
   const throughput = {
     beltItemsPerSecond: chosen.belt.itemsPerSecond,
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
