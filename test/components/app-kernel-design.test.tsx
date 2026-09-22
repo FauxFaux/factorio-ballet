@@ -83,9 +83,7 @@ describe('App', () => {
     const articleForProblem = (problem: KernelProblem) =>
       articles[sortedProblems.indexOf(problem)]!;
     expect(articles).toHaveLength(allKernelProblems.length);
-    expect(screen.queryAllByRole('region', { name: 'Assembler 1 preview' })).toHaveLength(
-      solutionCount,
-    );
+    expect(screen.queryAllByRole('region', { name: / preview$/ })).toHaveLength(solutionCount);
     expect(screen.queryAllByText('[no solution]')).toHaveLength(
       allKernelProblems.length - solutionCount,
     );
@@ -93,7 +91,7 @@ describe('App', () => {
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
     expect(cardTitles).toEqual(
-      allKernelProblems.map((problem) => problem.assemblers.map(({ name }) => name).join(', ')),
+      sortedProblems.map((problem) => problem.assemblers.map(({ name }) => name).join(', ')),
     );
     expect(
       articles.slice(solutionCount).every((article) => within(article).getByText('[no solution]')),

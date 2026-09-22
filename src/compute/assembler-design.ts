@@ -53,9 +53,9 @@ const wideInputSiteGroups: InputSite[][] = [
 /**
  * Generate a vertically tileable assembler design supported by the current transport kernels.
  *
- * The fluid kernels support one trunk and the solid kernels support one product. Filtered
- * multi-product output and simultaneous fluid input/output deliberately have no solution. Each
- * input belt may carry two solid resources, one per lane, and the kernel adds belts when lane
+ * The ordinary fluid kernels support one trunk, while machines with suitable opposing ports can
+ * connect a fluid input and output to separate trunks. The solid kernels support one product.
+ * Each input belt may carry two solid resources, one per lane, and the kernel adds belts when lane
  * count or transfer throughput requires them.
  */
 export function generateAssemblerDesign(
@@ -75,7 +75,7 @@ export function generateAssemblerDesign(
   if (problem.assemblers.length !== 1) return undefined;
   const hasFluidInput = hasRates(problem.inputs.fluids);
   const hasFluidOutput = hasRates(problem.outputs.fluids);
-  if (hasFluidInput && hasFluidOutput) return undefined;
+  if (hasFluidInput && hasFluidOutput) return generateDualFluidDesign(problem);
   if (hasFluidInput) {
     return generateFluidInputDesign(problem, throughput);
   }
@@ -133,6 +133,61 @@ export function generateAssemblerDesign(
     ...verticalBelt(outputBeltX, 'south'),
   ];
 
+  return { columns: [{ entities }] };
+}
+
+function generateDualFluidDesign(problem: KernelProblem): FactoryDesign | undefined {
+  const specification = problem.assemblers[0];
+  const fluidInputs = positiveRates(problem.inputs.fluids);
+  const fluidOutputs = positiveRates(problem.outputs.fluids);
+  const solidInputs = optionalPositiveRates(problem.inputs.solids);
+  const solidOutputs = optionalPositiveRates(problem.outputs.solids);
+  if (
+    fluidInputs?.length !== 1 ||
+    fluidOutputs?.length !== 1 ||
+    solidInputs?.length !== 0 ||
+    solidOutputs?.length !== 0 ||
+    !specification.size ||
+    !specification.fluidBoxes
+  ) {
+    return undefined;
+  }
+
+  // Turning the north-facing geometry east puts a south input on the west trunk and a north
+  // output on the east trunk. Requiring those physical ports keeps this special layout honest for
+  // machines whose fluid boxes have a different shape.
+  const hasWestInput = specification.fluidBoxes.some(
+    (box) =>
+      (box.productionType === 'input' || box.productionType === 'input-output') &&
+      box.connections.some(
+        (connection) =>
+          (connection.flowDirection === 'input' || connection.flowDirection === 'input-output') &&
+          connection.direction === 'south',
+      ),
+  );
+  const hasEastOutput = specification.fluidBoxes.some(
+    (box) =>
+      (box.productionType === 'output' || box.productionType === 'input-output') &&
+      box.connections.some(
+        (connection) =>
+          (connection.flowDirection === 'output' || connection.flowDirection === 'input-output') &&
+          connection.direction === 'north',
+      ),
+  );
+  if (!hasWestInput || !hasEastOutput) return undefined;
+
+  const size = { width: specification.size.height, height: specification.size.width };
+  const entities: DesignEntity[] = [
+    ...pipeTrunk(0, size.height),
+    {
+      kind: 'assembler',
+      position: { x: 1, y: 0 },
+      size,
+      recipe: specification.name,
+      direction: 'east',
+    },
+    ...pipeTrunk(size.width + 1, size.height),
+  ];
   return { columns: [{ entities }] };
 }
 
@@ -255,16 +310,17 @@ function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
   return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
 }
 
-function pipeTrunk(): DesignEntity[] {
-  return [0, 1, 2].map((y) => ({ kind: 'pipe', position: { x: 0, y } }));
+function pipeTrunk(x = 0, height = 3): DesignEntity[] {
+  return Array.from({ length: height }, (_, y) => ({ kind: 'pipe', position: { x, y } }));
 }
 
 function assembler(problem: KernelProblem, x: number): DesignEntity {
+  const specification = problem.assemblers[0];
   return {
     kind: 'assembler',
     position: { x, y: 0 },
-    size: { width: 3, height: 3 },
-    recipe: problem.assemblers[0].name,
+    size: specification.size ?? { width: 3, height: 3 },
+    recipe: specification.name,
   };
 }
 

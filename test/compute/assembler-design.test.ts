@@ -3,7 +3,7 @@ import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
 import { physicalStackLimit } from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
-import { assemblerProblem } from '../../src/compute/kernel-problems.ts';
+import { airFilterProblem, assemblerProblem } from '../../src/compute/kernel-problems.ts';
 
 const throughput = {
   beltItemsPerSecond: 30,
@@ -276,7 +276,7 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
-  it('has no solution for multiple solid outputs or simultaneous fluid input and output', () => {
+  it('has no solution for multiple solid outputs or dual fluids without port geometry', () => {
     expect(
       generateAssemblerDesign(
         assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
@@ -289,5 +289,50 @@ describe('generateAssemblerDesign', () => {
         throughput,
       ),
     ).toBeUndefined();
+  });
+
+  it.each([
+    [
+      { width: 3, height: 5 },
+      { width: 5, height: 3 },
+    ],
+    [
+      { width: 5, height: 3 },
+      { width: 3, height: 5 },
+    ],
+    [
+      { width: 5, height: 5 },
+      { width: 5, height: 5 },
+    ],
+  ] as const)('rotates a %j air filter between separate fluid trunks', (prototypeSize, size) => {
+    const design = generateAssemblerDesign(airFilterProblem(prototypeSize), throughput);
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'assembler')).toEqual([
+      {
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size,
+        recipe: `Air filter ${prototypeSize.width}×${prototypeSize.height}`,
+        direction: 'east',
+      },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
+      ...Array.from({ length: size.height }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 0, y },
+      })),
+      ...Array.from({ length: size.height }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: size.width + 1, y },
+      })),
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    expect(designBounds(entities)).toEqual({
+      minX: 0,
+      maxX: size.width + 2,
+      minY: 0,
+      maxY: size.height,
+    });
   });
 });
