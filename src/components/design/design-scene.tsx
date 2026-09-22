@@ -66,7 +66,8 @@ export function DesignScene({
   onEntityLeave?: (entityIndex: number) => void;
 }) {
   const entityStatuses = entityPositionStatuses(column.entities);
-  const assemblerStatuses = assemblerInputStatuses(column, recipes);
+  const boundaryItemTraces = items ? beltInputItemTraces(column, recipes) : undefined;
+  const assemblerStatuses = assemblerInputStatuses(column, recipes, boundaryItemTraces);
   const fluidTraces = designFluidTraces(column, recipes, machinesByRecipe, items !== undefined);
   for (const [assemblerIndex, fluidStatus] of fluidTraces.assemblerStatuses) {
     const itemStatus = assemblerStatuses.get(assemblerIndex);
@@ -78,8 +79,8 @@ export function DesignScene({
   }
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
   const itemTracesByBelt = beltItemTraces(column, recipes, items !== undefined);
-  if (items) {
-    for (const [beltIndex, inputTraces] of beltInputItemTraces(column, recipes)) {
+  if (boundaryItemTraces) {
+    for (const [beltIndex, inputTraces] of boundaryItemTraces) {
       const outputTraces = itemTracesByBelt.get(beltIndex) ?? [];
       itemTracesByBelt.set(beltIndex, [
         ...outputTraces,

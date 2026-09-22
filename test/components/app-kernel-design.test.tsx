@@ -139,6 +139,11 @@ describe('App', () => {
     const firstPreview = within(articleForProblem(firstSolidProblem)).getByRole('region', {
       name: 'Assembler 1 preview',
     });
+    const firstAssembler = within(firstPreview).getByRole('img', {
+      name: 'Assembler 1 assembler at 2, 0',
+    });
+    expect(firstAssembler.getAttribute('title')).toBe('Assembler 1 (2, 0)');
+    expect(firstAssembler.className).not.toContain('inputs-missing');
     const inputBelts = within(firstPreview).getAllByRole('img', {
       name: /Transport belt at 0, \d, pointing north/,
     });

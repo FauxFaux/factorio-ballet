@@ -38,6 +38,7 @@ export interface AssemblerInputStatus {
 export function assemblerInputStatuses(
   column: DesignColumn,
   recipes: RecipeIngredients & RecipeProducts,
+  boundaryTraces?: ReadonlyMap<number, BeltItemTrace[]>,
 ): Map<number, AssemblerInputStatus> {
   const analysis = analyzeDesignLanes(column, recipes);
   const suppliedByAssembler = new Map<number, Set<ResourceId>>();
@@ -60,7 +61,9 @@ export function assemblerInputStatuses(
     connectedAssemblers.add(assemblerIndex);
     const supplied = suppliedByAssembler.get(assemblerIndex) ?? new Set<ResourceId>();
     for (const lane of transfer.sourceBeltLanes) {
-      const item = singleLaneItem(analysis.contents.get(beltLaneKey(lane)));
+      const item =
+        singleLaneItem(analysis.contents.get(beltLaneKey(lane))) ??
+        boundaryTraces?.get(lane.entityNumber)?.find(({ side }) => side === lane.lane)?.item;
       if (item) supplied.add(item);
     }
     suppliedByAssembler.set(assemblerIndex, supplied);
