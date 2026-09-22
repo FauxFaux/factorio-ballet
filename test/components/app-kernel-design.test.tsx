@@ -92,7 +92,9 @@ describe('App', () => {
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
-    expect(cardTitles).toEqual(allKernelProblems.map(() => 'Assembler 1'));
+    expect(cardTitles).toEqual(
+      allKernelProblems.map((problem) => problem.assemblers.map(({ name }) => name).join(', ')),
+    );
     expect(
       articles.slice(solutionCount).every((article) => within(article).getByText('[no solution]')),
     ).toBe(true);
@@ -120,7 +122,7 @@ describe('App', () => {
     ).toBeTruthy();
     expect(screen.queryByText('Assemblers')).toBeNull();
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(18);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(24);
     for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
     }

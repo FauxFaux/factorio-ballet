@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import {
+  airFilterProblem,
   allKernelProblems,
   assemblerProblem,
   kernelProblems,
@@ -49,12 +50,51 @@ describe('kernelProblems', () => {
       'fluidInput',
       'fluidOutput',
       'fluidInputAndOutput',
+      'airFilter',
     ]);
     expect(kernelProblems.solid).toHaveLength(6);
     expect(kernelProblems.fluidInput).toHaveLength(4);
     expect(kernelProblems.fluidOutput).toHaveLength(6);
     expect(kernelProblems.fluidInputAndOutput).toHaveLength(4);
-    expect(allKernelProblems).toHaveLength(20);
+    expect(kernelProblems.airFilter).toHaveLength(3);
+    expect(allKernelProblems).toHaveLength(23);
+  });
+
+  it('generates air filters with centred south input and north output ports', () => {
+    for (const size of [
+      { width: 3, height: 5 },
+      { width: 5, height: 3 },
+      { width: 5, height: 5 },
+    ]) {
+      const problem = airFilterProblem(size);
+      const assembler = problem.assemblers[0];
+
+      expect(assembler?.size).toEqual(size);
+      expect(assembler?.fluidBoxes).toEqual([
+        {
+          productionType: 'input',
+          connections: [
+            {
+              position: { x: 0, y: Math.floor(size.height / 2) },
+              direction: 'south',
+              flowDirection: 'input',
+            },
+          ],
+        },
+        {
+          productionType: 'output',
+          connections: [
+            {
+              position: { x: 0, y: -Math.floor(size.height / 2) },
+              direction: 'north',
+              flowDirection: 'output',
+            },
+          ],
+        },
+      ]);
+      expect(problem.inputs.fluids).toEqual({ 'fluid 1': 200 });
+      expect(problem.outputs.fluids).toEqual({ 'fluid 2': 200 });
+    }
   });
 
   it('uses 200 per second for every example fluid', () => {

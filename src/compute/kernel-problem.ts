@@ -1,4 +1,5 @@
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
+import type { MachineFluidBox, MachineSize } from '../types.ts';
 
 /** Rates for the resources crossing one side of a kernel boundary. */
 export type ResourceRates = Record<string, number>;
@@ -14,6 +15,10 @@ export interface AssemblerSpecification {
   name: string;
   inputPerSecond: ResourceRates;
   outputPerSecond: ResourceRates;
+  /** The machine's tile footprint when a problem needs non-default geometry. */
+  size?: MachineSize;
+  /** Physical fluid slots and ports; recipe-fluid assignment is intentionally separate. */
+  fluidBoxes?: MachineFluidBox[];
 }
 
 /** A factory-kernel task, including its boundary contract and the machines it must contain. */
@@ -30,6 +35,8 @@ export interface AssemblerProblemOptions {
   fluidInputs?: readonly number[];
   solidOutputs?: readonly number[];
   fluidOutputs?: readonly number[];
+  size?: MachineSize;
+  fluidBoxes?: MachineFluidBox[];
 }
 
 /** Build a one-assembler problem with distinct synthetic resources for each flow. */
@@ -39,6 +46,8 @@ export function assemblerProblem({
   fluidInputs = [],
   solidOutputs = [],
   fluidOutputs = [],
+  size,
+  fluidBoxes,
 }: AssemblerProblemOptions): KernelProblem {
   const inputs: KernelFlows = {
     solids: resourceRates('item', solidInputs),
@@ -57,6 +66,8 @@ export function assemblerProblem({
         name: assemblerName,
         inputPerSecond: { ...inputs.solids, ...inputs.fluids },
         outputPerSecond: { ...outputs.solids, ...outputs.fluids },
+        ...(size ? { size } : {}),
+        ...(fluidBoxes ? { fluidBoxes } : {}),
       },
     ],
     design: newFactoryDesign(),
