@@ -50,4 +50,39 @@ describe('the ingested machine geometry', () => {
       [3, 'fluid:steam'],
     ]);
   });
+
+  it('merges every box on a side for one unindexed fluid', () => {
+    const resources = fluidBoxResources(staticData.machines['chemical-plant'], {
+      ingredients: [
+        { resource: 'fluid:angels-gas-oxygen' },
+        { resource: 'fluid:angels-gas-nitrogen-monoxide' },
+      ],
+      products: [{ resource: 'fluid:angels-gas-nitrogen-dioxide' }],
+    });
+
+    expect([...resources]).toEqual([
+      [0, 'fluid:angels-gas-oxygen'],
+      [1, 'fluid:angels-gas-nitrogen-monoxide'],
+      [2, 'fluid:angels-gas-nitrogen-dioxide'],
+      [3, 'fluid:angels-gas-nitrogen-dioxide'],
+    ]);
+  });
+
+  it('gives an indivisible extra box to the earlier unindexed fluid', () => {
+    const resources = fluidBoxResources(staticData.machines['oil-refinery'], {
+      ingredients: [{ resource: 'fluid:angels-liquid-vegetable-oil' }],
+      products: [
+        { resource: 'fluid:angels-liquid-fuel-oil' },
+        { resource: 'fluid:angels-liquid-mineral-oil' },
+      ],
+    });
+
+    expect([...resources]).toEqual([
+      [0, 'fluid:angels-liquid-vegetable-oil'],
+      [1, 'fluid:angels-liquid-vegetable-oil'],
+      [2, 'fluid:angels-liquid-fuel-oil'],
+      [3, 'fluid:angels-liquid-fuel-oil'],
+      [4, 'fluid:angels-liquid-mineral-oil'],
+    ]);
+  });
 });

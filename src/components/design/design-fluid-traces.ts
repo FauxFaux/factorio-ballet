@@ -170,7 +170,13 @@ export function assemblerFluidboxConnections(
   );
 }
 
-/** Match recipe fluids to the machine's ordered, side-specific fluid-box indexes. */
+/**
+ * Match recipe fluids to the machine's ordered, side-specific fluid-box indexes.
+ *
+ * Factorio merges unindexed boxes into contiguous groups. Divide the remaining boxes as evenly as
+ * possible between the remaining fluids, giving an indivisible extra box to the earlier fluid.
+ * See docs/FLUIDBOXES.md.
+ */
 export function fluidBoxResources(
   machine: Pick<Machine, 'fluidBoxes'>,
   recipe: DesignSceneRecipes[string] | undefined,
@@ -192,9 +198,13 @@ export function fluidBoxResources(
       if (boxIndex !== undefined) result.set(boxIndex, fluid.resource);
     }
     const unclaimed = boxes.filter((boxIndex) => !result.has(boxIndex));
-    for (const fluid of fluidResources.filter(({ fluidboxIndex }) => !fluidboxIndex)) {
-      const boxIndex = unclaimed.shift();
-      if (boxIndex !== undefined) result.set(boxIndex, fluid.resource);
+    const unindexed = fluidResources.filter(({ fluidboxIndex }) => !fluidboxIndex);
+    for (const [fluidIndex, fluid] of unindexed.entries()) {
+      const remainingFluids = unindexed.length - fluidIndex;
+      const boxCount = Math.ceil(unclaimed.length / remainingFluids);
+      for (const boxIndex of unclaimed.splice(0, boxCount)) {
+        result.set(boxIndex, fluid.resource);
+      }
     }
   };
 

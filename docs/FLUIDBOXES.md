@@ -8,10 +8,10 @@ it in the planner.
 
 ## Documented model
 
-A crafting machine declares an ordered `fluid_boxes` array. Each `FluidBox` has a
-`production_type` (`input`, `output`, `input-output`, or `none`) and one or more physical pipe
-connections. Multiple pipe connections within one prototype box expose the same storage; they are
-not separate recipe slots.
+A crafting machine declares an ordered `fluid_boxes` array. Each `FluidBox` has a `production_type`
+(`input`, `output`, `input-output`, or `none`) and one or more physical pipe connections. Multiple
+pipe connections within one prototype box expose the same storage; they are not separate recipe
+slots.
 
 A fluid ingredient or product may set `fluidbox_index`. The prototype API says that this index is
 1-based, is counted separately for input and output boxes, and selects one box. Its default is `0`,
@@ -87,12 +87,12 @@ remainder goes to the earlier fluid in recipe order.
 
 ## Inferred unindexed allocation rule
 
-The observations are consistent with treating inputs and outputs independently and partitioning
-the remaining compatible prototype boxes into contiguous groups for the remaining unindexed recipe
+The observations are consistent with treating inputs and outputs independently and partitioning the
+remaining compatible prototype boxes into contiguous groups for the remaining unindexed recipe
 fluids. At each step, the next fluid receives:
 
 ```ts
-Math.ceil(remainingBoxes / remainingFluids)
+Math.ceil(remainingBoxes / remainingFluids);
 ```
 
 boxes from the front of the ordered list.
@@ -124,8 +124,8 @@ explicitly select output indexes 2 and 1.
 
 The unresolved case is the precise interaction between explicitly claimed boxes and unindexed
 fluids. A plausible planner model is to remove explicitly claimed boxes and apply the contiguous
-partition rule to the remaining compatible boxes, but that extension is not established by the
-three observations above and needs an in-game fixture before being relied upon.
+partition rule to the remaining compatible boxes, but that extension is not established by the three
+observations above and needs an in-game fixture before being relied upon.
 
 ## Implication for the planner
 
