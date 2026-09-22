@@ -97,7 +97,8 @@ function assemblerItemIngredients(
 }
 
 /**
- * Return the individually traceable items on each ordinary transport belt.
+ * Return the individually traceable items on each transport-belt surface, including underground
+ * endpoints.
  *
  * An empty or mixed lane deliberately has no trace here because it has no single item to show.
  */
@@ -110,7 +111,7 @@ export function beltItemTraces(
   const traces = new Map<number, BeltItemTrace[]>();
 
   column.entities.forEach((entity, entityIndex) => {
-    if (entity.kind !== 'belt') return;
+    if (entity.kind !== 'belt' && entity.kind !== 'underground-belt') return;
     const beltTraces = (['left', 'right'] as const).flatMap((side) => {
       const item = singleLaneItem(
         contents.get(beltLaneKey({ entityNumber: entityIndex, line: 'left', lane: side })),
@@ -266,7 +267,11 @@ function tracesFromLaneItems(
   const traces = new Map<number, BeltItemTrace[]>();
   for (const [key, items] of itemsByLane) {
     const lane = lanes.get(key);
-    if (!lane || items.size !== 1 || column.entities[lane.entityNumber]?.kind !== 'belt') continue;
+    if (!lane || items.size !== 1) continue;
+    const entity = column.entities[lane.entityNumber];
+    if (entity?.kind !== 'belt' && entity?.kind !== 'underground-belt') {
+      continue;
+    }
     const beltTraces = traces.get(lane.entityNumber) ?? [];
     if (!beltTraces.some(({ side }) => side === lane.lane)) {
       beltTraces.push({ item: items.values().next().value!, side: lane.lane });

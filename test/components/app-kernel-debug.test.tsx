@@ -257,6 +257,19 @@ describe('App', () => {
         name: /Transport belt at 6, \d, pointing north/,
       }),
     ).toHaveLength(3);
+    const solidAndFluidOutputPreview = within(
+      articleForProblem(kernelProblems.fluidOutput[5]!),
+    ).getByRole('region', {
+      name: 'Assembler 2 preview',
+    });
+    const solidOutputEndpoints = within(solidAndFluidOutputPreview).getAllByRole('img', {
+      name: /Underground belt (input|output) at 8, [02], pointing south/,
+    });
+    expect(solidOutputEndpoints).toHaveLength(2);
+    for (const endpoint of solidOutputEndpoints) {
+      expect(endpoint.getAttribute('title')).toContain('item 4, 2/s');
+      expect(endpoint.getAttribute('data-item-status')).toBe('traced-item');
+    }
     expect(screen.queryByText('item 1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();
   });

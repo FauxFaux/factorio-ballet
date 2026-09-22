@@ -9,6 +9,7 @@ import type {
   DesignInserter,
   DesignPipe,
   DesignPosition,
+  DesignUndergroundBelt,
   DesignUndergroundPipe,
 } from '../../compute/design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
@@ -90,7 +91,7 @@ export function Belt({
   onPointerLeave,
 }: {
   entityIndex: number;
-  belt: DesignBelt;
+  belt: DesignBelt | DesignUndergroundBelt;
   status: EntityPositionStatus;
   hasLoop: boolean;
   itemTraces: BeltItemTrace[];
@@ -103,6 +104,8 @@ export function Belt({
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
   const isOverlapping = status === 'overlap';
   const isError = isOverlapping || hasLoop;
+  const isUnderground = belt.kind === 'underground-belt';
+  const name = isUnderground ? `Underground belt ${belt.end}` : 'Transport belt';
   const itemDescription = itemTraces
     .map(({ item, side }) => {
       const details = items?.[item];
@@ -118,15 +121,16 @@ export function Belt({
 
   return (
     <div
-      class={`cell-design-belt${isError ? ' cell-design-belt-error' : ''}`}
+      class={`cell-design-belt${isUnderground ? ' cell-design-underground-belt' : ''}${isError ? ' cell-design-belt-error' : ''}`}
       role="img"
-      aria-label={`Transport belt at ${x}, ${y}, pointing ${belt.direction}${itemDescription ? `, ${itemDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
-      title={`Transport belt (${x}, ${y}), ${belt.direction}${itemDescription ? ` — ${itemDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
+      aria-label={`${name} at ${x}, ${y}, pointing ${belt.direction}${itemDescription ? `, ${itemDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
+      title={`${name} (${x}, ${y}), ${belt.direction}${itemDescription ? ` — ${itemDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-entity-index={entityIndex}
       data-position-status={status}
       data-item-status={itemTraces.length === 0 ? 'empty' : 'traced-item'}
       data-direction={belt.direction}
+      {...(isUnderground ? { 'data-end': belt.end } : {})}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{

@@ -182,6 +182,7 @@ function DesignEntityView({
       );
     }
     case 'belt':
+    case 'underground-belt':
       return (
         <Belt
           entityIndex={entityIndex}
