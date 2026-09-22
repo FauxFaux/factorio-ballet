@@ -102,6 +102,18 @@ describe('App', () => {
         name: 'Assembler 1 preview',
       }),
     ).toBeTruthy();
+    const airFilterArticle = articleForProblem(kernelProblems.airFilter[0]!);
+    const fluidboxArrows = [...airFilterArticle.querySelectorAll('.cell-design-fluidbox-arrow')];
+    expect(
+      fluidboxArrows.map((arrow) => [
+        arrow.getAttribute('data-direction'),
+        arrow.getAttribute('data-flow-direction'),
+        arrow.getAttribute('data-resource'),
+      ]),
+    ).toEqual([
+      ['west', 'input', 'fluid:fluid 1'],
+      ['east', 'output', 'fluid:fluid 2'],
+    ]);
     expect(
       within(articleForProblem(firstSolidProblem)).getByLabelText('Max column height').textContent,
     ).toContain('×6');

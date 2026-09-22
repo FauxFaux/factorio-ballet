@@ -26,6 +26,9 @@ export function DesignCard({
   const resourceColours = resourceColoursFor(problem);
   const design = generateAssemblerDesign(problem, throughput);
   const { recipes, items } = designSceneFlows(problem, resourceColours);
+  const machinesByRecipe = Object.fromEntries(
+    problem.assemblers.map((assembler) => [assembler.name, assembler]),
+  );
   const stackLimit = design
     ? beltStackLimit(design.columns[0], recipes, problem, throughput.beltItemsPerSecond)
     : undefined;
@@ -58,6 +61,7 @@ export function DesignCard({
             column={design.columns[0]}
             label={`${title} preview`}
             recipes={recipes}
+            machinesByRecipe={machinesByRecipe}
             items={items}
           />
         ) : (
@@ -150,17 +154,18 @@ function designSceneFlows(
   problem: KernelProblem,
   colours: ResourceColours,
 ): { recipes: DesignSceneRecipes; items: DesignSceneItems } {
-  const itemId = (name: string): ResourceId => `item:${name}`;
+  const resourceId = (name: string): ResourceId =>
+    name.startsWith('fluid ') ? `fluid:${name}` : `item:${name}`;
   const recipes = Object.fromEntries(
     problem.assemblers.map((assembler) => [
       assembler.name,
       {
-        ingredients: Object.keys(assembler.inputPerSecond)
-          .filter((name) => name.startsWith('item '))
-          .map((name) => ({ resource: itemId(name) })),
-        products: Object.keys(assembler.outputPerSecond)
-          .filter((name) => name.startsWith('item '))
-          .map((name) => ({ resource: itemId(name) })),
+        ingredients: Object.keys(assembler.inputPerSecond).map((name) => ({
+          resource: resourceId(name),
+        })),
+        products: Object.keys(assembler.outputPerSecond).map((name) => ({
+          resource: resourceId(name),
+        })),
       },
     ]),
   );
@@ -174,7 +179,7 @@ function designSceneFlows(
   const items = Object.fromEntries(
     Object.entries(rates)
       .filter(([name]) => name.startsWith('item '))
-      .map(([name, rate]) => [itemId(name), { name, rate, colour: colours[name] }]),
+      .map(([name, rate]) => [resourceId(name), { name, rate, colour: colours[name] }]),
   );
   return { recipes, items };
 }

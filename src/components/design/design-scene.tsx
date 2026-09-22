@@ -1,4 +1,3 @@
-import { staticData } from '../../data/decode.ts';
 import type {
   DesignAssembler,
   DesignColumn,
@@ -33,7 +32,7 @@ export interface DesignSceneItem {
 }
 
 export type DesignSceneItems = Readonly<Record<string, DesignSceneItem>>;
-export type DesignSceneMachines = Readonly<Record<string, string | undefined>>;
+export type DesignSceneMachines = Readonly<Record<string, Pick<Machine, 'fluidBoxes'> | undefined>>;
 
 export type DesignSceneRecipes = Readonly<
   Record<
@@ -51,7 +50,7 @@ const ignoreEntity = (_entityIndex: number) => undefined;
 export function DesignScene({
   column,
   worldOrigin,
-  recipes = staticData.recipes,
+  recipes,
   machinesByRecipe = {},
   items,
   onEntityEnter = ignoreEntity,
@@ -59,7 +58,7 @@ export function DesignScene({
 }: {
   column: DesignColumn;
   worldOrigin: ViewportPoint;
-  recipes?: DesignSceneRecipes;
+  recipes: DesignSceneRecipes;
   machinesByRecipe?: DesignSceneMachines;
   items?: DesignSceneItems;
   onEntityEnter?: (entityIndex: number) => void;
@@ -245,13 +244,9 @@ function FluidboxConnectionArrow({
 /** Return the machine's north-facing fluid-box points transformed to this assembler's rotation. */
 export function assemblerFluidboxConnections(
   assembler: DesignAssembler,
-  fallbackMachine: string | undefined = undefined,
+  machine: Pick<Machine, 'fluidBoxes'> | undefined,
   recipe: DesignSceneRecipes[string] | undefined = undefined,
-  machines: Readonly<Record<string, Machine>> = staticData.machines,
 ): AssemblerFluidboxConnection[] {
-  const machineId = assembler.machine ?? fallbackMachine;
-  if (!machineId) return [];
-  const machine = machines[machineId];
   if (!machine?.fluidBoxes) return [];
   const turns = directionTurns(assembler.direction ?? 'north');
   const resources = fluidBoxResources(machine, recipe);
@@ -268,7 +263,7 @@ export function assemblerFluidboxConnections(
 
 /** Match recipe fluids to the machine's ordered, side-specific fluid-box indexes. */
 export function fluidBoxResources(
-  machine: Machine,
+  machine: Pick<Machine, 'fluidBoxes'>,
   recipe: DesignSceneRecipes[string] | undefined,
 ): ReadonlyMap<number, ResourceId> {
   const result = new Map<number, ResourceId>();

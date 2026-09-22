@@ -40,6 +40,7 @@ describe('DesignPreview', () => {
     render(
       <DesignPreview
         label="Read-only design"
+        recipes={{}}
         column={{
           entities: [
             { kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' },
@@ -62,6 +63,7 @@ describe('DesignPreview', () => {
     const { container } = render(
       <DesignPreview
         label="Fitted design"
+        recipes={{}}
         column={{
           entities: [{ kind: 'belt', position: { x: 0, y: 0 }, direction: 'east' }],
         }}
