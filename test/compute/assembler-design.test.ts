@@ -284,6 +284,101 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
+  it.each([
+    ['input', { fluidInputs: [200] }, 'east'],
+    ['output', { fluidOutputs: [200] }, 'west'],
+  ] as const)(
+    'routes a fluid %s outside three solid inputs and one solid output',
+    (_flow, fluidOptions, direction) => {
+      const design = generateAssemblerDesign(
+        assemblerProblem({
+          solidInputs: [5, 5, 8],
+          solidOutputs: [2],
+          ...fluidOptions,
+        }),
+        throughput,
+      );
+      const entities = design.columns?.[0].entities ?? [];
+
+      expect(entities).toContainEqual({
+        kind: 'assembler',
+        position: { x: 3, y: 0 },
+        size: { width: 3, height: 3 },
+        recipe: 'Assembler 2',
+        direction,
+      });
+      expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toEqual([
+        { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
+        { kind: 'underground-pipe', position: { x: 8, y: 1 }, direction: 'east' },
+      ]);
+      expect(entities.filter((entity) => entity.kind === 'underground-belt')).toEqual([
+        {
+          kind: 'underground-belt',
+          position: { x: 8, y: 0 },
+          direction: 'south',
+          end: 'input',
+        },
+        {
+          kind: 'underground-belt',
+          position: { x: 8, y: 2 },
+          direction: 'south',
+          end: 'output',
+        },
+      ]);
+      expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual(
+        Array.from({ length: 3 }, (_, y) => ({
+          kind: 'pipe' as const,
+          position: { x: 9, y },
+        })),
+      );
+      expect(entities).toContainEqual({
+        kind: 'inserter',
+        position: { x: 6, y: 0 },
+        direction: 'east',
+        reach: 2,
+      });
+      expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    },
+  );
+
+  it('uses separate outside trunks when three solid inputs and one solid output use both fluids', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        solidInputs: [5, 5, 8],
+        fluidInputs: [200],
+        solidOutputs: [2],
+        fluidOutputs: [200],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toEqual([
+      { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 8, y: 1 }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: 0, y: 1 }, direction: 'west' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 9, y },
+      })),
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: -1, y },
+      })),
+    ]);
+    expect(entities).toContainEqual({
+      kind: 'assembler',
+      position: { x: 3, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: 'Assembler 2',
+      direction: 'west',
+    });
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it('explains unsupported outputs and missing fluid-port geometry', () => {
     expect(
       generateAssemblerDesign(

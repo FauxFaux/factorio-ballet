@@ -118,6 +118,39 @@ describe('DesignColumn', () => {
     ).toHaveLength(2);
   });
 
+  it('draws pipe-to-ground endpoints as capital Ds with their round sides facing', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
+            { kind: 'underground-pipe', position: { x: 8, y: 1 }, direction: 'east' },
+          ],
+        }}
+        entries={[]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const machineEndpoint = screen.getByRole('img', {
+      name: 'Pipe-to-ground at 6, 1, opening west',
+    });
+    const trunkEndpoint = screen.getByRole('img', {
+      name: 'Pipe-to-ground at 8, 1, opening east',
+    });
+
+    expect(machineEndpoint.querySelector('path')?.getAttribute('d')).toBe(
+      'M 0 1 H 5 A 5 5 0 0 1 5 11 H 0 Z',
+    );
+    expect(machineEndpoint.querySelector('path')?.getAttribute('transform')).toBeNull();
+    expect(trunkEndpoint.querySelector('path')?.getAttribute('transform')).toBe('rotate(180 6 6)');
+    expect(machineEndpoint.getAttribute('data-direction')).toBe('west');
+    expect(trunkEndpoint.getAttribute('data-direction')).toBe('east');
+  });
+
   it('maps negative world coordinates relative to the viewport world origin', () => {
     expect(worldToViewport({ x: -3, y: -2 }, { x: 100, y: 80 })).toEqual({ x: 64, y: 56 });
   });

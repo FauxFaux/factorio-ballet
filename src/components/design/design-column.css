@@ -270,6 +270,21 @@
   border-color: lightcoral;
 }
 
+.cell-design-underground-pipe {
+  position: absolute;
+  z-index: 2;
+  overflow: visible;
+  fill: #6cb4d9;
+  stroke: rgb(173 216 230 / 80%);
+  stroke-width: 1px;
+  stroke-linejoin: round;
+}
+
+.cell-design-underground-pipe-error {
+  fill: rgb(220 20 60 / 80%);
+  stroke: lightcoral;
+}
+
 .cell-design-assembler {
   position: absolute;
   z-index: 1;

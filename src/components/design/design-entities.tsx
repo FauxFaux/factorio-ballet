@@ -9,6 +9,7 @@ import type {
   DesignInserter,
   DesignPipe,
   DesignPosition,
+  DesignUndergroundPipe,
 } from '../../compute/design.ts';
 import { iconStyle, recipeIconStyle } from '../icon.tsx';
 import type { AssemblerInputStatus, BeltItemTrace } from './design-belt-traces.ts';
@@ -266,6 +267,60 @@ export function Pipe({
         '--cell-design-pipe-fluid': fluidColour,
       }}
     />
+  );
+}
+
+/** A pipe-to-ground, drawn with its flat edge on the exposed connection side. */
+export function UndergroundPipe({
+  entityIndex,
+  pipe,
+  status,
+  worldOrigin,
+  onPointerEnter,
+  onPointerLeave,
+}: {
+  entityIndex: number;
+  pipe: DesignUndergroundPipe;
+  status: EntityPositionStatus;
+  worldOrigin: ViewportPoint;
+  onPointerEnter: JSX.PointerEventHandler<SVGSVGElement>;
+  onPointerLeave: JSX.PointerEventHandler<SVGSVGElement>;
+}) {
+  const { x, y } = pipe.position;
+  const viewportPosition = worldToViewport(pipe.position, worldOrigin);
+  const isOverlapping = status === 'overlap';
+  const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+  const rotation =
+    pipe.direction === 'west'
+      ? undefined
+      : pipe.direction === 'north'
+        ? 'rotate(90 6 6)'
+        : pipe.direction === 'east'
+          ? 'rotate(180 6 6)'
+          : 'rotate(270 6 6)';
+
+  return (
+    <svg
+      class={`cell-design-underground-pipe${isOverlapping ? ' cell-design-underground-pipe-error' : ''}`}
+      role="img"
+      aria-label={`Pipe-to-ground at ${x}, ${y}, opening ${pipe.direction}${errorDescription}`}
+      title={`Pipe-to-ground (${x}, ${y}), opening ${pipe.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
+      data-position={`${x},${y}`}
+      data-entity-index={entityIndex}
+      data-position-status={status}
+      data-direction={pipe.direction}
+      onPointerEnter={onPointerEnter}
+      onPointerLeave={onPointerLeave}
+      style={{
+        left: `${viewportPosition.x}px`,
+        top: `${viewportPosition.y}px`,
+        width: `${TILE_SIZE}px`,
+        height: `${TILE_SIZE}px`,
+      }}
+      viewBox="0 0 12 12"
+    >
+      <path d="M 0 1 H 5 A 5 5 0 0 1 5 11 H 0 Z" {...(rotation ? { transform: rotation } : {})} />
+    </svg>
   );
 }
 

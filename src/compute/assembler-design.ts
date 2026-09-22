@@ -2,6 +2,7 @@ import {
   solveDualFluidDesign,
   solveFluidInputDesign,
   solveFluidOutputDesign,
+  solveOutsideFluidTrunkDesign,
 } from './assembler-design/fluid-strategies.ts';
 import {
   solveCompactSolidDesign,
@@ -38,6 +39,7 @@ interface AssemblerDesignCandidate {
 const assemblerDesignStrategies: AssemblerDesignStrategy[] = [
   { id: 'compact-solid', solve: solveCompactSolidDesign },
   { id: 'wide-solid', solve: solveWideSolidDesign },
+  { id: 'outside-fluid-trunk', solve: solveOutsideFluidTrunkDesign },
   { id: 'single-fluid-input-trunk', solve: solveFluidInputDesign },
   { id: 'single-fluid-output-trunk', solve: solveFluidOutputDesign },
   { id: 'opposing-fluid-trunks', solve: solveDualFluidDesign },

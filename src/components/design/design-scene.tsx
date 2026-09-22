@@ -18,6 +18,7 @@ import {
   entityPositionStatuses,
   Inserter,
   Pipe,
+  UndergroundPipe,
   type EntityPositionStatus,
   type ViewportPoint,
   TILE_SIZE,
@@ -211,6 +212,16 @@ function DesignEntityView({
           status={status}
           fluids={pipeFluids}
           resources={items}
+          worldOrigin={worldOrigin}
+          {...hoverHandlers}
+        />
+      );
+    case 'underground-pipe':
+      return (
+        <UndergroundPipe
+          entityIndex={entityIndex}
+          pipe={entity}
+          status={status}
           worldOrigin={worldOrigin}
           {...hoverHandlers}
         />
