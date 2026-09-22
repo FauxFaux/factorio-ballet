@@ -255,6 +255,16 @@
   border-block: 1px solid rgb(173 216 230 / 55%);
 }
 
+.cell-design-pipe-filled {
+  background: linear-gradient(
+    to right,
+    transparent 30%,
+    var(--cell-design-pipe-fluid, #2f8fc2) 30% 70%,
+    transparent 70%
+  );
+  border-color: color-mix(in srgb, var(--cell-design-pipe-fluid, #2f8fc2) 70%, white);
+}
+
 .cell-design-pipe-error {
   background: rgb(220 20 60 / 60%);
   border-color: lightcoral;

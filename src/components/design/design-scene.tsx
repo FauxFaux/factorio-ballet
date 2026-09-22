@@ -1,10 +1,4 @@
-import type {
-  DesignAssembler,
-  DesignColumn,
-  DesignDirection,
-  DesignEntity,
-  DesignPosition,
-} from '../../compute/design.ts';
+import type { DesignAssembler, DesignColumn, DesignEntity } from '../../compute/design.ts';
 import {
   assemblerInputStatuses,
   beltInputItemTraces,
@@ -12,6 +6,11 @@ import {
   type AssemblerInputStatus,
   type BeltItemTrace,
 } from './design-belt-traces.ts';
+import {
+  assemblerFluidboxConnections,
+  designFluidTraces,
+  type AssemblerFluidboxConnection,
+} from './design-fluid-traces.ts';
 import { beltLoopEntityIndexes } from './design-belts.ts';
 import {
   Assembler,
@@ -23,7 +22,9 @@ import {
   type ViewportPoint,
   TILE_SIZE,
 } from './design-entities.tsx';
-import type { FluidFlowDirection, Machine, ResourceId } from '../../types.ts';
+import type { Machine, ResourceId } from '../../types.ts';
+
+export { fluidBoxResources } from './design-fluid-traces.ts';
 
 export interface DesignSceneItem {
   name: string;
@@ -66,6 +67,15 @@ export function DesignScene({
 }) {
   const entityStatuses = entityPositionStatuses(column.entities);
   const assemblerStatuses = assemblerInputStatuses(column, recipes);
+  const fluidTraces = designFluidTraces(column, recipes, machinesByRecipe, items !== undefined);
+  for (const [assemblerIndex, fluidStatus] of fluidTraces.assemblerStatuses) {
+    const itemStatus = assemblerStatuses.get(assemblerIndex);
+    const missing = [...(itemStatus?.missing ?? []), ...fluidStatus.missing];
+    assemblerStatuses.set(assemblerIndex, {
+      satisfied: missing.length === 0,
+      missing,
+    });
+  }
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
   const itemTracesByBelt = beltItemTraces(column, recipes, items !== undefined);
   if (items) {
@@ -91,6 +101,7 @@ export function DesignScene({
           assemblerInputStatus={assemblerStatuses.get(entityIndex)}
           beltHasLoop={loopBeltIndexes.has(entityIndex)}
           beltItemTraces={itemTracesByBelt.get(entityIndex) ?? []}
+          pipeFluids={fluidTraces.pipeTraces.get(entityIndex)?.fluids ?? []}
           items={items}
           recipes={recipes}
           machinesByRecipe={machinesByRecipe}
@@ -110,6 +121,7 @@ function DesignEntityView({
   assemblerInputStatus,
   beltHasLoop,
   beltItemTraces,
+  pipeFluids,
   items,
   recipes,
   machinesByRecipe,
@@ -123,6 +135,7 @@ function DesignEntityView({
   assemblerInputStatus: AssemblerInputStatus | undefined;
   beltHasLoop: boolean;
   beltItemTraces: BeltItemTrace[];
+  pipeFluids: ResourceId[];
   items: DesignSceneItems | undefined;
   recipes: DesignSceneRecipes;
   machinesByRecipe: DesignSceneMachines;
@@ -148,6 +161,10 @@ function DesignEntityView({
             assembler={entity}
             status={status}
             inputStatus={assemblerInputStatus}
+            ingredientCount={
+              new Set((recipes[entity.recipe]?.ingredients ?? []).map(({ resource }) => resource))
+                .size
+            }
             worldOrigin={worldOrigin}
             {...hoverHandlers}
           />
@@ -191,6 +208,8 @@ function DesignEntityView({
           entityIndex={entityIndex}
           pipe={entity}
           status={status}
+          fluids={pipeFluids}
+          resources={items}
           worldOrigin={worldOrigin}
           {...hoverHandlers}
         />
@@ -198,14 +217,6 @@ function DesignEntityView({
     default:
       return null;
   }
-}
-
-interface AssemblerFluidboxConnection {
-  /** Centre-relative point after applying the assembler's rotation. */
-  position: DesignPosition;
-  direction: DesignDirection;
-  flowDirection: FluidFlowDirection;
-  resource?: ResourceId;
 }
 
 function FluidboxConnectionArrow({
@@ -239,74 +250,4 @@ function FluidboxConnectionArrow({
       {connection.flowDirection === 'input-output' && <path d="M 1.5 6 L 5.5 3.75 L 5.5 8.25 Z" />}
     </svg>
   );
-}
-
-/** Return the machine's north-facing fluid-box points transformed to this assembler's rotation. */
-export function assemblerFluidboxConnections(
-  assembler: DesignAssembler,
-  machine: Pick<Machine, 'fluidBoxes'> | undefined,
-  recipe: DesignSceneRecipes[string] | undefined = undefined,
-): AssemblerFluidboxConnection[] {
-  if (!machine?.fluidBoxes) return [];
-  const turns = directionTurns(assembler.direction ?? 'north');
-  const resources = fluidBoxResources(machine, recipe);
-
-  return machine.fluidBoxes.flatMap((box, boxIndex) =>
-    box.connections.map((connection) => ({
-      position: rotatePosition(connection.position, turns),
-      direction: rotateDirection(connection.direction, turns),
-      flowDirection: connection.flowDirection,
-      resource: resources.get(boxIndex),
-    })),
-  );
-}
-
-/** Match recipe fluids to the machine's ordered, side-specific fluid-box indexes. */
-export function fluidBoxResources(
-  machine: Pick<Machine, 'fluidBoxes'>,
-  recipe: DesignSceneRecipes[string] | undefined,
-): ReadonlyMap<number, ResourceId> {
-  const result = new Map<number, ResourceId>();
-  if (!machine.fluidBoxes || !recipe) return result;
-
-  const assign = (
-    side: 'input' | 'output',
-    fluids: Array<{ resource: ResourceId; fluidboxIndex?: number }>,
-  ) => {
-    const boxes = machine.fluidBoxes!.flatMap((box, index) =>
-      box.productionType === side || box.productionType === 'input-output' ? [index] : [],
-    );
-    const fluidResources = fluids.filter(({ resource }) => resource.startsWith('fluid:'));
-    for (const fluid of fluidResources) {
-      if (!fluid.fluidboxIndex) continue;
-      const boxIndex = boxes[fluid.fluidboxIndex - 1];
-      if (boxIndex !== undefined) result.set(boxIndex, fluid.resource);
-    }
-    const unclaimed = boxes.filter((boxIndex) => !result.has(boxIndex));
-    for (const fluid of fluidResources.filter(({ fluidboxIndex }) => !fluidboxIndex)) {
-      const boxIndex = unclaimed.shift();
-      if (boxIndex !== undefined) result.set(boxIndex, fluid.resource);
-    }
-  };
-
-  assign('input', recipe.ingredients);
-  assign('output', recipe.products);
-  return result;
-}
-
-function rotateDirection(direction: DesignDirection, turns: number): DesignDirection {
-  const directions: DesignDirection[] = ['north', 'east', 'south', 'west'];
-  return directions[(directions.indexOf(direction) + turns) % directions.length];
-}
-
-function directionTurns(direction: DesignDirection): number {
-  return ['north', 'east', 'south', 'west'].indexOf(direction);
-}
-
-function rotatePosition(position: DesignPosition, turns: number): DesignPosition {
-  let rotated = position;
-  for (let turn = 0; turn < turns; turn += 1) {
-    rotated = { x: -rotated.y, y: rotated.x };
-  }
-  return rotated;
 }

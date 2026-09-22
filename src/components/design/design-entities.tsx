@@ -14,6 +14,7 @@ import { iconStyle, recipeIconStyle } from '../icon.tsx';
 import type { AssemblerInputStatus, BeltItemTrace } from './design-belt-traces.ts';
 import type { DesignSceneItems } from './design-scene.tsx';
 import { fmt } from '../../ts.ts';
+import type { ResourceId } from '../../types.ts';
 
 export const TILE_SIZE = 12;
 
@@ -211,6 +212,8 @@ export function Pipe({
   entityIndex,
   pipe,
   status,
+  fluids,
+  resources,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -218,6 +221,8 @@ export function Pipe({
   entityIndex: number;
   pipe: DesignPipe;
   status: EntityPositionStatus;
+  fluids: ResourceId[];
+  resources?: DesignSceneItems;
   worldOrigin: ViewportPoint;
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
@@ -225,17 +230,32 @@ export function Pipe({
   const { x, y } = pipe.position;
   const viewportPosition = worldToViewport(pipe.position, worldOrigin);
   const isOverlapping = status === 'overlap';
-  const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+  const isMixed = fluids.length > 1;
+  const isError = isOverlapping || isMixed;
+  const fluidDescription = fluids
+    .map((fluid) => {
+      const details = resources?.[fluid];
+      return details
+        ? `${details.name}, ${fmt(details.rate)}/s`
+        : `${resourceName(fluid)} (${fluid})`;
+    })
+    .join(', ');
+  const errorDescription = [
+    ...(isOverlapping ? ['overlaps another entity'] : []),
+    ...(isMixed ? ['contains incompatible fluids'] : []),
+  ].join(', ');
+  const fluidColour = fluids.length === 1 ? resources?.[fluids[0]]?.colour : undefined;
 
   return (
     <div
-      class={`cell-design-pipe${isOverlapping ? ' cell-design-pipe-error' : ''}`}
+      class={`cell-design-pipe${fluids.length === 1 ? ' cell-design-pipe-filled' : ''}${isError ? ' cell-design-pipe-error' : ''}`}
       role="img"
-      aria-label={`Pipe at ${x}, ${y}${errorDescription}`}
-      title={`Pipe (${x}, ${y})${isOverlapping ? ' — overlaps another entity' : ''}`}
+      aria-label={`Pipe at ${x}, ${y}${fluidDescription ? `, containing ${fluidDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
+      title={`Pipe (${x}, ${y})${fluidDescription ? ` — ${fluidDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-entity-index={entityIndex}
       data-position-status={status}
+      data-fluid-status={isMixed ? 'mixed' : fluids.length === 1 ? 'filled' : 'empty'}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{
@@ -243,6 +263,7 @@ export function Pipe({
         top: `${viewportPosition.y}px`,
         width: `${TILE_SIZE}px`,
         height: `${TILE_SIZE}px`,
+        '--cell-design-pipe-fluid': fluidColour,
       }}
     />
   );
@@ -254,6 +275,7 @@ export function Assembler({
   assembler,
   status,
   inputStatus,
+  ingredientCount,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -262,6 +284,7 @@ export function Assembler({
   assembler: DesignAssembler;
   status: EntityPositionStatus;
   inputStatus: AssemblerInputStatus | undefined;
+  ingredientCount: number;
   worldOrigin: ViewportPoint;
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
@@ -272,16 +295,11 @@ export function Assembler({
   const { width, height } = assembler.size;
   const viewportPosition = worldToViewport(assembler.position, worldOrigin);
   const isOverlapping = status === 'overlap';
-  const itemIngredientCount = new Set(
-    (recipe?.ingredients ?? [])
-      .map(({ resource }) => resource)
-      .filter((resource) => resource.startsWith('item:')),
-  ).size;
   const missing = inputStatus?.missing ?? [];
   const inputStatusClass =
     missing.length === 0
       ? ''
-      : missing.length === itemIngredientCount
+      : missing.length === ingredientCount
         ? ' cell-design-assembler-all-inputs-missing'
         : ' cell-design-assembler-some-inputs-missing';
   const missingDescription = missing

@@ -79,4 +79,81 @@ describe('DesignPreview', () => {
     expect(belt.style.left).toBe('22px');
     expect(belt.style.top).toBe('18px');
   });
+
+  it('highlights a machine whose fluid input is not attached to a filled pipe', () => {
+    render(
+      <DesignPreview
+        label="Missing fluid design"
+        recipes={{
+          consumer: { ingredients: [{ resource: 'fluid:water' }], products: [] },
+        }}
+        machinesByRecipe={{
+          consumer: {
+            fluidBoxes: [
+              {
+                productionType: 'input',
+                connections: [
+                  { position: { x: -1, y: 0 }, direction: 'west', flowDirection: 'input' },
+                ],
+              },
+            ],
+          },
+        }}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'consumer',
+              position: { x: 1, y: 0 },
+              size: { width: 3, height: 3 },
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(document.querySelector('.cell-design-assembler-all-inputs-missing')).not.toBeNull();
+  });
+
+  it('pre-fills and validates a fluid input pipe at the preview boundary', () => {
+    render(
+      <DesignPreview
+        label="Wrapped fluid design"
+        recipes={{
+          consumer: { ingredients: [{ resource: 'fluid:water' }], products: [] },
+        }}
+        machinesByRecipe={{
+          consumer: {
+            fluidBoxes: [
+              {
+                productionType: 'input',
+                connections: [
+                  { position: { x: -1, y: 0 }, direction: 'west', flowDirection: 'input' },
+                ],
+              },
+            ],
+          },
+        }}
+        items={{
+          'fluid:water': { name: 'water', rate: 200, colour: '#369dcc' },
+        }}
+        column={{
+          entities: [
+            { kind: 'pipe', position: { x: 0, y: 1 } },
+            {
+              kind: 'assembler',
+              recipe: 'consumer',
+              position: { x: 1, y: 0 },
+              size: { width: 3, height: 3 },
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(document.querySelector('.cell-design-assembler-all-inputs-missing')).toBeNull();
+    expect(document.querySelector('.cell-design-pipe')?.getAttribute('data-fluid-status')).toBe(
+      'filled',
+    );
+  });
 });

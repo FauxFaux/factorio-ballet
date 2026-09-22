@@ -177,9 +177,10 @@ function designSceneFlows(
     })),
   ) as ResourceRates;
   const items = Object.fromEntries(
-    Object.entries(rates)
-      .filter(([name]) => name.startsWith('item '))
-      .map(([name, rate]) => [resourceId(name), { name, rate, colour: colours[name] }]),
+    Object.entries(rates).map(([name, rate]) => [
+      resourceId(name),
+      { name, rate, colour: colours[name] },
+    ]),
   );
   return { recipes, items };
 }
