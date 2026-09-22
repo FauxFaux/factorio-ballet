@@ -3,6 +3,7 @@ import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems
 import { CARBON_LIGHT_SHORT } from '../../compute/colours.ts';
 import {
   generateAssemblerDesign,
+  isAssemblerDesignFailure,
   type AssemblerDesignThroughput,
 } from '../../compute/assembler-design.ts';
 import { GenericFluidIcon, GenericSolidIcon } from '../icon.tsx';
@@ -29,9 +30,9 @@ export function DesignCard({
   const machinesByRecipe = Object.fromEntries(
     problem.assemblers.map((assembler) => [assembler.name, assembler]),
   );
-  const stackLimit = design
-    ? beltStackLimit(design.columns[0], recipes, problem, throughput.beltItemsPerSecond)
-    : undefined;
+  const stackLimit = isAssemblerDesignFailure(design)
+    ? undefined
+    : beltStackLimit(design.columns[0], recipes, problem, throughput.beltItemsPerSecond);
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>
@@ -56,7 +57,7 @@ export function DesignCard({
         )}
       </aside>
       <div class="design-card-grid">
-        {design ? (
+        {!isAssemblerDesignFailure(design) ? (
           <DesignPreview
             column={design.columns[0]}
             label={`${title} preview`}
@@ -65,7 +66,9 @@ export function DesignCard({
             items={items}
           />
         ) : (
-          <span class="design-card-no-solution">[no solution]</span>
+          <span class="design-card-no-solution" role="note">
+            {design.failure.join(' ')}
+          </span>
         )}
       </div>
     </article>

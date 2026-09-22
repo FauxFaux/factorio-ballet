@@ -8,6 +8,20 @@ export interface AssemblerDesignThroughput {
   longInserterItemsPerSecond: number;
 }
 
+/** An explanation of the first constraint which prevented a kernel from being generated. */
+export interface AssemblerDesignFailure {
+  failure: string[];
+  columns?: undefined;
+}
+
+export type AssemblerDesignResult = FactoryDesign | AssemblerDesignFailure;
+
+export function isAssemblerDesignFailure(
+  result: AssemblerDesignResult,
+): result is AssemblerDesignFailure {
+  return result.columns === undefined;
+}
+
 interface InputSite {
   beltX: number;
   position: { x: number; y: number };
@@ -61,7 +75,7 @@ const wideInputSiteGroups: InputSite[][] = [
 export function generateAssemblerDesign(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
-): FactoryDesign | undefined {
+): AssemblerDesignResult {
   if (
     !Number.isFinite(throughput.beltItemsPerSecond) ||
     throughput.beltItemsPerSecond <= 0 ||
@@ -70,9 +84,15 @@ export function generateAssemblerDesign(
     !Number.isFinite(throughput.longInserterItemsPerSecond) ||
     throughput.longInserterItemsPerSecond <= 0
   ) {
-    return undefined;
+    return failed('cannot design an assembler kernel because transport throughput is invalid');
   }
-  if (problem.assemblers.length !== 1) return undefined;
+  if (problem.assemblers.length !== 1) {
+    return failed(
+      'cannot design a kernel for',
+      count(problem.assemblers.length, 'assembler'),
+      'because this generator supports exactly one assembler',
+    );
+  }
   const hasFluidInput = hasRates(problem.inputs.fluids);
   const hasFluidOutput = hasRates(problem.outputs.fluids);
   if (hasFluidInput && hasFluidOutput) return generateDualFluidDesign(problem);
@@ -83,13 +103,43 @@ export function generateAssemblerDesign(
 
   const inputRates = positiveRates(problem.inputs.solids);
   const outputRates = positiveRates(problem.outputs.solids);
-  if (!inputRates || !outputRates || inputRates.length > 6 || outputRates.length !== 1) {
-    return undefined;
+  if (!inputRates) return invalidRates('input', problem.inputs.solids);
+  if (!outputRates) return invalidRates('output', problem.outputs.solids);
+  if (inputRates.length > 6) {
+    return failed(
+      'cannot insert into',
+      problem.assemblers[0].name,
+      'because',
+      count(inputRates.length, 'solid input'),
+      'need',
+      count(Math.ceil(inputRates.length / 2), 'belt'),
+      'but only 3 belts fit',
+    );
+  }
+  if (outputRates.length !== 1) {
+    return failed(
+      'cannot extract from',
+      problem.assemblers[0].name,
+      'because this generator supports exactly one solid output, not',
+      String(outputRates.length),
+    );
   }
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
-  if (outputRate > throughput.beltItemsPerSecond) return undefined;
+  if (outputRate > throughput.beltItemsPerSecond) {
+    return failed(
+      'cannot output',
+      Object.keys(problem.outputs.solids)[0],
+      'from',
+      problem.assemblers[0].name,
+      'because its',
+      rate(outputRate),
+      "rate exceeds one belt's",
+      rate(throughput.beltItemsPerSecond),
+      'capacity',
+    );
+  }
 
   const compactInputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
   const compactOutputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
@@ -104,12 +154,20 @@ export function generateAssemblerDesign(
     : throughput.longInserterItemsPerSecond;
   const outputInserterCount = Math.ceil(outputRate / outputInserterItemsPerSecond);
   const outputPositions = compact ? compactOutputPositions : longOutputPositions;
-  if (outputInserterCount > outputPositions.length) return undefined;
+  if (outputInserterCount > outputPositions.length) {
+    return inserterFailure(
+      'extract',
+      Object.keys(problem.outputs.solids),
+      problem,
+      outputInserterCount,
+      outputPositions.length,
+    );
+  }
 
   const selectedInputSites = compact
     ? compactInputSites.slice(0, compactInputInserterCount)
-    : wideInputSites(inputRates, throughput, outputInserterCount);
-  if (!selectedInputSites) return undefined;
+    : wideInputSites(problem, throughput, outputInserterCount);
+  if (!Array.isArray(selectedInputSites)) return selectedInputSites;
   const assemblerX = compact ? 2 : 3;
   const outputBeltX = compact ? 6 : 8;
 
@@ -136,25 +194,34 @@ export function generateAssemblerDesign(
   return { columns: [{ entities }] };
 }
 
-function generateDualFluidDesign(problem: KernelProblem): FactoryDesign | undefined {
+function generateDualFluidDesign(problem: KernelProblem): AssemblerDesignResult {
   const specification = problem.assemblers[0];
   const fluidInputs = positiveRates(problem.inputs.fluids);
   const fluidOutputs = positiveRates(problem.outputs.fluids);
   const solidInputs = optionalPositiveRates(problem.inputs.solids);
   const solidOutputs = optionalPositiveRates(problem.outputs.solids);
-  if (
-    fluidInputs?.length !== 1 ||
-    fluidOutputs?.length !== 1 ||
-    solidInputs?.length !== 0 ||
-    solidOutputs?.length !== 0 ||
-    !specification.size ||
-    !specification.fluidBoxes
-  ) {
-    return undefined;
+  if (fluidInputs?.length !== 1 || fluidOutputs?.length !== 1) {
+    return failed('cannot connect fluids because exactly one fluid input and output are required');
+  }
+  if (solidInputs?.length !== 0 || solidOutputs?.length !== 0) {
+    return failed('cannot connect solid resources alongside both fluid trunks');
+  }
+  if (!specification.size || !specification.fluidBoxes) {
+    return failed(
+      'cannot connect fluids to',
+      specification.name,
+      'because its size or fluid-port geometry is missing',
+    );
   }
 
   const direction = fluidRotation(specification, 'input', 'west', 'output', 'east');
-  if (!direction) return undefined;
+  if (!direction) {
+    return failed(
+      'cannot connect fluids to',
+      specification.name,
+      'because it has no rotation with input and output ports on opposite sides',
+    );
+  }
 
   const size = rotatedSize(specification.size, direction);
   const entities: DesignEntity[] = [
@@ -174,24 +241,35 @@ function generateDualFluidDesign(problem: KernelProblem): FactoryDesign | undefi
 function generateFluidOutputDesign(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
-): FactoryDesign | undefined {
+): AssemblerDesignResult {
   const inputRates = positiveRates(problem.inputs.solids);
   const solidOutputRates = optionalPositiveRates(problem.outputs.solids);
   const fluidOutputRates = positiveRates(problem.outputs.fluids);
-  if (
-    !inputRates ||
-    inputRates.length > 4 ||
-    !solidOutputRates ||
-    solidOutputRates.length !== 0 ||
-    !fluidOutputRates ||
-    fluidOutputRates.length !== 1 ||
-    !problem.assemblers[0].size ||
-    !problem.assemblers[0].fluidBoxes
-  ) {
-    return undefined;
+  if (!inputRates) return invalidRates('input', problem.inputs.solids);
+  if (inputRates.length > 4) {
+    return failed('cannot feed more than 4 solid inputs alongside a fluid output');
+  }
+  if (!solidOutputRates || solidOutputRates.length !== 0) {
+    return failed('cannot extract a solid output alongside the fluid output');
+  }
+  if (!fluidOutputRates || fluidOutputRates.length !== 1) {
+    return failed('cannot connect anything other than one fluid output');
+  }
+  if (!problem.assemblers[0].size || !problem.assemblers[0].fluidBoxes) {
+    return failed(
+      'cannot connect the fluid output to',
+      problem.assemblers[0].name,
+      'because its size or fluid-port geometry is missing',
+    );
   }
   const assemblerDirection = fluidRotation(problem.assemblers[0], 'output', 'west');
-  if (!assemblerDirection) return undefined;
+  if (!assemblerDirection) {
+    return failed(
+      'cannot connect the fluid output to',
+      problem.assemblers[0].name,
+      'because it has no output port facing the pipe trunk',
+    );
+  }
 
   const nearInputRate = sum(inputRates.slice(0, 2));
   const farInputRate = sum(inputRates.slice(2, 4));
@@ -199,17 +277,27 @@ function generateFluidOutputDesign(
     nearInputRate > throughput.beltItemsPerSecond ||
     farInputRate > throughput.beltItemsPerSecond
   ) {
-    return undefined;
+    return failed('cannot feed the solid inputs because their rate exceeds the input belts');
   }
 
   const nearInserterCount = Math.ceil(nearInputRate / throughput.inserterItemsPerSecond);
   const farInserterCount = Math.ceil(farInputRate / throughput.longInserterItemsPerSecond);
-  if (nearInserterCount + farInserterCount > 3) return undefined;
+  if (nearInserterCount + farInserterCount > 3) {
+    return inserterFailure(
+      'insert',
+      Object.keys(problem.inputs.solids),
+      problem,
+      nearInserterCount + farInserterCount,
+      3,
+    );
+  }
   const nearInserterYs = edgeRows.slice(0, nearInserterCount);
   const farInserterYs = outputRows
     .filter((y) => !nearInserterYs.includes(y))
     .slice(0, farInserterCount);
-  if (farInserterYs.length !== farInserterCount) return undefined;
+  if (farInserterYs.length !== farInserterCount) {
+    return failed('cannot place the required long inserters without overlapping another inserter');
+  }
 
   const entities: DesignEntity[] = [
     ...pipeTrunk(),
@@ -235,30 +323,41 @@ function generateFluidOutputDesign(
 function generateFluidInputDesign(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
-): FactoryDesign | undefined {
+): AssemblerDesignResult {
   const fluidInputRates = positiveRates(problem.inputs.fluids);
   const inputRates = optionalPositiveRates(problem.inputs.solids);
   const outputRates = positiveRates(problem.outputs.solids);
-  if (
-    !fluidInputRates ||
-    fluidInputRates.length !== 1 ||
-    !inputRates ||
-    inputRates.length > 2 ||
-    !outputRates ||
-    outputRates.length !== 1 ||
-    !problem.assemblers[0].size ||
-    !problem.assemblers[0].fluidBoxes
-  ) {
-    return undefined;
+  if (!fluidInputRates || fluidInputRates.length !== 1) {
+    return failed('cannot connect anything other than one fluid input');
+  }
+  if (!inputRates) return invalidRates('input', problem.inputs.solids);
+  if (inputRates.length > 2) {
+    return failed('cannot feed more than 2 solid inputs alongside a fluid input');
+  }
+  if (!outputRates || outputRates.length !== 1) {
+    return failed('cannot extract anything other than one solid output alongside a fluid input');
+  }
+  if (!problem.assemblers[0].size || !problem.assemblers[0].fluidBoxes) {
+    return failed(
+      'cannot connect the fluid input to',
+      problem.assemblers[0].name,
+      'because its size or fluid-port geometry is missing',
+    );
   }
   const assemblerDirection = fluidRotation(problem.assemblers[0], 'input', 'west');
-  if (!assemblerDirection) return undefined;
+  if (!assemblerDirection) {
+    return failed(
+      'cannot connect the fluid input to',
+      problem.assemblers[0].name,
+      'because it has no input port facing the pipe trunk',
+    );
+  }
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
   const hasSolidInput = inputRates.length > 0;
   if (inputRate > throughput.beltItemsPerSecond || outputRate > throughput.beltItemsPerSecond) {
-    return undefined;
+    return failed('cannot carry the solid resources because their rate exceeds a belt');
   }
 
   const inputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
@@ -266,11 +365,23 @@ function generateFluidInputDesign(
     ? throughput.longInserterItemsPerSecond
     : throughput.inserterItemsPerSecond;
   const outputInserterCount = Math.ceil(outputRate / outputItemsPerSecond);
-  if (inputInserterCount + outputInserterCount > 3) return undefined;
+  if (inputInserterCount + outputInserterCount > 3) {
+    return failed(
+      'cannot serve',
+      problem.assemblers[0].name,
+      'because input and output need',
+      count(inputInserterCount + outputInserterCount, 'inserter'),
+      'but only 3 tiles are available beside the assembler',
+    );
+  }
 
   const inputYs = edgeRows.slice(0, inputInserterCount);
   const outputYs = outputRows.filter((y) => !inputYs.includes(y)).slice(0, outputInserterCount);
-  if (outputYs.length !== outputInserterCount) return undefined;
+  if (outputYs.length !== outputInserterCount) {
+    return failed(
+      'cannot place the required output inserters without overlapping an input inserter',
+    );
+  }
 
   const outputBeltX = hasSolidInput ? 6 : 5;
   const entities: DesignEntity[] = [
@@ -364,25 +475,63 @@ function rotatedSize(
 }
 
 function wideInputSites(
-  inputRates: number[],
+  problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
   outputInserterCount: number,
-): InputSite[] | undefined {
-  if (inputRates.length === 1) {
-    return splitSingleInputAcrossBelts(inputRates[0], throughput, outputInserterCount);
+): InputSite[] | AssemblerDesignFailure {
+  const inputEntries = Object.entries(problem.inputs.solids);
+  if (inputEntries.length === 1) {
+    return splitSingleInputAcrossBelts(
+      problem,
+      inputEntries[0][1],
+      throughput,
+      outputInserterCount,
+    );
   }
 
-  const beltCount = Math.ceil(inputRates.length / 2);
-  if (beltCount < 2 || beltCount > wideInputSiteGroups.length) return undefined;
+  const beltGroups: Array<Array<[string, number]>> = [];
+  for (const entry of inputEntries) {
+    const [resource, resourceRate] = entry;
+    if (resourceRate > throughput.beltItemsPerSecond) {
+      return failed(
+        'cannot carry',
+        resource,
+        'because its',
+        rateText(resourceRate),
+        "rate exceeds one belt's",
+        rateText(throughput.beltItemsPerSecond),
+        'capacity',
+      );
+    }
+
+    const currentGroup = beltGroups.at(-1);
+    if (
+      currentGroup &&
+      currentGroup.length < 2 &&
+      sum(currentGroup.map(([, rate]) => rate)) + resourceRate <= throughput.beltItemsPerSecond
+    ) {
+      currentGroup.push(entry);
+    } else {
+      beltGroups.push([entry]);
+    }
+  }
+
+  if (beltGroups.length > wideInputSiteGroups.length) {
+    return failed(
+      'cannot fit',
+      count(beltGroups.length, 'input belt'),
+      'around the assembler because only 3 belt positions are available',
+    );
+  }
 
   const selected: InputSite[] = [];
-  for (let beltIndex = 0; beltIndex < beltCount; beltIndex += 1) {
-    const rate = sum(inputRates.slice(beltIndex * 2, beltIndex * 2 + 2));
-    if (rate > throughput.beltItemsPerSecond) return undefined;
+  for (const [beltIndex, group] of beltGroups.entries()) {
+    const rate = sum(group.map(([, resourceRate]) => resourceRate));
+    const resources = group.map(([resource]) => resource);
 
     const allSites = wideInputSiteGroups[beltIndex];
     const sites =
-      beltIndex === 0 && beltCount === 3
+      beltIndex === 0 && beltGroups.length === 3
         ? allSites.slice(0, 2)
         : beltIndex === 1 && outputInserterCount === 2
           ? allSites.slice(0, 1)
@@ -390,17 +539,20 @@ function wideInputSites(
     const itemsPerSecond =
       beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
     const inserterCount = Math.ceil(rate / itemsPerSecond);
-    if (inserterCount > sites.length) return undefined;
+    if (inserterCount > sites.length) {
+      return inserterFailure('insert', resources, problem, inserterCount, sites.length);
+    }
     selected.push(...sites.slice(0, inserterCount));
   }
   return selected;
 }
 
 function splitSingleInputAcrossBelts(
+  problem: KernelProblem,
   rate: number,
   throughput: AssemblerDesignThroughput,
   outputInserterCount: number,
-): InputSite[] | undefined {
+): InputSite[] | AssemblerDesignFailure {
   const selected: InputSite[] = [];
   let remaining = rate;
 
@@ -417,7 +569,61 @@ function splitSingleInputAcrossBelts(
     remaining -= assignedRate;
   }
 
-  return remaining <= Number.EPSILON ? selected : undefined;
+  if (remaining <= Number.EPSILON) return selected;
+
+  return inserterFailure(
+    'insert',
+    Object.keys(problem.inputs.solids),
+    problem,
+    Math.ceil(rate / throughput.inserterItemsPerSecond),
+    selected.length,
+  );
+}
+
+function failed(...failure: string[]): AssemblerDesignFailure {
+  return { failure };
+}
+
+function invalidRates(side: 'input' | 'output', rates: ResourceRates): AssemblerDesignFailure {
+  return failed(
+    `cannot use the ${side} rates because`,
+    Object.keys(rates).length === 0
+      ? `there are no ${side} resources`
+      : 'every rate must be a finite positive number',
+  );
+}
+
+function inserterFailure(
+  operation: 'insert' | 'extract',
+  resources: string[],
+  problem: KernelProblem,
+  required: number,
+  available: number,
+): AssemblerDesignFailure {
+  const preposition = operation === 'insert' ? 'into' : 'from';
+  return failed(
+    `cannot ${operation}`,
+    resources.join(' and '),
+    preposition,
+    problem.assemblers[0].name,
+    'because',
+    count(required, 'inserter'),
+    'are needed but only',
+    count(available, 'tile'),
+    `${available === 1 ? 'is' : 'are'} available beside the assembler`,
+  );
+}
+
+function count(value: number, noun: string): string {
+  return `${value} ${noun}${value === 1 ? '' : 's'}`;
+}
+
+function rate(value: number): string {
+  return rateText(value);
+}
+
+function rateText(value: number): string {
+  return `${value} items/s`;
 }
 
 function positiveRates(rates: ResourceRates): number[] | undefined {

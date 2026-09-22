@@ -4,7 +4,10 @@ import { render, screen, within } from '@testing-library/preact';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/app.tsx';
-import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
+import {
+  generateAssemblerDesign,
+  isAssemblerDesignFailure,
+} from '../../src/compute/assembler-design.ts';
 import { CARBON_LIGHT_SHORT } from '../../src/compute/colours.ts';
 import { resolveChosen } from '../../src/data';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../src/data/inserter-throughput.ts';
@@ -57,11 +60,11 @@ describe('App', () => {
     };
     const sortedProblems = allKernelProblems.toSorted(
       (left, right) =>
-        Number(!generateAssemblerDesign(left, throughput)) -
-        Number(!generateAssemblerDesign(right, throughput)),
+        Number(isAssemblerDesignFailure(generateAssemblerDesign(left, throughput))) -
+        Number(isAssemblerDesignFailure(generateAssemblerDesign(right, throughput))),
     );
-    const solutionCount = allKernelProblems.filter((problem) =>
-      generateAssemblerDesign(problem, throughput),
+    const solutionCount = allKernelProblems.filter(
+      (problem) => !isAssemblerDesignFailure(generateAssemblerDesign(problem, throughput)),
     ).length;
 
     expect(screen.getByRole('heading', { name: 'Kernel design' })).toBeTruthy();
@@ -84,9 +87,7 @@ describe('App', () => {
       articles[sortedProblems.indexOf(problem)]!;
     expect(articles).toHaveLength(allKernelProblems.length);
     expect(screen.queryAllByRole('region', { name: / preview$/ })).toHaveLength(solutionCount);
-    expect(screen.queryAllByText('[no solution]')).toHaveLength(
-      allKernelProblems.length - solutionCount,
-    );
+    expect(screen.queryAllByRole('note')).toHaveLength(allKernelProblems.length - solutionCount);
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
@@ -94,8 +95,11 @@ describe('App', () => {
       sortedProblems.map((problem) => problem.assemblers.map(({ name }) => name).join(', ')),
     );
     expect(
-      articles.slice(solutionCount).every((article) => within(article).getByText('[no solution]')),
+      articles
+        .slice(solutionCount)
+        .every((article) => within(article).getByRole('note').textContent),
     ).toBe(true);
+    expect(screen.queryByText('[no solution]')).toBeNull();
     const firstSolidProblem = kernelProblems.solid[0]!;
     expect(
       within(articleForProblem(firstSolidProblem)).getByRole('region', {

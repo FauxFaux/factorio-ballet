@@ -32,7 +32,7 @@ describe('generateAssemblerDesign', () => {
       assemblerProblem({ solidInputs: [5], solidOutputs: [2] }),
       throughput,
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
       { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
@@ -55,7 +55,7 @@ describe('generateAssemblerDesign', () => {
       assemblerProblem({ solidInputs: [8], solidOutputs: [3] }),
       throughput,
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(2);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
@@ -70,7 +70,7 @@ describe('generateAssemblerDesign', () => {
         longInserterItemsPerSecond: 2.64,
       },
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
       { kind: 'inserter', position: { x: 1, y: 2 }, direction: 'east' },
@@ -91,7 +91,7 @@ describe('generateAssemblerDesign', () => {
       },
     );
     const inputInserters =
-      design?.columns[0].entities.filter(
+      design.columns?.[0].entities.filter(
         (entity) => entity.kind === 'inserter' && entity.position.x === 1,
       ) ?? [];
 
@@ -110,7 +110,7 @@ describe('generateAssemblerDesign', () => {
       longInserterItemsPerSecond: 2.64,
     });
     const outputInserters =
-      design?.columns[0].entities.filter(
+      design.columns?.[0].entities.filter(
         (entity) => entity.kind === 'inserter' && entity.position.x === 5,
       ) ?? [];
 
@@ -128,7 +128,7 @@ describe('generateAssemblerDesign', () => {
       longInserterItemsPerSecond: 2.64,
     });
     const outputInserters =
-      design?.columns[0].entities.filter(
+      design.columns?.[0].entities.filter(
         (entity) => entity.kind === 'inserter' && entity.position.x === 5,
       ) ?? [];
 
@@ -148,7 +148,7 @@ describe('generateAssemblerDesign', () => {
         longInserterItemsPerSecond: 2.945,
       },
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(9);
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
@@ -167,7 +167,7 @@ describe('generateAssemblerDesign', () => {
       assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
       throughput,
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(9);
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
@@ -203,7 +203,7 @@ describe('generateAssemblerDesign', () => {
     ],
   ] as const)('reserves the left pipe trunk for %s', (_description, problem, inputs, outputs) => {
     const design = generateAssemblerDesign(problem, throughput);
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
       { kind: 'pipe', position: { x: 0, y: 0 } },
@@ -237,7 +237,7 @@ describe('generateAssemblerDesign', () => {
         inserterItemsPerSecond: 12,
         longInserterItemsPerSecond: 6,
       });
-      const entities = design?.columns[0].entities ?? [];
+      const entities = design.columns?.[0].entities ?? [];
 
       expect(entities.filter((entity) => entity.kind === 'pipe')).toHaveLength(3);
       expect(entities.filter((entity) => entity.kind === 'belt')).toEqual([
@@ -266,7 +266,7 @@ describe('generateAssemblerDesign', () => {
         longInserterItemsPerSecond: 6,
       },
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'belt')).toEqual([
       { kind: 'belt', position: { x: 5, y: 0 }, direction: 'north' },
@@ -284,13 +284,20 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
-  it('has no solution for multiple solid outputs or dual fluids without port geometry', () => {
+  it('explains unsupported outputs and missing fluid-port geometry', () => {
     expect(
       generateAssemblerDesign(
         assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
         throughput,
       ),
-    ).toBeUndefined();
+    ).toEqual({
+      failure: [
+        'cannot extract from',
+        'Assembler 1',
+        'because this generator supports exactly one solid output, not',
+        '2',
+      ],
+    });
     expect(
       generateAssemblerDesign(
         assemblerProblem({
@@ -300,7 +307,60 @@ describe('generateAssemblerDesign', () => {
         }),
         throughput,
       ),
-    ).toBeUndefined();
+    ).toEqual({
+      failure: [
+        'cannot connect fluids to',
+        'No fluid ports',
+        'because its size or fluid-port geometry is missing',
+      ],
+    });
+  });
+
+  it('explains when an input needs more inserters than the assembler side can fit', () => {
+    const problem = assemblerProblem({ solidInputs: [21], fluidOutputs: [200] });
+    problem.inputs.solids = { 'item:item1': 21 };
+
+    expect(
+      generateAssemblerDesign(problem, {
+        beltItemsPerSecond: 30,
+        inserterItemsPerSecond: 3,
+        longInserterItemsPerSecond: 1.5,
+      }),
+    ).toEqual({
+      failure: [
+        'cannot insert',
+        'item:item1',
+        'into',
+        'Assembler 2',
+        'because',
+        '7 inserters',
+        'are needed but only',
+        '3 tiles',
+        'are available beside the assembler',
+      ],
+    });
+  });
+
+  it('counts input belts by throughput before reporting the limiting inserter sites', () => {
+    expect(
+      generateAssemblerDesign(assemblerProblem({ solidInputs: [5, 5], solidOutputs: [2] }), {
+        beltItemsPerSecond: 7.5,
+        inserterItemsPerSecond: 3.15,
+        longInserterItemsPerSecond: 1.575,
+      }),
+    ).toEqual({
+      failure: [
+        'cannot insert',
+        'item 2',
+        'into',
+        'Assembler 1',
+        'because',
+        '2 inserters',
+        'are needed but only',
+        '1 tile',
+        'is available beside the assembler',
+      ],
+    });
   });
 
   it('rotates Assembler 2 so its north input and south output meet opposite pipe trunks', () => {
@@ -308,7 +368,7 @@ describe('generateAssemblerDesign', () => {
       assemblerProblem({ fluidInputs: [200], fluidOutputs: [200] }),
       throughput,
     );
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'assembler')).toEqual([
       {
@@ -346,7 +406,7 @@ describe('generateAssemblerDesign', () => {
     ],
   ] as const)('rotates a %j air filter between separate fluid trunks', (prototypeSize, size) => {
     const design = generateAssemblerDesign(airFilterProblem(prototypeSize), throughput);
-    const entities = design?.columns[0].entities ?? [];
+    const entities = design.columns?.[0].entities ?? [];
 
     expect(entities.filter((entity) => entity.kind === 'assembler')).toEqual([
       {

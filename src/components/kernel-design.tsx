@@ -1,6 +1,6 @@
 import './kernel-design.css';
 import type { Chosen } from '../data/index.ts';
-import { generateAssemblerDesign } from '../compute/assembler-design.ts';
+import { generateAssemblerDesign, isAssemblerDesignFailure } from '../compute/assembler-design.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
 import { allKernelProblems } from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
@@ -17,8 +17,8 @@ export function KernelDesign({ progress, chosen }: { progress: number; chosen: C
     .map((problem, index) => ({ problem, index }))
     .toSorted(
       (left, right) =>
-        Number(!generateAssemblerDesign(left.problem, throughput)) -
-        Number(!generateAssemblerDesign(right.problem, throughput)),
+        Number(isAssemblerDesignFailure(generateAssemblerDesign(left.problem, throughput))) -
+        Number(isAssemblerDesignFailure(generateAssemblerDesign(right.problem, throughput))),
     );
 
   return (

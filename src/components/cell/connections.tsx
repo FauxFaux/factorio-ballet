@@ -1,7 +1,10 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
-import { generateAssemblerDesign } from '../../compute/assembler-design.ts';
+import {
+  generateAssemblerDesign,
+  isAssemblerDesignFailure,
+} from '../../compute/assembler-design.ts';
 import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
@@ -109,8 +112,8 @@ function AssemblerDesignSummary({
     longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt, 2),
   };
   const design = generateAssemblerDesign(problem, throughput);
-  if (!design) {
-    return <p class="cell-assembler-design">Assembler design: no solution</p>;
+  if (isAssemblerDesignFailure(design)) {
+    return <p class="cell-assembler-design">Assembler design: {design.failure.join(' ')}</p>;
   }
 
   const column = design.columns[0];
