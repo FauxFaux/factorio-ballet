@@ -214,7 +214,8 @@ describe('generateAssemblerDesign', () => {
       kind: 'assembler',
       position: { x: 1, y: 0 },
       size: { width: 3, height: 3 },
-      recipe: 'Assembler 1',
+      recipe: 'Assembler 2',
+      direction: 'west',
     });
     expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
       ...inputs.map((inserter) => ({ kind: 'inserter', ...inserter })),
@@ -245,6 +246,13 @@ describe('generateAssemblerDesign', () => {
         { kind: 'belt', position: { x: 5, y: 2 }, direction: 'north' },
       ]);
       expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(inserterCount);
+      expect(entities).toContainEqual({
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size: { width: 3, height: 3 },
+        recipe: 'Assembler 2',
+        direction: 'east',
+      });
       expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
     },
   );
@@ -285,10 +293,42 @@ describe('generateAssemblerDesign', () => {
     ).toBeUndefined();
     expect(
       generateAssemblerDesign(
-        assemblerProblem({ fluidInputs: [200], fluidOutputs: [200] }),
+        assemblerProblem({
+          assemblerName: 'No fluid ports',
+          fluidInputs: [200],
+          fluidOutputs: [200],
+        }),
         throughput,
       ),
     ).toBeUndefined();
+  });
+
+  it('rotates Assembler 2 so its north input and south output meet opposite pipe trunks', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({ fluidInputs: [200], fluidOutputs: [200] }),
+      throughput,
+    );
+    const entities = design?.columns[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'assembler')).toEqual([
+      {
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size: { width: 3, height: 3 },
+        recipe: 'Assembler 2',
+        direction: 'west',
+      },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 0, y },
+      })),
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 4, y },
+      })),
+    ]);
   });
 
   it.each([

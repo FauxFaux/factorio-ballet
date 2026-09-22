@@ -1,4 +1,4 @@
-import type { FactoryDesign, DesignEntity } from './design.ts';
+import type { DesignDirection, FactoryDesign, DesignEntity } from './design.ts';
 import type { KernelProblem, ResourceRates } from './kernel-problems.ts';
 
 /** Transport capabilities selected for one assembler-kernel generation pass. */
@@ -153,30 +153,10 @@ function generateDualFluidDesign(problem: KernelProblem): FactoryDesign | undefi
     return undefined;
   }
 
-  // Turning the north-facing geometry east puts a south input on the west trunk and a north
-  // output on the east trunk. Requiring those physical ports keeps this special layout honest for
-  // machines whose fluid boxes have a different shape.
-  const hasWestInput = specification.fluidBoxes.some(
-    (box) =>
-      (box.productionType === 'input' || box.productionType === 'input-output') &&
-      box.connections.some(
-        (connection) =>
-          (connection.flowDirection === 'input' || connection.flowDirection === 'input-output') &&
-          connection.direction === 'south',
-      ),
-  );
-  const hasEastOutput = specification.fluidBoxes.some(
-    (box) =>
-      (box.productionType === 'output' || box.productionType === 'input-output') &&
-      box.connections.some(
-        (connection) =>
-          (connection.flowDirection === 'output' || connection.flowDirection === 'input-output') &&
-          connection.direction === 'north',
-      ),
-  );
-  if (!hasWestInput || !hasEastOutput) return undefined;
+  const direction = fluidRotation(specification, 'input', 'west', 'output', 'east');
+  if (!direction) return undefined;
 
-  const size = { width: specification.size.height, height: specification.size.width };
+  const size = rotatedSize(specification.size, direction);
   const entities: DesignEntity[] = [
     ...pipeTrunk(0, size.height),
     {
@@ -184,7 +164,7 @@ function generateDualFluidDesign(problem: KernelProblem): FactoryDesign | undefi
       position: { x: 1, y: 0 },
       size,
       recipe: specification.name,
-      direction: 'east',
+      direction,
     },
     ...pipeTrunk(size.width + 1, size.height),
   ];
@@ -204,10 +184,14 @@ function generateFluidOutputDesign(
     !solidOutputRates ||
     solidOutputRates.length !== 0 ||
     !fluidOutputRates ||
-    fluidOutputRates.length !== 1
+    fluidOutputRates.length !== 1 ||
+    !problem.assemblers[0].size ||
+    !problem.assemblers[0].fluidBoxes
   ) {
     return undefined;
   }
+  const assemblerDirection = fluidRotation(problem.assemblers[0], 'output', 'west');
+  if (!assemblerDirection) return undefined;
 
   const nearInputRate = sum(inputRates.slice(0, 2));
   const farInputRate = sum(inputRates.slice(2, 4));
@@ -242,7 +226,7 @@ function generateFluidOutputDesign(
       direction: 'west',
       reach: 2,
     })),
-    assembler(problem, 1),
+    assembler(problem, 1, assemblerDirection),
   ];
 
   return { columns: [{ entities }] };
@@ -261,10 +245,14 @@ function generateFluidInputDesign(
     !inputRates ||
     inputRates.length > 2 ||
     !outputRates ||
-    outputRates.length !== 1
+    outputRates.length !== 1 ||
+    !problem.assemblers[0].size ||
+    !problem.assemblers[0].fluidBoxes
   ) {
     return undefined;
   }
+  const assemblerDirection = fluidRotation(problem.assemblers[0], 'input', 'west');
+  if (!assemblerDirection) return undefined;
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
@@ -293,7 +281,7 @@ function generateFluidInputDesign(
       position: { x: 4, y },
       direction: 'west',
     })),
-    assembler(problem, 1),
+    assembler(problem, 1, assemblerDirection),
     ...outputYs.map((y): DesignEntity => ({
       kind: 'inserter',
       position: { x: 4, y },
@@ -314,14 +302,65 @@ function pipeTrunk(x = 0, height = 3): DesignEntity[] {
   return Array.from({ length: height }, (_, y) => ({ kind: 'pipe', position: { x, y } }));
 }
 
-function assembler(problem: KernelProblem, x: number): DesignEntity {
+function assembler(problem: KernelProblem, x: number, direction?: DesignDirection): DesignEntity {
   const specification = problem.assemblers[0];
   return {
     kind: 'assembler',
     position: { x, y: 0 },
-    size: specification.size ?? { width: 3, height: 3 },
+    size: specification.size ? rotatedSize(specification.size, direction) : { width: 3, height: 3 },
     recipe: specification.name,
+    ...(direction ? { direction } : {}),
   };
+}
+
+function fluidRotation(
+  specification: KernelProblem['assemblers'][number],
+  firstFlow: 'input' | 'output',
+  firstTarget: DesignDirection,
+  secondFlow?: 'input' | 'output',
+  secondTarget?: DesignDirection,
+): DesignDirection | undefined {
+  if (!specification.fluidBoxes) return undefined;
+  return (['north', 'east', 'south', 'west'] as const).find(
+    (direction) =>
+      hasRotatedFluidPort(specification, firstFlow, firstTarget, direction) &&
+      (!secondFlow ||
+        !secondTarget ||
+        hasRotatedFluidPort(specification, secondFlow, secondTarget, direction)),
+  );
+}
+
+function hasRotatedFluidPort(
+  specification: KernelProblem['assemblers'][number],
+  flow: 'input' | 'output',
+  target: DesignDirection,
+  rotation: DesignDirection,
+): boolean {
+  return Boolean(
+    specification.fluidBoxes?.some(
+      (box) =>
+        (box.productionType === flow || box.productionType === 'input-output') &&
+        box.connections.some(
+          (connection) =>
+            (connection.flowDirection === flow || connection.flowDirection === 'input-output') &&
+            rotateDirection(connection.direction, rotation) === target,
+        ),
+    ),
+  );
+}
+
+function rotateDirection(direction: DesignDirection, rotation: DesignDirection): DesignDirection {
+  const directions: DesignDirection[] = ['north', 'east', 'south', 'west'];
+  return directions[(directions.indexOf(direction) + directions.indexOf(rotation)) % 4];
+}
+
+function rotatedSize(
+  size: { width: number; height: number },
+  direction: DesignDirection | undefined,
+) {
+  return direction === 'east' || direction === 'west'
+    ? { width: size.height, height: size.width }
+    : size;
 }
 
 function wideInputSites(

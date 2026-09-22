@@ -5,6 +5,7 @@ import {
   assemblerProblem,
   kernelProblems,
 } from '../../src/compute/kernel-problems.ts';
+import { staticData } from '../../src/data/decode.ts';
 
 describe('assemblerProblem', () => {
   it('builds distinct synthetic resources and the matching assembler flow', () => {
@@ -40,6 +41,27 @@ describe('assemblerProblem', () => {
     expect(problem.inputs).toEqual({ solids: {}, fluids: {} });
     expect(problem.outputs).toEqual({ solids: {}, fluids: {} });
     expect(problem.assemblers[0]?.name).toBe('Assembler 1');
+  });
+
+  it('uses Assembler 2 and its generated 3x3 fluid geometry for fluid problems', () => {
+    const assembler = assemblerProblem({ fluidInputs: [200], fluidOutputs: [100] }).assemblers[0];
+
+    expect(assembler).toMatchObject({
+      name: 'Assembler 2',
+      size: { width: 3, height: 3 },
+      fluidBoxes: [
+        {
+          productionType: 'input',
+          connections: [{ position: { x: 0, y: -1 }, direction: 'north', flowDirection: 'input' }],
+        },
+        {
+          productionType: 'output',
+          connections: [{ position: { x: 0, y: 1 }, direction: 'south', flowDirection: 'output' }],
+        },
+      ],
+    });
+    expect(assembler?.size).toEqual(staticData.machines['assembling-machine-2'].size);
+    expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
   });
 });
 

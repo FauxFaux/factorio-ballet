@@ -197,21 +197,51 @@ describe('App', () => {
     const fluidOnlyInputPreview = within(
       articleForProblem(kernelProblems.fluidInput[0]!),
     ).getByRole('region', {
-      name: 'Assembler 1 preview',
+      name: 'Assembler 2 preview',
     });
     expect(
       within(fluidOnlyInputPreview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ }),
     ).toHaveLength(3);
+    expect(
+      [...fluidOnlyInputPreview.querySelectorAll('.cell-design-fluidbox-arrow')].map((arrow) => [
+        arrow.getAttribute('data-direction'),
+        arrow.getAttribute('data-flow-direction'),
+      ]),
+    ).toEqual([
+      ['west', 'input'],
+      ['east', 'output'],
+    ]);
     for (const problem of kernelProblems.fluidOutput.slice(0, 4)) {
       const preview = within(articleForProblem(problem)).getByRole('region', {
-        name: 'Assembler 1 preview',
+        name: 'Assembler 2 preview',
       });
       expect(within(preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(3);
+      expect(
+        [...preview.querySelectorAll('.cell-design-fluidbox-arrow')].map((arrow) => [
+          arrow.getAttribute('data-direction'),
+          arrow.getAttribute('data-flow-direction'),
+        ]),
+      ).toEqual([
+        ['east', 'input'],
+        ['west', 'output'],
+      ]);
     }
+    const dualFluidPreview = within(
+      articleForProblem(kernelProblems.fluidInputAndOutput[0]!),
+    ).getByRole('region', { name: 'Assembler 2 preview' });
+    expect(
+      [...dualFluidPreview.querySelectorAll('.cell-design-fluidbox-arrow')].map((arrow) => [
+        arrow.getAttribute('data-direction'),
+        arrow.getAttribute('data-flow-direction'),
+      ]),
+    ).toEqual([
+      ['west', 'input'],
+      ['east', 'output'],
+    ]);
     const fiveInputFluidOutputPreview = within(
       articleForProblem(kernelProblems.fluidOutput[4]!),
     ).getByRole('region', {
-      name: 'Assembler 1 preview',
+      name: 'Assembler 2 preview',
     });
     expect(
       within(fiveInputFluidOutputPreview).getAllByRole('img', {

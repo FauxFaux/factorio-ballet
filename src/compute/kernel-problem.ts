@@ -41,7 +41,7 @@ export interface AssemblerProblemOptions {
 
 /** Build a one-assembler problem with distinct synthetic resources for each flow. */
 export function assemblerProblem({
-  assemblerName = 'Assembler 1',
+  assemblerName,
   solidInputs = [],
   fluidInputs = [],
   solidOutputs = [],
@@ -49,6 +49,8 @@ export function assemblerProblem({
   size,
   fluidBoxes,
 }: AssemblerProblemOptions): KernelProblem {
+  const useAssembler2 =
+    assemblerName === undefined && (fluidInputs.length > 0 || fluidOutputs.length > 0);
   const inputs: KernelFlows = {
     solids: resourceRates('item', solidInputs),
     fluids: resourceRates('fluid', fluidInputs),
@@ -63,15 +65,33 @@ export function assemblerProblem({
     outputs,
     assemblers: [
       {
-        name: assemblerName,
+        name: assemblerName ?? (useAssembler2 ? 'Assembler 2' : 'Assembler 1'),
         inputPerSecond: { ...inputs.solids, ...inputs.fluids },
         outputPerSecond: { ...outputs.solids, ...outputs.fluids },
-        ...(size ? { size } : {}),
-        ...(fluidBoxes ? { fluidBoxes } : {}),
+        ...(size ? { size } : useAssembler2 ? { size: { width: 3, height: 3 } } : {}),
+        ...(fluidBoxes
+          ? { fluidBoxes }
+          : useAssembler2
+            ? { fluidBoxes: assemblingMachine2FluidBoxes() }
+            : {}),
       },
     ],
     design: newFactoryDesign(),
   };
+}
+
+/** Fluid geometry of the `assembling-machine-2` prototype in the generated static data. */
+function assemblingMachine2FluidBoxes(): MachineFluidBox[] {
+  return [
+    {
+      productionType: 'input',
+      connections: [{ position: { x: 0, y: -1 }, direction: 'north', flowDirection: 'input' }],
+    },
+    {
+      productionType: 'output',
+      connections: [{ position: { x: 0, y: 1 }, direction: 'south', flowDirection: 'output' }],
+    },
+  ];
 }
 
 function resourceRates(prefix: string, rates: readonly number[], startIndex = 1): ResourceRates {
