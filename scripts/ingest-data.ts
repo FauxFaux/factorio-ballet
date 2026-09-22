@@ -21,6 +21,7 @@ import type {
   InserterCapacityBonus,
   IngredientTemperature,
   Machine,
+  MachineFluidBox,
   MachineKind,
   MachineSize,
   Module,
@@ -136,6 +137,7 @@ async function main() {
   checkBelts(belts, v, resources);
   checkInserters(inserters, resources);
   checkCatalysts(recipes);
+  checkRecipeFluidBoxes(recipes, machines);
 
   const { sciencePacks, inserterCapacityBonuses } = applyComplexity(v, recipes, resources);
   const fromAir = fromAirSuggestionStages({ recipes });
@@ -382,8 +384,7 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         // the character has no `crafting_speed`; hand crafting runs at the recipe's stated time
         speed: 'crafting_speed' in m ? (m.crafting_speed ?? 1) : 1,
         size: machineSize(m.collision_box, id),
-        fluidboxConnectionPoints:
-          'fluid_boxes' in m ? fluidboxConnectionPoints(m.fluid_boxes) : undefined,
+        fluidBoxes: 'fluid_boxes' in m ? machineFluidBoxes(m.fluid_boxes) : undefined,
         moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
         // both absent-means-everything; see `Machine.allowedEffects`
         allowedEffects: 'allowed_effects' in m ? effectLimits(m.allowed_effects) : undefined,
@@ -395,6 +396,42 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
 
   console.log(`Machines: ${Object.keys(machines).length} (dropped ${skipped} hidden)`);
   return machines;
+}
+
+function checkRecipeFluidBoxes(recipes: Record<string, Recipe>, machines: Record<string, Machine>) {
+  const missing: string[] = [];
+  for (const [recipeId, recipe] of Object.entries(recipes)) {
+    const indexedInputs = recipe.ingredients.flatMap((ingredient) =>
+      ingredient.fluidboxIndex ? [ingredient.fluidboxIndex] : [],
+    );
+    const indexedOutputs = recipe.products.flatMap((product) =>
+      product.fluidboxIndex ? [product.fluidboxIndex] : [],
+    );
+    if (indexedInputs.length === 0 && indexedOutputs.length === 0) continue;
+
+    for (const [machineId, machine] of Object.entries(machines)) {
+      if (!machine.categories.some((category) => recipe.categories.includes(category))) continue;
+      const boxes = machine.fluidBoxes ?? [];
+      const inputs = boxes.filter(
+        (box) => box.productionType === 'input' || box.productionType === 'input-output',
+      ).length;
+      const outputs = boxes.filter(
+        (box) => box.productionType === 'output' || box.productionType === 'input-output',
+      ).length;
+      if (indexedInputs.some((index) => index > inputs)) {
+        missing.push(`${recipeId} input on ${machineId}`);
+      }
+      if (indexedOutputs.some((index) => index > outputs)) {
+        missing.push(`${recipeId} output on ${machineId}`);
+      }
+    }
+  }
+  if (missing.length > 0) {
+    console.log(
+      `Recipe fluidbox indexes missing on compatible machines: ${missing.length}`,
+      missing.slice(0, 20),
+    );
+  }
 }
 
 /**
@@ -424,22 +461,35 @@ function point(position: unknown): [number, number] {
 }
 
 /**
- * Preserve pipe endpoints, not fluid boxes: a box can expose several sides and the radar needs
- * the physical connection points. The raw type permits alternate `positions` forms for rotated
- * connections, but the current dump uses one `position` for every crafting-machine connection;
- * reject a new form so we do not silently omit pipes from a layout.
+ * Preserve each recipe-fluid box around its physical connections. The raw type permits alternate
+ * `positions` forms for rotated connections, but the current dump uses one `position` for every
+ * crafting-machine connection; reject a new form so we do not silently omit pipes from a layout.
  */
-export function fluidboxConnectionPoints(fluidBoxes: FluidBox[] | undefined) {
+export function machineFluidBoxes(
+  fluidBoxes: FluidBox[] | undefined,
+): MachineFluidBox[] | undefined {
   if (!fluidBoxes) return undefined;
-  return fluidBoxes.flatMap((box) =>
-    box.pipe_connections.map((connection) => {
+  return fluidBoxes.map((box) => ({
+    productionType: box.production_type ?? 'none',
+    connections: box.pipe_connections.map((connection) => {
       if (!connection.position || connection.positions || !Array.isArray(connection.position)) {
         throw new Error('Expected each machine pipe connection to have one array position');
       }
       const [x, y] = connection.position;
-      return { x, y };
+      return {
+        position: { x, y },
+        direction: pipeDirection(connection.direction),
+        flowDirection: connection.flow_direction ?? 'input-output',
+      };
     }),
-  );
+  }));
+}
+
+function pipeDirection(direction: unknown): MachineFluidBox['connections'][number]['direction'] {
+  const cardinal = { 0: 'north', 4: 'east', 8: 'south', 12: 'west' } as const;
+  const result = cardinal[direction as keyof typeof cardinal];
+  if (!result) throw new Error(`Expected a cardinal machine pipe direction, got ${direction}`);
+  return result;
 }
 
 /**
@@ -634,6 +684,7 @@ function toIng(game: RIngredient): Ingredient {
     resource: `${game.type}:${game.name}`,
     amount: game.amount,
     temperature: toTemp(game),
+    fluidboxIndex: game.fluidbox_index || undefined,
   };
 }
 
@@ -668,6 +719,7 @@ function toProd(game: RProduct): Product {
     // TODO: bad !
     amount: game.amount ? { fixed: game.amount } : { min: game.amount_min!, max: game.amount_max! },
     probability: game.probability ?? 1,
+    fluidboxIndex: game.fluidbox_index || undefined,
     // the catalyst share, which zero is not: see `Product.ignoredByProductivity`
     ignoredByProductivity: game.ignored_by_productivity || undefined,
   };

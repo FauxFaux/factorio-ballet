@@ -2783,8 +2783,8 @@
       "s": 0.75,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
@@ -2798,8 +2798,8 @@
       "s": 1.25,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
@@ -2813,11 +2813,11 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -2831,10 +2831,10 @@
       "s": 1.75,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": -1, "y": 1 },
-        { "x": 1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -2848,8 +2848,8 @@
       "s": 1,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1.19 },
-        { "x": 0, "y": 1.19 }
+        { "p": "input", "c": [{ "p": [0, -1.19], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1.19], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
@@ -2892,8 +2892,8 @@
       "s": 2,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -2907,8 +2907,8 @@
       "s": 2.75,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 5,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -2922,8 +2922,8 @@
       "s": 3.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -2936,7 +2936,7 @@
       "c": ["electronics", "electronics-with-fluid"],
       "s": 1,
       "z": { "width": 2, "height": 2 },
-      "f": [{ "x": 0.5, "y": -0.5 }],
+      "f": [{ "p": "input", "c": [{ "p": [0.5, -0.5], "d": "north", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2948,7 +2948,7 @@
       "c": ["electronics", "electronics-with-fluid"],
       "s": 2.25,
       "z": { "width": 2, "height": 2 },
-      "f": [{ "x": 0.5, "y": -0.5 }],
+      "f": [{ "p": "input", "c": [{ "p": [0.5, -0.5], "d": "north", "f": "input" }] }],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2960,7 +2960,7 @@
       "c": ["electronics", "electronics-with-fluid"],
       "s": 4,
       "z": { "width": 2, "height": 2 },
-      "f": [{ "x": 0.5, "y": -0.5 }],
+      "f": [{ "p": "input", "c": [{ "p": [0.5, -0.5], "d": "north", "f": "input" }] }],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2972,7 +2972,7 @@
       "c": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "s": 3,
       "z": { "width": 3, "height": 3 },
-      "f": [{ "x": 0, "y": -1 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] }],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -2984,7 +2984,7 @@
       "c": ["smelting", "bob-mixing-furnace", "bob-chemical-furnace"],
       "s": 4,
       "z": { "width": 3, "height": 3 },
-      "f": [{ "x": 0, "y": -1 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] }],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3006,8 +3006,8 @@
       "s": 2.25,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1.19 },
-        { "x": 0, "y": 1.19 }
+        { "p": "input", "c": [{ "p": [0, -1.19], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1.19], "d": "south", "f": "output" }] }
       ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
@@ -3021,8 +3021,8 @@
       "s": 3.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1.19 },
-        { "x": 0, "y": 1.19 }
+        { "p": "input", "c": [{ "p": [0, -1.19], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 1.19], "d": "south", "f": "output" }] }
       ],
       "n": 6,
       "e": ["consumption", "speed", "productivity", "pollution", "quality"],
@@ -3144,8 +3144,8 @@
       "s": 0.75,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3159,8 +3159,8 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3174,8 +3174,8 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3189,8 +3189,8 @@
       "s": 0.75,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3204,8 +3204,8 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3219,8 +3219,8 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3289,10 +3289,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3306,10 +3306,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3322,7 +3322,7 @@
       "c": ["angels-crystallizing"],
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": 2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] }],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3334,7 +3334,7 @@
       "c": ["angels-crystallizing", "angels-crystallizing-2"],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": 2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] }],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3346,7 +3346,7 @@
       "c": ["angels-crystallizing", "angels-crystallizing-2", "angels-crystallizing-3"],
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": 2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -3359,10 +3359,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3376,10 +3376,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3393,10 +3393,10 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3410,8 +3410,8 @@
       "s": 1.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": 1 },
-        { "x": 0, "y": -1 }
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3425,8 +3425,8 @@
       "s": 2.25,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": 1 },
-        { "x": 0, "y": -1 }
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3440,8 +3440,8 @@
       "s": 3,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": 1 },
-        { "x": 0, "y": -1 }
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3455,8 +3455,8 @@
       "s": 3.75,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": 1 },
-        { "x": 0, "y": -1 }
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] }
       ],
       "n": 4,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3470,9 +3470,9 @@
       "s": 1,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -2, "y": -3 },
-        { "x": 2, "y": 3 },
-        { "x": -2, "y": 3 }
+        { "p": "input", "c": [{ "p": [-2, -3], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [2, 3], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, 3], "d": "south", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3486,9 +3486,9 @@
       "s": 1.5,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -2, "y": -3 },
-        { "x": 2, "y": 3 },
-        { "x": -2, "y": 3 }
+        { "p": "input", "c": [{ "p": [-2, -3], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [2, 3], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, 3], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3502,9 +3502,9 @@
       "s": 2,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -2, "y": -3 },
-        { "x": 2, "y": 3 },
-        { "x": -2, "y": 3 }
+        { "p": "input", "c": [{ "p": [-2, -3], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [2, 3], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, 3], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3518,8 +3518,8 @@
       "s": 1,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": 3 }
+        { "p": "input", "c": [{ "p": [-1, -3], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, 3], "d": "south", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3533,8 +3533,8 @@
       "s": 2,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": 3 }
+        { "p": "input", "c": [{ "p": [-1, -3], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, 3], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3548,9 +3548,9 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 2, "y": 0 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, 0], "d": "east", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3564,9 +3564,9 @@
       "s": 2.25,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 2, "y": 0 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, 0], "d": "east", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution", "productivity"],
@@ -3580,8 +3580,8 @@
       "s": 2,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": 1 },
-        { "x": 0, "y": -1 }
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
@@ -3595,10 +3595,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 },
-        { "x": -2, "y": 2 },
-        { "x": 2, "y": 2 }
+        { "p": "input", "c": [{ "p": [-2, -2], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, 2], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, 2], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3612,10 +3612,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 },
-        { "x": -2, "y": 2 },
-        { "x": 2, "y": 2 }
+        { "p": "input", "c": [{ "p": [-2, -2], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, 2], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, 2], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3629,10 +3629,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 },
-        { "x": -2, "y": 2 },
-        { "x": 2, "y": 2 }
+        { "p": "input", "c": [{ "p": [-2, -2], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, 2], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, 2], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3646,10 +3646,10 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 },
-        { "x": -2, "y": 2 },
-        { "x": 2, "y": 2 }
+        { "p": "input", "c": [{ "p": [-2, -2], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, 2], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, 2], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3663,8 +3663,8 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": -2 },
-        { "x": 0, "y": 2 }
+        { "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 2], "d": "south", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3678,8 +3678,8 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": -2 },
-        { "x": 0, "y": 2 }
+        { "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 2], "d": "south", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3693,8 +3693,8 @@
       "s": 2.25,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": -2 },
-        { "x": 0, "y": 2 }
+        { "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, 2], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3708,10 +3708,10 @@
       "s": 2.25,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": -1, "y": 1 },
-        { "x": 1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3725,10 +3725,10 @@
       "s": 2.75,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": -1, "y": 1 },
-        { "x": 1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3742,10 +3742,10 @@
       "s": 3.25,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": -1, "y": 1 },
-        { "x": 1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 4,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3759,12 +3759,12 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 2, "y": 2 },
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [2, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-2, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3778,12 +3778,12 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 2, "y": 2 },
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [2, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-2, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3797,10 +3797,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3814,10 +3814,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3831,10 +3831,10 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3848,10 +3848,10 @@
       "s": 3,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3865,12 +3865,12 @@
       "s": 1,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": 3 },
-        { "x": 1, "y": 3 },
-        { "x": -3, "y": -3 },
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": -3 },
-        { "x": 3, "y": -3 }
+        { "p": "input", "c": [{ "p": [-1, 3], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 3], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-3, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [3, -3], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3884,12 +3884,12 @@
       "s": 1.5,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": 3 },
-        { "x": 1, "y": 3 },
-        { "x": -3, "y": -3 },
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": -3 },
-        { "x": 3, "y": -3 }
+        { "p": "input", "c": [{ "p": [-1, 3], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 3], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-3, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [3, -3], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3903,12 +3903,12 @@
       "s": 2,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": 3 },
-        { "x": 1, "y": 3 },
-        { "x": -3, "y": -3 },
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": -3 },
-        { "x": 3, "y": -3 }
+        { "p": "input", "c": [{ "p": [-1, 3], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 3], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-3, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [3, -3], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3922,12 +3922,12 @@
       "s": 2.5,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": -1, "y": 3 },
-        { "x": 1, "y": 3 },
-        { "x": -3, "y": -3 },
-        { "x": -1, "y": -3 },
-        { "x": 1, "y": -3 },
-        { "x": 3, "y": -3 }
+        { "p": "input", "c": [{ "p": [-1, 3], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 3], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-3, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -3], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [3, -3], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3941,10 +3941,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 },
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3958,10 +3958,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 },
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3975,10 +3975,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 },
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -3992,10 +3992,10 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 },
-        { "x": -2, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4009,11 +4009,11 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4027,11 +4027,11 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4045,11 +4045,11 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -2, "y": -2 },
-        { "x": 0, "y": -2 },
-        { "x": 2, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-2, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4063,10 +4063,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4080,10 +4080,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4097,10 +4097,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4114,10 +4114,10 @@
       "s": 2.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4131,10 +4131,15 @@
       "s": 1,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": 0 },
-        { "x": 1, "y": 0 },
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        {
+          "p": "input",
+          "c": [
+            { "p": [-1, 0], "d": "west", "f": "input-output" },
+            { "p": [1, 0], "d": "east", "f": "input-output" }
+          ]
+        },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "pollution"],
@@ -4148,10 +4153,15 @@
       "s": 1.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": 0 },
-        { "x": 1, "y": 0 },
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        {
+          "p": "input",
+          "c": [
+            { "p": [-1, 0], "d": "west", "f": "input-output" },
+            { "p": [1, 0], "d": "east", "f": "input-output" }
+          ]
+        },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "pollution"],
@@ -4165,10 +4175,15 @@
       "s": 2,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": 0 },
-        { "x": 1, "y": 0 },
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        {
+          "p": "input",
+          "c": [
+            { "p": [-1, 0], "d": "west", "f": "input-output" },
+            { "p": [1, 0], "d": "east", "f": "input-output" }
+          ]
+        },
+        { "p": "output", "c": [{ "p": [0, -1], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
@@ -4181,7 +4196,7 @@
       "c": ["angels-induction-smelting"],
       "s": 1,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 2, "y": -2 }],
+      "f": [{ "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4193,7 +4208,7 @@
       "c": ["angels-induction-smelting", "angels-induction-smelting-2"],
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 2, "y": -2 }],
+      "f": [{ "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4209,7 +4224,7 @@
       ],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 2, "y": -2 }],
+      "f": [{ "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4226,7 +4241,7 @@
       ],
       "s": 3,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 2, "y": -2 }],
+      "f": [{ "p": "output", "c": [{ "p": [2, -2], "d": "north", "f": "output" }] }],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4239,8 +4254,8 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4254,8 +4269,8 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4269,8 +4284,8 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4289,8 +4304,8 @@
       "s": 3,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 0, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4304,10 +4319,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4321,10 +4336,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4338,10 +4353,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4360,10 +4375,10 @@
       "s": 3,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4377,10 +4392,10 @@
       "s": 1,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": 1, "y": 1 },
-        { "x": -1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -1], "d": "east", "f": "output" }] },
+        { "p": "input", "c": [{ "p": [1, 1], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 1], "d": "west", "f": "input" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4394,10 +4409,10 @@
       "s": 1.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": 1, "y": 1 },
-        { "x": -1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -1], "d": "east", "f": "output" }] },
+        { "p": "input", "c": [{ "p": [1, 1], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 1], "d": "west", "f": "input" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4411,10 +4426,10 @@
       "s": 2,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": 1, "y": 1 },
-        { "x": -1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -1], "d": "east", "f": "output" }] },
+        { "p": "input", "c": [{ "p": [1, 1], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 1], "d": "west", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4428,10 +4443,10 @@
       "s": 3,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": 1, "y": 1 },
-        { "x": -1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -1], "d": "east", "f": "output" }] },
+        { "p": "input", "c": [{ "p": [1, 1], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 1], "d": "west", "f": "input" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4620,10 +4635,10 @@
       "s": 1,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4637,10 +4652,10 @@
       "s": 1.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4654,10 +4669,10 @@
       "s": 2,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4676,10 +4691,10 @@
       "s": 3,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": -1, "y": 2 },
-        { "x": 1, "y": 2 },
-        { "x": -1, "y": -2 },
-        { "x": 1, "y": -2 }
+        { "p": "input", "c": [{ "p": [-1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, -2], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4693,10 +4708,10 @@
       "s": 2,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": -1, "y": -1 },
-        { "x": 1, "y": -1 },
-        { "x": -1, "y": 1 },
-        { "x": 1, "y": 1 }
+        { "p": "input", "c": [{ "p": [-1, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [1, -1], "d": "north", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
@@ -4710,8 +4725,8 @@
       "s": 0.5,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 0, "y": -3 },
-        { "x": 0, "y": 3 }
+        { "p": "input", "c": [{ "p": [0, -3], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 3], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4724,8 +4739,8 @@
       "s": 1,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 0, "y": -3 },
-        { "x": 0, "y": 3 }
+        { "p": "input", "c": [{ "p": [0, -3], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 3], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4738,8 +4753,8 @@
       "s": 1.5,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 0, "y": -3 },
-        { "x": 0, "y": 3 }
+        { "p": "input", "c": [{ "p": [0, -3], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 3], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4757,8 +4772,8 @@
       "s": 2,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 0, "y": -3 },
-        { "x": 0, "y": 3 }
+        { "p": "input", "c": [{ "p": [0, -3], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 3], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4775,7 +4790,7 @@
       ],
       "s": 1,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": -2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4786,7 +4801,7 @@
       "c": ["angels-temperate-farming", "angels-advanced-temperate-farming"],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": -2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4797,7 +4812,7 @@
       "c": ["angels-desert-farming", "angels-advanced-desert-farming"],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": -2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4808,7 +4823,7 @@
       "c": ["angels-swamp-farming", "angels-advanced-swamp-farming"],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": -2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
     },
@@ -4830,7 +4845,7 @@
       "c": ["angels-bio-pressing"],
       "s": 1,
       "z": { "width": 3, "height": 3 },
-      "f": [{ "x": 0, "y": 1 }],
+      "f": [{ "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4853,7 +4868,7 @@
       "c": ["angels-nutrient-extractor"],
       "s": 1,
       "z": { "width": 3, "height": 3 },
-      "f": [{ "x": 0, "y": 1 }],
+      "f": [{ "p": "output", "c": [{ "p": [0, 1], "d": "south", "f": "output" }] }],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -4866,8 +4881,8 @@
       "s": 0.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4881,8 +4896,8 @@
       "s": 0.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4896,8 +4911,8 @@
       "s": 0.5,
       "z": { "width": 3, "height": 3 },
       "f": [
-        { "x": 0, "y": -1 },
-        { "x": 0, "y": 1 }
+        { "p": "input", "c": [{ "p": [0, -1], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 1], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
@@ -4911,8 +4926,8 @@
       "s": 0.5,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": -2 },
-        { "x": 0, "y": 2 }
+        { "p": "input", "c": [{ "p": [0, -2], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4925,9 +4940,9 @@
       "s": 0.75,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 1, "y": 3 },
-        { "x": -1, "y": 3 },
-        { "x": 0, "y": -3 }
+        { "p": "input", "c": [{ "p": [1, 3], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-1, 3], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [0, -3], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4940,11 +4955,11 @@
       "s": 0.75,
       "z": { "width": 5, "height": 5 },
       "f": [
-        { "x": 0, "y": 2 },
-        { "x": 2, "y": 2 },
-        { "x": -2, "y": 2 },
-        { "x": 1, "y": -2 },
-        { "x": -1, "y": -2 }
+        { "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [2, 2], "d": "south", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [-2, 2], "d": "south", "f": "input" }] },
+        { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] },
+        { "p": "output", "c": [{ "p": [-1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -4957,8 +4972,8 @@
       "s": 2,
       "z": { "width": 7, "height": 7 },
       "f": [
-        { "x": 0, "y": -3 },
-        { "x": 0, "y": 3 }
+        { "p": "input", "c": [{ "p": [0, -3], "d": "north", "f": "input" }] },
+        { "p": "input", "c": [{ "p": [0, 3], "d": "south", "f": "input" }] }
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"]
@@ -5033,7 +5048,7 @@
       "c": ["angels-water-void"],
       "s": 2,
       "z": { "width": 5, "height": 5 },
-      "f": [{ "x": 0, "y": 2 }],
+      "f": [{ "p": "input", "c": [{ "p": [0, 2], "d": "south", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
@@ -5045,7 +5060,7 @@
       "c": ["angels-chemical-void"],
       "s": 2,
       "z": { "width": 2, "height": 2 },
-      "f": [{ "x": 0.5, "y": 0.5 }],
+      "f": [{ "p": "input", "c": [{ "p": [0.5, 0.5], "d": "south", "f": "input" }] }],
       "n": 2,
       "e": ["consumption", "speed", "pollution"],
       "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]

@@ -309,12 +309,11 @@ emit the same seam endpoint from both neighbors. This convention makes collision
 and an `n`-copy entity count much easier to reason about than the fixture author's branch-oriented
 grouping.
 
-This fixture also exposes a data-model requirement for generation.
-`Machine.fluidboxConnectionPoints` currently preserves physical points as one flat list; it does not
-retain which points belong to the same fluid box or whether that box accepts input or output. A
-generator for two independent fluid inputs and one fluid output needs that association from
-prototype data, a richer assembler specification, or an explicit caller-provided mapping. Geometry
-alone cannot safely assign the three fluids to the four chemical-plant connections.
+The machine model retains fluid boxes as groups, their production modes, and each physical
+connection's flow mode and direction. Recipe fluids retain their optional 1-based, side-specific
+`fluidboxIndex`, so a generator can map two independent fluid inputs and one fluid output onto the
+chemical plant's four physical connections. Geometry alone is still not a safe substitute for that
+mapping.
 
 ### The fixed `2s-in-1s-out-snake` kernel
 

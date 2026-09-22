@@ -42,7 +42,7 @@ describe('DesignColumn', () => {
     expect(assembler.querySelector('.cell-design-assembler-icon')).not.toBeNull();
   });
 
-  it('draws the selected machine fluidbox connections as outward blue triangles', () => {
+  it('draws machine fluidbox connections with their physical flow modes', () => {
     render(
       <DesignColumn
         index={0}
@@ -73,15 +73,49 @@ describe('DesignColumn', () => {
       arrows.map((arrow) => [
         arrow.getAttribute('data-fluidbox-position'),
         arrow.getAttribute('data-direction'),
+        arrow.getAttribute('data-flow-direction'),
         (arrow as HTMLElement).style.left,
         (arrow as HTMLElement).style.top,
       ]),
     ).toEqual([
-      ['1,-1', 'east', '24px', '0px'],
-      ['1,1', 'east', '24px', '24px'],
-      ['-1,-1', 'west', '0px', '0px'],
-      ['-1,1', 'west', '0px', '24px'],
+      ['1,-1', 'east', 'input', '24px', '0px'],
+      ['1,1', 'east', 'input', '24px', '24px'],
+      ['-1,-1', 'west', 'output', '0px', '0px'],
+      ['-1,1', 'west', 'output', '0px', '24px'],
     ]);
+  });
+
+  it('draws bidirectional fluidbox connections with opposing triangles', () => {
+    render(
+      <DesignColumn
+        index={0}
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'copper-cable',
+              position: { x: 0, y: 0 },
+              size: { width: 3, height: 3 },
+            },
+          ],
+        }}
+        entries={[{ recipe: 'copper-cable', machine: 'angels-electric-boiler' }]}
+        counts={[]}
+        progress={0}
+        onChange={() => undefined}
+      />,
+    );
+
+    const bidirectional = [
+      ...document.querySelectorAll(
+        '.cell-design-fluidbox-arrow[data-flow-direction="input-output"]',
+      ),
+    ];
+    expect(bidirectional).toHaveLength(2);
+    expect(bidirectional.every((arrow) => arrow.querySelectorAll('path').length === 2)).toBe(true);
+    expect(
+      document.querySelectorAll('.cell-design-fluidbox-arrow[data-flow-direction="output"]'),
+    ).toHaveLength(2);
   });
 
   it('maps negative world coordinates relative to the viewport world origin', () => {

@@ -297,6 +297,14 @@
   pointer-events: none;
 }
 
+.cell-design-fluidbox-arrow[data-flow-direction="output"] {
+  color: #ff9f3b;
+}
+
+.cell-design-fluidbox-arrow[data-flow-direction="input-output"] {
+  color: #b679ff;
+}
+
 .cell-design-fluidbox-arrow[data-direction="south"] {
   transform: rotate(90deg);
 }
@@ -307,6 +315,22 @@
 
 .cell-design-fluidbox-arrow[data-direction="north"] {
   transform: rotate(270deg);
+}
+
+.cell-design-fluidbox-arrow[data-flow-direction="input"][data-direction="east"] {
+  transform: rotate(180deg);
+}
+
+.cell-design-fluidbox-arrow[data-flow-direction="input"][data-direction="south"] {
+  transform: rotate(270deg);
+}
+
+.cell-design-fluidbox-arrow[data-flow-direction="input"][data-direction="west"] {
+  transform: rotate(0deg);
+}
+
+.cell-design-fluidbox-arrow[data-flow-direction="input"][data-direction="north"] {
+  transform: rotate(90deg);
 }
 
 .cell-design-assembler-icon {

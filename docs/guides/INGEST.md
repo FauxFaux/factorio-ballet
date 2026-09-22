@@ -269,8 +269,7 @@ centre and `direction` is the direction in which the connection faces when the e
 Factorio rotates or mirrors the effective values with the entity. The type also permits four
 orientation-specific `positions` instead of one `position` (the pumpjack is the documented example).
 The current dump uses one array `position` for every crafting-machine connection, and
-`fluidboxConnectionPoints()` deliberately rejects the other form. A richer representation should
-continue rejecting unsupported geometry rather than silently dropping a port.
+`machineFluidBoxes()` deliberately rejects the other form rather than silently dropping a port.
 
 On the recipe side, a fluid ingredient or product may set `fluidbox_index`. The index is **1-based
 and has separate input and output namespaces**: ingredient index 1 selects the first input fluid
@@ -288,7 +287,7 @@ interface MachineFluidBox {
   productionType: "none" | "input" | "output" | "input-output";
   connections: Array<{
     position: { x: number; y: number };
-    direction: number;
+    direction: "north" | "east" | "south" | "west";
     flowDirection: "input" | "output" | "input-output";
   }>;
 }
@@ -306,14 +305,11 @@ the planner answer both distinct questions: _which ports display input/output ar
 `flowDirection`, and _which ports carry this particular recipe fluid?_ from the recipe index,
 production side, box grouping, and finally the box's connections.
 
-The current code cannot perform that resolution. `fluidboxConnectionPoints()` flattens every box to
-`{x, y}`, `RIngredient` and `RProduct` accept `fluidbox_index` only as ignored unknown data, and
-`toIng` / `toProd` discard it. When replacing that model, update all four boundaries together: raw
-validators, recipe resource types, machine types, and packed/decode data. Retain the raw box order,
-because the recipe indices refer to it after separating input from output. Add completeness checks
-for a positive recipe index with no corresponding box on every compatible machine, and tests
-covering one box with multiple connections plus boxes whose connection flow differs from their
-production type.
+The ingest implements this shape across the raw validators, recipe resource types, machine types,
+and packed/decode data. `fluidBoxResources()` performs the side-specific recipe mapping for the
+design view; unindexed fluids take the remaining boxes in recipe order. The ingest reports a
+positive recipe index with no corresponding box on a machine in the recipe's categories. Tests cover
+grouped connections, production and flow modes, and recipe-to-box assignment.
 
 ## Notes for inserters
 

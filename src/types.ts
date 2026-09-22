@@ -86,7 +86,7 @@ export type StaticDataPacked = {
       c: string[];
       s: number;
       z: MachineSize;
-      f?: FluidboxConnectionPoint[];
+      f?: PackedMachineFluidBox[];
       n?: number;
       e?: Effect[];
       a?: string[];
@@ -134,12 +134,17 @@ export type StaticDataPacked = {
   };
 };
 
-type PackedIngredient = { r: number; a: number; t?: PackedTemperature };
+type PackedIngredient = { r: number; a: number; t?: PackedTemperature; f?: number };
 type PackedProduct = {
   r: number;
   a: PackedAmount;
   p: number;
   i?: number;
+  f?: number;
+};
+type PackedMachineFluidBox = {
+  p: FluidProductionType;
+  c: Array<{ p: [number, number]; d: PipeDirection; f: FluidFlowDirection }>;
 };
 type PackedAmount = { f: number } | { n: number; x: number };
 type PackedTemperature = { f: number } | { n: number; x: number } | { n: number } | { x: number };
@@ -164,10 +169,21 @@ export interface StaticEntity {
   chartColor: ChartColor;
 }
 
-/** A tile-centred point on a machine's edge where a pipe can connect. */
-export interface FluidboxConnectionPoint {
-  x: number;
-  y: number;
+export type FluidProductionType = 'none' | 'input' | 'output' | 'input-output';
+export type FluidFlowDirection = 'input' | 'output' | 'input-output';
+export type PipeDirection = 'north' | 'east' | 'south' | 'west';
+
+/** One physical port belonging to a machine fluid box, in its north-facing orientation. */
+export interface MachineFluidConnection {
+  position: { x: number; y: number };
+  direction: PipeDirection;
+  flowDirection: FluidFlowDirection;
+}
+
+/** One recipe-fluid slot. Its connections all expose the same contained fluid. */
+export interface MachineFluidBox {
+  productionType: FluidProductionType;
+  connections: MachineFluidConnection[];
 }
 
 /** A module's prototype id, e.g. `speed-module-3`; the same id as the item you craft. */
@@ -227,12 +243,16 @@ export interface Ingredient {
   resource: ResourceId;
   amount: number;
   temperature?: IngredientTemperature;
+  /** A positive, 1-based index within a machine's input fluid boxes. */
+  fluidboxIndex?: number;
 }
 
 export interface Product {
   resource: ResourceId;
   amount: ProductAmount;
   probability: number;
+  /** A positive, 1-based index within a machine's output fluid boxes. */
+  fluidboxIndex?: number;
 
   /**
    * How much of this, per craft, a productivity bonus is *not* paid on — the game's
@@ -297,12 +317,8 @@ export interface Machine {
    */
   size: MachineSize;
 
-  /**
-   * Every pipe connection on the machine's fluid boxes, relative to its centre. Absent means it
-   * has no fluid boxes. A fluid box may have more than one connection, so this is deliberately a
-   * flat list of physical points rather than one entry per box.
-   */
-  fluidboxConnectionPoints?: FluidboxConnectionPoint[];
+  /** Ordered recipe-fluid slots and their physical pipe connections. */
+  fluidBoxes?: MachineFluidBox[];
   moduleSlots?: number;
 
   /**

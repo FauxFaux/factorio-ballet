@@ -30,7 +30,7 @@ export const RIngredient = z.strictObject({
   maximum_temperature: z.optional(z.number()),
 
   ignored_by_stats: z.optional(z.unknown()),
-  fluidbox_index: z.optional(z.unknown()),
+  fluidbox_index: z.optional(z.number().check(z.int(), z.nonnegative())),
 });
 
 export type RIngredient = z.infer<typeof RIngredient>;
@@ -47,7 +47,7 @@ export const RProduct = z.strictObject({
   ignored_by_productivity: z.optional(z.number()),
 
   ignored_by_stats: z.optional(z.unknown()),
-  fluidbox_index: z.optional(z.unknown()),
+  fluidbox_index: z.optional(z.number().check(z.int(), z.nonnegative())),
   show_details_in_recipe_tooltip: z.optional(z.unknown()),
 });
 
