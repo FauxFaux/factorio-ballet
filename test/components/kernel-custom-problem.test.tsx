@@ -15,7 +15,13 @@ const throughput = {
   longInserterItemsPerSecond: 1,
 };
 
-function CustomProblemExample({ initial }: { initial?: KernelCustomState }) {
+function CustomProblemExample({
+  initial,
+  currentThroughput = throughput,
+}: {
+  initial?: KernelCustomState;
+  currentThroughput?: typeof throughput;
+}) {
   const uss = useState<UrlState>({
     v: 1,
     cs: '',
@@ -28,7 +34,7 @@ function CustomProblemExample({ initial }: { initial?: KernelCustomState }) {
   });
   return (
     <>
-      <KernelCustomProblem throughput={throughput} custom={field(uss, 'kp')} />
+      <KernelCustomProblem throughput={currentThroughput} custom={field(uss, 'kp')} />
       <output aria-label="Saved custom problem">{JSON.stringify(uss[0].kp)}</output>
     </>
   );
@@ -36,6 +42,42 @@ function CustomProblemExample({ initial }: { initial?: KernelCustomState }) {
 
 describe('KernelCustomProblem', () => {
   afterEach(cleanup);
+
+  it('follows overall throughput until edited and resumes following after reset', async () => {
+    const user = userEvent.setup();
+    const view = render(<CustomProblemExample />);
+    const group = screen.getByRole('group', { name: 'Throughputs' });
+    const reset = within(group).getByRole('button', {
+      name: 'Reset throughputs to overall game progress',
+    });
+    const belt = within(group).getByRole<HTMLInputElement>('slider', { name: 'Belt throughput' });
+
+    expect(reset.hasAttribute('disabled')).toBe(true);
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Building' }), 'air-filter');
+    expect(
+      JSON.parse(screen.getByLabelText('Saved custom problem').textContent!),
+    ).not.toHaveProperty('rates');
+
+    view.rerender(
+      <CustomProblemExample currentThroughput={{ ...throughput, beltItemsPerSecond: 30 }} />,
+    );
+    expect(belt.value).toBe('30');
+
+    fireEvent.input(belt, { target: { value: '40' } });
+    expect(reset.hasAttribute('disabled')).toBe(false);
+    view.rerender(
+      <CustomProblemExample currentThroughput={{ ...throughput, beltItemsPerSecond: 45 }} />,
+    );
+    expect(belt.value).toBe('40');
+
+    await user.click(reset);
+    expect(belt.value).toBe('45');
+    expect(reset.hasAttribute('disabled')).toBe(true);
+    expect(JSON.parse(screen.getByLabelText('Saved custom problem').textContent!)).toEqual({
+      building: 'air-filter',
+      flows: { solidInputs: [5], fluidInputs: [], solidOutputs: [2], fluidOutputs: [] },
+    });
+  });
 
   it('restores its building, flows, and rates from saved URL state', async () => {
     const user = userEvent.setup();

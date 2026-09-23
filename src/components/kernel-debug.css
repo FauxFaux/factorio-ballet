@@ -83,6 +83,32 @@
   border-radius: 4px;
 }
 
+.kernel-custom-reset-rates {
+  margin-left: 0.5rem;
+  padding: 2px 5px;
+  color: var(--text);
+  font: inherit;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.kernel-custom-reset-rates svg {
+  vertical-align: -0.15em;
+}
+
+.kernel-custom-reset-rates:hover:not(:disabled) {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
+.kernel-custom-reset-rates:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .kernel-custom-flow {
   display: flex;
   align-items: center;

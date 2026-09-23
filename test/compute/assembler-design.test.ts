@@ -183,6 +183,27 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
+  it('uses both full-height input sides for a high-rate solid on a 5×5 machine', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({ size: { width: 5, height: 5 }, solidInputs: [70], solidOutputs: [2] }),
+      { beltItemsPerSecond: 45, inserterItemsPerSecond: 8, longInserterItemsPerSecond: 4 },
+    );
+    const entities = design.columns?.[0].entities ?? [];
+    expect(
+      entities.filter(
+        (entity) =>
+          entity.kind === 'inserter' && entity.direction === 'east' && entity.position.x === 2,
+      ),
+    ).toHaveLength(5);
+    expect(
+      entities.filter(
+        (entity) =>
+          entity.kind === 'inserter' && entity.direction === 'west' && entity.position.x === 8,
+      ),
+    ).toHaveLength(4);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it('packs three inputs onto two belts, with one mixed belt', () => {
     const design = generateAssemblerDesign(
       assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
@@ -789,6 +810,61 @@ describe('generateAssemblerDesign', () => {
       expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
     },
   );
+
+  it('uses all four free side tiles to feed a 5×5 air filter', () => {
+    const problem = airFilterProblem({ width: 5, height: 5 });
+    problem.inputs.solids = { 'item:test': 32 };
+    const design = generateAssemblerDesign(problem, {
+      ...throughput,
+      beltItemsPerSecond: 45,
+    });
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual(
+      [4, 0, 1, 3].map((y) => ({
+        kind: 'inserter',
+        position: { x: 6, y },
+        direction: 'west',
+      })),
+    );
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('splits one high-rate solid across both sides of a 5×5 air filter', () => {
+    const problem = airFilterProblem({ width: 5, height: 5 });
+    problem.inputs.solids = { 'item:test': 60 };
+    const design = generateAssemblerDesign(problem, {
+      ...throughput,
+      beltItemsPerSecond: 45,
+    });
+    const entities = design.columns?.[0].entities ?? [];
+    expect(
+      entities.filter((entity) => entity.kind === 'inserter' && entity.position.x === 2),
+    ).toHaveLength(4);
+    expect(
+      entities.filter((entity) => entity.kind === 'inserter' && entity.position.x === 8),
+    ).toHaveLength(4);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('reports four available inserter tiles on a 5×5 air filter', () => {
+    const problem = airFilterProblem({ width: 5, height: 5 });
+    problem.inputs.solids = { 'item:test': 72 };
+
+    expect(generateAssemblerDesign(problem, { ...throughput, beltItemsPerSecond: 45 })).toEqual({
+      failure: [
+        'cannot insert',
+        'item:test',
+        'into',
+        'Air filter 5×5',
+        'because',
+        '5 inserters',
+        'are needed but only',
+        '4 tiles',
+        'are available beside the assembler',
+      ],
+    });
+  });
 
   it.each(['input', 'output'] as const)(
     'places right-side transport after rotating a rectangular machine with a fluid %s',

@@ -1,4 +1,5 @@
 import type { ComponentChildren } from 'preact';
+import { UndoIcon } from '@primer/octicons-react';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
@@ -50,15 +51,10 @@ function resourceNamesFor(problem: KernelProblem): Record<FlowKind, string[]> {
   };
 }
 
-function defaultCustomState(throughput: AssemblerDesignThroughput): KernelCustomState {
+function defaultCustomState(): KernelCustomState {
   return {
     building: 'assembler',
     flows: { solidInputs: [5], fluidInputs: [], solidOutputs: [2], fluidOutputs: [] },
-    rates: {
-      beltItemsPerSecond: withinRange(throughput.beltItemsPerSecond, 7.5, 75),
-      inserterItemsPerSecond: withinRange(throughput.inserterItemsPerSecond, 0.5, 40),
-      longInserterItemsPerSecond: withinRange(throughput.longInserterItemsPerSecond, 0.5, 40),
-    },
   };
 }
 
@@ -70,11 +66,17 @@ export function KernelCustomProblem({
   custom: State<KernelCustomState | undefined>;
 }) {
   const [stored, setStored] = custom;
-  const { building, flows, rates } = stored ?? defaultCustomState(throughput);
+  const { building, flows } = stored ?? defaultCustomState();
+  const rates = stored?.rates ?? {
+    beltItemsPerSecond: withinRange(throughput.beltItemsPerSecond, 7.5, 75),
+    inserterItemsPerSecond: withinRange(throughput.inserterItemsPerSecond, 0.5, 40),
+    longInserterItemsPerSecond: withinRange(throughput.longInserterItemsPerSecond, 0.5, 40),
+  };
   const updateCustom = (update: (current: KernelCustomState) => KernelCustomState) =>
-    setStored((current) => update(current ?? defaultCustomState(throughput)));
+    setStored((current) => update(current ?? defaultCustomState()));
   const setRates = (update: (current: AssemblerDesignThroughput) => AssemblerDesignThroughput) =>
-    updateCustom((current) => ({ ...current, rates: update(current.rates) }));
+    updateCustom((current) => ({ ...current, rates: update(current.rates ?? rates) }));
+  const resetRates = () => updateCustom(({ rates: _rates, ...current }) => current);
 
   const filter = airFilterProblem({ width: 5, height: 5 }).assemblers[0]!;
   const problemForFlows = (values: Flows) =>
@@ -133,8 +135,23 @@ export function KernelCustomProblem({
             </select>
           </label>
           <div class="kernel-custom-flows">
-            <fieldset class="kernel-custom-flow-group kernel-custom-throughputs">
-              <legend>Throughputs</legend>
+            <fieldset
+              class="kernel-custom-flow-group kernel-custom-throughputs"
+              aria-labelledby="kernel-custom-throughputs-title"
+            >
+              <legend>
+                <span id="kernel-custom-throughputs-title">Throughputs</span>
+                <button
+                  type="button"
+                  class="kernel-custom-reset-rates"
+                  title="Reset throughputs to overall game progress"
+                  aria-label="Reset throughputs to overall game progress"
+                  disabled={!stored?.rates}
+                  onClick={resetRates}
+                >
+                  <UndoIcon aria-hidden="true" />
+                </button>
+              </legend>
               <RateSlider
                 label="Belt throughput"
                 title="Belt throughput in items per second"

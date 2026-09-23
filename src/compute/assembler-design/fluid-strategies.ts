@@ -150,24 +150,40 @@ export function solveDualFluidSolidInputDesign(
   }
   const size = rotatedSize(specification.size, assemblerDirection);
   const middle = Math.floor(size.height / 2);
-  const inserterYs = [size.height - 1, 0].filter((y) => y !== middle);
+  const inserterYs = sideRows(size.height).filter((y) => y !== middle);
   if (inserterYs.length < 2) {
     return reject('machine-geometry', 'cannot fit solid inserters beside both fluid ports');
   }
 
-  if (prepared.inputSolids.some((rate) => rate > throughput.beltItemsPerSecond)) {
+  const singleRate = prepared.inputSolids[0];
+  const sideCapacity = Math.min(
+    throughput.beltItemsPerSecond,
+    inserterYs.length * throughput.inserterItemsPerSecond,
+  );
+  const useBothSides = prepared.inputSolids.length === 2 || singleRate > sideCapacity;
+  if (
+    prepared.inputSolids.length === 2
+      ? prepared.inputSolids.some((rate) => rate > throughput.beltItemsPerSecond)
+      : singleRate > 2 * throughput.beltItemsPerSecond
+  ) {
     return reject(
       'transport-capacity',
-      'cannot feed a solid input because its rate exceeds the input belt',
+      'cannot feed a solid input because its rate exceeds the available input belts',
     );
   }
-  for (const [index, rate] of prepared.inputSolids.entries()) {
+  const sideRates =
+    prepared.inputSolids.length === 2
+      ? prepared.inputSolids
+      : useBothSides
+        ? [Math.min(singleRate, sideCapacity), singleRate - Math.min(singleRate, sideCapacity)]
+        : [singleRate];
+  for (const [index, rate] of sideRates.entries()) {
     const inserterCount = Math.ceil(rate / throughput.inserterItemsPerSecond);
     if (inserterCount > inserterYs.length) {
       return rejected(
         inserterFailure(
           'insert',
-          [Object.keys(problem.inputs.solids)[index]],
+          [Object.keys(problem.inputs.solids)[Math.min(index, prepared.inputSolids.length - 1)]],
           problem,
           inserterCount,
           inserterYs.length,
@@ -176,13 +192,13 @@ export function solveDualFluidSolidInputDesign(
     }
   }
 
-  if (prepared.inputSolids.length === 2) {
+  if (useBothSides) {
     const rightInserterX = 3 + size.width;
     const entities: DesignEntity[] = [
       ...pipeTrunk(0, size.height),
       ...undergroundNorthBelt(1, size.height),
       ...inserterYs
-        .slice(0, Math.ceil(prepared.inputSolids[0] / throughput.inserterItemsPerSecond))
+        .slice(0, Math.ceil(sideRates[0] / throughput.inserterItemsPerSecond))
         .map((y): DesignEntity => ({
           kind: 'inserter',
           position: { x: 2, y },
@@ -190,7 +206,7 @@ export function solveDualFluidSolidInputDesign(
         })),
       assembler(problem, 3, assemblerDirection),
       ...inserterYs
-        .slice(0, Math.ceil(prepared.inputSolids[1] / throughput.inserterItemsPerSecond))
+        .slice(0, Math.ceil(sideRates[1] / throughput.inserterItemsPerSecond))
         .map((y): DesignEntity => ({
           kind: 'inserter',
           position: { x: rightInserterX, y },

@@ -26,31 +26,37 @@ interface InputSite {
   reach?: 2;
 }
 
-const compactInputSites: InputSite[] = [
-  { beltX: 0, position: { x: 1, y: 2 }, direction: 'east' },
-  { beltX: 0, position: { x: 1, y: 0 }, direction: 'east' },
-  { beltX: 0, position: { x: 1, y: 1 }, direction: 'east' },
-];
+function sideRows(height: number): number[] {
+  return [height - 1, ...Array.from({ length: height - 1 }, (_, y) => y)];
+}
 
 function outputRows(height: number): number[] {
   const middle = Math.floor(height / 2);
   return [middle, ...Array.from({ length: height }, (_, y) => y).filter((y) => y !== middle)];
 }
 
-// Three normal inserters can read the west near belt when its middle site is not occupied by the
-// far-west belt's long inserter. The east middle site belongs to the output inserter.
-const wideInputSiteGroups: InputSite[][] = [
-  [
-    { beltX: 1, position: { x: 2, y: 2 }, direction: 'east' },
-    { beltX: 1, position: { x: 2, y: 0 }, direction: 'east' },
-    { beltX: 1, position: { x: 2, y: 1 }, direction: 'east' },
-  ],
-  [
-    { beltX: 7, position: { x: 6, y: 2 }, direction: 'west' },
-    { beltX: 7, position: { x: 6, y: 0 }, direction: 'west' },
-  ],
-  [{ beltX: 0, position: { x: 2, y: 1 }, direction: 'east', reach: 2 }],
-];
+function wideInputSiteGroups(
+  size: { width: number; height: number },
+  outputPositions: { x: number; y: number }[],
+): InputSite[][] {
+  const rightX = 3 + size.width;
+  const farWestY = Math.floor(size.height / 2);
+  return [
+    sideRows(size.height).map((y) => ({
+      beltX: 1,
+      position: { x: 2, y },
+      direction: 'east' as const,
+    })),
+    sideRows(size.height)
+      .filter((y) => !outputPositions.some((position) => position.y === y))
+      .map((y) => ({
+        beltX: rightX + 1,
+        position: { x: rightX, y },
+        direction: 'west' as const,
+      })),
+    [{ beltX: 0, position: { x: 2, y: farWestY }, direction: 'east', reach: 2 }],
+  ];
+}
 
 export function solveCompactSolidDesign(
   prepared: PreparedAssemblerProblem,
@@ -63,6 +69,11 @@ export function solveCompactSolidDesign(
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
   const size = problem.assemblers[0].size ?? { width: 3, height: 3 };
+  const compactInputSites: InputSite[] = sideRows(size.height).map((y) => ({
+    beltX: 0,
+    position: { x: 1, y },
+    direction: 'east',
+  }));
   const outputPositions = outputRows(size.height).map((y) => ({ x: 2 + size.width, y }));
   const inputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
   const outputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
@@ -132,22 +143,20 @@ export function solveWideSolidDesign(
     );
   }
 
-  const selectedInputSites = wideInputSites(problem, throughput, outputInserterCount);
+  const selectedInputSites = wideInputSites(
+    problem,
+    throughput,
+    wideInputSiteGroups(size, outputPositions.slice(0, outputInserterCount)),
+  );
   if (!Array.isArray(selectedInputSites)) return rejected(selectedInputSites);
 
   const entities: DesignEntity[] = [
     ...[...new Set(selectedInputSites.map(({ beltX }) => beltX))].flatMap((beltX) =>
-      verticalBelt(beltX < 3 ? beltX : beltX + size.width - 3, 'north', size.height),
+      verticalBelt(beltX, 'north', size.height),
     ),
     ...selectedInputSites.map(({ position, direction, reach }) => ({
       kind: 'inserter' as const,
-      position:
-        position.x < 3
-          ? position
-          : {
-              x: position.x + size.width - 3,
-              y: position.y === 2 ? size.height - 1 : position.y,
-            },
+      position,
       direction,
       ...(reach ? { reach } : {}),
     })),
@@ -203,16 +212,11 @@ function validateSolidFlows(
 function wideInputSites(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
-  outputInserterCount: number,
+  siteGroups: InputSite[][],
 ): InputSite[] | AssemblerDesignRejection {
   const inputEntries = Object.entries(problem.inputs.solids);
   if (inputEntries.length === 1) {
-    return splitSingleInputAcrossBelts(
-      problem,
-      inputEntries[0][1],
-      throughput,
-      outputInserterCount,
-    );
+    return splitSingleInputAcrossBelts(problem, inputEntries[0][1], throughput, siteGroups);
   }
 
   const beltGroups: Array<Array<[string, number]>> = [];
@@ -243,7 +247,7 @@ function wideInputSites(
     }
   }
 
-  if (beltGroups.length > wideInputSiteGroups.length) {
+  if (beltGroups.length > siteGroups.length) {
     return designRejection(
       'entity-placement',
       'cannot fit',
@@ -257,13 +261,11 @@ function wideInputSites(
     const rate = sum(group.map(([, resourceRate]) => resourceRate));
     const resources = group.map(([resource]) => resource);
 
-    const allSites = wideInputSiteGroups[beltIndex];
+    const allSites = siteGroups[beltIndex];
     const sites =
       beltIndex === 0 && beltGroups.length === 3
-        ? allSites.slice(0, 2)
-        : beltIndex === 1 && outputInserterCount === 2
-          ? allSites.slice(0, 1)
-          : allSites;
+        ? allSites.filter((site) => site.position.y !== siteGroups[2][0].position.y)
+        : allSites;
     const itemsPerSecond =
       beltIndex === 2 ? throughput.longInserterItemsPerSecond : throughput.inserterItemsPerSecond;
     const inserterCount = Math.ceil(rate / itemsPerSecond);
@@ -279,7 +281,7 @@ function splitSingleInputAcrossBelts(
   problem: KernelProblem,
   rate: number,
   throughput: AssemblerDesignThroughput,
-  outputInserterCount: number,
+  siteGroups: InputSite[][],
 ): InputSite[] | AssemblerDesignRejection {
   const selected: InputSite[] = [];
   let remaining = rate;
@@ -287,8 +289,7 @@ function splitSingleInputAcrossBelts(
   // A third belt would claim the middle west site for its long inserter. Since long inserters are
   // slower, replacing that site's normal inserter cannot increase single-item transfer capacity.
   for (let beltIndex = 0; beltIndex < 2 && remaining > 0; beltIndex += 1) {
-    const allSites = wideInputSiteGroups[beltIndex];
-    const sites = beltIndex === 1 && outputInserterCount === 2 ? allSites.slice(0, 1) : allSites;
+    const sites = siteGroups[beltIndex];
     const itemsPerSecond = throughput.inserterItemsPerSecond;
     const beltCapacity = Math.min(throughput.beltItemsPerSecond, sites.length * itemsPerSecond);
     const assignedRate = Math.min(remaining, beltCapacity);

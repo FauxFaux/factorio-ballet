@@ -18,7 +18,8 @@ export interface KernelCustomState {
     solidOutputs: number[];
     fluidOutputs: number[];
   };
-  rates: AssemblerDesignThroughput;
+  /** Absent follows overall game progress until a throughput slider is adjusted. */
+  rates?: AssemblerDesignThroughput;
 }
 
 export interface UrlState {
