@@ -1,5 +1,6 @@
 import {
   solveDualFluidDesign,
+  solveDualFluidSolidOutputDesign,
   solveDualFluidSolidInputDesign,
   solveFluidInputDesign,
   solveFluidOutputDesign,
@@ -44,6 +45,7 @@ const assemblerDesignStrategies: AssemblerDesignStrategy[] = [
   { id: 'single-fluid-input-trunk', solve: solveFluidInputDesign },
   { id: 'single-fluid-output-trunk', solve: solveFluidOutputDesign },
   { id: 'dual-fluid-solid-input', solve: solveDualFluidSolidInputDesign },
+  { id: 'dual-fluid-solid-output', solve: solveDualFluidSolidOutputDesign },
   { id: 'opposing-fluid-trunks', solve: solveDualFluidDesign },
 ];
 

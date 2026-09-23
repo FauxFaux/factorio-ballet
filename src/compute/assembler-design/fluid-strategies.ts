@@ -229,6 +229,117 @@ function undergroundNorthBelt(x: number): DesignEntity[] {
   ];
 }
 
+/** Two solid inputs and one solid output around opposing middle-edge fluid ports. */
+export function solveDualFluidSolidOutputDesign(
+  prepared: PreparedAssemblerProblem,
+): AssemblerDesignStrategyResult {
+  const { problem, throughput, inputSolids, outputSolids } = prepared;
+  if (
+    inputSolids.length !== 2 ||
+    outputSolids.length !== 1 ||
+    prepared.inputFluids.length !== 1 ||
+    prepared.outputFluids.length !== 1
+  ) {
+    return notApplicable();
+  }
+
+  const specification = problem.assemblers[0];
+  if (!specification.size || !specification.fluidBoxes) {
+    return reject(
+      'machine-geometry',
+      'cannot connect fluids to',
+      specification.name,
+      'because its size or fluid-port geometry is missing',
+    );
+  }
+  if (specification.size.width !== 3 || specification.size.height !== 3) {
+    return reject('machine-geometry', 'this solid and fluid layout requires a 3x3 machine');
+  }
+  const direction = centeredFluidRotation(specification, 'input', 'west', 'output', 'east');
+  if (!direction) {
+    return reject(
+      'machine-geometry',
+      'cannot connect fluids to',
+      specification.name,
+      'because it has no rotation with opposing middle-edge input and output ports',
+    );
+  }
+
+  if (inputSolids.some((rate) => rate > throughput.beltItemsPerSecond)) {
+    return reject(
+      'transport-capacity',
+      'cannot carry a solid input because its rate exceeds one belt',
+    );
+  }
+  const outputRate = outputSolids[0];
+  if (outputRate > throughput.beltItemsPerSecond) {
+    return reject(
+      'transport-capacity',
+      'cannot carry the solid output because its rate exceeds one belt',
+    );
+  }
+  const outputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
+  if (outputInserterCount > 2) {
+    return rejected(
+      inserterFailure(
+        'extract',
+        Object.keys(problem.outputs.solids),
+        problem,
+        outputInserterCount,
+        2,
+      ),
+    );
+  }
+
+  // Assign the slower input to the far belt. When a long inserter cannot carry either input,
+  // both resources may share the near belt if its two lanes and inserters can carry their sum.
+  const farRate = Math.min(...inputSolids);
+  const nearRate = Math.max(...inputSolids);
+  const useFarBelt =
+    farRate <= throughput.longInserterItemsPerSecond &&
+    nearRate <= throughput.inserterItemsPerSecond;
+  const sharedRate = sum(inputSolids);
+  if (
+    !useFarBelt &&
+    (sharedRate > throughput.beltItemsPerSecond ||
+      sharedRate > 2 * throughput.inserterItemsPerSecond)
+  ) {
+    return reject(
+      'transport-capacity',
+      'cannot feed both solid inputs through the available belts and inserter sites',
+    );
+  }
+
+  const inputInserters: DesignEntity[] = useFarBelt
+    ? [
+        { kind: 'inserter', position: { x: 3, y: 0 }, direction: 'east', reach: 2 },
+        { kind: 'inserter', position: { x: 3, y: 2 }, direction: 'east' },
+      ]
+    : [0, 2]
+        .slice(0, Math.ceil(sharedRate / throughput.inserterItemsPerSecond))
+        .map((y) => ({ kind: 'inserter', position: { x: 3, y }, direction: 'east' }));
+  const entities: DesignEntity[] = [
+    ...pipeTrunk(),
+    ...(useFarBelt ? undergroundNorthBelt(1) : []),
+    ...verticalBelt(2, 'north'),
+    ...inputInserters,
+    assembler(problem, 4, direction),
+    ...[0, 2].slice(0, outputInserterCount).map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 7, y },
+      direction: 'east',
+    })),
+    { kind: 'underground-belt', position: { x: 8, y: 0 }, direction: 'south', end: 'input' },
+    { kind: 'underground-belt', position: { x: 8, y: 2 }, direction: 'south', end: 'output' },
+    { kind: 'underground-pipe', position: { x: 1, y: 1 }, direction: 'west' },
+    { kind: 'underground-pipe', position: { x: 3, y: 1 }, direction: 'east' },
+    { kind: 'underground-pipe', position: { x: 7, y: 1 }, direction: 'west' },
+    { kind: 'underground-pipe', position: { x: 8, y: 1 }, direction: 'east' },
+    ...pipeTrunk(9),
+  ];
+  return solved({ columns: [{ entities }] });
+}
+
 export function solveDualFluidDesign(
   prepared: PreparedAssemblerProblem,
 ): AssemblerDesignStrategyResult {

@@ -138,7 +138,7 @@ describe('App', () => {
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
     expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(24);
     for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
-      expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Red50);
+      expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }
     const firstPreview = within(articleForProblem(firstSolidProblem)).getByRole('region', {
       name: 'Assembler 1 preview',
@@ -158,7 +158,7 @@ describe('App', () => {
       const lanes = belt.querySelectorAll('.cell-design-belt-lane');
       expect(lanes).toHaveLength(2);
       for (const lane of lanes) {
-        expect((lane as HTMLElement).style.backgroundColor).toBe(CARBON_LIGHT_SHORT.Red50);
+        expect((lane as HTMLElement).style.backgroundColor).toBe(CARBON_LIGHT_SHORT.Yellow50);
       }
     }
     const outputBelts = within(firstPreview).getAllByRole('img', {
@@ -172,7 +172,7 @@ describe('App', () => {
       expect(belt.getAttribute('title')).toContain('item 2, 2/s');
       expect(
         [...belt.querySelectorAll<HTMLElement>('.cell-design-belt-lane')].some(
-          (lane) => lane.style.backgroundColor === CARBON_LIGHT_SHORT.Green60,
+          (lane) => lane.style.backgroundColor === CARBON_LIGHT_SHORT.Purple50,
         ),
       ).toBe(true);
     }
@@ -189,11 +189,11 @@ describe('App', () => {
       expect(
         belt.querySelector<HTMLElement>('.cell-design-belt-lane[data-side="left"]')?.style
           .backgroundColor,
-      ).toBe(CARBON_LIGHT_SHORT.Red50);
+      ).toBe(CARBON_LIGHT_SHORT.Yellow50);
       expect(
         belt.querySelector<HTMLElement>('.cell-design-belt-lane[data-side="right"]')?.style
           .backgroundColor,
-      ).toBe(CARBON_LIGHT_SHORT.Green60);
+      ).toBe(CARBON_LIGHT_SHORT.Purple50);
     }
     const rightInputBelts = within(fifthPreview).getAllByRole('img', {
       name: /Transport belt at 7, \d, pointing north/,

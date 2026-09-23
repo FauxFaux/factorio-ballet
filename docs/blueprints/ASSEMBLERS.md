@@ -214,6 +214,23 @@ check that both members have the same prototype, lie on one axis, face the requi
 and are within that prototype's underground distance. It must make the equivalent reach check for
 the underground belt pair using `Belt.undergroundLength`.
 
+### Two solids and one fluid in, one solid and one fluid out
+
+The generator supports a 10x3 tile for a 3x3 machine with opposing middle-edge fluid ports. From
+west to east, its columns are a fluid trunk at `x=0`, a northbound underground input belt at `x=1`,
+a northbound input belt at `x=2`, input inserters at `x=3`, the machine at `x=4..6`, output
+inserters at `x=7`, a southbound underground output belt at `x=8`, and a fluid trunk at `x=9`.
+
+The left fluid branch connects underground-pipe endpoints `(1,1)` and `(3,1)`, crossing the near
+input belt at `(2,1)`. The right branch connects `(7,1)` and `(8,1)`. Both underground belts have
+surface endpoints in rows 0 and 2, leaving row 1 for their respective fluid branches. The far input
+belt is read by a long-handed inserter at `(3,0)`; the near belt is read by a normal inserter at
+`(3,2)`. Normal output inserters occupy `(7,0)` and, when needed, `(7,2)`.
+
+If neither solid input fits the long-handed inserter's transfer rate, both can share the near belt
+when their combined rate fits its two lanes and two normal inserters. In that case the far input
+belt is omitted and the normal input inserters occupy `(3,0)` and `(3,2)`.
+
 ### The rectangular `chem-2f2s-in-1f1s-out` pattern
 
 `chem-2f2s-in-1f1s-out.json` contains two complete copies of a more complicated repeating unit. The

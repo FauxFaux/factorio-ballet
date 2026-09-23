@@ -596,6 +596,72 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
+  it('routes two solid inputs and a solid output between opposing fluid trunks', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        solidInputs: [3, 5],
+        fluidInputs: [200],
+        solidOutputs: [12],
+        fluidOutputs: [200],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities).toContainEqual({
+      kind: 'assembler',
+      position: { x: 4, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: 'Assembler 2',
+      direction: 'west',
+    });
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 3, y: 0 }, direction: 'east', reach: 2 },
+      { kind: 'inserter', position: { x: 3, y: 2 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 7, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 7, y: 2 }, direction: 'east' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'underground-belt')).toEqual([
+      { kind: 'underground-belt', position: { x: 1, y: 2 }, direction: 'north', end: 'input' },
+      { kind: 'underground-belt', position: { x: 1, y: 0 }, direction: 'north', end: 'output' },
+      { kind: 'underground-belt', position: { x: 8, y: 0 }, direction: 'south', end: 'input' },
+      { kind: 'underground-belt', position: { x: 8, y: 2 }, direction: 'south', end: 'output' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toEqual([
+      { kind: 'underground-pipe', position: { x: 1, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 3, y: 1 }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: 7, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 8, y: 1 }, direction: 'east' },
+    ]);
+    expect(
+      entities.filter((entity) => entity.kind === 'pipe').map(({ position }) => position),
+    ).toEqual([0, 9].flatMap((x) => [0, 1, 2].map((y) => ({ x, y }))));
+    expect(designBounds(entities)).toEqual({ minX: 0, maxX: 10, minY: 0, maxY: 3 });
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('shares the near input belt when neither solid fits a long inserter', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        solidInputs: [5, 5],
+        fluidInputs: [200],
+        solidOutputs: [2],
+        fluidOutputs: [200],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(
+      entities.filter((entity) => entity.kind === 'inserter' && entity.position.x === 3),
+    ).toEqual([
+      { kind: 'inserter', position: { x: 3, y: 0 }, direction: 'east' },
+      { kind: 'inserter', position: { x: 3, y: 2 }, direction: 'east' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'underground-belt')).toHaveLength(2);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it.each([
     [
       { width: 3, height: 5 },
