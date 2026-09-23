@@ -95,8 +95,8 @@ export function solveOutsideFluidTrunkDesign(
 }
 
 /**
- * Feed one solid alongside opposing fluid input/output ports. The input fluid trunk touches the
- * west port directly; the east solid belt goes underground at the output pipe connection.
+ * Feed up to two solids alongside opposing fluid input/output ports. With two solids, each side
+ * gets an underground belt and its fluid connection passes through the belt's middle row.
  */
 export function solveDualFluidSolidInputDesign(
   prepared: PreparedAssemblerProblem,
@@ -105,7 +105,11 @@ export function solveDualFluidSolidInputDesign(
   if (prepared.inputFluids.length === 0 || prepared.outputFluids.length === 0) {
     return notApplicable();
   }
-  if (prepared.inputSolids.length !== 1 || prepared.outputSolids.length !== 0) {
+  if (
+    prepared.inputSolids.length < 1 ||
+    prepared.inputSolids.length > 2 ||
+    prepared.outputSolids.length !== 0
+  ) {
     return notApplicable();
   }
   if (prepared.inputFluids.length !== 1 || prepared.outputFluids.length !== 1) {
@@ -149,52 +153,80 @@ export function solveDualFluidSolidInputDesign(
     );
   }
 
-  const inputRate = prepared.inputSolids[0];
-  if (inputRate > throughput.beltItemsPerSecond) {
+  if (prepared.inputSolids.some((rate) => rate > throughput.beltItemsPerSecond)) {
     return reject(
       'transport-capacity',
-      'cannot feed the solid input because its rate exceeds the input belt',
+      'cannot feed a solid input because its rate exceeds the input belt',
     );
   }
-  const inserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
   const inserterYs = [2, 0];
-  if (inserterCount > inserterYs.length) {
-    return rejected(
-      inserterFailure(
-        'insert',
-        Object.keys(problem.inputs.solids),
-        problem,
-        inserterCount,
-        inserterYs.length,
-      ),
-    );
+  for (const [index, rate] of prepared.inputSolids.entries()) {
+    const inserterCount = Math.ceil(rate / throughput.inserterItemsPerSecond);
+    if (inserterCount > inserterYs.length) {
+      return rejected(
+        inserterFailure(
+          'insert',
+          [Object.keys(problem.inputs.solids)[index]],
+          problem,
+          inserterCount,
+          inserterYs.length,
+        ),
+      );
+    }
+  }
+
+  if (prepared.inputSolids.length === 2) {
+    const entities: DesignEntity[] = [
+      ...pipeTrunk(),
+      ...undergroundNorthBelt(1),
+      ...inserterYs
+        .slice(0, Math.ceil(prepared.inputSolids[0] / throughput.inserterItemsPerSecond))
+        .map((y): DesignEntity => ({
+          kind: 'inserter',
+          position: { x: 2, y },
+          direction: 'east',
+        })),
+      assembler(problem, 3, assemblerDirection),
+      ...inserterYs
+        .slice(0, Math.ceil(prepared.inputSolids[1] / throughput.inserterItemsPerSecond))
+        .map((y): DesignEntity => ({
+          kind: 'inserter',
+          position: { x: 6, y },
+          direction: 'west',
+        })),
+      ...undergroundNorthBelt(7),
+      { kind: 'underground-pipe', position: { x: 1, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 7, y: 1 }, direction: 'east' },
+      ...pipeTrunk(8),
+    ];
+    return solved({ columns: [{ entities }] });
   }
 
   const entities: DesignEntity[] = [
     ...pipeTrunk(),
     assembler(problem, 1, assemblerDirection),
-    ...inserterYs.slice(0, inserterCount).map((y): DesignEntity => ({
-      kind: 'inserter',
-      position: { x: 4, y },
-      direction: 'west',
-    })),
-    {
-      kind: 'underground-belt',
-      position: { x: 5, y: 2 },
-      direction: 'north',
-      end: 'input',
-    },
-    {
-      kind: 'underground-belt',
-      position: { x: 5, y: 0 },
-      direction: 'north',
-      end: 'output',
-    },
+    ...inserterYs
+      .slice(0, Math.ceil(prepared.inputSolids[0] / throughput.inserterItemsPerSecond))
+      .map((y): DesignEntity => ({
+        kind: 'inserter',
+        position: { x: 4, y },
+        direction: 'west',
+      })),
+    ...undergroundNorthBelt(5),
     { kind: 'underground-pipe', position: { x: 4, y: 1 }, direction: 'west' },
     { kind: 'underground-pipe', position: { x: 5, y: 1 }, direction: 'east' },
     ...pipeTrunk(6),
   ];
   return solved({ columns: [{ entities }] });
+}
+
+function undergroundNorthBelt(x: number): DesignEntity[] {
+  return [
+    { kind: 'underground-belt', position: { x, y: 2 }, direction: 'north', end: 'input' },
+    { kind: 'underground-belt', position: { x, y: 0 }, direction: 'north', end: 'output' },
+  ];
 }
 
 export function solveDualFluidDesign(

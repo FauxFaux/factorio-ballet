@@ -531,6 +531,72 @@ describe('generateAssemblerDesign', () => {
   });
 
   it.each([
+    [5, 8],
+    [12, 12],
+  ])('feeds two solid inputs at %s/s and %s/s across both fluid trunks', (leftRate, rightRate) => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        solidInputs: [leftRate, rightRate],
+        fluidInputs: [200],
+        fluidOutputs: [200],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'assembler')).toEqual([
+      {
+        kind: 'assembler',
+        position: { x: 3, y: 0 },
+        size: { width: 3, height: 3 },
+        recipe: 'Assembler 2',
+        direction: 'west',
+      },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      ...[2, 0].slice(0, Math.ceil(leftRate / throughput.inserterItemsPerSecond)).map((y) => ({
+        kind: 'inserter' as const,
+        position: { x: 2, y },
+        direction: 'east' as const,
+      })),
+      ...[2, 0].slice(0, Math.ceil(rightRate / throughput.inserterItemsPerSecond)).map((y) => ({
+        kind: 'inserter' as const,
+        position: { x: 6, y },
+        direction: 'west' as const,
+      })),
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'underground-belt')).toEqual(
+      [1, 7].flatMap((x) => [
+        {
+          kind: 'underground-belt' as const,
+          position: { x, y: 2 },
+          direction: 'north' as const,
+          end: 'input' as const,
+        },
+        {
+          kind: 'underground-belt' as const,
+          position: { x, y: 0 },
+          direction: 'north' as const,
+          end: 'output' as const,
+        },
+      ]),
+    );
+    expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toEqual([
+      { kind: 'underground-pipe', position: { x: 1, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 7, y: 1 }, direction: 'east' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual(
+      [0, 8].flatMap((x) =>
+        Array.from({ length: 3 }, (_, y) => ({ kind: 'pipe' as const, position: { x, y } })),
+      ),
+    );
+    expect(designBounds(entities)).toEqual({ minX: 0, maxX: 9, minY: 0, maxY: 3 });
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it.each([
     [
       { width: 3, height: 5 },
       { width: 5, height: 3 },
