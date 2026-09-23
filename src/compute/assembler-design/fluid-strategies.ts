@@ -94,6 +94,98 @@ export function solveOutsideFluidTrunkDesign(
   return solved({ columns: [{ entities }] });
 }
 
+/**
+ * Feed one solid alongside opposing fluid input/output ports. The input fluid trunk touches the
+ * west port directly; the output crosses beneath the east solid belt to a separate outside trunk.
+ */
+export function solveDualFluidSolidInputDesign(
+  prepared: PreparedAssemblerProblem,
+): AssemblerDesignStrategyResult {
+  const { problem, throughput } = prepared;
+  if (prepared.inputFluids.length === 0 || prepared.outputFluids.length === 0) {
+    return notApplicable();
+  }
+  if (prepared.inputSolids.length !== 1 || prepared.outputSolids.length !== 0) {
+    return notApplicable();
+  }
+  if (prepared.inputFluids.length !== 1 || prepared.outputFluids.length !== 1) {
+    return reject(
+      'unsupported-flows',
+      'cannot connect fluids because exactly one fluid input and output are required',
+    );
+  }
+
+  const specification = problem.assemblers[0];
+  if (!specification.size || !specification.fluidBoxes) {
+    return reject(
+      'machine-geometry',
+      'cannot connect fluids to',
+      specification.name,
+      'because its size or fluid-port geometry is missing',
+    );
+  }
+  if (specification.size.width !== 3 || specification.size.height !== 3) {
+    return reject(
+      'machine-geometry',
+      'cannot feed a solid alongside both fluid trunks of',
+      specification.name,
+      'because this layout requires a 3x3 machine',
+    );
+  }
+
+  const assemblerDirection = centeredFluidRotation(
+    specification,
+    'input',
+    'west',
+    'output',
+    'east',
+  );
+  if (!assemblerDirection) {
+    return reject(
+      'machine-geometry',
+      'cannot connect fluids to',
+      specification.name,
+      'because it has no rotation with opposing middle-edge input and output ports',
+    );
+  }
+
+  const inputRate = prepared.inputSolids[0];
+  if (inputRate > throughput.beltItemsPerSecond) {
+    return reject(
+      'transport-capacity',
+      'cannot feed the solid input because its rate exceeds the input belt',
+    );
+  }
+  const inserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
+  const inserterYs = [2, 0];
+  if (inserterCount > inserterYs.length) {
+    return rejected(
+      inserterFailure(
+        'insert',
+        Object.keys(problem.inputs.solids),
+        problem,
+        inserterCount,
+        inserterYs.length,
+      ),
+    );
+  }
+
+  const entities: DesignEntity[] = [
+    ...pipeTrunk(),
+    assembler(problem, 1, assemblerDirection),
+    ...inserterYs.slice(0, inserterCount).map((y): DesignEntity => ({
+      kind: 'inserter',
+      position: { x: 4, y },
+      direction: 'west',
+    })),
+    ...verticalBelt(5, 'north'),
+    { kind: 'underground-pipe', position: { x: 4, y: 1 }, direction: 'west' },
+    { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'east' },
+    ...pipeTrunk(7),
+  ];
+  return solved({ columns: [{ entities }] });
+}
+
 export function solveDualFluidDesign(
   prepared: PreparedAssemblerProblem,
 ): AssemblerDesignStrategyResult {

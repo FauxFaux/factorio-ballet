@@ -486,6 +486,47 @@ describe('generateAssemblerDesign', () => {
     ]);
   });
 
+  it('feeds one solid input between separate fluid input and output trunks', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({ solidInputs: [5], fluidInputs: [200], fluidOutputs: [200] }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities).toContainEqual({
+      kind: 'assembler',
+      position: { x: 1, y: 0 },
+      size: { width: 3, height: 3 },
+      recipe: 'Assembler 2',
+      direction: 'west',
+    });
+    expect(entities.filter((entity) => entity.kind === 'belt')).toEqual(
+      Array.from({ length: 3 }, (_, y) => ({
+        kind: 'belt' as const,
+        position: { x: 5, y },
+        direction: 'north' as const,
+      })),
+    );
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toEqual([
+      { kind: 'inserter', position: { x: 4, y: 2 }, direction: 'west' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toEqual([
+      { kind: 'underground-pipe', position: { x: 4, y: 1 }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'east' },
+    ]);
+    expect(entities.filter((entity) => entity.kind === 'pipe')).toEqual([
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 0, y },
+      })),
+      ...Array.from({ length: 3 }, (_, y) => ({
+        kind: 'pipe' as const,
+        position: { x: 7, y },
+      })),
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it.each([
     [
       { width: 3, height: 5 },
