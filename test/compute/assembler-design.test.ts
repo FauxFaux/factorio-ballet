@@ -727,4 +727,92 @@ describe('generateAssemblerDesign', () => {
       maxY: size.height,
     });
   });
+
+  it.each([
+    [
+      { width: 5, height: 3 },
+      { width: 5, height: 3 },
+    ],
+    [
+      { width: 3, height: 5 },
+      { width: 3, height: 5 },
+    ],
+  ] as const)('places solid output transport beyond a %j machine', (size, _unused) => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({ size, solidInputs: [5], solidOutputs: [2] }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+    expect(entities).toContainEqual({
+      kind: 'inserter',
+      position: { x: size.width + 2, y: Math.floor(size.height / 2) },
+      direction: 'east',
+    });
+    expect(
+      entities.filter((entity) => entity.kind === 'belt' && entity.position.x === size.width + 3),
+    ).toHaveLength(size.height);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it.each([
+    [
+      { width: 3, height: 5 },
+      { width: 5, height: 3 },
+    ],
+    [
+      { width: 5, height: 3 },
+      { width: 3, height: 5 },
+    ],
+    [
+      { width: 5, height: 5 },
+      { width: 5, height: 5 },
+    ],
+  ] as const)(
+    'feeds a solid beside opposing fluid trunks on a rotated %j air filter',
+    (size, rotated) => {
+      const problem = airFilterProblem(size);
+      problem.inputs.solids = { 'item:test': 5 };
+      const design = generateAssemblerDesign(problem, throughput);
+      const entities = design.columns?.[0].entities ?? [];
+      expect(entities).toContainEqual({
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size: rotated,
+        recipe: `Air filter ${size.width}×${size.height}`,
+        direction: 'east',
+      });
+      expect(entities).toContainEqual({
+        kind: 'inserter',
+        position: { x: rotated.width + 1, y: rotated.height - 1 },
+        direction: 'west',
+      });
+      expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    },
+  );
+
+  it.each(['input', 'output'] as const)(
+    'places right-side transport after rotating a rectangular machine with a fluid %s',
+    (fluidSide) => {
+      const problem = assemblerProblem({
+        size: { width: 3, height: 5 },
+        solidInputs: [5],
+        ...(fluidSide === 'input'
+          ? { fluidInputs: [200], solidOutputs: [2] }
+          : { fluidOutputs: [200] }),
+      });
+      const design = generateAssemblerDesign(problem, throughput);
+      const entities = design.columns?.[0].entities ?? [];
+      const machine = entities.find((entity) => entity.kind === 'assembler');
+      expect(machine?.size).toEqual({ width: 5, height: 3 });
+      expect(
+        entities
+          .filter((entity) => entity.kind === 'inserter')
+          .every((entity) => entity.position.x === 6),
+      ).toBe(true);
+      expect(
+        entities.filter((entity) => entity.kind === 'belt' && entity.position.x === 7),
+      ).toHaveLength(3);
+      expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    },
+  );
 });

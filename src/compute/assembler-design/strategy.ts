@@ -39,8 +39,12 @@ export interface AssemblerDesignStrategy {
   solve: (prepared: PreparedAssemblerProblem) => AssemblerDesignStrategyResult;
 }
 
-export function verticalBelt(x: number, direction: 'north' | 'south'): DesignEntity[] {
-  return [0, 1, 2].map((y) => ({ kind: 'belt', position: { x, y }, direction }));
+export function verticalBelt(x: number, direction: 'north' | 'south', height = 3): DesignEntity[] {
+  return Array.from({ length: height }, (_, y) => ({
+    kind: 'belt',
+    position: { x, y },
+    direction,
+  }));
 }
 
 export function pipeTrunk(x = 0, height = 3): DesignEntity[] {

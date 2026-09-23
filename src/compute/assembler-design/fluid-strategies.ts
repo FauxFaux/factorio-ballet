@@ -17,8 +17,14 @@ import {
   type PreparedAssemblerProblem,
 } from './strategy.ts';
 
-const edgeRows = [2, 0, 1];
-const outputRows = [1, 0, 2];
+function sideRows(height: number): number[] {
+  return [height - 1, ...Array.from({ length: height - 1 }, (_, y) => y)];
+}
+
+function outputSideRows(height: number): number[] {
+  const middle = Math.floor(height / 2);
+  return [middle, ...Array.from({ length: height }, (_, y) => y).filter((y) => y !== middle)];
+}
 
 /**
  * Add the outside fluid plumbing from the documented `3s-1f-in-1s-out` kernel to the wide solid
@@ -127,15 +133,6 @@ export function solveDualFluidSolidInputDesign(
       'because its size or fluid-port geometry is missing',
     );
   }
-  if (specification.size.width !== 3 || specification.size.height !== 3) {
-    return reject(
-      'machine-geometry',
-      'cannot feed a solid alongside both fluid trunks of',
-      specification.name,
-      'because this layout requires a 3x3 machine',
-    );
-  }
-
   const assemblerDirection = centeredFluidRotation(
     specification,
     'input',
@@ -151,6 +148,12 @@ export function solveDualFluidSolidInputDesign(
       'because it has no rotation with opposing middle-edge input and output ports',
     );
   }
+  const size = rotatedSize(specification.size, assemblerDirection);
+  const middle = Math.floor(size.height / 2);
+  const inserterYs = [size.height - 1, 0].filter((y) => y !== middle);
+  if (inserterYs.length < 2) {
+    return reject('machine-geometry', 'cannot fit solid inserters beside both fluid ports');
+  }
 
   if (prepared.inputSolids.some((rate) => rate > throughput.beltItemsPerSecond)) {
     return reject(
@@ -158,7 +161,6 @@ export function solveDualFluidSolidInputDesign(
       'cannot feed a solid input because its rate exceeds the input belt',
     );
   }
-  const inserterYs = [2, 0];
   for (const [index, rate] of prepared.inputSolids.entries()) {
     const inserterCount = Math.ceil(rate / throughput.inserterItemsPerSecond);
     if (inserterCount > inserterYs.length) {
@@ -175,9 +177,10 @@ export function solveDualFluidSolidInputDesign(
   }
 
   if (prepared.inputSolids.length === 2) {
+    const rightInserterX = 3 + size.width;
     const entities: DesignEntity[] = [
-      ...pipeTrunk(),
-      ...undergroundNorthBelt(1),
+      ...pipeTrunk(0, size.height),
+      ...undergroundNorthBelt(1, size.height),
       ...inserterYs
         .slice(0, Math.ceil(prepared.inputSolids[0] / throughput.inserterItemsPerSecond))
         .map((y): DesignEntity => ({
@@ -190,41 +193,56 @@ export function solveDualFluidSolidInputDesign(
         .slice(0, Math.ceil(prepared.inputSolids[1] / throughput.inserterItemsPerSecond))
         .map((y): DesignEntity => ({
           kind: 'inserter',
-          position: { x: 6, y },
+          position: { x: rightInserterX, y },
           direction: 'west',
         })),
-      ...undergroundNorthBelt(7),
-      { kind: 'underground-pipe', position: { x: 1, y: 1 }, direction: 'west' },
-      { kind: 'underground-pipe', position: { x: 2, y: 1 }, direction: 'east' },
-      { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'west' },
-      { kind: 'underground-pipe', position: { x: 7, y: 1 }, direction: 'east' },
-      ...pipeTrunk(8),
+      ...undergroundNorthBelt(rightInserterX + 1, size.height),
+      { kind: 'underground-pipe', position: { x: 1, y: middle }, direction: 'west' },
+      { kind: 'underground-pipe', position: { x: 2, y: middle }, direction: 'east' },
+      { kind: 'underground-pipe', position: { x: rightInserterX, y: middle }, direction: 'west' },
+      {
+        kind: 'underground-pipe',
+        position: { x: rightInserterX + 1, y: middle },
+        direction: 'east',
+      },
+      ...pipeTrunk(rightInserterX + 2, size.height),
     ];
     return solved({ columns: [{ entities }] });
   }
 
   const entities: DesignEntity[] = [
-    ...pipeTrunk(),
+    ...pipeTrunk(0, size.height),
     assembler(problem, 1, assemblerDirection),
     ...inserterYs
       .slice(0, Math.ceil(prepared.inputSolids[0] / throughput.inserterItemsPerSecond))
       .map((y): DesignEntity => ({
         kind: 'inserter',
-        position: { x: 4, y },
+        position: { x: 1 + size.width, y },
         direction: 'west',
       })),
-    ...undergroundNorthBelt(5),
-    { kind: 'underground-pipe', position: { x: 4, y: 1 }, direction: 'west' },
-    { kind: 'underground-pipe', position: { x: 5, y: 1 }, direction: 'east' },
-    ...pipeTrunk(6),
+    ...undergroundNorthBelt(2 + size.width, size.height),
+    { kind: 'underground-pipe', position: { x: 1 + size.width, y: middle }, direction: 'west' },
+    { kind: 'underground-pipe', position: { x: 2 + size.width, y: middle }, direction: 'east' },
+    ...pipeTrunk(3 + size.width, size.height),
   ];
   return solved({ columns: [{ entities }] });
 }
 
-function undergroundNorthBelt(x: number): DesignEntity[] {
+function undergroundNorthBelt(x: number, height = 3): DesignEntity[] {
+  const middle = Math.floor(height / 2);
   return [
-    { kind: 'underground-belt', position: { x, y: 2 }, direction: 'north', end: 'input' },
-    { kind: 'underground-belt', position: { x, y: 0 }, direction: 'north', end: 'output' },
+    ...Array.from({ length: middle - 1 }, (_, y): DesignEntity => ({
+      kind: 'belt',
+      position: { x, y },
+      direction: 'north',
+    })),
+    { kind: 'underground-belt', position: { x, y: middle + 1 }, direction: 'north', end: 'input' },
+    { kind: 'underground-belt', position: { x, y: middle - 1 }, direction: 'north', end: 'output' },
+    ...Array.from({ length: height - middle - 2 }, (_, index): DesignEntity => ({
+      kind: 'belt',
+      position: { x, y: middle + 2 + index },
+      direction: 'north',
+    })),
   ];
 }
 
@@ -429,6 +447,8 @@ export function solveFluidOutputDesign(
       'because it has no output port facing the pipe trunk',
     );
   }
+  const size = rotatedSize(problem.assemblers[0].size, assemblerDirection);
+  const rightX = size.width + 1;
 
   if (inputRates.length === 0) {
     const size = rotatedSize(problem.assemblers[0].size, assemblerDirection);
@@ -453,19 +473,19 @@ export function solveFluidOutputDesign(
 
   const nearInserterCount = Math.ceil(nearInputRate / throughput.inserterItemsPerSecond);
   const farInserterCount = Math.ceil(farInputRate / throughput.longInserterItemsPerSecond);
-  if (nearInserterCount + farInserterCount > 3) {
+  if (nearInserterCount + farInserterCount > size.height) {
     return rejected(
       inserterFailure(
         'insert',
         Object.keys(problem.inputs.solids),
         problem,
         nearInserterCount + farInserterCount,
-        3,
+        size.height,
       ),
     );
   }
-  const nearInserterYs = edgeRows.slice(0, nearInserterCount);
-  const farInserterYs = outputRows
+  const nearInserterYs = sideRows(size.height).slice(0, nearInserterCount);
+  const farInserterYs = outputSideRows(size.height)
     .filter((y) => !nearInserterYs.includes(y))
     .slice(0, farInserterCount);
   if (farInserterYs.length !== farInserterCount) {
@@ -476,17 +496,17 @@ export function solveFluidOutputDesign(
   }
 
   const entities: DesignEntity[] = [
-    ...pipeTrunk(),
-    ...verticalBelt(5, 'north'),
-    ...(farInputRate > 0 ? verticalBelt(6, 'north') : []),
+    ...pipeTrunk(0, size.height),
+    ...verticalBelt(rightX + 1, 'north', size.height),
+    ...(farInputRate > 0 ? verticalBelt(rightX + 2, 'north', size.height) : []),
     ...nearInserterYs.map((y): DesignEntity => ({
       kind: 'inserter',
-      position: { x: 4, y },
+      position: { x: rightX, y },
       direction: 'west',
     })),
     ...farInserterYs.map((y): DesignEntity => ({
       kind: 'inserter',
-      position: { x: 4, y },
+      position: { x: rightX, y },
       direction: 'west',
       reach: 2,
     })),
@@ -535,6 +555,8 @@ export function solveFluidInputDesign(
       'because it has no input port facing the pipe trunk',
     );
   }
+  const size = rotatedSize(problem.assemblers[0].size, assemblerDirection);
+  const rightX = size.width + 1;
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
@@ -551,19 +573,21 @@ export function solveFluidInputDesign(
     ? throughput.longInserterItemsPerSecond
     : throughput.inserterItemsPerSecond;
   const outputInserterCount = Math.ceil(outputRate / outputItemsPerSecond);
-  if (inputInserterCount + outputInserterCount > 3) {
+  if (inputInserterCount + outputInserterCount > size.height) {
     return reject(
       'entity-placement',
       'cannot serve',
       problem.assemblers[0].name,
       'because input and output need',
       count(inputInserterCount + outputInserterCount, 'inserter'),
-      'but only 3 tiles are available beside the assembler',
+      `but only ${size.height} tiles are available beside the assembler`,
     );
   }
 
-  const inputYs = edgeRows.slice(0, inputInserterCount);
-  const outputYs = outputRows.filter((y) => !inputYs.includes(y)).slice(0, outputInserterCount);
+  const inputYs = sideRows(size.height).slice(0, inputInserterCount);
+  const outputYs = outputSideRows(size.height)
+    .filter((y) => !inputYs.includes(y))
+    .slice(0, outputInserterCount);
   if (outputYs.length !== outputInserterCount) {
     return reject(
       'entity-placement',
@@ -571,23 +595,23 @@ export function solveFluidInputDesign(
     );
   }
 
-  const outputBeltX = hasSolidInput ? 6 : 5;
+  const outputBeltX = rightX + (hasSolidInput ? 2 : 1);
   const entities: DesignEntity[] = [
-    ...pipeTrunk(),
-    ...(hasSolidInput ? verticalBelt(5, 'north') : []),
+    ...pipeTrunk(0, size.height),
+    ...(hasSolidInput ? verticalBelt(rightX + 1, 'north', size.height) : []),
     ...inputYs.map((y): DesignEntity => ({
       kind: 'inserter',
-      position: { x: 4, y },
+      position: { x: rightX, y },
       direction: 'west',
     })),
     assembler(problem, 1, assemblerDirection),
     ...outputYs.map((y): DesignEntity => ({
       kind: 'inserter',
-      position: { x: 4, y },
+      position: { x: rightX, y },
       direction: 'east',
       ...(hasSolidInput ? { reach: 2 } : {}),
     })),
-    ...verticalBelt(outputBeltX, 'south'),
+    ...verticalBelt(outputBeltX, 'south', size.height),
   ];
 
   return solved({ columns: [{ entities }] });
@@ -632,7 +656,9 @@ function hasRotatedCenteredFluidPort(
   target: 'east' | 'west',
   rotation: DesignDirection,
 ): boolean {
-  const targetPosition = { x: target === 'east' ? 1 : -1, y: 0 };
+  if (!specification.size) return false;
+  const halfWidth = Math.floor(rotatedSize(specification.size, rotation).width / 2);
+  const targetPosition = { x: target === 'east' ? halfWidth : -halfWidth, y: 0 };
   return Boolean(
     specification.fluidBoxes?.some(
       (box) =>

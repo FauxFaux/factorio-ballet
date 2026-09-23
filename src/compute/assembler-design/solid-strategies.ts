@@ -32,16 +32,10 @@ const compactInputSites: InputSite[] = [
   { beltX: 0, position: { x: 1, y: 1 }, direction: 'east' },
 ];
 
-const compactOutputPositions = [
-  { x: 5, y: 1 },
-  { x: 5, y: 0 },
-  { x: 5, y: 2 },
-];
-
-const longOutputPositions = [
-  { x: 6, y: 1 },
-  { x: 6, y: 0 },
-];
+function outputRows(height: number): number[] {
+  const middle = Math.floor(height / 2);
+  return [middle, ...Array.from({ length: height }, (_, y) => y).filter((y) => y !== middle)];
+}
 
 // Three normal inserters can read the west near belt when its middle site is not occupied by the
 // far-west belt's long inserter. The east middle site belongs to the output inserter.
@@ -68,31 +62,33 @@ export function solveCompactSolidDesign(
 
   const inputRate = sum(inputRates);
   const outputRate = sum(outputRates);
+  const size = problem.assemblers[0].size ?? { width: 3, height: 3 };
+  const outputPositions = outputRows(size.height).map((y) => ({ x: 2 + size.width, y }));
   const inputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
   const outputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
   if (
     inputRates.length > 2 ||
     inputRate > throughput.beltItemsPerSecond ||
     inputInserterCount > compactInputSites.length ||
-    outputInserterCount > compactOutputPositions.length
+    outputInserterCount > outputPositions.length
   ) {
     return notApplicable();
   }
 
   const entities: DesignEntity[] = [
-    ...verticalBelt(0, 'north'),
+    ...verticalBelt(0, 'north', size.height),
     ...compactInputSites.slice(0, inputInserterCount).map(({ position, direction }) => ({
       kind: 'inserter' as const,
       position,
       direction,
     })),
     assembler(problem, 2),
-    ...compactOutputPositions.slice(0, outputInserterCount).map((position) => ({
+    ...outputPositions.slice(0, outputInserterCount).map((position) => ({
       kind: 'inserter' as const,
       position,
       direction: 'east' as const,
     })),
-    ...verticalBelt(6, 'south'),
+    ...verticalBelt(3 + size.width, 'south', size.height),
   ];
   return solved({ columns: [{ entities }] });
 }
@@ -119,15 +115,19 @@ export function solveWideSolidDesign(
   }
 
   const outputRate = sum(outputRates);
+  const size = problem.assemblers[0].size ?? { width: 3, height: 3 };
+  const outputPositions = outputRows(size.height)
+    .slice(0, 2)
+    .map((y) => ({ x: 3 + size.width, y }));
   const outputInserterCount = Math.ceil(outputRate / throughput.longInserterItemsPerSecond);
-  if (outputInserterCount > longOutputPositions.length) {
+  if (outputInserterCount > outputPositions.length) {
     return rejected(
       inserterFailure(
         'extract',
         Object.keys(problem.outputs.solids),
         problem,
         outputInserterCount,
-        longOutputPositions.length,
+        outputPositions.length,
       ),
     );
   }
@@ -137,22 +137,28 @@ export function solveWideSolidDesign(
 
   const entities: DesignEntity[] = [
     ...[...new Set(selectedInputSites.map(({ beltX }) => beltX))].flatMap((beltX) =>
-      verticalBelt(beltX, 'north'),
+      verticalBelt(beltX < 3 ? beltX : beltX + size.width - 3, 'north', size.height),
     ),
     ...selectedInputSites.map(({ position, direction, reach }) => ({
       kind: 'inserter' as const,
-      position,
+      position:
+        position.x < 3
+          ? position
+          : {
+              x: position.x + size.width - 3,
+              y: position.y === 2 ? size.height - 1 : position.y,
+            },
       direction,
       ...(reach ? { reach } : {}),
     })),
     assembler(problem, 3),
-    ...longOutputPositions.slice(0, outputInserterCount).map((position) => ({
+    ...outputPositions.slice(0, outputInserterCount).map((position) => ({
       kind: 'inserter' as const,
       position,
       direction: 'east' as const,
       reach: 2 as const,
     })),
-    ...verticalBelt(8, 'south'),
+    ...verticalBelt(5 + size.width, 'south', size.height),
   ];
 
   return solved({ columns: [{ entities }] });
