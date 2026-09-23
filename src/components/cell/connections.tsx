@@ -1,6 +1,7 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
-import type { Belt, ResourceId } from '../../types.ts';
+import { staticData } from '../../data/decode.ts';
+import type { Belt, MachineId, ResourceId } from '../../types.ts';
 import {
   generateAssemblerDesign,
   isAssemblerDesignFailure,
@@ -25,6 +26,7 @@ export function RecipeConnections({
   solved,
   belt,
   recipe,
+  machine,
   inputRates,
   outputRates,
   machineCount,
@@ -36,6 +38,7 @@ export function RecipeConnections({
   /** The selected item belt; fluids deliberately have no belt equivalent here. */
   belt: Belt;
   recipe: string;
+  machine: MachineId | undefined;
   inputRates: Map<ResourceId, number> | undefined;
   outputRates: Map<ResourceId, number> | undefined;
   machineCount: number | undefined;
@@ -71,6 +74,7 @@ export function RecipeConnections({
         machineCount={machineCount}
         belt={belt}
         recipe={recipe}
+        machine={machine}
         progress={progress}
       />
     </div>
@@ -83,6 +87,7 @@ function AssemblerDesignSummary({
   machineCount,
   belt,
   recipe,
+  machine,
   progress,
 }: {
   inputRates: Map<ResourceId, number> | undefined;
@@ -90,16 +95,20 @@ function AssemblerDesignSummary({
   machineCount: number | undefined;
   belt: Belt;
   recipe: string;
+  machine: MachineId | undefined;
   progress: number;
 }) {
   const inputs = splitRates(inputRates);
   const outputs = splitRates(outputRates);
+  const machineData = machine === undefined ? undefined : staticData.machines[machine];
   const problem: KernelProblem = {
     inputs,
     outputs,
     assemblers: [
       {
         name: recipe,
+        size: machineData?.size,
+        fluidBoxes: machineData?.fluidBoxes,
         inputPerSecond: { ...inputs.solids, ...inputs.fluids },
         outputPerSecond: { ...outputs.solids, ...outputs.fluids },
       },

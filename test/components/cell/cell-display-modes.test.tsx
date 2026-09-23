@@ -98,4 +98,28 @@ describe('cell display modes', () => {
     expect(within(summary).getByText('Columns/modules needed')).toBeTruthy();
     expect(within(summary).getAllByText(/^×\d+$/)).toHaveLength(2);
   });
+
+  it('uses the selected machine geometry for a fluid recipe', async () => {
+    const user = userEvent.setup();
+    render(
+      <CellBox
+        cell={[
+          { entries: [{ recipe: 'bob-processing-electronics', machine: 'assembling-machine-2' }] },
+          () => {},
+        ]}
+        active
+        progress={state.gp}
+        chosen={chosen}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
+
+    const summary = document.querySelector('.cell-assembler-design');
+    expect(summary).toBeTruthy();
+    expect(summary?.textContent).not.toContain('size or fluid-port geometry is missing');
+  });
 });

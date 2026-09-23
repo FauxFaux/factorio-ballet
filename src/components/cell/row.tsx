@@ -135,6 +135,7 @@ export function CellRow({
             solved={count !== undefined}
             belt={chosen.belt}
             recipe={entry.recipe}
+            machine={recipe ? entryMachine(entry, recipe, progress) : undefined}
             inputRates={solution.inputRates[entryIndex]}
             outputRates={solution.outputRates[entryIndex]}
             machineCount={count}
@@ -148,6 +149,7 @@ export function CellRow({
           solved={count !== undefined}
           belt={chosen.belt}
           recipe={entry.recipe}
+          machine={recipe ? entryMachine(entry, recipe, progress) : undefined}
           inputRates={solution.inputRates[entryIndex]}
           outputRates={solution.outputRates[entryIndex]}
           machineCount={count}
