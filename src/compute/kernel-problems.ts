@@ -162,6 +162,7 @@ export const kernelProblems = {
       solidOutputs: [2],
       fluidOutputs: [FLUID_RATE],
     }),
+    assemblerProblem({ fluidOutputs: [FLUID_RATE] }),
   ],
   fluidInputAndOutput: [
     assemblerProblem({ fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE] }),

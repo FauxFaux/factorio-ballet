@@ -76,10 +76,18 @@ describe('kernelProblems', () => {
     ]);
     expect(kernelProblems.solid).toHaveLength(6);
     expect(kernelProblems.fluidInput).toHaveLength(4);
-    expect(kernelProblems.fluidOutput).toHaveLength(6);
+    expect(kernelProblems.fluidOutput).toHaveLength(7);
     expect(kernelProblems.fluidInputAndOutput).toHaveLength(4);
     expect(kernelProblems.airFilter).toHaveLength(3);
-    expect(allKernelProblems).toHaveLength(23);
+    expect(allKernelProblems).toHaveLength(24);
+  });
+
+  it('includes a fluid-producing recipe with no input resources', () => {
+    const problem = kernelProblems.fluidOutput[6]!;
+
+    expect(problem.inputs).toEqual({ solids: {}, fluids: {} });
+    expect(problem.outputs).toEqual({ solids: {}, fluids: { 'fluid 1': 200 } });
+    expect(problem.assemblers[0]?.inputPerSecond).toEqual({});
   });
 
   it('generates air filters with centred south input and north output ports', () => {

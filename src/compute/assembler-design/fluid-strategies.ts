@@ -5,7 +5,6 @@ import {
   assembler,
   count,
   inserterFailure,
-  invalidRatesRejection,
   notApplicable,
   pipeTrunk,
   reject,
@@ -401,8 +400,6 @@ export function solveFluidOutputDesign(
   if (prepared.inputFluids.length > 0 || prepared.outputFluids.length === 0) {
     return notApplicable();
   }
-  if (inputRates.length === 0)
-    return rejected(invalidRatesRejection('input', problem.inputs.solids));
   if (inputRates.length > 4) {
     return reject(
       'unsupported-flows',
@@ -431,6 +428,15 @@ export function solveFluidOutputDesign(
       problem.assemblers[0].name,
       'because it has no output port facing the pipe trunk',
     );
+  }
+
+  if (inputRates.length === 0) {
+    const size = rotatedSize(problem.assemblers[0].size, assemblerDirection);
+    return solved({
+      columns: [
+        { entities: [...pipeTrunk(0, size.height), assembler(problem, 1, assemblerDirection)] },
+      ],
+    });
   }
 
   const nearInputRate = sum(inputRates.slice(0, 2));

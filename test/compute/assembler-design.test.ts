@@ -3,7 +3,11 @@ import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
 import { physicalStackLimit } from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
-import { airFilterProblem, assemblerProblem } from '../../src/compute/kernel-problems.ts';
+import {
+  airFilterProblem,
+  assemblerProblem,
+  kernelProblems,
+} from '../../src/compute/kernel-problems.ts';
 
 const throughput = {
   beltItemsPerSecond: 30,
@@ -12,6 +16,23 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it('connects a fluid output when the recipe consumes no resources', () => {
+    const design = generateAssemblerDesign(kernelProblems.fluidOutput[6]!, throughput);
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities).toEqual([
+      ...Array.from({ length: 3 }, (_, y) => ({ kind: 'pipe', position: { x: 0, y } })),
+      {
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size: { width: 3, height: 3 },
+        recipe: 'Assembler 2',
+        direction: 'east',
+      },
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it('limits five-tile kernels to the physical height of the brick', () => {
     expect(
       physicalStackLimit({

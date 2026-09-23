@@ -136,7 +136,7 @@ describe('App', () => {
     ).toBeTruthy();
     expect(screen.queryByText('Assemblers')).toBeNull();
     expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(24);
+    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(25);
     for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }
