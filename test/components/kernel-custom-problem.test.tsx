@@ -51,6 +51,7 @@ describe('KernelCustomProblem', () => {
     for (const [value, label] of [
       ['chemical-plant', 'Chemical plant'],
       ['flare-stack', 'Flare stack'],
+      ['casting-machine', 'Casting machine'],
       ['powderiser', 'Powderiser'],
     ] as const) {
       await user.selectOptions(select, value);

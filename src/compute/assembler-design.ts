@@ -1,3 +1,4 @@
+import { solveAdaptedFluidInputDesign } from './assembler-design/adapted-fluid-input-strategy.ts';
 import {
   solveDualFluidSolidInputDesign,
   solveDualFluidSolidOutputDesign,
@@ -44,6 +45,7 @@ interface AssemblerDesignCandidate {
 }
 
 const assemblerDesignStrategies: AssemblerDesignStrategy[] = [
+  { id: 'adapted-fluid-input', solve: solveAdaptedFluidInputDesign },
   { id: 'compact-solid', solve: solveCompactSolidDesign },
   { id: 'wide-solid', solve: solveWideSolidDesign },
   { id: 'outside-fluid-trunk', solve: solveOutsideFluidTrunkDesign },

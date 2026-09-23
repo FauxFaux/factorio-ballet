@@ -1,5 +1,6 @@
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
 import { staticData } from '../data/decode.ts';
+import type { FluidBoxResource } from './fluid-box-resources.ts';
 import type { MachineFluidBox, MachineSize } from '../types.ts';
 
 const FLUID_RATE = 200;
@@ -22,6 +23,8 @@ export interface AssemblerSpecification {
   size?: MachineSize;
   /** Physical fluid slots and ports; recipe-fluid assignment is intentionally separate. */
   fluidBoxes?: MachineFluidBox[];
+  /** Recipe order and explicit input-box indexes, when available. */
+  fluidIngredients?: FluidBoxResource[];
 }
 
 /** A factory-kernel task, including its boundary contract and the machines it must contain. */
@@ -87,6 +90,7 @@ export function assemblerProblem({
 export const kernelMachineChoices = [
   { value: 'chemical-plant', label: 'Chemical plant', machineId: 'chemical-plant' },
   { value: 'flare-stack', label: 'Flare stack', machineId: 'angels-flare-stack' },
+  { value: 'casting-machine', label: 'Casting machine', machineId: 'angels-casting-machine-3' },
   { value: 'powderiser', label: 'Powderiser', machineId: 'angels-powderizer-3' },
 ] as const;
 
@@ -180,6 +184,11 @@ export const kernelProblems = {
       solidOutputs: [2, 2],
     }),
     machineProblem('flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
+    machineProblem(
+      'casting-machine',
+      { fluidInputs: [FLUID_RATE, FLUID_RATE], solidOutputs: [2] },
+      'Mono-silicon',
+    ),
   ],
   fluidOutput: [
     assemblerProblem({ solidInputs: [5], fluidOutputs: [FLUID_RATE] }),

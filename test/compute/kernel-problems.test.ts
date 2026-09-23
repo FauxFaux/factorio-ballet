@@ -80,6 +80,7 @@ describe('kernelProblems', () => {
     expect(kernelMachineChoices.map(({ label }) => label)).toEqual([
       'Chemical plant',
       'Flare stack',
+      'Casting machine',
       'Powderiser',
     ]);
     for (const { value, label, machineId } of kernelMachineChoices) {
@@ -99,11 +100,11 @@ describe('kernelProblems', () => {
       'airFilter',
     ]);
     expect(kernelProblems.solid).toHaveLength(9);
-    expect(kernelProblems.fluidInput).toHaveLength(5);
+    expect(kernelProblems.fluidInput).toHaveLength(6);
     expect(kernelProblems.fluidOutput).toHaveLength(7);
     expect(kernelProblems.fluidInputAndOutput).toHaveLength(5);
     expect(kernelProblems.airFilter).toHaveLength(3);
-    expect(allKernelProblems).toHaveLength(29);
+    expect(allKernelProblems).toHaveLength(30);
   });
 
   it('includes the mixed belt, 2×2, flare, and air-separation cases', () => {

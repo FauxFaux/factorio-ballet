@@ -140,8 +140,8 @@ describe('App', () => {
       }),
     ).toBeTruthy();
     expect(screen.queryByText('Assemblers')).toBeNull();
-    expect(within(builtInResults).getAllByRole('img', { name: 'Solid' })).toHaveLength(55);
-    expect(within(builtInResults).getAllByRole('img', { name: 'Fluid' })).toHaveLength(29);
+    expect(within(builtInResults).getAllByRole('img', { name: 'Solid' })).toHaveLength(56);
+    expect(within(builtInResults).getAllByRole('img', { name: 'Fluid' })).toHaveLength(31);
     for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }

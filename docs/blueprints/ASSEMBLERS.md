@@ -362,6 +362,20 @@ the two fluids' network separation across adjacent copies. The outer wrapper can
 `chem-2f2s-in-1f1s-out` is another non-human wrapping, with separate fluid trunks and seam endpoints
 chosen for transport geometry rather than visual symmetry.
 
+The generator's `adapted-fluid-input` strategy uses a reflected 6x4 wrapper so the casting machine
+can remain unmirrored and north-facing. The machine occupies `(1..3,0..2)`, the output belt runs
+south at `x=5`, and the output inserter occupies `(4,1)`. The west input has an ordinary pipe at
+`(0,2)` between underground endpoints `(0,1)` facing south and `(0,3)` facing north. The south input
+turns through `(3,3)` and `(4,3)`, with underground endpoints `(4,2)` facing south and `(4,0)`
+facing north. The row-zero endpoint belongs to the previous copy's adaptor; both trunks pair
+underground across copies at a distance of two tiles.
+
+Port selection uses rotated physical coordinates and the recipe-fluid assignment described in
+`docs/FLUIDBOXES.md`, including explicit ingredient indexes when supplied. This matters for the
+casting machine: its three input boxes serve two fluids, so merely selecting different prototype
+boxes does not prove that both fluids are connected. The strategy supports two fluid inputs and one
+solid output, limited to one belt lane and the single free output inserter site.
+
 ### The fixed `2s-in-1s-out-snake` kernel
 
 `ass-2s-in-1s-out-snake.json` is a useful validation fixture rather than a family from which to
