@@ -26,7 +26,15 @@ async function versionFor(id: string): Promise<KnownVersion | undefined> {
   const commit = await git('rev-parse', '--verify', `${id}^{commit}`);
   let declarations: string;
   try {
-    declarations = await git('grep', '-l', 'const HASH_VERSION = ', commit);
+    declarations = await git(
+      'grep',
+      '-l',
+      '-E',
+      '^(export )?const HASH_VERSION = `',
+      commit,
+      '--',
+      'src',
+    );
   } catch {
     // Snapshots before standard hash versioning have no declaration to record.
     return undefined;
