@@ -1,5 +1,6 @@
 import type { DesignDirection, FactoryDesign, DesignEntity } from '../design.ts';
 import type { KernelProblem, ResourceRates } from '../kernel-problems.ts';
+import { fmt } from '../../ts.ts';
 
 /** Transport capabilities selected for one assembler-kernel generation pass. */
 export interface AssemblerDesignThroughput {
@@ -115,7 +116,7 @@ export function count(value: number, noun: string): string {
 }
 
 export function rateText(value: number): string {
-  return `${value} items/s`;
+  return `${fmt(value)} items/s`;
 }
 
 export function solved(design: FactoryDesign): AssemblerDesignStrategyResult {

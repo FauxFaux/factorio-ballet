@@ -98,9 +98,9 @@ function AssemblerDesignSummary({
   machine: MachineId | undefined;
   progress: number;
 }) {
-  // The solved row rates are totals for all machines; one kernel contains one machine.
-  const inputs = splitRates(inputRates, machineCount);
-  const outputs = splitRates(outputRates, machineCount);
+  // Solution input and output rates already describe one machine.
+  const inputs = splitRates(inputRates);
+  const outputs = splitRates(outputRates);
   const machineData = machine === undefined ? undefined : staticData.machines[machine];
   const problem: KernelProblem = {
     inputs,
@@ -160,16 +160,11 @@ function AssemblerDesignSummary({
   );
 }
 
-function splitRates(
-  rates: Map<ResourceId, number> | undefined,
-  machineCount?: number,
-): {
+function splitRates(rates: Map<ResourceId, number> | undefined): {
   solids: ResourceRates;
   fluids: ResourceRates;
 } {
-  const entries = [...(rates ?? [])]
-    .filter(([, rate]) => rate > 0)
-    .map(([resource, rate]) => [resource, machineCount ? rate / machineCount : rate] as const);
+  const entries = [...(rates ?? [])].filter(([, rate]) => rate > 0);
   return {
     solids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('item:'))),
     fluids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('fluid:'))),

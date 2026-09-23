@@ -36,8 +36,8 @@ describe('cell display modes', () => {
         belt={{ human: 'test belt', itemsPerSecond: 45, undergroundLength: 7 }}
         recipe="bob-silicon-powder"
         machine="angels-powderizer"
-        inputRates={new Map([['item:angels-ingot-silicon', 23.166023166023162]])}
-        outputRates={new Map([['item:bob-silicon-powder', 23.166023166023162]])}
+        inputRates={new Map([['item:angels-ingot-silicon', 15]])}
+        outputRates={new Map([['item:bob-silicon-powder', 15]])}
         machineCount={1.5444015444015442}
         progress={1}
         onSelectResource={() => {}}

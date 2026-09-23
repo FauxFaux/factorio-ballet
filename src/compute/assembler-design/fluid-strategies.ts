@@ -7,6 +7,7 @@ import {
   inserterFailure,
   notApplicable,
   pipeTrunk,
+  rateText,
   reject,
   rejected,
   rotatedSize,
@@ -548,8 +549,43 @@ export function solveFluidOutputDesign(
     });
   }
 
-  const nearInputRate = sum(inputRates.slice(0, 2));
-  const farInputRate = sum(inputRates.slice(2, 4));
+  let nearInputRate = sum(inputRates.slice(0, 2));
+  let farInputRate = sum(inputRates.slice(2, 4));
+  if (inputRates.length === 1 && nearInputRate > throughput.beltItemsPerSecond) {
+    const rate = nearInputRate;
+    const beltCapacity = throughput.beltItemsPerSecond;
+    const allocations = Array.from({ length: size.height - 1 }, (_, index) => {
+      const nearSites = index + 1;
+      const nearCapacity = Math.min(beltCapacity, nearSites * throughput.inserterItemsPerSecond);
+      const farCapacity = Math.min(
+        beltCapacity,
+        (size.height - nearSites) * throughput.longInserterItemsPerSecond,
+      );
+      return { nearCapacity, farCapacity };
+    });
+    const allocation = allocations.find(
+      ({ nearCapacity, farCapacity }) => rate <= nearCapacity + farCapacity + Number.EPSILON,
+    );
+    if (!allocation) {
+      const maximum = Math.max(
+        0,
+        ...allocations.map(({ nearCapacity, farCapacity }) => nearCapacity + farCapacity),
+      );
+      return reject(
+        'transport-capacity',
+        'cannot feed',
+        Object.keys(problem.inputs.solids)[0],
+        'at',
+        rateText(rate),
+        'because two',
+        rateText(beltCapacity),
+        'input belts and their available inserters can transfer at most',
+        rateText(maximum),
+      );
+    }
+    nearInputRate = Math.min(rate, allocation.nearCapacity);
+    farInputRate = rate - nearInputRate;
+  }
   if (
     nearInputRate > throughput.beltItemsPerSecond ||
     farInputRate > throughput.beltItemsPerSecond

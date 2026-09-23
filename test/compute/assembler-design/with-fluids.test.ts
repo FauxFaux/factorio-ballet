@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { generateAssemblerDesign } from '../../../src/compute/assembler-design.ts';
 import { entityPositionStatuses } from '../../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../../src/components/design/design-preview.tsx';
+import { beltStackLimit } from '../../../src/components/design/design-stack-limit.ts';
 import { designFluidTraces } from '../../../src/components/design/design-fluid-traces.ts';
 import { staticData } from '../../../src/data/decode.ts';
+import { inserterItemsPerSecondForBeltAtProgress } from '../../../src/data/inserter-throughput.ts';
+import cpuCell from '../../../docs/cells/cpu.json';
 import {
   airFilterProblem,
   assemblerProblem,
@@ -17,6 +20,105 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it.each([15, 30])('feeds molten silicon from the CPU cell using %s items/s belts', (beltRate) => {
+    const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
+    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const inputRate = row.inputs[0].rate / row.count;
+    const outputRate = row.outputs[0].rate / row.count;
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        assemblerName: row.recipe,
+        size: machine.size,
+        fluidBoxes: machine.fluidBoxes,
+        solidInputs: [inputRate],
+        fluidOutputs: [outputRate],
+      }),
+      {
+        beltItemsPerSecond: beltRate,
+        inserterItemsPerSecond: 8,
+        longInserterItemsPerSecond: 4,
+      },
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'inserter')).toHaveLength(
+      beltRate === 15 ? 5 : 4,
+    );
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(
+      beltRate === 15 ? 10 : 5,
+    );
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('states the two-belt limit when molten silicon uses basic belts', () => {
+    const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
+    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        assemblerName: row.recipe,
+        size: machine.size,
+        fluidBoxes: machine.fluidBoxes,
+        solidInputs: [row.inputs[0].rate / row.count],
+        fluidOutputs: [row.outputs[0].rate / row.count],
+      }),
+      { beltItemsPerSecond: 7.5, inserterItemsPerSecond: 8, longInserterItemsPerSecond: 4 },
+    );
+
+    expect(design).toEqual({
+      failure: [
+        'cannot feed',
+        'item 1',
+        'at',
+        '25.2 items/s',
+        'because two',
+        '7.5 items/s',
+        'input belts and their available inserters can transfer at most',
+        '15 items/s',
+      ],
+    });
+  });
+
+  it('stacks two molten-silicon furnaces on one 75 items/s input belt', () => {
+    const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
+    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const inputRate = row.inputs[0].rate / row.count;
+    const problem = assemblerProblem({
+      assemblerName: row.recipe,
+      size: machine.size,
+      fluidBoxes: machine.fluidBoxes,
+      solidInputs: [inputRate],
+      fluidOutputs: [row.outputs[0].rate / row.count],
+    });
+    problem.inputs.solids = { 'item:angels-ingot-silicon': inputRate };
+    const design = generateAssemblerDesign(problem, {
+      beltItemsPerSecond: 75,
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+        1,
+        staticData.belts['bob-ultimate-transport-belt'],
+      ),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+        1,
+        staticData.belts['bob-ultimate-transport-belt'],
+        2,
+      ),
+    });
+    const column = design.columns?.[0];
+    expect(column).toBeDefined();
+    expect(
+      beltStackLimit(
+        column!,
+        {
+          [row.recipe]: {
+            ingredients: [{ resource: 'item:angels-ingot-silicon' }],
+            products: [{ resource: 'fluid:angels-liquid-molten-silicon' }],
+          },
+        },
+        problem,
+        75,
+      ),
+    ).toBe(2);
+  });
+
   it('keeps air separation input and both outputs on independent chemical-plant trunks', () => {
     const recipeName = 'angels-air-separation';
     const recipe = staticData.recipes[recipeName];

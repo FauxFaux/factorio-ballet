@@ -1,0 +1,246 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "angels-casting-machine-3"
+        },
+        "index": 1
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 387.5
+        }
+      },
+      {
+        "entity_number": 2,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 388.5
+        }
+      },
+      {
+        "entity_number": 3,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 389.5
+        }
+      },
+      {
+        "entity_number": 4,
+        "name": "inserter",
+        "position": {
+          "x": 187.5,
+          "y": 388.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 5,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 187.5,
+          "y": 389.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 6,
+        "name": "angels-casting-machine-3",
+        "position": {
+          "x": 189.5,
+          "y": 388.5
+        },
+        "direction": 4,
+        "mirror": true,
+        "recipe": "angels-mono-silicon-seed",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 7,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 191.5,
+          "y": 388.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 8,
+        "name": "pipe",
+        "position": {
+          "x": 191.5,
+          "y": 389.5
+        }
+      },
+      {
+        "entity_number": 9,
+        "name": "pipe",
+        "position": {
+          "x": 187.5,
+          "y": 390.5
+        }
+      },
+      {
+        "entity_number": 10,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 187.5,
+          "y": 391.5
+        }
+      },
+      {
+        "entity_number": 11,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 391.5
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 390.5
+        }
+      },
+      {
+        "entity_number": 13,
+        "name": "pipe",
+        "position": {
+          "x": 188.5,
+          "y": 390.5
+        }
+      },
+      {
+        "entity_number": 14,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 191.5,
+          "y": 390.5
+        }
+      },
+      {
+        "entity_number": 15,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 392.5
+        }
+      },
+      {
+        "entity_number": 16,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 393.5
+        }
+      },
+      {
+        "entity_number": 17,
+        "name": "inserter",
+        "position": {
+          "x": 187.5,
+          "y": 392.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 18,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 187.5,
+          "y": 393.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 19,
+        "name": "angels-casting-machine-3",
+        "position": {
+          "x": 189.5,
+          "y": 392.5
+        },
+        "direction": 4,
+        "mirror": true,
+        "recipe": "angels-mono-silicon-seed",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 20,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 191.5,
+          "y": 392.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 21,
+        "name": "pipe",
+        "position": {
+          "x": 191.5,
+          "y": 393.5
+        }
+      },
+      {
+        "entity_number": 22,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 395.5
+        }
+      },
+      {
+        "entity_number": 23,
+        "name": "transport-belt",
+        "position": {
+          "x": 186.5,
+          "y": 394.5
+        }
+      },
+      {
+        "entity_number": 24,
+        "name": "pipe",
+        "position": {
+          "x": 187.5,
+          "y": 394.5
+        }
+      },
+      {
+        "entity_number": 25,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 187.5,
+          "y": 395.5
+        }
+      },
+      {
+        "entity_number": 26,
+        "name": "pipe",
+        "position": {
+          "x": 188.5,
+          "y": 394.5
+        }
+      },
+      {
+        "entity_number": 27,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": 191.5,
+          "y": 394.5
+        }
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}
