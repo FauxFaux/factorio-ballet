@@ -6,6 +6,7 @@ import {
 } from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
+import { staticData } from '../../src/data/decode.ts';
 import {
   airFilterProblem,
   assemblerProblem,
@@ -19,6 +20,33 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it('connects the flare stack fluid input without adding an output belt', () => {
+    const machine = staticData.machines['angels-flare-stack'];
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        assemblerName: 'angels-chemical-void-angels-gas-oxygen',
+        size: machine.size,
+        fluidBoxes: machine.fluidBoxes,
+        fluidInputs: [400],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities).toEqual([
+      { kind: 'pipe', position: { x: 0, y: 0 } },
+      { kind: 'pipe', position: { x: 0, y: 1 } },
+      {
+        kind: 'assembler',
+        position: { x: 1, y: 0 },
+        size: { width: 2, height: 2 },
+        recipe: 'angels-chemical-void-angels-gas-oxygen',
+        direction: 'east',
+      },
+    ]);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it('supports a 2×2 machine with one solid input and output', () => {
     const problem = assemblerProblem({
       size: { width: 2, height: 2 },

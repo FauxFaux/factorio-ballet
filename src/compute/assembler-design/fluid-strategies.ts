@@ -549,10 +549,10 @@ export function solveFluidInputDesign(
       'cannot feed more than 2 solid inputs alongside a fluid input',
     );
   }
-  if (outputRates.length !== 1) {
+  if (outputRates.length > 1) {
     return reject(
       'unsupported-flows',
-      'cannot extract anything other than one solid output alongside a fluid input',
+      'cannot extract more than one solid output alongside a fluid input',
     );
   }
   if (!problem.assemblers[0].size || !problem.assemblers[0].fluidBoxes) {
@@ -628,7 +628,7 @@ export function solveFluidInputDesign(
       direction: 'east',
       ...(hasSolidInput ? { reach: 2 } : {}),
     })),
-    ...verticalBelt(outputBeltX, 'south', size.height),
+    ...(outputInserterCount > 0 ? verticalBelt(outputBeltX, 'south', size.height) : []),
   ];
 
   return solved({ columns: [{ entities }] });

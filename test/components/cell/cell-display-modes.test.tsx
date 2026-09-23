@@ -47,6 +47,25 @@ describe('cell display modes', () => {
     expect(screen.getByLabelText('Assembler design')).toBeTruthy();
   });
 
+  it('summarizes the 2×2 oxygen flare with no output', () => {
+    render(
+      <RecipeConnections
+        connections={{ inputs: [], outputs: [] }}
+        solved
+        belt={{ human: 'test belt', itemsPerSecond: 45, undergroundLength: 7 }}
+        recipe="angels-chemical-void-angels-gas-oxygen"
+        machine="angels-flare-stack"
+        inputRates={new Map([['fluid:angels-gas-oxygen', 307.06800094555194]])}
+        outputRates={new Map()}
+        machineCount={0.7676700023638798}
+        progress={1}
+        onSelectResource={() => {}}
+      />,
+    );
+
+    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+  });
+
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
     const user = userEvent.setup();
     const { container } = renderCell();
