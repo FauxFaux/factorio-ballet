@@ -2,226 +2,226 @@
   "inputs": [
     {
       "material": "fluid:angels-liquid-sulfuric-acid",
-      "rate": 342.8571428571429
+      "rate": 195.99999999999997
     },
     {
       "material": "item:angels-ingot-silicon",
-      "rate": 35.28090772988732
+      "rate": 17.95738636363636
     },
     {
       "material": "item:angels-wire-platinum",
-      "rate": 171.42857142857144
+      "rate": 97.99999999999999
     }
   ],
   "recipes": [
     {
       "recipe": "bob-processing-electronics",
-      "count": 300,
+      "count": 8,
       "inputs": [
         {
           "material": "fluid:angels-liquid-sulfuric-acid",
-          "rate": 342.8571428571429,
+          "rate": 195.99999999999997,
           "ratio": null
         },
         {
           "material": "item:bob-silicon-wafer",
-          "rate": 205.71428571428572,
-          "ratio": 0.08329862557267805
+          "rate": 117.6,
+          "ratio": 1.5909090909090904
         },
         {
           "material": "item:angels-wire-platinum",
-          "rate": 171.42857142857144,
+          "rate": 97.99999999999999,
           "ratio": null
         },
         {
           "material": "item:bob-silicon-nitride",
-          "rate": 34.28571428571429,
-          "ratio": 0.04826254826254826
+          "rate": 19.599999999999998,
+          "ratio": 1.5312499999999998
         }
       ],
       "outputs": [
         {
           "material": "item:bob-processing-electronics",
-          "rate": 336.00000000000006,
+          "rate": 215.59999999999997,
           "ratio": null
+        }
+      ]
+    },
+    {
+      "recipe": "bob-silicon-nitride",
+      "count": 12.249999999999998,
+      "inputs": [
+        {
+          "material": "fluid:angels-gas-nitrogen",
+          "rate": 159.24999999999997,
+          "ratio": 0.0478815302344714
+        },
+        {
+          "material": "item:bob-silicon-powder",
+          "rate": 12.249999999999998,
+          "ratio": 0.05952380952380953
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:bob-silicon-nitride",
+          "rate": 19.599999999999998,
+          "ratio": 0.653061224489796
+        }
+      ]
+    },
+    {
+      "recipe": "angels-air-separation",
+      "count": 0.5865487453722745,
+      "inputs": [
+        {
+          "material": "fluid:angels-gas-compressed-air",
+          "rate": 324.0681818181817,
+          "ratio": 3.3484848484848486
+        }
+      ],
+      "outputs": [
+        {
+          "material": "fluid:angels-gas-nitrogen",
+          "rate": 162.03409090909085,
+          "ratio": 21.110906561937497
+        },
+        {
+          "material": "fluid:angels-gas-oxygen",
+          "rate": 162.03409090909085,
+          "ratio": 0.6278409090909091
+        }
+      ]
+    },
+    {
+      "recipe": "angels-gas-compressed-air",
+      "count": 1.9640495867768588,
+      "inputs": [],
+      "outputs": [
+        {
+          "material": "fluid:angels-gas-compressed-air",
+          "rate": 324.0681818181817,
+          "ratio": 0.2986425339366516
+        }
+      ]
+    },
+    {
+      "recipe": "bob-silicon-powder",
+      "count": 0.7291666666666666,
+      "inputs": [
+        {
+          "material": "item:angels-ingot-silicon",
+          "rate": 12.249999999999996,
+          "ratio": null
+        }
+      ],
+      "outputs": [
+        {
+          "material": "item:bob-silicon-powder",
+          "rate": 12.249999999999996,
+          "ratio": 16.799999999999997
         }
       ]
     },
     {
       "recipe": "bob-silicon-wafer",
-      "count": 24.989587671803413,
+      "count": 12.727272727272723,
       "inputs": [
         {
           "material": "item:angels-mono-silicon",
-          "rate": 17.49271137026239,
-          "ratio": 0.5912162162162165
+          "rate": 8.909090909090907,
+          "ratio": 0.875
         }
       ],
       "outputs": [
         {
           "material": "item:bob-silicon-wafer",
-          "rate": 205.71428571428572,
-          "ratio": 12.005
+          "rate": 117.59999999999998,
+          "ratio": 0.6285714285714288
         }
       ]
     },
     {
       "recipe": "angels-mono-silicon",
-      "count": 14.774249468127024,
+      "count": 11.136363636363633,
       "inputs": [
         {
           "material": "fluid:angels-liquid-molten-silicon",
-          "rate": 118.19399574501617,
-          "ratio": 0.03644444444444443
+          "rate": 55.681818181818166,
+          "ratio": 0.02033730158730159
         },
         {
           "material": "item:angels-mono-silicon-seed",
-          "rate": 2.954849893625404,
-          "ratio": 0.021333333333333333
+          "rate": 1.3920454545454541,
+          "ratio": 0.01190476190476191
         }
       ],
       "outputs": [
         {
           "material": "item:angels-mono-silicon",
-          "rate": 17.49271137026239,
-          "ratio": 1.6914285714285706
-        }
-      ]
-    },
-    {
-      "recipe": "angels-liquid-molten-silicon",
-      "count": 0.538439313949518,
-      "inputs": [
-        {
-          "material": "item:angels-ingot-silicon",
-          "rate": 12.114884563864155,
-          "ratio": null
-        }
-      ],
-      "outputs": [
-        {
-          "material": "fluid:angels-liquid-molten-silicon",
-          "rate": 121.14884563864156,
-          "ratio": 28.02439024390245
+          "rate": 8.909090909090907,
+          "ratio": 1.1428571428571428
         }
       ]
     },
     {
       "recipe": "angels-mono-silicon-seed",
-      "count": 0.3151839886533765,
+      "count": 0.1325757575757576,
       "inputs": [
         {
           "material": "fluid:angels-gas-nitrogen",
-          "rate": 5.909699787250809,
-          "ratio": 3.9969230769230757
+          "rate": 2.784090909090909,
+          "ratio": 4.424253393665156
         },
         {
           "material": "fluid:angels-liquid-molten-silicon",
-          "rate": 2.9548498936254046,
+          "rate": 1.3920454545454546,
           "ratio": 1.708333333333333
         }
       ],
       "outputs": [
         {
           "material": "item:angels-mono-silicon-seed",
-          "rate": 2.9548498936254046,
-          "ratio": 46.87500000000001
+          "rate": 1.3920454545454546,
+          "ratio": 83.99999999999996
         }
       ]
     },
     {
-      "recipe": "bob-silicon-nitride",
-      "count": 14.478764478764479,
-      "inputs": [
-        {
-          "material": "fluid:angels-gas-nitrogen",
-          "rate": 301.15830115830113,
-          "ratio": 0.08700784929356357
-        },
-        {
-          "material": "item:bob-silicon-powder",
-          "rate": 23.166023166023162,
-          "ratio": 0.10666666666666666
-        }
-      ],
-      "outputs": [
-        {
-          "material": "item:bob-silicon-nitride",
-          "rate": 34.285714285714285,
-          "ratio": 20.72
-        }
-      ]
-    },
-    {
-      "recipe": "bob-silicon-powder",
-      "count": 1.5444015444015442,
+      "recipe": "angels-liquid-molten-silicon",
+      "count": 0.22648358585858586,
       "inputs": [
         {
           "material": "item:angels-ingot-silicon",
-          "rate": 23.166023166023162,
+          "rate": 5.707386363636362,
           "ratio": null
         }
       ],
       "outputs": [
         {
-          "material": "item:bob-silicon-powder",
-          "rate": 23.166023166023162,
-          "ratio": 9.375000000000002
+          "material": "fluid:angels-liquid-molten-silicon",
+          "rate": 57.073863636363626,
+          "ratio": 49.7560975609756
         }
       ]
     },
     {
       "recipe": "angels-chemical-void-angels-gas-oxygen",
-      "count": 0.7676700023638798,
+      "count": 0.368259297520661,
       "inputs": [
         {
           "material": "fluid:angels-gas-oxygen",
-          "rate": 307.06800094555194,
-          "ratio": 1.6410256410256412
+          "rate": 162.03409090909085,
+          "ratio": 1.592760180995475
         }
       ],
       "outputs": []
-    },
-    {
-      "recipe": "angels-air-separation",
-      "count": 1.2597661577253414,
-      "inputs": [
-        {
-          "material": "fluid:angels-gas-compressed-air",
-          "rate": 614.1360018911039,
-          "ratio": 3.25
-        }
-      ],
-      "outputs": [
-        {
-          "material": "fluid:angels-gas-nitrogen",
-          "rate": 307.06800094555194,
-          "ratio": 11.743408391070055
-        },
-        {
-          "material": "fluid:angels-gas-oxygen",
-          "rate": 307.06800094555194,
-          "ratio": 0.6093749999999999
-        }
-      ]
-    },
-    {
-      "recipe": "angels-gas-compressed-air",
-      "count": 4.09424001260736,
-      "inputs": [],
-      "outputs": [
-        {
-          "material": "fluid:angels-gas-compressed-air",
-          "rate": 614.136001891104,
-          "ratio": 0.30769230769230765
-        }
-      ]
     }
   ],
   "outputs": [
     {
       "material": "item:bob-processing-electronics",
-      "rate": 336.00000000000006
+      "rate": 215.59999999999997
     }
   ]
 }
