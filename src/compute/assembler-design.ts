@@ -1,12 +1,16 @@
 import {
-  solveDualFluidDesign,
-  solveOneFluidTwoOutputsDesign,
-  solveDualFluidSolidOutputDesign,
   solveDualFluidSolidInputDesign,
+  solveDualFluidSolidOutputDesign,
+} from './assembler-design/dual-fluid-solid-strategies.ts';
+import {
   solveFluidInputDesign,
   solveFluidOutputDesign,
-  solveOutsideFluidTrunkDesign,
 } from './assembler-design/fluid-strategies.ts';
+import {
+  solveDualFluidDesign,
+  solveOneFluidTwoOutputsDesign,
+} from './assembler-design/multi-fluid-strategies.ts';
+import { solveOutsideFluidTrunkDesign } from './assembler-design/outside-fluid-strategy.ts';
 import {
   solveCompactSolidDesign,
   solveWideSolidDesign,

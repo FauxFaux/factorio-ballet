@@ -40,6 +40,10 @@ export interface AssemblerDesignStrategy {
   solve: (prepared: PreparedAssemblerProblem) => AssemblerDesignStrategyResult;
 }
 
+export function sideRows(height: number): number[] {
+  return [height - 1, ...Array.from({ length: height - 1 }, (_, y) => y)];
+}
+
 export function verticalBelt(x: number, direction: 'north' | 'south', height = 3): DesignEntity[] {
   return Array.from({ length: height }, (_, y) => ({
     kind: 'belt',
