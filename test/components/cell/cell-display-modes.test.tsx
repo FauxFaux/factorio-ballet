@@ -6,6 +6,7 @@ import state from '../../assets/uranium.state.json';
 import type { Cell } from '../../../src/cell.ts';
 import { resolveChosen, resourceName } from '../../../src/data';
 import { CellBox } from '../../../src/components/cell/box.tsx';
+import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen({}, undefined, undefined, state.gp);
@@ -27,6 +28,25 @@ function renderCell() {
 }
 
 describe('cell display modes', () => {
+  it('uses per-machine rates for the silicon-powder 2×2 kernel', () => {
+    render(
+      <RecipeConnections
+        connections={{ inputs: [], outputs: [] }}
+        solved
+        belt={{ human: 'test belt', itemsPerSecond: 45, undergroundLength: 7 }}
+        recipe="bob-silicon-powder"
+        machine="angels-powderizer"
+        inputRates={new Map([['item:angels-ingot-silicon', 23.166023166023162]])}
+        outputRates={new Map([['item:bob-silicon-powder', 23.166023166023162]])}
+        machineCount={1.5444015444015442}
+        progress={1}
+        onSelectResource={() => {}}
+      />,
+    );
+
+    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+  });
+
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
     const user = userEvent.setup();
     const { container } = renderCell();

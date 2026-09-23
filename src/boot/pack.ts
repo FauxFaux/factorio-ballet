@@ -57,7 +57,7 @@ type PackedDesignEntity =
   | [3, number, number, number]
   | [4, number, number]
   | [5, number, number, number]
-  | [6, number, number, number, (1 | 2)?];
+  | [6, number, number, number, (1 | 2 | null)?, string?];
 
 /** {@link CellEntry} with its ids packed; see {@link PackedId} for why the types are unions. */
 export interface PackedEntry {
@@ -192,9 +192,11 @@ function packDesignEntity(entity: Exclude<DesignEntity, { kind: 'belt' }>): Pack
     case 'underground-pipe':
       return [5, x, y, directions.indexOf(entity.direction)];
     case 'inserter':
-      return entity.reach
-        ? [6, x, y, directions.indexOf(entity.direction), entity.reach]
-        : [6, x, y, directions.indexOf(entity.direction)];
+      return entity.filter
+        ? [6, x, y, directions.indexOf(entity.direction), entity.reach ?? null, entity.filter]
+        : entity.reach
+          ? [6, x, y, directions.indexOf(entity.direction), entity.reach]
+          : [6, x, y, directions.indexOf(entity.direction)];
   }
 }
 
@@ -266,6 +268,7 @@ function unpackDesignEntity(entity: Exclude<PackedDesignEntity, DesignEntity>): 
           position,
           direction: directions[entity[3]],
           ...(entity[4] ? { reach: entity[4] } : {}),
+          ...(entity[5] ? { filter: entity[5] } : {}),
         },
       ];
   }

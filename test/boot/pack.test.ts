@@ -55,6 +55,13 @@ describe('packCells', () => {
                   position: { x: 1, y: 2 },
                   direction: 'east',
                   reach: 2,
+                  filter: 'item:copper-cable',
+                },
+                {
+                  kind: 'inserter',
+                  position: { x: 2, y: 2 },
+                  direction: 'west',
+                  filter: 'item:iron-gear-wheel',
                 },
               ],
             },

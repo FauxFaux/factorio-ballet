@@ -62,6 +62,8 @@ export interface DesignInserter extends DesignEntityBase {
   direction: DesignDirection;
   /** Pickup and drop distance in tiles. Omitted for an ordinary one-tile inserter. */
   reach?: 1 | 2;
+  /** The item this inserter extracts when a machine produces multiple solids. */
+  filter?: string;
 }
 
 /** An entity the simplified factory blueprint can place on a {@link DesignColumn}. */

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { generateAssemblerDesign } from '../../src/compute/assembler-design.ts';
-import { physicalStackLimit } from '../../src/components/design/design-stack-limit.ts';
+import {
+  beltStackLimit,
+  physicalStackLimit,
+} from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
 import {
@@ -16,6 +19,74 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it('supports a 2×2 machine with one solid input and output', () => {
+    const problem = assemblerProblem({
+      size: { width: 2, height: 2 },
+      solidInputs: [1],
+      solidOutputs: [1],
+    });
+    const design = generateAssemblerDesign(problem, throughput);
+    const column = design.columns?.[0];
+    expect(column).toBeDefined();
+    expect(entityPositionStatuses(column!.entities)).toEqual(column!.entities.map(() => 'valid'));
+    expect(
+      beltStackLimit(
+        column!,
+        {
+          [problem.assemblers[0].name]: {
+            ingredients: [{ resource: 'item:item 1' }],
+            products: [{ resource: 'item:item 2' }],
+          },
+        },
+        problem,
+        throughput.beltItemsPerSecond,
+      ),
+    ).toBeGreaterThan(0);
+  });
+
+  it('supports two solid inputs and outputs on a 2×2 machine', () => {
+    const problem = assemblerProblem({
+      size: { width: 2, height: 2 },
+      solidInputs: [1, 1],
+      solidOutputs: [1, 1],
+    });
+    const design = generateAssemblerDesign(problem, throughput);
+    const column = design.columns?.[0];
+    expect(column).toBeDefined();
+    expect(column!.entities.filter((entity) => entity.kind === 'belt')).toHaveLength(6);
+    expect(
+      column!.entities.filter((entity) => entity.kind === 'inserter' && entity.position.x === 4),
+    ).toEqual([
+      {
+        kind: 'inserter',
+        position: { x: 4, y: 1 },
+        direction: 'east',
+        filter: 'item:item 3',
+      },
+      {
+        kind: 'inserter',
+        position: { x: 4, y: 0 },
+        direction: 'east',
+        reach: 2,
+        filter: 'item:item 4',
+      },
+    ]);
+    expect(entityPositionStatuses(column!.entities)).toEqual(column!.entities.map(() => 'valid'));
+    expect(
+      beltStackLimit(
+        column!,
+        {
+          [problem.assemblers[0].name]: {
+            ingredients: [{ resource: 'item:item 1' }, { resource: 'item:item 2' }],
+            products: [{ resource: 'item:item 3' }, { resource: 'item:item 4' }],
+          },
+        },
+        problem,
+        throughput.beltItemsPerSecond,
+      ),
+    ).toBeGreaterThan(0);
+  });
+
   it('connects a fluid output when the recipe consumes no resources', () => {
     const design = generateAssemblerDesign(kernelProblems.fluidOutput[6]!, throughput);
     const entities = design.columns?.[0].entities ?? [];

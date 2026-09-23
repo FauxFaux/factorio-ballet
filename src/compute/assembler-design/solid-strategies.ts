@@ -63,7 +63,7 @@ export function solveCompactSolidDesign(
 ): AssemblerDesignStrategyResult {
   const { problem, throughput, inputSolids: inputRates, outputSolids: outputRates } = prepared;
   if (prepared.inputFluids.length > 0 || prepared.outputFluids.length > 0) return notApplicable();
-  const invalid = validateSolidFlows(problem, inputRates, outputRates, throughput);
+  const invalid = validateSolidFlows(problem, inputRates, outputRates, throughput, 2);
   if (invalid) return rejected(invalid);
 
   const inputRate = sum(inputRates);
@@ -76,12 +76,23 @@ export function solveCompactSolidDesign(
   }));
   const outputPositions = outputRows(size.height).map((y) => ({ x: 2 + size.width, y }));
   const inputInserterCount = Math.ceil(inputRate / throughput.inserterItemsPerSecond);
-  const outputInserterCount = Math.ceil(outputRate / throughput.inserterItemsPerSecond);
+  const splitOutputs = outputRates.length === 2;
+  const outputInserterCount = splitOutputs
+    ? 2
+    : Math.ceil(outputRate / throughput.inserterItemsPerSecond);
+  const outputEntries = Object.entries(problem.outputs.solids).toSorted(
+    (left, right) => right[1] - left[1],
+  );
   if (
     inputRates.length > 2 ||
     inputRate > throughput.beltItemsPerSecond ||
     (inputRates.length === 2 &&
       inputRates.some((rate) => rate > throughput.beltItemsPerSecond / 2)) ||
+    (splitOutputs
+      ? outputRates.some((rate) => rate > throughput.beltItemsPerSecond / 2) ||
+        outputEntries[0][1] > throughput.inserterItemsPerSecond ||
+        outputEntries[1][1] > throughput.longInserterItemsPerSecond
+      : outputRate > throughput.beltItemsPerSecond) ||
     inputInserterCount > compactInputSites.length ||
     outputInserterCount > outputPositions.length
   ) {
@@ -96,12 +107,21 @@ export function solveCompactSolidDesign(
       direction,
     })),
     assembler(problem, 2),
-    ...outputPositions.slice(0, outputInserterCount).map((position) => ({
+    ...outputPositions.slice(0, outputInserterCount).map((position, index) => ({
       kind: 'inserter' as const,
       position,
       direction: 'east' as const,
+      ...(splitOutputs
+        ? {
+            ...(index === 1 ? { reach: 2 as const } : {}),
+            filter: outputEntries[index][0].startsWith('item:')
+              ? outputEntries[index][0]
+              : `item:${outputEntries[index][0]}`,
+          }
+        : {}),
     })),
     ...verticalBelt(3 + size.width, 'south', size.height),
+    ...(splitOutputs ? verticalBelt(4 + size.width, 'south', size.height) : []),
   ];
   return solved({ columns: [{ entities }] });
 }
@@ -180,15 +200,18 @@ function validateSolidFlows(
   inputRates: number[],
   outputRates: number[],
   throughput: AssemblerDesignThroughput,
+  maxOutputs = 1,
 ): AssemblerDesignRejection | undefined {
   if (inputRates.length === 0) return invalidRatesRejection('input', problem.inputs.solids);
   if (outputRates.length === 0) return invalidRatesRejection('output', problem.outputs.solids);
-  if (outputRates.length !== 1) {
+  if (outputRates.length > maxOutputs) {
     return designRejection(
       'unsupported-flows',
       'cannot extract from',
       problem.assemblers[0].name,
-      'because this generator supports exactly one solid output, not',
+      maxOutputs === 1
+        ? 'because this generator supports exactly one solid output, not'
+        : `because this generator supports at most ${maxOutputs} solid outputs, not`,
       String(outputRates.length),
     );
   }

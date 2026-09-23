@@ -179,6 +179,24 @@ function findLaneInjections(
     }
 
     const items = assemblerItemResults(assemblerMatch.assembler, recipes);
+    if (entity.filter) {
+      if (items.includes(entity.filter as ResourceId)) {
+        injections.push({
+          inserterIndex,
+          assemblerIndex: assemblerMatch.assemblerIndex,
+          item: entity.filter as ResourceId,
+          target,
+        });
+      } else {
+        issues.push({
+          kind: 'ambiguous-assembler-result',
+          inserterIndex,
+          assemblerIndex: assemblerMatch.assemblerIndex,
+          items,
+        });
+      }
+      return;
+    }
     if (items.length !== 1) {
       issues.push({
         kind: 'ambiguous-assembler-result',
