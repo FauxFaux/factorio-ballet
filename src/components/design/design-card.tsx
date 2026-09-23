@@ -132,7 +132,7 @@ function ResourceIcon({ resource, color }: { resource: string; color: string }) 
   );
 }
 
-function resourceColoursFor(problem: KernelProblem): ResourceColours {
+export function resourceColoursFor(problem: KernelProblem): ResourceColours {
   const resourceNames = [
     ...Object.keys(problem.inputs.solids),
     ...Object.keys(problem.inputs.fluids),

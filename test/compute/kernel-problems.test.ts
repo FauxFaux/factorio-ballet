@@ -63,6 +63,14 @@ describe('assemblerProblem', () => {
     expect(assembler?.size).toEqual(staticData.machines['assembling-machine-2'].size);
     expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
   });
+
+  it('keeps Assembler 2 geometry when it is selected without fluid flows', () => {
+    const assembler = assemblerProblem({ assemblerName: 'Assembler 2', solidInputs: [5] })
+      .assemblers[0];
+
+    expect(assembler?.size).toEqual({ width: 3, height: 3 });
+    expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
+  });
 });
 
 describe('kernelProblems', () => {

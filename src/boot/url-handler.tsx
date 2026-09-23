@@ -5,9 +5,21 @@ import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
+import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { packCells, unpackCells, type PackedCell } from './pack.ts';
 import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
+
+export interface KernelCustomState {
+  building: 'assembler' | 'air-filter';
+  flows: {
+    solidInputs: number[];
+    fluidInputs: number[];
+    solidOutputs: number[];
+    fluidOutputs: number[];
+  };
+  rates: AssemblerDesignThroughput;
+}
 
 export interface UrlState {
   /**
@@ -51,6 +63,8 @@ export interface UrlState {
   /** Show the standalone kernel-design workspace rather than a planner page. */
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- persisted as an empty object
   kd?: {};
+  /** The editable kernel problem, retained when the workspace is hidden. */
+  kp?: KernelCustomState;
 }
 
 const defaultUs: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };

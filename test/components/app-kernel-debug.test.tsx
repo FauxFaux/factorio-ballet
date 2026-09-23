@@ -82,12 +82,17 @@ describe('App', () => {
     expect(
       within(throughputSummary).getByText(`${fmt(throughput.longInserterItemsPerSecond)} items/s`),
     ).toBeTruthy();
-    const articles = screen.getAllByRole('article');
+    const builtInResults = screen.getByLabelText('Kernel problems');
+    const articles = within(builtInResults).getAllByRole('article');
     const articleForProblem = (problem: KernelProblem) =>
       articles[sortedProblems.indexOf(problem)]!;
     expect(articles).toHaveLength(allKernelProblems.length);
-    expect(screen.queryAllByRole('region', { name: / preview$/ })).toHaveLength(solutionCount);
-    expect(screen.queryAllByRole('note')).toHaveLength(allKernelProblems.length - solutionCount);
+    expect(within(builtInResults).queryAllByRole('region', { name: / preview$/ })).toHaveLength(
+      solutionCount,
+    );
+    expect(within(builtInResults).queryAllByRole('note')).toHaveLength(
+      allKernelProblems.length - solutionCount,
+    );
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
@@ -135,8 +140,8 @@ describe('App', () => {
       }),
     ).toBeTruthy();
     expect(screen.queryByText('Assemblers')).toBeNull();
-    expect(screen.getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
-    expect(screen.getAllByRole('img', { name: 'Fluid' })).toHaveLength(25);
+    expect(within(builtInResults).getAllByRole('img', { name: 'Solid' })).toHaveLength(46);
+    expect(within(builtInResults).getAllByRole('img', { name: 'Fluid' })).toHaveLength(25);
     for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }

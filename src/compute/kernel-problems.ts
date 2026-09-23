@@ -52,7 +52,8 @@ export function assemblerProblem({
   fluidBoxes,
 }: AssemblerProblemOptions): KernelProblem {
   const useAssembler2 =
-    assemblerName === undefined && (fluidInputs.length > 0 || fluidOutputs.length > 0);
+    assemblerName === 'Assembler 2' ||
+    (assemblerName === undefined && (fluidInputs.length > 0 || fluidOutputs.length > 0));
   const inputs: KernelFlows = {
     solids: resourceRates('item', solidInputs),
     fluids: resourceRates('fluid', fluidInputs),
