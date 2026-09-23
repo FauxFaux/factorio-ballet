@@ -475,7 +475,8 @@ export function solveOneFluidTwoOutputsDesign(
       input !== undefined &&
       upperOutput !== undefined &&
       lowerOutput !== undefined &&
-      new Set([input, upperOutput, lowerOutput]).size === 3
+      new Set([input, upperOutput, lowerOutput]).size === 3 &&
+      trunkFacesOnlyFluidInputs(specification, 'east', rotation)
     );
   });
   if (!direction) {
@@ -490,12 +491,11 @@ export function solveOneFluidTwoOutputsDesign(
   const entities: DesignEntity[] = [
     ...pipeTrunk(0),
     ...pipeTrunk(2),
-    ...pipeTrunk(8),
+    ...pipeTrunk(7),
     { kind: 'underground-pipe', position: { x: 1, y: 2 }, direction: 'west' },
     { kind: 'pipe', position: { x: 3, y: 0 } },
     { kind: 'underground-pipe', position: { x: 3, y: 2 }, direction: 'east' },
     assembler(problem, 4, direction),
-    { kind: 'pipe', position: { x: 7, y: 0 } },
   ];
   return solved({ columns: [{ entities }] });
 }
@@ -906,6 +906,30 @@ function rotatedPortBoxIndex(
       }),
   );
   return index === -1 ? undefined : index;
+}
+
+function trunkFacesOnlyFluidInputs(
+  specification: KernelProblem['assemblers'][number],
+  side: 'east' | 'west',
+  rotation: DesignDirection,
+): boolean {
+  const edgeX = side === 'east' ? 1 : -1;
+  const ports = specification.fluidBoxes!.flatMap((box) =>
+    box.connections.flatMap((connection) => {
+      const position = rotatePosition(connection.position, rotation);
+      return rotateDirection(connection.direction, rotation) === side && position.x === edgeX
+        ? [{ box, connection }]
+        : [];
+    }),
+  );
+  return (
+    ports.length > 0 &&
+    ports.every(
+      ({ box, connection }) =>
+        (box.productionType === 'input' || box.productionType === 'input-output') &&
+        (connection.flowDirection === 'input' || connection.flowDirection === 'input-output'),
+    )
+  );
 }
 
 function rotateDirection(direction: DesignDirection, rotation: DesignDirection): DesignDirection {

@@ -34,8 +34,9 @@ describe('generateAssemblerDesign', () => {
     const entities = design.columns?.[0].entities ?? [];
     expect(
       entities.filter((entity) => entity.kind === 'pipe' || entity.kind === 'underground-pipe'),
-    ).toHaveLength(13);
+    ).toHaveLength(12);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    expect(designBounds(entities)).toEqual({ minX: 0, maxX: 8, minY: 0, maxY: 3 });
 
     const traces = designFluidTraces(
       { entities },
@@ -43,7 +44,7 @@ describe('generateAssemblerDesign', () => {
       { [recipeName]: machine },
       true,
     );
-    const trunkFluids = [0, 2, 8].map((x) => {
+    const trunkFluids = [0, 2, 7].map((x) => {
       const index = entities.findIndex(
         (entity) => entity.kind === 'pipe' && entity.position.x === x && entity.position.y === 0,
       );
@@ -56,6 +57,34 @@ describe('generateAssemblerDesign', () => {
       new Set(['fluid:angels-gas-nitrogen', 'fluid:angels-gas-oxygen']),
     );
     expect([...traces.assemblerStatuses.values()][0]?.missing).toEqual([]);
+  });
+
+  it('does not run the adjacent input trunk past an output port', () => {
+    const machine = staticData.machines['chemical-plant'];
+    const fluidBoxes = machine.fluidBoxes!.map((box, index) =>
+      index === 1
+        ? {
+            ...box,
+            productionType: 'output' as const,
+            connections: box.connections.map((connection) => ({
+              ...connection,
+              flowDirection: 'output' as const,
+            })),
+          }
+        : box,
+    );
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        assemblerName: 'Plant with an east output',
+        size: machine.size,
+        fluidBoxes,
+        fluidInputs: [100],
+        fluidOutputs: [50, 50],
+      }),
+      throughput,
+    );
+
+    expect(design.columns).toBeUndefined();
   });
 
   it('connects the flare stack fluid input without adding an output belt', () => {
