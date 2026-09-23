@@ -1,4 +1,5 @@
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
+import { staticData } from '../data/decode.ts';
 import type { MachineFluidBox, MachineSize } from '../types.ts';
 
 const FLUID_RATE = 200;
@@ -83,6 +84,30 @@ export function assemblerProblem({
   };
 }
 
+export const kernelMachineChoices = [
+  { value: 'chemical-plant', label: 'Chemical plant', machineId: 'chemical-plant' },
+  { value: 'flare-stack', label: 'Flare stack', machineId: 'angels-flare-stack' },
+  { value: 'powderiser', label: 'Powderiser', machineId: 'angels-powderizer-3' },
+] as const;
+
+export type KernelMachineChoice = (typeof kernelMachineChoices)[number]['value'];
+
+/** Give a synthetic flow problem the footprint and fluid ports of a real machine. */
+export function machineProblem(
+  building: KernelMachineChoice,
+  options: Omit<AssemblerProblemOptions, 'assemblerName' | 'size' | 'fluidBoxes'>,
+  name?: string,
+): KernelProblem {
+  const choice = kernelMachineChoices.find(({ value }) => value === building)!;
+  const machine = staticData.machines[choice.machineId];
+  return assemblerProblem({
+    ...options,
+    assemblerName: name ?? choice.label,
+    size: machine.size,
+    fluidBoxes: machine.fluidBoxes,
+  });
+}
+
 /** Fluid geometry of the `assembling-machine-2` prototype in the generated static data. */
 function assemblingMachine2FluidBoxes(): MachineFluidBox[] {
   return [
@@ -141,6 +166,9 @@ export const kernelProblems = {
     assemblerProblem({ solidInputs: [5, 5], solidOutputs: [2] }),
     assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
     assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
+    assemblerProblem({ solidInputs: [30, 5], solidOutputs: [3] }),
+    machineProblem('powderiser', { solidInputs: [15], solidOutputs: [15] }, 'Silicon powder'),
+    machineProblem('powderiser', { solidInputs: [1, 1], solidOutputs: [1, 1] }, '2×2 solid flows'),
   ],
   fluidInput: [
     assemblerProblem({ fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
@@ -151,6 +179,7 @@ export const kernelProblems = {
       fluidInputs: [FLUID_RATE],
       solidOutputs: [2, 2],
     }),
+    machineProblem('flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
   ],
   fluidOutput: [
     assemblerProblem({ solidInputs: [5], fluidOutputs: [FLUID_RATE] }),
@@ -183,6 +212,11 @@ export const kernelProblems = {
       solidOutputs: [2],
       fluidOutputs: [FLUID_RATE],
     }),
+    machineProblem(
+      'chemical-plant',
+      { fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE, FLUID_RATE] },
+      'Air separation',
+    ),
   ],
   airFilter: [
     airFilterProblem({ width: 3, height: 5 }),

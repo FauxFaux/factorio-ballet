@@ -5,6 +5,8 @@ import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
   airFilterProblem,
   assemblerProblem,
+  kernelMachineChoices,
+  machineProblem,
   type KernelProblem,
 } from '../compute/kernel-problems.ts';
 import { fmt, type State } from '../ts.ts';
@@ -80,11 +82,16 @@ export function KernelCustomProblem({
 
   const filter = airFilterProblem({ width: 5, height: 5 }).assemblers[0]!;
   const problemForFlows = (values: Flows) =>
-    assemblerProblem({
-      assemblerName: building === 'assembler' ? 'Assembler 2' : 'Air filter 5×5',
-      ...values,
-      ...(building === 'air-filter' ? { size: filter.size, fluidBoxes: filter.fluidBoxes } : {}),
-    });
+    building === 'assembler'
+      ? assemblerProblem({ assemblerName: 'Assembler 2', ...values })
+      : building === 'air-filter'
+        ? assemblerProblem({
+            assemblerName: 'Air filter 5×5',
+            ...values,
+            size: filter.size,
+            fluidBoxes: filter.fluidBoxes,
+          })
+        : machineProblem(building, values);
   const problem = problemForFlows(flows);
   const colours = resourceColoursFor(problem);
   const resourceNames = resourceNamesFor(problem);
@@ -132,6 +139,11 @@ export function KernelCustomProblem({
             >
               <option value="assembler">Assembler 2</option>
               <option value="air-filter">5×5 air filter</option>
+              {kernelMachineChoices.map(({ value, label }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
             </select>
           </label>
           <div class="kernel-custom-flows">

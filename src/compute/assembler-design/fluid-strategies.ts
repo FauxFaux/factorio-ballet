@@ -428,6 +428,78 @@ export function solveDualFluidDesign(
   return solved({ columns: [{ entities }] });
 }
 
+/** A no-solid three-trunk variant of the documented rectangular chemical-plant pattern. */
+export function solveOneFluidTwoOutputsDesign(
+  prepared: PreparedAssemblerProblem,
+): AssemblerDesignStrategyResult {
+  const { problem } = prepared;
+  if (
+    prepared.inputFluids.length !== 1 ||
+    prepared.outputFluids.length !== 2 ||
+    prepared.inputSolids.length !== 0 ||
+    prepared.outputSolids.length !== 0
+  ) {
+    return notApplicable();
+  }
+
+  const specification = problem.assemblers[0];
+  if (!specification.size || !specification.fluidBoxes) {
+    return reject(
+      'machine-geometry',
+      'cannot connect fluids to',
+      specification.name,
+      'because its size or fluid-port geometry is missing',
+    );
+  }
+  if (specification.size.width !== 3 || specification.size.height !== 3) {
+    return reject('machine-geometry', 'the three-fluid-trunk layout requires a 3x3 machine');
+  }
+
+  const direction = (['north', 'east', 'south', 'west'] as const).find((rotation) => {
+    const input = rotatedPortBoxIndex(specification, 'input', 'east', { x: 1, y: -1 }, rotation);
+    const upperOutput = rotatedPortBoxIndex(
+      specification,
+      'output',
+      'west',
+      { x: -1, y: -1 },
+      rotation,
+    );
+    const lowerOutput = rotatedPortBoxIndex(
+      specification,
+      'output',
+      'west',
+      { x: -1, y: 1 },
+      rotation,
+    );
+    return (
+      input !== undefined &&
+      upperOutput !== undefined &&
+      lowerOutput !== undefined &&
+      new Set([input, upperOutput, lowerOutput]).size === 3
+    );
+  });
+  if (!direction) {
+    return reject(
+      'machine-geometry',
+      'cannot connect one fluid input and two fluid outputs to',
+      specification.name,
+      'because the required corner ports are unavailable',
+    );
+  }
+
+  const entities: DesignEntity[] = [
+    ...pipeTrunk(0),
+    ...pipeTrunk(2),
+    ...pipeTrunk(8),
+    { kind: 'underground-pipe', position: { x: 1, y: 2 }, direction: 'west' },
+    { kind: 'pipe', position: { x: 3, y: 0 } },
+    { kind: 'underground-pipe', position: { x: 3, y: 2 }, direction: 'east' },
+    assembler(problem, 4, direction),
+    { kind: 'pipe', position: { x: 7, y: 0 } },
+  ];
+  return solved({ columns: [{ entities }] });
+}
+
 export function solveFluidOutputDesign(
   prepared: PreparedAssemblerProblem,
 ): AssemblerDesignStrategyResult {
@@ -811,6 +883,29 @@ function hasRotatedFluidPort(
         ),
     ),
   );
+}
+
+function rotatedPortBoxIndex(
+  specification: KernelProblem['assemblers'][number],
+  flow: 'input' | 'output',
+  target: DesignDirection,
+  position: { x: number; y: number },
+  rotation: DesignDirection,
+): number | undefined {
+  const index = specification.fluidBoxes?.findIndex(
+    (box) =>
+      (box.productionType === flow || box.productionType === 'input-output') &&
+      box.connections.some((connection) => {
+        const rotated = rotatePosition(connection.position, rotation);
+        return (
+          (connection.flowDirection === flow || connection.flowDirection === 'input-output') &&
+          rotateDirection(connection.direction, rotation) === target &&
+          rotated.x === position.x &&
+          rotated.y === position.y
+        );
+      }),
+  );
+  return index === -1 ? undefined : index;
 }
 
 function rotateDirection(direction: DesignDirection, rotation: DesignDirection): DesignDirection {

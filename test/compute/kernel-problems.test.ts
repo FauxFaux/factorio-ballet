@@ -4,6 +4,8 @@ import {
   allKernelProblems,
   assemblerProblem,
   kernelProblems,
+  kernelMachineChoices,
+  machineProblem,
 } from '../../src/compute/kernel-problems.ts';
 import { staticData } from '../../src/data/decode.ts';
 
@@ -74,6 +76,20 @@ describe('assemblerProblem', () => {
 });
 
 describe('kernelProblems', () => {
+  it('uses the selected machine footprint and ports for custom problems', () => {
+    expect(kernelMachineChoices.map(({ label }) => label)).toEqual([
+      'Chemical plant',
+      'Flare stack',
+      'Powderiser',
+    ]);
+    for (const { value, label, machineId } of kernelMachineChoices) {
+      const assembler = machineProblem(value, { solidInputs: [1], solidOutputs: [1] })
+        .assemblers[0];
+      expect(assembler).toMatchObject({ name: label, size: staticData.machines[machineId].size });
+      expect(assembler?.fluidBoxes).toEqual(staticData.machines[machineId].fluidBoxes);
+    }
+  });
+
   it('groups examples by fluid boundary shape', () => {
     expect(Object.keys(kernelProblems)).toEqual([
       'solid',
@@ -82,12 +98,23 @@ describe('kernelProblems', () => {
       'fluidInputAndOutput',
       'airFilter',
     ]);
-    expect(kernelProblems.solid).toHaveLength(6);
-    expect(kernelProblems.fluidInput).toHaveLength(4);
+    expect(kernelProblems.solid).toHaveLength(9);
+    expect(kernelProblems.fluidInput).toHaveLength(5);
     expect(kernelProblems.fluidOutput).toHaveLength(7);
-    expect(kernelProblems.fluidInputAndOutput).toHaveLength(4);
+    expect(kernelProblems.fluidInputAndOutput).toHaveLength(5);
     expect(kernelProblems.airFilter).toHaveLength(3);
-    expect(allKernelProblems).toHaveLength(24);
+    expect(allKernelProblems).toHaveLength(29);
+  });
+
+  it('includes the mixed belt, 2×2, flare, and air-separation cases', () => {
+    expect(kernelProblems.solid[6]?.inputs.solids).toEqual({ 'item 1': 30, 'item 2': 5 });
+    expect(kernelProblems.solid[7]?.assemblers[0]?.size).toEqual({ width: 2, height: 2 });
+    expect(kernelProblems.solid[8]?.outputs.solids).toEqual({ 'item 3': 1, 'item 4': 1 });
+    expect(kernelProblems.fluidInput[4]?.outputs).toEqual({ solids: {}, fluids: {} });
+    expect(kernelProblems.fluidInputAndOutput[4]?.outputs.fluids).toEqual({
+      'fluid 2': 200,
+      'fluid 3': 200,
+    });
   });
 
   it('includes a fluid-producing recipe with no input resources', () => {
@@ -135,8 +162,10 @@ describe('kernelProblems', () => {
     }
   });
 
-  it('uses 200 per second for every example fluid', () => {
-    for (const problem of allKernelProblems) {
+  it('uses 200 per second for generic example fluids', () => {
+    for (const problem of allKernelProblems.filter(
+      (problem) => problem.assemblers[0]?.name !== 'Oxygen flare',
+    )) {
       expect(Object.values(problem.inputs.fluids).every((rate) => rate === 200)).toBe(true);
       expect(Object.values(problem.outputs.fluids).every((rate) => rate === 200)).toBe(true);
     }

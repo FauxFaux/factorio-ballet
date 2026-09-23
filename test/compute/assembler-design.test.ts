@@ -6,6 +6,7 @@ import {
 } from '../../src/components/design/design-stack-limit.ts';
 import { entityPositionStatuses } from '../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../src/components/design/design-preview.tsx';
+import { designFluidTraces } from '../../src/components/design/design-fluid-traces.ts';
 import { staticData } from '../../src/data/decode.ts';
 import {
   airFilterProblem,
@@ -20,6 +21,47 @@ const throughput = {
 };
 
 describe('generateAssemblerDesign', () => {
+  it('keeps air separation input and both outputs on independent chemical-plant trunks', () => {
+    const recipeName = 'angels-air-separation';
+    const recipe = staticData.recipes[recipeName];
+    const machine = staticData.machines['chemical-plant'];
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        assemblerName: recipeName,
+        size: machine.size,
+        fluidBoxes: machine.fluidBoxes,
+        fluidInputs: [100],
+        fluidOutputs: [50, 50],
+      }),
+      throughput,
+    );
+    const entities = design.columns?.[0].entities ?? [];
+    expect(
+      entities.filter((entity) => entity.kind === 'pipe' || entity.kind === 'underground-pipe'),
+    ).toHaveLength(13);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+
+    const traces = designFluidTraces(
+      { entities },
+      { [recipeName]: recipe },
+      { [recipeName]: machine },
+      true,
+    );
+    const trunkFluids = [0, 2, 8].map((x) => {
+      const index = entities.findIndex(
+        (entity) => entity.kind === 'pipe' && entity.position.x === x && entity.position.y === 0,
+      );
+      return traces.pipeTraces.get(index)?.fluids;
+    });
+    expect(trunkFluids[2]).toEqual(['fluid:angels-gas-compressed-air']);
+    expect(trunkFluids[0]).toHaveLength(1);
+    expect(trunkFluids[1]).toHaveLength(1);
+    expect(new Set([...trunkFluids[0]!, ...trunkFluids[1]!])).toEqual(
+      new Set(['fluid:angels-gas-nitrogen', 'fluid:angels-gas-oxygen']),
+    );
+    expect([...traces.assemblerStatuses.values()][0]?.missing).toEqual([]);
+  });
+
   it('connects the flare stack fluid input without adding an output belt', () => {
     const machine = staticData.machines['angels-flare-stack'];
     const design = generateAssemblerDesign(

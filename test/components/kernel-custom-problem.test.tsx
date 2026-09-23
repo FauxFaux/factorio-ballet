@@ -43,6 +43,26 @@ function CustomProblemExample({
 describe('KernelCustomProblem', () => {
   afterEach(cleanup);
 
+  it('offers a chemical plant, flare stack, and powderiser as building choices', async () => {
+    const user = userEvent.setup();
+    render(<CustomProblemExample />);
+    const select = screen.getByRole<HTMLSelectElement>('combobox', { name: 'Building' });
+
+    for (const [value, label] of [
+      ['chemical-plant', 'Chemical plant'],
+      ['flare-stack', 'Flare stack'],
+      ['powderiser', 'Powderiser'],
+    ] as const) {
+      await user.selectOptions(select, value);
+      expect(
+        within(screen.getByLabelText('Your problem result')).getByRole('heading', { name: label }),
+      ).toBeTruthy();
+      expect(JSON.parse(screen.getByLabelText('Saved custom problem').textContent!).building).toBe(
+        value,
+      );
+    }
+  });
+
   it('follows overall throughput until edited and resumes following after reset', async () => {
     const user = userEvent.setup();
     const view = render(<CustomProblemExample />);

@@ -66,6 +66,30 @@ describe('cell display modes', () => {
     expect(screen.getByLabelText('Assembler design')).toBeTruthy();
   });
 
+  it('summarizes air separation with two fluid outputs', () => {
+    render(
+      <RecipeConnections
+        connections={{ inputs: [], outputs: [] }}
+        solved
+        belt={{ human: 'test belt', itemsPerSecond: 45, undergroundLength: 7 }}
+        recipe="angels-air-separation"
+        machine="chemical-plant"
+        inputRates={new Map([['fluid:angels-gas-compressed-air', 614.1360018911039]])}
+        outputRates={
+          new Map([
+            ['fluid:angels-gas-nitrogen', 307.06800094555194],
+            ['fluid:angels-gas-oxygen', 307.06800094555194],
+          ])
+        }
+        machineCount={1.2597661577253414}
+        progress={1}
+        onSelectResource={() => {}}
+      />,
+    );
+
+    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+  });
+
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
     const user = userEvent.setup();
     const { container } = renderCell();

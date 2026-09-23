@@ -6,12 +6,13 @@ import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
+import type { KernelMachineChoice } from '../compute/kernel-problems.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { packCells, unpackCells, type PackedCell } from './pack.ts';
 import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
 
 export interface KernelCustomState {
-  building: 'assembler' | 'air-filter';
+  building: 'assembler' | 'air-filter' | KernelMachineChoice;
   flows: {
     solidInputs: number[];
     fluidInputs: number[];
