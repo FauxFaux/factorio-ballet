@@ -335,6 +335,7 @@ export function solveDualFluidSolidOutputDesign(
   if (
     !useFarBelt &&
     (sharedRate > throughput.beltItemsPerSecond ||
+      inputSolids.some((rate) => rate > throughput.beltItemsPerSecond / 2) ||
       sharedRate > 2 * throughput.inserterItemsPerSecond)
   ) {
     return reject(

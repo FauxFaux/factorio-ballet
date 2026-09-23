@@ -221,6 +221,22 @@ describe('generateAssemblerDesign', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
+  it('keeps an input over half a belt off a mixed belt', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({ solidInputs: [30, 5], solidOutputs: [3] }),
+      { beltItemsPerSecond: 45, inserterItemsPerSecond: 16, longInserterItemsPerSecond: 8 },
+    );
+    const entities = design.columns?.[0].entities ?? [];
+
+    expect(entities.filter((entity) => entity.kind === 'belt')).toHaveLength(9);
+    expect(
+      entities
+        .filter((entity) => entity.kind === 'inserter' && entity.direction !== 'east')
+        .map((entity) => entity.position.x),
+    ).toContain(6);
+    expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
   it.each([
     [
       'fluid-only input',
@@ -702,6 +718,22 @@ describe('generateAssemblerDesign', () => {
     ]);
     expect(entities.filter((entity) => entity.kind === 'underground-belt')).toHaveLength(2);
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+  });
+
+  it('rejects a shared input belt when one solid exceeds a lane', () => {
+    const design = generateAssemblerDesign(
+      assemblerProblem({
+        solidInputs: [24, 5],
+        fluidInputs: [200],
+        solidOutputs: [3],
+        fluidOutputs: [200],
+      }),
+      { beltItemsPerSecond: 45, inserterItemsPerSecond: 16, longInserterItemsPerSecond: 4 },
+    );
+
+    expect(design).toEqual({
+      failure: ['cannot feed both solid inputs through the available belts and inserter sites'],
+    });
   });
 
   it.each([

@@ -80,6 +80,8 @@ export function solveCompactSolidDesign(
   if (
     inputRates.length > 2 ||
     inputRate > throughput.beltItemsPerSecond ||
+    (inputRates.length === 2 &&
+      inputRates.some((rate) => rate > throughput.beltItemsPerSecond / 2)) ||
     inputInserterCount > compactInputSites.length ||
     outputInserterCount > outputPositions.length
   ) {
@@ -239,6 +241,8 @@ function wideInputSites(
     if (
       currentGroup &&
       currentGroup.length < 2 &&
+      currentGroup[0][1] <= throughput.beltItemsPerSecond / 2 &&
+      resourceRate <= throughput.beltItemsPerSecond / 2 &&
       sum(currentGroup.map(([, rate]) => rate)) + resourceRate <= throughput.beltItemsPerSecond
     ) {
       currentGroup.push(entry);
