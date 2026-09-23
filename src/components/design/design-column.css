@@ -387,6 +387,11 @@
   stroke-linejoin: round;
 }
 
+.cell-design-underground-pipe-filled {
+  fill: var(--cell-design-pipe-fluid, #6cb4d9);
+  stroke: color-mix(in srgb, var(--cell-design-pipe-fluid, #6cb4d9) 70%, white);
+}
+
 .cell-design-underground-pipe-error {
   fill: rgb(220 20 60 / 80%);
   stroke: lightcoral;

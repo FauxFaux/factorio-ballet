@@ -2,6 +2,7 @@ import type {
   DesignAssembler,
   DesignColumn,
   DesignDirection,
+  DesignEntity,
   DesignPosition,
 } from '../../compute/design.ts';
 import type { FluidFlowDirection, Machine, ResourceId } from '../../types.ts';
@@ -28,6 +29,8 @@ interface PipeComponents {
   componentByPipe: Map<number, number>;
   pipesByComponent: Map<number, number[]>;
 }
+
+const undergroundPipeReach = 10;
 
 /** Trace the single fluid shared instantly by every tile in a connected pipe component. */
 export function designFluidTraces(
@@ -112,7 +115,11 @@ function connectedFluidboxes(
 ): ConnectedFluidbox[] {
   const exact = assemblerFluidboxConnections(assembler, machine, recipe).flatMap((connection) => {
     const port = fluidboxWorldPosition(assembler, connection.position);
-    const pipeIndex = pipeAt(column, addPosition(port, directionVector(connection.direction)));
+    const pipeIndex = pipeAt(
+      column,
+      addPosition(port, directionVector(connection.direction)),
+      oppositeDirection(connection.direction),
+    );
     const component = pipeIndex === undefined ? undefined : componentByPipe.get(pipeIndex);
     return component === undefined ? [] : [{ ...connection, component }];
   });
@@ -122,8 +129,9 @@ function connectedFluidboxes(
 function pipeComponents(column: DesignColumn): PipeComponents {
   const pipeByPosition = new Map<string, number>();
   column.entities.forEach((entity, entityIndex) => {
-    if (entity.kind === 'pipe') pipeByPosition.set(positionKey(entity.position), entityIndex);
+    if (isPipe(entity)) pipeByPosition.set(positionKey(entity.position), entityIndex);
   });
+  const undergroundPartners = pairUndergroundPipes(column);
   const componentByPipe = new Map<number, number>();
   const pipesByComponent = new Map<number, number[]>();
 
@@ -137,17 +145,75 @@ function pipeComponents(column: DesignColumn): PipeComponents {
       const current = pending.pop()!;
       indexes.push(current);
       const pipe = column.entities[current];
-      if (!pipe || pipe.kind !== 'pipe') continue;
-      for (const offset of Object.values(directionVectors)) {
+      if (!pipe || !isPipe(pipe)) continue;
+      for (const [direction, offset] of Object.entries(directionVectors) as [
+        DesignDirection,
+        DesignPosition,
+      ][]) {
+        if (pipe.kind === 'underground-pipe' && pipe.direction !== direction) continue;
         const adjacent = pipeByPosition.get(positionKey(addPosition(pipe.position, offset)));
         if (adjacent === undefined || componentByPipe.has(adjacent)) continue;
+        const other = column.entities[adjacent];
+        if (other.kind === 'underground-pipe' && other.direction !== oppositeDirection(direction)) {
+          continue;
+        }
         componentByPipe.set(adjacent, component);
         pending.push(adjacent);
+      }
+      const partner = undergroundPartners.get(current);
+      if (partner !== undefined && !componentByPipe.has(partner)) {
+        componentByPipe.set(partner, component);
+        pending.push(partner);
       }
     }
     pipesByComponent.set(component, indexes);
   }
   return { componentByPipe, pipesByComponent };
+}
+
+function isPipe(
+  entity: DesignEntity,
+): entity is Extract<DesignEntity, { kind: 'pipe' | 'underground-pipe' }> {
+  return entity.kind === 'pipe' || entity.kind === 'underground-pipe';
+}
+
+function pairUndergroundPipes(column: DesignColumn): Map<number, number> {
+  const endpoints = column.entities.flatMap((entity, index) =>
+    entity.kind === 'underground-pipe' ? [{ entity, index }] : [],
+  );
+  const candidates: { first: number; second: number; distance: number }[] = [];
+  for (const { entity: first, index: firstIndex } of endpoints) {
+    const underground = directionVector(oppositeDirection(first.direction));
+    for (const { entity: second, index: secondIndex } of endpoints) {
+      if (secondIndex <= firstIndex || second.direction !== oppositeDirection(first.direction)) {
+        continue;
+      }
+      const delta = {
+        x: second.position.x - first.position.x,
+        y: second.position.y - first.position.y,
+      };
+      const distance = delta.x * underground.x + delta.y * underground.y;
+      if (
+        distance > 0 &&
+        distance <= undergroundPipeReach &&
+        delta.x * underground.y === delta.y * underground.x
+      ) {
+        candidates.push({ first: firstIndex, second: secondIndex, distance });
+      }
+    }
+  }
+  candidates.sort((left, right) => left.distance - right.distance);
+  const partners = new Map<number, number>();
+  for (const { first, second } of candidates) {
+    if (partners.has(first) || partners.has(second)) continue;
+    partners.set(first, second);
+    partners.set(second, first);
+  }
+  return partners;
+}
+
+function oppositeDirection(direction: DesignDirection): DesignDirection {
+  return rotateDirection(direction, 2);
 }
 
 /** Return the machine's north-facing fluid-box points transformed to this assembler's rotation. */
@@ -238,12 +304,17 @@ function fluidboxWorldPosition(
   };
 }
 
-function pipeAt(column: DesignColumn, position: DesignPosition): number | undefined {
+function pipeAt(
+  column: DesignColumn,
+  position: DesignPosition,
+  opening: DesignDirection,
+): number | undefined {
   const index = column.entities.findIndex(
     (entity) =>
-      entity.kind === 'pipe' &&
+      isPipe(entity) &&
       entity.position.x === position.x &&
-      entity.position.y === position.y,
+      entity.position.y === position.y &&
+      (entity.kind === 'pipe' || entity.direction === opening),
   );
   return index < 0 ? undefined : index;
 }

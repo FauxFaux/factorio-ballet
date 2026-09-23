@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DesignColumn } from '../../../src/components/design/design-column.tsx';
 import { beltLoopEntityIndexes } from '../../../src/components/design/design-belts.ts';
+import { DesignScene } from '../../../src/components/design/design-scene.tsx';
 import {
   entityPositionStatuses,
   worldToViewport,
@@ -149,6 +150,57 @@ describe('DesignColumn', () => {
     expect(trunkEndpoint.querySelector('path')?.getAttribute('transform')).toBe('rotate(180 6 6)');
     expect(machineEndpoint.getAttribute('data-direction')).toBe('west');
     expect(trunkEndpoint.getAttribute('data-direction')).toBe('east');
+  });
+
+  it('highlights pipe-to-ground endpoints carrying a traced fluid', () => {
+    render(
+      <DesignScene
+        column={{
+          entities: [
+            {
+              kind: 'assembler',
+              recipe: 'source',
+              position: { x: 0, y: 0 },
+              size: { width: 3, height: 3 },
+            },
+            { kind: 'underground-pipe', position: { x: 3, y: 1 }, direction: 'west' },
+            { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'east' },
+            { kind: 'pipe', position: { x: 7, y: 1 } },
+          ],
+        }}
+        worldOrigin={{ x: 0, y: 0 }}
+        recipes={{ source: { ingredients: [], products: [{ resource: 'fluid:steam' }] } }}
+        machinesByRecipe={{
+          source: {
+            fluidBoxes: [
+              {
+                productionType: 'output',
+                connections: [
+                  { position: { x: 1, y: 0 }, direction: 'east', flowDirection: 'output' },
+                ],
+              },
+            ],
+          },
+        }}
+        items={{ 'fluid:steam': { name: 'Steam', colour: '#123456', rate: 1 } }}
+      />,
+    );
+
+    for (const position of ['3,1', '6,1']) {
+      const endpoint = document.querySelector(
+        `.cell-design-underground-pipe[data-position="${position}"]`,
+      );
+      expect(endpoint?.getAttribute('data-fluid-status')).toBe('filled');
+      expect(endpoint?.getAttribute('title')).toContain('Steam, 1/s');
+      expect((endpoint as HTMLElement).style.getPropertyValue('--cell-design-pipe-fluid')).toBe(
+        '#123456',
+      );
+    }
+    expect(
+      screen
+        .getByRole('img', { name: /Pipe at 7, 1, containing Steam/ })
+        .getAttribute('data-fluid-status'),
+    ).toBe('filled');
   });
 
   it('maps negative world coordinates relative to the viewport world origin', () => {

@@ -85,6 +85,45 @@ describe('design fluid traces', () => {
     expect(wrapped.pipeTraces.get(0)).toEqual({ fluids: ['fluid:steam'] });
     expect(wrapped.pipeTraces.get(2)).toEqual({ fluids: ['fluid:steam'] });
   });
+
+  it('traces through facing pipe-to-ground endpoints and their exposed sides', () => {
+    const column: DesignColumn = {
+      entities: [
+        assembler('source', 0),
+        { kind: 'underground-pipe', position: { x: 3, y: 1 }, direction: 'west' },
+        { kind: 'pipe', position: { x: 4, y: 1 } },
+        { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'east' },
+        { kind: 'pipe', position: { x: 7, y: 1 } },
+        assembler('consumer', 8),
+      ],
+    };
+
+    const traces = designFluidTraces(column, recipes, machines);
+    expect(traces.pipeTraces.get(1)).toEqual({ fluids: ['fluid:steam'] });
+    expect(traces.pipeTraces.get(3)).toEqual({ fluids: ['fluid:steam'] });
+    expect(traces.pipeTraces.get(4)).toEqual({ fluids: ['fluid:steam'] });
+    expect(traces.pipeTraces.get(2)).toEqual({ fluids: [] });
+    expect(traces.assemblerStatuses.get(5)).toEqual({ missing: [] });
+  });
+
+  it('keeps misaligned, misoriented, and out-of-reach endpoints separate', () => {
+    for (const [position, direction] of [
+      [{ x: 5, y: 2 }, 'east'],
+      [{ x: 5, y: 1 }, 'west'],
+      [{ x: 14, y: 1 }, 'east'],
+    ] as const) {
+      const column: DesignColumn = {
+        entities: [
+          assembler('source', 0),
+          { kind: 'underground-pipe', position: { x: 3, y: 1 }, direction: 'west' },
+          { kind: 'underground-pipe', position, direction },
+          { kind: 'pipe', position: { x: position.x + 1, y: position.y } },
+        ],
+      };
+      const traces = designFluidTraces(column, recipes, machines);
+      expect(traces.pipeTraces.get(2)).toEqual({ fluids: [] });
+    }
+  });
 });
 
 function assembler(recipe: string, x: number) {

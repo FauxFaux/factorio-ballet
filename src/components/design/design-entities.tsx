@@ -279,6 +279,8 @@ export function UndergroundPipe({
   entityIndex,
   pipe,
   status,
+  fluids,
+  resources,
   worldOrigin,
   onPointerEnter,
   onPointerLeave,
@@ -286,6 +288,8 @@ export function UndergroundPipe({
   entityIndex: number;
   pipe: DesignUndergroundPipe;
   status: EntityPositionStatus;
+  fluids: ResourceId[];
+  resources: DesignSceneItems | undefined;
   worldOrigin: ViewportPoint;
   onPointerEnter: JSX.PointerEventHandler<SVGSVGElement>;
   onPointerLeave: JSX.PointerEventHandler<SVGSVGElement>;
@@ -293,7 +297,21 @@ export function UndergroundPipe({
   const { x, y } = pipe.position;
   const viewportPosition = worldToViewport(pipe.position, worldOrigin);
   const isOverlapping = status === 'overlap';
-  const errorDescription = isOverlapping ? ', overlaps another entity' : '';
+  const isMixed = fluids.length > 1;
+  const isError = isOverlapping || isMixed;
+  const fluidDescription = fluids
+    .map((fluid) => {
+      const details = resources?.[fluid];
+      return details
+        ? `${details.name}, ${fmt(details.rate)}/s`
+        : `${resourceName(fluid)} (${fluid})`;
+    })
+    .join(', ');
+  const errorDescription = [
+    ...(isOverlapping ? ['overlaps another entity'] : []),
+    ...(isMixed ? ['contains incompatible fluids'] : []),
+  ].join(', ');
+  const fluidColour = fluids.length === 1 ? resources?.[fluids[0]]?.colour : undefined;
   const rotation =
     pipe.direction === 'west'
       ? undefined
@@ -305,14 +323,15 @@ export function UndergroundPipe({
 
   return (
     <svg
-      class={`cell-design-underground-pipe${isOverlapping ? ' cell-design-underground-pipe-error' : ''}`}
+      class={`cell-design-underground-pipe${fluids.length === 1 ? ' cell-design-underground-pipe-filled' : ''}${isError ? ' cell-design-underground-pipe-error' : ''}`}
       role="img"
-      aria-label={`Pipe-to-ground at ${x}, ${y}, opening ${pipe.direction}${errorDescription}`}
-      title={`Pipe-to-ground (${x}, ${y}), opening ${pipe.direction}${isOverlapping ? ' — overlaps another entity' : ''}`}
+      aria-label={`Pipe-to-ground at ${x}, ${y}, opening ${pipe.direction}${fluidDescription ? `, containing ${fluidDescription}` : ''}${errorDescription ? `, ${errorDescription}` : ''}`}
+      title={`Pipe-to-ground (${x}, ${y}), opening ${pipe.direction}${fluidDescription ? ` — ${fluidDescription}` : ''}${errorDescription ? ` — ${errorDescription}` : ''}`}
       data-position={`${x},${y}`}
       data-entity-index={entityIndex}
       data-position-status={status}
       data-direction={pipe.direction}
+      data-fluid-status={isMixed ? 'mixed' : fluids.length === 1 ? 'filled' : 'empty'}
       onPointerEnter={onPointerEnter}
       onPointerLeave={onPointerLeave}
       style={{
@@ -320,6 +339,7 @@ export function UndergroundPipe({
         top: `${viewportPosition.y}px`,
         width: `${TILE_SIZE}px`,
         height: `${TILE_SIZE}px`,
+        '--cell-design-pipe-fluid': fluidColour,
       }}
       viewBox="0 0 12 12"
     >

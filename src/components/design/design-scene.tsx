@@ -223,6 +223,8 @@ function DesignEntityView({
           entityIndex={entityIndex}
           pipe={entity}
           status={status}
+          fluids={pipeFluids}
+          resources={items}
           worldOrigin={worldOrigin}
           {...hoverHandlers}
         />

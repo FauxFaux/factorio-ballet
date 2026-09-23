@@ -16,17 +16,17 @@ export const CARBON_LIGHT = {
 };
 
 export const CARBON_LIGHT_SHORT = {
-  Red50: '#fa4d56',
-  Green60: '#198038',
+  Yellow50: '#b28600',
   Purple50: '#a56eff',
   Cyan50: '#1192e8',
-  Magenta50: '#ee538b',
-  Magenta70: '#9f1853',
   Teal70: '#005d5d',
+  Green60: '#198038',
+  Magenta50: '#ee538b',
+  Red50: '#fa4d56',
+  Magenta70: '#9f1853',
   Purple70: '#6929c4',
   Red90: '#570408',
   Blue80: '#002d9c',
-  Yellow50: '#b28600',
   Teal50: '#009d9a',
   Cyan90: '#012749',
   Orange70: '#8a3800',
