@@ -96,7 +96,7 @@ export function solveOutsideFluidTrunkDesign(
 
 /**
  * Feed one solid alongside opposing fluid input/output ports. The input fluid trunk touches the
- * west port directly; the output crosses beneath the east solid belt to a separate outside trunk.
+ * west port directly; the east solid belt goes underground at the output pipe connection.
  */
 export function solveDualFluidSolidInputDesign(
   prepared: PreparedAssemblerProblem,
@@ -178,10 +178,21 @@ export function solveDualFluidSolidInputDesign(
       position: { x: 4, y },
       direction: 'west',
     })),
-    ...verticalBelt(5, 'north'),
+    {
+      kind: 'underground-belt',
+      position: { x: 5, y: 2 },
+      direction: 'north',
+      end: 'input',
+    },
+    {
+      kind: 'underground-belt',
+      position: { x: 5, y: 0 },
+      direction: 'north',
+      end: 'output',
+    },
     { kind: 'underground-pipe', position: { x: 4, y: 1 }, direction: 'west' },
-    { kind: 'underground-pipe', position: { x: 6, y: 1 }, direction: 'east' },
-    ...pipeTrunk(7),
+    { kind: 'underground-pipe', position: { x: 5, y: 1 }, direction: 'east' },
+    ...pipeTrunk(6),
   ];
   return solved({ columns: [{ entities }] });
 }
