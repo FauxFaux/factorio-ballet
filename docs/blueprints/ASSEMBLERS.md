@@ -3,22 +3,23 @@
 This note describes the solid-item transport pattern demonstrated by `ass-3s-in-1s-out.base64`, its
 one-fluid extension in `ass-3s-1f-in-1s-out.base64`, and the rectangular chemical-plant pattern in
 `chem-2f2s-in-1f1s-out.base64`. It also records the compact two-assembler snake in
-`ass-2s-in-1s-out-snake.base64`. The matching JSON files are easier to inspect and are the
-authoritative entity lists; all four exchange strings decode to their JSON exactly.
+`ass-2s-in-1s-out-snake.base64` and the port adaptor in `mono-silicon.base64`. The matching JSON
+files are easier to inspect and are the authoritative entity lists.
 
 The filename counts describe transport lines, not resource types: `s` is one solid belt and `f` is
 one independent fluid pipe. A solid belt has two lanes and can therefore carry two dependable item
 types under the one-item-per-lane rule used here.
 
-The fixtures are transport kernels rather than complete factories. None sets recipes, filters,
-modules, or circuit conditions. The first three also omit power; the snake includes one medium
-electric pole as part of its fixed layout.
+These fixtures illustrate transport geometry rather than complete factories. The mono-silicon
+fixture sets a recipe on each machine; the others do not. None includes filters, modules, or circuit
+conditions. Only the snake includes a power pole.
 
 | Fixture                  | Machines per tile | Tile size | Repeat vector | Inputs                  | Outputs                                       | Intended use             |
 | ------------------------ | ----------------: | --------- | ------------- | ----------------------- | --------------------------------------------- | ------------------------ |
 | `ass-3s-in-1s-out`       |                 1 | 9x3       | `(0,3)`       | 3 solid belts           | 1 solid belt, one lane populated              | generator template       |
 | `ass-3s-1f-in-1s-out`    |                 1 | 10x3      | `(0,3)`       | 3 solid belts, 1 fluid  | 1 solid belt, one lane populated              | generator template       |
 | `chem-2f2s-in-1f1s-out`  |                 1 | 15x3      | `(0,3)`       | 2 solid belts, 2 fluids | 1 solid belt with one lane populated, 1 fluid | geometry reference       |
+| `mono-silicon`           |                 1 | 6x4       | `(0,4)`       | 2 fluids                | 1 solid belt, one lane populated              | port adaptor reference   |
 | `ass-2s-in-1s-out-snake` |                 2 | 7x6       | `(0,6)`       | 2 solid belts           | 1 solid belt, both lanes populated            | fixed validation fixture |
 
 The table gives normalized reusable-tile dimensions. A finite fixture may include boundary plumbing
@@ -331,6 +332,35 @@ connection's flow mode and direction. Recipe fluids retain their optional 1-base
 `fluidboxIndex`, so a generator can map two independent fluid inputs and one fluid output onto the
 chemical plant's four physical connections. Geometry alone is still not a safe substitute for that
 mapping.
+
+### Adapting a fluid port: `mono-silicon`
+
+`mono-silicon.json` contains two mirrored, east-facing 3x3 `angels-casting-machine-3` machines
+running `angels-mono-silicon-seed`. The recipe takes two fluids and produces one solid item. The
+machine centres are `(189.5,388.5)` and `(189.5,392.5)`, four rows apart. Their output inserters
+drop west onto the northbound belt at `x=186.5`; there is no solid input belt. The two fluid inputs
+cannot both be connected directly on one machine edge.
+
+Use the first machine's top-left cell as local `(2,0)`. Its belt is at `x=0`, output inserter at
+`(1,1)`, and machine at `x=2..4`, `y=0..2`. One fluid route uses the east-side pipe-to-ground at
+`(5,1)`, with a pipe at `(5,2)` and another pipe-to-ground at `(5,3)`. The other route leaves the
+machine's lower edge through the ordinary pipe at `(2,3)`, turns west through `(1,3)`, and reaches
+the west-side pipe-to-ground at `(1,2)`. The fixture also places a west-side pipe-to-ground at
+`(1,4)`, at the next four-row seam. The second machine repeats this arrangement at an offset of
+`(0,4)`; the finite export includes belt and pipe endpoints after it.
+
+The short pipe run at `(2,3)` and `(1,3)` is an **adaptor**: it presents the lower machine fluid
+connection at a usable west-side routing position. From there the fluid can use underground pipe
+routing, as in the other patterns, or the adaptor can extend farther west to meet a regular trunk.
+Model the adaptor as part of the wrapper around the machine, not as a new fluid port on the machine
+itself. Reserve its cells before placing the output inserter, belt, and other fluid branch. The
+extra row below the machine is why this example repeats every four rows rather than three.
+
+For generation, map each recipe fluid to the correct physical connection after rotation and
+mirroring, then route from those connections to useful outer ports. Check underground partners and
+the two fluids' network separation across adjacent copies. The outer wrapper can be irregular:
+`chem-2f2s-in-1f1s-out` is another non-human wrapping, with separate fluid trunks and seam endpoints
+chosen for transport geometry rather than visual symmetry.
 
 ### The fixed `2s-in-1s-out-snake` kernel
 
