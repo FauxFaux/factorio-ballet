@@ -1,4 +1,5 @@
 import type { DesignAssembler, DesignColumn, DesignEntity } from '../../compute/design.ts';
+import type { TileLaneAssignment } from '../../compute/design-validation/types.ts';
 import {
   assemblerInputStatuses,
   beltInputItemTraces,
@@ -23,7 +24,7 @@ import {
   type ViewportPoint,
   TILE_SIZE,
 } from './design-entities.tsx';
-import type { Machine, ResourceId } from '../../types.ts';
+import { isItem, type Machine, type ResourceId } from '../../types.ts';
 
 export { fluidBoxResources } from './design-fluid-traces.ts';
 
@@ -51,6 +52,7 @@ const ignoreEntity = (_entityIndex: number) => undefined;
 /** Draw a design column's entities and their derived read-only status information. */
 export function DesignScene({
   column,
+  assignedLanes,
   worldOrigin,
   recipes,
   machinesByRecipe = {},
@@ -59,6 +61,7 @@ export function DesignScene({
   onEntityLeave = ignoreEntity,
 }: {
   column: DesignColumn;
+  assignedLanes?: TileLaneAssignment[];
   worldOrigin: ViewportPoint;
   recipes: DesignSceneRecipes;
   machinesByRecipe?: DesignSceneMachines;
@@ -67,7 +70,16 @@ export function DesignScene({
   onEntityLeave?: (entityIndex: number) => void;
 }) {
   const entityStatuses = entityPositionStatuses(column.entities);
-  const boundaryItemTraces = items ? beltInputItemTraces(column, recipes) : undefined;
+  const explicitTraces = assignedLanes ? new Map<number, BeltItemTrace[]>() : undefined;
+  if (explicitTraces)
+    for (const { entityIndex, lane, resource } of assignedLanes ?? []) {
+      if (!isItem(resource)) continue;
+      const traces = explicitTraces.get(entityIndex) ?? [];
+      traces.push({ item: resource, side: lane });
+      explicitTraces.set(entityIndex, traces);
+    }
+  const boundaryItemTraces =
+    explicitTraces ?? (items ? beltInputItemTraces(column, recipes) : undefined);
   const assemblerStatuses = assemblerInputStatuses(column, recipes, boundaryItemTraces);
   const fluidTraces = designFluidTraces(column, recipes, machinesByRecipe, items !== undefined);
   for (const [assemblerIndex, fluidStatus] of fluidTraces.assemblerStatuses) {
@@ -79,7 +91,7 @@ export function DesignScene({
     });
   }
   const loopBeltIndexes = beltLoopEntityIndexes(column.entities);
-  const itemTracesByBelt = beltItemTraces(column, recipes, items !== undefined);
+  const itemTracesByBelt = explicitTraces ?? beltItemTraces(column, recipes, items !== undefined);
   if (boundaryItemTraces) {
     for (const [beltIndex, inputTraces] of boundaryItemTraces) {
       const outputTraces = itemTracesByBelt.get(beltIndex) ?? [];

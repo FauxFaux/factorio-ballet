@@ -105,6 +105,47 @@ function exhaustiveOrdinary(
 }
 
 describe('solveTileDesign', () => {
+  it('places long input inserters on the belt at their actual pickup endpoint', () => {
+    const problem = input(
+      [30.8, 29.5],
+      [1.2],
+      {
+        ...withLong,
+        transport: {
+          ...withLong.transport,
+          inserters: [
+            { id: 'ordinary', capacity: 8, reach: 1 },
+            { id: 'long', capacity: 4, reach: 2 },
+          ],
+        },
+        envelope: { ...withLong.envelope, maxWidth: 16, maxStates: 10_000 },
+      },
+      { width: 5, height: 5 },
+    );
+    const result = found(solveTileDesign(problem));
+    const { entities } = result.candidate.column;
+    for (const transfer of result.candidate.transfers.filter(({ side }) => side === 'input')) {
+      const inserter = entities[transfer.inserterIndex];
+      expect(inserter.kind).toBe('inserter');
+      if (inserter.kind !== 'inserter') continue;
+      const step = inserter.direction === 'east' ? -1 : 1;
+      const pickupX = inserter.position.x + step * (inserter.reach ?? 1);
+      const pickupBelt = entities.findIndex(
+        (entity) =>
+          entity.kind === 'belt' &&
+          entity.position.x === pickupX &&
+          entity.position.y === inserter.position.y,
+      );
+      expect(pickupBelt).toBeGreaterThanOrEqual(0);
+      expect(result.candidate.lanes).toContainEqual({
+        entityIndex: pickupBelt,
+        lane: transfer.beltLane,
+        resource: transfer.resource,
+      });
+    }
+    const farLeft = result.candidate.boundary[0];
+    expect(farLeft.lanes).toEqual({ left: 'item:3', right: 'item:1' });
+  });
   it('packs an input and output onto separate lanes of one trunk when sites permit', () => {
     const result = found(solveTileDesign(input([1], [2])));
     expect(result).toMatchObject({

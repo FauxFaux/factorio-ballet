@@ -2,6 +2,7 @@ import './design-column.css';
 import './design-preview.css';
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import type { DesignColumn, DesignEntity } from '../../compute/design.ts';
+import type { TileLaneAssignment } from '../../compute/design-validation/types.ts';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { DesignScene } from './design-scene.tsx';
 import type { DesignSceneItems, DesignSceneMachines, DesignSceneRecipes } from './design-scene.tsx';
@@ -72,12 +73,14 @@ export function fitDesignPreview(
 /** A fitted, read-only rendering of a design column. */
 export function DesignPreview({
   column,
+  lanes,
   label,
   recipes,
   machinesByRecipe,
   items,
 }: {
   column: DesignColumn;
+  lanes?: TileLaneAssignment[];
   label: string;
   recipes: DesignSceneRecipes;
   machinesByRecipe?: DesignSceneMachines;
@@ -124,6 +127,7 @@ export function DesignPreview({
       >
         <DesignScene
           column={column}
+          assignedLanes={lanes}
           worldOrigin={origin}
           recipes={recipes}
           machinesByRecipe={machinesByRecipe}

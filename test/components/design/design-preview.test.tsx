@@ -25,6 +25,29 @@ afterEach(() => {
 });
 
 describe('DesignPreview', () => {
+  it('shows both assigned lanes of a tile-design belt without guessing from recipes', () => {
+    render(
+      <DesignPreview
+        label="Assigned lanes"
+        recipes={{}}
+        column={{ entities: [{ kind: 'belt', position: { x: 0, y: 0 }, direction: 'north' }] }}
+        lanes={[
+          { entityIndex: 0, lane: 'left', resource: 'item:3' },
+          { entityIndex: 0, lane: 'right', resource: 'item:1' },
+        ]}
+        items={{
+          'item:1': { name: 'input', rate: 30.8, colour: '#fff' },
+          'item:3': { name: 'output', rate: 1.2, colour: '#000' },
+        }}
+      />,
+    );
+    expect(
+      screen.getByRole('img', {
+        name: /Transport belt at 0, 0, pointing north, left side: output.*right side: input/,
+      }),
+    ).toBeTruthy();
+  });
+
   it('includes entity sizes and negative positions in its bounds', () => {
     expect(designBounds(entities)).toEqual({ minX: -2, maxX: 5, minY: -1, maxY: 4 });
   });

@@ -111,6 +111,7 @@ export function DesignCard({
           ) : tileResult.status === 'found' ? (
             <DesignPreview
               column={tileResult.candidate.column}
+              lanes={tileResult.candidate.lanes}
               label={`${title} tile design preview`}
               recipes={recipes}
               machinesByRecipe={machinesByRecipe}
