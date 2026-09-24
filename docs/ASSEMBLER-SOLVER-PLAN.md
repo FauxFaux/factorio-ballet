@@ -1,6 +1,7 @@
 # Plan: assembler access and periodic column allocation
 
-Status: proposed architecture; no solver behavior changes in this document.
+Status: migration history and remaining delivery plan. The implemented one-machine search is
+described in [TILE-SEARCH.md](guides/TILE-SEARCH.md); source code defines its current limits.
 
 ## Recommendation
 
@@ -15,14 +16,13 @@ allocation and access selection must constrain each other. Neither can be comple
 the other: a nearby belt is useless without enough inserter sites, and a free inserter site is
 useless without a reachable, correctly populated belt lane.
 
-Use deterministic backtracking with propagation and branch-and-bound for discrete geometry, plus a
-small linear feasibility problem for rate allocation after discrete choices are fixed. Keep these
-behind separate interfaces. This gives us a practical first implementation and leaves room for a
-constraint-programming backend if measurements later justify it.
+Keep discrete geometry search separate from rate feasibility. The implemented one-machine family
+uses bounded deterministic search and a fractional-flow capacity adapter. Internal transport and
+more general inserter rules may need a broader feasibility model.
 
-Target one machine first, using an internal model that already supports several machines. Extend to
-small groups, typically one to five, without introducing a second layout algorithm. The supported
-machine count is a search budget decision, not a geometrical rule.
+The normalized contract supports several machine instances; the current search supports one. Extend
+it first to an exactly two-machine repeat unit, then to small groups without introducing a second
+layout algorithm.
 
 ## Why the current structure resists extension
 
@@ -48,13 +48,11 @@ run without using the old `assembler-design` module.
 
 ## Scope and contract
 
-The solver receives fixed machine operating rates. It places machines and transport; it does not
-choose recipes, solve machine ratios, or silently reduce throughput to make a layout fit.
-
-Normalize [KernelProblem](../src/compute/kernel-problems.ts) into explicit machine instances and
-resource demands. Give each instance an ID independent of its recipe name. Retain gross inputs and
-outputs even when the same resource occurs on both sides: net boundary rates do not describe the
-transfers required by a catalyst or an internal production chain.
+The [normalized input](../src/compute/tile-design/types.ts) contains machine instances, fixed
+resource rates, physical fluid access and transport rules. Recipe selection and machine-ratio
+solving are upstream of this contract; a recipe cannot enter the tile search through its input
+types. Each instance has an ID independent of its recipe name. Gross inputs and outputs remain
+separate even when the same resource occurs on both sides.
 
 For multiple machines, require enough information to reconcile every resource:
 
@@ -63,21 +61,9 @@ For multiple machines, require enough information to reconcile every resource:
 An internal resource may use direct insertion or local transport. Do not infer that it disappears
 because the boundary omits it. Reject inconsistent specifications before searching.
 
-Add the following solver inputs and outputs, initially through an adapter around the existing API:
-
-| Object             | Required information                                                                                                                      |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| Machine instance   | Stable ID, footprint, allowed rotations, input/output rates, actual fluid-box assignments                                                 |
-| Transport rules    | Belt lane capacity, underground reach and pairing rules, pipe connectivity, available inserter configurations and transfer capacities     |
-| Search envelope    | Maximum width and pitch, allowed placement/routing primitives, deterministic search budget                                                |
-| Repeat requirement | Requested copy count, defaulting to one; optional physical module height                                                                  |
-| Solved kernel      | Entities, explicit width and pitch, machine placements, lane and fluid assignments, transfer rates, boundary interface, validation result |
-| Search result      | Valid candidate and search status, or invalid input / exhausted envelope / budget exhausted / unsupported rule                            |
-
-Carry recipe products' fluid-box indexes as well as ingredients'. The current
-`AssemblerSpecification.fluidIngredients` is insufficient for a general output-port assignment.
-Reuse [fluidBoxResources](../src/compute/fluid-box-resources.ts), with explicit diagnostics when
-necessary mapping information is missing or incompatible.
+The [adapter](../src/compute/tile-design/problem.ts) accepts both ingredient and product fluid-box
+indexes and checks the boundary balance. The search currently supports one machine with external
+flows; multiple machines and internal transfers remain to be implemented.
 
 The repository's [domain model](guides/FACTORIO.md) treats fluid throughput as unlimited. Preserve
 that as an explicit transport policy while enforcing connectivity and fluid separation. If a later
@@ -86,21 +72,24 @@ policy does not constitute a fluid simulation.
 
 ## Represent the repeating space directly
 
-A candidate occupies `[0, W) × [0, H)` and repeats by `(0, H)`. `H` is a decision variable, starting
-at a lower bound from the machines and growing when access or routing needs more rows. Blank routing
-space is part of the candidate, even if it contains no entity.
+A candidate occupies `[0, W) × [0, H)`. The current one-machine family repeats by `(0, H)` and fixes
+`H` to machine height. The two-machine checkpoint must represent either a vertical `(0, H)` or a
+horizontal `(W, 0)` repeat, with the repeated dimension chosen from placement and routing needs.
+Blank routing space counts even if it contains no entity.
 
-Every advertised external trunk connects the bottom boundary to the top boundary. Input and output
-belts may travel in opposite directions; geometric continuity does not require northbound outputs.
-Pipes expose compatible connections at both boundaries. Local internal routes need not be trunks.
+For a vertical repeat, every advertised external trunk connects the bottom boundary to the top; for
+a horizontal repeat, it connects the left and right boundaries. Input and output belts may travel in
+opposite directions. Pipes expose compatible connections at both repeat boundaries. Local internal
+routes need not be trunks.
 
-A boundary interface records each track's x-coordinate, transport kind, direction, lane resources,
-fluid identity, and any underground endpoint phase. Ordinary surface continuations are the first
-implementation. Later, seam-crossing underground pairs support the phased trunks in the
+A boundary interface records each track's position along the seam, transport kind, direction, lane
+resources, fluid identity, and any underground endpoint phase. The current vertical family uses
+ordinary surface continuations. Later, seam-crossing underground pairs support the phased trunks in
+the
 [chemical-plant fixture](blueprints/ASSEMBLERS.md#the-rectangular-chem-2f2s-in-1f1s-out-pattern).
 
 Represent a connection across a seam as an edge with a copy offset. This distinguishes a pipe in the
-current tile from its potential partner one tile above. Store each entity once using spatial
+current tile from its potential partner in the next copy. Store each entity once using spatial
 ownership; do not duplicate an endpoint because two machine branches use it. Initially keep machine
 footprints wholly inside the rectangle to simplify ownership.
 
@@ -108,126 +97,35 @@ Expose the repeat interface to the module builder. For a finite run it also need
 caps that complete seam-spanning transport. Periodic connectivity alone does not prove that a finite
 export has working first and last copies.
 
-## 1. Derive access options from each machine
+## 1–2. Access options, tracks and lanes
 
-For each machine placement and allowed rotation, derive geometry before making transport choices.
-Use occupied cells and transformed ports, with the existing integer-grid convention. This also
-handles rectangular and even-sized machines without assuming a central row exists.
-
-For solid transfers, enumerate legal inserter configurations by working outward from potential
-pickup/drop points in the machine footprint. Each option records:
-
-- Inserter base, footprint, configuration, pickup and drop endpoints.
-- Source and destination machine IDs or transport attachment points.
-- Reachable belt columns, surface rows, pickup lanes and actual drop lane.
-- Permitted resources and filter requirements.
-- Capacity under the supplied rule, and all occupied cells and connection requirements.
-
-Enumerate all four machine sides. East/west access is usually cheaper because it faces the vertical
-trunks. North/south access is legal when extra rows and branch routing can connect it. Prefer
-cheaper options in search order, but make any initial routing restriction explicit in the envelope.
-
-An ordinary and a long inserter at the same base are alternative uses of one cell. Adding a far belt
-does not create another base. An underground belt's hidden segment is not a pickup surface. Inserter
-arms may reach across occupied cells when the rules permit; reserve their actual footprint rather
-than their entire swept rectangle.
-
-For fluids, derive required logical connections from assigned boxes, then enumerate the physical
-ports that can satisfy each connection. Multiple ports on one box can be alternatives; distinct
-required boxes remain distinct obligations unless the fluid model explicitly groups them. A selected
-port reserves its outside connection cell and a route to its fluid network. Keep unselected port
-faces in the connectivity model, since a passing pipe must not connect to an incompatible box.
-
-Do not permanently reserve every possible fluid route before selecting inserters. Reserve mandatory
-cells immediately; retain alternative port and route choices as domains. Prefer the connection with
-the fewest legal choices, whether it is fluid or solid.
+[TILE-SEARCH.md](guides/TILE-SEARCH.md) records the implemented one-machine access, track, lane and
+fluid-port search. It covers rotated and mirrored footprints, ordinary and long inserter bases,
+shared base occupancy, actual belt pickup/drop lanes, alternative fluid ports, isolated pipe
+networks and capacity-driven lane splits. The current tracks are straight vertical trunks;
+north/south item access, bends and local item branches still need routing primitives. Those
+primitives must expose their occupied cells and actual track attachments so a distant column cannot
+be counted as access merely because space exists for it.
 
 ### Inserter rules are data and behavior, not layout cases
 
-Define an inserter rule provider with operations to enumerate configurations, determine endpoints
-and lane access, determine filter support, and compute a capacity constraint for a transfer context.
-Start with today's ordinary and long inserters and caller-supplied rates. Later rules can introduce
-asymmetric reach, configurable pickup/drop positions, item stack effects or different belt/machine
-transfer rates through this provider.
+The current rule data describes filter-capable, constant-capacity inserters with one- or two-tile
+reach. Modded inserters need a rule provider for configurable or asymmetric endpoints, lane access,
+filter support and transfer-dependent capacity. Site and lane bounds must continue to use actual
+reachable configurations, with one shared budget per occupied base.
 
-The search selects as many compatible configurations as the rate constraints require. For identical
-inserters, `ceil(requiredRate / capacity)` is a useful lower bound. The upper bound comes from
-actual nonconflicting sites. There is no `maxInserters = 2`, nor a replacement limit such as “three
-belts fit any assembler”. Two lanes per belt remains a transport fact supplied by the belt model.
+## 3. Extend shared rate allocation
 
-## 2. Allocate columns and lanes against those options
+The one-machine search already branches over conflicting sites, lanes, fluid routes and underground
+choices. Its fractional-flow adapter allocates constant-rate item transfers while sharing each
+inserter base's capacity; an independent validator checks emitted geometry and rates. See
+[TILE-SEARCH.md](guides/TILE-SEARCH.md) for the implemented model and the blocked-side-row case.
 
-Use **track** for a vertical belt or pipe and retain `DesignColumn` for the whole repeating kernel.
-A track is a decision object, not initially a list of entities. It has an x-coordinate, transport
-kind, direction, assigned resources and an allowed row profile.
-
-The row profile records surface transport, underground endpoints/spans, branch attachments, and rows
-that must stay accessible to selected inserters. Two tracks can be adjacent only if their actual
-connectivity is compatible: two independent ordinary pipe trunks would join without separation or
-appropriate underground geometry. Track width alone does not describe this constraint.
-
-Allocate tracks in the corridors outside and, for several machines, between machine footprints.
-Candidate x-coordinates come from the bounded rectangle. Inserter endpoints immediately restrict
-which of those columns can directly serve a machine. More distant columns need a realizable branch;
-they are not extra capacity just because there is empty space for them.
-
-For each belt lane, assign one resource under the dependable one-item-per-lane policy. An item may
-occupy several lanes or belts, but the solution must state their separate rates and the boundary
-supply contract. If this requires an upstream split, expose that requirement to the module router;
-do not count one supplied lane twice. The kernel need not build station routing itself.
-
-Explore lane packing and track order together with access choices. Sorting resources by constraint
-and rate gives a useful search order, but insertion order in a JavaScript object must not determine
-which items can share a belt. Output lanes are constrained by the actual inserter drop geometry.
-Adding several inserters on one side of a belt does not make both lanes available.
-
-Use lower bounds to prune: the required number of lanes, the transfer capacity reachable from each
-demand, and the combined capacity of sites shared by several demands. Passing independent checks for
-each item is insufficient when all of them rely on the same inserter base.
-
-## 3. Solve space and transfer capacity together
-
-Maintain a shared constraint state covering machine placements, selected access options, tracks,
-lane assignments, fluid routes and underground pairs. Each choice reduces other domains. Conflicts
-include occupied cells, incompatible pipe adjacency, invalid underground pairing and a lost transfer
-endpoint, as well as insufficient throughput.
-
-With geometry and resource assignments fixed, allocate nonnegative rates to legal transfers.
-Require:
-
-- Every machine input and output has its specified total transfer rate.
-- Each lane and each routed belt segment stays within capacity.
-- Each selected inserter stays within its capacity, shared across all resources it moves.
-- Internal transfers conserve each resource; boundary flows match the declared interface.
-
-For the initial constant-rate inserter model, `sum(resource rates through inserter) <= capacity` is
-enough. A later resource-dependent model can use a time budget, for example
-`sum(rate[r] / capacity[r]) <= 1`, where the rule provider guarantees that model is valid. More
-complex rules may require discrete operating modes or conservative capacity bounds.
-
-This residual allocation is a small linear feasibility problem. Use a dedicated LP adapter; the
-existing cell solver's RREF handles equalities and is not an inequality solver. Select a
-browser-safe implementation during the first capacity milestone, measuring bundle size and runtime
-on the fixture corpus. A flow algorithm can replace the LP for a restricted case only when it
-preserves resource identity and shared inserter budgets. Do not independently solve each resource
-and reuse the same inserter's full capacity in every solution.
-
-Rate feasibility is conditional on the declared supply and inserter model. Mixed-input pickup needs
-a capacity rule that accounts for sharing; filtered outputs require a configuration that can enforce
-the lane assignment. Never turn an arithmetic allocation into an implicit scheduling guarantee.
-
-### Example: a taller machine with a blocked side row
-
-Suppose a five-row machine has a fluid connection occupying the middle east-side base cell. Four
-ordinary output-inserter bases remain on that side. At 3 items/s each, an 11 items/s output needs
-all four. It is feasible there if their drop lane can carry 11 items/s and the selected pipe route
-leaves their belt endpoints accessible. At 13 items/s that side is insufficient.
-
-The search then tries another compatible access site, machine rotation, output track or branch
-arrangement. Widening the rectangle alone does not help if no additional transfer can reach the
-machine. Increasing pitch may enable north/south access, but does not create extra east-side rows on
-the machine. A three-row version with the same blocked middle row really has only two remaining
-east-side bases; that count is derived from geometry.
+For multiple machines, include internal transfers and each routed segment's cumulative load. Require
+each machine's gross input and output rate, resource conservation through internal routes, and the
+declared boundary flows. Resource-dependent modded inserter capacities may need a time budget such
+as `sum(rate[r] / capacity[r]) <= 1`, discrete operating modes, or a dedicated linear feasibility
+adapter. The current fractional-flow model does not establish pickup scheduling for mixed inputs.
 
 ## 4. Route branches with reusable transport primitives
 
@@ -250,10 +148,10 @@ Validate prototype reach, endpoint orientation and actual nearest-compatible pai
 neighboring copies. Crossing underground spans is allowed only under the selected transport rules.
 Pipe adjacency is a connection, not just a collision test, and must participate in routing.
 
-For the first version, support direct access to straight vertical belts and general local pipe
-branches. Add item branches and lane-changing constructions through the same primitive interface.
-Until then, report that restriction as part of the searched envelope rather than claiming general
-infeasibility.
+The current family has direct access to straight vertical belts and limited horizontal fluid
+branches. Add item branches, bends, lane-changing constructions, north/south fluid branches and seam
+phases through route alternatives. Until each is implemented, report the actual searched envelope
+rather than claiming general infeasibility.
 
 ## 5. Search, scoring and stopping
 
@@ -275,12 +173,10 @@ Cache access geometry by machine/rule/rotation and canonicalize resource and mac
 deterministic expansion budgets for repeatable tests, with cancellation or a time limit for the UI.
 Record explored states, rejected constraints, best score and remaining search scope for diagnosis.
 
-For a requested repeat count, minimize `W * H`, then underground pairs, total transport entities,
-and a canonical geometry key. Use the declared rectangle area, including reserved empty space.
-Return repeat capacity as well: a compact kernel with poor stack capacity may be worse for the
-module builder. A future caller can request a frontier over width, pitch and supported copies
-without changing feasibility rules. Do not silently trade away a requested copy count to improve
-area.
+The current one-machine score orders rectangle area and transport entity count. Leave scoring
+improvements for a later milestone; pair support is accepted on validity, capacity and honest search
+scope. Continue to enforce the requested repeat count and report supported copies rather than
+trading capacity away for a smaller area.
 
 Budget exhaustion may return a valid incumbent with `optimal: false`. Exhausting one bounded
 envelope means “no solution using these bounds and primitives”, not “this recipe cannot be laid
@@ -290,9 +186,10 @@ local to a placement.
 
 ## 6. Validate periodic geometry and loaded transport
 
-Create a pure validator shared by generation, previews and fixture tests. It must reconstruct actual
-connectivity from emitted entities and compare it with the proposed assignments, rather than
-trusting the search's selected pair IDs or resource labels.
+The [independent validator](../src/compute/design-validation/validate.ts) reconstructs connectivity
+from emitted entities and compares it with proposed assignments. Extend it for multiple machines,
+branched belts, seam-spanning pairs and finite end connections without trusting selected pair IDs or
+resource labels.
 
 Validate footprints, exact transfer endpoints, filters, lane continuity, required fluid boxes,
 network separation and underground pairing. For periodic geometry, inspect a neighborhood large
@@ -312,28 +209,11 @@ Report the largest supported copy count under that contract, bounded by physical
 Cycles requiring startup inventory should retain that requirement in the result; a balanced steady
 state does not prove self-starting operation.
 
-Reuse the belt model in [src/bp](../src/bp/belt.ts) and extract suitable pure logic from
-[design traces](../src/components/design/design-belt-traces.ts). Review their assumptions before
-using them as validators: the fluid tracer currently accepts supply through any connected input box,
-and the blueprint inserter tracer uses approximate endpoint entity matching. Generation needs exact
-footprint and assigned-box checks. The new compute code should not depend on Preact components.
+## Module boundaries and integration
 
-## Suggested module boundaries
-
-Put the new solver under `src/compute/tile-design/`; `src/solve/` currently solves cell rates. Keep
-`src/compute/assembler-design/` only for migration and cross-validation, then leave it unused.
-
-| Module                  | Responsibility                                                             |
-| ----------------------- | -------------------------------------------------------------------------- |
-| `problem.ts`            | Normalized instances, gross demands, fluid assignments, boundary contract  |
-| `transport-rules.ts`    | Inserter configurations/capacity and belt/pipe capability interfaces       |
-| `access.ts`             | Rotated geometry, transfer and fluid-port options, conflicts               |
-| `tracks.ts`             | Track domains, row profiles, lanes and boundary signatures                 |
-| `routes.ts`             | Local path alternatives and transport primitive expansion                  |
-| `capacity.ts`           | Residual rate constraints, feasibility adapter and repeat load calculation |
-| `search.ts`             | Placement, propagation, branching, bounds, scoring and diagnostics         |
-| `emit.ts`               | Solver result to editable design entities and interface metadata           |
-| `../design-validation/` | Pure geometry, connectivity and capacity validation, shared with previews  |
+The search and emission modules live under `src/compute/tile-design/`; the independent validator is
+under `src/compute/design-validation/`. Keep `src/compute/assembler-design/` for migration and
+cross-validation until consumers switch to the new search.
 
 Persist explicit pitch and interface metadata when a generated kernel becomes an editable design.
 Edits must invalidate/recompute its certificate. Update stacking and export consumers to use pitch;
@@ -343,31 +223,43 @@ through the repository's normal versioning checks.
 
 ## Delivery plan and acceptance criteria
 
-1. **Define the normalized contract and validator.** Adapt existing generated designs and blueprint
-   fixtures; expose their assumptions and any validation failures. Preserve existing strategy tests,
-   but distinguish tests of physical feasibility from tests of an old strategy's deliberate limits.
-   A previously expected rejection is not evidence that a new valid solution is wrong.
-2. **Implement one-machine solid allocation.** Add access enumeration, track/lane choices, capacity
-   allocation and bounded search. Require rate-driven use of three or more inserters, variable
-   rectangular footprints, multiple filtered products and reordered resource maps. Compare small
-   bounded cases with an exhaustive enumerator to check pruning and feasibility.
-3. **Add fluid branches and periodic seams.** Express the existing opposing-port, outside-trunk and
-   casting adaptor cases using the same access/track/route machinery. Include the full mixed
-   chemical-plant reference, moved ports, additional fluid networks, alternate port choices,
-   pipe-isolation failures and seam partner conflicts. No recipe-specific branch in the search.
+1. **Completed: normalize and validate.** The adapter supplies fixed machine rates, gross demands,
+   fluid-box assignments and a balanced boundary contract. Independent validation checks emitted
+   one-machine geometry, connectivity and capacity. See [TILE-SEARCH.md](guides/TILE-SEARCH.md).
+2. **Completed: one-machine item search.** Access, straight tracks, lane assignment and shared
+   inserter capacity are searched within a bounded envelope. The documented verification includes
+   rectangular machines, multiple products, resource ordering and an exhaustive allocator check.
+3. **In progress: complete the fluid route family.** The search handles alternative ports, isolated
+   networks, horizontal pipe branches and in-tile belt tunnels. Add south/north port adaptors,
+   uneven pitch, phased seam-spanning pipes and belts, and the full mixed chemical-plant reference.
+   Keep failures scoped to supported primitives and avoid recipe-specific branches.
 4. **Integrate generated metadata and switch the entry point.** Carry pitch, boundary supply
    requirements and stack capacity into previews, module placement and export. Cross-validate
    against legacy seeds through the same gate. Once supported fixtures and perturbations pass,
    switch consumers to `tile-design` and leave `assembler-design` unused. Measure search cost and
    layout quality before choosing the default budget.
-5. **Extend placement to small machine groups.** Add direct insertion as machine-to-machine access
-   options and internal belt/pipe routing. Exercise the two-machine snake, a 3:2 group, and internal
-   resource balance. Keep fixed machine counts and rates; enlarge search budgets explicitly.
+5. **Support exactly two assemblers per tiling unit.** Search two placements and their independent
+   orientations inside one explicit repeat rectangle, with fixed rates and external item/fluid
+   flows. Choose the vertical repeat used by the snake or the horizontal repeat used by
+   `chem-flippos`; expose the matching pair of boundary faces in the interface. Allow touching
+   machines and alternating mirrors, while preserving each machine's fluid-box assignment. Route
+   shared trunks and local connections against both access maps; support the seam-spanning
+   underground phases and the opposite output lanes required by the
+   [two-assembler snake](blueprints/ASSEMBLERS.md#the-fixed-2s-in-1s-out-snake-kernel), and isolated
+   alternating fluid networks as in
+   [chem-flippos](blueprints/ASSEMBLERS.md#alternating-mirrored-plants-chem-flippos). Treat the two
+   machines as one repeat unit: aggregate boundary rates and lane loads, then validate at least
+   three translated units and the first/last connections of a finite run. Accept generated
+   variations as well as the fixtures, with no shape- or recipe-specific search branch. Report
+   unsupported internal handoffs explicitly at this checkpoint.
+6. **Extend to small machine groups and internal flows.** Add machine-to-machine insertion and
+   internal belt/pipe routing, then exercise a 3:2 group and resource balance. Keep fixed machine
+   counts and rates; enlarge search budgets explicitly.
 
 Across these milestones, add generated cases varying footprint dimensions, port positions, resource
-order, rates, belt capacity and inserter rules. Check validity rather than exact coordinates except
-where canonical output is the behavior being tested. Include cases constructively known to have a
-solution, not only a validator that could pass by rejecting every unfamiliar shape.
+order, rates, belt capacity and supported inserter rules. Check validity rather than exact
+coordinates except where canonical output is the behavior being tested. Include cases constructively
+known to have a solution, not only a validator that could pass by rejecting every unfamiliar shape.
 
 Acceptance means: all returned candidates pass independent periodic and rate checks; the supported
 corpus retains coverage; altered shapes succeed without new shape predicates; exhausting a budget is
