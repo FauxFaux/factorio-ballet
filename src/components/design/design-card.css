@@ -110,17 +110,44 @@
 
 .design-card-grid {
   display: grid;
-  place-items: stretch;
+  grid-template-rows: repeat(2, 9rem);
   min-width: 0;
+}
+
+.design-card-result {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  min-width: 0;
+  min-height: 0;
+}
+
+.design-card-result + .design-card-result {
+  border-top: 6px solid var(--border);
+}
+
+.design-card-result h4 {
+  align-self: center;
+  margin: 0;
+  padding: 0.25rem 0.5rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  writing-mode: vertical-lr;
+}
+
+.design-card-result-v1 h4 {
+  writing-mode: sideways-lr;
 }
 
 .design-card-no-solution {
   place-self: center;
+  padding: 0.5rem;
   color: var(--text-muted);
   font-size: 0.8333rem;
 }
 
-.design-card-grid .design-preview {
+.design-card-result .design-preview {
   height: 100%;
   box-sizing: border-box;
 }
@@ -133,9 +160,5 @@
   .design-card-description {
     border-right: 0;
     border-bottom: 1px solid var(--border);
-  }
-
-  .design-card-grid .design-preview {
-    height: 12rem;
   }
 }

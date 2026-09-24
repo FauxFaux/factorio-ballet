@@ -1,4 +1,5 @@
 import './design-card.css';
+import { useMemo } from 'preact/hooks';
 import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../compute/colours.ts';
 import {
@@ -12,6 +13,9 @@ import { DesignPreview } from './design-preview.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
 import { beltStackLimit } from './design-stack-limit.ts';
+import { normalizeTileDesignInput } from '../../compute/tile-design/problem.ts';
+import { solveTileDesign } from '../../compute/tile-design/search.ts';
+import type { TileDesignOptions } from '../../compute/tile-design/types.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
@@ -26,9 +30,34 @@ export function DesignCard({
   const title = problem.assemblers.map(({ name }) => name).join(', ');
   const resourceColours = resourceColoursFor(problem);
   const design = generateAssemblerDesign(problem, throughput);
+  const tileResult = useMemo(() => {
+    const options: TileDesignOptions = {
+      transport: {
+        beltLaneCapacity: throughput.beltItemsPerSecond / 2,
+        undergroundBeltReach: 4,
+        undergroundPipeReach: 10,
+        inserters: [
+          { id: 'ordinary', capacity: throughput.inserterItemsPerSecond, reach: 1 },
+          { id: 'long', capacity: throughput.longInserterItemsPerSecond, reach: 2 },
+        ],
+        fluidThroughput: 'unlimited',
+      },
+      envelope: { maxWidth: 16, maxPitch: 12, primitives: ['surface'], maxStates: 10_000 },
+    };
+    const normalized = normalizeTileDesignInput(problem, options);
+    return normalized.success ? solveTileDesign(normalized.input) : normalized;
+  }, [
+    problem,
+    throughput.beltItemsPerSecond,
+    throughput.inserterItemsPerSecond,
+    throughput.longInserterItemsPerSecond,
+  ]);
   const { recipes, items } = designSceneFlows(problem, resourceColours);
   const machinesByRecipe = Object.fromEntries(
-    problem.assemblers.map((assembler) => [assembler.name, assembler]),
+    problem.assemblers.flatMap((assembler, index) => [
+      [assembler.name, assembler],
+      [assembler.id ?? `machine-${index + 1}`, assembler],
+    ]),
   );
   const stackLimit = isAssemblerDesignFailure(design)
     ? undefined
@@ -57,19 +86,42 @@ export function DesignCard({
         )}
       </aside>
       <div class="design-card-grid">
-        {!isAssemblerDesignFailure(design) ? (
-          <DesignPreview
-            column={design.columns[0]}
-            label={`${title} preview`}
-            recipes={recipes}
-            machinesByRecipe={machinesByRecipe}
-            items={items}
-          />
-        ) : (
-          <span class="design-card-no-solution" role="note">
-            {design.failure.join(' ')}
-          </span>
-        )}
+        <section class="design-card-result" aria-label="Assembler design result">
+          <h4>design v0</h4>
+          {!isAssemblerDesignFailure(design) ? (
+            <DesignPreview
+              column={design.columns[0]}
+              label={`${title} assembler design preview`}
+              recipes={recipes}
+              machinesByRecipe={machinesByRecipe}
+              items={items}
+            />
+          ) : (
+            <span class="design-card-no-solution" role="note">
+              {design.failure.join(' ')}
+            </span>
+          )}
+        </section>
+        <section class="design-card-result design-card-result-v1" aria-label="Tile design result">
+          <h4>design v1</h4>
+          {'success' in tileResult ? (
+            <span class="design-card-no-solution" role="note">
+              {tileResult.message}
+            </span>
+          ) : tileResult.status === 'found' ? (
+            <DesignPreview
+              column={tileResult.candidate.column}
+              label={`${title} tile design preview`}
+              recipes={recipes}
+              machinesByRecipe={machinesByRecipe}
+              items={items}
+            />
+          ) : (
+            <span class="design-card-no-solution" role="note">
+              {tileResult.reason}
+            </span>
+          )}
+        </section>
       </div>
     </article>
   );
@@ -160,17 +212,20 @@ function designSceneFlows(
   const resourceId = (name: string): ResourceId =>
     name.startsWith('fluid:') || name.startsWith('item:') ? (name as ResourceId) : `item:${name}`;
   const recipes = Object.fromEntries(
-    problem.assemblers.map((assembler) => [
-      assembler.name,
-      {
+    problem.assemblers.flatMap((assembler, index) => {
+      const recipe = {
         ingredients: Object.keys(assembler.inputPerSecond).map((name) => ({
           resource: resourceId(name),
         })),
         products: Object.keys(assembler.outputPerSecond).map((name) => ({
           resource: resourceId(name),
         })),
-      },
-    ]),
+      };
+      return [
+        [assembler.name, recipe],
+        [assembler.id ?? `machine-${index + 1}`, recipe],
+      ];
+    }),
   );
   const rates = Object.assign(
     {},

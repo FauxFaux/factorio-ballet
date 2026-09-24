@@ -87,12 +87,19 @@ describe('App', () => {
     const articleForProblem = (problem: KernelProblem) =>
       articles[sortedProblems.indexOf(problem)]!;
     expect(articles).toHaveLength(allKernelProblems.length);
-    expect(within(builtInResults).queryAllByRole('region', { name: / preview$/ })).toHaveLength(
-      solutionCount,
-    );
-    expect(within(builtInResults).queryAllByRole('note')).toHaveLength(
-      allKernelProblems.length - solutionCount,
-    );
+    expect(
+      within(builtInResults).queryAllByRole('region', { name: / assembler design preview$/ }),
+    ).toHaveLength(solutionCount);
+    expect(
+      articles.flatMap((article) =>
+        within(
+          within(article).getByRole('region', { name: 'Assembler design result' }),
+        ).queryAllByRole('note'),
+      ),
+    ).toHaveLength(allKernelProblems.length - solutionCount);
+    expect(
+      within(builtInResults).getAllByRole('region', { name: 'Tile design result' }),
+    ).toHaveLength(allKernelProblems.length);
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
@@ -102,13 +109,23 @@ describe('App', () => {
     expect(
       articles
         .slice(solutionCount)
-        .every((article) => within(article).getByRole('note').textContent),
+        .every(
+          (article) =>
+            within(
+              within(article).getByRole('region', { name: 'Assembler design result' }),
+            ).getByRole('note').textContent,
+        ),
     ).toBe(true);
     expect(screen.queryByText('[no solution]')).toBeNull();
     const firstSolidProblem = kernelProblems.solid[0]!;
     expect(
       within(articleForProblem(firstSolidProblem)).getByRole('region', {
-        name: 'Assembler 1 preview',
+        name: 'Assembler 1 assembler design preview',
+      }),
+    ).toBeTruthy();
+    expect(
+      within(articleForProblem(firstSolidProblem)).getByRole('region', {
+        name: 'Assembler 1 tile design preview',
       }),
     ).toBeTruthy();
     const airFilterArticle = articleForProblem(kernelProblems.airFilter[0]!);
@@ -146,7 +163,7 @@ describe('App', () => {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }
     const firstPreview = within(articleForProblem(firstSolidProblem)).getByRole('region', {
-      name: 'Assembler 1 preview',
+      name: 'Assembler 1 assembler design preview',
     });
     const firstAssembler = within(firstPreview).getByRole('img', {
       name: 'Assembler 1 assembler at 2, 0',
@@ -182,7 +199,7 @@ describe('App', () => {
       ).toBe(true);
     }
     const fifthPreview = within(articleForProblem(kernelProblems.solid[4]!)).getByRole('region', {
-      name: 'Assembler 1 preview',
+      name: 'Assembler 1 assembler design preview',
     });
     const mixedInputBelts = within(fifthPreview).getAllByRole('img', {
       name: /Transport belt at 1, \d, pointing north/,
@@ -211,7 +228,7 @@ describe('App', () => {
     const fluidOnlyInputPreview = within(
       articleForProblem(kernelProblems.fluidInput[0]!),
     ).getByRole('region', {
-      name: 'Assembler 2 preview',
+      name: 'Assembler 2 assembler design preview',
     });
     expect(
       within(fluidOnlyInputPreview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ }),
@@ -227,7 +244,7 @@ describe('App', () => {
     ]);
     for (const problem of kernelProblems.fluidOutput.slice(0, 4)) {
       const preview = within(articleForProblem(problem)).getByRole('region', {
-        name: 'Assembler 2 preview',
+        name: 'Assembler 2 assembler design preview',
       });
       expect(within(preview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ })).toHaveLength(3);
       expect(
@@ -242,7 +259,7 @@ describe('App', () => {
     }
     const dualFluidPreview = within(
       articleForProblem(kernelProblems.fluidInputAndOutput[0]!),
-    ).getByRole('region', { name: 'Assembler 2 preview' });
+    ).getByRole('region', { name: 'Assembler 2 assembler design preview' });
     expect(
       [...dualFluidPreview.querySelectorAll('.cell-design-fluidbox-arrow')].map((arrow) => [
         arrow.getAttribute('data-direction'),
@@ -255,7 +272,7 @@ describe('App', () => {
     const fiveInputFluidOutputPreview = within(
       articleForProblem(kernelProblems.fluidOutput[4]!),
     ).getByRole('region', {
-      name: 'Assembler 2 preview',
+      name: 'Assembler 2 assembler design preview',
     });
     expect(
       within(fiveInputFluidOutputPreview).getAllByRole('img', {
@@ -265,7 +282,7 @@ describe('App', () => {
     const solidAndFluidOutputPreview = within(
       articleForProblem(kernelProblems.fluidOutput[5]!),
     ).getByRole('region', {
-      name: 'Assembler 2 preview',
+      name: 'Assembler 2 assembler design preview',
     });
     const solidOutputEndpoints = within(solidAndFluidOutputPreview).getAllByRole('img', {
       name: /Underground belt (input|output) at 8, [02], pointing south/,
