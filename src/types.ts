@@ -149,7 +149,17 @@ type PackedMachineFluidBox = {
 type PackedAmount = { f: number } | { n: number; x: number };
 type PackedTemperature = { f: number } | { n: number; x: number } | { n: number } | { x: number };
 
-export type ResourceId = `item:${string}` | `fluid:${string}`;
+export type ItemId = `item:${string}`;
+export type FluidId = `fluid:${string}`;
+export type ResourceId = ItemId | FluidId;
+
+export function isItem(resource: string): resource is ItemId {
+  return resource.startsWith('item:');
+}
+
+export function isFluid(resource: string): resource is FluidId {
+  return resource.startsWith('fluid:');
+}
 
 /** A crafting machine's prototype id, e.g. `assembling-machine-2`. */
 export type MachineId = string;

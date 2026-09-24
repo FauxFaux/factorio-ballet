@@ -67,7 +67,7 @@ describe('generateAssemblerDesign', () => {
     expect(design).toEqual({
       failure: [
         'cannot feed',
-        'item 1',
+        'item:1',
         'at',
         '25.2 items/s',
         'because two',

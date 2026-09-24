@@ -1,5 +1,12 @@
-import type { AssemblerSpecification, KernelProblem, KernelFlows } from '../kernel-problems.ts';
+import type {
+  AssemblerSpecification,
+  KernelProblem,
+  KernelFlows,
+  ResourceRates,
+} from '../kernel-problems.ts';
 import type { DesignDirection } from '../design.ts';
+import { isFluid, isItem, type ResourceId } from '../../types.ts';
+import { entriesOf, keysOf } from '../../ts.ts';
 import { makeFluidAccesses } from './fluid-access.ts';
 import type {
   BoundaryFlows,
@@ -37,10 +44,10 @@ export function normalizeTileDesignInput(
       for (const [resource, rate] of Object.entries(rates)) {
         const error = validateRate(resource, rate, `${side} boundary`);
         if (error) return error;
-        if ((kind === 'fluid') !== resource.startsWith('fluid:')) {
+        if (kind === 'fluid' ? !isFluid(resource) : !isItem(resource)) {
           return invalid(
             'invalid-resource',
-            `${resource} must use a ${kind === 'fluid' ? 'fluid:' : 'non-fluid'} resource ID.`,
+            `${resource} must use an ${kind === 'fluid' ? 'fluid:' : 'item:'} resource ID.`,
             resource,
           );
         }
@@ -65,7 +72,7 @@ export function normalizeTileDesignInput(
       ['output', specification.fluidProducts],
     ] as const) {
       for (const declaration of declarations ?? []) {
-        if (!declaration.resource.startsWith('fluid:')) {
+        if (!isFluid(declaration.resource)) {
           return invalid(
             'invalid-resource',
             `${declaration.resource} must use a fluid: resource ID.`,
@@ -92,6 +99,14 @@ export function normalizeTileDesignInput(
       for (const [resource, rate] of Object.entries(rates)) {
         const error = validateRate(resource, rate, `${side} of machine ${id}`);
         if (error) return error;
+        if (!isItem(resource) && !isFluid(resource)) {
+          return invalid(
+            'invalid-resource',
+            `${resource} must use an item: or fluid: resource ID.`,
+            resource,
+            id,
+          );
+        }
       }
     }
   }
@@ -125,14 +140,14 @@ export function normalizeTileDesignInput(
     inputs: boundaryFlows(problem.inputs),
     outputs: boundaryFlows(problem.outputs),
   };
-  const resources = new Set([
-    ...Object.keys(problem.inputs.solids),
-    ...Object.keys(problem.inputs.fluids),
-    ...Object.keys(problem.outputs.solids),
-    ...Object.keys(problem.outputs.fluids),
+  const resources = new Set<ResourceId>([
+    ...keysOf(problem.inputs.solids),
+    ...keysOf(problem.inputs.fluids),
+    ...keysOf(problem.outputs.solids),
+    ...keysOf(problem.outputs.fluids),
     ...problem.assemblers.flatMap((machine) => [
-      ...Object.keys(machine.inputPerSecond),
-      ...Object.keys(machine.outputPerSecond),
+      ...keysOf(machine.inputPerSecond),
+      ...keysOf(machine.outputPerSecond),
     ]),
   ]);
   for (const resource of [...resources].sort()) {
@@ -184,14 +199,14 @@ function machineOrientations(specification: AssemblerSpecification): TileMachine
   );
 }
 
-function splitMachineFlows(rates: Record<string, number>): {
+function splitMachineFlows(rates: ResourceRates): {
   items: ItemFlow[];
   fluids: FluidId[];
 } {
   const items: ItemFlow[] = [];
   const fluids: FluidId[] = [];
-  for (const [resource, rate] of Object.entries(rates)) {
-    if (resource.startsWith('fluid:')) fluids.push(resource as FluidId);
+  for (const [resource, rate] of entriesOf(rates)) {
+    if (isFluid(resource)) fluids.push(resource);
     else items.push({ resource, rate });
   }
   items.sort((a, b) => a.resource.localeCompare(b.resource));
@@ -201,13 +216,13 @@ function splitMachineFlows(rates: Record<string, number>): {
 
 function boundaryFlows(flows: KernelFlows): BoundaryFlows {
   return {
-    items: Object.entries(flows.solids)
-      .map(([resource, rate]) => ({ resource, rate }))
+    items: entriesOf(flows.solids)
+      .flatMap(([resource, rate]) => (isItem(resource) ? [{ resource, rate }] : []))
       .sort((a, b) => a.resource.localeCompare(b.resource)),
-    fluids: Object.keys(flows.fluids).sort() as FluidId[],
+    fluids: keysOf(flows.fluids).filter(isFluid).sort(),
   };
 }
 
-function boundaryRate(flows: KernelFlows, resource: string): number {
+function boundaryRate(flows: KernelFlows, resource: ResourceId): number {
   return flows.solids[resource] ?? flows.fluids[resource] ?? 0;
 }

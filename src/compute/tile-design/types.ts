@@ -1,11 +1,11 @@
 import type { DesignDirection } from '../design.ts';
-import type { MachineSize, ResourceId } from '../../types.ts';
+import type { FluidId, ItemId, MachineSize } from '../../types.ts';
 
-export type FluidId = Extract<ResourceId, `fluid:${string}`>;
+export type { FluidId } from '../../types.ts';
 
 /** A named item transfer rate, used for either input or output. */
 export interface ItemFlow {
-  resource: string;
+  resource: ItemId;
   rate: number;
 }
 

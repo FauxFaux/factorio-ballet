@@ -43,12 +43,12 @@ describe('solveTileDesign starter allocation', () => {
         width: 7,
         pitch: 3,
         boundary: [
-          { x: 0, kind: 'belt', lanes: { left: 'item 1' } },
-          { x: 6, kind: 'belt', lanes: { right: 'item 2' } },
+          { x: 0, kind: 'belt', lanes: { left: 'item:1' } },
+          { x: 6, kind: 'belt', lanes: { right: 'item:2' } },
         ],
         transfers: [
-          { side: 'input', resource: 'item 1', rate: 1, beltLane: 'left' },
-          { side: 'output', resource: 'item 2', rate: 2, beltLane: 'right' },
+          { side: 'input', resource: 'item:1', rate: 1, beltLane: 'left' },
+          { side: 'output', resource: 'item:2', rate: 2, beltLane: 'right' },
         ],
       },
     });

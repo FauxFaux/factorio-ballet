@@ -1,4 +1,4 @@
-import type { Product, Recipe } from '../types.ts';
+import { isFluid, isItem, type Product, type Recipe } from '../types.ts';
 
 function productAmount(product: Product): number {
   return 'fixed' in product.amount
@@ -22,19 +22,16 @@ export function isVoid(recipe: Recipe): boolean {
 /** Whether a recipe puts a fluid into a barrel or canister. */
 export function isBarrelling(recipe: Recipe): boolean {
   return (
-    recipe.ingredients.some(({ resource }) => resource.startsWith('fluid:')) &&
-    recipe.products.some(
-      ({ resource }) => resource.startsWith('item:') && resource.endsWith('-barrel'),
-    )
+    recipe.ingredients.some(({ resource }) => isFluid(resource)) &&
+    recipe.products.some(({ resource }) => isItem(resource) && resource.endsWith('-barrel'))
   );
 }
 
 /** Whether a recipe takes a filled barrel apart into fluid. */
 export function isUnbarrelling(recipe: Recipe): boolean {
   return (
-    recipe.ingredients.some(
-      ({ resource }) => resource.startsWith('item:') && resource.endsWith('-barrel'),
-    ) && recipe.products.some(({ resource }) => resource.startsWith('fluid:'))
+    recipe.ingredients.some(({ resource }) => isItem(resource) && resource.endsWith('-barrel')) &&
+    recipe.products.some(({ resource }) => isFluid(resource))
   );
 }
 

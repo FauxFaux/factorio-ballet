@@ -7,7 +7,7 @@ import type {
   DesignEntity,
   DesignPosition,
 } from '../../compute/design.ts';
-import type { FluidFlowDirection, Machine, ResourceId } from '../../types.ts';
+import { isFluid, type FluidFlowDirection, type Machine, type ResourceId } from '../../types.ts';
 import type { DesignSceneMachines, DesignSceneRecipes } from './design-scene.tsx';
 
 export interface AssemblerFluidInputStatus {
@@ -245,10 +245,6 @@ function onlyRecipeFluid(
 ): ResourceId | undefined {
   const fluids = recipeFluids(flows);
   return fluids.length === 1 ? fluids[0] : undefined;
-}
-
-function isFluid(resource: ResourceId): resource is `fluid:${string}` {
-  return resource.startsWith('fluid:');
 }
 
 function fluidboxWorldPosition(

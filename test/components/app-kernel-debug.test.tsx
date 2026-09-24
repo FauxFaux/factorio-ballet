@@ -142,7 +142,7 @@ describe('App', () => {
     expect(screen.queryByText('Assemblers')).toBeNull();
     expect(within(builtInResults).getAllByRole('img', { name: 'Solid' })).toHaveLength(56);
     expect(within(builtInResults).getAllByRole('img', { name: 'Fluid' })).toHaveLength(31);
-    for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item 1')) {
+    for (const icon of within(articleForProblem(firstSolidProblem)).getAllByTitle('item:1')) {
       expect(icon.querySelector('path')?.getAttribute('fill')).toBe(CARBON_LIGHT_SHORT.Yellow50);
     }
     const firstPreview = within(articleForProblem(firstSolidProblem)).getByRole('region', {
@@ -158,8 +158,8 @@ describe('App', () => {
     });
     expect(inputBelts).toHaveLength(3);
     for (const belt of inputBelts) {
-      expect(belt.getAttribute('title')).toContain('left side: item 1, 5/s');
-      expect(belt.getAttribute('title')).toContain('right side: item 1, 5/s');
+      expect(belt.getAttribute('title')).toContain('left side: item:1, 5/s');
+      expect(belt.getAttribute('title')).toContain('right side: item:1, 5/s');
       const lanes = belt.querySelectorAll('.cell-design-belt-lane');
       expect(lanes).toHaveLength(2);
       for (const lane of lanes) {
@@ -174,7 +174,7 @@ describe('App', () => {
       expect(belt.querySelectorAll('.cell-design-belt-lane')).toHaveLength(2);
     }
     for (const belt of outputBelts) {
-      expect(belt.getAttribute('title')).toContain('item 2, 2/s');
+      expect(belt.getAttribute('title')).toContain('item:2, 2/s');
       expect(
         [...belt.querySelectorAll<HTMLElement>('.cell-design-belt-lane')].some(
           (lane) => lane.style.backgroundColor === CARBON_LIGHT_SHORT.Purple50,
@@ -189,8 +189,8 @@ describe('App', () => {
     });
     expect(mixedInputBelts).toHaveLength(3);
     for (const belt of mixedInputBelts) {
-      expect(belt.getAttribute('title')).toContain('left side: item 1, 5/s');
-      expect(belt.getAttribute('title')).toContain('right side: item 2, 5/s');
+      expect(belt.getAttribute('title')).toContain('left side: item:1, 5/s');
+      expect(belt.getAttribute('title')).toContain('right side: item:2, 5/s');
       expect(
         belt.querySelector<HTMLElement>('.cell-design-belt-lane[data-side="left"]')?.style
           .backgroundColor,
@@ -205,8 +205,8 @@ describe('App', () => {
     });
     expect(rightInputBelts).toHaveLength(3);
     for (const belt of rightInputBelts) {
-      expect(belt.getAttribute('title')).toContain('left side: item 3, 8/s');
-      expect(belt.getAttribute('title')).toContain('right side: item 3, 8/s');
+      expect(belt.getAttribute('title')).toContain('left side: item:3, 8/s');
+      expect(belt.getAttribute('title')).toContain('right side: item:3, 8/s');
     }
     const fluidOnlyInputPreview = within(
       articleForProblem(kernelProblems.fluidInput[0]!),
@@ -272,10 +272,10 @@ describe('App', () => {
     });
     expect(solidOutputEndpoints).toHaveLength(2);
     for (const endpoint of solidOutputEndpoints) {
-      expect(endpoint.getAttribute('title')).toContain('item 4, 2/s');
+      expect(endpoint.getAttribute('title')).toContain('item:4, 2/s');
       expect(endpoint.getAttribute('data-item-status')).toBe('traced-item');
     }
-    expect(screen.queryByText('item 1')).toBeNull();
+    expect(screen.queryByText('item:1')).toBeNull();
     expect(screen.queryByRole('button', { name: 'Draw belts' })).toBeNull();
   });
 });

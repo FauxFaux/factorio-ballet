@@ -1,7 +1,7 @@
 import type { CellEntry } from '../cell.ts';
 import { recipeName, resourceName } from '../data';
 import type { Solution } from '../solve';
-import type { Belt, ResourceId } from '../types.ts';
+import { isFluid, type Belt, type ResourceId } from '../types.ts';
 
 const EPSILON = 1e-7;
 
@@ -63,7 +63,7 @@ function ratesForEntries(
 }
 
 function routeCount(resource: ResourceId, rate: number, belt: Belt) {
-  if (resource.startsWith('fluid:')) return 1;
+  if (isFluid(resource)) return 1;
   return Math.ceil(Math.max(0, rate - EPSILON) / belt.itemsPerSecond);
 }
 

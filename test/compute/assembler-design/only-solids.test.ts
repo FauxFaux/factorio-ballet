@@ -30,8 +30,8 @@ describe('generateAssemblerDesign', () => {
         column!,
         {
           [problem.assemblers[0].name]: {
-            ingredients: [{ resource: 'item:item 1' }],
-            products: [{ resource: 'item:item 2' }],
+            ingredients: [{ resource: 'item:1' }],
+            products: [{ resource: 'item:2' }],
           },
         },
         problem,
@@ -57,14 +57,14 @@ describe('generateAssemblerDesign', () => {
         kind: 'inserter',
         position: { x: 4, y: 1 },
         direction: 'east',
-        filter: 'item:item 3',
+        filter: 'item:3',
       },
       {
         kind: 'inserter',
         position: { x: 4, y: 0 },
         direction: 'east',
         reach: 2,
-        filter: 'item:item 4',
+        filter: 'item:4',
       },
     ]);
     expect(entityPositionStatuses(column!.entities)).toEqual(column!.entities.map(() => 'valid'));
@@ -73,8 +73,8 @@ describe('generateAssemblerDesign', () => {
         column!,
         {
           [problem.assemblers[0].name]: {
-            ingredients: [{ resource: 'item:item 1' }, { resource: 'item:item 2' }],
-            products: [{ resource: 'item:item 3' }, { resource: 'item:item 4' }],
+            ingredients: [{ resource: 'item:1' }, { resource: 'item:2' }],
+            products: [{ resource: 'item:3' }, { resource: 'item:4' }],
           },
         },
         problem,
@@ -297,7 +297,7 @@ describe('generateAssemblerDesign', () => {
     ).toEqual({
       failure: [
         'cannot insert',
-        'item 2',
+        'item:2',
         'into',
         'Assembler 1',
         'because',

@@ -16,7 +16,7 @@ export type Setter<S> = Dispatch<StateUpdater<S>>;
 export type State<T> = [T, Setter<T>];
 
 /**
- * `Object.values` / `Object.entries` with the element type kept. Both lie a little — a runtime
+ * `Object.keys` / `Object.values` / `Object.entries` with the element type kept. These lie a little — a runtime
  * object can carry keys its type does not mention, and `Object.keys` stringifies numeric ones —
  * which is the usual price for these helpers.
  *
@@ -27,6 +27,7 @@ export type State<T> = [T, Setter<T>];
  * (`scripts/raw-keys.ts`); these resolve to `A | B` instead.
  */
 export const valuesOf = Object.values as <T extends object>(obj: T) => Array<T[keyof T]>;
+export const keysOf = Object.keys as <T extends object>(obj: T) => Array<keyof T>;
 export const entriesOf = Object.entries as <T extends object>(
   obj: T,
 ) => Array<[keyof T, T[keyof T]]>;

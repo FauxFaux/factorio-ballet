@@ -212,12 +212,12 @@ describe('KernelCustomProblem', () => {
 
     const result = screen.getByLabelText('Your problem result');
     expect(within(result).getByRole('heading', { name: 'Assembler 2' })).toBeTruthy();
-    expect(within(result).getByLabelText('5 item 1')).toBeTruthy();
+    expect(within(result).getByLabelText('5 item:1')).toBeTruthy();
     const inputItems = screen.getByRole('group', { name: 'Inputs' });
     expect(within(inputItems).queryByText('item 1')).toBeNull();
     expect(
       inputItems.querySelector('.kernel-custom-resource-icon path')?.getAttribute('fill'),
-    ).toBe(within(result).getByLabelText('5 item 1').querySelector('path')?.getAttribute('fill'));
+    ).toBe(within(result).getByLabelText('5 item:1').querySelector('path')?.getAttribute('fill'));
 
     await user.click(
       within(screen.getByRole('group', { name: 'Inputs' })).getByRole('button', {
@@ -240,14 +240,14 @@ describe('KernelCustomProblem', () => {
         name: 'Remove item 1',
       }),
     );
-    expect(within(result).queryByLabelText('2 item 2')).toBeNull();
+    expect(within(result).queryByLabelText('2 item:2')).toBeNull();
 
     await user.selectOptions(screen.getByRole('combobox', { name: 'Building' }), 'air-filter');
     expect(within(result).getByRole('heading', { name: 'Air filter 5×5' })).toBeTruthy();
 
     const itemRate = screen.getByRole('slider', { name: 'Input items 1 rate' });
     fireEvent.input(itemRate, { target: { value: '5.1' } });
-    expect(within(result).getByLabelText('5.1 item 1')).toBeTruthy();
+    expect(within(result).getByLabelText('5.1 item:1')).toBeTruthy();
 
     const beltRate = screen.getByRole('slider', { name: 'Belt throughput' });
     fireEvent.input(beltRate, { target: { value: '15.1' } });

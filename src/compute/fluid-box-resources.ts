@@ -1,4 +1,4 @@
-import type { Machine, ResourceId } from '../types.ts';
+import { isFluid, type Machine, type ResourceId } from '../types.ts';
 
 export interface FluidBoxResource {
   resource: ResourceId;
@@ -26,7 +26,7 @@ export function fluidBoxResources(
     const boxes = machine.fluidBoxes!.flatMap((box, index) =>
       box.productionType === side || box.productionType === 'input-output' ? [index] : [],
     );
-    const fluidResources = fluids.filter(({ resource }) => resource.startsWith('fluid:'));
+    const fluidResources = fluids.filter(({ resource }) => isFluid(resource));
     for (const fluid of fluidResources) {
       if (!fluid.fluidboxIndex) continue;
       const boxIndex = boxes[fluid.fluidboxIndex - 1];

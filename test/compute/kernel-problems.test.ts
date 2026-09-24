@@ -20,18 +20,18 @@ describe('assemblerProblem', () => {
     });
 
     expect(problem.inputs).toEqual({
-      solids: { 'item 1': 5, 'item 2': 8 },
+      solids: { 'item:1': 5, 'item:2': 8 },
       fluids: { 'fluid:1': 200 },
     });
     expect(problem.outputs).toEqual({
-      solids: { 'item 3': 2 },
+      solids: { 'item:3': 2 },
       fluids: { 'fluid:2': 100 },
     });
     expect(problem.assemblers).toEqual([
       {
         name: 'Chemical plant',
-        inputPerSecond: { 'item 1': 5, 'item 2': 8, 'fluid:1': 200 },
-        outputPerSecond: { 'item 3': 2, 'fluid:2': 100 },
+        inputPerSecond: { 'item:1': 5, 'item:2': 8, 'fluid:1': 200 },
+        outputPerSecond: { 'item:3': 2, 'fluid:2': 100 },
       },
     ]);
     expect(problem.design).toEqual({ columns: [{ entities: [] }] });
@@ -108,9 +108,9 @@ describe('kernelProblems', () => {
   });
 
   it('includes the mixed belt, 2×2, flare, and air-separation cases', () => {
-    expect(kernelProblems.solid[6]?.inputs.solids).toEqual({ 'item 1': 30, 'item 2': 5 });
+    expect(kernelProblems.solid[6]?.inputs.solids).toEqual({ 'item:1': 30, 'item:2': 5 });
     expect(kernelProblems.solid[7]?.assemblers[0]?.size).toEqual({ width: 2, height: 2 });
-    expect(kernelProblems.solid[8]?.outputs.solids).toEqual({ 'item 3': 1, 'item 4': 1 });
+    expect(kernelProblems.solid[8]?.outputs.solids).toEqual({ 'item:3': 1, 'item:4': 1 });
     expect(kernelProblems.fluidInput[4]?.outputs).toEqual({ solids: {}, fluids: {} });
     expect(kernelProblems.fluidInputAndOutput[4]?.outputs.fluids).toEqual({
       'fluid:2': 200,

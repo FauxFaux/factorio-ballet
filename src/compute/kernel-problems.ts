@@ -2,11 +2,12 @@ import { newFactoryDesign, type FactoryDesign } from './design.ts';
 import { staticData } from '../data/decode.ts';
 import type { FluidBoxResource } from './fluid-box-resources.ts';
 import type { MachineFluidBox, MachineSize } from '../types.ts';
+import type { ResourceId } from '../types.ts';
 
 const FLUID_RATE = 200;
 
 /** Rates for the resources crossing one side of a kernel boundary. */
-export type ResourceRates = Record<string, number>;
+export type ResourceRates = Record<ResourceId, number>;
 
 /** The solid belts and fluid pipes a kernel consumes or produces. */
 export interface KernelFlows {
@@ -63,11 +64,11 @@ export function assemblerProblem({
     assemblerName === 'Assembler 2' ||
     (assemblerName === undefined && (fluidInputs.length > 0 || fluidOutputs.length > 0));
   const inputs: KernelFlows = {
-    solids: resourceRates('item ', solidInputs),
+    solids: resourceRates('item:', solidInputs),
     fluids: resourceRates('fluid:', fluidInputs),
   };
   const outputs: KernelFlows = {
-    solids: resourceRates('item ', solidOutputs, solidInputs.length + 1),
+    solids: resourceRates('item:', solidOutputs, solidInputs.length + 1),
     fluids: resourceRates('fluid:', fluidOutputs, fluidInputs.length + 1),
   };
 
@@ -130,7 +131,11 @@ function assemblingMachine2FluidBoxes(): MachineFluidBox[] {
   ];
 }
 
-function resourceRates(prefix: string, rates: readonly number[], startIndex = 1): ResourceRates {
+function resourceRates(
+  prefix: 'item:' | 'fluid:',
+  rates: readonly number[],
+  startIndex = 1,
+): ResourceRates {
   return Object.fromEntries(rates.map((rate, index) => [`${prefix}${startIndex + index}`, rate]));
 }
 

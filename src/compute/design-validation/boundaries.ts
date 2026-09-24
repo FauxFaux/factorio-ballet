@@ -11,7 +11,7 @@ export function validateBoundary(
 ) {
   const { entities } = candidate.column;
   const trackKeys = new Set<string>();
-  const declared = new Set([
+  const declared = new Set<string>([
     ...input.boundary.inputs.items.map(({ resource }) => resource),
     ...input.boundary.outputs.items.map(({ resource }) => resource),
     ...input.boundary.inputs.fluids,

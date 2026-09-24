@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { assemblerProblem, type KernelProblem } from '../../../src/compute/kernel-problems.ts';
+import {
+  assemblerProblem,
+  type KernelProblem,
+  type ResourceRates,
+} from '../../../src/compute/kernel-problems.ts';
 import { normalizeTileDesignInput } from '../../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../../src/compute/tile-design/types.ts';
 import { isError } from '../../../src/compute/tile-design/validation.ts';
@@ -71,31 +75,31 @@ describe('normalizeTileDesignInput', () => {
 
   it('retains gross machine transfers and reconciles an internal resource', () => {
     const problem = assemblerProblem({ solidInputs: [5], solidOutputs: [5] });
-    problem.inputs.solids = { ore: 5 };
-    problem.outputs.solids = { plate: 5 };
+    problem.inputs.solids = { 'item:ore': 5 };
+    problem.outputs.solids = { 'item:plate': 5 };
     problem.assemblers = [
       {
         id: 'smelter',
         name: 'Same operation',
-        inputPerSecond: { ore: 5 },
-        outputPerSecond: { intermediate: 5 },
+        inputPerSecond: { 'item:ore': 5 },
+        outputPerSecond: { 'item:intermediate': 5 },
       },
       {
         id: 'finisher',
         name: 'Same operation',
-        inputPerSecond: { intermediate: 5 },
-        outputPerSecond: { plate: 5 },
+        inputPerSecond: { 'item:intermediate': 5 },
+        outputPerSecond: { 'item:plate': 5 },
       },
     ];
 
     const input = normalized(problem, { repeatCount: 3, moduleHeight: 30 });
     expect(input.machines.map(({ id }) => id)).toEqual(['smelter', 'finisher']);
     expect(input.machines[0]?.outputs).toEqual({
-      items: [{ resource: 'intermediate', rate: 5 }],
+      items: [{ resource: 'item:intermediate', rate: 5 }],
       fluids: [],
     });
     expect(input.machines[1]?.inputs).toEqual({
-      items: [{ resource: 'intermediate', rate: 5 }],
+      items: [{ resource: 'item:intermediate', rate: 5 }],
       fluids: [],
     });
     expect(input.repeat).toEqual({ count: 3, moduleHeight: 30 });
@@ -104,18 +108,18 @@ describe('normalizeTileDesignInput', () => {
 
   it('keeps both sides of a catalyst transfer', () => {
     const problem = assemblerProblem({});
-    problem.inputs.solids = { catalyst: 2, feed: 3 };
-    problem.outputs.solids = { catalyst: 2, product: 3 };
-    problem.assemblers[0]!.inputPerSecond = { catalyst: 2, feed: 3 };
-    problem.assemblers[0]!.outputPerSecond = { catalyst: 2, product: 3 };
+    problem.inputs.solids = { 'item:catalyst': 2, 'item:feed': 3 };
+    problem.outputs.solids = { 'item:catalyst': 2, 'item:product': 3 };
+    problem.assemblers[0]!.inputPerSecond = { 'item:catalyst': 2, 'item:feed': 3 };
+    problem.assemblers[0]!.outputPerSecond = { 'item:catalyst': 2, 'item:product': 3 };
 
     const input = normalized(problem);
     expect(input.machines[0]?.inputs.items).toContainEqual({
-      resource: 'catalyst',
+      resource: 'item:catalyst',
       rate: 2,
     });
     expect(input.machines[0]?.outputs.items).toContainEqual({
-      resource: 'catalyst',
+      resource: 'item:catalyst',
       rate: 2,
     });
     expect(input.repeat).toEqual({ count: 1 });
@@ -209,11 +213,11 @@ describe('normalizeTileDesignInput', () => {
 
   it('reports an unbalanced internal flow before search', () => {
     const problem = assemblerProblem({ solidInputs: [5], solidOutputs: [2] });
-    problem.assemblers[0]!.outputPerSecond = { 'item 2': 2, stray: 1 };
+    problem.assemblers[0]!.outputPerSecond = { 'item:2': 2, 'item:stray': 1 };
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
       success: false,
       code: 'unbalanced-flow',
-      resource: 'stray',
+      resource: 'item:stray',
       message: expect.stringContaining('external supply'),
     });
   });
@@ -239,11 +243,11 @@ describe('normalizeTileDesignInput', () => {
     });
 
     const badRate = assemblerProblem({ solidInputs: [1] });
-    badRate.inputs.solids['item 1'] = Number.NaN;
+    badRate.inputs.solids['item:1'] = Number.NaN;
     expect(normalizeTileDesignInput(badRate, options)).toMatchObject({
       success: false,
       code: 'invalid-rate',
-      resource: 'item 1',
+      resource: 'item:1',
     });
 
     const duplicate = assemblerProblem({});
@@ -276,6 +280,17 @@ describe('normalizeTileDesignInput', () => {
       success: false,
       code: 'invalid-resource',
       resource: 'fluid:1',
+    });
+  });
+
+  it('rejects malformed resource IDs before constructing item flows', () => {
+    const problem = assemblerProblem({ solidInputs: [1] });
+    problem.assemblers[0]!.inputPerSecond = { 'item 1': 1 } as ResourceRates;
+
+    expect(normalizeTileDesignInput(problem, options)).toMatchObject({
+      success: false,
+      code: 'invalid-resource',
+      resource: 'item 1',
     });
   });
 
