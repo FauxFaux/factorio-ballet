@@ -244,6 +244,29 @@ export function validateTileDesign(
 
   validateFluids(candidate, assemblers, issue);
   validateBoundary(input, candidate, lanes, issue);
+  for (const track of candidate.boundary) {
+    if (!track.laneFlows) continue;
+    for (const lane of ['left', 'right'] as const) {
+      const resource = track.lanes?.[lane];
+      const flow = track.laneFlows[lane];
+      const actual = laneRates.get(`${track.x}:${lane}:${resource}`);
+      if (
+        (resource || flow) &&
+        (!resource ||
+          !flow ||
+          !Number.isFinite(flow.rate) ||
+          flow.rate <= 0 ||
+          !actual ||
+          Math.abs(actual[flow.side] - flow.rate) > 1e-8 * Math.max(1, flow.rate))
+      )
+        issue(
+          'boundary-rate',
+          'Declared lane flow does not match its transfers.',
+          undefined,
+          resource,
+        );
+    }
+  }
   const rateLimits = [
     input.repeat.moduleHeight === undefined
       ? Infinity
@@ -256,7 +279,7 @@ export function validateTileDesign(
         `Lane ${lane} has both production and consumption; cumulative load cannot yet be certified.`,
       );
     const rate = Math.max(consumed, produced);
-    if (rate > 0) rateLimits.push(Math.floor(input.transport.beltLaneCapacity / rate));
+    if (rate > 0) rateLimits.push(Math.floor(input.transport.beltLaneCapacity / rate + 1e-9));
   }
   for (const side of ['inputs', 'outputs'] as const)
     for (const { resource, rate } of input.boundary[side].items) {
@@ -272,7 +295,9 @@ export function validateTileDesign(
           0,
         );
       rateLimits.push(
-        laneCount === 0 ? 0 : Math.floor((laneCount * input.transport.beltLaneCapacity) / rate),
+        laneCount === 0
+          ? 0
+          : Math.floor((laneCount * input.transport.beltLaneCapacity) / rate + 1e-9),
       );
     }
   const supportedCopies = Math.max(0, Math.min(...rateLimits));

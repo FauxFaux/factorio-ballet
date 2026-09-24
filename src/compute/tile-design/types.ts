@@ -51,6 +51,7 @@ export interface TileTransportRules {
   beltLaneCapacity: number;
   undergroundBeltReach: number;
   undergroundPipeReach: number;
+  /** Filter-capable configurations. Capacity is the total rate across all carried resources. */
   inserters: { id: string; capacity: number; reach: number }[];
   fluidThroughput: 'unlimited';
 }

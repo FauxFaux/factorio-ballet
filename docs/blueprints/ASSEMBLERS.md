@@ -5,7 +5,8 @@ one-fluid extension in `ass-3s-1f-in-1s-out.base64`, and the rectangular chemica
 `chem-2f2s-in-1f1s-out.base64`. It also records the compact two-assembler snake in
 `ass-2s-in-1s-out-snake.base64`, the port adaptor in `mono-silicon.base64`, and the alternating
 mirrored-plant arrangement in `chem-flippos.base64`. The matching JSON files are easier to inspect
-and are the authoritative entity lists.
+and are the authoritative entity lists. `more-inserters-in-wiggle.json` illustrates a way to
+increase input inserter throughput along one machine edge.
 
 The filename counts describe transport lines, not resource types: `s` is one solid belt and `f` is
 one independent fluid pipe. A solid belt has two lanes and can therefore carry two dependable item
@@ -109,6 +110,41 @@ The single output inserter always drops onto one particular lane. Consequently, 
 half a belt of usable output throughput even though the other lane physically exists. Using both
 output lanes would require another output inserter, alternating/mirroring kernels, or a later
 lane-balancing pattern.
+
+## Bending a belt for more short-reach inserters
+
+`more-inserters-in-wiggle.json` shows two southbound input belts beside the five-tile west edge of
+an induction furnace. The fixture uses ordinary inserters, one in each row; the throughput benefit
+comes from being able to use bulk inserters at all five sites. Relative to the fixture, the furnace
+occupies columns `3..7`, the inserters occupy column `2`, and the belts normally run in columns `0`
+(far) and `1` (near):
+
+```text
+row 0:  far belt ↓   near underground input   inserter → furnace
+row 1:  far belt →   far belt ↓               inserter → furnace
+row 2:      ·        far belt ↓               inserter → furnace
+row 3:  far belt ↓   far belt ←               inserter → furnace
+row 4:  far belt ↓   near underground output  inserter → furnace
+```
+
+The near belt enters an underground section at row 0 and resurfaces at row 4. While it is
+underground, the leftmost (far) belt bends inward to column `1` for three rows, then bends back. The
+inserters in rows `1..3` pick up from that temporarily near far belt; the inserters in rows `0` and
+`4` pick up from the exposed underground-belt endpoints of the original near belt. Thus both
+independent belts remain continuous, and all five pickup positions are only one tile from their
+inserters.
+
+With straight belts at the same positions, the near belt offers two short-reach pickup sites and the
+far belt needs three long-handed inserters. The bend changes a possible `2 bulk + 3 long-handed`
+arrangement into `2 bulk + 3 bulk`, which can provide substantially more transfer capacity where
+inserter throughput is the constraint. Actual rates still depend on the inserter prototypes and
+whether the two belt lanes can supply the items quickly enough.
+
+The inward run need not be three tiles long. A two-tile bend can give a four-tile-high machine two
+short-reach inserters on each belt. Along a five-tile edge, shifting the underground endpoints and
+the two-tile bend leaves three sites on the normally near belt and gives two sites to the normally
+far belt while it is temporarily near. The principle is to allocate the available edge rows between
+exposed near-belt segments and the far belt's inward run.
 
 ## Choosing a pattern from item rates
 

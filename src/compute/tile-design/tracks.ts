@@ -1,56 +1,91 @@
-import type { TileBoundaryTrack } from '../design-validation/types.ts';
-import type { SolidAccessOption } from './access.ts';
+import { solidAccessOptions, type SolidAccessOption } from './access.ts';
+import type { ItemFlow, TileDesignInput, TileMachine } from './types.ts';
+import type { DesignDirection } from '../design.ts';
 
-export interface SolidTrackChoice {
-  boundary: TileBoundaryTrack;
-  access: SolidAccessOption[];
-  lane: 'left' | 'right';
-  resource: string;
+export interface SolidDemand extends ItemFlow {
+  machineId: string;
+  side: 'input' | 'output';
 }
 
-/** First-fit direct trunk allocation. A later search will branch over tracks and lanes. */
-export function firstSolidTrack(
-  options: SolidAccessOption[],
-  side: 'input' | 'output',
-  resource: string,
-  rate: number,
-  laneCapacity: number,
-  repeatCount: number,
-  width: number,
-  pitch: number,
-): SolidTrackChoice | undefined {
-  const face = side === 'input' ? 'west' : 'east';
-  const matching = options.filter(
-    (option) =>
-      option.side === side &&
-      option.face === face &&
-      option.belt.x >= 0 &&
-      option.belt.x < width &&
-      option.belt.y >= 0 &&
-      option.belt.y < pitch,
-  );
-  const first = matching[0];
-  if (!first || rate * repeatCount > laneCapacity) return undefined;
-  const lane = side === 'input' ? 'left' : 'right';
-  const selected: SolidAccessOption[] = [];
-  let remaining = rate;
-  for (const option of matching) {
-    if (option.belt.x !== first.belt.x || option.reach !== first.reach) continue;
-    if (selected.some(({ base }) => base.x === option.base.x && base.y === option.base.y)) continue;
-    selected.push(option);
-    remaining -= option.capacity;
-    if (remaining <= 0) break;
+/** A surface profile today; future bent/underground profiles can expose different row attachments. */
+export interface SolidTrack {
+  x: number;
+  direction: 'north';
+  profile: 'surface';
+}
+
+export interface SolidLane {
+  track: SolidTrack;
+  lane: 'left' | 'right';
+}
+
+export interface AssignedSolidLane extends SolidLane {
+  demand: SolidDemand;
+}
+
+export function reachesLane(option: SolidAccessOption, lane: SolidLane): boolean {
+  if (option.belt.x !== lane.track.x) return false;
+  // A northbound belt receives output on the far lane, never both lanes from the same side.
+  return option.side === 'input' || lane.lane === (option.face === 'east' ? 'right' : 'left');
+}
+
+export function servesDemand(option: SolidAccessOption, demand: SolidDemand): boolean {
+  return option.machineId === demand.machineId && option.side === demand.side;
+}
+
+export function trackLanes(tracks: SolidTrack[]): SolidLane[] {
+  return tracks.flatMap((track) => (['left', 'right'] as const).map((lane) => ({ track, lane })));
+}
+
+export interface SolidTrackFrame {
+  machine: TileMachine;
+  rotation: DesignDirection;
+  tracks: SolidTrack[];
+  options: SolidAccessOption[];
+  area: number;
+}
+
+/** Enumerate only reachable track subsets. At most six columns for the current reach rules. */
+export function solidTrackFrames(input: TileDesignInput, original: TileMachine): SolidTrackFrame[] {
+  const result: SolidTrackFrame[] = [];
+  const shapes = new Set<string>();
+  for (const { rotation, mirrored } of original.orientations) {
+    if (mirrored) continue;
+    const swapped = rotation === 'east' || rotation === 'west';
+    const size = swapped
+      ? { width: original.size.height, height: original.size.width }
+      : original.size;
+    const shape = `${size.width},${size.height}`;
+    if (shapes.has(shape)) continue;
+    shapes.add(shape);
+    if (
+      size.height > input.envelope.maxPitch ||
+      size.height * input.repeat.count > (input.repeat.moduleHeight ?? Infinity)
+    )
+      continue;
+    const machine = { ...original, size };
+    const accesses = solidAccessOptions(machine, { x: 0, y: 0 }, input.transport).filter(
+      ({ face }) => face === 'west' || face === 'east',
+    );
+    const xs = [...new Set(accesses.map(({ belt }) => belt.x))].sort((a, b) => a - b);
+    for (let mask = 0; mask < 2 ** xs.length; mask++) {
+      const selected = xs.filter((_, index) => mask & (1 << index));
+      const width = Math.max(size.width - 1, ...selected) - Math.min(0, ...selected) + 1;
+      if (width > input.envelope.maxWidth) continue;
+      const tracks: SolidTrack[] = selected.map((x) => ({
+        x,
+        direction: 'north',
+        profile: 'surface',
+      }));
+      const options = accesses.filter(
+        ({ base, belt }) => selected.includes(belt.x) && !selected.includes(base.x),
+      );
+      result.push({ machine, rotation, tracks, options, area: width * size.height });
+    }
   }
-  if (remaining > 0) return undefined;
-  return {
-    boundary: {
-      kind: 'belt',
-      x: first.belt.x,
-      direction: 'north',
-      lanes: { [lane]: resource },
-    },
-    access: selected,
-    lane,
-    resource,
-  };
+  return result.sort(
+    (a, b) =>
+      a.area - b.area ||
+      a.tracks.length * a.machine.size.height - b.tracks.length * b.machine.size.height,
+  );
 }

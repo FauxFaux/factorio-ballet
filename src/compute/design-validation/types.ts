@@ -27,6 +27,11 @@ export interface TileBoundaryTrack {
   kind: 'belt' | 'pipe';
   direction?: DesignDirection;
   lanes?: { left?: string; right?: string };
+  /** External flow per tile, on each independently supplied/exported lane. */
+  laneFlows?: {
+    left?: { side: 'input' | 'output'; rate: number };
+    right?: { side: 'input' | 'output'; rate: number };
+  };
   resource?: string;
 }
 

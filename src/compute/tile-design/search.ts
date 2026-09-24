@@ -1,141 +1,286 @@
 import type { TileDesignCandidate, TileValidationResult } from '../design-validation/types.ts';
 import { validateTileDesign } from '../design-validation/validate.ts';
-import type { DesignEntity } from '../design.ts';
-import { solidAccessOptions } from './access.ts';
-import { firstSolidTrack, type SolidTrackChoice } from './tracks.ts';
+import type { SolidAccessOption } from './access.ts';
+import { allocateSolidRates, RATE_EPSILON, requiredUnits } from './capacity.ts';
+import { emitSolidTile } from './emit.ts';
+import {
+  reachesLane,
+  solidTrackFrames,
+  servesDemand,
+  trackLanes,
+  type AssignedSolidLane,
+  type SolidDemand,
+  type SolidLane,
+} from './tracks.ts';
 import type { TileDesignInput } from './types.ts';
+import { validateSearchInput } from './validation.ts';
+
+export interface TileSearchDiagnostics {
+  exploredStates: number;
+  capacityRejections: number;
+  validationRejections: number;
+  /** The actually searched family, even when the caller permits additional primitives. */
+  scope: 'one-machine/external-items/straight-surface-trunks';
+  bestScore?: { area: number; transportEntities: number };
+}
 
 export type TileDesignSearchResult =
-  | { status: 'found'; candidate: TileDesignCandidate; validation: TileValidationResult }
-  | { status: 'unsupported' | 'first-choice-rejected'; reason: string };
+  | {
+      status: 'found';
+      candidate: TileDesignCandidate;
+      validation: TileValidationResult;
+      /** Minimum area, then transport entity count, within the reported scope. Ties are deterministic. */
+      optimal: boolean;
+      stopReason: 'complete' | 'budget-exhausted';
+      diagnostics: TileSearchDiagnostics;
+    }
+  | {
+      status: 'unsupported' | 'invalid-input' | 'envelope-exhausted' | 'budget-exhausted';
+      reason: string;
+      diagnostics: TileSearchDiagnostics;
+    };
 
-/** Starter one-machine allocator: fixed placement and first-fit west/east surface trunks. */
+/** Bounded discrete allocation with an independent continuous rate adapter and emission/validation.
+ * Translation is fixed. With straight external trunks, all useful attachments are east/west;
+ * extra pitch, disconnected distant tracks, and padding are dominated. Belt reversal only renames
+ * the free lane variables, so northbound is canonical for this family. Branch profiles will need
+ * their own frames/attachments, without changing the demand or rate-allocation contracts. */
 export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult {
+  const diagnostics: TileSearchDiagnostics = {
+    exploredStates: 0,
+    capacityRejections: 0,
+    validationRejections: 0,
+    scope: 'one-machine/external-items/straight-surface-trunks',
+  };
+  const failure = (
+    status: Exclude<TileDesignSearchResult['status'], 'found'>,
+    reason: string,
+  ): TileDesignSearchResult => ({ status, reason, diagnostics });
+  const invalid = validateSearchInput(input);
+  if (invalid) return failure('invalid-input', invalid);
   const machine = input.machines[0];
   if (
     input.machines.length !== 1 ||
-    !machine ||
     machine.inputs.fluids.length ||
-    machine.outputs.fluids.length
+    machine.outputs.fluids.length ||
+    input.boundary.inputs.fluids.length ||
+    input.boundary.outputs.fluids.length
   )
-    return { status: 'unsupported', reason: 'Only one solid-only machine is supported.' };
+    return failure('unsupported', 'Only one machine with external item flows is supported.');
   if (!input.envelope.primitives.includes('surface'))
-    return { status: 'unsupported', reason: 'Surface belts are required.' };
-  if (machine.inputs.items.length !== 1 || machine.outputs.items.length !== 1)
-    return { status: 'unsupported', reason: 'One input item and one output item are supported.' };
-  const inputFlow = machine.inputs.items[0]!;
-  const outputFlow = machine.outputs.items[0]!;
-  if (
-    input.boundary.inputs.items.length !== 1 ||
-    input.boundary.outputs.items.length !== 1 ||
-    input.boundary.inputs.items[0]?.resource !== inputFlow.resource ||
-    input.boundary.outputs.items[0]?.resource !== outputFlow.resource ||
-    input.boundary.inputs.items[0]?.rate !== inputFlow.rate ||
-    input.boundary.outputs.items[0]?.rate !== outputFlow.rate
-  )
-    return {
-      status: 'unsupported',
-      reason: 'Only external, directly supplied item flows are supported.',
-    };
-
-  const firstRule = input.transport.inserters[0]!;
-  if (firstRule.reach !== 1 && firstRule.reach !== 2)
-    return { status: 'unsupported', reason: 'Only one- and two-tile inserter reach is supported.' };
-  const width = machine.size.width + 4 * firstRule.reach;
-  const pitch = machine.size.height;
-  if (width > input.envelope.maxWidth || pitch > input.envelope.maxPitch)
-    return {
-      status: 'first-choice-rejected',
-      reason: 'The fixed machine and direct trunks exceed the envelope.',
-    };
-  if (
-    input.repeat.moduleHeight !== undefined &&
-    pitch * input.repeat.count > input.repeat.moduleHeight
-  )
-    return {
-      status: 'first-choice-rejected',
-      reason: 'The requested copies exceed the physical height.',
-    };
-
-  const position = { x: 2 * firstRule.reach, y: 0 };
-  const options = solidAccessOptions(machine, position, input.transport);
-  const choices = [
-    firstSolidTrack(
-      options,
-      'input',
-      inputFlow.resource,
-      inputFlow.rate,
-      input.transport.beltLaneCapacity,
-      input.repeat.count,
-      width,
-      pitch,
-    ),
-    firstSolidTrack(
-      options,
-      'output',
-      outputFlow.resource,
-      outputFlow.rate,
-      input.transport.beltLaneCapacity,
-      input.repeat.count,
-      width,
-      pitch,
-    ),
-  ];
-  if (!choices[0] || !choices[1])
-    return {
-      status: 'first-choice-rejected',
-      reason: 'The first direct belt or inserter allocation lacks capacity.',
-    };
-
-  const entities: DesignEntity[] = [];
-  const lanes: TileDesignCandidate['lanes'] = [];
-  for (const choice of choices as SolidTrackChoice[]) {
-    for (let y = 0; y < pitch; y++) {
-      const entityIndex = entities.length;
-      entities.push({ kind: 'belt', position: { x: choice.boundary.x, y }, direction: 'north' });
-      lanes.push({ entityIndex, lane: choice.lane, resource: choice.resource });
-    }
+    return failure('unsupported', 'Straight surface belts are required.');
+  if (input.transport.inserters.some(({ reach }) => reach !== 1 && reach !== 2))
+    return failure('unsupported', 'Only one- and two-tile inserter reach is supported.');
+  if (!machine.orientations.some(({ mirrored }) => !mirrored))
+    return failure('unsupported', 'Mirrored-only machine placements cannot yet be emitted.');
+  for (const side of ['inputs', 'outputs'] as const) {
+    const flows = machine[side].items;
+    const boundary = input.boundary[side].items;
+    if (
+      flows.length !== boundary.length ||
+      flows.some(
+        (flow) =>
+          !boundary.some(
+            ({ resource, rate }) =>
+              resource === flow.resource &&
+              Math.abs(rate - flow.rate) <= RATE_EPSILON * Math.max(1, rate, flow.rate),
+          ),
+      )
+    )
+      return failure(
+        'unsupported',
+        'Gross machine transfers must be supplied/exported externally; internal recirculation is not supported.',
+      );
   }
-  const transfers: TileDesignCandidate['transfers'] = [];
-  for (const [index, choice] of choices.entries()) {
-    let remaining = index === 0 ? inputFlow.rate : outputFlow.rate;
-    for (const option of choice!.access) {
-      const rate = Math.min(remaining, option.capacity);
-      const inserterIndex = entities.length;
-      entities.push({
-        kind: 'inserter',
-        position: option.base,
-        direction: option.direction,
-        ...(option.reach === 1 ? {} : { reach: option.reach }),
-      });
-      transfers.push({
-        inserterIndex,
-        machineId: machine.id,
-        side: option.side,
-        resource: choice!.resource,
-        rate,
-        beltLane: choice!.lane,
-      });
-      remaining -= rate;
+  const demands: SolidDemand[] = (['input', 'output'] as const).flatMap((side) =>
+    (side === 'input' ? machine.inputs : machine.outputs).items
+      .toSorted((a, b) => a.resource.localeCompare(b.resource))
+      .map((flow) => ({ ...flow, machineId: machine.id, side })),
+  );
+  const laneCapacity = input.transport.beltLaneCapacity / input.repeat.count;
+  let exhausted = false;
+  let best: Extract<TileDesignSearchResult, { status: 'found' }> | undefined;
+  function visit(): boolean {
+    if (diagnostics.exploredStates >= input.envelope.maxStates) {
+      exhausted = true;
+      return false;
     }
+    diagnostics.exploredStates++;
+    return true;
   }
-  const machineIndex = entities.length;
-  entities.push({ kind: 'assembler', position, size: machine.size, recipe: machine.id });
-  const candidate: TileDesignCandidate = {
-    column: { entities },
-    width,
-    pitch,
-    machineIds: { [machineIndex]: machine.id },
-    lanes,
-    transfers,
-    fluids: [],
-    boundary: choices.map((choice) => choice!.boundary),
-  };
-  const validation = validateTileDesign(input, candidate);
-  if (!validation.valid)
-    return {
-      status: 'first-choice-rejected',
-      reason: `First candidate failed validation: ${validation.issues.map(({ code }) => code).join(', ')}`,
-    };
-  return { status: 'found', candidate, validation };
+
+  for (const frame of solidTrackFrames(input, machine)) {
+    if (best && frame.area > best.candidate.width * best.candidate.pitch) break;
+    if (!visit()) break;
+    const lanes = trackLanes(frame.tracks);
+    // Fewest possible lanes first; output geometry is usually the tightest constraint.
+    const domains = demands
+      .map((demand) => ({
+        demand,
+        lanes: lanes.filter((lane) =>
+          frame.options.some((option) => servesDemand(option, demand) && reachesLane(option, lane)),
+        ),
+      }))
+      .sort(
+        (a, b) =>
+          a.lanes.length - b.lanes.length ||
+          b.demand.rate - a.demand.rate ||
+          a.demand.side.localeCompare(b.demand.side) ||
+          a.demand.resource.localeCompare(b.demand.resource),
+      );
+    const assigned: AssignedSolidLane[] = [];
+    const occupied = new Set<SolidLane>();
+
+    function possible(demand: SolidDemand, available: SolidLane[]): boolean {
+      if (available.length * laneCapacity + RATE_EPSILON < demand.rate) return false;
+      const capacities = new Map<string, number>();
+      for (const option of frame.options) {
+        if (!servesDemand(option, demand) || !available.some((lane) => reachesLane(option, lane)))
+          continue;
+        const key = baseKey(option);
+        capacities.set(key, Math.max(capacities.get(key) ?? 0, option.capacity));
+      }
+      return [...capacities.values()].reduce((a, b) => a + b, 0) + RATE_EPSILON >= demand.rate;
+    }
+
+    function allocateSites() {
+      const seen = new Set<string>();
+      const optionIds = new Map(frame.options.map((option, index) => [option, index]));
+      function searchSites(options: SolidAccessOption[]) {
+        if (exhausted) return;
+        const key = options.map((option) => optionIds.get(option)).join(',');
+        if (seen.has(key)) return;
+        seen.add(key);
+        if (!visit()) return;
+        const allocation = allocateSolidRates(demands, assigned, options, laneCapacity);
+        if (!allocation.feasible) {
+          diagnostics.capacityRejections++;
+          return;
+        }
+        if (allocation.conflict) {
+          const group = allocation.conflict;
+          // Selecting a configuration does not force positive flow, so no separate unused branch.
+          for (const choice of group) {
+            searchSites(options.filter((option) => !group.includes(option) || option === choice));
+            if (exhausted) break;
+          }
+          return;
+        }
+        const candidate = emitSolidTile(frame.machine, frame.rotation, allocation.transfers);
+        const score = {
+          area: candidate.width * candidate.pitch,
+          transportEntities: candidate.column.entities.length - 1,
+        };
+        const old = diagnostics.bestScore;
+        if (
+          !old ||
+          score.area < old.area ||
+          (score.area === old.area && score.transportEntities < old.transportEntities)
+        ) {
+          const validation = validateTileDesign(input, candidate);
+          if (validation.valid) {
+            diagnostics.bestScore = score;
+            best = {
+              status: 'found',
+              candidate,
+              validation,
+              optimal: false,
+              stopReason: 'budget-exhausted',
+              diagnostics,
+            };
+          } else {
+            diagnostics.validationRejections++;
+          }
+        }
+        // Any solution using fewer inserters must omit at least one currently used base.
+        // These branches also retain alternative configurations at all other bases.
+        const used = new Set(allocation.transfers.map(({ option }) => baseKey(option)));
+        const maxCapacity = Math.max(0, ...options.map(({ capacity }) => capacity));
+        const lowerBound =
+          requiredUnits(
+            demands.filter(({ side }) => side === 'input').reduce((sum, { rate }) => sum + rate, 0),
+            maxCapacity,
+          ) +
+          demands
+            .filter(({ side }) => side === 'output')
+            .reduce((sum, { rate }) => sum + requiredUnits(rate, maxCapacity), 0);
+        if (used.size <= lowerBound || used.size === 0) return;
+        for (const base of used) {
+          searchSites(options.filter((option) => baseKey(option) !== base));
+          if (exhausted) break;
+        }
+      }
+      searchSites(frame.options);
+    }
+
+    function assignLanes(index: number) {
+      if (exhausted || !visit()) return;
+      if (index === domains.length) {
+        if (frame.tracks.every((track) => assigned.some((lane) => lane.track === track)))
+          allocateSites();
+        return;
+      }
+      // Independent bounds are deliberately optimistic; the shared-base flow check follows.
+      for (const domain of domains.slice(index)) {
+        if (
+          !possible(
+            domain.demand,
+            domain.lanes.filter((lane) => !occupied.has(lane)),
+          )
+        ) {
+          diagnostics.capacityRejections++;
+          return;
+        }
+      }
+      const { demand, lanes: domain } = domains[index];
+      const available = domain.filter((lane) => !occupied.has(lane));
+      const reserved = domains
+        .slice(index + 1)
+        .reduce((sum, { demand }) => sum + requiredUnits(demand.rate, laneCapacity), 0);
+      const maximum = Math.min(available.length, lanes.length - occupied.size - reserved);
+      const minimum = requiredUnits(demand.rate, laneCapacity);
+      for (let count = minimum; count <= maximum; count++) {
+        const selected: SolidLane[] = [];
+        function choose(start: number) {
+          if (exhausted || !visit()) return;
+          if (selected.length === count) {
+            if (!possible(demand, selected)) return;
+            for (const lane of selected) {
+              occupied.add(lane);
+              assigned.push({ ...lane, demand });
+            }
+            assignLanes(index + 1);
+            assigned.splice(assigned.length - selected.length);
+            for (const lane of selected) occupied.delete(lane);
+            return;
+          }
+          for (let next = start; next <= available.length - (count - selected.length); next++) {
+            selected.push(available[next]);
+            choose(next + 1);
+            selected.pop();
+            if (exhausted) break;
+          }
+        }
+        choose(0);
+        if (exhausted) break;
+      }
+    }
+    assignLanes(0);
+    if (exhausted) break;
+  }
+  if (best) {
+    best.optimal = !exhausted && diagnostics.validationRejections === 0;
+    best.stopReason = exhausted ? 'budget-exhausted' : 'complete';
+    return best;
+  }
+  return failure(
+    exhausted ? 'budget-exhausted' : 'envelope-exhausted',
+    exhausted
+      ? 'The deterministic state budget ended before a valid allocation was found.'
+      : 'No allocation fits the width, pitch, repeat capacity, and compatible inserter sites using straight surface trunks.',
+  );
+}
+
+function baseKey(option: SolidAccessOption): string {
+  return `${option.base.x},${option.base.y}`;
 }

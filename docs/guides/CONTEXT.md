@@ -339,12 +339,14 @@ The completed assembler kernel project left a strategy-based generator in
 known solid and fluid layouts for a `KernelProblem` and returns the smallest successful design by
 occupied area. Current UI consumers still call this generator.
 
-The tile design project produced `src/compute/tile-design/` with types, input normalization,
-transport-rule checks, and fluid-box access modeling for a bounded, periodically repeated tile. The
-project did not produce a search implementation or a tile generator used by the UI.
-`src/compute/design-validation/` holds the separate, pure candidate checks: shared entity overlap
-geometry and validation of emitted entities, transfers, fluid connections, boundary tracks, and
-repeat capacity. The overlap helper is also used by design previews.
+`src/compute/tile-design/` contains input normalization, transport-rule checks, fluid-box access
+modeling, and a bounded one-machine item allocator. The search allocates straight belt tracks,
+lanes, and compatible ordinary/long inserters against fixed rates and requested repeat capacity. It
+is not yet used by the UI. [TILE-SEARCH.md](TILE-SEARCH.md) describes its supported scope, capacity
+model, diagnostics, and extension points. `src/compute/design-validation/` holds the separate, pure
+candidate checks: shared entity overlap geometry and validation of emitted entities, transfers,
+fluid connections, boundary tracks, and repeat capacity. The overlap helper is also used by design
+previews.
 
 `docs/ASSEMBLER-SOLVER-PLAN.md` records the completed migration planning project and its proposed
 solver architecture. Its delivery steps describe that project’s intended direction, not the current

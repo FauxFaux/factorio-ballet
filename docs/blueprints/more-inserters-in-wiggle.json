@@ -1,0 +1,156 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "angels-induction-furnace-3"
+        },
+        "index": 1
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "transport-belt",
+        "position": {
+          "x": 150.5,
+          "y": 367.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 2,
+        "name": "underground-belt",
+        "position": {
+          "x": 151.5,
+          "y": 367.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 3,
+        "name": "inserter",
+        "position": {
+          "x": 152.5,
+          "y": 367.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 4,
+        "name": "transport-belt",
+        "position": {
+          "x": 151.5,
+          "y": 369.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 5,
+        "name": "transport-belt",
+        "position": {
+          "x": 151.5,
+          "y": 368.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 6,
+        "name": "transport-belt",
+        "position": {
+          "x": 150.5,
+          "y": 368.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 7,
+        "name": "inserter",
+        "position": {
+          "x": 152.5,
+          "y": 368.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 8,
+        "name": "inserter",
+        "position": {
+          "x": 152.5,
+          "y": 369.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 9,
+        "name": "angels-induction-furnace-3",
+        "position": {
+          "x": 155.5,
+          "y": 369.5
+        },
+        "direction": 4,
+        "mirror": true,
+        "recipe": "angels-liquid-molten-aluminium-2",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 10,
+        "name": "transport-belt",
+        "position": {
+          "x": 150.5,
+          "y": 371.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 11,
+        "name": "transport-belt",
+        "position": {
+          "x": 150.5,
+          "y": 370.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 12,
+        "name": "transport-belt",
+        "position": {
+          "x": 151.5,
+          "y": 370.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 13,
+        "name": "underground-belt",
+        "position": {
+          "x": 151.5,
+          "y": 371.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 14,
+        "name": "inserter",
+        "position": {
+          "x": 152.5,
+          "y": 370.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 15,
+        "name": "inserter",
+        "position": {
+          "x": 152.5,
+          "y": 371.5
+        },
+        "direction": 12
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}

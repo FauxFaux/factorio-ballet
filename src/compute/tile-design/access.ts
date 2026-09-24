@@ -12,7 +12,8 @@ export interface SolidAccessOption {
   capacity: number;
 }
 
-/** Direct machine-to-belt sites. The base is the only occupied cell between endpoints. */
+/** Direct machine-to-belt sites. Arms may cross occupied cells; only the base occupies space.
+ * A long inserter may stand one OR two cells from the edge if its endpoint is in the machine. */
 export function solidAccessOptions(
   machine: TileMachine,
   position: DesignPosition,
@@ -20,36 +21,41 @@ export function solidAccessOptions(
 ): SolidAccessOption[] {
   const options: SolidAccessOption[] = [];
   const { width, height } = machine.size;
+  // Rules with identical geometry are interchangeable in the constant-capacity model.
+  const capacities = new Map<1 | 2, number>();
+  for (const rule of rules.inserters) {
+    if (rule.reach !== 1 && rule.reach !== 2) continue;
+    capacities.set(rule.reach, Math.max(capacities.get(rule.reach) ?? 0, rule.capacity));
+  }
   for (const side of ['input', 'output'] as const) {
-    for (const rule of rules.inserters) {
-      if (rule.reach !== 1 && rule.reach !== 2) continue;
-      for (const [face, vector, count] of [
-        ['west', { x: -1, y: 0 }, height],
-        ['east', { x: 1, y: 0 }, height],
-        ['north', { x: 0, y: -1 }, width],
-        ['south', { x: 0, y: 1 }, width],
+    for (const [reach, capacity] of [...capacities].sort(([a], [b]) => a - b)) {
+      for (const [face, vector, count, depth] of [
+        ['west', { x: -1, y: 0 }, height, width],
+        ['east', { x: 1, y: 0 }, height, width],
+        ['north', { x: 0, y: -1 }, width, height],
+        ['south', { x: 0, y: 1 }, width, height],
       ] as const) {
-        for (let offset = 0; offset < count; offset++) {
-          const edge = {
-            x: position.x + (face === 'east' ? width - 1 : face === 'west' ? 0 : offset),
-            y: position.y + (face === 'south' ? height - 1 : face === 'north' ? 0 : offset),
-          };
-          const base = { x: edge.x + vector.x * rule.reach, y: edge.y + vector.y * rule.reach };
-          const belt = {
-            x: edge.x + vector.x * rule.reach * 2,
-            y: edge.y + vector.y * rule.reach * 2,
-          };
-          const direction = side === 'output' ? face : opposite(face);
-          options.push({
-            machineId: machine.id,
-            side,
-            face,
-            base,
-            belt,
-            direction,
-            reach: rule.reach,
-            capacity: rule.capacity,
-          });
+        for (let distance = 1; distance <= reach; distance++) {
+          if (reach - distance >= depth) continue;
+          for (let offset = 0; offset < count; offset++) {
+            const edge = {
+              x: position.x + (face === 'east' ? width - 1 : face === 'west' ? 0 : offset),
+              y: position.y + (face === 'south' ? height - 1 : face === 'north' ? 0 : offset),
+            };
+            options.push({
+              machineId: machine.id,
+              side,
+              face,
+              base: { x: edge.x + vector.x * distance, y: edge.y + vector.y * distance },
+              belt: {
+                x: edge.x + vector.x * (distance + reach),
+                y: edge.y + vector.y * (distance + reach),
+              },
+              direction: side === 'output' ? face : opposite(face),
+              reach,
+              capacity,
+            });
+          }
         }
       }
     }

@@ -1,4 +1,6 @@
-import type { InvalidTileDesignInput, TileDesignOptions } from './types.ts';
+import { isItem } from '../../types.ts';
+import { RATE_EPSILON } from './capacity.ts';
+import type { InvalidTileDesignInput, TileDesignOptions, TileDesignInput } from './types.ts';
 
 export function isError<T>(result: T | InvalidTileDesignInput): result is InvalidTileDesignInput {
   return (
@@ -77,4 +79,64 @@ export function invalid(
     ...(resource ? { resource } : {}),
     ...(machineId ? { machineId } : {}),
   };
+}
+
+/** Validate callers of the normalized search API as well as the KernelProblem adapter. */
+export function validateSearchInput(input: TileDesignInput): string | undefined {
+  const error = validateOptions({
+    transport: input.transport,
+    envelope: input.envelope,
+    repeatCount: input.repeat.count,
+    moduleHeight: input.repeat.moduleHeight,
+  });
+  if (error) return error.message;
+  if (!input.machines.length) return 'At least one machine is required.';
+  const ids = new Set<string>();
+  for (const machine of input.machines) {
+    if (
+      !machine.id.trim() ||
+      ids.has(machine.id) ||
+      !positiveInteger(machine.size.width) ||
+      !positiveInteger(machine.size.height) ||
+      !machine.orientations.length ||
+      machine.orientations.some(
+        ({ rotation }) => !['north', 'east', 'south', 'west'].includes(rotation),
+      )
+    )
+      return 'Machine IDs, footprints, and orientations must be valid and distinct.';
+    ids.add(machine.id);
+  }
+  for (const flows of [
+    ...input.machines.flatMap((machine) => [machine.inputs, machine.outputs]),
+    input.boundary.inputs,
+    input.boundary.outputs,
+  ]) {
+    const resources = new Set<string>();
+    for (const { resource, rate } of flows.items) {
+      if (!isItem(resource) || resources.has(resource) || !Number.isFinite(rate) || rate <= 0)
+        return 'Item flows require distinct item IDs and finite positive rates.';
+      resources.add(resource);
+    }
+  }
+  const balance = new Map<string, number>();
+  const scale = new Map<string, number>();
+  for (const [flows, sign] of [
+    [input.boundary.inputs.items, 1],
+    [input.boundary.outputs.items, -1],
+    ...input.machines.flatMap(
+      (machine) =>
+        [
+          [machine.outputs.items, 1],
+          [machine.inputs.items, -1],
+        ] as const,
+    ),
+  ] as const) {
+    for (const { resource, rate } of flows) {
+      balance.set(resource, (balance.get(resource) ?? 0) + sign * rate);
+      scale.set(resource, Math.max(scale.get(resource) ?? 1, rate));
+    }
+  }
+  for (const [resource, rate] of balance)
+    if (Math.abs(rate) > RATE_EPSILON * scale.get(resource)!)
+      return `${resource} does not balance external and machine item flows.`;
 }
