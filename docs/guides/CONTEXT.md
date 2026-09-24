@@ -332,6 +332,24 @@ changing what it eats, which is a real answer and not a scaling: the same three 
 consume the same plates and hand on 36% more gears, so downstream counts fall and upstream ones do
 not. `CONTEXT-UI.md` describes the wider planner design the solver eventually serves.
 
+### Assembler and tile design (`src/compute/`)
+
+The completed assembler kernel project left a strategy-based generator in
+`src/compute/assembler-design/`, with `src/compute/assembler-design.ts` as its entry point. It tries
+known solid and fluid layouts for a `KernelProblem` and returns the smallest successful design by
+occupied area. Current UI consumers still call this generator.
+
+The tile design project produced `src/compute/tile-design/` with types, input normalization,
+transport-rule checks, and fluid-box access modeling for a bounded, periodically repeated tile. The
+project did not produce a search implementation or a tile generator used by the UI.
+`src/compute/design-validation/` holds the separate, pure candidate checks: shared entity overlap
+geometry and validation of emitted entities, transfers, fluid connections, boundary tracks, and
+repeat capacity. The overlap helper is also used by design previews.
+
+`docs/ASSEMBLER-SOLVER-PLAN.md` records the completed migration planning project and its proposed
+solver architecture. Its delivery steps describe that project’s intended direction, not the current
+implementation or an active roadmap; consult the source when changing either design path.
+
 ### TypeScript specifics
 
 - `verbatimModuleSyntax` means `import type` where applicable.
