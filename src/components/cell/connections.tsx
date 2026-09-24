@@ -113,6 +113,9 @@ function AssemblerDesignSummary({
         fluidIngredients: staticData.recipes[recipe]?.ingredients.filter(({ resource }) =>
           resource.startsWith('fluid:'),
         ),
+        fluidProducts: staticData.recipes[recipe]?.products.filter(({ resource }) =>
+          resource.startsWith('fluid:'),
+        ),
         inputPerSecond: { ...inputs.solids, ...inputs.fluids },
         outputPerSecond: { ...outputs.solids, ...outputs.fluids },
       },

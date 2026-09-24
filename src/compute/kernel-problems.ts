@@ -16,15 +16,20 @@ export interface KernelFlows {
 
 /** One machine's required recipe inputs and outputs, at its intended running rate. */
 export interface AssemblerSpecification {
+  /** Stable identity within a kernel, independent of the machine's name. */
+  id?: string;
   name: string;
   inputPerSecond: ResourceRates;
   outputPerSecond: ResourceRates;
   /** The machine's tile footprint when a problem needs non-default geometry. */
   size?: MachineSize;
+  allowedRotations?: ('north' | 'east' | 'south' | 'west')[];
   /** Physical fluid slots and ports; recipe-fluid assignment is intentionally separate. */
   fluidBoxes?: MachineFluidBox[];
   /** Recipe order and explicit input-box indexes, when available. */
   fluidIngredients?: FluidBoxResource[];
+  /** Product order and explicit output-box indexes, when available. */
+  fluidProducts?: FluidBoxResource[];
 }
 
 /** A factory-kernel task, including its boundary contract and the machines it must contain. */
