@@ -79,7 +79,11 @@ Base belt frames are ordered by rectangle area and belt entity count, then expan
 and tunnel alternatives. Area pruning uses the whole routed rectangle. Within each frame, the search
 assigns lane subsets to the most constrained demands first, including extra lanes when rate or
 access requires splitting an item. It uses lane and reachable-base capacity bounds before solving
-shared capacity. Resource and rule ordering are canonical.
+shared capacity. Resource and rule ordering are canonical. Fully exhausted item-capacity failures
+are cached by belt columns and available inserter configurations within each search. Moving a fluid
+trunk without changing item access therefore does not repeat the same impossible allocation. Valid
+allocations, geometry-validation failures, and interrupted searches are not cached as capacity
+failures.
 
 `capacity.ts` uses a small deterministic fractional max-flow adapter:
 

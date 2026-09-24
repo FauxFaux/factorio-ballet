@@ -82,6 +82,35 @@ function codes(input: TileDesignInput, candidate: ReturnType<typeof found>['cand
 }
 
 describe('fluid tile search', () => {
+  it('finds the 5/5/9 item-input fluid-output layout within the debug search budget', () => {
+    const settings = problem();
+    settings.transport.inserters = [
+      { id: 'ordinary', capacity: 8, reach: 1 },
+      { id: 'long', capacity: 4, reach: 2 },
+    ];
+    settings.envelope = { ...settings.envelope, maxWidth: 16, maxPitch: 12, maxStates: 10_000 };
+    const normalized = normalizeTileDesignInput(
+      assemblerProblem({ solidInputs: [5, 5, 9], fluidOutputs: [200] }),
+      settings,
+    );
+    if (!normalized.success) throw new Error(normalized.message);
+    const result = found(solveTileDesign(normalized.input));
+    expect(result.candidate).toMatchObject({ width: 8, pitch: 3 });
+    expect(validateTileDesign(normalized.input, result.candidate).valid).toBe(true);
+    expect(result.candidate.boundary.filter(({ kind }) => kind === 'belt')).toHaveLength(2);
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
+    ).toHaveLength(2);
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'underground-belt'),
+    ).toHaveLength(2);
+    expect(
+      result.candidate.column.entities
+        .filter((entity) => entity.kind === 'inserter')
+        .every((entity) => entity.reach === undefined || entity.reach === 1),
+    ).toBe(true);
+  });
+
   it('uses immediately adjacent trunks without underground primitives', () => {
     const input = problem();
     noItems(input);

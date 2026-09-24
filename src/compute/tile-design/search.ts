@@ -102,6 +102,9 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
       .map((flow) => ({ ...flow, machineId: machine.id, side })),
   );
   const laneCapacity = input.transport.beltLaneCapacity / input.repeat.count;
+  // Fluid routes can leave exactly the same item access geometry, even when their trunks
+  // move or the machine is reflected. Reuse only fully exhausted capacity failures.
+  const impossibleItemFrames = new Set<string>();
   let exhausted = false;
   let best: Extract<TileDesignSearchResult, { status: 'found' }> | undefined;
   function visit(): boolean {
@@ -122,6 +125,12 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
   for (const frame of frames()) {
     if (best && frame.area > best.candidate.width * best.candidate.pitch) continue;
     if (!visit()) break;
+    const itemFrameKey = JSON.stringify([frame.tracks.map(({ x }) => x), frame.options]);
+    if (impossibleItemFrames.has(itemFrameKey)) {
+      diagnostics.capacityRejections++;
+      continue;
+    }
+    let itemFeasible = false;
     const lanes = trackLanes(frame.tracks);
     // Fewest possible lanes first; output geometry is usually the tightest constraint.
     const domains = demands
@@ -176,6 +185,7 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
           }
           return;
         }
+        itemFeasible = true;
         const candidate = emitTile(frame, allocation.transfers);
         const score = {
           area: candidate.width * candidate.pitch,
@@ -276,6 +286,7 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
       }
     }
     assignLanes(0);
+    if (!exhausted && !itemFeasible) impossibleItemFrames.add(itemFrameKey);
     if (exhausted) break;
   }
   if (best) {
