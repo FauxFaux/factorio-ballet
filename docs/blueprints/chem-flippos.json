@@ -1,0 +1,467 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "angels-chemical-plant-2"
+        },
+        "index": 1
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "pipe",
+        "position": {
+          "x": -412.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 2,
+        "name": "pipe",
+        "position": {
+          "x": -413.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 3,
+        "name": "pipe",
+        "position": {
+          "x": -410.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 4,
+        "name": "pipe",
+        "position": {
+          "x": -411.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 5,
+        "name": "pipe",
+        "position": {
+          "x": -408.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 6,
+        "name": "pipe",
+        "position": {
+          "x": -409.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 7,
+        "name": "pipe",
+        "position": {
+          "x": -407.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 8,
+        "name": "pipe",
+        "position": {
+          "x": -406.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 9,
+        "name": "pipe",
+        "position": {
+          "x": -405.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 10,
+        "name": "pipe",
+        "position": {
+          "x": -404.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 11,
+        "name": "pipe",
+        "position": {
+          "x": -403.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "pipe",
+        "position": {
+          "x": -402.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 13,
+        "name": "pipe",
+        "position": {
+          "x": -400.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 14,
+        "name": "pipe",
+        "position": {
+          "x": -401.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 15,
+        "name": "pipe",
+        "position": {
+          "x": -399.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 16,
+        "name": "pipe",
+        "position": {
+          "x": -398.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 17,
+        "name": "pipe",
+        "position": {
+          "x": -396.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 18,
+        "name": "pipe",
+        "position": {
+          "x": -397.5,
+          "y": -147.5
+        }
+      },
+      {
+        "entity_number": 19,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -412.5,
+          "y": -145.5
+        },
+        "mirror": true,
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 20,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -409.5,
+          "y": -145.5
+        },
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 21,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -406.5,
+          "y": -145.5
+        },
+        "mirror": true,
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 22,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -403.5,
+          "y": -145.5
+        },
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 23,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -400.5,
+          "y": -145.5
+        },
+        "mirror": true,
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 24,
+        "name": "angels-chemical-plant-2",
+        "position": {
+          "x": -397.5,
+          "y": -145.5
+        },
+        "recipe": "angels-air-separation",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 25,
+        "name": "pipe",
+        "position": {
+          "x": -413.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 26,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -412.5,
+          "y": -143.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 27,
+        "name": "pipe",
+        "position": {
+          "x": -410.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 28,
+        "name": "pipe",
+        "position": {
+          "x": -410.5,
+          "y": -142.5
+        }
+      },
+      {
+        "entity_number": 29,
+        "name": "pipe",
+        "position": {
+          "x": -411.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 30,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -411.5,
+          "y": -142.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 31,
+        "name": "pipe",
+        "position": {
+          "x": -408.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 32,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -408.5,
+          "y": -142.5
+        }
+      },
+      {
+        "entity_number": 33,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -409.5,
+          "y": -142.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 34,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -409.5,
+          "y": -143.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 35,
+        "name": "pipe",
+        "position": {
+          "x": -407.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 36,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -406.5,
+          "y": -143.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 37,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -406.5,
+          "y": -142.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 38,
+        "name": "pipe",
+        "position": {
+          "x": -405.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 39,
+        "name": "pipe",
+        "position": {
+          "x": -405.5,
+          "y": -142.5
+        }
+      },
+      {
+        "entity_number": 40,
+        "name": "pipe",
+        "position": {
+          "x": -404.5,
+          "y": -142.5
+        }
+      },
+      {
+        "entity_number": 41,
+        "name": "pipe",
+        "position": {
+          "x": -404.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 42,
+        "name": "pipe",
+        "position": {
+          "x": -402.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 43,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -403.5,
+          "y": -142.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 44,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -403.5,
+          "y": -143.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 45,
+        "name": "pipe",
+        "position": {
+          "x": -401.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 46,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -400.5,
+          "y": -143.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 47,
+        "name": "pipe",
+        "position": {
+          "x": -398.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 48,
+        "name": "pipe",
+        "position": {
+          "x": -398.5,
+          "y": -142.5
+        }
+      },
+      {
+        "entity_number": 49,
+        "name": "pipe",
+        "position": {
+          "x": -399.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 50,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -399.5,
+          "y": -142.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 51,
+        "name": "pipe",
+        "position": {
+          "x": -396.5,
+          "y": -143.5
+        }
+      },
+      {
+        "entity_number": 52,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -397.5,
+          "y": -142.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 53,
+        "name": "pipe-to-ground",
+        "position": {
+          "x": -397.5,
+          "y": -143.5
+        },
+        "direction": 4
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}

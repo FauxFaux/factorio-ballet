@@ -3,8 +3,9 @@
 This note describes the solid-item transport pattern demonstrated by `ass-3s-in-1s-out.base64`, its
 one-fluid extension in `ass-3s-1f-in-1s-out.base64`, and the rectangular chemical-plant pattern in
 `chem-2f2s-in-1f1s-out.base64`. It also records the compact two-assembler snake in
-`ass-2s-in-1s-out-snake.base64` and the port adaptor in `mono-silicon.base64`. The matching JSON
-files are easier to inspect and are the authoritative entity lists.
+`ass-2s-in-1s-out-snake.base64`, the port adaptor in `mono-silicon.base64`, and the alternating
+mirrored-plant arrangement in `chem-flippos.base64`. The matching JSON files are easier to inspect
+and are the authoritative entity lists.
 
 The filename counts describe transport lines, not resource types: `s` is one solid belt and `f` is
 one independent fluid pipe. A solid belt has two lanes and can therefore carry two dependable item
@@ -332,6 +333,32 @@ connection's flow mode and direction. Recipe fluids retain their optional 1-base
 `fluidboxIndex`, so a generator can map two independent fluid inputs and one fluid output onto the
 chemical plant's four physical connections. Geometry alone is still not a safe substitute for that
 mapping.
+
+### Alternating mirrored plants: `chem-flippos`
+
+`chem-flippos.json` places six north-facing 3x3 `angels-chemical-plant-2` machines in one touching
+row, with centres three tiles apart. All run `angels-air-separation`. Machines 1, 3, and 5 have
+`mirror: true`; machines 2, 4, and 6 omit it. Their north-side fluid inputs meet one continuous pipe
+row. Their two south-side fluid output ports are two tiles apart on each machine, so routing both
+outputs through a row of touching, identically oriented plants would crowd the same narrow strip
+below them.
+
+Mirroring every other plant exchanges the _physical positions_ of its two output fluid boxes. A
+given product uses the left output port on one plant and the right output port on its neighbour. At
+alternating boundaries, one product's matching ports face each other just one tile apart; at the
+next boundary, the other product's ports do. The fixture uses ordinary pipes for the short
+connections and pipe-to-ground pairs to carry the separate output networks past one another. The
+fixture has 34 pipes and 13 pipe-to-ground entities, including plumbing at the ends of this finite
+six-plant row. It is not a single rectangular tile to copy verbatim.
+
+This alternating mirror is the preferred dense arrangement when a machine has two fluid input or
+output ports at a two-tile pitch and the same fluids must serve a tightly packed row. Apply the
+reflection to the machine's fluid-box connections and keep the recipe-to-box assignment attached to
+the reflected boxes; merely mirroring the pipe drawing would connect the wrong fluids. A generator
+should use a two-machine repeat unit, since a one-machine translation does not preserve the port
+assignment, and verify that the two fluid networks stay separate across repeated units. The same
+principle applies to two input ports when the recipe and machine permit the corresponding mirrored
+assignment.
 
 ### Adapting a fluid port: `mono-silicon`
 
