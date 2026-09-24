@@ -15,8 +15,8 @@ blueprints. `src/data` is for managing and loading of static datasets.
 Within `src/compute/`, `assembler-design/` contains the strategy-based assembler kernel generator,
 `tile-design/` contains normalized inputs and fluid access modeling for tile design, and
 `design-validation/` checks emitted tile candidates and shared entity geometry. The completed
-assembler solver planning project is recorded in `docs/ASSEMBLER-SOLVER-PLAN.md`; read it as migration
-history, and use the source to determine which parts are implemented and used today.
+assembler solver planning project is recorded in `docs/ASSEMBLER-SOLVER-PLAN.md`; read it as
+migration history, and use the source to determine which parts are implemented and used today.
 
 Read `docs/guides/FACTORIO.md` before changing domain, cell, kernel, or layout behavior. Read
 `docs/guides/STYLING.md` before changing page layout, responsive behavior, or shared visual sizing.
