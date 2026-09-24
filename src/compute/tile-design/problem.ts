@@ -12,17 +12,24 @@ export interface ResourceDemand {
   rate: number;
 }
 
-/** One required connection; positions are alternatives into the same fluid storage. */
+/** One required connection in north-facing local coordinates. Transform its positions with the
+ * selected machine orientation while keeping the resource attached to this requirement. */
 export interface FluidRequirement {
   resource: string;
   side: FlowSide;
   positions: { position: { x: number; y: number }; direction: DesignDirection }[];
 }
 
+/** Mirror local x coordinates before applying the cardinal rotation. */
+export interface TileMachineOrientation {
+  rotation: DesignDirection;
+  mirrored: boolean;
+}
+
 export interface TileMachine {
   id: string;
   size: MachineSize;
-  allowedRotations: DesignDirection[];
+  orientations: TileMachineOrientation[];
   inputs: ResourceDemand[];
   outputs: ResourceDemand[];
   fluidRequirements: FluidRequirement[];
@@ -141,20 +148,6 @@ export function normalizeTileDesignInput(
     if (!positiveInteger(size.width) || !positiveInteger(size.height)) {
       return invalid('invalid-machine', `Machine ${id} has an invalid footprint.`, undefined, id);
     }
-    const rotations = specification.allowedRotations ?? directions;
-    if (
-      rotations.length === 0 ||
-      new Set(rotations).size !== rotations.length ||
-      rotations.some((rotation) => !directions.includes(rotation))
-    ) {
-      return invalid(
-        'invalid-machine',
-        `Machine ${id} has invalid allowed rotations.`,
-        undefined,
-        id,
-      );
-    }
-
     for (const [side, declarations] of [
       ['input', specification.fluidIngredients],
       ['output', specification.fluidProducts],
@@ -217,7 +210,7 @@ export function normalizeTileDesignInput(
     machines.push({
       id,
       size: { ...(specification.size ?? { width: 3, height: 3 }) },
-      allowedRotations: [...(specification.allowedRotations ?? directions)],
+      orientations: machineOrientations(specification),
       inputs,
       outputs,
       fluidRequirements,
@@ -265,6 +258,17 @@ export function normalizeTileDesignInput(
       },
     },
   };
+}
+
+function machineOrientations(specification: AssemblerSpecification): TileMachineOrientation[] {
+  const size = specification.size ?? { width: 3, height: 3 };
+  const hasFluidConnections = Boolean(specification.fluidBoxes?.length);
+  if (size.width === size.height && !hasFluidConnections) {
+    return [{ rotation: 'north', mirrored: false }];
+  }
+  return [false, ...(hasFluidConnections ? [true] : [])].flatMap((mirrored) =>
+    directions.map((rotation) => ({ rotation, mirrored })),
+  );
 }
 
 function makeFluidRequirements(

@@ -23,7 +23,6 @@ export interface AssemblerSpecification {
   outputPerSecond: ResourceRates;
   /** The machine's tile footprint when a problem needs non-default geometry. */
   size?: MachineSize;
-  allowedRotations?: ('north' | 'east' | 'south' | 'west')[];
   /** Physical fluid slots and ports; recipe-fluid assignment is intentionally separate. */
   fluidBoxes?: MachineFluidBox[];
   /** Recipe order and explicit input-box indexes, when available. */

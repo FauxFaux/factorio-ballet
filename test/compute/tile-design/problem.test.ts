@@ -24,6 +24,50 @@ function normalized(problem: KernelProblem, overrides: Partial<TileDesignOptions
 }
 
 describe('normalizeTileDesignInput', () => {
+  it('lists one meaningful orientation for a square machine without fluid connections', () => {
+    const machine = normalized(assemblerProblem({ solidInputs: [1] })).machines[0]!;
+    expect(machine.orientations).toEqual([{ rotation: 'north', mirrored: false }]);
+  });
+
+  it('allows every cardinal rotation for a rectangular machine', () => {
+    const machine = normalized(
+      assemblerProblem({ solidInputs: [1], size: { width: 2, height: 3 } }),
+    ).machines[0]!;
+    expect(machine.orientations).toEqual([
+      { rotation: 'north', mirrored: false },
+      { rotation: 'east', mirrored: false },
+      { rotation: 'south', mirrored: false },
+      { rotation: 'west', mirrored: false },
+    ]);
+  });
+
+  it('allows each rotation and its mirror when a machine has fluid connections', () => {
+    const machine = normalized(assemblerProblem({ fluidInputs: [1], fluidOutputs: [1] }))
+      .machines[0]!;
+    expect(machine.orientations).toEqual([
+      { rotation: 'north', mirrored: false },
+      { rotation: 'east', mirrored: false },
+      { rotation: 'south', mirrored: false },
+      { rotation: 'west', mirrored: false },
+      { rotation: 'north', mirrored: true },
+      { rotation: 'east', mirrored: true },
+      { rotation: 'south', mirrored: true },
+      { rotation: 'west', mirrored: true },
+    ]);
+    expect(machine.fluidRequirements).toEqual([
+      {
+        resource: 'fluid 1',
+        side: 'input',
+        positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
+      },
+      {
+        resource: 'fluid 2',
+        side: 'output',
+        positions: [{ position: { x: 0, y: 1 }, direction: 'south' }],
+      },
+    ]);
+  });
+
   it('retains gross machine transfers and reconciles an internal resource', () => {
     const problem = assemblerProblem({ solidInputs: [5], solidOutputs: [5] });
     problem.inputs.solids = { ore: 5 };
@@ -81,7 +125,9 @@ describe('normalizeTileDesignInput', () => {
     problem.inputs.fluids = { fluid1: 200 };
     problem.assemblers[0]!.inputPerSecond = { fluid1: 200 };
 
-    expect(normalized(problem).machines[0]?.fluidRequirements).toEqual([
+    const machine = normalized(problem).machines[0]!;
+    expect(machine.orientations).toContainEqual({ rotation: 'north', mirrored: true });
+    expect(machine.fluidRequirements).toEqual([
       {
         resource: 'fluid1',
         side: 'input',
@@ -139,7 +185,9 @@ describe('normalizeTileDesignInput', () => {
       },
     ];
 
-    expect(normalized(problem).machines[0]?.fluidRequirements).toEqual([
+    const machine = normalized(problem).machines[0]!;
+    expect(machine.orientations).toContainEqual({ rotation: 'north', mirrored: true });
+    expect(machine.fluidRequirements).toEqual([
       {
         resource: 'fluid:beta',
         side: 'output',
