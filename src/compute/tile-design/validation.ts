@@ -1,4 +1,5 @@
-import { isItem } from '../../types.ts';
+import { isFluid, isItem } from '../../types.ts';
+import { orientFluidPort } from './orientation.ts';
 import { RATE_EPSILON } from './capacity.ts';
 import type { InvalidTileDesignInput, TileDesignOptions, TileDesignInput } from './types.ts';
 
@@ -100,11 +101,53 @@ export function validateSearchInput(input: TileDesignInput): string | undefined 
       !positiveInteger(machine.size.height) ||
       !machine.orientations.length ||
       machine.orientations.some(
-        ({ rotation }) => !['north', 'east', 'south', 'west'].includes(rotation),
+        ({ rotation, mirrored }) =>
+          !['north', 'east', 'south', 'west'].includes(rotation) || typeof mirrored !== 'boolean',
       )
     )
       return 'Machine IDs, footprints, and orientations must be valid and distinct.';
     ids.add(machine.id);
+    const boxes = new Map<number, string>();
+    for (const flows of [machine.inputs, machine.outputs]) {
+      const seen = new Set<number>();
+      for (const access of flows.fluids) {
+        if (
+          !isFluid(access.resource) ||
+          !Number.isSafeInteger(access.boxIndex) ||
+          access.boxIndex < 0 ||
+          seen.has(access.boxIndex) ||
+          !access.positions.length ||
+          (boxes.has(access.boxIndex) && boxes.get(access.boxIndex) !== access.resource)
+        )
+          return 'Fluid accesses require distinct valid boxes, fluid IDs, and physical ports.';
+        seen.add(access.boxIndex);
+        boxes.set(access.boxIndex, access.resource);
+        for (const port of access.positions) {
+          if (
+            !['north', 'east', 'south', 'west'].includes(port.direction) ||
+            !Number.isSafeInteger(port.position.x * 2) ||
+            !Number.isSafeInteger(port.position.y * 2)
+          )
+            return 'Fluid ports must use cardinal directions and grid-aligned coordinates.';
+          const {
+            position: { x, y },
+          } = orientFluidPort(port, machine.size, { rotation: 'north', mirrored: false });
+          const { width, height } = machine.size;
+          if (
+            !Number.isInteger(x) ||
+            !Number.isInteger(y) ||
+            !(port.direction === 'west'
+              ? x === -1 && y >= 0 && y < height
+              : port.direction === 'east'
+                ? x === width && y >= 0 && y < height
+                : port.direction === 'north'
+                  ? y === -1 && x >= 0 && x < width
+                  : y === height && x >= 0 && x < width)
+          )
+            return 'Fluid ports must face outward from a footprint edge.';
+        }
+      }
+    }
   }
   for (const flows of [
     ...input.machines.flatMap((machine) => [machine.inputs, machine.outputs]),
@@ -117,6 +160,11 @@ export function validateSearchInput(input: TileDesignInput): string | undefined 
         return 'Item flows require distinct item IDs and finite positive rates.';
       resources.add(resource);
     }
+  }
+  for (const side of ['inputs', 'outputs'] as const) {
+    const fluids = input.boundary[side].fluids;
+    if (fluids.some((fluid) => !isFluid(fluid)) || new Set(fluids).size !== fluids.length)
+      return 'Boundary fluids require distinct fluid IDs.';
   }
   const balance = new Map<string, number>();
   const scale = new Map<string, number>();

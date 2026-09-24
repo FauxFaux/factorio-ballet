@@ -54,7 +54,7 @@ export function validateBelts(
   if (entities.some((entity) => entity.kind === 'splitter'))
     issue('unsupported-entity', 'Splitter validation is not yet supported.');
   for (const [index, entity] of entities.entries()) {
-    if (entity.kind !== 'belt') continue;
+    if (entity.kind !== 'belt' && entity.kind !== 'underground-belt') continue;
     const track = candidate.boundary.find(
       (track) => track.kind === 'belt' && track.x === entity.position.x,
     );
@@ -65,7 +65,7 @@ export function validateBelts(
     )
       issue(
         'unsupported-belt-route',
-        'Only straight vertical surface trunks can be certified.',
+        'Only straight vertical trunks with in-tile tunnels can be certified.',
         index,
       );
   }
@@ -79,8 +79,25 @@ export function validateBelts(
     if (entity.kind === 'underground-belt' && !paired.has(index))
       issue('underground-pair', `Underground belt ${index} has no partner.`, index);
   });
-  if (entities.some((entity) => entity.kind === 'underground-belt'))
-    issue('unsupported-entity', 'Underground belt load and seam validation is not yet supported.');
+  // Local non-overlapping pairs leave no endpoint looking for a partner in another copy.
+  // This also proves finite-run connectivity without adding end caps.
+  for (const pair of graph.undergroundPairs) {
+    const a = entities[pair.inputEntityNumber].position;
+    const b = entities[pair.outputEntityNumber].position;
+    for (const [index, entity] of entities.entries()) {
+      if (
+        (entity.kind === 'belt' || entity.kind === 'underground-belt') &&
+        entity.position.x === a.x &&
+        entity.position.y > Math.min(a.y, b.y) &&
+        entity.position.y < Math.max(a.y, b.y)
+      )
+        issue(
+          'underground-conflict',
+          'A trunk has exposed belt geometry inside its tunnel.',
+          index,
+        );
+    }
+  }
   for (const pair of graph.undergroundPairs)
     if (pair.span - 2 > input.transport.undergroundBeltReach)
       issue(
@@ -117,13 +134,15 @@ export function validateBelts(
     if (track.kind !== 'belt') continue;
     const bottom = entities.findIndex(
       (entity) =>
-        entity.kind === 'belt' &&
+        (entity.kind === 'belt' || entity.kind === 'underground-belt') &&
         entity.position.x === track.x &&
         entity.position.y === candidate.pitch - 1,
     );
     const top = entities.findIndex(
       (entity) =>
-        entity.kind === 'belt' && entity.position.x === track.x && entity.position.y === 0,
+        (entity.kind === 'belt' || entity.kind === 'underground-belt') &&
+        entity.position.x === track.x &&
+        entity.position.y === 0,
     );
     if (bottom < 0 || top < 0) continue;
     for (const side of ['left', 'right'] as const) {

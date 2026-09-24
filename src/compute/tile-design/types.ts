@@ -49,7 +49,9 @@ export interface TileBoundary {
 
 export interface TileTransportRules {
   beltLaneCapacity: number;
+  /** Maximum hidden cells between endpoints (endpoint distance minus one). */
   undergroundBeltReach: number;
+  /** Maximum hidden cells between endpoints, using the same convention as belts. */
   undergroundPipeReach: number;
   /** Filter-capable configurations. Capacity is the total rate across all carried resources. */
   inserters: { id: string; capacity: number; reach: number }[];

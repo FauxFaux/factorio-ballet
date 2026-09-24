@@ -216,7 +216,7 @@ function oppositeDirection(direction: DesignDirection): DesignDirection {
   return rotateDirection(direction, 2);
 }
 
-/** Return the machine's north-facing fluid-box points transformed to this assembler's rotation. */
+/** Transform prototype ports by local-x reflection followed by the assembler's rotation. */
 export function assemblerFluidboxConnections(
   assembler: DesignAssembler,
   machine: Pick<Machine, 'fluidBoxes'> | undefined,
@@ -228,8 +228,18 @@ export function assemblerFluidboxConnections(
 
   return machine.fluidBoxes.flatMap((box, boxIndex) =>
     box.connections.map((connection) => ({
-      position: rotatePosition(connection.position, turns),
-      direction: rotateDirection(connection.direction, turns),
+      position: rotatePosition(
+        assembler.mirrored
+          ? { x: -connection.position.x, y: connection.position.y }
+          : connection.position,
+        turns,
+      ),
+      direction: rotateDirection(
+        assembler.mirrored && (connection.direction === 'east' || connection.direction === 'west')
+          ? oppositeDirection(connection.direction)
+          : connection.direction,
+        turns,
+      ),
       flowDirection: connection.flowDirection,
       resource: resources.get(boxIndex),
     })),

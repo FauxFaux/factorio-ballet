@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { designFluidTraces } from '../src/components/design/design-fluid-traces.ts';
+import {
+  assemblerFluidboxConnections,
+  designFluidTraces,
+} from '../src/components/design/design-fluid-traces.ts';
 import type {
   DesignSceneMachines,
   DesignSceneRecipes,
@@ -32,6 +35,26 @@ const recipes: DesignSceneRecipes = {
 };
 
 describe('design fluid traces', () => {
+  it('reflects fluid identities and normals before rotating preview ports', () => {
+    const source = assembler('source', 0);
+    const machine = structuredClone(machines.source!);
+    machine.fluidBoxes![0].connections[0].position.y = -1;
+    expect(
+      assemblerFluidboxConnections(
+        { ...source, direction: 'east', mirrored: true },
+        machine,
+        recipes.source,
+      ),
+    ).toEqual([
+      {
+        position: { x: 1, y: -1 },
+        direction: 'north',
+        flowDirection: 'output',
+        resource: 'fluid:steam',
+      },
+    ]);
+  });
+
   it('fills a complete pipe component from an adjacent fluidbox output', () => {
     const column: DesignColumn = {
       entities: [

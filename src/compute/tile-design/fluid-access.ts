@@ -81,8 +81,8 @@ export function makeFluidAccesses(
         positions.length === 0 ||
         positions.some(
           ({ position, direction }) =>
-            !Number.isInteger(position.x) ||
-            !Number.isInteger(position.y) ||
+            !Number.isSafeInteger(position.x * 2) ||
+            !Number.isSafeInteger(position.y * 2) ||
             !directions.includes(direction),
         )
       ) {

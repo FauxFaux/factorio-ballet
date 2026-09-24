@@ -129,17 +129,20 @@ describe('App', () => {
       }),
     ).toBeTruthy();
     const airFilterArticle = articleForProblem(kernelProblems.airFilter[0]!);
-    const fluidboxArrows = [...airFilterArticle.querySelectorAll('.cell-design-fluidbox-arrow')];
-    expect(
-      fluidboxArrows.map((arrow) => [
-        arrow.getAttribute('data-direction'),
-        arrow.getAttribute('data-flow-direction'),
-        arrow.getAttribute('data-resource'),
-      ]),
-    ).toEqual([
-      ['west', 'input', 'fluid:1'],
-      ['east', 'output', 'fluid:2'],
-    ]);
+    for (const name of ['Assembler design result', 'Tile design result']) {
+      const preview = within(airFilterArticle).getByRole('region', { name });
+      const fluidboxArrows = [...preview.querySelectorAll('.cell-design-fluidbox-arrow')];
+      expect(
+        fluidboxArrows.map((arrow) => [
+          arrow.getAttribute('data-direction'),
+          arrow.getAttribute('data-flow-direction'),
+          arrow.getAttribute('data-resource'),
+        ]),
+      ).toEqual([
+        ['west', 'input', 'fluid:1'],
+        ['east', 'output', 'fluid:2'],
+      ]);
+    }
     expect(
       within(articleForProblem(firstSolidProblem)).getByLabelText('Max column height').textContent,
     ).toContain('×6');

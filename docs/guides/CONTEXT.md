@@ -337,16 +337,19 @@ not. `CONTEXT-UI.md` describes the wider planner design the solver eventually se
 The completed assembler kernel project left a strategy-based generator in
 `src/compute/assembler-design/`, with `src/compute/assembler-design.ts` as its entry point. It tries
 known solid and fluid layouts for a `KernelProblem` and returns the smallest successful design by
-occupied area. Current UI consumers still call this generator.
+occupied area. Kernel debug cards compare it with the tile solver; other design consumers still call
+this generator.
 
 `src/compute/tile-design/` contains input normalization, transport-rule checks, fluid-box access
-modeling, and a bounded one-machine item allocator. The search allocates straight belt tracks,
-lanes, and compatible ordinary/long inserters against fixed rates and requested repeat capacity. It
-is not yet used by the UI. [TILE-SEARCH.md](TILE-SEARCH.md) describes its supported scope, capacity
-model, diagnostics, and extension points. `src/compute/design-validation/` holds the separate, pure
-candidate checks: shared entity overlap geometry and validation of emitted entities, transfers,
-fluid connections, boundary tracks, and repeat capacity. The overlap helper is also used by design
-previews.
+modeling, and a bounded one-machine item/fluid allocator. The search allocates straight belt tracks,
+lanes, compatible ordinary/long inserters, and rotated/mirrored fluid connections against fixed
+rates and requested repeat capacity. Fluid routes use adjacent trunks or horizontal underground pipe
+pairs; obstructed belts receive in-tile underground spans. Kernel debug cards show its candidate
+alongside the legacy design. [TILE-SEARCH.md](TILE-SEARCH.md) describes its supported scope,
+capacity model, diagnostics, and extension points. `src/compute/design-validation/` holds the
+separate, pure candidate checks: shared entity overlap geometry and validation of emitted entities,
+transfers, fluid connections, boundary tracks, and repeat capacity. The overlap helper is also used
+by design previews.
 
 `docs/ASSEMBLER-SOLVER-PLAN.md` records the completed migration planning project and its proposed
 solver architecture. Its delivery steps describe that project’s intended direction, not the current

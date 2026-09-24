@@ -7,11 +7,13 @@ export interface SolidDemand extends ItemFlow {
   side: 'input' | 'output';
 }
 
-/** A surface profile today; future bent/underground profiles can expose different row attachments. */
+/** Straight track with explicit surface access and optional in-tile underground spans. */
 export interface SolidTrack {
   x: number;
   direction: 'north';
-  profile: 'surface';
+  profile: 'surface' | 'underground';
+  /** In-tile northbound pairs, including their two exposed endpoint rows. */
+  tunnels?: { top: number; bottom: number }[];
 }
 
 export interface SolidLane {
@@ -25,6 +27,8 @@ export interface AssignedSolidLane extends SolidLane {
 
 export function reachesLane(option: SolidAccessOption, lane: SolidLane): boolean {
   if (option.belt.x !== lane.track.x) return false;
+  if (lane.track.tunnels?.some(({ top, bottom }) => option.belt.y > top && option.belt.y < bottom))
+    return false;
   // A northbound belt receives output on the far lane, never both lanes from the same side.
   return option.side === 'input' || lane.lane === (option.face === 'east' ? 'right' : 'left');
 }
@@ -40,6 +44,7 @@ export function trackLanes(tracks: SolidTrack[]): SolidLane[] {
 export interface SolidTrackFrame {
   machine: TileMachine;
   rotation: DesignDirection;
+  mirrored: boolean;
   tracks: SolidTrack[];
   options: SolidAccessOption[];
   area: number;
@@ -50,12 +55,12 @@ export function solidTrackFrames(input: TileDesignInput, original: TileMachine):
   const result: SolidTrackFrame[] = [];
   const shapes = new Set<string>();
   for (const { rotation, mirrored } of original.orientations) {
-    if (mirrored) continue;
     const swapped = rotation === 'east' || rotation === 'west';
     const size = swapped
       ? { width: original.size.height, height: original.size.width }
       : original.size;
-    const shape = `${size.width},${size.height}`;
+    const hasFluids = original.inputs.fluids.length + original.outputs.fluids.length > 0;
+    const shape = hasFluids ? `${rotation},${mirrored}` : `${size.width},${size.height}`;
     if (shapes.has(shape)) continue;
     shapes.add(shape);
     if (
@@ -77,10 +82,8 @@ export function solidTrackFrames(input: TileDesignInput, original: TileMachine):
         direction: 'north',
         profile: 'surface',
       }));
-      const options = accesses.filter(
-        ({ base, belt }) => selected.includes(belt.x) && !selected.includes(base.x),
-      );
-      result.push({ machine, rotation, tracks, options, area: width * size.height });
+      const options = accesses.filter(({ belt }) => selected.includes(belt.x));
+      result.push({ machine, rotation, mirrored, tracks, options, area: width * size.height });
     }
   }
   return result.sort(

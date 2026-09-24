@@ -42,7 +42,12 @@ export function DesignCard({
         ],
         fluidThroughput: 'unlimited',
       },
-      envelope: { maxWidth: 16, maxPitch: 12, primitives: ['surface'], maxStates: 10_000 },
+      envelope: {
+        maxWidth: 16,
+        maxPitch: 12,
+        primitives: ['surface', 'underground', 'branch'],
+        maxStates: 10_000,
+      },
     };
     const normalized = normalizeTileDesignInput(problem, options);
     return normalized.success ? solveTileDesign(normalized.input) : normalized;

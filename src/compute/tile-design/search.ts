@@ -2,7 +2,8 @@ import type { TileDesignCandidate, TileValidationResult } from '../design-valida
 import { validateTileDesign } from '../design-validation/validate.ts';
 import type { SolidAccessOption } from './access.ts';
 import { allocateSolidRates, RATE_EPSILON, requiredUnits } from './capacity.ts';
-import { emitSolidTile } from './emit.ts';
+import { emitTile } from './emit.ts';
+import { routeFrames } from './routes.ts';
 import {
   reachesLane,
   solidTrackFrames,
@@ -20,7 +21,9 @@ export interface TileSearchDiagnostics {
   capacityRejections: number;
   validationRejections: number;
   /** The actually searched family, even when the caller permits additional primitives. */
-  scope: 'one-machine/external-items/straight-surface-trunks';
+  scope:
+    | 'one-machine/external-items/straight-surface-trunks'
+    | 'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels';
   bestScore?: { area: number; transportEntities: number };
 }
 
@@ -40,11 +43,10 @@ export type TileDesignSearchResult =
       diagnostics: TileSearchDiagnostics;
     };
 
-/** Bounded discrete allocation with an independent continuous rate adapter and emission/validation.
- * Translation is fixed. With straight external trunks, all useful attachments are east/west;
- * extra pitch, disconnected distant tracks, and padding are dominated. Belt reversal only renames
- * the free lane variables, so northbound is canonical for this family. Branch profiles will need
- * their own frames/attachments, without changing the demand or rate-allocation contracts. */
+/** Bounded geometry and rate allocation with independent emission validation. Translation and
+ * uniform machine-height pitch are fixed; selected ports must face east/west trunks. Northbound
+ * belts are canonical because reversal swaps free lane variables in this route family. Adapter
+ * margins, phased trunks and bent belts will need additional route frames. */
 export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult {
   const diagnostics: TileSearchDiagnostics = {
     exploredStates: 0,
@@ -59,21 +61,23 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
   const invalid = validateSearchInput(input);
   if (invalid) return failure('invalid-input', invalid);
   const machine = input.machines[0];
-  if (
-    input.machines.length !== 1 ||
-    machine.inputs.fluids.length ||
-    machine.outputs.fluids.length ||
-    input.boundary.inputs.fluids.length ||
-    input.boundary.outputs.fluids.length
-  )
-    return failure('unsupported', 'Only one machine with external item flows is supported.');
+  if (input.machines.length !== 1)
+    return failure('unsupported', 'Only one machine with external flows is supported.');
+  const hasFluids = machine.inputs.fluids.length + machine.outputs.fluids.length > 0;
+  if (hasFluids)
+    diagnostics.scope =
+      'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels';
   if (!input.envelope.primitives.includes('surface'))
-    return failure('unsupported', 'Straight surface belts are required.');
+    return failure('unsupported', 'Surface trunks are required.');
   if (input.transport.inserters.some(({ reach }) => reach !== 1 && reach !== 2))
     return failure('unsupported', 'Only one- and two-tile inserter reach is supported.');
-  if (!machine.orientations.some(({ mirrored }) => !mirrored))
-    return failure('unsupported', 'Mirrored-only machine placements cannot yet be emitted.');
   for (const side of ['inputs', 'outputs'] as const) {
+    const fluids = new Set(machine[side].fluids.map(({ resource }) => resource));
+    if (
+      fluids.size !== input.boundary[side].fluids.length ||
+      input.boundary[side].fluids.some((fluid) => !fluids.has(fluid))
+    )
+      return failure('unsupported', 'Gross fluid transfers must be supplied/exported externally.');
     const flows = machine[side].items;
     const boundary = input.boundary[side].items;
     if (
@@ -109,8 +113,14 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
     return true;
   }
 
-  for (const frame of solidTrackFrames(input, machine)) {
-    if (best && frame.area > best.candidate.width * best.candidate.pitch) break;
+  function* frames() {
+    for (const frame of solidTrackFrames(input, machine)) {
+      if (exhausted) return;
+      yield* routeFrames(input, frame, visit);
+    }
+  }
+  for (const frame of frames()) {
+    if (best && frame.area > best.candidate.width * best.candidate.pitch) continue;
     if (!visit()) break;
     const lanes = trackLanes(frame.tracks);
     // Fewest possible lanes first; output geometry is usually the tightest constraint.
@@ -166,7 +176,7 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
           }
           return;
         }
-        const candidate = emitSolidTile(frame.machine, frame.rotation, allocation.transfers);
+        const candidate = emitTile(frame, allocation.transfers);
         const score = {
           area: candidate.width * candidate.pitch,
           transportEntities: candidate.column.entities.length - 1,
@@ -277,7 +287,7 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
     exhausted ? 'budget-exhausted' : 'envelope-exhausted',
     exhausted
       ? 'The deterministic state budget ended before a valid allocation was found.'
-      : 'No allocation fits the width, pitch, repeat capacity, and compatible inserter sites using straight surface trunks.',
+      : 'No allocation fits the width, pitch, repeat capacity, and compatible inserter sites using the reported trunk and branch primitives.',
   );
 }
 

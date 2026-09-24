@@ -37,7 +37,7 @@ describe('DesignCard', () => {
     expect(assembler.compareDocumentPosition(tile) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
-  it('shows the tile solver reason when it cannot handle a problem', () => {
+  it('shows fluid layouts from the tile solver', () => {
     const { container } = render(
       <DesignCard
         index={1}
@@ -49,6 +49,20 @@ describe('DesignCard', () => {
     const tile = within(container as HTMLElement).getByRole('region', {
       name: 'Tile design result',
     });
-    expect(within(tile).getByRole('note').textContent).toContain('external item flows');
+    expect(within(tile).queryByRole('note')).toBeNull();
+    expect(
+      within(tile).getByRole('region', { name: 'Assembler 2 tile design preview' }),
+    ).toBeTruthy();
+  });
+  it('shows the tile solver reason for unsupported machine groups', () => {
+    const problem = assemblerProblem({ solidInputs: [1], solidOutputs: [2] });
+    problem.assemblers.push({ ...problem.assemblers[0], inputPerSecond: {}, outputPerSecond: {} });
+    const { container } = render(
+      <DesignCard index={2} problem={problem} throughput={throughput} />,
+    );
+    const tile = within(container as HTMLElement).getByRole('region', {
+      name: 'Tile design result',
+    });
+    expect(within(tile).getByRole('note').textContent).toContain('Only one machine');
   });
 });

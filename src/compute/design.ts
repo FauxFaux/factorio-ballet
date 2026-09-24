@@ -30,6 +30,8 @@ export interface DesignAssembler extends DesignEntityBase {
   machine?: MachineId;
   /** Its rotation from the prototype's north-facing geometry. Absent means north. */
   direction?: DesignDirection;
+  /** Reflect prototype-local x before rotation. Absent means unmirrored. */
+  mirrored?: boolean;
 }
 
 export interface DesignBelt extends DesignEntityBase {

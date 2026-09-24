@@ -1,25 +1,27 @@
-# Item tile search
+# Item and fluid tile search
 
-`solveTileDesign` in `src/compute/tile-design/search.ts` implements the one-machine item allocation
-milestone of `docs/ASSEMBLER-SOLVER-PLAN.md`. It consumes normalized fixed rates;
-`normalizeTileDesignInput` remains the adapter from `KernelProblem`. Existing UI consumers still use
-the legacy assembler generator.
+`solveTileDesign` in `src/compute/tile-design/search.ts` implements one-machine item and fluid
+allocation following the architecture of `docs/ASSEMBLER-SOLVER-PLAN.md`. It consumes normalized
+fixed rates; `normalizeTileDesignInput` remains the adapter from `KernelProblem`. The kernel debug
+cards compare this search with the legacy assembler generator. Other design consumers still use the
+legacy path.
 
 The search supports any number of item ingredients and products that fit the available geometry and
 capacities. It preserves gross input and output demands, including catalysts. Each gross transfer
-must have a corresponding external supply or export. Internal recirculation, fluids, and multiple
-machines return `unsupported`.
+must have a corresponding external supply or export. Internal recirculation and multiple machines
+return `unsupported`. Fluids use unlimited-throughput networks with explicit physical box
+obligations; each resource must have an external supply or export on the corresponding side.
 
 ## Geometry and transport model
 
 - Enumerate allowed rectangular footprint orientations and subsets of reachable straight vertical
-  surface tracks. Northbound is canonical: reversing a straight belt just swaps its free lane
-  variables in this model.
+  tracks with surface segments and optional underground spans. Northbound is canonical: reversing a
+  straight belt just swaps its free lane variables in this model.
 - Enumerate ordinary and long inserter bases on all four faces. Long inserters can stand either one
   or two cells from the edge, provided their machine endpoint lies inside the footprint. Ordinary
   and long configurations at the same base are alternatives.
 - Straight trunks can serve east/west faces only. North/south access needs later item branches.
-  Extra pitch and padding cannot improve this family, so pitch equals the rotated machine height.
+  Pitch equals the rotated machine height. The search does not add adapter rows or stagger machines.
 - One resource and one external flow role per lane. Inputs can pick either lane; outputs use the
   actual far lane. Several inserters on one face do not unlock the other output lane.
 - All supplied inserter rules currently describe filter-capable configurations with constant total
@@ -27,17 +29,57 @@ machines return `unsupported`.
   Multiple products receive explicit output filters. Resource-dependent capacities or pickup
   scheduling require a richer rule model.
 
-The track model exposes a surface profile separately from access options, capacity allocation, and
-entity emission. Future bends, underground spans, and branches must supply their actual row
-attachments and occupancy conflicts; an extra column alone does not promise extra access. The
-belt-bending example in `docs/blueprints/ASSEMBLERS.md` is outside the current searched scope.
+The track model exposes row profiles separately from access options, capacity allocation, and entity
+emission. Future bends and item branches must supply their actual row attachments and occupancy
+conflicts; an extra column alone does not promise extra access. The belt-bending example in
+`docs/blueprints/ASSEMBLERS.md` is outside the current searched scope.
+
+## Fluid routes and orientation
+
+All allowed cardinal rotations and local-x mirrors are searched for fluid machines. Reflection is
+applied before rotation, including port normals; resource and physical box identities stay attached
+to the transformed ports. Rectangular and even footprints use centre-relative prototype positions,
+including half-cell coordinates. Emitted assemblers retain `direction` and `mirrored`.
+
+`routes.ts` enumerates two connection schemes for every required box and alternative port:
+
+1. A surface pipe trunk immediately beside the selected east/west port.
+2. An inward-facing pipe-to-ground at the machine and an outward-facing partner beside a more
+   distant surface trunk. The horizontal tunnel can cross belts and other pipe trunks underground.
+
+The second scheme requires both `branch` and `underground` in the envelope. If either pipe endpoint
+occupies a belt cell, enumerate in-tile underground belt pairs covering that obstruction. Endpoint
+choices can preserve different inserter sites, or combine several obstructions in one tunnel. Hidden
+rows cannot supply inserters; both exposed endpoints can. Inserter bases reserve only their actual
+cells, so arms may cross pipes and other transport. Both underground reach settings count hidden
+cells between endpoints; adapters from prototype fields must convert their distance convention.
+
+Routes may share compatible geometry. Distinct fluid networks must remain isolated, including at
+unselected ports and across the repeat seam. The validator reconstructs surface adjacency and mutual
+nearest underground partners from entities, checks reach and exposed faces, and requires every box
+to connect to an advertised trunk. Per-pipe resource assignments and per-trunk fluid identities are
+emitted explicitly.
+
+The current family uses full surface pipe trunks and horizontal pipe pairs. Belt tunnels stay wholly
+inside one tile, with exposed surface connections at the top and bottom, so finite modules need no
+extra tunnel end caps. Periodic fluid adjacency is checked with wrapped seam edges; horizontal
+pairing cannot reach a neighboring copy. Straight, non-overlapping in-tile belt pairs likewise
+cannot steal another copy's partner. Validation rejects vertical underground pipe phases and
+unsupported belt routes.
+
+North/south fluid branches, seam-spanning tunnels, adapters for uneven stacking, and alternating
+machine orientations across copies remain outside this family. A larger general routing model can
+add new route primitives and boundary phases; the item rate allocation contract need not change.
+Kernel debug cards enable both connection schemes and display the selected geometry; integration
+with editable designs and module export remains separate.
 
 ## Search and capacity
 
-Frames are ordered by rectangle area and belt entity count. Within each frame, the search assigns
-lane subsets to the most constrained demands first, including extra lanes when rate or access
-requires splitting an item. It uses lane and reachable-base capacity bounds before solving shared
-capacity. Resource and rule ordering are canonical.
+Base belt frames are ordered by rectangle area and belt entity count, then expanded into fluid route
+and tunnel alternatives. Area pruning uses the whole routed rectangle. Within each frame, the search
+assigns lane subsets to the most constrained demands first, including extra lanes when rate or
+access requires splitting an item. It uses lane and reachable-base capacity bounds before solving
+shared capacity. Resource and rule ordering are canonical.
 
 `capacity.ts` uses a small deterministic fractional max-flow adapter:
 
@@ -54,11 +96,13 @@ rates in `boundary[].laneFlows`, so module routing can supply/export each lane s
 independent validator reconstructs geometry, lane access, filters, rates, and repeat capacity.
 
 The search minimizes rectangle area, then transport entity count; equal scores retain the first
-canonical candidate. `maxStates` counts frame visits, lane assignment/subset recursion, and discrete
-capacity branches. Diagnostics report explored states, rejected capacity/validation checks, the best
-score, and the actual scope searched. Results distinguish invalid input, unsupported rules,
-exhausted geometry/capacity bounds, and exhausted search budget. A budget stop retains any valid
-incumbent with `optimal: false`. `optimal: true` applies only to the reported straight-trunk scope.
+canonical candidate. `maxStates` counts fluid route choices, tunnel choices, frame visits, lane
+assignment/subset recursion, and discrete capacity branches. Diagnostics report explored states,
+rejected capacity/validation checks, the best score, and the actual scope searched. Results
+distinguish invalid input, unsupported rules, exhausted geometry/capacity bounds, and exhausted
+search budget. A budget stop retains any valid incumbent with `optimal: false`. `optimal: true`
+applies only to the reported route family. Tunnel profiles are generated to cross fluid
+obstructions, not solely to replace otherwise unobstructed belts.
 
 ## Verification
 
@@ -66,3 +110,8 @@ incumbent with `optimal: false`. `optimal: true` applies only to the reported st
 products, rectangular rotation, catalysts, repeat limits, deterministic ordering, and honest budget
 stops. A separate exhaustive allocator compares feasibility across 216 small integer-rate cases; it
 enumerates demand splits between faces independently of the production flow/search code.
+
+`test/compute/tile-design/fluid-search.test.ts` covers adjacent and remote trunks, rotations and
+mirrors, rectangular half-cell geometry, multiple isolated networks, alternative and distinct box
+obligations, four-inserter outputs around a blocked row, repeat/budget limits, and corrupted pipe or
+belt certificates. It also checks periodic fluid mixing and rejects disconnected labelled stubs.

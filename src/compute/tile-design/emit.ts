@@ -1,18 +1,15 @@
-import type { DesignDirection } from '../design.ts';
 import type { TileDesignCandidate } from '../design-validation/types.ts';
 import type { AllocatedTransfer } from './capacity.ts';
-import type { TileMachine } from './types.ts';
+import type { RoutedFrame } from './routes.ts';
 
-/** Expand a solved surface profile. Boundary rates are per tile; the module router must supply
+/** Expand selected belt profiles and fluid routes. Boundary rates are per tile; the module router must supply
  * each advertised lane separately (including upstream splits when an item uses several lanes). */
-export function emitSolidTile(
-  machine: TileMachine,
-  rotation: DesignDirection,
-  allocated: AllocatedTransfer[],
-): TileDesignCandidate {
+export function emitTile(frame: RoutedFrame, allocated: AllocatedTransfer[]): TileDesignCandidate {
+  const { machine, rotation, mirrored, fluid } = frame;
   const trackXs = [...new Set(allocated.map(({ lane }) => lane.track.x))].sort((a, b) => a - b);
-  const minX = Math.min(0, ...trackXs);
-  const maxX = Math.max(machine.size.width - 1, ...trackXs);
+  const pipeXs = fluid.pipes.map(({ entity }) => entity.position.x);
+  const minX = Math.min(0, ...trackXs, ...pipeXs);
+  const maxX = Math.max(machine.size.width - 1, ...trackXs, ...pipeXs);
   const candidate: TileDesignCandidate = {
     column: { entities: [] },
     width: maxX - minX + 1,
@@ -41,8 +38,18 @@ export function emitSolidTile(
     }
     candidate.boundary.push(boundary);
     for (let y = 0; y < candidate.pitch; y++) {
+      const tunnels = frame.tracks.find((track) => track.x === x)!.tunnels ?? [];
+      if (tunnels.some(({ top, bottom }) => y > top && y < bottom)) continue;
+      const endpoint = tunnels.find(({ top, bottom }) => y === top || y === bottom);
       const entityIndex = entities.length;
-      entities.push({ kind: 'belt', position: { x: x - minX, y }, direction: 'north' });
+      if (endpoint)
+        entities.push({
+          kind: 'underground-belt',
+          position: { x: x - minX, y },
+          direction: 'north',
+          end: y === endpoint.top ? 'output' : 'input',
+        });
+      else entities.push({ kind: 'belt', position: { x: x - minX, y }, direction: 'north' });
       for (const lane of ['left', 'right'] as const) {
         const resource = boundary.lanes![lane];
         if (resource) candidate.lanes.push({ entityIndex, lane, resource });
@@ -75,6 +82,13 @@ export function emitSolidTile(
       });
     }
   }
+  for (const { entity, resource } of fluid.pipes) {
+    candidate.fluids.push({ pipeIndex: entities.length, resource });
+    entities.push({ ...entity, position: { x: entity.position.x - minX, y: entity.position.y } });
+  }
+  candidate.boundary.push(
+    ...fluid.trunks.map(({ x, resource }) => ({ x: x - minX, kind: 'pipe' as const, resource })),
+  );
   candidate.machineIds[entities.length] = machine.id;
   entities.push({
     kind: 'assembler',
@@ -82,6 +96,7 @@ export function emitSolidTile(
     size: machine.size,
     recipe: machine.id,
     direction: rotation,
+    ...(mirrored ? { mirrored: true } : {}),
   });
   return candidate;
 }

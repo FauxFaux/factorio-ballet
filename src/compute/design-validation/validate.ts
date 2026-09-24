@@ -84,7 +84,8 @@ export function validateTileDesign(
     seenMachines.add(id);
     const rotation = entity.direction ?? 'north';
     const allowed = machine.orientations.some(
-      (orientation) => orientation.rotation === rotation && !orientation.mirrored,
+      (orientation) =>
+        orientation.rotation === rotation && orientation.mirrored === (entity.mirrored ?? false),
     );
     const swapped = rotation === 'east' || rotation === 'west';
     if (
@@ -161,8 +162,14 @@ export function validateTileDesign(
         : graphTransfer.targetBeltLane
           ? [graphTransfer.targetBeltLane]
           : [];
+    const beltPoint = add(entity.position, {
+      x: offset.x * reach * (transfer.side === 'input' ? -1 : 1),
+      y: offset.y * reach * (transfer.side === 'input' ? -1 : 1),
+    });
     const beltLane = beltLanes.find(
       (lane) =>
+        entities[lane.entityNumber].position.x === beltPoint.x &&
+        entities[lane.entityNumber].position.y === beltPoint.y &&
         lane.lane === transfer.beltLane &&
         lanes.get(`${lane.entityNumber}:${lane.lane}`) === transfer.resource,
     );
@@ -242,7 +249,7 @@ export function validateTileDesign(
       }
     }
 
-  validateFluids(candidate, assemblers, issue);
+  validateFluids(input, candidate, assemblers, issue);
   validateBoundary(input, candidate, lanes, issue);
   for (const track of candidate.boundary) {
     if (!track.laneFlows) continue;

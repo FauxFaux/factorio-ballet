@@ -41,7 +41,9 @@ export function validateBoundary(
         (entity) =>
           entity.position.x === track.x &&
           entity.position.y === y &&
-          (track.kind === 'belt' ? entity.kind === 'belt' : entity.kind === 'pipe'),
+          (track.kind === 'belt'
+            ? entity.kind === 'belt' || entity.kind === 'underground-belt'
+            : entity.kind === 'pipe'),
       ),
     );
     if (ends.some((index) => index < 0)) {
@@ -59,6 +61,16 @@ export function validateBoundary(
         (track.direction !== 'north' && track.direction !== 'south')
       )
         issue('boundary-direction', `Belt track at x=${track.x} has inconsistent direction.`);
+      for (const [end, index] of ends.entries()) {
+        const entity = entities[index];
+        const isEntry = track.direction === 'north' ? end === 1 : end === 0;
+        if (entity.kind === 'underground-belt' && entity.end !== (isEntry ? 'input' : 'output'))
+          issue(
+            'boundary-continuity',
+            'Underground endpoint does not expose the tile seam.',
+            index,
+          );
+      }
       for (const lane of ['left', 'right'] as const)
         if (
           track.lanes?.[lane] &&
@@ -71,12 +83,12 @@ export function validateBoundary(
       for (let y = 0; y < candidate.pitch; y++) {
         const index = entities.findIndex(
           (entity) =>
-            entity.kind === 'belt' && entity.position.x === track.x && entity.position.y === y,
+            (entity.kind === 'belt' || entity.kind === 'underground-belt') &&
+            entity.position.x === track.x &&
+            entity.position.y === y,
         );
-        if (index < 0) {
-          issue('boundary-continuity', `Belt track at x=${track.x} is missing row ${y}.`);
-          continue;
-        }
+        // The belt graph proves through continuity across any hidden rows.
+        if (index < 0) continue;
         for (const lane of ['left', 'right'] as const)
           if (track.lanes?.[lane] && lanes.get(`${index}:${lane}`) !== track.lanes[lane])
             issue('boundary-lane', `Belt lane ${lane} at x=${track.x} changes resource.`, index);
