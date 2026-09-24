@@ -54,15 +54,15 @@ describe('normalizeTileDesignInput', () => {
       { rotation: 'south', mirrored: true },
       { rotation: 'west', mirrored: true },
     ]);
-    expect(machine.fluidRequirements).toEqual([
+    expect(machine.inputs.fluids).toEqual([
       {
         resource: 'fluid 1',
-        side: 'input',
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
+    ]);
+    expect(machine.outputs.fluids).toEqual([
       {
         resource: 'fluid 2',
-        side: 'output',
         positions: [{ position: { x: 0, y: 1 }, direction: 'south' }],
       },
     ]);
@@ -89,12 +89,14 @@ describe('normalizeTileDesignInput', () => {
 
     const input = normalized(problem, { repeatCount: 3, moduleHeight: 30 });
     expect(input.machines.map(({ id }) => id)).toEqual(['smelter', 'finisher']);
-    expect(input.machines[0]?.outputs).toEqual([
-      { resource: 'intermediate', kind: 'solid', rate: 5 },
-    ]);
-    expect(input.machines[1]?.inputs).toEqual([
-      { resource: 'intermediate', kind: 'solid', rate: 5 },
-    ]);
+    expect(input.machines[0]?.outputs).toEqual({
+      items: [{ resource: 'intermediate', rate: 5 }],
+      fluids: [],
+    });
+    expect(input.machines[1]?.inputs).toEqual({
+      items: [{ resource: 'intermediate', rate: 5 }],
+      fluids: [],
+    });
     expect(input.repeat).toEqual({ count: 3, moduleHeight: 30 });
     expect(input.transport.fluidThroughput).toBe('unlimited');
   });
@@ -107,14 +109,12 @@ describe('normalizeTileDesignInput', () => {
     problem.assemblers[0]!.outputPerSecond = { catalyst: 2, product: 3 };
 
     const input = normalized(problem);
-    expect(input.machines[0]?.inputs).toContainEqual({
+    expect(input.machines[0]?.inputs.items).toContainEqual({
       resource: 'catalyst',
-      kind: 'solid',
       rate: 2,
     });
-    expect(input.machines[0]?.outputs).toContainEqual({
+    expect(input.machines[0]?.outputs.items).toContainEqual({
       resource: 'catalyst',
-      kind: 'solid',
       rate: 2,
     });
     expect(input.repeat).toEqual({ count: 1 });
@@ -127,13 +127,14 @@ describe('normalizeTileDesignInput', () => {
 
     const machine = normalized(problem).machines[0]!;
     expect(machine.orientations).toContainEqual({ rotation: 'north', mirrored: true });
-    expect(machine.fluidRequirements).toEqual([
+    expect(machine.inputs.fluids).toEqual([
       {
         resource: 'fluid1',
-        side: 'input',
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
+    expect(machine.inputs.items).toEqual([]);
+    expect(normalized(problem).boundary.inputs.fluids).toEqual(['fluid1']);
   });
 
   it('keeps separate connections when one fluid needs several positions', () => {
@@ -149,15 +150,13 @@ describe('normalizeTileDesignInput', () => {
       },
     ];
 
-    expect(normalized(problem).machines[0]?.fluidRequirements).toEqual([
+    expect(normalized(problem).machines[0]?.inputs.fluids).toEqual([
       {
         resource: 'fluid 1',
-        side: 'input',
         positions: [{ position: { x: -1, y: 0 }, direction: 'west' }],
       },
       {
         resource: 'fluid 1',
-        side: 'input',
         positions: [{ position: { x: 1, y: 0 }, direction: 'east' }],
       },
     ]);
@@ -187,10 +186,9 @@ describe('normalizeTileDesignInput', () => {
 
     const machine = normalized(problem).machines[0]!;
     expect(machine.orientations).toContainEqual({ rotation: 'north', mirrored: true });
-    expect(machine.fluidRequirements).toEqual([
+    expect(machine.outputs.fluids).toEqual([
       {
         resource: 'fluid:beta',
-        side: 'output',
         positions: [
           { position: { x: -1, y: 1 }, direction: 'south' },
           { position: { x: 1, y: 1 }, direction: 'south' },
@@ -198,7 +196,6 @@ describe('normalizeTileDesignInput', () => {
       },
       {
         resource: 'fluid:alpha',
-        side: 'output',
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
@@ -212,6 +209,17 @@ describe('normalizeTileDesignInput', () => {
       code: 'unbalanced-flow',
       resource: 'stray',
       message: expect.stringContaining('external supply'),
+    });
+  });
+
+  it('validates fluid quantity consistency without exposing fluid rates', () => {
+    const problem = assemblerProblem({ fluidInputs: [200] });
+    problem.assemblers[0]!.inputPerSecond['fluid 1'] = 199;
+
+    expect(normalizeTileDesignInput(problem, options)).toMatchObject({
+      kind: 'invalid-input',
+      code: 'unbalanced-flow',
+      resource: 'fluid 1',
     });
   });
 

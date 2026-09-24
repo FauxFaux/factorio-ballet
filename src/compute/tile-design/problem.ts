@@ -6,18 +6,37 @@ import type { MachineSize, ResourceId } from '../../types.ts';
 export type FlowSide = 'input' | 'output';
 export type ResourceKind = 'solid' | 'fluid';
 
-export interface ResourceDemand {
+interface ResourceDemand {
   resource: string;
   kind: ResourceKind;
   rate: number;
 }
 
-/** One required connection in north-facing local coordinates. Transform its positions with the
- * selected machine orientation while keeping the resource attached to this requirement. */
-export interface FluidRequirement {
+/** A named item transfer rate, used for either input or output. */
+export interface ItemFlow {
   resource: string;
-  side: FlowSide;
+  rate: number;
+}
+
+/** One fluid's alternative connections in north-facing local coordinates. Transform its positions
+ * with the selected machine orientation while keeping the resource attached to this access. */
+export interface FluidAccess {
+  resource: string;
   positions: { position: { x: number; y: number }; direction: DesignDirection }[];
+}
+
+interface SidedFluidAccess extends FluidAccess {
+  side: FlowSide;
+}
+
+export interface MachineFlows {
+  items: ItemFlow[];
+  fluids: FluidAccess[];
+}
+
+export interface BoundaryFlows {
+  items: ItemFlow[];
+  fluids: string[];
 }
 
 /** Mirror local x coordinates before applying the cardinal rotation. */
@@ -30,14 +49,13 @@ export interface TileMachine {
   id: string;
   size: MachineSize;
   orientations: TileMachineOrientation[];
-  inputs: ResourceDemand[];
-  outputs: ResourceDemand[];
-  fluidRequirements: FluidRequirement[];
+  inputs: MachineFlows;
+  outputs: MachineFlows;
 }
 
 export interface TileBoundary {
-  inputs: ResourceDemand[];
-  outputs: ResourceDemand[];
+  inputs: BoundaryFlows;
+  outputs: BoundaryFlows;
 }
 
 export interface TileTransportRules {
@@ -137,6 +155,7 @@ export function normalizeTileDesignInput(
   }
 
   const machines: TileMachine[] = [];
+  const machineRates: { inputs: ResourceDemand[]; outputs: ResourceDemand[] }[] = [];
   const usedIds = new Set<string>();
   for (const [index, specification] of problem.assemblers.entries()) {
     const id = specification.id ?? `machine-${index + 1}`;
@@ -205,34 +224,52 @@ export function normalizeTileDesignInput(
     if ('kind' in inputs) return inputs;
     const outputs = demands(specification.outputPerSecond, kinds, id, 'output');
     if ('kind' in outputs) return outputs;
-    const fluidRequirements = makeFluidRequirements(specification, id, inputs, outputs);
-    if ('kind' in fluidRequirements) return fluidRequirements;
+    const fluidAccesses = makeFluidAccesses(specification, id, inputs, outputs);
+    if ('kind' in fluidAccesses) return fluidAccesses;
+    machineRates.push({ inputs, outputs });
     machines.push({
       id,
       size: { ...(specification.size ?? { width: 3, height: 3 }) },
       orientations: machineOrientations(specification),
-      inputs,
-      outputs,
-      fluidRequirements,
+      inputs: {
+        items: itemFlows(inputs),
+        fluids: fluidAccesses
+          .filter(({ side }) => side === 'input')
+          .map(({ resource, positions }) => ({ resource, positions })),
+      },
+      outputs: {
+        items: itemFlows(outputs),
+        fluids: fluidAccesses
+          .filter(({ side }) => side === 'output')
+          .map(({ resource, positions }) => ({ resource, positions })),
+      },
     });
   }
 
+  const boundaryInputRates = boundaryDemands(problem.inputs);
+  const boundaryOutputRates = boundaryDemands(problem.outputs);
   const boundary: TileBoundary = {
-    inputs: boundaryDemands(problem.inputs),
-    outputs: boundaryDemands(problem.outputs),
+    inputs: { items: itemFlows(boundaryInputRates), fluids: fluidNames(boundaryInputRates) },
+    outputs: { items: itemFlows(boundaryOutputRates), fluids: fluidNames(boundaryOutputRates) },
   };
   const resources = new Set([
-    ...boundary.inputs.map(({ resource }) => resource),
-    ...boundary.outputs.map(({ resource }) => resource),
-    ...machines.flatMap((machine) =>
+    ...boundaryInputRates.map(({ resource }) => resource),
+    ...boundaryOutputRates.map(({ resource }) => resource),
+    ...machineRates.flatMap((machine) =>
       [...machine.inputs, ...machine.outputs].map(({ resource }) => resource),
     ),
   ]);
   for (const resource of [...resources].sort()) {
-    const supplied = rateOf(boundary.inputs, resource);
-    const produced = machines.reduce((sum, machine) => sum + rateOf(machine.outputs, resource), 0);
-    const consumed = machines.reduce((sum, machine) => sum + rateOf(machine.inputs, resource), 0);
-    const exported = rateOf(boundary.outputs, resource);
+    const supplied = rateOf(boundaryInputRates, resource);
+    const produced = machineRates.reduce(
+      (sum, machine) => sum + rateOf(machine.outputs, resource),
+      0,
+    );
+    const consumed = machineRates.reduce(
+      (sum, machine) => sum + rateOf(machine.inputs, resource),
+      0,
+    );
+    const exported = rateOf(boundaryOutputRates, resource);
     if (
       Math.abs(supplied + produced - consumed - exported) >
       1e-8 * Math.max(1, supplied, produced, consumed, exported)
@@ -271,12 +308,12 @@ function machineOrientations(specification: AssemblerSpecification): TileMachine
   );
 }
 
-function makeFluidRequirements(
+function makeFluidAccesses(
   specification: AssemblerSpecification,
   machineId: string,
   inputs: ResourceDemand[],
   outputs: ResourceDemand[],
-): FluidRequirement[] | InvalidTileDesignInput {
+): SidedFluidAccess[] | InvalidTileDesignInput {
   const fluidInputs = inputs.filter(({ kind }) => kind === 'fluid');
   const fluidOutputs = outputs.filter(({ kind }) => kind === 'fluid');
   if (fluidInputs.length + fluidOutputs.length === 0) return [];
@@ -310,7 +347,7 @@ function makeFluidRequirements(
     ingredients: [],
     products: toEncoded(outputOrder),
   });
-  const requirements: FluidRequirement[] = [];
+  const accesses: SidedFluidAccess[] = [];
   for (const [index, resourceId] of inputAssigned) {
     const other = outputAssigned.get(index);
     if (other && other !== resourceId) {
@@ -351,7 +388,7 @@ function makeFluidRequirements(
           machineId,
         );
       }
-      requirements.push({ resource, side, positions });
+      accesses.push({ resource, side, positions });
     }
   }
   for (const [side, fluids] of [
@@ -359,11 +396,7 @@ function makeFluidRequirements(
     ['output', fluidOutputs],
   ] as const) {
     for (const { resource } of fluids) {
-      if (
-        !requirements.some(
-          (requirement) => requirement.resource === resource && requirement.side === side,
-        )
-      ) {
+      if (!accesses.some((access) => access.resource === resource && access.side === side)) {
         return invalid(
           'invalid-fluid',
           `Machine ${machineId} has no ${side} position for ${resource}.`,
@@ -373,7 +406,7 @@ function makeFluidRequirements(
       }
     }
   }
-  return requirements;
+  return accesses;
 }
 
 function orderedFluids(
@@ -452,6 +485,16 @@ function boundaryDemands(flows: KernelFlows): ResourceDemand[] {
       kind: 'fluid' as const,
     })),
   ].sort((a, b) => a.resource.localeCompare(b.resource));
+}
+
+function itemFlows(demandsForSide: ResourceDemand[]): ItemFlow[] {
+  return demandsForSide
+    .filter(({ kind }) => kind === 'solid')
+    .map(({ resource, rate }) => ({ resource, rate }));
+}
+
+function fluidNames(demandsForSide: ResourceDemand[]): string[] {
+  return demandsForSide.filter(({ kind }) => kind === 'fluid').map(({ resource }) => resource);
 }
 
 function rateOf(demandsForSide: ResourceDemand[], resource: string): number {
