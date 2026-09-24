@@ -1,9 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { assemblerProblem, type KernelProblem } from '../../../src/compute/kernel-problems.ts';
-import {
-  normalizeTileDesignInput,
-  type TileDesignOptions,
-} from '../../../src/compute/tile-design/problem.ts';
+import { normalizeTileDesignInput } from '../../../src/compute/tile-design/problem.ts';
+import type { TileDesignOptions } from '../../../src/compute/tile-design/types.ts';
 
 const options: TileDesignOptions = {
   transport: {
