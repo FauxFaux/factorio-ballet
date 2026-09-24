@@ -13,6 +13,33 @@
   gap: 1rem;
 }
 
+.kernel-custom-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.kernel-custom-heading h3 {
+  margin: 0;
+}
+
+.kernel-custom-copy {
+  padding: 0.25rem 0.5rem;
+  color: var(--text);
+  font: inherit;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.kernel-custom-copy:hover {
+  color: var(--text-h);
+  background: var(--accent-bg);
+  border-color: var(--accent-border);
+}
+
 .kernel-custom-controls {
   display: grid;
   gap: 1rem;

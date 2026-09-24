@@ -1,6 +1,10 @@
 import type { ComponentChildren } from 'preact';
+import { useState } from 'preact/hooks';
 import { UndoIcon } from '@primer/octicons-react';
-import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
+import {
+  generateAssemblerDesign,
+  type AssemblerDesignThroughput,
+} from '../compute/assembler-design.ts';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
   airFilterProblem,
@@ -93,8 +97,23 @@ export function KernelCustomProblem({
           })
         : machineProblem(building, values);
   const problem = problemForFlows(flows);
+  const design = generateAssemblerDesign(problem, rates);
+  const [copied, setCopied] = useState(false);
   const colours = resourceColoursFor(problem);
   const resourceNames = resourceNamesFor(problem);
+
+  const copyProblem = async () => {
+    const json = {
+      building,
+      inputs: problem.inputs,
+      outputs: problem.outputs,
+      assemblers: problem.assemblers,
+      throughput: rates,
+      ...('failure' in design ? { error: design.failure.join(' ') } : {}),
+    };
+    await navigator.clipboard.writeText(JSON.stringify(json, null, 2));
+    setCopied(true);
+  };
 
   const addFlow = (kind: FlowKind, rate: number) =>
     updateCustom((current) => ({
@@ -122,7 +141,16 @@ export function KernelCustomProblem({
 
   return (
     <section class="kernel-custom" aria-labelledby="kernel-custom-title">
-      <h3 id="kernel-custom-title">Your problem</h3>
+      <div class="kernel-custom-heading">
+        <h3 id="kernel-custom-title">Your problem</h3>
+        <button
+          type="button"
+          class="kernel-custom-copy"
+          onClick={() => void copyProblem().catch(() => setCopied(false))}
+        >
+          {copied ? 'Copied!' : 'Copy JSON'}
+        </button>
+      </div>
       <div class="kernel-custom-layout">
         <div class="kernel-custom-controls">
           <label class="kernel-custom-building">
