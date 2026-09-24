@@ -3,8 +3,10 @@ import { useState } from 'preact/hooks';
 import { UndoIcon } from '@primer/octicons-react';
 import {
   generateAssemblerDesign,
+  isAssemblerDesignFailure,
   type AssemblerDesignThroughput,
 } from '../compute/assembler-design.ts';
+import { solveKernelTileDesign } from '../compute/tile-design/kernel-result.ts';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
   airFilterProblem,
@@ -103,13 +105,22 @@ export function KernelCustomProblem({
   const resourceNames = resourceNamesFor(problem);
 
   const copyProblem = async () => {
+    const tileResult = solveKernelTileDesign(problem, rates);
     const json = {
+      source: 'your-problem-export',
       building,
       inputs: problem.inputs,
       outputs: problem.outputs,
       assemblers: problem.assemblers,
       throughput: rates,
-      ...('failure' in design ? { error: design.failure.join(' ') } : {}),
+      ...(isAssemblerDesignFailure(design)
+        ? { assemblerDesignFailure: design.failure.join(' ') }
+        : {}),
+      ...('success' in tileResult
+        ? { tileDesignFailure: tileResult.message }
+        : tileResult.status === 'found'
+          ? {}
+          : { tileDesignFailure: tileResult.reason }),
     };
     await navigator.clipboard.writeText(JSON.stringify(json, null, 2));
     setCopied(true);

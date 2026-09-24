@@ -3,7 +3,7 @@
 import { cleanup, fireEvent, render, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { KernelCustomState, UrlState } from '../../src/boot/url-handler.tsx';
 import { KernelCustomProblem } from '../../src/components/kernel-custom-problem.tsx';
 import { resourceIconStyle } from '../../src/components/icon.tsx';
@@ -252,5 +252,40 @@ describe('KernelCustomProblem', () => {
     const beltRate = screen.getByRole('slider', { name: 'Belt throughput' });
     fireEvent.input(beltRate, { target: { value: '15.1' } });
     expect(screen.getByText('15.1/s')).toBeTruthy();
+  });
+
+  it('exports both solver failures with a source marker', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    const user = userEvent.setup();
+    Object.defineProperty(navigator, 'clipboard', {
+      configurable: true,
+      value: { writeText },
+    });
+    render(
+      <CustomProblemExample
+        initial={{
+          building: 'chemical-plant',
+          flows: {
+            solidInputs: [],
+            fluidInputs: [200, 200, 200],
+            solidOutputs: [],
+            fluidOutputs: [200],
+          },
+        }}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Copy JSON' }));
+    const exported = JSON.parse(writeText.mock.calls[0]![0]);
+    expect(exported.source).toBe('your-problem-export');
+    expect(exported).not.toHaveProperty('error');
+    expect(exported.assemblerDesignFailure).toContain('cannot connect fluids');
+    expect(exported.tileDesignFailure).toEqual(expect.any(String));
+    expect(exported.tileDesignFailure).not.toContain('explicit input assignment');
+    expect(exported.assemblers[0].fluidIngredients).toEqual([
+      { resource: 'fluid:1' },
+      { resource: 'fluid:2' },
+      { resource: 'fluid:3' },
+    ]);
   });
 });

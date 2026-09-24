@@ -296,6 +296,7 @@ describe('normalizeTileDesignInput', () => {
 
   it('rejects missing output assignments and invalid repeat rules', () => {
     const problem = assemblerProblem({ fluidOutputs: [1, 1] });
+    delete problem.assemblers[0]!.fluidProducts;
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
       success: false,
       code: 'invalid-fluid',

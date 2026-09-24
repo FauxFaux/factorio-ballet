@@ -8,6 +8,19 @@ import {
   machineProblem,
 } from '../../src/compute/kernel-problems.ts';
 import { staticData } from '../../src/data/decode.ts';
+import { normalizeTileDesignInput } from '../../src/compute/tile-design/problem.ts';
+import type { TileDesignOptions } from '../../src/compute/tile-design/types.ts';
+
+const tileOptions: TileDesignOptions = {
+  transport: {
+    beltLaneCapacity: 15,
+    undergroundBeltReach: 4,
+    undergroundPipeReach: 10,
+    inserters: [{ id: 'ordinary', capacity: 8, reach: 1 }],
+    fluidThroughput: 'unlimited',
+  },
+  envelope: { maxWidth: 16, maxPitch: 12, primitives: ['surface'], maxStates: 1000 },
+};
 
 describe('assemblerProblem', () => {
   it('builds distinct synthetic resources and the matching assembler flow', () => {
@@ -72,6 +85,32 @@ describe('assemblerProblem', () => {
 
     expect(assembler?.size).toEqual({ width: 3, height: 3 });
     expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
+  });
+
+  it('assigns multiple synthetic fluids to the machine ports for tile design', () => {
+    const problem = machineProblem('chemical-plant', {
+      fluidInputs: [200, 200],
+      fluidOutputs: [200],
+    });
+    expect(problem.assemblers[0]?.fluidIngredients).toEqual([
+      { resource: 'fluid:1' },
+      { resource: 'fluid:2' },
+    ]);
+    expect(problem.assemblers[0]?.fluidProducts).toEqual([{ resource: 'fluid:3' }]);
+
+    const normalized = normalizeTileDesignInput(problem, tileOptions);
+    expect(normalized.success).toBe(true);
+    if (normalized.success) {
+      expect(
+        normalized.input.machines[0]?.inputs.fluids.map(({ boxIndex, resource }) => ({
+          boxIndex,
+          resource,
+        })),
+      ).toEqual([
+        { boxIndex: 0, resource: 'fluid:1' },
+        { boxIndex: 1, resource: 'fluid:2' },
+      ]);
+    }
   });
 });
 

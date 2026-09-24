@@ -86,6 +86,16 @@ export function assemblerProblem({
           : useAssembler2
             ? { fluidBoxes: assemblingMachine2FluidBoxes() }
             : {}),
+        ...(fluidBoxes || useAssembler2
+          ? {
+              fluidIngredients: Object.keys(inputs.fluids).map((resource) => ({
+                resource: resource as ResourceId,
+              })),
+              fluidProducts: Object.keys(outputs.fluids).map((resource) => ({
+                resource: resource as ResourceId,
+              })),
+            }
+          : {}),
       },
     ],
     design: newFactoryDesign(),
@@ -141,8 +151,7 @@ function resourceRates(
 
 /**
  * Build a fluid-only problem for an air filter whose ports sit at the centres of its north and
- * south faces. Fluid boxes describe physical machine geometry only; they do not assign either
- * synthetic fluid to a recipe fluid-box index.
+ * south faces. Synthetic recipe fluids follow their declared order across the physical boxes.
  */
 export function airFilterProblem(size: MachineSize) {
   const northY = -Math.floor(size.height / 2);
