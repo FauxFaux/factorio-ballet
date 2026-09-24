@@ -41,8 +41,10 @@ inputs, and belt tracing. The problem is where those pieces are combined:
 - [DesignColumn](../src/compute/design.ts) stores entities alone. Repeat pitch, lane assignments,
   seam connections, and the reason a transfer has sufficient capacity are inferred elsewhere.
 
-Keep the current strategies as candidate seeds during migration. Their successful geometry is useful
-evidence; their input/output counts should not define the new solver's domains.
+Use the current strategies as candidate seeds and cross-validation references while building the new
+solver. Their successful geometry is useful evidence; their input/output counts should not define
+the new solver's domains. Once integration and cross-validation are complete, the new solver should
+run without using the old `assembler-design` module.
 
 ## Scope and contract
 
@@ -318,7 +320,8 @@ footprint and assigned-box checks. The new compute code should not depend on Pre
 
 ## Suggested module boundaries
 
-Keep the solver under `src/compute/assembler-design/`; `src/solve/` currently solves cell rates.
+Put the new solver under `src/compute/tile-design/`; `src/solve/` currently solves cell rates. Keep
+`src/compute/assembler-design/` only for migration and cross-validation, then leave it unused.
 
 | Module                  | Responsibility                                                             |
 | ----------------------- | -------------------------------------------------------------------------- |
@@ -353,10 +356,10 @@ through the repository's normal versioning checks.
    chemical-plant reference, moved ports, additional fluid networks, alternate port choices,
    pipe-isolation failures and seam partner conflicts. No recipe-specific branch in the search.
 4. **Integrate generated metadata and switch the entry point.** Carry pitch, boundary supply
-   requirements and stack capacity into previews, module placement and export. Validate legacy seeds
-   through the same gate. Stop relying on legacy strategies once supported fixtures and
-   perturbations pass, and measure search cost and layout quality before choosing the default
-   budget.
+   requirements and stack capacity into previews, module placement and export. Cross-validate
+   against legacy seeds through the same gate. Once supported fixtures and perturbations pass,
+   switch consumers to `tile-design` and leave `assembler-design` unused. Measure search cost and
+   layout quality before choosing the default budget.
 5. **Extend placement to small machine groups.** Add direct insertion as machine-to-machine access
    options and internal belt/pipe routing. Exercise the two-machine snake, a 3:2 group, and internal
    resource balance. Keep fixed machine counts and rates; enlarge search budgets explicitly.
