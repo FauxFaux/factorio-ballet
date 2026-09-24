@@ -56,13 +56,13 @@ describe('normalizeTileDesignInput', () => {
     ]);
     expect(machine.inputs.fluids).toEqual([
       {
-        resource: 'fluid 1',
+        resource: 'fluid:1',
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
     expect(machine.outputs.fluids).toEqual([
       {
-        resource: 'fluid 2',
+        resource: 'fluid:2',
         positions: [{ position: { x: 0, y: 1 }, direction: 'south' }],
       },
     ]);
@@ -122,19 +122,19 @@ describe('normalizeTileDesignInput', () => {
 
   it('names a fluid at its required position without exposing source geometry', () => {
     const problem = assemblerProblem({ fluidInputs: [200], solidOutputs: [2] });
-    problem.inputs.fluids = { fluid1: 200 };
-    problem.assemblers[0]!.inputPerSecond = { fluid1: 200 };
+    problem.inputs.fluids = { 'fluid:1': 200 };
+    problem.assemblers[0]!.inputPerSecond = { 'fluid:1': 200 };
 
     const machine = normalized(problem).machines[0]!;
     expect(machine.orientations).toContainEqual({ rotation: 'north', mirrored: true });
     expect(machine.inputs.fluids).toEqual([
       {
-        resource: 'fluid1',
+        resource: 'fluid:1',
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
     expect(machine.inputs.items).toEqual([]);
-    expect(normalized(problem).boundary.inputs.fluids).toEqual(['fluid1']);
+    expect(normalized(problem).boundary.inputs.fluids).toEqual(['fluid:1']);
   });
 
   it('keeps separate connections when one fluid needs several positions', () => {
@@ -152,11 +152,11 @@ describe('normalizeTileDesignInput', () => {
 
     expect(normalized(problem).machines[0]?.inputs.fluids).toEqual([
       {
-        resource: 'fluid 1',
+        resource: 'fluid:1',
         positions: [{ position: { x: -1, y: 0 }, direction: 'west' }],
       },
       {
-        resource: 'fluid 1',
+        resource: 'fluid:1',
         positions: [{ position: { x: 1, y: 0 }, direction: 'east' }],
       },
     ]);
@@ -214,12 +214,12 @@ describe('normalizeTileDesignInput', () => {
 
   it('validates fluid quantity consistency without exposing fluid rates', () => {
     const problem = assemblerProblem({ fluidInputs: [200] });
-    problem.assemblers[0]!.inputPerSecond['fluid 1'] = 199;
+    problem.assemblers[0]!.inputPerSecond['fluid:1'] = 199;
 
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
       kind: 'invalid-input',
       code: 'unbalanced-flow',
-      resource: 'fluid 1',
+      resource: 'fluid:1',
     });
   });
 
@@ -229,7 +229,7 @@ describe('normalizeTileDesignInput', () => {
     expect(normalizeTileDesignInput(missing, options)).toMatchObject({
       kind: 'invalid-input',
       code: 'invalid-fluid',
-      resource: 'fluid 1',
+      resource: 'fluid:1',
     });
 
     const badRate = assemblerProblem({ solidInputs: [1] });
@@ -249,6 +249,17 @@ describe('normalizeTileDesignInput', () => {
       kind: 'invalid-input',
       code: 'invalid-machine',
       message: expect.stringContaining('repeated'),
+    });
+  });
+
+  it('rejects a fluid ID declared in the item boundary', () => {
+    const problem = assemblerProblem({ fluidInputs: [1] });
+    problem.inputs.solids['fluid:1'] = 1;
+
+    expect(normalizeTileDesignInput(problem, options)).toMatchObject({
+      kind: 'invalid-input',
+      code: 'invalid-resource',
+      resource: 'fluid:1',
     });
   });
 

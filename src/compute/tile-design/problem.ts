@@ -4,13 +4,7 @@ import type { DesignDirection } from '../design.ts';
 import type { MachineSize, ResourceId } from '../../types.ts';
 
 export type FlowSide = 'input' | 'output';
-export type ResourceKind = 'solid' | 'fluid';
-
-interface ResourceDemand {
-  resource: string;
-  kind: ResourceKind;
-  rate: number;
-}
+type FluidId = Extract<ResourceId, `fluid:${string}`>;
 
 /** A named item transfer rate, used for either input or output. */
 export interface ItemFlow {
@@ -21,7 +15,7 @@ export interface ItemFlow {
 /** One fluid's alternative connections in north-facing local coordinates. Transform its positions
  * with the selected machine orientation while keeping the resource attached to this access. */
 export interface FluidAccess {
-  resource: string;
+  resource: FluidId;
   positions: { position: { x: number; y: number }; direction: DesignDirection }[];
 }
 
@@ -36,7 +30,7 @@ export interface MachineFlows {
 
 export interface BoundaryFlows {
   items: ItemFlow[];
-  fluids: string[];
+  fluids: FluidId[];
 }
 
 /** Mirror local x coordinates before applying the cardinal rotation. */
@@ -119,7 +113,6 @@ export function normalizeTileDesignInput(
     return invalid('invalid-machine', 'At least one machine is required.');
   }
 
-  const kinds = new Map<string, ResourceKind>();
   for (const [side, flows] of [
     ['input', problem.inputs],
     ['output', problem.outputs],
@@ -131,31 +124,18 @@ export function normalizeTileDesignInput(
       for (const [resource, rate] of Object.entries(rates)) {
         const error = validateRate(resource, rate, `${side} boundary`);
         if (error) return error;
-        if (
-          (resource.startsWith('fluid:') && kind !== 'fluid') ||
-          (resource.startsWith('item:') && kind !== 'solid')
-        ) {
+        if ((kind === 'fluid') !== resource.startsWith('fluid:')) {
           return invalid(
             'invalid-resource',
-            `${resource} has conflicting resource kinds.`,
+            `${resource} must use a ${kind === 'fluid' ? 'fluid:' : 'non-fluid'} resource ID.`,
             resource,
           );
         }
-        const prior = kinds.get(resource);
-        if (prior && prior !== kind) {
-          return invalid(
-            'invalid-resource',
-            `${resource} is declared as both solid and fluid.`,
-            resource,
-          );
-        }
-        kinds.set(resource, kind);
       }
     }
   }
 
   const machines: TileMachine[] = [];
-  const machineRates: { inputs: ResourceDemand[]; outputs: ResourceDemand[] }[] = [];
   const usedIds = new Set<string>();
   for (const [index, specification] of problem.assemblers.entries()) {
     const id = specification.id ?? `machine-${index + 1}`;
@@ -172,15 +152,14 @@ export function normalizeTileDesignInput(
       ['output', specification.fluidProducts],
     ] as const) {
       for (const declaration of declarations ?? []) {
-        if (kinds.get(declaration.resource) === 'solid') {
+        if (!declaration.resource.startsWith('fluid:')) {
           return invalid(
             'invalid-resource',
-            `${declaration.resource} is declared as solid and fluid.`,
+            `${declaration.resource} must use a fluid: resource ID.`,
             declaration.resource,
             id,
           );
         }
-        kinds.set(declaration.resource, 'fluid');
         const rates =
           side === 'input' ? specification.inputPerSecond : specification.outputPerSecond;
         if (!(declaration.resource in rates)) {
@@ -193,52 +172,35 @@ export function normalizeTileDesignInput(
         }
       }
     }
-    for (const resource of [
-      ...Object.keys(specification.inputPerSecond),
-      ...Object.keys(specification.outputPerSecond),
-    ]) {
-      if (resource.startsWith('fluid:')) kinds.set(resource, 'fluid');
-      else if (resource.startsWith('item:') && kinds.get(resource) === 'fluid') {
-        return invalid(
-          'invalid-resource',
-          `${resource} has conflicting resource kinds.`,
-          resource,
-          id,
-        );
+    for (const [side, rates] of [
+      ['input', specification.inputPerSecond],
+      ['output', specification.outputPerSecond],
+    ] as const) {
+      for (const [resource, rate] of Object.entries(rates)) {
+        const error = validateRate(resource, rate, `${side} of machine ${id}`);
+        if (error) return error;
       }
-    }
-  }
-
-  for (const [resource, kind] of kinds) {
-    if (
-      (resource.startsWith('fluid:') && kind !== 'fluid') ||
-      (resource.startsWith('item:') && kind !== 'solid')
-    ) {
-      return invalid('invalid-resource', `${resource} has conflicting resource kinds.`, resource);
     }
   }
 
   for (const [index, specification] of problem.assemblers.entries()) {
     const id = specification.id ?? `machine-${index + 1}`;
-    const inputs = demands(specification.inputPerSecond, kinds, id, 'input');
-    if ('kind' in inputs) return inputs;
-    const outputs = demands(specification.outputPerSecond, kinds, id, 'output');
-    if ('kind' in outputs) return outputs;
-    const fluidAccesses = makeFluidAccesses(specification, id, inputs, outputs);
+    const inputs = splitMachineFlows(specification.inputPerSecond);
+    const outputs = splitMachineFlows(specification.outputPerSecond);
+    const fluidAccesses = makeFluidAccesses(specification, id, inputs.fluids, outputs.fluids);
     if ('kind' in fluidAccesses) return fluidAccesses;
-    machineRates.push({ inputs, outputs });
     machines.push({
       id,
       size: { ...(specification.size ?? { width: 3, height: 3 }) },
       orientations: machineOrientations(specification),
       inputs: {
-        items: itemFlows(inputs),
+        items: inputs.items,
         fluids: fluidAccesses
           .filter(({ side }) => side === 'input')
           .map(({ resource, positions }) => ({ resource, positions })),
       },
       outputs: {
-        items: itemFlows(outputs),
+        items: outputs.items,
         fluids: fluidAccesses
           .filter(({ side }) => side === 'output')
           .map(({ resource, positions }) => ({ resource, positions })),
@@ -246,30 +208,31 @@ export function normalizeTileDesignInput(
     });
   }
 
-  const boundaryInputRates = boundaryDemands(problem.inputs);
-  const boundaryOutputRates = boundaryDemands(problem.outputs);
   const boundary: TileBoundary = {
-    inputs: { items: itemFlows(boundaryInputRates), fluids: fluidNames(boundaryInputRates) },
-    outputs: { items: itemFlows(boundaryOutputRates), fluids: fluidNames(boundaryOutputRates) },
+    inputs: boundaryFlows(problem.inputs),
+    outputs: boundaryFlows(problem.outputs),
   };
   const resources = new Set([
-    ...boundaryInputRates.map(({ resource }) => resource),
-    ...boundaryOutputRates.map(({ resource }) => resource),
-    ...machineRates.flatMap((machine) =>
-      [...machine.inputs, ...machine.outputs].map(({ resource }) => resource),
-    ),
+    ...Object.keys(problem.inputs.solids),
+    ...Object.keys(problem.inputs.fluids),
+    ...Object.keys(problem.outputs.solids),
+    ...Object.keys(problem.outputs.fluids),
+    ...problem.assemblers.flatMap((machine) => [
+      ...Object.keys(machine.inputPerSecond),
+      ...Object.keys(machine.outputPerSecond),
+    ]),
   ]);
   for (const resource of [...resources].sort()) {
-    const supplied = rateOf(boundaryInputRates, resource);
-    const produced = machineRates.reduce(
-      (sum, machine) => sum + rateOf(machine.outputs, resource),
+    const supplied = boundaryRate(problem.inputs, resource);
+    const produced = problem.assemblers.reduce(
+      (sum, machine) => sum + (machine.outputPerSecond[resource] ?? 0),
       0,
     );
-    const consumed = machineRates.reduce(
-      (sum, machine) => sum + rateOf(machine.inputs, resource),
+    const consumed = problem.assemblers.reduce(
+      (sum, machine) => sum + (machine.inputPerSecond[resource] ?? 0),
       0,
     );
-    const exported = rateOf(boundaryOutputRates, resource);
+    const exported = boundaryRate(problem.outputs, resource);
     if (
       Math.abs(supplied + produced - consumed - exported) >
       1e-8 * Math.max(1, supplied, produced, consumed, exported)
@@ -311,11 +274,9 @@ function machineOrientations(specification: AssemblerSpecification): TileMachine
 function makeFluidAccesses(
   specification: AssemblerSpecification,
   machineId: string,
-  inputs: ResourceDemand[],
-  outputs: ResourceDemand[],
+  fluidInputs: FluidId[],
+  fluidOutputs: FluidId[],
 ): SidedFluidAccess[] | InvalidTileDesignInput {
-  const fluidInputs = inputs.filter(({ kind }) => kind === 'fluid');
-  const fluidOutputs = outputs.filter(({ kind }) => kind === 'fluid');
   if (fluidInputs.length + fluidOutputs.length === 0) return [];
   if (!specification.fluidBoxes) {
     return invalid(
@@ -330,22 +291,13 @@ function makeFluidAccesses(
   const outputOrder = orderedFluids(fluidOutputs, specification.fluidProducts, machineId, 'output');
   if ('kind' in outputOrder) return outputOrder;
 
-  // The shared assignment helper expects typed IDs. Synthetic resource names are encoded only here.
-  const names = [...new Set([...inputOrder, ...outputOrder].map(({ resource }) => resource))];
-  const encoded = new Map(names.map((name, index) => [name, `fluid:tile-${index}` as ResourceId]));
-  const decoded = new Map([...encoded].map(([name, code]) => [code, name]));
-  const toEncoded = (fluids: FluidBoxResource[]) =>
-    fluids.map(({ resource, fluidboxIndex }) => ({
-      resource: encoded.get(resource)!,
-      fluidboxIndex,
-    }));
   const inputAssigned = fluidBoxResources(specification, {
-    ingredients: toEncoded(inputOrder),
+    ingredients: inputOrder,
     products: [],
   });
   const outputAssigned = fluidBoxResources(specification, {
     ingredients: [],
-    products: toEncoded(outputOrder),
+    products: outputOrder,
   });
   const accesses: SidedFluidAccess[] = [];
   for (const [index, resourceId] of inputAssigned) {
@@ -354,7 +306,7 @@ function makeFluidAccesses(
       return invalid(
         'invalid-fluid',
         `Machine ${machineId} needs incompatible fluids at one position.`,
-        decoded.get(resourceId),
+        resourceId,
         machineId,
       );
     }
@@ -364,7 +316,7 @@ function makeFluidAccesses(
     ['output', outputAssigned],
   ] as const) {
     for (const [index, resourceId] of assigned) {
-      const resource = decoded.get(resourceId)!;
+      const resource = resourceId as FluidId;
       const box = specification.fluidBoxes[index]!;
       const positions = box.connections
         .filter(
@@ -395,7 +347,7 @@ function makeFluidAccesses(
     ['input', fluidInputs],
     ['output', fluidOutputs],
   ] as const) {
-    for (const { resource } of fluids) {
+    for (const resource of fluids) {
       if (!accesses.some((access) => access.resource === resource && access.side === side)) {
         return invalid(
           'invalid-fluid',
@@ -410,13 +362,13 @@ function makeFluidAccesses(
 }
 
 function orderedFluids(
-  demandsForSide: ResourceDemand[],
+  fluidsForSide: FluidId[],
   declarations: FluidBoxResource[] | undefined,
   machineId: string,
   side: FlowSide,
 ): FluidBoxResource[] | InvalidTileDesignInput {
   if (!declarations) {
-    if (demandsForSide.length > 1) {
+    if (fluidsForSide.length > 1) {
       return invalid(
         'invalid-fluid',
         `Machine ${machineId} needs an explicit ${side} assignment for its multiple fluids.`,
@@ -424,9 +376,9 @@ function orderedFluids(
         machineId,
       );
     }
-    return demandsForSide.map(({ resource }) => ({ resource: resource as ResourceId }));
+    return fluidsForSide.map((resource) => ({ resource }));
   }
-  const expected = new Set(demandsForSide.map(({ resource }) => resource));
+  const expected = new Set<string>(fluidsForSide);
   const seen = new Set<string>();
   const claimed = new Set<number>();
   for (const { resource, fluidboxIndex } of declarations) {
@@ -457,48 +409,32 @@ function orderedFluids(
   return declarations;
 }
 
-function demands(
-  rates: Record<string, number>,
-  kinds: Map<string, ResourceKind>,
-  machineId: string,
-  side: FlowSide,
-): ResourceDemand[] | InvalidTileDesignInput {
-  const result: ResourceDemand[] = [];
+function splitMachineFlows(rates: Record<string, number>): {
+  items: ItemFlow[];
+  fluids: FluidId[];
+} {
+  const items: ItemFlow[] = [];
+  const fluids: FluidId[] = [];
   for (const [resource, rate] of Object.entries(rates)) {
-    const error = validateRate(resource, rate, `${side} of machine ${machineId}`);
-    if (error) return error;
-    result.push({ resource, kind: kinds.get(resource) ?? 'solid', rate });
+    if (resource.startsWith('fluid:')) fluids.push(resource as FluidId);
+    else items.push({ resource, rate });
   }
-  return result.sort((a, b) => a.resource.localeCompare(b.resource));
+  items.sort((a, b) => a.resource.localeCompare(b.resource));
+  fluids.sort();
+  return { items, fluids };
 }
 
-function boundaryDemands(flows: KernelFlows): ResourceDemand[] {
-  return [
-    ...Object.entries(flows.solids).map(([resource, rate]) => ({
-      resource,
-      rate,
-      kind: 'solid' as const,
-    })),
-    ...Object.entries(flows.fluids).map(([resource, rate]) => ({
-      resource,
-      rate,
-      kind: 'fluid' as const,
-    })),
-  ].sort((a, b) => a.resource.localeCompare(b.resource));
+function boundaryFlows(flows: KernelFlows): BoundaryFlows {
+  return {
+    items: Object.entries(flows.solids)
+      .map(([resource, rate]) => ({ resource, rate }))
+      .sort((a, b) => a.resource.localeCompare(b.resource)),
+    fluids: Object.keys(flows.fluids).sort() as FluidId[],
+  };
 }
 
-function itemFlows(demandsForSide: ResourceDemand[]): ItemFlow[] {
-  return demandsForSide
-    .filter(({ kind }) => kind === 'solid')
-    .map(({ resource, rate }) => ({ resource, rate }));
-}
-
-function fluidNames(demandsForSide: ResourceDemand[]): string[] {
-  return demandsForSide.filter(({ kind }) => kind === 'fluid').map(({ resource }) => resource);
-}
-
-function rateOf(demandsForSide: ResourceDemand[], resource: string): number {
-  return demandsForSide.find((demand) => demand.resource === resource)?.rate ?? 0;
+function boundaryRate(flows: KernelFlows, resource: string): number {
+  return flows.solids[resource] ?? flows.fluids[resource] ?? 0;
 }
 
 function validateRate(

@@ -63,12 +63,12 @@ export function assemblerProblem({
     assemblerName === 'Assembler 2' ||
     (assemblerName === undefined && (fluidInputs.length > 0 || fluidOutputs.length > 0));
   const inputs: KernelFlows = {
-    solids: resourceRates('item', solidInputs),
-    fluids: resourceRates('fluid', fluidInputs),
+    solids: resourceRates('item ', solidInputs),
+    fluids: resourceRates('fluid:', fluidInputs),
   };
   const outputs: KernelFlows = {
-    solids: resourceRates('item', solidOutputs, solidInputs.length + 1),
-    fluids: resourceRates('fluid', fluidOutputs, fluidInputs.length + 1),
+    solids: resourceRates('item ', solidOutputs, solidInputs.length + 1),
+    fluids: resourceRates('fluid:', fluidOutputs, fluidInputs.length + 1),
   };
 
   return {
@@ -131,7 +131,7 @@ function assemblingMachine2FluidBoxes(): MachineFluidBox[] {
 }
 
 function resourceRates(prefix: string, rates: readonly number[], startIndex = 1): ResourceRates {
-  return Object.fromEntries(rates.map((rate, index) => [`${prefix} ${startIndex + index}`, rate]));
+  return Object.fromEntries(rates.map((rate, index) => [`${prefix}${startIndex + index}`, rate]));
 }
 
 /**

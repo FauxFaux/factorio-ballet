@@ -123,7 +123,7 @@ function RateSummary({
 }
 
 function ResourceIcon({ resource, color }: { resource: string; color: string }) {
-  const Icon = resource.startsWith('fluid ') ? GenericFluidIcon : GenericSolidIcon;
+  const Icon = resource.startsWith('fluid:') ? GenericFluidIcon : GenericSolidIcon;
 
   return (
     <span class="design-card-rate-icon" title={resource}>
@@ -158,7 +158,7 @@ function designSceneFlows(
   colours: ResourceColours,
 ): { recipes: DesignSceneRecipes; items: DesignSceneItems } {
   const resourceId = (name: string): ResourceId =>
-    name.startsWith('fluid ') ? `fluid:${name}` : `item:${name}`;
+    name.startsWith('fluid:') || name.startsWith('item:') ? (name as ResourceId) : `item:${name}`;
   const recipes = Object.fromEntries(
     problem.assemblers.map((assembler) => [
       assembler.name,

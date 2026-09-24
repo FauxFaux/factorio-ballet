@@ -120,8 +120,8 @@ describe('App', () => {
         arrow.getAttribute('data-resource'),
       ]),
     ).toEqual([
-      ['west', 'input', 'fluid:fluid 1'],
-      ['east', 'output', 'fluid:fluid 2'],
+      ['west', 'input', 'fluid:1'],
+      ['east', 'output', 'fluid:2'],
     ]);
     expect(
       within(articleForProblem(firstSolidProblem)).getByLabelText('Max column height').textContent,

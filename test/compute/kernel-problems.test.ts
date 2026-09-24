@@ -21,17 +21,17 @@ describe('assemblerProblem', () => {
 
     expect(problem.inputs).toEqual({
       solids: { 'item 1': 5, 'item 2': 8 },
-      fluids: { 'fluid 1': 200 },
+      fluids: { 'fluid:1': 200 },
     });
     expect(problem.outputs).toEqual({
       solids: { 'item 3': 2 },
-      fluids: { 'fluid 2': 100 },
+      fluids: { 'fluid:2': 100 },
     });
     expect(problem.assemblers).toEqual([
       {
         name: 'Chemical plant',
-        inputPerSecond: { 'item 1': 5, 'item 2': 8, 'fluid 1': 200 },
-        outputPerSecond: { 'item 3': 2, 'fluid 2': 100 },
+        inputPerSecond: { 'item 1': 5, 'item 2': 8, 'fluid:1': 200 },
+        outputPerSecond: { 'item 3': 2, 'fluid:2': 100 },
       },
     ]);
     expect(problem.design).toEqual({ columns: [{ entities: [] }] });
@@ -113,8 +113,8 @@ describe('kernelProblems', () => {
     expect(kernelProblems.solid[8]?.outputs.solids).toEqual({ 'item 3': 1, 'item 4': 1 });
     expect(kernelProblems.fluidInput[4]?.outputs).toEqual({ solids: {}, fluids: {} });
     expect(kernelProblems.fluidInputAndOutput[4]?.outputs.fluids).toEqual({
-      'fluid 2': 200,
-      'fluid 3': 200,
+      'fluid:2': 200,
+      'fluid:3': 200,
     });
   });
 
@@ -122,7 +122,7 @@ describe('kernelProblems', () => {
     const problem = kernelProblems.fluidOutput[6]!;
 
     expect(problem.inputs).toEqual({ solids: {}, fluids: {} });
-    expect(problem.outputs).toEqual({ solids: {}, fluids: { 'fluid 1': 200 } });
+    expect(problem.outputs).toEqual({ solids: {}, fluids: { 'fluid:1': 200 } });
     expect(problem.assemblers[0]?.inputPerSecond).toEqual({});
   });
 
@@ -158,8 +158,8 @@ describe('kernelProblems', () => {
           ],
         },
       ]);
-      expect(problem.inputs.fluids).toEqual({ 'fluid 1': 200 });
-      expect(problem.outputs.fluids).toEqual({ 'fluid 2': 200 });
+      expect(problem.inputs.fluids).toEqual({ 'fluid:1': 200 });
+      expect(problem.outputs.fluids).toEqual({ 'fluid:2': 200 });
     }
   });
 

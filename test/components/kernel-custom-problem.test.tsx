@@ -149,8 +149,8 @@ describe('KernelCustomProblem', () => {
     );
     const result = screen.getByLabelText('Your problem result');
     expect(within(result).getByRole('heading', { name: 'Air filter 5×5' })).toBeTruthy();
-    expect(within(result).getByLabelText('200 fluid 1')).toBeTruthy();
-    expect(within(result).getByLabelText('200 fluid 2')).toBeTruthy();
+    expect(within(result).getByLabelText('200 fluid:1')).toBeTruthy();
+    expect(within(result).getByLabelText('200 fluid:2')).toBeTruthy();
   });
 
   it('previews the colour of each item and fluid that will be added', async () => {
@@ -224,15 +224,15 @@ describe('KernelCustomProblem', () => {
         name: 'Add fluid',
       }),
     );
-    expect(within(result).getByLabelText('200 fluid 1')).toBeTruthy();
+    expect(within(result).getByLabelText('200 fluid:1')).toBeTruthy();
     const inputFluids = screen.getByRole('group', { name: 'Inputs' });
-    expect(within(inputFluids).queryByText('fluid 1')).toBeNull();
+    expect(within(inputFluids).queryByText('fluid:1')).toBeNull();
     expect(
       inputFluids
         .querySelector('.kernel-custom-fluid .kernel-custom-resource-icon path')
         ?.getAttribute('fill'),
     ).toBe(
-      within(result).getByLabelText('200 fluid 1').querySelector('path')?.getAttribute('fill'),
+      within(result).getByLabelText('200 fluid:1').querySelector('path')?.getAttribute('fill'),
     );
 
     await user.click(
