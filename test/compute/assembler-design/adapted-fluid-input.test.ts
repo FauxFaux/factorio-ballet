@@ -114,6 +114,43 @@ describe('adapted casting-machine fluid inputs', () => {
     expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
   });
 
+  it.each([
+    { inputRate: 29.1, beltItemsPerSecond: 45 },
+    { inputRate: 12.2, beltItemsPerSecond: 11.2 },
+  ])(
+    'splits one $inputRate items/s input across two belts',
+    ({ inputRate, beltItemsPerSecond }) => {
+      const design = generateAssemblerDesign(problem(null, [inputRate]), {
+        beltItemsPerSecond,
+        inserterItemsPerSecond: 15.9,
+        longInserterItemsPerSecond: 7.9,
+      });
+      expect(design.columns).toBeDefined();
+      const entities = design.columns![0].entities;
+      expect(entities.filter(({ kind }) => kind === 'inserter')).toEqual([
+        { kind: 'inserter', position: { x: 5, y: 1 }, direction: 'west' },
+        { kind: 'inserter', position: { x: 1, y: 0 }, direction: 'east' },
+      ]);
+      expect(
+        entities.filter(({ kind }) => kind === 'belt').map(({ position }) => position.x),
+      ).toEqual([6, 6, 6, 6, 0, 0, 0, 0]);
+      expect(entityPositionStatuses(entities)).toEqual(entities.map(() => 'valid'));
+    },
+  );
+
+  it('rejects a single input above the combined belt and inserter capacity', () => {
+    const design = generateAssemblerDesign(problem(null, [31.9]), {
+      beltItemsPerSecond: 45,
+      inserterItemsPerSecond: 15.9,
+      longInserterItemsPerSecond: 7.9,
+    });
+    expect(design).toEqual({
+      failure: [
+        'the adapted fluid layout cannot feed its solid inputs through the available belts and inserters',
+      ],
+    });
+  });
+
   it('uses the second belt when two inputs exceed one inserter, and rejects an input beyond either inserter', () => {
     const transport = {
       beltItemsPerSecond: 45,

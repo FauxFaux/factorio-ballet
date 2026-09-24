@@ -135,11 +135,16 @@ function groupInputRates(
 ): number[][] | undefined {
   if (rates.length === 0) return [];
   if (beltCount === 0) return undefined;
+  const perBeltCapacity = Math.min(beltCapacity, inserterCapacity);
+  if (rates.length === 1 && rates[0] > perBeltCapacity) {
+    if (beltCount < 2 || rates[0] > 2 * perBeltCapacity) return undefined;
+    return [[perBeltCapacity], [rates[0] - perBeltCapacity]];
+  }
   for (const size of [2, 1]) {
     const group = rates.slice(0, size);
     if (group.length !== size) continue;
     if (group.length === 2 && group.some((rate) => rate > beltCapacity / 2)) continue;
-    if (sum(group) > Math.min(beltCapacity, inserterCapacity)) continue;
+    if (sum(group) > perBeltCapacity) continue;
     const rest = groupInputRates(rates.slice(size), beltCount - 1, beltCapacity, inserterCapacity);
     if (rest) return [group, ...rest];
   }
