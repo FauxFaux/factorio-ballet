@@ -5,7 +5,6 @@ import { staticData } from '../../data/decode.ts';
 import type {
   DesignAssembler,
   DesignBelt,
-  DesignEntity,
   DesignInserter,
   DesignPipe,
   DesignPosition,
@@ -17,56 +16,15 @@ import type { AssemblerInputStatus, BeltItemTrace } from './design-belt-traces.t
 import type { DesignSceneItems } from './design-scene.tsx';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
+import type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
+export { entityPositionStatuses } from '../../compute/design-validation/geometry.ts';
+export type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
 
 export const TILE_SIZE = 12;
 
 export type ViewportPoint = { x: number; y: number };
 
 /** The placement and connection validity currently known for an entity. */
-export type EntityPositionStatus = 'valid' | 'overlap' | 'disconnected';
-
-interface EntityBounds {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-/**
- * Return each entity's placement status. Connection validation will later be able to return
- * `disconnected`; for now, only intersecting tile rectangles are invalid.
- */
-export function entityPositionStatuses(entities: DesignEntity[]): EntityPositionStatus[] {
-  const statuses: EntityPositionStatus[] = Array(entities.length).fill('valid');
-  const bounds = entities.map(entityBounds);
-
-  for (let first = 0; first < bounds.length; first += 1) {
-    for (let second = first + 1; second < bounds.length; second += 1) {
-      if (!rectanglesOverlap(bounds[first], bounds[second])) continue;
-      statuses[first] = 'overlap';
-      statuses[second] = 'overlap';
-    }
-  }
-
-  return statuses;
-}
-
-function entityBounds(entity: DesignEntity): EntityBounds {
-  return {
-    ...entity.position,
-    ...(entity.kind === 'assembler' ? entity.size : { width: 1, height: 1 }),
-  };
-}
-
-function rectanglesOverlap(first: EntityBounds, second: EntityBounds): boolean {
-  return (
-    first.x < second.x + second.width &&
-    first.x + first.width > second.x &&
-    first.y < second.y + second.height &&
-    first.y + first.height > second.y
-  );
-}
-
 /** Convert a position in the design model to a pixel position in the visible viewport. */
 export function worldToViewport(
   position: DesignPosition,

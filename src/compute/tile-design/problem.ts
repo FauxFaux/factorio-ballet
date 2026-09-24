@@ -110,13 +110,13 @@ export function normalizeTileDesignInput(
         items: inputs.items,
         fluids: fluidAccesses
           .filter(({ side }) => side === 'input')
-          .map(({ resource, positions }) => ({ resource, positions })),
+          .map(({ resource, boxIndex, positions }) => ({ resource, boxIndex, positions })),
       },
       outputs: {
         items: outputs.items,
         fluids: fluidAccesses
           .filter(({ side }) => side === 'output')
-          .map(({ resource, positions }) => ({ resource, positions })),
+          .map(({ resource, boxIndex, positions }) => ({ resource, boxIndex, positions })),
       },
     });
   }

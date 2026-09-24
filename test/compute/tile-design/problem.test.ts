@@ -56,12 +56,14 @@ describe('normalizeTileDesignInput', () => {
     expect(machine.inputs.fluids).toEqual([
       {
         resource: 'fluid:1',
+        boxIndex: 0,
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
     expect(machine.outputs.fluids).toEqual([
       {
         resource: 'fluid:2',
+        boxIndex: 1,
         positions: [{ position: { x: 0, y: 1 }, direction: 'south' }],
       },
     ]);
@@ -129,6 +131,7 @@ describe('normalizeTileDesignInput', () => {
     expect(machine.inputs.fluids).toEqual([
       {
         resource: 'fluid:1',
+        boxIndex: 0,
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
@@ -152,10 +155,12 @@ describe('normalizeTileDesignInput', () => {
     expect(normalized(problem).machines[0]?.inputs.fluids).toEqual([
       {
         resource: 'fluid:1',
+        boxIndex: 0,
         positions: [{ position: { x: -1, y: 0 }, direction: 'west' }],
       },
       {
         resource: 'fluid:1',
+        boxIndex: 1,
         positions: [{ position: { x: 1, y: 0 }, direction: 'east' }],
       },
     ]);
@@ -188,6 +193,7 @@ describe('normalizeTileDesignInput', () => {
     expect(machine.outputs.fluids).toEqual([
       {
         resource: 'fluid:beta',
+        boxIndex: 0,
         positions: [
           { position: { x: -1, y: 1 }, direction: 'south' },
           { position: { x: 1, y: 1 }, direction: 'south' },
@@ -195,6 +201,7 @@ describe('normalizeTileDesignInput', () => {
       },
       {
         resource: 'fluid:alpha',
+        boxIndex: 1,
         positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
       },
     ]);
@@ -248,6 +255,16 @@ describe('normalizeTileDesignInput', () => {
       success: false,
       code: 'invalid-machine',
       message: expect.stringContaining('repeated'),
+    });
+  });
+
+  it('rejects a fluid-box index outside the available side-specific boxes', () => {
+    const problem = assemblerProblem({ fluidInputs: [1] });
+    problem.assemblers[0]!.fluidIngredients = [{ resource: 'fluid:1', fluidboxIndex: 2 }];
+    expect(normalizeTileDesignInput(problem, options)).toMatchObject({
+      success: false,
+      code: 'invalid-fluid',
+      resource: 'fluid:1',
     });
   });
 

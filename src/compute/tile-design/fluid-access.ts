@@ -27,9 +27,21 @@ export function makeFluidAccesses(
       machineId,
     );
   }
-  const inputOrder = orderedFluids(fluidInputs, specification.fluidIngredients, machineId, 'input');
+  const inputOrder = orderedFluids(
+    fluidInputs,
+    specification.fluidIngredients,
+    specification,
+    machineId,
+    'input',
+  );
   if (isError(inputOrder)) return inputOrder;
-  const outputOrder = orderedFluids(fluidOutputs, specification.fluidProducts, machineId, 'output');
+  const outputOrder = orderedFluids(
+    fluidOutputs,
+    specification.fluidProducts,
+    specification,
+    machineId,
+    'output',
+  );
   if (isError(outputOrder)) return outputOrder;
 
   const inputAssigned = fluidBoxResources(specification, {
@@ -81,7 +93,7 @@ export function makeFluidAccesses(
           machineId,
         );
       }
-      accesses.push({ resource, side, positions });
+      accesses.push({ resource, boxIndex: index, side, positions });
     }
   }
   for (const [side, fluids] of [
@@ -105,6 +117,7 @@ export function makeFluidAccesses(
 function orderedFluids(
   fluidsForSide: FluidId[],
   declarations: FluidBoxResource[] | undefined,
+  specification: AssemblerSpecification,
   machineId: string,
   side: FlowSide,
 ): FluidBoxResource[] | InvalidTileDesignInput {
@@ -120,6 +133,9 @@ function orderedFluids(
     return fluidsForSide.map((resource) => ({ resource }));
   }
   const expected = new Set<string>(fluidsForSide);
+  const availableBoxes = (specification.fluidBoxes ?? []).filter(
+    (box) => box.productionType === side || box.productionType === 'input-output',
+  ).length;
   const seen = new Set<string>();
   const claimed = new Set<number>();
   for (const { resource, fluidboxIndex } of declarations) {
@@ -127,7 +143,9 @@ function orderedFluids(
       !expected.has(resource) ||
       seen.has(resource) ||
       (fluidboxIndex !== undefined &&
-        (!positiveInteger(fluidboxIndex) || claimed.has(fluidboxIndex)))
+        (!positiveInteger(fluidboxIndex) ||
+          fluidboxIndex > availableBoxes ||
+          claimed.has(fluidboxIndex)))
     ) {
       return invalid(
         'invalid-fluid',

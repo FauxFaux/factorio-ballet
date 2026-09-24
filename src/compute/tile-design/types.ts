@@ -13,6 +13,8 @@ export interface ItemFlow {
  * with the selected machine orientation while keeping the resource attached to this access. */
 export interface FluidAccess {
   resource: FluidId;
+  /** Zero-based physical fluid-box index on the unrotated machine. */
+  boxIndex: number;
   positions: { position: { x: number; y: number }; direction: DesignDirection }[];
 }
 
