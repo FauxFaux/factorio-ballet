@@ -123,7 +123,11 @@ describe('fluid tile search', () => {
     const input = pairedOutputsProblem();
     const result = found(solveTileDesign(input));
     expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.width).toBe(6);
     expect(result.candidate.pitch).toBe(6);
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
+    ).toHaveLength(6);
     expect(
       result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
     ).toMatchObject([{ direction: 'east' }, { direction: 'east', mirrored: true }]);
@@ -145,6 +149,12 @@ describe('fluid tile search', () => {
     expect(outputOrder).toEqual(['fluid:steam', 'fluid:acid', 'fluid:acid', 'fluid:steam']);
     expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(3);
     expect(validateTileDesign(input, result.candidate).valid).toBe(true);
+    const brokenTunnel = structuredClone(result.candidate);
+    const endpoint = brokenTunnel.column.entities.find(
+      (entity) => entity.kind === 'underground-pipe' && entity.direction === 'north',
+    );
+    if (endpoint?.kind === 'underground-pipe') endpoint.direction = 'east';
+    expect(codes(input, brokenTunnel)).toContain('underground-pipe-pair');
     const unmirrored = structuredClone(result.candidate);
     const second = unmirrored.column.entities.findIndex(
       (entity, index) => entity.kind === 'assembler' && index > 0,
@@ -199,6 +209,7 @@ describe('fluid tile search', () => {
     if (!normalized.success) throw new Error(normalized.message);
     const result = found(solveTileDesign(normalized.input));
     expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.width).toBe(6);
     expect(
       result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
     ).toHaveLength(2);

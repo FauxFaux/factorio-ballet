@@ -43,7 +43,7 @@ export function validateBoundary(
           entity.position.y === y &&
           (track.kind === 'belt'
             ? entity.kind === 'belt' || entity.kind === 'underground-belt'
-            : entity.kind === 'pipe'),
+            : entity.kind === 'pipe' || entity.kind === 'underground-pipe'),
       ),
     );
     if (ends.some((index) => index < 0)) {
@@ -93,6 +93,14 @@ export function validateBoundary(
           if (track.lanes?.[lane] && lanes.get(`${index}:${lane}`) !== track.lanes[lane])
             issue('boundary-lane', `Belt lane ${lane} at x=${track.x} changes resource.`, index);
       }
+    } else {
+      const top = entities[ends[0]];
+      const bottom = entities[ends[1]];
+      if (
+        (top.kind === 'underground-pipe' && top.direction !== 'north') ||
+        (bottom.kind === 'underground-pipe' && bottom.direction !== 'south')
+      )
+        issue('boundary-continuity', `Pipe track at x=${track.x} has no exposed seam.`);
     }
   }
   for (const side of ['inputs', 'outputs'] as const) {

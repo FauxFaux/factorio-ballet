@@ -2,3 +2,6 @@
   - when no saw blade recipe, solver reports negative but dosen't add input
   - saw blade doesn't show as output of wood recipe
   - timborer's???
+- in the stacked chemical plant air separation kernel design,
+  - undergruond the input pipe trunk so we have space for input and output inserters
+  - http://localhost:5173/#yr4qA4YZMIGD4hCUwGHegjrU2ExHKRtobDVQczaQD8xBpZk5oMIbqAZeFIGrLZCPgQ16oGagr0BFjWdeAbCtADETnLnhAsCaASgGVuRfWoKmCiECVKYDUgpyODBIwSaD8qQnMLCLA1KLglOB3gA6zhjoeFhdhS5noaMEGhPyxCFtpGdWCzQeHBdAGhwgAA==

@@ -5,7 +5,13 @@ import { oppositeDirection, orientFluidPort, positionKey } from './orientation.t
 import type { FluidAccess, TileDesignInput, TileMachineOrientation } from './types.ts';
 
 type Pipe = Extract<DesignEntity, { kind: 'pipe' | 'underground-pipe' }>;
-type Port = { resource: string; x: number; y: number; side: 'east' | 'west' };
+type Port = {
+  resource: string;
+  x: number;
+  y: number;
+  side: 'east' | 'west';
+  flowSide: 'input' | 'output';
+};
 
 /** Two touching copies form one periodic unit. Both use the same resource-to-box assignment;
  * reflection changes only the physical position of the second copy's ports. */
@@ -49,11 +55,14 @@ export function mirroredFluidPair(
         { rotation, mirrored: firstMirrored },
         { rotation, mirrored: !firstMirrored },
       ];
-      const accesses = [...machine.inputs.fluids, ...machine.outputs.fluids];
+      const accesses = [
+        ...machine.inputs.fluids.map((access) => ({ access, flowSide: 'input' as const })),
+        ...machine.outputs.fluids.map((access) => ({ access, flowSide: 'output' as const })),
+      ];
       const ports: Port[] = [];
       let supported = true;
       for (const [copy, orientation] of orientations.entries()) {
-        for (const access of accesses) {
+        for (const { access, flowSide } of accesses) {
           const port = horizontalPort(access, size, orientation);
           if (!port) {
             supported = false;
@@ -64,11 +73,18 @@ export function mirroredFluidPair(
             x: port.x,
             y: port.y + copy * size.height,
             side: port.side,
+            flowSide,
           });
         }
       }
       if (!supported) continue;
-      const resources = [...new Set(ports.map(({ resource }) => resource))].sort();
+      const resources = [...new Set(ports.map(({ resource }) => resource))].sort((a, b) => {
+        const span = (resource: string) => {
+          const rows = ports.filter((port) => port.resource === resource).map(({ y }) => y);
+          return Math.max(...rows) - Math.min(...rows);
+        };
+        return span(b) - span(a) || a.localeCompare(b);
+      });
       const choices = resources.map((resource) => {
         const matching = ports.filter((port) => port.resource === resource);
         const side = matching[0].side;
@@ -104,95 +120,108 @@ export function mirroredFluidPair(
           }
           return;
         }
-        const pipes = new Map<string, { entity: Pipe; resource: string }>();
-        function add(entity: Pipe, resource: string): boolean {
-          const key = positionKey(entity.position);
-          const old = pipes.get(key);
-          if (old)
-            return (
-              old.resource === resource &&
-              old.entity.kind === entity.kind &&
-              (old.entity.kind !== 'underground-pipe' ||
-                (entity.kind === 'underground-pipe' && old.entity.direction === entity.direction))
-            );
-          if (entity.position.x >= 0 && entity.position.x < size.width) return false;
-          pipes.set(key, { entity, resource });
-          return true;
-        }
-        for (const [resource, x] of trunks) {
-          for (let y = 0; y < pitch; y++)
-            if (!add({ kind: 'pipe', position: { x, y } }, resource)) return;
-        }
-        for (const port of ports) {
-          const trunkX = trunks.get(port.resource)!;
-          const sign = port.side === 'east' ? 1 : -1;
-          const distance = (trunkX - port.x) * sign;
-          if (distance < 0) return;
-          if (distance === 1) {
-            if (!add({ kind: 'pipe', position: { x: port.x, y: port.y } }, port.resource)) return;
-          } else if (distance > 1) {
-            if (
-              distance - 2 > input.transport.undergroundPipeReach ||
-              !add(
-                {
-                  kind: 'underground-pipe',
-                  position: { x: port.x, y: port.y },
-                  direction: oppositeDirection(port.side),
-                },
-                port.resource,
-              ) ||
-              !add(
-                {
-                  kind: 'underground-pipe',
-                  position: { x: trunkX - sign, y: port.y },
-                  direction: port.side,
-                },
-                port.resource,
-              )
-            )
-              return;
+        function emit(
+          profile: Map<string, Pipe[]> | undefined,
+        ): { candidate: TileDesignCandidate; validation: TileValidationResult } | undefined {
+          const pipes = new Map<string, { entity: Pipe; resource: string }>();
+          function add(entity: Pipe, resource: string): boolean {
+            const key = positionKey(entity.position);
+            const old = pipes.get(key);
+            if (old)
+              return (
+                old.resource === resource &&
+                old.entity.kind === entity.kind &&
+                (old.entity.kind !== 'underground-pipe' ||
+                  (entity.kind === 'underground-pipe' && old.entity.direction === entity.direction))
+              );
+            if (entity.position.x >= 0 && entity.position.x < size.width) return false;
+            pipes.set(key, { entity, resource });
+            return true;
           }
+          for (const [resource, x] of trunks) {
+            const entities =
+              profile?.get(resource) ??
+              Array.from({ length: pitch }, (_, y): Pipe => ({ kind: 'pipe', position: { x, y } }));
+            for (const entity of entities) if (!add(entity, resource)) return;
+          }
+          for (const port of ports) {
+            const trunkX = trunks.get(port.resource)!;
+            const sign = port.side === 'east' ? 1 : -1;
+            const distance = (trunkX - port.x) * sign;
+            if (distance < 0) return;
+            if (distance === 1) {
+              if (!add({ kind: 'pipe', position: { x: port.x, y: port.y } }, port.resource)) return;
+            } else if (distance > 1) {
+              if (
+                distance - 2 > input.transport.undergroundPipeReach ||
+                !add(
+                  {
+                    kind: 'underground-pipe',
+                    position: { x: port.x, y: port.y },
+                    direction: oppositeDirection(port.side),
+                  },
+                  port.resource,
+                ) ||
+                !add(
+                  {
+                    kind: 'underground-pipe',
+                    position: { x: trunkX - sign, y: port.y },
+                    direction: port.side,
+                  },
+                  port.resource,
+                )
+              )
+                return;
+            }
+          }
+          const xs = [
+            0,
+            size.width - 1,
+            ...trunks.values(),
+            ...[...pipes.values()].map(({ entity }) => entity.position.x),
+          ];
+          const minX = Math.min(...xs);
+          const width = Math.max(...xs) - minX + 1;
+          if (width > input.envelope.maxWidth) return;
+          const candidate: TileDesignCandidate = {
+            width,
+            pitch,
+            column: { entities: [] },
+            machineIds: {},
+            lanes: [],
+            transfers: [],
+            fluids: [],
+            boundary: [...trunks].map(([resource, x]) => ({ kind: 'pipe', x: x - minX, resource })),
+          };
+          for (const [copy, orientation] of orientations.entries()) {
+            const entityIndex = candidate.column.entities.length;
+            candidate.machineIds[entityIndex] = machine.id;
+            candidate.column.entities.push({
+              kind: 'assembler',
+              position: { x: -minX, y: copy * size.height },
+              size,
+              recipe: machine.id,
+              direction: orientation.rotation,
+              ...(orientation.mirrored ? { mirrored: true } : {}),
+            });
+          }
+          for (const { entity, resource } of pipes.values()) {
+            candidate.fluids.push({ pipeIndex: candidate.column.entities.length, resource });
+            candidate.column.entities.push({
+              ...entity,
+              position: { x: entity.position.x - minX, y: entity.position.y },
+            });
+          }
+          const validation = validateTileDesign(input, candidate);
+          return validation.valid ? { candidate, validation } : undefined;
         }
-        const xs = [
-          0,
-          size.width - 1,
-          ...trunks.values(),
-          ...[...pipes.values()].map(({ entity }) => entity.position.x),
-        ];
-        const minX = Math.min(...xs);
-        const width = Math.max(...xs) - minX + 1;
-        if (width > input.envelope.maxWidth) return;
-        const candidate: TileDesignCandidate = {
-          width,
+        const profile = interleavedOutputTrunks(
+          ports,
+          trunks,
           pitch,
-          column: { entities: [] },
-          machineIds: {},
-          lanes: [],
-          transfers: [],
-          fluids: [],
-          boundary: [...trunks].map(([resource, x]) => ({ kind: 'pipe', x: x - minX, resource })),
-        };
-        for (const [copy, orientation] of orientations.entries()) {
-          const entityIndex = candidate.column.entities.length;
-          candidate.machineIds[entityIndex] = machine.id;
-          candidate.column.entities.push({
-            kind: 'assembler',
-            position: { x: -minX, y: copy * size.height },
-            size,
-            recipe: machine.id,
-            direction: orientation.rotation,
-            ...(orientation.mirrored ? { mirrored: true } : {}),
-          });
-        }
-        for (const { entity, resource } of pipes.values()) {
-          candidate.fluids.push({ pipeIndex: candidate.column.entities.length, resource });
-          candidate.column.entities.push({
-            ...entity,
-            position: { x: entity.position.x - minX, y: entity.position.y },
-          });
-        }
-        const validation = validateTileDesign(input, candidate);
-        return validation.valid ? { candidate, validation } : undefined;
+          input.transport.undergroundPipeReach,
+        );
+        return (profile && emit(profile)) || emit(undefined);
       }
       const result = search(0);
       if (result) return result;
@@ -210,6 +239,68 @@ function horizontalPort(
     if (port.direction === 'east' || port.direction === 'west')
       return { ...port.position, side: port.direction };
   }
+}
+
+/** Complementary vertical underground spans let adjacent output trunks pass through each
+ * other's active rows without a surface connection. Both spans terminate within the tile. */
+function interleavedOutputTrunks(
+  ports: Port[],
+  trunks: Map<string, number>,
+  pitch: number,
+  reach: number,
+): Map<string, Pipe[]> | undefined {
+  const outputs = ports.filter(({ flowSide }) => flowSide === 'output');
+  const resources = [...new Set(outputs.map(({ resource }) => resource))];
+  if (resources.length !== 2 || outputs.length !== 4) return;
+  const groups = resources.map((resource) =>
+    outputs.filter((port) => port.resource === resource).sort((a, b) => a.y - b.y),
+  );
+  const outer = groups.find((group) => group[0].y === 0 && group[1].y === pitch - 1);
+  const inner = groups.find((group) => group !== outer);
+  if (!outer || !inner || outer.length !== 2 || inner.length !== 2) return;
+  const side = outer[0].side;
+  const portX = outer[0].x;
+  if ([...outer, ...inner].some((port) => port.side !== side || port.x !== portX)) return;
+  const first = inner[0].y;
+  const last = inner[1].y;
+  if (
+    first < 2 ||
+    last > pitch - 3 ||
+    last - first + 1 > reach ||
+    first - 2 > reach ||
+    pitch - last - 3 > reach
+  )
+    return;
+  const sign = side === 'east' ? 1 : -1;
+  if (trunks.get(outer[0].resource) !== portX || trunks.get(inner[0].resource) !== portX + sign)
+    return;
+  const result = new Map<string, Pipe[]>();
+  const surface = (x: number, y: number): Pipe => ({ kind: 'pipe', position: { x, y } });
+  const under = (x: number, y: number, direction: 'north' | 'south'): Pipe => ({
+    kind: 'underground-pipe',
+    position: { x, y },
+    direction,
+  });
+  result.set(
+    outer[0].resource,
+    Array.from({ length: pitch }, (_, y) => {
+      if (y === first - 1) return under(portX, y, 'north');
+      if (y === last + 1) return under(portX, y, 'south');
+      if (y >= first && y <= last) return undefined;
+      return surface(portX, y);
+    }).filter((pipe): pipe is Pipe => pipe !== undefined),
+  );
+  const innerX = portX + sign;
+  result.set(
+    inner[0].resource,
+    Array.from({ length: pitch }, (_, y) => {
+      if (y === 0 || y === last + 1) return under(innerX, y, 'north');
+      if (y === first - 1 || y === pitch - 1) return under(innerX, y, 'south');
+      if (y >= first && y <= last) return surface(innerX, y);
+      return undefined;
+    }).filter((pipe): pipe is Pipe => pipe !== undefined),
+  );
+  return result;
 }
 
 /** Join two independently routed halves only when every through track lines up. The full
