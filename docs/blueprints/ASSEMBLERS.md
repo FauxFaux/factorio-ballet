@@ -6,7 +6,8 @@ one-fluid extension in `ass-3s-1f-in-1s-out.base64`, and the rectangular chemica
 `ass-2s-in-1s-out-snake.base64`, the port adaptor in `mono-silicon.base64`, and the alternating
 mirrored-plant arrangement in `chem-flippos.base64`. The matching JSON files are easier to inspect
 and are the authoritative entity lists. `more-inserters-in-wiggle.json` illustrates a way to
-increase input inserter throughput along one machine edge.
+increase input inserter throughput along one machine edge. `three-piping-plans.json` compares three
+ways to fit a fluid pipe and belt transfers along one assembler edge.
 
 The filename counts describe transport lines, not resource types: `s` is one solid belt and `f` is
 one independent fluid pipe. A solid belt has two lanes and can therefore carry two dependable item
@@ -145,6 +146,30 @@ short-reach inserters on each belt. Along a five-tile edge, shifting the undergr
 the two-tile bend leaves three sites on the normally near belt and gives two sites to the normally
 far belt while it is temporarily near. The principle is to allocate the available edge rows between
 exposed near-belt segments and the far belt's inward run.
+
+## Three ways to share an assembler edge with a pipe
+
+`three-piping-plans.json` places three separate assembling-machine-2 examples from top to bottom.
+Only the left side of each assembler is populated. Each example occupies three rows, has a
+northbound belt, and connects a pipe to the middle of the assembler's west edge. The inserter
+directions below describe the fixture; a free inserter site could serve either role.
+
+| Example | West-to-east arrangement                                    | Inserters in the fixture                 | Tradeoff                                                                                                                                                                                                                                                                                                   |
+| ------- | ----------------------------------------------------------- | ---------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Top     | belt, empty cell, long inserters, pipe, assembler           | top and middle feed in; bottom takes out | The inserters stand outside the surface pipe and reach across it into the machine. The belt is two cells beyond their bases. This mainly demonstrates that a long inserter can transfer across a pipe.                                                                                                     |
+| Middle  | pipe trunk, underground belt, ordinary inserters, assembler | top and bottom take out                  | A straight pipe trunk runs vertically. A pipe-to-ground pair occupies the middle row between the trunk and the assembler. The belt passes underneath one pipe endpoint, leaving its exposed endpoints for ordinary inserters. This compact arrangement is useful and is sometimes produced by the solvers. |
+| Bottom  | belt, pipe trunk, long inserters, assembler                 | top takes out; bottom feeds in           | A surface pipe runs between the belt and inserter bases. The middle-row pipe branches to the assembler. No underground pipes or belts are needed, but the long inserters make this a low-throughput choice.                                                                                                |
+
+In the top example, the pipe itself runs vertically in the cell immediately beside the assembler;
+the long inserters stand on its far side. In the bottom example, the inserters stand immediately
+beside the assembler, with the pipe between them and the belt. A long inserter reaches two cells on
+each side of its base, so both placements work despite the intervening pipe.
+
+The bottom arrangement gets built in real games because underground pipes and belts cost more. Its
+long inserters transfer items much more slowly than ordinary inserters, so it suits modest item
+rates. The middle arrangement spends underground entities to keep ordinary inserters at the machine
+edge. In all three examples, the fixture shows geometry and transfer directions, not a measured
+throughput guarantee for a particular recipe.
 
 ## Choosing a pattern from item rates
 
