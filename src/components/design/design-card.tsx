@@ -22,10 +22,12 @@ export function DesignCard({
   index,
   problem,
   throughput,
+  onUseProblem,
 }: {
   index: number;
   problem: KernelProblem;
   throughput: AssemblerDesignThroughput;
+  onUseProblem?: () => void;
 }) {
   const title = problem.assemblers.map(({ name }) => name).join(', ');
   const resourceColours = resourceColoursFor(problem);
@@ -77,6 +79,11 @@ export function DesignCard({
           outputs={problem.outputs}
           resourceColours={resourceColours}
         />
+        {onUseProblem && (
+          <button type="button" class="design-card-use-problem" onClick={onUseProblem}>
+            Use this problem
+          </button>
+        )}
         {stackLimit !== undefined && (
           <dl class="design-card-stack-limit" aria-label="Max column height">
             <dt>

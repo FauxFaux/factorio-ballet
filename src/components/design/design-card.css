@@ -27,6 +27,10 @@
   font-size: 1rem;
 }
 
+.design-card-use-problem {
+  margin-top: 0.75rem;
+}
+
 .design-card-flow {
   display: flex;
   align-items: baseline;

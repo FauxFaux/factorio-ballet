@@ -2,7 +2,7 @@ import './kernel-debug.css';
 import type { Chosen } from '../data/index.ts';
 import { generateAssemblerDesign, isAssemblerDesignFailure } from '../compute/assembler-design.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
-import { allKernelProblems } from '../compute/kernel-problems.ts';
+import { allKernelProblems, kernelMachineChoices } from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
 import { DesignCard } from './design/design-card.tsx';
 import { KernelCustomProblem } from './kernel-custom-problem.tsx';
@@ -30,6 +30,24 @@ export function KernelDebug({
         Number(isAssemblerDesignFailure(generateAssemblerDesign(left.problem, throughput))) -
         Number(isAssemblerDesignFailure(generateAssemblerDesign(right.problem, throughput))),
     );
+  const useProblem = (problem: (typeof allKernelProblems)[number]) => {
+    const assembler = problem.assemblers[0];
+    if (!assembler) return;
+    const machine = kernelMachineChoices.find(({ label }) => label === assembler.name);
+    const building = assembler.name.startsWith('Air filter')
+      ? 'air-filter'
+      : (machine?.value ?? (assembler.name.startsWith('Assembler') ? 'assembler' : undefined));
+    custom[1]((current) => ({
+      building: building ?? current?.building ?? 'assembler',
+      flows: {
+        solidInputs: Object.values(problem.inputs.solids),
+        fluidInputs: Object.values(problem.inputs.fluids),
+        solidOutputs: Object.values(problem.outputs.solids),
+        fluidOutputs: Object.values(problem.outputs.fluids),
+      },
+      ...(current?.rates ? { rates: current.rates } : {}),
+    }));
+  };
 
   return (
     <section class="kernel-design" aria-labelledby="kernel-design-title">
@@ -53,7 +71,12 @@ export function KernelDebug({
         </dl>
         <div class="kernel-design-cards" aria-label="Kernel problems">
           {sortedProblems.map(({ problem, index }) => (
-            <DesignCard index={index} problem={problem} throughput={throughput} />
+            <DesignCard
+              index={index}
+              problem={problem}
+              throughput={throughput}
+              onUseProblem={() => useProblem(problem)}
+            />
           ))}
         </div>
       </section>
