@@ -1,5 +1,8 @@
 # Assembler design: coverage and limits
 
+For the proposed replacement architecture, see
+[the assembler solver plan](ASSEMBLER-SOLVER-PLAN.md).
+
 This is a factual map for reviewing how far the stock generator generalises the transport geometry
 in [the assembler blueprint notes](blueprints/ASSEMBLERS.md). The blueprint JSON files are geometry
 references, not a promise that every fixture is generated. The fixed two-assembler snake, for
