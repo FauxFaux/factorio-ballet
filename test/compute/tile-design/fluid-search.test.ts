@@ -127,7 +127,30 @@ describe('fluid tile search', () => {
     expect(result.candidate.pitch).toBe(6);
     expect(
       result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
-    ).toHaveLength(6);
+    ).toHaveLength(4);
+    const leftTrunk = result.candidate.boundary
+      .filter(({ kind }) => kind === 'pipe')
+      .toSorted((a, b) => a.x - b.x)[0];
+    expect(
+      result.candidate.column.entities.some(
+        (entity) =>
+          entity.kind === 'underground-pipe' &&
+          entity.position.x === leftTrunk.x &&
+          (entity.position.y === 0 || entity.position.y === result.candidate.pitch - 1),
+      ),
+    ).toBe(false);
+    const brokenSeam = structuredClone(result.candidate);
+    const seamEndpoint = brokenSeam.column.entities.find(
+      (entity) =>
+        entity.kind === 'underground-pipe' &&
+        entity.position.x === leftTrunk.x &&
+        entity.direction === 'north',
+    );
+    if (seamEndpoint?.kind === 'underground-pipe') seamEndpoint.direction = 'east';
+    expect(codes(input, brokenSeam)).toContain('boundary-continuity');
+    const shortReach = structuredClone(input);
+    shortReach.transport.undergroundPipeReach = 1;
+    expect(codes(shortReach, result.candidate)).toContain('underground-pipe-pair');
     expect(
       result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
     ).toMatchObject([{ direction: 'east' }, { direction: 'east', mirrored: true }]);

@@ -11,8 +11,7 @@ import type { TileDesignCandidate, TileValidationInput } from './types.ts';
 
 type ReportIssue = (code: string, message: string, index?: number, resource?: string) => void;
 
-/** Reconstruct the periodic fluid network. Underground pairs are wholly owned by one tile;
- * exposed adjacency wraps at the seam. */
+/** Reconstruct the periodic fluid network, including vertical underground spans crossing a seam. */
 export function validateFluids(
   input: TileValidationInput,
   candidate: TileDesignCandidate,
@@ -63,17 +62,16 @@ export function validateFluids(
       Math.min(
         input.transport.undergroundPipeReach + 1,
         entity.direction === 'north' || entity.direction === 'south'
-          ? candidate.pitch
+          ? candidate.pitch - 1
           : candidate.width,
       );
       distance++
     ) {
-      const otherIndex = pipeAt.get(
-        key({
-          x: entity.position.x + vector.x * distance,
-          y: entity.position.y + vector.y * distance,
-        }),
-      );
+      const position = {
+        x: entity.position.x + vector.x * distance,
+        y: entity.position.y + vector.y * distance,
+      };
+      const otherIndex = pipeAt.get(key(vector.y ? wrap(position) : position));
       if (otherIndex === undefined) continue;
       const other = entities[otherIndex];
       if (other.kind === 'underground-pipe' && other.direction === opposite(entity.direction)) {
@@ -142,55 +140,69 @@ export function validateFluids(
   const boundaryRoots = new Set<number>();
   for (const track of candidate.boundary) {
     if (track.kind !== 'pipe') continue;
-    const index = pipeAt.get(`${track.x},0`);
-    const oppositeEnd = pipeAt.get(`${track.x},${candidate.pitch - 1}`);
-    if (index === undefined || oppositeEnd === undefined) continue;
-    const top = entities[index];
-    const bottom = entities[oppositeEnd];
-    if (
-      (top.kind !== 'pipe' && (top.kind !== 'underground-pipe' || top.direction !== 'north')) ||
-      (bottom.kind !== 'pipe' &&
-        (bottom.kind !== 'underground-pipe' || bottom.direction !== 'south'))
-    ) {
-      issue('boundary-continuity', `Pipe track at x=${track.x} has no exposed seam.`);
+    const topIndex = pipeAt.get(`${track.x},0`);
+    const bottomIndex = pipeAt.get(`${track.x},${candidate.pitch - 1}`);
+    const top = topIndex === undefined ? undefined : entities[topIndex];
+    const bottom = bottomIndex === undefined ? undefined : entities[bottomIndex];
+    const exposedSeam =
+      topIndex !== undefined &&
+      bottomIndex !== undefined &&
+      (top?.kind === 'pipe' || (top?.kind === 'underground-pipe' && top.direction === 'north')) &&
+      (bottom?.kind === 'pipe' ||
+        (bottom?.kind === 'underground-pipe' && bottom.direction === 'south')) &&
+      root(topIndex) === root(bottomIndex) &&
+      fluidByRoot.get(root(topIndex)) === track.resource;
+    const seamPair = [...nearest].find(([end, partner]) => {
+      const pipe = entities[end];
+      const mate = entities[partner];
+      return (
+        nearest.get(partner) === end &&
+        pipe.kind === 'underground-pipe' &&
+        mate.kind === 'underground-pipe' &&
+        pipe.direction === 'north' &&
+        mate.direction === 'south' &&
+        pipe.position.x === track.x &&
+        pipe.position.y > mate.position.y &&
+        fluidByRoot.get(root(end)) === track.resource
+      );
+    });
+    const anchor = seamPair?.[0] ?? (exposedSeam ? topIndex : undefined);
+    if (anchor === undefined) {
+      issue('boundary-continuity', `Pipe track at x=${track.x} has no connected seam.`);
       continue;
     }
-    if (root(index) !== root(oppositeEnd))
-      issue('boundary-continuity', `Pipe track at x=${track.x} is disconnected.`);
-    // Every row must carry this fluid on the surface or below it in a paired vertical span.
-    // A seam edge alone cannot stand in for a through trunk inside a finite tile.
+    const network = root(anchor);
+    // Cover each row with this network's surface pipe, endpoint, or a mutual vertical pair.
     for (let y = 0; y < candidate.pitch; y++) {
       const row = pipeAt.get(`${track.x},${y}`);
       const exposed =
         row !== undefined &&
-        fluidByRoot.get(root(row)) === track.resource &&
+        root(row) === network &&
         (entities[row].kind === 'pipe' ||
           (entities[row].kind === 'underground-pipe' &&
             ['north', 'south'].includes(entities[row].direction)));
       const buried = [...nearest].some(([end, partner]) => {
         const pipe = entities[end];
-        const mate = entities[partner];
-        return (
-          pipe.kind === 'underground-pipe' &&
-          mate.kind === 'underground-pipe' &&
-          (pipe.direction === 'north' || pipe.direction === 'south') &&
-          pipe.position.x === track.x &&
-          fluidByRoot.get(root(end)) === track.resource &&
-          Math.min(pipe.position.y, mate.position.y) < y &&
-          y < Math.max(pipe.position.y, mate.position.y)
-        );
+        if (
+          nearest.get(partner) !== end ||
+          pipe.kind !== 'underground-pipe' ||
+          (pipe.direction !== 'north' && pipe.direction !== 'south') ||
+          pipe.position.x !== track.x ||
+          root(end) !== network
+        )
+          return false;
+        const step = vectors[opposite(pipe.direction)].y;
+        for (let distance = 1; distance < candidate.pitch; distance++) {
+          const row = wrap({ x: track.x, y: pipe.position.y + step * distance }).y;
+          if (row === entities[partner].position.y) return false;
+          if (row === y) return true;
+        }
+        return false;
       });
       if (!exposed && !buried)
         issue('unsupported-pipe-route', 'Boundary pipe has an uncovered row.');
     }
-    if (fluidByRoot.get(root(index)) !== track.resource)
-      issue(
-        'boundary-fluid',
-        'Boundary pipe network has a different fluid.',
-        index,
-        track.resource,
-      );
-    else boundaryRoots.add(root(index));
+    boundaryRoots.add(network);
   }
   for (const { access, machine, pipes } of obligations) {
     for (const pipe of pipes)

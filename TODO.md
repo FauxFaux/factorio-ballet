@@ -5,3 +5,6 @@
 - in the stacked chemical plant air separation kernel design,
   - undergruond the input pipe trunk so we have space for input and output inserters
   - http://localhost:5173/#yr4qA4YZMIGD4hCUwGHegjrU2ExHKRtobDVQczaQD8xBpZk5oMIbqAZeFIGrLZCPgQ16oGagr0BFjWdeAbCtADETnLnhAsCaASgGVuRfWoKmCiECVKYDUgpyODBIwSaD8qQnMLCLA1KLglOB3gA6zhjoeFhdhS5noaMEGhPyxCFtpGdWCzQeHBdAGhwgAA==
+  - use long-inserters to reach over the inner pipe
+  - shorten the outside pipe trunk's connection to one tile to give more inserter spaces
+  - why does it only work for outputs?

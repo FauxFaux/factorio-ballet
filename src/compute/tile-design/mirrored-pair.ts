@@ -242,7 +242,7 @@ function horizontalPort(
 }
 
 /** Complementary vertical underground spans let adjacent output trunks pass through each
- * other's active rows without a surface connection. Both spans terminate within the tile. */
+ * other's active rows. The outer trunk's pair is in the tile; the inner pair spans its seam. */
 function interleavedOutputTrunks(
   ports: Port[],
   trunks: Map<string, number>,
@@ -263,13 +263,7 @@ function interleavedOutputTrunks(
   if ([...outer, ...inner].some((port) => port.side !== side || port.x !== portX)) return;
   const first = inner[0].y;
   const last = inner[1].y;
-  if (
-    first < 2 ||
-    last > pitch - 3 ||
-    last - first + 1 > reach ||
-    first - 2 > reach ||
-    pitch - last - 3 > reach
-  )
+  if (first < 2 || last > pitch - 3 || last - first + 1 > reach || pitch + first - last - 3 > reach)
     return;
   const sign = side === 'east' ? 1 : -1;
   if (trunks.get(outer[0].resource) !== portX || trunks.get(inner[0].resource) !== portX + sign)
@@ -294,8 +288,8 @@ function interleavedOutputTrunks(
   result.set(
     inner[0].resource,
     Array.from({ length: pitch }, (_, y) => {
-      if (y === 0 || y === last + 1) return under(innerX, y, 'north');
-      if (y === first - 1 || y === pitch - 1) return under(innerX, y, 'south');
+      if (y === last + 1) return under(innerX, y, 'north');
+      if (y === first - 1) return under(innerX, y, 'south');
       if (y >= first && y <= last) return surface(innerX, y);
       return undefined;
     }).filter((pipe): pipe is Pipe => pipe !== undefined),
