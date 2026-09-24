@@ -45,13 +45,16 @@ export function* routeFrames(
               )
             : 0;
         for (let offset = 0; offset <= limit; offset++) {
-          if (offset === 1) continue;
           const trunkX = x + sign * offset;
           const pipes: FluidRoute['pipes'] = Array.from({ length: height }, (_, row) => ({
             entity: { kind: 'pipe', position: { x: trunkX, y: row } },
             resource: access.resource,
           }));
-          if (offset)
+          if (offset === 1) {
+            // A trunk one tile beyond the port connects through a surface pipe at the
+            // port itself; no underground pair is needed for this short branch.
+            pipes.push({ entity: { kind: 'pipe', position: { x, y } }, resource: access.resource });
+          } else if (offset > 1)
             pipes.push(
               {
                 entity: {

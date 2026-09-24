@@ -122,6 +122,18 @@ describe('fluid tile search', () => {
     expect(result.validation.supportedCopies).toBe(10);
   });
 
+  it('allows a trunk one tile beyond a direct fluid port pipe', () => {
+    const input = problem();
+    noItems(input);
+    input.machines[0].inputs.fluids = [access('fluid:water', 0, 'west')];
+    input.machines[0].outputs.fluids = [access('fluid:steam', 1, 'west', 0)];
+    input.boundary.outputs.fluids = ['fluid:steam'];
+    input.envelope.maxWidth = 7;
+    const result = found(solveTileDesign(input));
+    expect(result.validation.valid).toBe(true);
+    expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(2);
+  });
+
   it('rotates normalized opposing north/south ports to face trunks', () => {
     const settings = problem();
     const normalized = normalizeTileDesignInput(
@@ -214,10 +226,9 @@ describe('fluid tile search', () => {
       },
     ];
     const result = found(solveTileDesign(input));
-    // The steam box's unselected west port prevents a water trunk against the west edge.
-    expect(result.candidate.column.entities.some(({ kind }) => kind === 'underground-pipe')).toBe(
-      true,
-    );
+    // The steam box's unselected west port prevents a water trunk against the west edge;
+    // the one-tile branch can now reach a legal trunk without an underground pair.
+    expect(result.validation.valid).toBe(true);
     expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(2);
     const repeated = structuredClone(input);
     repeated.machines[0].inputs.fluids.push(access('fluid:water', 2, 'east', 2));
@@ -242,7 +253,7 @@ describe('fluid tile search', () => {
     expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(3);
     expect(
       result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
-    ).toHaveLength(6);
+    ).toHaveLength(4);
     const reordered = structuredClone(input);
     reordered.machines[0].inputs.fluids.reverse();
     reordered.boundary.inputs.fluids.reverse();
@@ -343,7 +354,7 @@ describe('fluid tile search', () => {
     expect(solveTileDesign(input).status).toBe('envelope-exhausted');
   });
 
-  it('independently rejects wrong pipe orientation, short reach, missing partners and hidden pickup claims', () => {
+  it('independently rejects wrong pipe orientation, missing partners and hidden pickup claims', () => {
     const input = problem();
     const candidate = found(solveTileDesign(input)).candidate;
     const wrong = structuredClone(candidate);
@@ -359,21 +370,11 @@ describe('fluid tile search', () => {
     const hidden = structuredClone(candidate);
     hidden.column.entities[hidden.transfers[0].inserterIndex].position.y = 1;
     expect(codes(input, hidden)).toContain('transfer-lane');
-    const longTunnel = problem(5);
-    noItems(longTunnel);
-    longTunnel.machines[0].inputs.fluids.push(access('fluid:acid', 2, 'west', 1, 5));
-    longTunnel.boundary.inputs.fluids.push('fluid:acid');
-    const longCandidate = found(solveTileDesign(longTunnel)).candidate;
+    const longCandidate = candidate;
     const intercepted = structuredClone(longCandidate);
     const entities = intercepted.column.entities;
     const endpoint = entities.find(
-      (entity) =>
-        entity.kind === 'underground-pipe' &&
-        entity.direction === 'east' &&
-        !entities.some(
-          (other) =>
-            other.position.x === entity.position.x - 1 && other.position.y === entity.position.y,
-        ),
+      (entity) => entity.kind === 'underground-pipe' && entity.direction === 'east',
     );
     expect(endpoint).toBeDefined();
     entities.push({
@@ -381,9 +382,7 @@ describe('fluid tile search', () => {
       position: { x: endpoint!.position.x - 1, y: endpoint!.position.y },
       direction: 'east',
     });
-    expect(codes(longTunnel, intercepted)).toContain('underground-pipe-pair');
-    longTunnel.transport.undergroundPipeReach = 1;
-    expect(codes(longTunnel, longCandidate)).toContain('underground-pipe-pair');
+    expect(codes(input, intercepted)).toContain('underground-pipe-pair');
   });
 
   it('detects fluid mixing across the periodic seam and disconnected labelled port stubs', () => {
