@@ -6,6 +6,7 @@ import {
   notApplicable,
   reject,
   solved,
+  sum,
   verticalBelt,
   type AssemblerDesignStrategyResult,
   type PreparedAssemblerProblem,
@@ -19,8 +20,8 @@ export function solveAdaptedFluidInputDesign(
   if (
     prepared.inputFluids.length !== 2 ||
     prepared.outputFluids.length !== 0 ||
-    prepared.inputSolids.length !== 0 ||
-    prepared.outputSolids.length !== 1
+    prepared.inputSolids.length > 4 ||
+    prepared.outputSolids.length > 1
   ) {
     return notApplicable();
   }
@@ -62,7 +63,19 @@ export function solveAdaptedFluidInputDesign(
       'cannot adapt two fluid inputs because separate recipe fluids need a lower west port and a rightmost south port',
     );
   }
-  const outputRate = prepared.outputSolids[0];
+  const outputRate = prepared.outputSolids[0] ?? 0;
+  const inputGroups = groupInputRates(
+    prepared.inputSolids,
+    outputRate > 0 ? 1 : 2,
+    throughput.beltItemsPerSecond,
+    throughput.inserterItemsPerSecond,
+  );
+  if (!inputGroups) {
+    return reject(
+      'transport-capacity',
+      'the adapted fluid layout cannot feed its solid inputs through the available belts and inserters',
+    );
+  }
   if (outputRate > throughput.beltItemsPerSecond / 2) {
     return reject('transport-capacity', 'the adapted fluid layout output exceeds one belt lane');
   }
@@ -84,8 +97,51 @@ export function solveAdaptedFluidInputDesign(
     { kind: 'underground-pipe', position: { x: 4, y: 2 }, direction: 'south' },
     { kind: 'pipe', position: { x: 4, y: 3 } },
     { kind: 'pipe', position: { x: 3, y: 3 } },
-    { kind: 'inserter', position: { x: 4, y: 1 }, direction: 'west' },
-    ...verticalBelt(5, 'south', 4),
   ];
-  return solved({ columns: [{ entities }] });
+  if (outputRate > 0) {
+    entities.push(
+      { kind: 'inserter', position: { x: 4, y: 1 }, direction: 'east' },
+      ...verticalBelt(5, 'south', 4),
+    );
+  }
+  if (inputGroups.length > 0 && outputRate === 0) {
+    entities.push(
+      { kind: 'inserter', position: { x: 4, y: 1 }, direction: 'west' },
+      ...verticalBelt(5, 'north', 4),
+    );
+  }
+  const westInput = inputGroups.length > (outputRate > 0 ? 0 : 1);
+  if (westInput) {
+    entities.push(
+      { kind: 'inserter', position: { x: 0, y: 0 }, direction: 'east' },
+      ...verticalBelt(-1, 'north', 4),
+    );
+  }
+  // Keep the extra west input belt inside the design's nonnegative coordinates.
+  const shifted = westInput
+    ? entities.map((entity) => ({
+        ...entity,
+        position: { ...entity.position, x: entity.position.x + 1 },
+      }))
+    : entities;
+  return solved({ columns: [{ entities: shifted }] });
+}
+
+function groupInputRates(
+  rates: number[],
+  beltCount: number,
+  beltCapacity: number,
+  inserterCapacity: number,
+): number[][] | undefined {
+  if (rates.length === 0) return [];
+  if (beltCount === 0) return undefined;
+  for (const size of [2, 1]) {
+    const group = rates.slice(0, size);
+    if (group.length !== size) continue;
+    if (group.length === 2 && group.some((rate) => rate > beltCapacity / 2)) continue;
+    if (sum(group) > Math.min(beltCapacity, inserterCapacity)) continue;
+    const rest = groupInputRates(rates.slice(size), beltCount - 1, beltCapacity, inserterCapacity);
+    if (rest) return [group, ...rest];
+  }
+  return undefined;
 }
