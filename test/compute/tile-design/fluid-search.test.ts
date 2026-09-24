@@ -81,7 +81,129 @@ function codes(input: TileDesignInput, candidate: ReturnType<typeof found>['cand
   return validateTileDesign(input, candidate).issues.map(({ code }) => code);
 }
 
+function pairedOutputsProblem(items = false): TileDesignInput {
+  const input = problem();
+  if (!items) noItems(input);
+  else {
+    input.machines[0].inputs.items[0].rate = 1;
+    input.boundary.inputs.items[0].rate = 1;
+    input.machines[0].outputs.items = [];
+    input.boundary.outputs.items = [];
+    input.transport.inserters.push({ id: 'long', capacity: 2, reach: 2 });
+  }
+  input.machines[0].orientations = [
+    { rotation: 'east', mirrored: false },
+    { rotation: 'east', mirrored: true },
+  ];
+  input.machines[0].inputs.fluids = [
+    {
+      resource: 'fluid:water',
+      boxIndex: 0,
+      positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
+    },
+  ];
+  input.machines[0].outputs.fluids = [
+    {
+      resource: 'fluid:steam',
+      boxIndex: 1,
+      positions: [{ position: { x: -1, y: 1 }, direction: 'south' }],
+    },
+    {
+      resource: 'fluid:acid',
+      boxIndex: 2,
+      positions: [{ position: { x: 1, y: 1 }, direction: 'south' }],
+    },
+  ];
+  input.boundary.outputs.fluids = ['fluid:steam', 'fluid:acid'];
+  return input;
+}
+
 describe('fluid tile search', () => {
+  it('uses a reflected two-plant repeat for separate fluid outputs', () => {
+    const input = pairedOutputsProblem();
+    const result = found(solveTileDesign(input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.pitch).toBe(6);
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
+    ).toMatchObject([{ direction: 'east' }, { direction: 'east', mirrored: true }]);
+    const outputOrder = result.candidate.column.entities
+      .filter((entity) => entity.kind === 'assembler')
+      .flatMap((entity) =>
+        input.machines[0].outputs.fluids.map((access) => ({
+          resource: access.resource,
+          y:
+            entity.position.y +
+            orientFluidPort(access.positions[0], entity.size, {
+              rotation: entity.direction ?? 'north',
+              mirrored: entity.mirrored ?? false,
+            }).position.y,
+        })),
+      )
+      .sort((a, b) => a.y - b.y)
+      .map(({ resource }) => resource);
+    expect(outputOrder).toEqual(['fluid:steam', 'fluid:acid', 'fluid:acid', 'fluid:steam']);
+    expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(3);
+    expect(validateTileDesign(input, result.candidate).valid).toBe(true);
+    const unmirrored = structuredClone(result.candidate);
+    const second = unmirrored.column.entities.findIndex(
+      (entity, index) => entity.kind === 'assembler' && index > 0,
+    );
+    const assembler = unmirrored.column.entities[second];
+    if (assembler.kind === 'assembler') assembler.mirrored = false;
+    expect(codes(input, unmirrored)).toContain('machine-identity');
+  });
+
+  it('stacks reflected layouts when their item and fluid trunks line up', () => {
+    const input = pairedOutputsProblem(true);
+    const result = found(solveTileDesign(input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
+    ).toHaveLength(2);
+    expect(result.candidate.transfers).toHaveLength(2);
+    expect(result.candidate.boundary.find(({ kind }) => kind === 'belt')?.laneFlows).toMatchObject({
+      left: { side: 'input', rate: 2 },
+    });
+  });
+
+  it('finds the mirrored pair through the kernel problem adapter', () => {
+    const settings = pairedOutputsProblem();
+    const normalized = normalizeTileDesignInput(
+      assemblerProblem({
+        fluidInputs: [200],
+        fluidOutputs: [100, 100],
+        fluidBoxes: [
+          {
+            productionType: 'input',
+            connections: [
+              { position: { x: 0, y: -1 }, direction: 'north', flowDirection: 'input' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: -1, y: 1 }, direction: 'south', flowDirection: 'output' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: 1, y: 1 }, direction: 'south', flowDirection: 'output' },
+            ],
+          },
+        ],
+      }),
+      { transport: settings.transport, envelope: settings.envelope },
+    );
+    if (!normalized.success) throw new Error(normalized.message);
+    const result = found(solveTileDesign(normalized.input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'assembler'),
+    ).toHaveLength(2);
+  });
+
   it('finds the 5/5/9 item-input fluid-output layout within the debug search budget', () => {
     const settings = problem();
     settings.transport.inserters = [

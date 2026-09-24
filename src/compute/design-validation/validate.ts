@@ -72,16 +72,18 @@ export function validateTileDesign(
 
   const machines = new Map(input.machines.map((machine) => [machine.id, machine]));
   const assemblers = new Map<number, { entity: DesignAssembler; machine: TileMachine }>();
-  const seenMachines = new Set<string>();
+  const seenMachines = new Map<string, DesignAssembler[]>();
   entities.forEach((entity, index) => {
     if (entity.kind !== 'assembler') return;
     const id = candidate.machineIds[index];
     const machine = machines.get(id);
-    if (!machine || seenMachines.has(id)) {
-      issue('machine-identity', `Assembler ${index} has no unique matching machine ID.`, index);
+    if (!machine) {
+      issue('machine-identity', `Assembler ${index} has no matching machine ID.`, index);
       return;
     }
-    seenMachines.add(id);
+    const placed = seenMachines.get(id) ?? [];
+    placed.push(entity);
+    seenMachines.set(id, placed);
     const rotation = entity.direction ?? 'north';
     const allowed = machine.orientations.some(
       (orientation) =>
@@ -104,6 +106,19 @@ export function validateTileDesign(
   for (const machine of input.machines)
     if (!seenMachines.has(machine.id))
       issue('missing-machine', `Machine ${machine.id} is missing.`);
+  for (const [id, placed] of seenMachines) {
+    if (placed.length === 1) continue;
+    if (
+      input.machines.length !== 1 ||
+      placed.length !== 2 ||
+      new Set(machines.get(id)?.outputs.fluids.map(({ resource }) => resource)).size < 2 ||
+      placed[0].direction !== placed[1].direction ||
+      Boolean(placed[0].mirrored) === Boolean(placed[1].mirrored) ||
+      placed[0].position.x !== placed[1].position.x ||
+      Math.abs(placed[0].position.y - placed[1].position.y) !== placed[0].size.height
+    )
+      issue('machine-identity', `Machine ${id} is repeated without a mirrored pair.`);
+  }
 
   const { graph, lanes } = validateBelts(input, candidate, issue);
 
@@ -237,8 +252,11 @@ export function validateTileDesign(
       for (const { resource, rate } of (side === 'input' ? machine.inputs : machine.outputs)
         .items) {
         if (
-          Math.abs((transferRates.get(`${machine.id}:${side}:${resource}`) ?? 0) - rate) >
-          1e-8 * Math.max(1, rate)
+          Math.abs(
+            (transferRates.get(`${machine.id}:${side}:${resource}`) ?? 0) -
+              rate * (seenMachines.get(machine.id)?.length ?? 1),
+          ) >
+          1e-8 * Math.max(1, rate * (seenMachines.get(machine.id)?.length ?? 1))
         )
           issue(
             'machine-rate',
@@ -304,7 +322,11 @@ export function validateTileDesign(
       rateLimits.push(
         laneCount === 0
           ? 0
-          : Math.floor((laneCount * input.transport.beltLaneCapacity) / rate + 1e-9),
+          : Math.floor(
+              (laneCount * input.transport.beltLaneCapacity) /
+                (rate * (seenMachines.get(input.machines[0]?.id)?.length ?? 1)) +
+                1e-9,
+            ),
       );
     }
   const supportedCopies = Math.max(0, Math.min(...rateLimits));

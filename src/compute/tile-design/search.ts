@@ -3,6 +3,7 @@ import { validateTileDesign } from '../design-validation/validate.ts';
 import type { SolidAccessOption } from './access.ts';
 import { allocateSolidRates, RATE_EPSILON, requiredUnits } from './capacity.ts';
 import { emitTile } from './emit.ts';
+import { mirroredFluidPair, stackMirroredTiles } from './mirrored-pair.ts';
 import { routeFrames } from './routes.ts';
 import {
   reachesLane,
@@ -23,7 +24,8 @@ export interface TileSearchDiagnostics {
   /** The actually searched family, even when the caller permits additional primitives. */
   scope:
     | 'one-machine/external-items/straight-surface-trunks'
-    | 'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels';
+    | 'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels'
+    | 'mirrored-fluid-pair/horizontal-branches';
   bestScore?: { area: number; transportEntities: number };
 }
 
@@ -32,9 +34,9 @@ export type TileDesignSearchResult =
       status: 'found';
       candidate: TileDesignCandidate;
       validation: TileValidationResult;
-      /** Minimum area, then transport entity count, within the reported scope. Ties are deterministic. */
+      /** A valid incumbent; optimal is true only when the reported scope was fully searched. */
       optimal: boolean;
-      stopReason: 'complete' | 'budget-exhausted';
+      stopReason: 'complete' | 'budget-exhausted' | 'first-valid';
       diagnostics: TileSearchDiagnostics;
     }
   | {
@@ -44,10 +46,10 @@ export type TileDesignSearchResult =
     };
 
 /** Bounded geometry and rate allocation with independent emission validation. Translation and
- * uniform machine-height pitch are fixed; selected ports must face east/west trunks. Northbound
+ * machine-height pitch (twice that height for a mirrored pair) are fixed; selected ports face east/west trunks. Northbound
  * belts are canonical because reversal swaps free lane variables in this route family. Adapter
  * margins, phased trunks and bent belts will need additional route frames. */
-export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult {
+export function solveTileDesign(input: TileDesignInput, allowPair = true): TileDesignSearchResult {
   const diagnostics: TileSearchDiagnostics = {
     exploredStates: 0,
     capacityRejections: 0,
@@ -95,6 +97,73 @@ export function solveTileDesign(input: TileDesignInput): TileDesignSearchResult 
         'unsupported',
         'Gross machine transfers must be supplied/exported externally; internal recirculation is not supported.',
       );
+  }
+  if (allowPair && new Set(machine.outputs.fluids.map(({ resource }) => resource)).size >= 2) {
+    const pairBudget = Math.min(2_000, Math.floor(input.envelope.maxStates / 4));
+    const pair = mirroredFluidPair(input, () => {
+      if (diagnostics.exploredStates >= pairBudget) return false;
+      diagnostics.exploredStates++;
+      return true;
+    });
+    if (pair) {
+      diagnostics.scope = 'mirrored-fluid-pair/horizontal-branches';
+      diagnostics.bestScore = {
+        area: pair.candidate.width * pair.candidate.pitch,
+        transportEntities: pair.candidate.column.entities.length - 2,
+      };
+      return {
+        status: 'found',
+        candidate: pair.candidate,
+        validation: pair.validation,
+        optimal: false,
+        stopReason: 'first-valid',
+        diagnostics,
+      };
+    }
+    if (machine.inputs.items.length + machine.outputs.items.length > 0) {
+      for (const rotation of ['north', 'east', 'south', 'west'] as const) {
+        if (diagnostics.exploredStates >= pairBudget) break;
+        if (
+          ![false, true].every((mirrored) =>
+            machine.orientations.some(
+              (orientation) =>
+                orientation.rotation === rotation && orientation.mirrored === mirrored,
+            ),
+          )
+        )
+          continue;
+        const halves = [false, true].map((mirrored) => {
+          const remaining = pairBudget - diagnostics.exploredStates;
+          if (remaining < 1) return undefined;
+          const result = solveTileDesign(
+            {
+              ...input,
+              machines: [{ ...machine, orientations: [{ rotation, mirrored }] }],
+              envelope: { ...input.envelope, maxStates: Math.min(1_000, remaining) },
+            },
+            false,
+          );
+          diagnostics.exploredStates += result.diagnostics.exploredStates;
+          return result.status === 'found' ? result.candidate : undefined;
+        });
+        if (!halves[0] || !halves[1]) continue;
+        const stacked = stackMirroredTiles(input, halves[0], halves[1]);
+        if (!stacked) continue;
+        diagnostics.scope = 'mirrored-fluid-pair/horizontal-branches';
+        diagnostics.bestScore = {
+          area: stacked.candidate.width * stacked.candidate.pitch,
+          transportEntities: stacked.candidate.column.entities.length - 2,
+        };
+        return {
+          status: 'found',
+          candidate: stacked.candidate,
+          validation: stacked.validation,
+          optimal: false,
+          stopReason: 'first-valid',
+          diagnostics,
+        };
+      }
+    }
   }
   const demands: SolidDemand[] = (['input', 'output'] as const).flatMap((side) =>
     (side === 'input' ? machine.inputs : machine.outputs).items
