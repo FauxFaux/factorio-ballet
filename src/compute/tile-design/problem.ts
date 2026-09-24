@@ -11,7 +11,7 @@ import type {
   TileMachine,
   TileMachineOrientation,
 } from './types.ts';
-import { invalid, positiveInteger, validateOptions, validateRate } from './validation.ts';
+import { invalid, isError, positiveInteger, validateOptions, validateRate } from './validation.ts';
 
 const directions: DesignDirection[] = ['north', 'east', 'south', 'west'];
 
@@ -101,7 +101,7 @@ export function normalizeTileDesignInput(
     const inputs = splitMachineFlows(specification.inputPerSecond);
     const outputs = splitMachineFlows(specification.outputPerSecond);
     const fluidAccesses = makeFluidAccesses(specification, id, inputs.fluids, outputs.fluids);
-    if ('kind' in fluidAccesses) return fluidAccesses;
+    if (isError(fluidAccesses)) return fluidAccesses;
     machines.push({
       id,
       size: { ...(specification.size ?? { width: 3, height: 3 }) },
@@ -159,7 +159,7 @@ export function normalizeTileDesignInput(
   }
 
   return {
-    kind: 'valid',
+    success: true,
     input: {
       machines,
       boundary,

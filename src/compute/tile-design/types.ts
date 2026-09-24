@@ -76,7 +76,7 @@ export interface TileDesignInput {
 }
 
 export interface InvalidTileDesignInput {
-  kind: 'invalid-input';
+  success: false;
   code:
     | 'invalid-rate'
     | 'invalid-resource'
@@ -90,5 +90,5 @@ export interface InvalidTileDesignInput {
 }
 
 export type TileDesignInputResult =
-  | { kind: 'valid'; input: TileDesignInput }
+  | { success: true; input: TileDesignInput }
   | InvalidTileDesignInput;

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { assemblerProblem, type KernelProblem } from '../../../src/compute/kernel-problems.ts';
 import { normalizeTileDesignInput } from '../../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../../src/compute/tile-design/types.ts';
+import { isError } from '../../../src/compute/tile-design/validation.ts';
 
 const options: TileDesignOptions = {
   transport: {
@@ -16,8 +17,8 @@ const options: TileDesignOptions = {
 
 function normalized(problem: KernelProblem, overrides: Partial<TileDesignOptions> = {}) {
   const result = normalizeTileDesignInput(problem, { ...options, ...overrides });
-  expect(result.kind).toBe('valid');
-  if (result.kind !== 'valid') throw new Error(result.message);
+  expect(result.success).toBe(true);
+  if (isError(result)) throw new Error(result.message);
   return result.input;
 }
 
@@ -203,7 +204,7 @@ describe('normalizeTileDesignInput', () => {
     const problem = assemblerProblem({ solidInputs: [5], solidOutputs: [2] });
     problem.assemblers[0]!.outputPerSecond = { 'item 2': 2, stray: 1 };
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'unbalanced-flow',
       resource: 'stray',
       message: expect.stringContaining('external supply'),
@@ -215,7 +216,7 @@ describe('normalizeTileDesignInput', () => {
     problem.assemblers[0]!.inputPerSecond['fluid:1'] = 199;
 
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'unbalanced-flow',
       resource: 'fluid:1',
     });
@@ -225,7 +226,7 @@ describe('normalizeTileDesignInput', () => {
     const missing = assemblerProblem({ fluidInputs: [1] });
     missing.assemblers[0]!.fluidBoxes = [];
     expect(normalizeTileDesignInput(missing, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-fluid',
       resource: 'fluid:1',
     });
@@ -233,7 +234,7 @@ describe('normalizeTileDesignInput', () => {
     const badRate = assemblerProblem({ solidInputs: [1] });
     badRate.inputs.solids['item 1'] = Number.NaN;
     expect(normalizeTileDesignInput(badRate, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-rate',
       resource: 'item 1',
     });
@@ -244,7 +245,7 @@ describe('normalizeTileDesignInput', () => {
       { id: 'same', name: 'b', inputPerSecond: {}, outputPerSecond: {} },
     ];
     expect(normalizeTileDesignInput(duplicate, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-machine',
       message: expect.stringContaining('repeated'),
     });
@@ -255,7 +256,7 @@ describe('normalizeTileDesignInput', () => {
     problem.inputs.solids['fluid:1'] = 1;
 
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-resource',
       resource: 'fluid:1',
     });
@@ -264,19 +265,19 @@ describe('normalizeTileDesignInput', () => {
   it('rejects missing output assignments and invalid repeat rules', () => {
     const problem = assemblerProblem({ fluidOutputs: [1, 1] });
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-fluid',
       message: expect.stringContaining('explicit output assignment'),
     });
     problem.assemblers[0]!.fluidProducts = [{ resource: 'fluid:missing' }];
     expect(normalizeTileDesignInput(problem, options)).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-fluid',
     });
     expect(
       normalizeTileDesignInput(assemblerProblem({}), { ...options, repeatCount: 0 }),
     ).toMatchObject({
-      kind: 'invalid-input',
+      success: false,
       code: 'invalid-rule',
     });
   });

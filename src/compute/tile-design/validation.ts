@@ -1,5 +1,11 @@
 import type { InvalidTileDesignInput, TileDesignOptions } from './types.ts';
 
+export function isError<T>(result: T | InvalidTileDesignInput): result is InvalidTileDesignInput {
+  return (
+    typeof result === 'object' && result !== null && 'success' in result && result.success === false
+  );
+}
+
 export function validateRate(
   resource: string,
   rate: number,
@@ -65,7 +71,7 @@ export function invalid(
   machineId?: string,
 ): InvalidTileDesignInput {
   return {
-    kind: 'invalid-input',
+    success: false,
     code,
     message,
     ...(resource ? { resource } : {}),

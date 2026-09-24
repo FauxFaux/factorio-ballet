@@ -2,7 +2,7 @@ import { fluidBoxResources, type FluidBoxResource } from '../fluid-box-resources
 import type { AssemblerSpecification } from '../kernel-problems.ts';
 import type { DesignDirection } from '../design.ts';
 import type { FluidAccess, FluidId, InvalidTileDesignInput } from './types.ts';
-import { invalid, positiveInteger } from './validation.ts';
+import { invalid, isError, positiveInteger } from './validation.ts';
 
 type FlowSide = 'input' | 'output';
 
@@ -28,9 +28,9 @@ export function makeFluidAccesses(
     );
   }
   const inputOrder = orderedFluids(fluidInputs, specification.fluidIngredients, machineId, 'input');
-  if ('kind' in inputOrder) return inputOrder;
+  if (isError(inputOrder)) return inputOrder;
   const outputOrder = orderedFluids(fluidOutputs, specification.fluidProducts, machineId, 'output');
-  if ('kind' in outputOrder) return outputOrder;
+  if (isError(outputOrder)) return outputOrder;
 
   const inputAssigned = fluidBoxResources(specification, {
     ingredients: inputOrder,
