@@ -1,16 +1,17 @@
-import type { StaticData } from '../types.ts';
 import type { DatasetId } from './index.ts';
+import { bobAngs } from './catalogue/bobang.ts';
+import type { DatasetInput } from './types.ts';
 
 interface DatasetCatalogueEntry {
   label: string;
-  load(): Promise<StaticData>;
+  load(): Promise<DatasetInput>;
 }
 
 /** Keep this module free of dataset assets so the chooser can render before they load. */
 export const datasetCatalogue = {
   'bobang-r4q': {
     label: "Bob's and Angel's",
-    load: async () => (await import('../data/decode.ts')).staticData,
+    load: async () => bobAngs(),
   },
 } satisfies Record<DatasetId, DatasetCatalogueEntry>;
 

@@ -1,4 +1,4 @@
-import { type IconMap } from '../data/decode-icons.ts';
+import { type IconMap } from '../data/icon-map.ts';
 import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 
 /** A plain fluid droplet for fluids which have a colour, but no icon artwork. */

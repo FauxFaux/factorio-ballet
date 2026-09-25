@@ -12,13 +12,15 @@ import { defaultDataset } from './with-bobang.ts';
 
 afterEach(cleanup);
 
+const { data, iconMap } = defaultDataset;
+
 function DatasetLabel() {
   return <span>{useDataset().id}</span>;
 }
 
 describe('useDataset', () => {
   it('returns the provider value', () => {
-    const selected = createDataset('example-revision', defaultDataset.data);
+    const selected = createDataset('example-revision', { staticData: data, iconMap });
     render(
       <DatasetProvider value={selected}>
         <DatasetLabel />
@@ -37,10 +39,13 @@ describe('useDataset', () => {
   it('uses the selected dataset for names in recipe flows', () => {
     const resource = 'item:iron-plate' as const;
     const selected = createDataset('renamed', {
-      ...defaultDataset.data,
-      resources: {
-        ...defaultDataset.data.resources,
-        [resource]: { ...defaultDataset.data.resources[resource], human: 'Custom iron' },
+      iconMap,
+      staticData: {
+        ...data,
+        resources: {
+          ...data.resources,
+          [resource]: { ...data.resources[resource], human: 'Custom iron' },
+        },
       },
     });
     render(
@@ -58,16 +63,22 @@ describe('createDataset', () => {
     const beacon = defaultDataset.data.beacons['beacon'];
     const belt = defaultDataset.data.belts['transport-belt'];
     const first = createDataset('first', {
-      ...defaultDataset.data,
-      sciencePacks: ['item:automation-science-pack'],
-      beacons: { first: { ...beacon, item: 'beacon' } },
-      belts: { first: { ...belt, item: 'transport-belt' } },
+      iconMap,
+      staticData: {
+        ...data,
+        sciencePacks: ['item:automation-science-pack'],
+        beacons: { first: { ...beacon, item: 'beacon' } },
+        belts: { first: { ...belt, item: 'transport-belt' } },
+      },
     });
     const second = createDataset('second', {
-      ...defaultDataset.data,
-      sciencePacks: ['item:logistic-science-pack'],
-      beacons: { second: { ...beacon, item: 'beacon' } },
-      belts: { second: { ...belt, item: 'transport-belt' } },
+      iconMap,
+      staticData: {
+        ...data,
+        sciencePacks: ['item:logistic-science-pack'],
+        beacons: { second: { ...beacon, item: 'beacon' } },
+        belts: { second: { ...belt, item: 'transport-belt' } },
+      },
     });
 
     expect(first.packLandmarks.map(({ id }) => id)).toEqual(['item:automation-science-pack']);
@@ -84,12 +95,18 @@ describe('createDataset', () => {
     const speedModule = defaultDataset.data.modules['speed-module'];
     const fasterModule = defaultDataset.data.modules['speed-module-2'];
     const first = createDataset('first', {
-      ...defaultDataset.data,
-      modules: { 'speed-module': { ...speedModule, category: 'first-family' } },
+      iconMap,
+      staticData: {
+        ...data,
+        modules: { 'speed-module': { ...speedModule, category: 'first-family' } },
+      },
     });
     const second = createDataset('second', {
-      ...defaultDataset.data,
-      modules: { 'speed-module-2': { ...fasterModule, category: 'second-family' } },
+      iconMap,
+      staticData: {
+        ...data,
+        modules: { 'speed-module-2': { ...fasterModule, category: 'second-family' } },
+      },
     });
 
     expect(first.moduleCategories.map(({ id }) => id)).toEqual(['first-family']);
@@ -105,12 +122,18 @@ describe('createDataset', () => {
     const machine = Object.values(defaultDataset.data.machines)[0]!;
     const recipe = { ...defaultDataset.data.recipes['iron-plate'], categories: ['example'] };
     const first = createDataset('first', {
-      ...defaultDataset.data,
-      machines: { first: { ...machine, categories: ['example'] } },
+      iconMap,
+      staticData: {
+        ...data,
+        machines: { first: { ...machine, categories: ['example'] } },
+      },
     });
     const second = createDataset('second', {
-      ...defaultDataset.data,
-      machines: { second: { ...machine, categories: ['example'] } },
+      iconMap,
+      staticData: {
+        ...data,
+        machines: { second: { ...machine, categories: ['example'] } },
+      },
     });
 
     expect(machinesFor(first, recipe).map(({ id }) => id)).toEqual(['first']);
@@ -120,12 +143,18 @@ describe('createDataset', () => {
   it('builds the sole-producer index from each dataset’s recipes', () => {
     const recipe = defaultDataset.data.recipes['iron-plate'];
     const first = createDataset('first', {
-      ...defaultDataset.data,
-      recipes: { first: recipe },
+      iconMap,
+      staticData: {
+        ...data,
+        recipes: { first: recipe },
+      },
     });
     const second = createDataset('second', {
-      ...defaultDataset.data,
-      recipes: { second: recipe },
+      iconMap,
+      staticData: {
+        ...data,
+        recipes: { second: recipe },
+      },
     });
 
     expect(first.soleProducerByResource.get('item:iron-plate')).toBe('first');

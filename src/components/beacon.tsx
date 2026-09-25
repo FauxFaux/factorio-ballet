@@ -4,7 +4,7 @@ import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Beacon, BeaconId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
-import type { IconMap } from '../data/decode-icons.ts';
+import type { IconMap } from '../data/icon-map.ts';
 
 /**
  * Which beacon a row builds when its speed modules overflow the machine, as a dropdown: the header

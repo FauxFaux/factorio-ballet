@@ -4,7 +4,7 @@ import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Belt, BeltId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
-import type { IconMap } from '../data/decode-icons.ts';
+import type { IconMap } from '../data/icon-map.ts';
 
 /**
  * The belt tier a future throughput check will use. Like the module and beacon controls, this is a

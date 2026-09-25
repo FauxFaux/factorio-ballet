@@ -13,7 +13,8 @@ import {
   buildSuggestionPlanIndex,
   type SuggestionPlanIndex,
 } from './precompute.ts';
-import { type IconMap, icons_BANNED_IMPORT } from '../data/decode-icons.ts';
+import { type IconMap } from '../data/icon-map.ts';
+import type { DatasetInput } from './types.ts';
 
 /** Identifies one exact generated data artifact and its prototype ordering. */
 export type DatasetId = string;
@@ -33,7 +34,8 @@ export interface Dataset {
   readonly iconMap: IconMap;
 }
 
-export function createDataset(id: DatasetId, data: StaticData): Dataset {
+export function createDataset(id: DatasetId, dsBuilder: DatasetInput): Dataset {
+  const { staticData: data, iconMap } = dsBuilder;
   const moduleIndex = buildModuleIndex(data);
   return {
     id,
@@ -46,6 +48,6 @@ export function createDataset(id: DatasetId, data: StaticData): Dataset {
     beltTiers: buildBeltTiers(data),
     soleProducerByResource: buildSoleProducerIndex(data),
     suggestionPlans: buildSuggestionPlanIndex(data),
-    iconMap: icons_BANNED_IMPORT,
+    iconMap,
   };
 }
