@@ -21,7 +21,7 @@ afterEach(cleanup);
 
 describe('plutonium boundary diagnosis', () => {
   it('reproduces the misleading balanced U-238 in the saved dumb answer', () => {
-    const answer = solveCell(cell, state.gp, chosen, dumbSolver);
+    const answer = solveCell(staticData, cell, state.gp, chosen, dumbSolver);
     expect(answer.counts).toEqual(snapshot.recipes.map((recipe) => recipe.count));
     expect(answer.balance.get(u238)).toBe(0);
     expect(Math.abs(answer.balance.get('item:uranium-235')!)).toBeGreaterThan(0.1);
@@ -29,7 +29,7 @@ describe('plutonium boundary diagnosis', () => {
   });
 
   it.each([matrixSolver, dumbSolver])('suggests a verified U-238 export for $id', (solver) => {
-    const answer = solveCell(cell, state.gp, chosen, solver);
+    const answer = solveCell(staticData, cell, state.gp, chosen, solver);
     const suggestion = answer.boundarySuggestions?.find((note) => note.resource === u238);
     expect(suggestion).toMatchObject({
       direction: 'export',
@@ -39,7 +39,7 @@ describe('plutonium boundary diagnosis', () => {
       1,
     );
     const exported: Cell = { ...cell, exports: [u238] };
-    const fixed = solveCell(exported, state.gp, chosen, matrixSolver);
+    const fixed = solveCell(staticData, exported, state.gp, chosen, matrixSolver);
     expect(fixed.complete).toBe(true);
     expect(fixed.notes).toEqual([]);
     expect(fixed.boundarySuggestions).toEqual([]);
@@ -56,7 +56,7 @@ describe('plutonium boundary diagnosis', () => {
 
   it('warns that exporting alone does not repair the dumb solver on this cycle', () => {
     const fixedBoundary: Cell = { ...cell, exports: [u238] };
-    const dumb = solveCell(fixedBoundary, state.gp, chosen, dumbSolver);
+    const dumb = solveCell(staticData, fixedBoundary, state.gp, chosen, dumbSolver);
     const iface = cellInterface(staticData, fixedBoundary);
     expect(
       iface.inPlay.some(

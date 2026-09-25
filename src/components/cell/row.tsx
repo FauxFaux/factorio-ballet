@@ -199,7 +199,7 @@ function RecipeWarning({ problem }: { problem: SolveNote | undefined }) {
   return (
     <span
       class={problem ? 'cell-warn is-problem' : 'cell-warn'}
-      title={problem ? noteText(problem) : undefined}
+      title={problem ? noteText(problem, staticData) : undefined}
     >
       {problem ? <WarnIcon label="Not worked out" /> : null}
     </span>

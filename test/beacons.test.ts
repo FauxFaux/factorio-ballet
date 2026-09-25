@@ -239,12 +239,14 @@ describe('a cell row with beacons', () => {
     const cell = (beacons?: number): Cell => ({
       entries: [{ ...entry, beacons, count: 1 }, { recipe: 'iron-plate' }],
     });
-    const plates = (c: Cell) => solveCell(c, 0, kit({ speed: SPEED_3 })).counts[1]!;
+    const plates = (c: Cell) => solveCell(staticData, c, 0, kit({ speed: SPEED_3 })).counts[1]!;
     // a machine going 2.16× as fast eats its ingredients 2.16× as fast, and the row feeding it
     // has to be that much bigger: 3.8785 / 1.8, the beaconed row against the auto one
     expect(plates(cell(3)) / plates(cell(undefined))).toBeCloseTo(2.1547);
     // with no speed module chosen at all, the count is the unmodded one
-    expect(solveCell(cell(3), 0).counts[1]).toBeCloseTo(solveCell(cell(0), 0).counts[1]!);
+    expect(solveCell(staticData, cell(3), 0).counts[1]).toBeCloseTo(
+      solveCell(staticData, cell(0), 0).counts[1]!,
+    );
   });
 });
 

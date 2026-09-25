@@ -135,7 +135,7 @@ function ResourceDetails({
       ) : null}
       {suggestion ? (
         <p class="cell-export-note">
-          <WarnIcon /> {boundarySuggestionText(suggestion)}
+          <WarnIcon /> {boundarySuggestionText(suggestion, staticData)}
         </p>
       ) : null}
       {forcedImport ? (

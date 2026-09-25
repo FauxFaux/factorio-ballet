@@ -123,7 +123,7 @@ export function InPlayRow({
                 key={suggestion.resource}
                 type="button"
                 class="cell-btn cell-in-play-resource-action"
-                title={boundarySuggestionText(suggestion)}
+                title={boundarySuggestionText(suggestion, staticData)}
                 onClick={() => applyBoundarySuggestion(suggestion)}
               >
                 <ResourceIcon id={suggestion.resource} />
@@ -195,7 +195,7 @@ function InPlayChip({
       {unbalanced || suggestion ? (
         <span
           class="cell-leftover"
-          title={suggestion ? boundarySuggestionText(suggestion) : imbalanceTitle}
+          title={suggestion ? boundarySuggestionText(suggestion, staticData) : imbalanceTitle}
         >
           <WarnIcon
             label={

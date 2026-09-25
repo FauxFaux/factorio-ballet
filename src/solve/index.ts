@@ -3,11 +3,10 @@ import { machinesFor } from '../data/machines.ts';
 import { NO_CHOICE, recipeName, resourceName, type Chosen } from '../data/index.ts';
 import { directionalRates, netRates, speedOf } from '../compute/flow.ts';
 import { fmt } from '../ts.ts';
-import type { ResourceId } from '../types.ts';
+import type { ResourceId, StaticData } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
 import { matrixSolver } from './matrix.ts';
 import { boundarySuggestions, type BoundarySuggestion } from './boundary-suggestions.ts';
-import { staticData } from '../data/decode.ts';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -66,12 +65,13 @@ export const defaultSolver: Solver = matrixSolver;
 
 /** Resolve a cell to data-independent rows and hand them to the selected solver. */
 export function solveCell(
+  data: StaticData,
   cell: Cell,
   progress: number,
   chosen: Chosen = NO_CHOICE,
   solver: Solver = defaultSolver,
 ): Solution {
-  const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen));
+  const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen, data));
   const exports = new Set(cell.exports);
   const imports = new Set(cell.imports);
   const external = new Set([...exports, ...imports]);
@@ -102,7 +102,7 @@ export function solveCell(
         kind: 'solver',
         entry: 0,
         detail:
-          `${resourceName(staticData, resource)} is marked for ${boundary} but has a ${imbalance}. ` +
+          `${resourceName(data, resource)} is marked for ${boundary} but has a ${imbalance}. ` +
           `${remedy} or clear its explicit ${boundary}.`,
       });
     }
@@ -112,7 +112,7 @@ export function solveCell(
 }
 
 /** Explain an alternative without presenting its predicted rate as the current balance. */
-export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
+export function boundarySuggestionText(suggestion: BoundarySuggestion, data: StaticData): string {
   const { resource, direction, rate, requiresMatrix } = suggestion;
   const boundaryRate = `${fmt(Math.abs(rate))}/s ${
     direction === 'export' ? 'leaving' : 'supplied to'
@@ -122,19 +122,19 @@ export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
     ? ' This alternative needs the Matrix solver; the dumb solver still cannot balance it.'
     : '';
   return (
-    `Allow ${resourceName(staticData, resource)} ${direction}: recalculating with this boundary ` +
+    `Allow ${resourceName(data, resource)} ${direction}: recalculating with this boundary ` +
     `balances all other internal resources, with ${boundaryRate} Choose “${choice}” ` +
     `if that matches your factory.${matrixNote}`
   );
 }
 
-function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {
-  const recipe = entryRecipe(staticData, entry);
+function rowOf(entry: CellEntry, progress: number, chosen: Chosen, data: StaticData): SolveRow {
+  const recipe = entryRecipe(data, entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
   const speed = speedOf(machinesFor(recipe), machine);
-  const effects = entryEffects(staticData, entry, recipe, machine, chosen);
+  const effects = entryEffects(data, entry, recipe, machine, chosen);
   return {
     rates: netRates(recipe, speed, effects),
     ...directionalRates(recipe, speed, effects),
@@ -153,7 +153,7 @@ export function isProblem(note: SolveNote): boolean {
 }
 
 /** A note as a sentence, ending in what the user can type to resolve it. */
-export function noteText(note: SolveNote): string {
+export function noteText(note: SolveNote, data: StaticData): string {
   switch (note.kind) {
     case 'seeded':
       return (
@@ -162,13 +162,13 @@ export function noteText(note: SolveNote): string {
       );
     case 'contested':
       return (
-        `This and another row could both balance ${resourceName(staticData, note.resource)}, ` +
+        `This and another row could both balance ${resourceName(data, note.resource)}, ` +
         "and picking between them is not the solver's call: type a count on one of them."
       );
     case 'conflict':
       return (
-        `${fmt(note.needed)} would balance ${resourceName(staticData, note.resource)}, ` +
-        `${fmt(note.used)} is needed elsewhere, so ${resourceName(staticData, note.resource)} is left over.`
+        `${fmt(note.needed)} would balance ${resourceName(data, note.resource)}, ` +
+        `${fmt(note.used)} is needed elsewhere, so ${resourceName(data, note.resource)} is left over.`
       );
     case 'stranded':
       return (
@@ -183,7 +183,7 @@ export function noteText(note: SolveNote): string {
 }
 
 /** `noteText` with the row's recipe in front of it, for a list away from the row itself. */
-export function noteLine(cell: Cell, note: SolveNote): string {
+export function noteLine(cell: Cell, note: SolveNote, data: StaticData): string {
   const entry = cell.entries[note.entry];
-  return `${entry ? recipeName(staticData, entry.recipe) : '?'}: ${noteText(note)}`;
+  return `${entry ? recipeName(data, entry.recipe) : '?'}: ${noteText(note, data)}`;
 }

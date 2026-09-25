@@ -2,6 +2,7 @@ import './notes.css';
 import { AlertFillIcon } from '@primer/octicons-react';
 import type { Cell } from '../../cell.ts';
 import { isProblem, noteLine, type Solution } from '../../solve/index.ts';
+import { staticData } from '../../data/decode.ts';
 
 /**
  * The glyph for a solver note, wherever one is shown: a row's own mark, or the sentence it points
@@ -27,7 +28,7 @@ export function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution 
           class={isProblem(note) ? 'cell-note is-problem' : 'cell-note'}
         >
           {isProblem(note) ? <WarnIcon /> : null}
-          {noteLine(cell, note)}
+          {noteLine(cell, note, staticData)}
         </li>
       ))}
     </ul>
