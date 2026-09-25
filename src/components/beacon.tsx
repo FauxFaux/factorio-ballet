@@ -10,6 +10,7 @@ import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Beacon, BeaconId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
+import { staticData } from '../data/decode.ts';
 
 /**
  * Which beacon a row builds when its speed modules overflow the machine, as a dropdown: the header
@@ -43,7 +44,9 @@ export function BeaconPicker({
      `null` means and what the early game defaults to. A pinned id the dataset no longer has is none
      too — a stale URL, and the same answer `chosenBeacon` gives the arithmetic. */
   const current = pinned ? beaconTiers.find(({ id }) => id === choice) : defaultBeacon(progress);
-  const what = current ? `${beaconName(current.id)}: ${slotSummary(current.beacon)}` : 'No beacons';
+  const what = current
+    ? `${beaconName(staticData, current.id)}: ${slotSummary(current.beacon)}`
+    : 'No beacons';
   const label = pinned ? what : `${what}, by default for this progress`;
 
   const choose = (id: BeaconChoice) => {
@@ -137,7 +140,7 @@ export function BeaconPicker({
             >
               <span class="module-icon" style={beaconIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{worth(beacon)}</span>
-              <span class="module-option-name">{beaconName(id)}</span>
+              <span class="module-option-name">{beaconName(staticData, id)}</span>
             </button>
           ))}
         </div>

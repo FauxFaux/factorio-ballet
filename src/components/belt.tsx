@@ -4,6 +4,7 @@ import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Belt, BeltId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
+import { staticData } from '../data/decode.ts';
 
 /**
  * The belt tier a future throughput check will use. Like the module and beacon controls, this is a
@@ -23,7 +24,7 @@ export function BeltPicker({
 
   const pinned = choice !== undefined;
   const current = pinned ? beltTiers.find(({ id }) => id === choice)! : defaultBelt(progress);
-  const what = current ? `${beltName(current.id)}: ${rate(current.belt)}` : 'No belts';
+  const what = current ? `${beltName(staticData, current.id)}: ${rate(current.belt)}` : 'No belts';
   const label = pinned ? what : `${what}, by default for this progress`;
   const choose = (id: BeltChoice) => {
     setChoice(id);
@@ -78,7 +79,7 @@ export function BeltPicker({
             >
               <span class="module-icon" style={beltIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{rate(belt)}</span>
-              <span class="module-option-name">{beltName(id)}</span>
+              <span class="module-option-name">{beltName(staticData, id)}</span>
             </button>
           ))}
         </div>

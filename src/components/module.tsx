@@ -1,13 +1,13 @@
 import './module.css';
-import { moduleName, type BeaconChoice, type BeltChoice } from '../data/index.ts';
+import { type BeaconChoice, type BeltChoice, resourceName } from '../data/index.ts';
 import {
   defaultModule,
   headlineEffect,
   moduleCategories,
-  modulesIn,
   type ModuleCategory,
   type ModuleChoice,
   type ModuleMatch,
+  modulesIn,
 } from '../data/modules.ts';
 import { BeaconPicker } from './beacon.tsx';
 import { BeltPicker } from './belt.tsx';
@@ -16,6 +16,7 @@ import { fmt, type State } from '../ts.ts';
 import type { Module, ModuleId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 import { UnlitIcon } from './unlit-module-icon.tsx';
+import { staticData } from '../data/decode.ts';
 
 /** One of a module's effects as a percentage, sign and all: `+40%`, `−15%`. */
 const percent = (value: number): string => `${value < 0 ? '−' : '+'}${fmt(Math.abs(value) * 100)}%`;
@@ -59,7 +60,7 @@ export function ModulePicker({
   const pinned = choice !== undefined;
   const current = chosen ? modules.find(({ id }) => id === chosen) : undefined;
   const what = current
-    ? `${moduleName(current.id)}: ${effectSummary(category, current.module)}`
+    ? `${resourceName(staticData, `item:${current.id}`)}: ${effectSummary(category, current.module)}`
     : `No ${category.human} modules`;
   const label = pinned ? what : `${what}, by default for this progress`;
 
@@ -155,7 +156,7 @@ export function ModulePicker({
                 aria-hidden="true"
               />
               <span class="module-option-effect">{percent(headlineEffect(category, module))}</span>
-              <span class="module-option-name">{moduleName(id)}</span>
+              <span class="module-option-name">{resourceName(staticData, `item:${id}`)}</span>
             </button>
           ))}
         </div>

@@ -1,4 +1,4 @@
-import type { Beacon, BeaconId, Belt, BeltId, ModuleId, ResourceId, StaticData } from '../types.ts';
+import type { Beacon, BeaconId, Belt, BeltId, ResourceId, StaticData } from '../types.ts';
 import { staticData } from './decode.ts';
 import { selectPackLandmarks } from '../compute/landmarks.ts';
 import type { Landmark } from '../compute/landmarks.ts';
@@ -46,11 +46,6 @@ export const packLandmarks: Landmark[] = (() => {
   return selectPackLandmarks(staticData.sciencePacks, staticData.resources);
 })();
 
-/** The display name for a module: the item's, because a module is the item you craft. */
-export function moduleName(id: ModuleId): string {
-  return resourceName(staticData, `item:${id}`);
-}
-
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
 
@@ -83,8 +78,8 @@ export const beaconTiers: BeaconMatch[] = Object.entries(staticData.beacons ?? {
   );
 
 /** What a beacon is called; its own name, unlike a module's, which is its item's. */
-export function beaconName(id: BeaconId): string {
-  return staticData.beacons[id]?.human ?? id;
+export function beaconName(data: StaticData, id: BeaconId): string {
+  return data.beacons[id]?.human ?? id;
 }
 
 /**
@@ -148,8 +143,8 @@ export const beltTiers: BeltMatch[] = Object.entries(staticData.belts)
   );
 
 /** The belt's own name, unlike a module's, which is the name of its item. */
-export function beltName(id: BeltId): string {
-  return staticData.belts[id]?.human ?? id;
+export function beltName(data: StaticData, id: BeltId): string {
+  return data.belts[id]?.human ?? id;
 }
 
 /** The fastest belt already available at this point in the tech tree. */
