@@ -5,10 +5,12 @@ import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
+// eslint-disable-next-line no-restricted-syntax -- URL hashes currently use the global dataset.
+import { staticData } from '../data/decode.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelMachineChoice } from '../compute/kernel-problems.ts';
 import { CrashHandler } from './crash-handler.tsx';
-import { packCells, unpackCells, type PackedCell } from './pack.ts';
+import { createIdTables, packCells, unpackCells, type PackedCell } from './pack.ts';
 import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
 
 export interface KernelCustomState {
@@ -165,9 +167,10 @@ export function UrlHandler() {
 }
 
 const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(REFERENCE_STATE)));
+const idTables = createIdTables(staticData);
 
 function packUs(us: UrlState): string {
-  const packed: PackedState = { ...us, cl: packCells(us.cl) };
+  const packed: PackedState = { ...us, cl: packCells(us.cl, idTables) };
   const json = JSON.stringify(shallowSortKeys(packed));
   const data = deflateSync(strToU8(json), {
     level: 9,
@@ -192,7 +195,7 @@ function unpackUs(hash: string): UrlState {
     ...stored,
     cs: stored.cs || (typeof legacyResourceSearch === 'string' ? legacyResourceSearch : ''),
   } as PackedState;
-  return { ...packed, cl: unpackCells(packed.cl ?? []) };
+  return { ...packed, cl: unpackCells(packed.cl ?? [], idTables) };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

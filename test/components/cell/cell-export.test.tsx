@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import state from '../../assets/uranium.state.json';
 import { type Cell, cellInterface } from '../../../src/cell.ts';
 import { resolveChosen, resourceName } from '../../../src/data';
-import { packCells, unpackCells } from '../../../src/boot/pack.ts';
+import { createIdTables, packCells, unpackCells } from '../../../src/boot/pack.ts';
 import { solveCell } from '../../../src/solve';
 import { dumbSolver } from '../../../src/solve/dumb.ts';
 import { matrixSolver } from '../../../src/solve/matrix.ts';
@@ -18,6 +18,7 @@ import { defaultDataset } from '../../../src/dataset';
 const uranium: Cell = state.cl[0];
 const chosen = resolveChosen(defaultDataset, {}, undefined, undefined, state.gp);
 const exported: Cell = { ...uranium, exports: ['item:uranium-238'] };
+const ids = createIdTables(defaultDataset.data);
 afterEach(cleanup);
 
 describe('explicit cell imports', () => {
@@ -42,7 +43,7 @@ describe('explicit cell imports', () => {
   });
 
   it('preserves imports and classifies them as inputs', () => {
-    expect(unpackCells(packCells([imported]))).toEqual([imported]);
+    expect(unpackCells(packCells([imported], ids), ids)).toEqual([imported]);
     expect(cellInterface(defaultDataset.data, imported).inputs).toContain('item:uranium-235');
     expect(cellInterface(defaultDataset.data, imported).outputs).not.toContain('item:uranium-235');
   });
@@ -289,7 +290,7 @@ describe('explicit cell exports', () => {
   });
 
   it('preserves exports in packed state and exposes them as outputs', () => {
-    expect(unpackCells(packCells([exported]))).toEqual([exported]);
+    expect(unpackCells(packCells([exported], ids), ids)).toEqual([exported]);
     expect(cellInterface(defaultDataset.data, exported).outputs).toContain('item:uranium-238');
     expect(cellInterface(defaultDataset.data, uranium).outputs).not.toContain('item:uranium-238');
   });

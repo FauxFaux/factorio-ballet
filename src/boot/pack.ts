@@ -1,5 +1,4 @@
 import type { Cell, CellEntry } from '../cell.ts';
-import { staticData } from '../data/decode.ts';
 import type { ModuleFill } from '../data/module-effects.ts';
 import type {
   DesignColumn,
@@ -8,7 +7,7 @@ import type {
   FactoryDesign,
 } from '../compute/design.ts';
 import type { CellLayout } from '../compute/layout.ts';
-import type { ResourceId } from '../types.ts';
+import type { ResourceId, StaticData } from '../types.ts';
 
 /**
  * The cells as they go into the URL hash: the same shape, with each recipe and machine prototype
@@ -101,29 +100,35 @@ function idTable(names: string[]): IdTable {
   };
 }
 
-const recipeIds = idTable(Object.keys(staticData.recipes));
-const machineIds = idTable(Object.keys(staticData.machines));
-const moduleIds = idTable(Object.keys(staticData.modules));
+export function createIdTables(data: StaticData) {
+  return {
+    recipeIds: idTable(Object.keys(data.recipes)),
+    machineIds: idTable(Object.keys(data.machines)),
+    moduleIds: idTable(Object.keys(data.modules)),
+  };
+}
 
-export function packCells(cells: Cell[]): PackedCell[] {
+export type IdTables = ReturnType<typeof createIdTables>;
+
+export function packCells(cells: Cell[], ids: IdTables): PackedCell[] {
   return cells.map((cell) => {
     const { design, layout, ...rest } = cell;
     return {
       ...rest,
-      entries: cell.entries.map(packEntry),
-      ...(design ? { design: packDesign(design) } : {}),
+      entries: cell.entries.map((entry) => packEntry(entry, ids)),
+      ...(design ? { design: packDesign(design, ids) } : {}),
       ...(layout ? { layout } : {}),
     };
   });
 }
 
-export function unpackCells(cells: PackedCell[]): Cell[] {
+export function unpackCells(cells: PackedCell[], ids: IdTables): Cell[] {
   return cells.map((cell) => {
     const { design, layout, ...rest } = cell;
     return {
       ...rest,
-      entries: (cell.entries ?? []).map(unpackEntry),
-      ...(design ? { design: unpackDesign(design) } : {}),
+      entries: (cell.entries ?? []).map((entry) => unpackEntry(entry, ids)),
+      ...(design ? { design: unpackDesign(design, ids) } : {}),
       ...(layout ? { layout } : {}),
     };
   });
@@ -132,16 +137,16 @@ export function unpackCells(cells: PackedCell[]): Cell[] {
 const directions: DesignDirection[] = ['north', 'east', 'south', 'west'];
 const directionChars = ['n', 'e', 's', 'w'] as const;
 
-function packDesign(design: FactoryDesign): PackedFactoryDesign {
-  return { columns: design.columns.map(packColumn) };
+function packDesign(design: FactoryDesign, ids: IdTables): PackedFactoryDesign {
+  return { columns: design.columns.map((column) => packColumn(column, ids)) };
 }
 
-function packColumn(column: DesignColumn): PackedDesignColumn {
+function packColumn(column: DesignColumn, ids: IdTables): PackedDesignColumn {
   const entities: PackedDesignEntity[] = [];
   for (let i = 0; i < column.entities.length; i++) {
     const entity = column.entities[i];
     if (entity.kind !== 'belt') {
-      entities.push(packDesignEntity(entity));
+      entities.push(packDesignEntity(entity, ids));
       continue;
     }
 
@@ -167,7 +172,10 @@ function beltContinues(previous: Extract<DesignEntity, { kind: 'belt' }>, next: 
   return next.position.x === x + dx && next.position.y === y + dy;
 }
 
-function packDesignEntity(entity: Exclude<DesignEntity, { kind: 'belt' }>): PackedDesignEntity {
+function packDesignEntity(
+  entity: Exclude<DesignEntity, { kind: 'belt' }>,
+  { recipeIds, machineIds }: IdTables,
+): PackedDesignEntity {
   const { x, y } = entity.position;
   switch (entity.kind) {
     case 'assembler':
@@ -200,19 +208,22 @@ function packDesignEntity(entity: Exclude<DesignEntity, { kind: 'belt' }>): Pack
   }
 }
 
-function unpackDesign(design: PackedFactoryDesign): FactoryDesign {
-  return { columns: (design.columns ?? []).map(unpackColumn) };
+function unpackDesign(design: PackedFactoryDesign, ids: IdTables): FactoryDesign {
+  return { columns: (design.columns ?? []).map((column) => unpackColumn(column, ids)) };
 }
 
-function unpackColumn(column: PackedDesignColumn): DesignColumn {
+function unpackColumn(column: PackedDesignColumn, ids: IdTables): DesignColumn {
   // Object entities are the packed representation used before design packing was introduced.
   const entities = (column.entities ?? []).flatMap((entity) =>
-    Array.isArray(entity) ? unpackDesignEntity(entity) : [entity as DesignEntity],
+    Array.isArray(entity) ? unpackDesignEntity(entity, ids) : [entity as DesignEntity],
   );
   return { entities };
 }
 
-function unpackDesignEntity(entity: Exclude<PackedDesignEntity, DesignEntity>): DesignEntity[] {
+function unpackDesignEntity(
+  entity: Exclude<PackedDesignEntity, DesignEntity>,
+  { recipeIds, machineIds }: IdTables,
+): DesignEntity[] {
   const [kind, x, y] = entity;
   const position = { x, y };
   switch (kind) {
@@ -287,11 +298,11 @@ function directionOffset(direction: DesignDirection): [number, number] {
   }
 }
 
-function packEntry(entry: CellEntry): PackedEntry {
+function packEntry(entry: CellEntry, { recipeIds, machineIds, moduleIds }: IdTables): PackedEntry {
   const packed: PackedEntry = { recipe: recipeIds.toId(entry.recipe) };
   if (entry.machine !== undefined) packed.machine = machineIds.toId(entry.machine);
   if (entry.count !== undefined) packed.count = entry.count;
-  const modules = packModules(entry.modules);
+  const modules = packModules(entry.modules, moduleIds);
   if (modules) packed.modules = modules;
   if (entry.productivityModules !== undefined) {
     packed.productivityModules = entry.productivityModules;
@@ -301,11 +312,14 @@ function packEntry(entry: CellEntry): PackedEntry {
   return packed;
 }
 
-function unpackEntry(packed: PackedEntry): CellEntry {
+function unpackEntry(
+  packed: PackedEntry,
+  { recipeIds, machineIds, moduleIds }: IdTables,
+): CellEntry {
   const entry: CellEntry = { recipe: recipeIds.toName(packed.recipe) };
   if (packed.machine !== undefined) entry.machine = machineIds.toName(packed.machine);
   if (packed.count !== undefined) entry.count = packed.count;
-  const modules = unpackModules(packed.modules);
+  const modules = unpackModules(packed.modules, moduleIds);
   if (modules) entry.modules = modules;
   if (packed.productivityModules !== undefined) {
     entry.productivityModules = packed.productivityModules;
@@ -315,13 +329,19 @@ function unpackEntry(packed: PackedEntry): CellEntry {
   return entry;
 }
 
-function packModules(fill: ModuleFill | undefined): [PackedId, number][] | undefined {
+function packModules(
+  fill: ModuleFill | undefined,
+  moduleIds: IdTable,
+): [PackedId, number][] | undefined {
   const entries = Object.entries(fill ?? {});
   if (entries.length === 0) return undefined;
   return entries.map(([module, count]) => [moduleIds.toId(module), count]);
 }
 
-function unpackModules(packed: [PackedId, number][] | undefined): ModuleFill | undefined {
+function unpackModules(
+  packed: [PackedId, number][] | undefined,
+  moduleIds: IdTable,
+): ModuleFill | undefined {
   if (!packed?.length) return undefined;
   return Object.fromEntries(packed.map(([module, count]) => [moduleIds.toName(module), count]));
 }

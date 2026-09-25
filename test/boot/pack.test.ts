@@ -1,14 +1,65 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../../src/cell.ts';
-import { packCells, unpackCells } from '../../src/boot/pack.ts';
+import { createIdTables, packCells, unpackCells } from '../../src/boot/pack.ts';
 import { defaultDataset } from '../../src/dataset';
 
 const recipe = Object.keys(defaultDataset.data.recipes)[0];
 const machine = Object.keys(defaultDataset.data.machines)[0];
 const [moduleA, moduleB] = Object.keys(defaultDataset.data.modules);
+const ids = createIdTables(defaultDataset.data);
 
 describe('packCells', () => {
+  it('uses the supplied dataset for entry and design ids', () => {
+    const data = {
+      ...defaultDataset.data,
+      recipes: Object.fromEntries(Object.entries(defaultDataset.data.recipes).reverse()),
+      machines: Object.fromEntries(Object.entries(defaultDataset.data.machines).reverse()),
+      modules: Object.fromEntries(Object.entries(defaultDataset.data.modules).reverse()),
+    };
+    const reversedIds = createIdTables(data);
+    const recipeId = Object.keys(data.recipes)[0];
+    const machineId = Object.keys(data.machines)[0];
+    const moduleId = Object.keys(data.modules)[0];
+    const cells: Cell[] = [
+      {
+        entries: [{ recipe: recipeId, machine: machineId, modules: { [moduleId]: 1 } }],
+        design: {
+          columns: [
+            {
+              entities: [
+                {
+                  kind: 'assembler',
+                  position: { x: 0, y: 0 },
+                  size: { width: 3, height: 3 },
+                  recipe: recipeId,
+                  machine: machineId,
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ];
+
+    expect(packCells(cells, reversedIds)[0].entries[0]).toEqual({
+      recipe: 0,
+      machine: 0,
+      modules: [[0, 1]],
+    });
+    expect(packCells(cells, reversedIds)[0].design?.columns[0].entities[0]).toEqual([
+      0,
+      0,
+      0,
+      3,
+      3,
+      0,
+      0,
+      null,
+    ]);
+    expect(unpackCells(packCells(cells, reversedIds), reversedIds)).toEqual(cells);
+  });
+
   it('round-trips a cell', () => {
     const cells: Cell[] = [
       {
@@ -69,11 +120,11 @@ describe('packCells', () => {
         },
       },
     ];
-    expect(unpackCells(packCells(cells))).toEqual(cells);
+    expect(unpackCells(packCells(cells, ids), ids)).toEqual(cells);
   });
 
   it('numbers the ids it knows', () => {
-    const packed = packCells([{ entries: [{ recipe: 'copper-cable', machine }] }]);
+    const packed = packCells([{ entries: [{ recipe: 'copper-cable', machine }] }], ids);
     expect(packed[0].entries[0]).toEqual({
       recipe: Object.keys(defaultDataset.data.recipes).indexOf('copper-cable'),
       machine: 0,
@@ -84,15 +135,15 @@ describe('packCells', () => {
     // What a hash written against an older `static.json` leaves behind: the app draws the row as
     // missing, and re-packing it must not lose which recipe it was.
     const cells: Cell[] = [{ entries: [{ recipe: 'gone-recipe', machine: 'gone-machine' }] }];
-    expect(packCells(cells)[0].entries[0]).toEqual({
+    expect(packCells(cells, ids)[0].entries[0]).toEqual({
       recipe: 'gone-recipe',
       machine: 'gone-machine',
     });
-    expect(unpackCells(packCells(cells))).toEqual(cells);
+    expect(unpackCells(packCells(cells, ids), ids)).toEqual(cells);
   });
 
   it('turns an index it cannot reach into a name nothing matches', () => {
-    const [entry] = unpackCells([{ entries: [{ recipe: 999999 }] }])[0].entries;
+    const [entry] = unpackCells([{ entries: [{ recipe: 999999 }] }], ids)[0].entries;
     expect(entry.recipe).toBe('#999999');
     expect(defaultDataset.data.recipes[entry.recipe]).toBeUndefined();
   });
@@ -100,16 +151,19 @@ describe('packCells', () => {
   it('keeps a loadout in the order it fills the slots', () => {
     // The reason `modules` packs as pairs: as object keys, integer-like ids would come back sorted.
     const modules = { [moduleB]: 1, [moduleA]: 3 };
-    const packed = packCells([{ entries: [{ recipe, modules }] }]);
+    const packed = packCells([{ entries: [{ recipe, modules }] }], ids);
     expect(packed[0].entries[0].modules).toEqual([
       [1, 1],
       [0, 3],
     ]);
-    expect(Object.keys(unpackCells(packed)[0].entries[0].modules!)).toEqual([moduleB, moduleA]);
+    expect(Object.keys(unpackCells(packed, ids)[0].entries[0].modules!)).toEqual([
+      moduleB,
+      moduleA,
+    ]);
   });
 
   it('drops an empty loadout rather than packing it', () => {
-    const packed = packCells([{ entries: [{ recipe, modules: {} }] }]);
+    const packed = packCells([{ entries: [{ recipe, modules: {} }] }], ids);
     expect(packed[0].entries[0]).toEqual({ recipe: 0 });
   });
 
@@ -132,11 +186,11 @@ describe('packCells', () => {
       },
     ];
 
-    expect(packCells(cells)[0].design?.columns[0].entities).toEqual([
+    expect(packCells(cells, ids)[0].design?.columns[0].entities).toEqual([
       [1, 2, 3, 'enw'],
       [1, 9, 9, 's'],
     ]);
-    expect(unpackCells(packCells(cells))).toEqual(cells);
+    expect(unpackCells(packCells(cells, ids), ids)).toEqual(cells);
   });
 
   it('substantially shrinks a belt-heavy design', () => {
@@ -144,9 +198,9 @@ describe('packCells', () => {
       readFileSync(new URL('../assets/belts.state.json', import.meta.url), 'utf8'),
     ) as { cl: Cell[] };
     const originalLength = JSON.stringify(state.cl).length;
-    const packed = packCells(state.cl);
+    const packed = packCells(state.cl, ids);
 
-    expect(unpackCells(packed)).toEqual(state.cl);
+    expect(unpackCells(packed, ids)).toEqual(state.cl);
     expect(JSON.stringify(packed).length).toBeLessThan(originalLength / 2);
   });
 });
