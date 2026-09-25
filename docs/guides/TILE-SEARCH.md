@@ -10,7 +10,10 @@ The search supports any number of item ingredients and products that fit the ava
 capacities. It preserves gross input and output demands, including catalysts. Each gross transfer
 must have a corresponding external supply or export. Internal recirculation and multiple machines
 return `unsupported`. Fluids use unlimited-throughput networks with explicit physical box
-obligations; each resource must have an external supply or export on the corresponding side.
+obligations; each resource must have an external supply or export on the corresponding side. When
+several physical boxes are assigned the same fluid on one side, connecting any one of them satisfies
+that resource's obligation. Other boxes may remain unconnected, leaving their neighboring cells
+available for item inserters.
 
 ## Geometry and transport model
 
@@ -41,7 +44,8 @@ applied before rotation, including port normals; resource and physical box ident
 to the transformed ports. Rectangular and even footprints use centre-relative prototype positions,
 including half-cell coordinates. Emitted assemblers retain `direction` and `mirrored`.
 
-`routes.ts` enumerates two connection schemes for every required box and alternative port:
+`routes.ts` enumerates two connection schemes for each required fluid and side, choosing one of its
+assigned boxes and alternative ports:
 
 1. A surface pipe trunk immediately beside the selected east/west port.
 2. An inward-facing pipe-to-ground at the machine and an outward-facing partner beside a more
@@ -56,9 +60,10 @@ cells between endpoints; adapters from prototype fields must convert their dista
 
 Routes may share compatible geometry. Distinct fluid networks must remain isolated, including at
 unselected ports and across the repeat seam. The validator reconstructs surface adjacency and mutual
-nearest underground partners from entities, checks reach and exposed faces, and requires every box
-to connect to an advertised trunk. Per-pipe resource assignments and per-trunk fluid identities are
-emitted explicitly.
+nearest underground partners from entities, checks reach and exposed faces, and requires at least
+one assigned box per fluid and side to connect to an advertised trunk. Pipes touching other assigned
+boxes must still carry the correct fluid. Per-pipe resource assignments and per-trunk fluid
+identities are emitted explicitly.
 
 The current family uses full surface pipe trunks and horizontal pipe pairs. Belt tunnels stay wholly
 inside one tile, with exposed surface connections at the top and bottom, so finite modules need no

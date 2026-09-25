@@ -24,62 +24,78 @@ export function* routeFrames(
 ): Generator<RoutedFrame> {
   const { machine } = frame;
   const height = machine.size.height;
-  const domains = [...machine.inputs.fluids, ...machine.outputs.fluids]
-    .map((access) => {
+  const groups = new Map<string, typeof machine.inputs.fluids>();
+  for (const [side, accesses] of [
+    ['input', machine.inputs.fluids],
+    ['output', machine.outputs.fluids],
+  ] as const) {
+    for (const access of accesses) {
+      const key = `${side}:${access.resource}`;
+      const group = groups.get(key) ?? [];
+      group.push(access);
+      groups.set(key, group);
+    }
+  }
+  const domains = [...groups.values()]
+    .map((accesses) => {
       const routes: FluidRoute[] = [];
       const seen = new Set<string>();
-      for (const source of access.positions) {
-        const port = orientFluidPort(source, machine.size, frame);
-        const { x, y } = port.position;
-        if ((port.direction !== 'east' && port.direction !== 'west') || y < 0 || y >= height)
-          continue;
-        const sign = port.direction === 'east' ? 1 : -1;
-        // First choice is the adjacent trunk. Other choices have a pair and a trunk one cell
-        // beyond its outer endpoint. Reach counts hidden cells, as for underground belts.
-        const limit =
-          input.envelope.primitives.includes('underground') &&
-          input.envelope.primitives.includes('branch')
-            ? Math.min(
-                input.transport.undergroundPipeReach + 2,
-                input.envelope.maxWidth - machine.size.width,
-              )
-            : 0;
-        for (let offset = 0; offset <= limit; offset++) {
-          const trunkX = x + sign * offset;
-          const pipes: FluidRoute['pipes'] = Array.from({ length: height }, (_, row) => ({
-            entity: { kind: 'pipe', position: { x: trunkX, y: row } },
-            resource: access.resource,
-          }));
-          if (offset === 1) {
-            // A trunk one tile beyond the port connects through a surface pipe at the
-            // port itself; no underground pair is needed for this short branch.
-            pipes.push({ entity: { kind: 'pipe', position: { x, y } }, resource: access.resource });
-          } else if (offset > 1)
-            pipes.push(
-              {
-                entity: {
-                  kind: 'underground-pipe',
-                  position: { x, y },
-                  direction: oppositeDirection(port.direction),
-                },
+      for (const access of accesses)
+        for (const source of access.positions) {
+          const port = orientFluidPort(source, machine.size, frame);
+          const { x, y } = port.position;
+          if ((port.direction !== 'east' && port.direction !== 'west') || y < 0 || y >= height)
+            continue;
+          const sign = port.direction === 'east' ? 1 : -1;
+          // First choice is the adjacent trunk. Other choices have a pair and a trunk one cell
+          // beyond its outer endpoint. Reach counts hidden cells, as for underground belts.
+          const limit =
+            input.envelope.primitives.includes('underground') &&
+            input.envelope.primitives.includes('branch')
+              ? Math.min(
+                  input.transport.undergroundPipeReach + 2,
+                  input.envelope.maxWidth - machine.size.width,
+                )
+              : 0;
+          for (let offset = 0; offset <= limit; offset++) {
+            const trunkX = x + sign * offset;
+            const pipes: FluidRoute['pipes'] = Array.from({ length: height }, (_, row) => ({
+              entity: { kind: 'pipe', position: { x: trunkX, y: row } },
+              resource: access.resource,
+            }));
+            if (offset === 1) {
+              // A trunk one tile beyond the port connects through a surface pipe at the
+              // port itself; no underground pair is needed for this short branch.
+              pipes.push({
+                entity: { kind: 'pipe', position: { x, y } },
                 resource: access.resource,
-              },
-              {
-                entity: {
-                  kind: 'underground-pipe',
-                  position: { x: trunkX - sign, y },
-                  direction: port.direction,
+              });
+            } else if (offset > 1)
+              pipes.push(
+                {
+                  entity: {
+                    kind: 'underground-pipe',
+                    position: { x, y },
+                    direction: oppositeDirection(port.direction),
+                  },
+                  resource: access.resource,
                 },
-                resource: access.resource,
-              },
-            );
-          const key = JSON.stringify(pipes);
-          if (seen.has(key)) continue;
-          seen.add(key);
-          routes.push({ pipes, trunks: [{ x: trunkX, resource: access.resource }] });
+                {
+                  entity: {
+                    kind: 'underground-pipe',
+                    position: { x: trunkX - sign, y },
+                    direction: port.direction,
+                  },
+                  resource: access.resource,
+                },
+              );
+            const key = JSON.stringify(pipes);
+            if (seen.has(key)) continue;
+            seen.add(key);
+            routes.push({ pipes, trunks: [{ x: trunkX, resource: access.resource }] });
+          }
         }
-      }
-      return { access, routes };
+      return { access: accesses[0], routes };
     })
     .sort(
       (a, b) =>

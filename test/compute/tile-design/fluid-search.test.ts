@@ -129,6 +129,78 @@ function pairedInputsProblem(): TileDesignInput {
 }
 
 describe('fluid tile search', () => {
+  it('connects one of two boxes for the same fluid and leaves room for three solid inputs', () => {
+    const fluidBoxes = [
+      ...[-1, 1].map((x) => ({
+        productionType: 'input' as const,
+        connections: [
+          { position: { x, y: -1 }, direction: 'north' as const, flowDirection: 'input' as const },
+        ],
+      })),
+      ...[-1, 1].map((x) => ({
+        productionType: 'output' as const,
+        connections: [
+          { position: { x, y: 1 }, direction: 'south' as const, flowDirection: 'output' as const },
+        ],
+      })),
+    ];
+    for (const thirdInput of [3, 5]) {
+      const kernel = assemblerProblem({
+        assemblerName: 'Chemical plant',
+        solidInputs: [5, 5, thirdInput],
+        fluidInputs: [200],
+        solidOutputs: [5],
+        fluidBoxes,
+      });
+      const result = solveKernelTileDesign(kernel, {
+        beltItemsPerSecond: 30,
+        inserterItemsPerSecond: 8,
+        longInserterItemsPerSecond: 2.6,
+      });
+      expect('status' in result && result.status, JSON.stringify(result)).toBe('found');
+      if (!('status' in result) || result.status !== 'found') continue;
+      const normalized = normalizeTileDesignInput(kernel, {
+        transport: {
+          beltLaneCapacity: 15,
+          undergroundBeltReach: 4,
+          undergroundPipeReach: 10,
+          inserters: [
+            { id: 'ordinary', capacity: 8, reach: 1 },
+            { id: 'long', capacity: 2.6, reach: 2 },
+          ],
+          fluidThroughput: 'unlimited',
+        },
+        envelope: {
+          maxWidth: 16,
+          maxPitch: 12,
+          maxStates: 10_000,
+          primitives: ['surface', 'underground', 'branch'],
+        },
+      });
+      if (!normalized.success) throw new Error(normalized.message);
+      expect(validateTileDesign(normalized.input, result.candidate).valid).toBe(true);
+      const assembler = result.candidate.column.entities.find(
+        (entity) => entity.kind === 'assembler',
+      );
+      if (!assembler || assembler.kind !== 'assembler') throw new Error('Missing assembler');
+      const connectedInputs = normalized.input.machines[0].inputs.fluids.filter((access) =>
+        access.positions.some((port) => {
+          const oriented = orientFluidPort(port, assembler.size, {
+            rotation: assembler.direction ?? 'north',
+            mirrored: assembler.mirrored ?? false,
+          });
+          return result.candidate.column.entities.some(
+            (entity) =>
+              (entity.kind === 'pipe' || entity.kind === 'underground-pipe') &&
+              entity.position.x === assembler.position.x + oriented.position.x &&
+              entity.position.y === assembler.position.y + oriented.position.y,
+          );
+        }),
+      );
+      expect(connectedInputs).toHaveLength(1);
+    }
+  });
+
   it('solves the exported chemical plant shapes through the preview entry point', () => {
     const fluidBoxes = [
       ...[-1, 1].map((x) => ({

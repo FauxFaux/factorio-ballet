@@ -113,15 +113,24 @@ export function validateFluids(
     if (pipe.kind === 'underground-pipe' && pipe.direction !== opposite(oriented.direction)) return;
     return index;
   }
-  const obligations = [...assemblers.values()].flatMap(({ entity, machine }) =>
-    [...machine.inputs.fluids, ...machine.outputs.fluids].map((access) => ({
-      access,
-      machine,
-      pipes: access.positions.flatMap((port) => {
-        const index = portPipeIndex(entity, port);
-        return index === undefined ? [] : [index];
-      }),
-    })),
+  const obligations = [...assemblers].flatMap(([assemblerIndex, { entity, machine }]) =>
+    (
+      [
+        ['input', machine.inputs.fluids],
+        ['output', machine.outputs.fluids],
+      ] as const
+    ).flatMap(([side, accesses]) =>
+      accesses.map((access) => ({
+        access,
+        machine,
+        assemblerIndex,
+        side,
+        pipes: access.positions.flatMap((port) => {
+          const index = portPipeIndex(entity, port);
+          return index === undefined ? [] : [index];
+        }),
+      })),
+    ),
   );
   // Alternative physical ports of a logical box connect through that box.
   for (const { pipes } of obligations) for (const index of pipes.slice(1)) join(pipes[0], index);
@@ -204,7 +213,7 @@ export function validateFluids(
     }
     boundaryRoots.add(network);
   }
-  for (const { access, machine, pipes } of obligations) {
+  for (const { access, pipes } of obligations) {
     for (const pipe of pipes)
       if (fluidByRoot.get(root(pipe)) !== access.resource)
         issue(
@@ -213,11 +222,25 @@ export function validateFluids(
           pipe,
           access.resource,
         );
-    if (
-      !pipes.some(
-        (pipe) => fluidByRoot.get(root(pipe)) === access.resource && boundaryRoots.has(root(pipe)),
+  }
+  const connected = new Set(
+    obligations
+      .filter(({ access, pipes }) =>
+        pipes.some(
+          (pipe) =>
+            fluidByRoot.get(root(pipe)) === access.resource && boundaryRoots.has(root(pipe)),
+        ),
       )
-    )
+      .map(({ assemblerIndex, side, access }) => `${assemblerIndex}:${side}:${access.resource}`),
+  );
+  const required = new Map(
+    obligations.map(({ assemblerIndex, side, access, machine }) => [
+      `${assemblerIndex}:${side}:${access.resource}`,
+      { access, machine },
+    ]),
+  );
+  for (const [key, { access, machine }] of required) {
+    if (!connected.has(key))
       issue(
         'fluid-port',
         `Machine ${machine.id} has no boundary-connected port for ${access.resource}.`,
