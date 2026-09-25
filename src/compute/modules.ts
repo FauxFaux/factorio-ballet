@@ -7,6 +7,7 @@ import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
 import { solveKernelTileDesign } from './tile-design/kernel-result.ts';
+import { staticData } from '../data/decode.ts';
 
 export const MAX_MODULE_HEIGHT = 100;
 
@@ -358,8 +359,13 @@ export function modulesForCell(
     );
     const result = solveKernelTileDesign(problem, {
       beltItemsPerSecond: belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt),
-      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt, 2),
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(staticData, progress, belt),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+        staticData,
+        progress,
+        belt,
+        2,
+      ),
     });
     return 'status' in result && result.status === 'found'
       ? modulesForTile(

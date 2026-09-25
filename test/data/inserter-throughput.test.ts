@@ -85,7 +85,7 @@ describe('inserterItemsPerSecond', () => {
       2,
     );
 
-    expect(inserterItemsPerSecondAtProgress(0.55, 2)).toBeCloseTo(expected);
+    expect(inserterItemsPerSecondAtProgress(staticData, 0.55, 2)).toBeCloseTo(expected);
   });
 
   it('uses a chosen belt while resolving the inserter and capacity bonus from progress', () => {
@@ -109,6 +109,8 @@ describe('inserterItemsPerSecond', () => {
         ),
     );
 
-    expect(inserterItemsPerSecondForBeltAtProgress(progress, belt)).toBeCloseTo(expected);
+    expect(inserterItemsPerSecondForBeltAtProgress(staticData, progress, belt)).toBeCloseTo(
+      expected,
+    );
   });
 });

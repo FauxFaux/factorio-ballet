@@ -20,6 +20,7 @@ import {
 import { fmt } from '../../src/ts.ts';
 import { defaultDataset } from '../../src/dataset/index.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
+import { staticData } from '../../src/data/decode.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);
@@ -60,8 +61,17 @@ describe('App', () => {
     );
     const throughput = {
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
-      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+        staticData,
+        progress,
+        chosen.belt,
+      ),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+        staticData,
+        progress,
+        chosen.belt,
+        2,
+      ),
     };
     const sortedProblems = allProblems.toSorted(
       (left, right) =>

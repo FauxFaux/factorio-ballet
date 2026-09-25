@@ -109,8 +109,13 @@ function AssemblerDesignSummary({
   );
   const throughput = {
     beltItemsPerSecond: belt.itemsPerSecond,
-    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt),
-    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt, 2),
+    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(staticData, progress, belt),
+    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+      staticData,
+      progress,
+      belt,
+      2,
+    ),
   };
   const result = solveKernelTileDesign(problem, throughput);
   if ('success' in result) {

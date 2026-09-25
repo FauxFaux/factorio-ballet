@@ -1,5 +1,4 @@
-import type { Belt, Inserter, InserterCapacityBonus } from '../types.ts';
-import { staticData } from './decode.ts';
+import type { Belt, Inserter, InserterCapacityBonus, StaticData } from '../types.ts';
 import { defaultBelt } from './index.ts';
 
 type ThroughputGrid = ReadonlyArray<{
@@ -131,24 +130,29 @@ export function inserterItemsPerSecond(
  * latest capacity research come from the same progress scale; the inserter is whichever unlocked
  * non-stack prototype produces the highest estimate.
  */
-export function inserterItemsPerSecondAtProgress(progress: number, reach = 1): number {
-  return inserterItemsPerSecondForBeltAtProgress(progress, defaultBelt(progress).belt, reach);
+export function inserterItemsPerSecondAtProgress(
+  data: StaticData,
+  progress: number,
+  reach = 1,
+): number {
+  return inserterItemsPerSecondForBeltAtProgress(data, progress, defaultBelt(progress).belt, reach);
 }
 
 /** Estimate the best unlocked inserter's transfer rate against a caller-selected belt. */
 export function inserterItemsPerSecondForBeltAtProgress(
+  data: StaticData,
   progress: number,
   belt: Belt,
   reach = 1,
 ): number {
-  const capacityBonus = staticData.inserterCapacityBonuses.findLast(
+  const capacityBonus = data.inserterCapacityBonuses.findLast(
     ([complexity]) => complexity <= progress,
   );
-  const rates = Object.values(staticData.inserters)
+  const rates = Object.values(data.inserters)
     .filter(
       (inserter) =>
         !isStackInserter(inserter) &&
-        (staticData.resources[`item:${inserter.item}`]?.complexity ?? Infinity) <= progress,
+        (data.resources[`item:${inserter.item}`]?.complexity ?? Infinity) <= progress,
     )
     .map((inserter) => inserterItemsPerSecond(inserter, capacityBonus, belt, reach));
 
