@@ -246,6 +246,37 @@ Avoid duplicating derived data in both `Dataset` and module-local caches. Constr
 indexes; free functions consume them. If an index is only useful to one module, its exported type
 may remain opaque, but it still belongs to the dataset instance rather than the ES module instance.
 
+### Current module-scope audit
+
+The following application values are currently computed from the built-in `staticData` while their
+modules are evaluated. They need to be constructed from the selected dataset as the migration
+proceeds:
+
+- `src/boot/pack.ts:104-106`: recipe, machine, and module ID tables.
+- `src/components/recipe-suggestions/suggestion-plans.ts:14-20`: the resource-chain finder,
+  producer and consumer indexes (through `indexRecipes`), unique producer and consumer maps, and
+  the free-recipe-by-product map. `indexRecipes` reads every recipe at `:23-34`.
+- `src/data/index.ts:45-47`: science-pack landmarks; `:72-83`: sorted beacon tiers; and `:137-146`:
+  sorted belt tiers.
+- `src/data/machines.ts:29-40`: machines indexed by crafting category.
+- `src/data/modules.ts:61-83`: modules indexed by module category and the derived module-category
+  list.
+- `src/dataset/index.ts:20`: the built-in `defaultDataset` is constructed from `staticData` at
+  module scope. This is legacy default-dataset wiring rather than a reusable derived index.
+
+Other `staticData` references found in application source are inside functions and do not currently
+produce a module-scope derived value: `src/cell.ts:114,168,213,363`,
+`src/compute/kernel-problems.ts:121`, `src/compute/modules.ts:175,184,187,347`,
+`src/data/inserter-throughput.ts:144-153`, `src/data/machines.ts:13-26`,
+`src/data/module-effects.ts:41,94`, `src/data/modules.ts:5-11,125`, and
+`src/data/search.ts:67-87,141-183`. These still bind those operations to the built-in dataset;
+they need explicit dataset inputs for multi-dataset operation, but are not eager module-scope
+derivations.
+
+`src/data/decode.ts:10-178` loads and decodes the generated artifact and exports `staticData`; this
+is the source value rather than a derived index. `src/dataset/index.ts:20` currently consumes it to
+create the legacy dataset.
+
 ## Incremental implementation
 
 Implement this in stages while retaining the current dataset as a compatibility fixture:
