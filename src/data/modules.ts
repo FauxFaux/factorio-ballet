@@ -1,4 +1,4 @@
-import type { Beacon, Effect, Machine, Module, ModuleId, Recipe } from '../types.ts';
+import type {Beacon, Effect, Machine, Module, ModuleId, Recipe, StaticData} from '../types.ts';
 import { staticData } from './decode.ts';
 
 /** Whether a machine applies one of the module effects. */
@@ -18,10 +18,10 @@ export interface ModuleMatch {
 }
 
 /** The modules which would do something in this machine on this recipe, cheapest first. */
-export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
+export function modulesFor(data: StaticData, machine: Machine, recipe: Recipe): ModuleMatch[] {
   if (!machine.moduleSlots) return [];
   const out: ModuleMatch[] = [];
-  for (const [id, module] of Object.entries(staticData.modules)) {
+  for (const [id, module] of Object.entries(data.modules)) {
     if (!takesCategory(machine, module.category)) continue;
     const faster = (module.speed ?? 0) > 0 && allowsEffect(machine, 'speed');
     const moreOut =
@@ -29,7 +29,7 @@ export function modulesFor(machine: Machine, recipe: Recipe): ModuleMatch[] {
       allowsEffect(machine, 'productivity') &&
       recipe.allowProductivity;
     if (!faster && !moreOut) continue;
-    out.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
+    out.push({ id, module, complexity: data.resources[`item:${id}`]?.complexity });
   }
   return out.sort(cheapestModule);
 }

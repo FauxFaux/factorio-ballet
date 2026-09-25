@@ -58,7 +58,7 @@ describe('modulesFor', () => {
   const ids = (...args: Parameters<typeof modulesFor>) => modulesFor(...args).map(({ id }) => id);
 
   it('offers speed and productivity where the recipe allows productivity', () => {
-    const found = ids(assembler, gears);
+    const found = ids(staticData, assembler, gears);
     expect(found).toContain('speed-module-3');
     expect(found).toContain('productivity-module-3');
     // cheapest first: the tier 1s come before their own tier 3s
@@ -66,19 +66,19 @@ describe('modulesFor', () => {
   });
 
   it('drops productivity modules on a recipe which does not allow it', () => {
-    const found = ids(assembler, circuits);
+    const found = ids(staticData, assembler, circuits);
     expect(found).toContain('speed-module-3');
     expect(found.filter((id) => id.includes('productivity'))).toEqual([]);
   });
 
   it('offers a module only where its category is allowed', () => {
     // no machine's whitelist names `angels-bio-yield`; the farms name no whitelist at all
-    expect(ids(assembler, gears)).not.toContain('angels-bio-yield-module');
-    expect(ids(farm, garden)).toContain('angels-bio-yield-module');
+    expect(ids(staticData, assembler, gears)).not.toContain('angels-bio-yield-module');
+    expect(ids(staticData, farm, garden)).toContain('angels-bio-yield-module');
   });
 
   it('offers nothing to a machine with no slots', () => {
-    expect(ids(character, gears)).toEqual([]);
+    expect(ids(staticData, character, gears)).toEqual([]);
   });
 
   it('reads a missing allowed_effects as no restriction', () => {
