@@ -3,16 +3,16 @@ import {
   airFilterProblem,
   allKernelProblems,
   assemblerProblem,
-  kernelProblems,
   kernelMachineChoices,
+  kernelProblems,
   machineProblem,
 } from '../../src/compute/kernel-problems.ts';
-import { staticData } from '../../src/data/decode.ts';
-
-const problems = kernelProblems(staticData);
-const allProblems = allKernelProblems(staticData);
 import { normalizeTileDesignInput } from '../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../src/compute/tile-design/types.ts';
+import { defaultDataset } from '../../src/dataset';
+
+const problems = kernelProblems(defaultDataset.data);
+const allProblems = allKernelProblems(defaultDataset.data);
 
 const tileOptions: TileDesignOptions = {
   transport: {
@@ -78,8 +78,10 @@ describe('assemblerProblem', () => {
         },
       ],
     });
-    expect(assembler?.size).toEqual(staticData.machines['assembling-machine-2'].size);
-    expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
+    expect(assembler?.size).toEqual(defaultDataset.data.machines['assembling-machine-2'].size);
+    expect(assembler?.fluidBoxes).toEqual(
+      defaultDataset.data.machines['assembling-machine-2'].fluidBoxes,
+    );
   });
 
   it('keeps Assembler 2 geometry when it is selected without fluid flows', () => {
@@ -87,11 +89,13 @@ describe('assemblerProblem', () => {
       .assemblers[0];
 
     expect(assembler?.size).toEqual({ width: 3, height: 3 });
-    expect(assembler?.fluidBoxes).toEqual(staticData.machines['assembling-machine-2'].fluidBoxes);
+    expect(assembler?.fluidBoxes).toEqual(
+      defaultDataset.data.machines['assembling-machine-2'].fluidBoxes,
+    );
   });
 
   it('assigns multiple synthetic fluids to the machine ports for tile design', () => {
-    const problem = machineProblem(staticData, 'chemical-plant', {
+    const problem = machineProblem(defaultDataset.data, 'chemical-plant', {
       fluidInputs: [200, 200],
       fluidOutputs: [200],
     });
@@ -126,10 +130,15 @@ describe('kernelProblems', () => {
       'Powderiser',
     ]);
     for (const { value, label, machineId } of kernelMachineChoices) {
-      const assembler = machineProblem(staticData, value, { solidInputs: [1], solidOutputs: [1] })
-        .assemblers[0];
-      expect(assembler).toMatchObject({ name: label, size: staticData.machines[machineId].size });
-      expect(assembler?.fluidBoxes).toEqual(staticData.machines[machineId].fluidBoxes);
+      const assembler = machineProblem(defaultDataset.data, value, {
+        solidInputs: [1],
+        solidOutputs: [1],
+      }).assemblers[0];
+      expect(assembler).toMatchObject({
+        name: label,
+        size: defaultDataset.data.machines[machineId].size,
+      });
+      expect(assembler?.fluidBoxes).toEqual(defaultDataset.data.machines[machineId].fluidBoxes);
     }
   });
 

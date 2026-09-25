@@ -3,7 +3,7 @@ import type { CellEntry } from '../../src/cell.ts';
 import type { Solution } from '../../src/solve/index.ts';
 import { proposedSplits } from '../../src/compute/split.ts';
 import type { ResourceId } from '../../src/types.ts';
-import { staticData } from '../../src/data/decode.ts';
+import { defaultDataset } from '../../src/dataset';
 
 const recipeRows = [
   {
@@ -110,7 +110,7 @@ describe('proposedSplits', () => {
         itemsPerSecond: 30,
         undergroundLength: 7,
       },
-      staticData,
+      defaultDataset.data,
     );
 
     expect(proposals.map(({ name }) => name)).toEqual(['3 regions', '4 units']);
@@ -143,7 +143,7 @@ describe('proposedSplits', () => {
         itemsPerSecond: 30,
         undergroundLength: 7,
       },
-      staticData,
+      defaultDataset.data,
     );
 
     expect(proposal!.ratios).toEqual([
@@ -162,7 +162,7 @@ describe('proposedSplits', () => {
           itemsPerSecond: 30,
           undergroundLength: 7,
         },
-        staticData,
+        defaultDataset.data,
       ),
     ).toEqual([]);
     expect(
@@ -173,7 +173,7 @@ describe('proposedSplits', () => {
           itemsPerSecond: 30,
           undergroundLength: 7,
         },
-        staticData,
+        defaultDataset.data,
       ),
     ).toEqual([]);
   });

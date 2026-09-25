@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { allocateModuleFlows, connectStationFlows } from '../../src/compute/module-connections.ts';
 import { assignModulePorts } from '../../src/compute/module-port-connections.ts';
-import { recipeKernelProblem, modulesForTile } from '../../src/compute/modules.ts';
-import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
-import { staticData } from '../../src/data/decode.ts';
-import { portPoint } from '../../src/components/layout/spring-layout.ts';
 import type { FactoryModule, ModulePort } from '../../src/compute/modules.ts';
+import { modulesForTile, recipeKernelProblem } from '../../src/compute/modules.ts';
+import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
+import { portPoint } from '../../src/components/layout/spring-layout.ts';
 import type { ResourceId } from '../../src/types.ts';
+import { defaultDataset } from '../../src/dataset';
 
 function module(id: string, input: number, output: number, ports: ModulePort[]): FactoryModule {
   return {
@@ -43,9 +43,9 @@ function beltPort(
 describe('assignModulePorts', () => {
   it('attaches both fluid products from air separation to their stations', () => {
     const recipeId = 'angels-air-separation';
-    const recipe = staticData.recipes[recipeId]!;
+    const recipe = defaultDataset.data.recipes[recipeId]!;
     const problem = recipeKernelProblem(
-      staticData,
+      defaultDataset.data,
       recipeId,
       'chemical-plant',
       new Map(recipe.ingredients.map(({ resource, amount }) => [resource, amount as number])),

@@ -1,15 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { newCell, type Cell } from '../src/cell.ts';
+import { type Cell, newCell } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
-import { staticDs } from '../src/data/decode.ts';
 import { netRates, speedOf } from '../src/compute/flow.ts';
 import { NO_EFFECTS } from '../src/data/module-effects.ts';
 import {
   noteFor,
-  solveCell,
   type Solution,
-  type SolveRow,
+  solveCell,
   type Solver,
+  type SolveRow,
 } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import type { ResourceId } from '../src/types.ts';
@@ -54,7 +53,7 @@ describe('Solver interface', () => {
 
     const answer = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       {
         entries: [
           {
@@ -179,8 +178,8 @@ describe('dumbSolver', () => {
 });
 
 describe('solveCell', () => {
-  const plate = staticDs.data.recipes['iron-plate'];
-  const gears = staticDs.data.recipes['iron-gear-wheel'];
+  const plate = defaultDataset.data.recipes['iron-plate'];
+  const gears = defaultDataset.data.recipes['iron-gear-wheel'];
 
   /** What one machine of a recipe does, at the machine an unpinned row resolves to. */
   const rateOf = (recipe: typeof plate, resource: ResourceId) => {
@@ -192,7 +191,7 @@ describe('solveCell', () => {
   it('takes one of a lone recipe, and quotes its edges', () => {
     const answer = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       newCell('iron-plate'),
       0,
       noChoice(defaultDataset),
@@ -205,7 +204,13 @@ describe('solveCell', () => {
     const cell: Cell = {
       entries: [{ recipe: 'iron-plate', count: 3 }, { recipe: 'iron-gear-wheel' }],
     };
-    const answer = solveCell(defaultDataset, staticDs.data, cell, 0, noChoice(defaultDataset));
+    const answer = solveCell(
+      defaultDataset,
+      defaultDataset.data,
+      cell,
+      0,
+      noChoice(defaultDataset),
+    );
     const made = 3 * rateOf(plate, 'item:iron-plate');
     const used = -rateOf(gears, 'item:iron-plate');
     expect(answer.counts[1]).toBeCloseTo(made / used, 9);
@@ -216,7 +221,7 @@ describe('solveCell', () => {
   it('makes replacement saws for the expected loss from wood sawing', () => {
     const answer = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       {
         entries: [{ recipe: 'angels-wood-sawing-1', count: 1 }, { recipe: 'angels-solid-saw' }],
       },
@@ -241,14 +246,14 @@ describe('solveCell', () => {
     // three productivity module 3s: 1.36 gears where there was one, at 0.55× the crafts
     const bare = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       { entries: [{ ...gearRow(), count: 1 }] },
       0,
       noChoice(defaultDataset),
     ).balance;
     const modded = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       {
         entries: [
           {
@@ -276,7 +281,7 @@ describe('solveCell', () => {
     const against = (modules?: Record<string, number>) =>
       solveCell(
         defaultDataset,
-        staticDs.data,
+        defaultDataset.data,
         {
           entries: [
             {
@@ -298,7 +303,7 @@ describe('solveCell', () => {
       entries: [{ recipe: 'iron-plate', count: 1 }, { recipe: 'no-such-recipe' }],
     };
     expect(
-      solveCell(defaultDataset, staticDs.data, cell, 0, noChoice(defaultDataset)).notes,
+      solveCell(defaultDataset, defaultDataset.data, cell, 0, noChoice(defaultDataset)).notes,
     ).toEqual([
       { kind: 'stranded', entry: 1 },
       {

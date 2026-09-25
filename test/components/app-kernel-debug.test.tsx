@@ -14,13 +14,12 @@ import { resolveChosen } from '../../src/data';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../src/data/inserter-throughput.ts';
 import {
   allKernelProblems,
-  kernelProblems,
   type KernelProblem,
+  kernelProblems,
 } from '../../src/compute/kernel-problems.ts';
 import { fmt } from '../../src/ts.ts';
 import { defaultDataset } from '../../src/dataset/index.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
-import { staticData } from '../../src/data/decode.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);
@@ -63,12 +62,12 @@ describe('App', () => {
     const throughput = {
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
+        defaultDataset.data,
         progress,
         chosen.belt,
       ),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
+        defaultDataset.data,
         progress,
         chosen.belt,
         2,

@@ -4,7 +4,6 @@ import { entityPositionStatuses } from '../../../src/components/design/design-en
 import { designBounds } from '../../../src/components/design/design-preview.tsx';
 import { beltStackLimit } from '../../../src/components/design/design-stack-limit.ts';
 import { designFluidTraces } from '../../../src/components/design/design-fluid-traces.ts';
-import { staticData } from '../../../src/data/decode.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../../src/data/inserter-throughput.ts';
 import cpuCell from '../../../docs/cells/cpu.json';
 import {
@@ -12,6 +11,7 @@ import {
   assemblerProblem,
   kernelProblems,
 } from '../../../src/compute/kernel-problems.ts';
+import { defaultDataset } from '../../../src/dataset';
 
 const throughput = {
   beltItemsPerSecond: 30,
@@ -22,7 +22,7 @@ const throughput = {
 describe('generateAssemblerDesign', () => {
   it.each([15, 30])('feeds molten silicon from the CPU cell using %s items/s belts', (beltRate) => {
     const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
-    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const machine = defaultDataset.data.machines['angels-chemical-furnace-3'];
     const inputRate = row.inputs[0].rate / row.count;
     const outputRate = row.outputs[0].rate / row.count;
     const design = generateAssemblerDesign(
@@ -52,7 +52,7 @@ describe('generateAssemblerDesign', () => {
 
   it('states the two-belt limit when molten silicon uses basic belts', () => {
     const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
-    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const machine = defaultDataset.data.machines['angels-chemical-furnace-3'];
     const design = generateAssemblerDesign(
       assemblerProblem({
         assemblerName: row.recipe,
@@ -80,7 +80,7 @@ describe('generateAssemblerDesign', () => {
 
   it('stacks two molten-silicon furnaces on one 75 items/s input belt', () => {
     const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
-    const machine = staticData.machines['angels-chemical-furnace-3'];
+    const machine = defaultDataset.data.machines['angels-chemical-furnace-3'];
     const inputRate = row.inputs[0].rate / row.count;
     const problem = assemblerProblem({
       assemblerName: row.recipe,
@@ -93,14 +93,14 @@ describe('generateAssemblerDesign', () => {
     const design = generateAssemblerDesign(problem, {
       beltItemsPerSecond: 75,
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
+        defaultDataset.data,
         1,
-        staticData.belts['bob-ultimate-transport-belt'],
+        defaultDataset.data.belts['bob-ultimate-transport-belt'],
       ),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
+        defaultDataset.data,
         1,
-        staticData.belts['bob-ultimate-transport-belt'],
+        defaultDataset.data.belts['bob-ultimate-transport-belt'],
         2,
       ),
     });
@@ -123,8 +123,8 @@ describe('generateAssemblerDesign', () => {
 
   it('keeps air separation input and both outputs on independent chemical-plant trunks', () => {
     const recipeName = 'angels-air-separation';
-    const recipe = staticData.recipes[recipeName];
-    const machine = staticData.machines['chemical-plant'];
+    const recipe = defaultDataset.data.recipes[recipeName];
+    const machine = defaultDataset.data.machines['chemical-plant'];
     const design = generateAssemblerDesign(
       assemblerProblem({
         assemblerName: recipeName,
@@ -164,7 +164,7 @@ describe('generateAssemblerDesign', () => {
   });
 
   it('does not run the adjacent input trunk past an output port', () => {
-    const machine = staticData.machines['chemical-plant'];
+    const machine = defaultDataset.data.machines['chemical-plant'];
     const fluidBoxes = machine.fluidBoxes!.map((box, index) =>
       index === 1
         ? {
@@ -192,7 +192,7 @@ describe('generateAssemblerDesign', () => {
   });
 
   it('connects the flare stack fluid input without adding an output belt', () => {
-    const machine = staticData.machines['angels-flare-stack'];
+    const machine = defaultDataset.data.machines['angels-flare-stack'];
     const design = generateAssemblerDesign(
       assemblerProblem({
         assemblerName: 'angels-chemical-void-angels-gas-oxygen',
@@ -219,7 +219,10 @@ describe('generateAssemblerDesign', () => {
   });
 
   it('connects a fluid output when the recipe consumes no resources', () => {
-    const design = generateAssemblerDesign(kernelProblems(staticData).fluidOutput[6]!, throughput);
+    const design = generateAssemblerDesign(
+      kernelProblems(defaultDataset.data).fluidOutput[6]!,
+      throughput,
+    );
     const entities = design.columns?.[0].entities ?? [];
 
     expect(entities).toEqual([

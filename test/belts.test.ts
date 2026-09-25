@@ -1,6 +1,5 @@
 import { describe, expect, it } from 'vitest';
 import { chosenBelt, defaultBelt } from '../src/data/index.ts';
-import { staticDs } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
 
 const { beltTiers } = defaultDataset;
@@ -9,7 +8,7 @@ describe('the chosen belt', () => {
   it('is the six tiers the pack has, in items per second', () => {
     expect(
       Object.fromEntries(
-        Object.entries(staticDs.data.belts).map(([id, b]) => [id, b.itemsPerSecond]),
+        Object.entries(defaultDataset.data.belts).map(([id, b]) => [id, b.itemsPerSecond]),
       ),
     ).toEqual({
       'bob-basic-transport-belt': 7.5,
@@ -24,7 +23,7 @@ describe('the chosen belt', () => {
   it("includes each tier's underground-belt reach", () => {
     expect(
       Object.fromEntries(
-        Object.entries(staticDs.data.belts).map(([id, b]) => [id, b.undergroundLength]),
+        Object.entries(defaultDataset.data.belts).map(([id, b]) => [id, b.undergroundLength]),
       ),
     ).toEqual({
       'bob-basic-transport-belt': 3,
@@ -46,7 +45,7 @@ describe('the chosen belt', () => {
       'bob-ultimate-transport-belt',
     ]);
     for (const { id, belt, complexity } of beltTiers) {
-      expect(staticDs.data.resources[`item:${belt.item ?? id}`]?.human, id).toBeTruthy();
+      expect(defaultDataset.data.resources[`item:${belt.item ?? id}`]?.human, id).toBeTruthy();
       expect(complexity, id).toBeDefined();
     }
   });
@@ -54,10 +53,10 @@ describe('the chosen belt', () => {
   it('defaults to the fastest researched belt and lets the header pin or remove it', () => {
     expect(defaultBelt(defaultDataset, 1)?.id).toBe('bob-ultimate-transport-belt');
     expect(chosenBelt(defaultDataset, 'transport-belt', 1)).toBe(
-      staticDs.data.belts['transport-belt'],
+      defaultDataset.data.belts['transport-belt'],
     );
     expect(chosenBelt(defaultDataset, undefined, 1)).toBe(
-      staticDs.data.belts['bob-ultimate-transport-belt'],
+      defaultDataset.data.belts['bob-ultimate-transport-belt'],
     );
   });
 });

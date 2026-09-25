@@ -1,19 +1,22 @@
 import { describe, expect, it } from 'vitest';
 import { fluidBoxResources } from '../src/components/design/design-scene.tsx';
-import { staticDs } from '../src/data/decode.ts';
+import { defaultDataset } from '../src/dataset';
 
 describe('the ingested machine geometry', () => {
   it('keeps tile footprints for all production machines', () => {
-    for (const [id, machine] of Object.entries(staticDs.data.machines)) {
+    for (const [id, machine] of Object.entries(defaultDataset.data.machines)) {
       expect(machine.size.width, `${id} width`).toBeGreaterThan(0);
       expect(machine.size.height, `${id} height`).toBeGreaterThan(0);
     }
-    expect(staticDs.data.machines['assembling-machine-3'].size).toEqual({ width: 3, height: 3 });
-    expect(staticDs.data.machines['oil-refinery'].size).toEqual({ width: 5, height: 5 });
+    expect(defaultDataset.data.machines['assembling-machine-3'].size).toEqual({
+      width: 3,
+      height: 3,
+    });
+    expect(defaultDataset.data.machines['oil-refinery'].size).toEqual({ width: 5, height: 5 });
   });
 
   it('keeps fluid boxes grouped with their production and connection modes', () => {
-    expect(staticDs.data.machines['chemical-plant'].fluidBoxes).toEqual([
+    expect(defaultDataset.data.machines['chemical-plant'].fluidBoxes).toEqual([
       {
         productionType: 'input',
         connections: [{ position: { x: -1, y: -1 }, direction: 'north', flowDirection: 'input' }],
@@ -31,11 +34,11 @@ describe('the ingested machine geometry', () => {
         connections: [{ position: { x: 1, y: 1 }, direction: 'south', flowDirection: 'output' }],
       },
     ]);
-    expect(staticDs.data.machines['assembling-machine-1'].fluidBoxes).toBeUndefined();
+    expect(defaultDataset.data.machines['assembling-machine-1'].fluidBoxes).toBeUndefined();
   });
 
   it('maps indexed and unindexed recipe fluids in separate input and output namespaces', () => {
-    const resources = fluidBoxResources(staticDs.data.machines['chemical-plant'], {
+    const resources = fluidBoxResources(defaultDataset.data.machines['chemical-plant'], {
       ingredients: [
         { resource: 'fluid:sulfuric-acid' },
         { resource: 'fluid:water', fluidboxIndex: 2 },
@@ -52,7 +55,7 @@ describe('the ingested machine geometry', () => {
   });
 
   it('merges every box on a side for one unindexed fluid', () => {
-    const resources = fluidBoxResources(staticDs.data.machines['chemical-plant'], {
+    const resources = fluidBoxResources(defaultDataset.data.machines['chemical-plant'], {
       ingredients: [
         { resource: 'fluid:angels-gas-oxygen' },
         { resource: 'fluid:angels-gas-nitrogen-monoxide' },
@@ -69,7 +72,7 @@ describe('the ingested machine geometry', () => {
   });
 
   it('gives an indivisible extra box to the earlier unindexed fluid', () => {
-    const resources = fluidBoxResources(staticDs.data.machines['oil-refinery'], {
+    const resources = fluidBoxResources(defaultDataset.data.machines['oil-refinery'], {
       ingredients: [{ resource: 'fluid:angels-liquid-vegetable-oil' }],
       products: [
         { resource: 'fluid:angels-liquid-fuel-oil' },

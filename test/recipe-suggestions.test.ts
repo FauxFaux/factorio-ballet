@@ -2,14 +2,13 @@
 
 import { cleanup, render as testingRender, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
-import { h, type ComponentChild } from 'preact';
+import { type ComponentChild, h } from 'preact';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { cellInterface, newCell, type Cell } from '../src/cell.ts';
+import { type Cell, cellInterface, newCell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
-import { staticDs } from '../src/data/decode.ts';
 import { DatasetProvider } from '../src/dataset/context.tsx';
 import { defaultDataset } from '../src/dataset/index.ts';
 import { buildSuggestionPlanIndex } from '../src/dataset/precompute.ts';
@@ -20,9 +19,9 @@ import {
 } from '../src/components/recipe-suggestions/suggestions.ts';
 import {
   producerCount,
-  suggestedResourceChains,
   suggestedFewProducerInputs,
   suggestedFreeInputs,
+  suggestedResourceChains,
   suggestedSoleConsumerOutputs,
   suggestedSoleProducerInputs,
   suggestedVoidResources,
@@ -59,12 +58,12 @@ function SuggestionsExample({ initialCell }: { initialCell: Cell }) {
 
 describe('suggestedVoidResources', () => {
   it('includes the resource targeted by a uses search', () => {
-    expect(suggestedVoidResources(staticDs.data, `uses:${waste}`)).toEqual([waste]);
+    expect(suggestedVoidResources(defaultDataset.data, `uses:${waste}`)).toEqual([waste]);
   });
 
   it('includes cell outputs, including those named by uses:@out only once', () => {
     const cell = newCell('empty-angels-water-yellow-waste-barrel');
-    const suggestions = suggestedVoidResources(staticDs.data, 'uses:@out', cell);
+    const suggestions = suggestedVoidResources(defaultDataset.data, 'uses:@out', cell);
 
     expect(suggestions).toContain(waste);
     expect(suggestions.filter((resource) => resource === waste)).toHaveLength(1);
@@ -78,7 +77,9 @@ describe('suggestedResourceChains', () => {
     };
 
     const chains =
-      suggestedResourceChains(staticDs.data, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
+      suggestedResourceChains(defaultDataset.data, defaultDataset.suggestionPlans, cell).get(
+        waste,
+      ) ?? [];
 
     expect(chains).toContainEqual({
       target: 'fluid:angels-liquid-sulfuric-acid',
@@ -95,9 +96,9 @@ describe('suggestedResourceChains', () => {
 
 describe('suggestion plan indexes', () => {
   it('counts producers from the supplied static data', () => {
-    const recipe = staticDs.data.recipes['iron-plate'];
-    const withProducer = { ...staticDs.data, recipes: { only: recipe } };
-    const withoutProducer = { ...staticDs.data, recipes: {} };
+    const recipe = defaultDataset.data.recipes['iron-plate'];
+    const withProducer = { ...defaultDataset.data, recipes: { only: recipe } };
+    const withoutProducer = { ...defaultDataset.data, recipes: {} };
 
     const first = buildSuggestionPlanIndex(withProducer);
     const second = buildSuggestionPlanIndex(withoutProducer);
@@ -137,7 +138,7 @@ describe('single-recipe interface suggestions', () => {
     );
 
     expect(
-      cellInterface(staticDs.data, { entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs,
+      cellInterface(defaultDataset.data, { entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs,
     ).toContain(nitrogen);
     expect(suggestions).toContainEqual(
       expect.objectContaining({ target: nitrogen, recipes: ['angels-air-separation'] }),
@@ -515,7 +516,7 @@ describe('suggestedRecipePaths', () => {
       paths
         .flatMap((path) => path.plan.recipes)
         .some((id) => {
-          const recipe = staticDs.data.recipes[id]!;
+          const recipe = defaultDataset.data.recipes[id]!;
           return isBarrelling(recipe) || isUnbarrelling(recipe);
         }),
     ).toBe(false);
@@ -528,7 +529,9 @@ describe('RecipeSuggestions', () => {
     render(h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'speed-module-3' }] } }));
 
     const card = screen
-      .getByRole('heading', { name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}` })
+      .getByRole('heading', {
+        name: `Make ${resourceName(defaultDataset.data, 'item:speed-module-2')}`,
+      })
       .closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
@@ -536,7 +539,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       screen.queryByRole('heading', {
-        name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}`,
+        name: `Make ${resourceName(defaultDataset.data, 'item:speed-module-2')}`,
       }),
     ).toBeNull();
   });
@@ -551,7 +554,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       screen.queryByRole('heading', {
-        name: `Use ${resourceName(staticDs.data, 'item:bob-speed-processor')}`,
+        name: `Use ${resourceName(defaultDataset.data, 'item:bob-speed-processor')}`,
       }),
     ).toBeNull();
   });
@@ -565,7 +568,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       queryByRole('heading', {
-        name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}`,
+        name: `Make ${resourceName(defaultDataset.data, 'item:speed-module-2')}`,
       }),
     ).toBeNull();
   });
@@ -579,7 +582,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       queryByRole('heading', {
-        name: `Use ${resourceName(staticDs.data, 'item:bob-speed-processor')}`,
+        name: `Use ${resourceName(defaultDataset.data, 'item:bob-speed-processor')}`,
       }),
     ).toBeNull();
   });
@@ -597,7 +600,7 @@ describe('RecipeSuggestions', () => {
 
     const { getByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
     const card = getByRole('heading', {
-      name: `Use ${resourceName(staticDs.data, suggestion.resource)}`,
+      name: `Use ${resourceName(defaultDataset.data, suggestion.resource)}`,
     }).closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
@@ -605,12 +608,12 @@ describe('RecipeSuggestions', () => {
     const { plan } = suggestion;
     expect(
       within(card).getByLabelText(
-        `Needs: ${[plan.target, ...plan.inputs].map((v) => resourceName(staticDs.data, v)).join(', ')}`,
+        `Needs: ${[plan.target, ...plan.inputs].map((v) => resourceName(defaultDataset.data, v)).join(', ')}`,
       ),
     ).toBeTruthy();
     expect(
       within(card).getByLabelText(
-        `Makes: ${plan.outputs.map((v) => resourceName(staticDs.data, v)).join(', ')}`,
+        `Makes: ${plan.outputs.map((v) => resourceName(defaultDataset.data, v)).join(', ')}`,
       ),
     ).toBeTruthy();
   });

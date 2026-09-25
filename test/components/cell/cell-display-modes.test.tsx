@@ -8,7 +8,6 @@ import type { Cell } from '../../../src/cell.ts';
 import { resolveChosen, resourceName } from '../../../src/data';
 import { CellBox } from '../../../src/components/cell/box.tsx';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
-import { staticData } from '../../../src/data/decode.ts';
 import { defaultDataset } from '../../../src/dataset';
 
 const cell: Cell = state.cl[0];
@@ -124,7 +123,7 @@ describe('cell display modes', () => {
     const user = userEvent.setup();
     const { container } = renderCell();
     const resource = 'item:uranium-ore';
-    const name = resourceName(staticData, resource);
+    const name = resourceName(defaultDataset.data, resource);
 
     expect(container.querySelector('.cell-in-play.is-vertical')).toBeNull();
     expect(screen.queryByRole('button', { name: `Search for recipes making ${name}` })).toBeNull();

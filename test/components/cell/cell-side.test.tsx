@@ -3,9 +3,9 @@ import { cleanup, screen } from '@testing-library/preact';
 import { render } from '../../render-with-dataset.tsx';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CellSide } from '../../../src/components/cell/side.tsx';
-import { staticData } from '../../../src/data/decode.ts';
 import type { Solution } from '../../../src/solve';
 import type { Belt, ResourceId } from '../../../src/types.ts';
+import { defaultDataset } from '../../../src/dataset';
 
 afterEach(cleanup);
 
@@ -54,7 +54,7 @@ describe('CellSide rates', () => {
   });
 
   it('warns when a rate exceeds the station belt or train capacity', () => {
-    const trainLimit = 5 * staticData.resources[ids[0]]!.stackSize!;
+    const trainLimit = 5 * defaultDataset.data.resources[ids[0]]!.stackSize!;
     render(
       <CellSide
         dir="out"

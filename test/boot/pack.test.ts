@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../../src/cell.ts';
-import { staticData } from '../../src/data/decode.ts';
 import { packCells, unpackCells } from '../../src/boot/pack.ts';
+import { defaultDataset } from '../../src/dataset';
 
-const recipe = Object.keys(staticData.recipes)[0];
-const machine = Object.keys(staticData.machines)[0];
-const [moduleA, moduleB] = Object.keys(staticData.modules);
+const recipe = Object.keys(defaultDataset.data.recipes)[0];
+const machine = Object.keys(defaultDataset.data.machines)[0];
+const [moduleA, moduleB] = Object.keys(defaultDataset.data.modules);
 
 describe('packCells', () => {
   it('round-trips a cell', () => {
@@ -75,7 +75,7 @@ describe('packCells', () => {
   it('numbers the ids it knows', () => {
     const packed = packCells([{ entries: [{ recipe: 'copper-cable', machine }] }]);
     expect(packed[0].entries[0]).toEqual({
-      recipe: Object.keys(staticData.recipes).indexOf('copper-cable'),
+      recipe: Object.keys(defaultDataset.data.recipes).indexOf('copper-cable'),
       machine: 0,
     });
   });
@@ -94,7 +94,7 @@ describe('packCells', () => {
   it('turns an index it cannot reach into a name nothing matches', () => {
     const [entry] = unpackCells([{ entries: [{ recipe: 999999 }] }])[0].entries;
     expect(entry.recipe).toBe('#999999');
-    expect(staticData.recipes[entry.recipe]).toBeUndefined();
+    expect(defaultDataset.data.recipes[entry.recipe]).toBeUndefined();
   });
 
   it('keeps a loadout in the order it fills the slots', () => {

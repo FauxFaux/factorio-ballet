@@ -6,13 +6,12 @@ import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it } from 'vitest';
 import state from './assets/plutonium.state.json';
 import snapshot from './assets/plutonium.cell.json';
-import { cellInterface, type Cell } from '../src/cell.ts';
+import { type Cell, cellInterface } from '../src/cell.ts';
 import { resolveChosen, resourceName } from '../src/data/index.ts';
 import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
-import { staticDs } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
 
 const cell: Cell = state.cl[0];
@@ -22,7 +21,14 @@ afterEach(cleanup);
 
 describe('plutonium boundary diagnosis', () => {
   it('reproduces the misleading balanced U-238 in the saved dumb answer', () => {
-    const answer = solveCell(defaultDataset, staticDs.data, cell, state.gp, chosen, dumbSolver);
+    const answer = solveCell(
+      defaultDataset,
+      defaultDataset.data,
+      cell,
+      state.gp,
+      chosen,
+      dumbSolver,
+    );
     expect(answer.counts).toEqual(snapshot.recipes.map((recipe) => recipe.count));
     expect(answer.balance.get(u238)).toBe(0);
     expect(Math.abs(answer.balance.get('item:uranium-235')!)).toBeGreaterThan(0.1);
@@ -30,7 +36,7 @@ describe('plutonium boundary diagnosis', () => {
   });
 
   it.each([matrixSolver, dumbSolver])('suggests a verified U-238 export for $id', (solver) => {
-    const answer = solveCell(defaultDataset, staticDs.data, cell, state.gp, chosen, solver);
+    const answer = solveCell(defaultDataset, defaultDataset.data, cell, state.gp, chosen, solver);
     const suggestion = answer.boundarySuggestions?.find((note) => note.resource === u238);
     expect(suggestion).toMatchObject({
       direction: 'export',
@@ -42,7 +48,7 @@ describe('plutonium boundary diagnosis', () => {
     const exported: Cell = { ...cell, exports: [u238] };
     const fixed = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       exported,
       state.gp,
       chosen,
@@ -54,7 +60,7 @@ describe('plutonium boundary diagnosis', () => {
     expect(fixed.counts[0]).toBe(7);
     expect(fixed.balance.get(u238)).toBeCloseTo(suggestion!.rate, 9);
     expect(fixed.balance.get(u238)).toBeGreaterThan(0);
-    const iface = cellInterface(staticDs.data, exported);
+    const iface = cellInterface(defaultDataset.data, exported);
     for (const resource of iface.inPlay.filter(
       (id) => !iface.inputs.includes(id) && !iface.outputs.includes(id),
     )) {
@@ -66,13 +72,13 @@ describe('plutonium boundary diagnosis', () => {
     const fixedBoundary: Cell = { ...cell, exports: [u238] };
     const dumb = solveCell(
       defaultDataset,
-      staticDs.data,
+      defaultDataset.data,
       fixedBoundary,
       state.gp,
       chosen,
       dumbSolver,
     );
-    const iface = cellInterface(staticDs.data, fixedBoundary);
+    const iface = cellInterface(defaultDataset.data, fixedBoundary);
     expect(
       iface.inPlay.some(
         (id) =>
@@ -100,20 +106,20 @@ describe('plutonium boundary diagnosis', () => {
     const user = userEvent.setup();
     render(<Example />);
     const chip = screen.getByRole('button', {
-      name: `Show recipes for ${resourceName(staticDs.data, u238)}`,
+      name: `Show recipes for ${resourceName(defaultDataset.data, u238)}`,
     });
     expect(
-      within(chip).getByLabelText(`Review export for ${resourceName(staticDs.data, u238)}`),
+      within(chip).getByLabelText(`Review export for ${resourceName(defaultDataset.data, u238)}`),
     ).toBeTruthy();
     await user.click(
-      screen.getByRole('button', { name: `export ${resourceName(staticDs.data, u238)}` }),
+      screen.getByRole('button', { name: `export ${resourceName(defaultDataset.data, u238)}` }),
     );
     expect(
       screen.queryByText(/recalculating with this boundary balances all other internal resources/),
     ).toBeNull();
     expect(screen.queryByText(/These internal balances cannot all close together/)).toBeNull();
     expect(
-      screen.queryByLabelText(`Review export for ${resourceName(staticDs.data, u238)}`),
+      screen.queryByLabelText(`Review export for ${resourceName(defaultDataset.data, u238)}`),
     ).toBeNull();
     expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
   });

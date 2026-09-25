@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { isBarrelling, isSynthetic, isUnbarrelling, isVoid } from '../../src/compute/recipes.ts';
-import { staticData } from '../../src/data/decode.ts';
+import { defaultDataset } from '../../src/dataset';
 
 describe('recipe kinds', () => {
   it('detects void recipes', () => {
@@ -12,20 +12,22 @@ describe('recipe kinds', () => {
         categories: ['void'],
       }),
     ).toBe(true);
-    expect(isVoid(staticData.recipes['water-barrel'])).toBe(false);
+    expect(isVoid(defaultDataset.data.recipes['water-barrel'])).toBe(false);
   });
 
   it('detects both directions of barrelling', () => {
-    expect(isBarrelling(staticData.recipes['water-barrel'])).toBe(true);
-    expect(isUnbarrelling(staticData.recipes['water-barrel'])).toBe(false);
-    expect(isUnbarrelling(staticData.recipes['empty-water-barrel'])).toBe(true);
-    expect(isBarrelling(staticData.recipes['empty-water-barrel'])).toBe(false);
-    expect(isBarrelling(staticData.recipes['angels-gas-nitrogen-barrel'])).toBe(true);
-    expect(isUnbarrelling(staticData.recipes['empty-angels-gas-nitrogen-barrel'])).toBe(true);
+    expect(isBarrelling(defaultDataset.data.recipes['water-barrel'])).toBe(true);
+    expect(isUnbarrelling(defaultDataset.data.recipes['water-barrel'])).toBe(false);
+    expect(isUnbarrelling(defaultDataset.data.recipes['empty-water-barrel'])).toBe(true);
+    expect(isBarrelling(defaultDataset.data.recipes['empty-water-barrel'])).toBe(false);
+    expect(isBarrelling(defaultDataset.data.recipes['angels-gas-nitrogen-barrel'])).toBe(true);
+    expect(isUnbarrelling(defaultDataset.data.recipes['empty-angels-gas-nitrogen-barrel'])).toBe(
+      true,
+    );
   });
 
   it('detects synthetic recipes from their explicit marker', () => {
-    expect(isSynthetic(staticData.recipes['synthetic:pumping-water'])).toBe(true);
-    expect(isSynthetic(staticData.recipes['water-barrel'])).toBe(false);
+    expect(isSynthetic(defaultDataset.data.recipes['synthetic:pumping-water'])).toBe(true);
+    expect(isSynthetic(defaultDataset.data.recipes['water-barrel'])).toBe(false);
   });
 });

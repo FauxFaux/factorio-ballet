@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import state from '../../assets/uranium.state.json';
-import { cellInterface, type Cell } from '../../../src/cell.ts';
+import { type Cell, cellInterface } from '../../../src/cell.ts';
 import { resolveChosen, resourceName } from '../../../src/data';
 import { packCells, unpackCells } from '../../../src/boot/pack.ts';
 import { solveCell } from '../../../src/solve';
@@ -13,7 +13,6 @@ import { dumbSolver } from '../../../src/solve/dumb.ts';
 import { matrixSolver } from '../../../src/solve/matrix.ts';
 import { decodeDocument } from '../../../src/bp/decode.ts';
 import { CellBox } from '../../../src/components/cell/box.tsx';
-import { staticData } from '../../../src/data/decode.ts';
 import { defaultDataset } from '../../../src/dataset';
 
 const uranium: Cell = state.cl[0];
@@ -25,7 +24,7 @@ describe('explicit cell imports', () => {
   const imported: Cell = { ...uranium, imports: ['item:uranium-235'] };
 
   it('closes the uranium recycling loop with external U-235', () => {
-    const solution = solveCell(defaultDataset, staticData, imported, state.gp, chosen);
+    const solution = solveCell(defaultDataset, defaultDataset.data, imported, state.gp, chosen);
     expect(solution.complete).toBe(true);
     expect(solution.notes).toEqual([]);
     expect(solution.balance.get('item:uranium-235')).toBeLessThan(0);
@@ -44,8 +43,8 @@ describe('explicit cell imports', () => {
 
   it('preserves imports and classifies them as inputs', () => {
     expect(unpackCells(packCells([imported]))).toEqual([imported]);
-    expect(cellInterface(staticData, imported).inputs).toContain('item:uranium-235');
-    expect(cellInterface(staticData, imported).outputs).not.toContain('item:uranium-235');
+    expect(cellInterface(defaultDataset.data, imported).inputs).toContain('item:uranium-235');
+    expect(cellInterface(defaultDataset.data, imported).outputs).not.toContain('item:uranium-235');
   });
 
   it.each([matrixSolver, dumbSolver])(
@@ -53,7 +52,7 @@ describe('explicit cell imports', () => {
     (solver) => {
       const solution = solveCell(
         defaultDataset,
-        staticData,
+        defaultDataset.data,
         {
           ...exported,
           imports: ['item:angels-neptunium-240'],
@@ -91,7 +90,7 @@ describe('explicit cell imports', () => {
     render(<Example />);
     await user.click(
       screen.getByRole('button', {
-        name: `Show recipes for ${resourceName(staticData, 'item:uranium-235')}`,
+        name: `Show recipes for ${resourceName(defaultDataset.data, 'item:uranium-235')}`,
       }),
     );
     expect(screen.getByText(/or import the shortfall/)).toBeTruthy();
@@ -114,7 +113,7 @@ describe('explicit cell imports', () => {
 describe('cell rail brick', () => {
   it('copies a blueprint matching the diagram station layout', async () => {
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
-    const iface = cellInterface(staticData, uranium);
+    const iface = cellInterface(defaultDataset.data, uranium);
     render(
       <CellBox
         cell={[uranium, () => {}]}
@@ -226,7 +225,7 @@ describe('cell side resource selection', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: `Show recipes for ${resourceName(staticData, 'item:uranium-ore')}`,
+        name: `Show recipes for ${resourceName(defaultDataset.data, 'item:uranium-ore')}`,
       }),
     );
     await user.click(screen.getAllByRole('button', { name: /Toggle connections for/ })[0]!);
@@ -250,7 +249,7 @@ describe('cell side resource selection', () => {
 
     await user.click(
       screen.getByRole('button', {
-        name: `Show recipes for ${resourceName(staticData, 'item:uranium-ore')}`,
+        name: `Show recipes for ${resourceName(defaultDataset.data, 'item:uranium-ore')}`,
       }),
     );
     const marker = screen.getByText('[input]');
@@ -265,7 +264,14 @@ describe('cell side resource selection', () => {
 
 describe('explicit cell exports', () => {
   it.each([matrixSolver, dumbSolver])('balances the uranium chain with $id', (solver) => {
-    const solution = solveCell(defaultDataset, staticData, exported, state.gp, chosen, solver);
+    const solution = solveCell(
+      defaultDataset,
+      defaultDataset.data,
+      exported,
+      state.gp,
+      chosen,
+      solver,
+    );
     expect(solution.complete).toBe(true);
     expect(solution.notes).toEqual([]);
     expect(solution.balance.get('item:uranium-238')).toBeCloseTo(7.9007091625);
@@ -284,14 +290,14 @@ describe('explicit cell exports', () => {
 
   it('preserves exports in packed state and exposes them as outputs', () => {
     expect(unpackCells(packCells([exported]))).toEqual([exported]);
-    expect(cellInterface(staticData, exported).outputs).toContain('item:uranium-238');
-    expect(cellInterface(staticData, uranium).outputs).not.toContain('item:uranium-238');
+    expect(cellInterface(defaultDataset.data, exported).outputs).toContain('item:uranium-238');
+    expect(cellInterface(defaultDataset.data, uranium).outputs).not.toContain('item:uranium-238');
   });
 
   it('rejects an export that requires external supply', () => {
     const solution = solveCell(
       defaultDataset,
-      staticData,
+      defaultDataset.data,
       { ...uranium, exports: ['item:uranium-ore'] },
       state.gp,
       chosen,
@@ -321,7 +327,7 @@ describe('explicit cell exports', () => {
     render(<Example />);
     await user.click(
       screen.getByRole('button', {
-        name: `Show recipes for ${resourceName(staticData, 'item:uranium-238')}`,
+        name: `Show recipes for ${resourceName(defaultDataset.data, 'item:uranium-238')}`,
       }),
     );
     await user.click(screen.getByRole('button', { name: 'export surplus' }));

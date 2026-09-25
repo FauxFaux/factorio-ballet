@@ -1,5 +1,4 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../../src/data/decode.ts';
 import {
   inserterItemsPerSecond,
   inserterItemsPerSecondAtProgress,
@@ -65,11 +64,11 @@ describe('inserterItemsPerSecond', () => {
   });
 
   it('estimates every inserter and belt tier in the checked-in mod pack', () => {
-    for (const inserter of Object.values(staticData.inserters)) {
-      for (const belt of Object.values(staticData.belts)) {
+    for (const inserter of Object.values(defaultDataset.data.inserters)) {
+      for (const belt of Object.values(defaultDataset.data.belts)) {
         const rate = inserterItemsPerSecond(
           inserter,
-          staticData.inserterCapacityBonuses.at(-1),
+          defaultDataset.data.inserterCapacityBonuses.at(-1),
           belt,
         );
         expect(rate).toBeGreaterThan(0);
@@ -80,9 +79,9 @@ describe('inserterItemsPerSecond', () => {
 
   it('resolves the inserter, capacity bonus, and belt from game progress', () => {
     const expected = inserterItemsPerSecond(
-      staticData.inserters['bob-red-bulk-inserter'],
-      staticData.inserterCapacityBonuses.findLast(([complexity]) => complexity <= 0.55),
-      staticData.belts['express-transport-belt'],
+      defaultDataset.data.inserters['bob-red-bulk-inserter'],
+      defaultDataset.data.inserterCapacityBonuses.findLast(([complexity]) => complexity <= 0.55),
+      defaultDataset.data.belts['express-transport-belt'],
       2,
     );
 
@@ -91,12 +90,13 @@ describe('inserterItemsPerSecond', () => {
 
   it('uses a chosen belt while resolving the inserter and capacity bonus from progress', () => {
     const progress = 0.55;
-    const belt = staticData.belts['bob-basic-transport-belt'];
+    const belt = defaultDataset.data.belts['bob-basic-transport-belt'];
     const expected = Math.max(
-      ...Object.values(staticData.inserters)
+      ...Object.values(defaultDataset.data.inserters)
         .filter(
           (inserter) =>
-            (staticData.resources[`item:${inserter.item}`]?.complexity ?? Infinity) <= progress &&
+            (defaultDataset.data.resources[`item:${inserter.item}`]?.complexity ?? Infinity) <=
+              progress &&
             inserter.maxBeltStackSize === undefined &&
             inserter.grabLessToMatchBeltStack !== true &&
             inserter.waitForFullHand !== true,
@@ -104,14 +104,16 @@ describe('inserterItemsPerSecond', () => {
         .map((inserter) =>
           inserterItemsPerSecond(
             inserter,
-            staticData.inserterCapacityBonuses.findLast(([complexity]) => complexity <= progress),
+            defaultDataset.data.inserterCapacityBonuses.findLast(
+              ([complexity]) => complexity <= progress,
+            ),
             belt,
           ),
         ),
     );
 
-    expect(inserterItemsPerSecondForBeltAtProgress(staticData, progress, belt)).toBeCloseTo(
-      expected,
-    );
+    expect(
+      inserterItemsPerSecondForBeltAtProgress(defaultDataset.data, progress, belt),
+    ).toBeCloseTo(expected);
   });
 });

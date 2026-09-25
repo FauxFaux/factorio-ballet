@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { fromAirStages } from '../../src/components/from-air.tsx';
-import { staticData } from '../../src/data/decode.ts';
 import { fromAirSuggestionStages } from '../../src/compute/from-air.ts';
 import type { Recipe, ResourceId } from '../../src/types.ts';
+import { defaultDataset } from '../../src/dataset';
 
 const recipe = (
   ingredients: ResourceId[],
@@ -20,9 +20,9 @@ const recipe = (
 
 describe('fromAirStages', () => {
   it('derives the suggestion prefix identically to the full acyclic search', () => {
-    expect(fromAirSuggestionStages(staticData)).toEqual(
-      fromAirStages(staticData, false, 1, { maxStages: 2, includeCycles: false }).map((stage) =>
-        stage.map(({ id, adds }) => ({ id, adds })),
+    expect(fromAirSuggestionStages(defaultDataset.data)).toEqual(
+      fromAirStages(defaultDataset.data, false, 1, { maxStages: 2, includeCycles: false }).map(
+        (stage) => stage.map(({ id, adds }) => ({ id, adds })),
       ),
     );
   });
@@ -185,7 +185,7 @@ describe('fromAirStages', () => {
   });
 
   it('finds the productive swamp seed cycles in the application data', () => {
-    const cycles = fromAirStages(staticData)
+    const cycles = fromAirStages(defaultDataset.data)
       .flat()
       .filter(({ recipes }) => recipes !== undefined)
       .map(({ recipes }) => recipes);

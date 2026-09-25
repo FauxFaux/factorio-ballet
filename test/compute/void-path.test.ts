@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../../src/data/decode.ts';
 import type { Recipe, ResourceId } from '../../src/types.ts';
 import {
   singleStepVoidableResources,
   voidPlanFinder,
   voidPlans,
 } from '../../src/compute/void-path.ts';
+import { defaultDataset } from '../../src/dataset';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),
@@ -57,7 +57,7 @@ describe('voidPlans', () => {
   });
 
   it('finds the expected crushed-slag route', () => {
-    const plan = voidPlans('item:angels-slag', staticData).find(({ recipes }) =>
+    const plan = voidPlans('item:angels-slag', defaultDataset.data).find(({ recipes }) =>
       [
         'angels-stone-crushed',
         'angels-water-mineralized',

@@ -8,14 +8,13 @@ import {
 } from '../../src/compute/flow.ts';
 import { NO_EFFECTS } from '../../src/data/module-effects.ts';
 import { machinesFor } from '../../src/data/machines.ts';
-import { staticData } from '../../src/data/decode.ts';
 import { defaultDataset } from '../../src/dataset';
 
-const gears = staticData.recipes['iron-gear-wheel'];
+const gears = defaultDataset.data.recipes['iron-gear-wheel'];
 /** Three results, the rarest of them 0.0055% of a craft: the reason for the third decimal. */
-const uranium = staticData.recipes['uranium-processing'];
+const uranium = defaultDataset.data.recipes['uranium-processing'];
 /** A `0–3` result rolled half the time, and the same recipe carries a fluid with a temperature. */
-const mud = staticData.recipes['angels-water-heavy-mud'];
+const mud = defaultDataset.data.recipes['angels-water-heavy-mud'];
 
 const ds = defaultDataset;
 
@@ -77,13 +76,13 @@ describe('recipeFlows', () => {
   });
 
   it('notes the temperature an ingredient is wanted at', () => {
-    const { ins } = recipeFlows(staticData.recipes['fission-reactor-equipment'], [], 1);
+    const { ins } = recipeFlows(defaultDataset.data.recipes['fission-reactor-equipment'], [], 1);
     expect(ins.find(({ resource }) => resource.startsWith('fluid:'))?.note).toBe('≤30°C');
   });
 });
 
 /** One garden in, two out: the second is made, the first is handed straight back. */
-const garden = staticData.recipes['angels-temperate-garden'];
+const garden = defaultDataset.data.recipes['angels-temperate-garden'];
 
 describe('productAmount', () => {
   const gear = gears.products[0];
@@ -106,13 +105,13 @@ describe('productAmount', () => {
 
   it('pays nothing where the catalyst is the whole result and more', () => {
     // four rays in, one back out, three of them ignored: there is nothing left to pay a bonus on
-    const [ray] = staticData.recipes['angels-fish-keeping-3'].products;
+    const [ray] = defaultDataset.data.recipes['angels-fish-keeping-3'].products;
     expect(ray.ignoredByProductivity).toBe(3);
     expect(productAmount(ray, 2)).toBe(1);
   });
 
   it('rolls the chance on the bigger result rather than on a better chance', () => {
-    const [u235] = staticData.recipes['uranium-processing'].products;
+    const [u235] = defaultDataset.data.recipes['uranium-processing'].products;
     expect(productAmount(u235, 1.36)).toBeCloseTo(u235.probability * 1.36);
   });
 });
@@ -128,7 +127,7 @@ describe('productAmount', () => {
  * gives kovarex its 40 — and this is where we find out if a pack does not.
  */
 describe('the ingested catalyst shares', () => {
-  const pairs = Object.entries(staticData.recipes).flatMap(([id, recipe]) => {
+  const pairs = Object.entries(defaultDataset.data.recipes).flatMap(([id, recipe]) => {
     if (!recipe.allowProductivity) return [];
     const ingredients = new Map(recipe.ingredients.map((i) => [i.resource, i.amount]));
     return recipe.products.flatMap((product) => {
@@ -154,7 +153,7 @@ describe('the ingested catalyst shares', () => {
   it('states them where no amount of arithmetic over the recipe could find them', () => {
     // glass takes molten tin and hands back tin *ingots*: a catalyst which changes form on the way
     // through, so "the resource is on both sides" sees nothing at all here
-    const glass = staticData.recipes['angels-plate-glass-3'];
+    const glass = defaultDataset.data.recipes['angels-plate-glass-3'];
     const ingot = glass.products.find(({ resource }) => resource === 'item:angels-ingot-tin');
     expect(glass.ingredients.map(({ resource }) => resource)).not.toContain(
       'item:angels-ingot-tin',
@@ -196,7 +195,7 @@ describe('netRates', () => {
 describe('flowTitle', () => {
   it('names the resource, its amount per craft, and any note', () => {
     const { ins, outs } = recipeFlows(uranium, [], 1);
-    expect(flowTitle(staticData, ins[0])).toBe('Uranium ore: 10 per craft');
-    expect(flowTitle(staticData, outs[0])).toBe('Uranium-235: 1 per craft, 0.7%');
+    expect(flowTitle(defaultDataset.data, ins[0])).toBe('Uranium ore: 10 per craft');
+    expect(flowTitle(defaultDataset.data, outs[0])).toBe('Uranium-235: 1 per craft, 0.7%');
   });
 });

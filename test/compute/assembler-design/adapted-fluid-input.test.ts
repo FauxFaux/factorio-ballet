@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { generateAssemblerDesign } from '../../../src/compute/assembler-design.ts';
 import { assemblerProblem, machineProblem } from '../../../src/compute/kernel-problems.ts';
-import { staticData } from '../../../src/data/decode.ts';
 import { entityPositionStatuses } from '../../../src/components/design/design-entities.tsx';
 import { designBounds } from '../../../src/components/design/design-preview.tsx';
 import { designFluidTraces } from '../../../src/components/design/design-fluid-traces.ts';
 import { fluidBoxResources } from '../../../src/compute/fluid-box-resources.ts';
+import { defaultDataset } from '../../../src/dataset';
 
 const throughput = {
   beltItemsPerSecond: 30,
@@ -13,12 +13,12 @@ const throughput = {
   longInserterItemsPerSecond: 4,
 };
 const recipeId = 'angels-mono-silicon-seed';
-const machine = staticData.machines['angels-casting-machine-3'];
-const recipe = staticData.recipes[recipeId];
+const machine = defaultDataset.data.machines['angels-casting-machine-3'];
+const recipe = defaultDataset.data.recipes[recipeId];
 
 function problem(output: number | null = 2, solidInputs: number[] = []) {
   const result = machineProblem(
-    staticData,
+    defaultDataset.data,
     'casting-machine',
     { fluidInputs: [200, 200], solidInputs, solidOutputs: output === null ? [] : [output] },
     recipeId,

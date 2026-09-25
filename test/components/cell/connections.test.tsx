@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import cpuCell from '../../../docs/cells/cpu.json';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
-import { staticData } from '../../../src/data/decode.ts';
 import { DatasetProvider } from '../../../src/dataset/context.tsx';
 import { defaultDataset } from '../../../src/dataset/index.ts';
 
@@ -19,7 +18,7 @@ describe('RecipeConnections', () => {
         <RecipeConnections
           connections={{ inputs: [], outputs: [] }}
           solved
-          belt={staticData.belts['bob-ultimate-transport-belt']}
+          belt={defaultDataset.data.belts['bob-ultimate-transport-belt']}
           recipe={row.recipe}
           machine="angels-chemical-furnace-3"
           inputRates={new Map([['item:angels-ingot-silicon', row.inputs[0].rate / row.count]])}
