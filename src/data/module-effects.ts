@@ -9,6 +9,7 @@ import {
   type ChosenModules,
 } from './modules.ts';
 import type { Beacon, Machine, ModuleId, Recipe, StaticData } from '../types.ts';
+import { defaultDataset } from '../dataset';
 
 export interface Effects {
   speed: number;
@@ -98,7 +99,7 @@ export function moduleBoost(
 ): Boost {
   const found = module === undefined ? undefined : data.modules[module];
   if (!module || !found || !machine.moduleSlots) return NO_BOOST;
-  const effect = categoryEffect(found.category);
+  const effect = categoryEffect(defaultDataset, found.category);
   const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
   const asked = wanted ?? slots;
   const inMachine = Math.min(asked, slots);
@@ -167,7 +168,7 @@ export function moduleLayout(
     data,
     machine,
     slots,
-    moduleFor(machine, 'productivity', modules),
+    moduleFor(defaultDataset, machine, 'productivity', modules),
     Math.min(wants.productivity ?? auto, slots),
     beacon,
   );
@@ -175,7 +176,7 @@ export function moduleLayout(
     data,
     machine,
     slots - productivity.inMachine,
-    moduleFor(machine, 'speed', modules),
+    moduleFor(defaultDataset, machine, 'speed', modules),
     wants.speed,
     beacon,
     wants.beacons,
@@ -186,8 +187,8 @@ export function moduleLayout(
     slots,
     reaches,
     families: {
-      productivity: familyFor(machine, 'productivity'),
-      speed: familyFor(machine, 'speed'),
+      productivity: familyFor(machine, 'productivity', defaultDataset),
+      speed: familyFor(machine, 'speed', defaultDataset),
     },
   };
 }

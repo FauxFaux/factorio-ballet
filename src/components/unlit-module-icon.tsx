@@ -11,7 +11,13 @@ import { resourceIconStyle } from './icon.tsx';
  * this wants and the game does not draw; {@link UnlitFilter} is how we get one without drawing it
  * either.
  */
-export function UnlitIcon({ modules, class: box }: { modules: ModuleMatch[]; class: string }) {
+export function UnlitIcon({
+  modules,
+  class: box,
+}: {
+  modules: readonly ModuleMatch[];
+  class: string;
+}) {
   const cheapest = modules[0];
   return (
     <span

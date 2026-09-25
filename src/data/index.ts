@@ -48,6 +48,7 @@ export const packLandmarks: Landmark[] = (() => {
 
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
+import { defaultDataset } from '../dataset';
 
 /**
  * The beacons this pack has, cheapest first: one tier of the same idea, as the module families are.
@@ -188,7 +189,7 @@ export function resolveChosen(
   progress: number,
 ): Chosen {
   return {
-    modules: chosenModules(choice, progress),
+    modules: chosenModules(defaultDataset, choice, progress),
     beacon: chosenBeacon(beacon, progress),
     belt: chosenBelt(belt, progress),
   };

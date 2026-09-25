@@ -4,13 +4,13 @@ import {
   categoryName,
   defaultModule,
   familyFor,
-  moduleCategories,
   moduleFor,
   modulesFor,
   modulesIn,
 } from '../src/data/modules.ts';
 import { staticData } from '../src/data/decode.ts';
 import { fillSlots, moduleEffects } from '../src/data/module-effects.ts';
+import { defaultDataset } from '../src/dataset';
 
 /** Allows productivity; runs in an assembler. */
 const gears = staticData.recipes['iron-gear-wheel'];
@@ -187,7 +187,7 @@ describe('moduleEffects', () => {
 
 describe('the module families', () => {
   it('is the three the pack has, in the order the header shows them', () => {
-    expect(moduleCategories).toEqual([
+    expect(defaultDataset.moduleCategories).toEqual([
       { id: 'speed', human: 'speed', effect: 'speed' },
       { id: 'productivity', human: 'productivity', effect: 'productivity' },
       { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
@@ -196,18 +196,19 @@ describe('the module families', () => {
 
   it('lists a family cheapest first, whatever machine or recipe', () => {
     // every tier, unlike `modulesFor`: which of them a machine would take is a later question
-    expect(modulesIn('speed').map(({ id }) => id)).toEqual([
+    expect(modulesIn(defaultDataset, 'speed').map(({ id }) => id)).toEqual([
       'speed-module',
       'speed-module-2',
       'speed-module-3',
       'bob-speed-module-4',
       'bob-speed-module-5',
     ]);
-    expect(modulesIn('no-such-category')).toEqual([]);
+    expect(modulesIn(defaultDataset, 'no-such-category')).toEqual([]);
   });
 
   it('defaults to the best tier the progress slider has unlocked', () => {
-    const at = (progress: number) => defaultModule(modulesIn('productivity'), progress)?.id;
+    const at = (progress: number) =>
+      defaultModule(modulesIn(defaultDataset, 'productivity'), progress)?.id;
     // none until tier 1 is actually craftable, which is 0.3556 in this pack: unlike a machine, a
     // module has an honest answer to fall back to, and empty slots is it
     expect(at(0)).toBeUndefined();
@@ -237,39 +238,43 @@ describe('moduleFor', () => {
     // the farm names no whitelist, so it takes the ordinary productivity modules too — but +50% of
     // pure yield beats +12% at −15% speed, and that is what decides it
     expect(desert.allowedModuleCategories).toBeUndefined();
-    expect(moduleFor(desert, 'productivity', chosen)).toBe('angels-bio-yield-module-5');
-    expect(familyFor(desert, 'productivity')).toBe('angels-bio-yield');
+    expect(moduleFor(defaultDataset, desert, 'productivity', chosen)).toBe(
+      'angels-bio-yield-module-5',
+    );
+    expect(familyFor(desert, 'productivity', defaultDataset)).toBe('angels-bio-yield');
   });
 
   it('gives every other machine the productivity modules, being all they will take', () => {
     expect(assembler.allowedModuleCategories).toContain('productivity');
     expect(assembler.allowedModuleCategories).not.toContain('angels-bio-yield');
-    expect(moduleFor(assembler, 'productivity', chosen)).toBe('productivity-module-3');
-    expect(familyFor(assembler, 'productivity')).toBe('productivity');
+    expect(moduleFor(defaultDataset, assembler, 'productivity', chosen)).toBe(
+      'productivity-module-3',
+    );
+    expect(familyFor(assembler, 'productivity', defaultDataset)).toBe('productivity');
   });
 
   it('does not substitute agricultural modules when productivity is set to none', () => {
     const noProductivity = { ...chosen, productivity: undefined };
-    expect(moduleFor(assembler, 'productivity', noProductivity)).toBeUndefined();
+    expect(moduleFor(defaultDataset, assembler, 'productivity', noProductivity)).toBeUndefined();
   });
 
   it('falls through to a family the header has actually chosen', () => {
     // a player not using the bio-yield modules at all still has the ordinary ones in a farm
     const noBio = { ...chosen, 'angels-bio-yield': undefined };
-    expect(moduleFor(desert, 'productivity', noBio)).toBe('productivity-module-3');
-    expect(moduleFor(desert, 'productivity', {})).toBeUndefined();
+    expect(moduleFor(defaultDataset, desert, 'productivity', noBio)).toBe('productivity-module-3');
+    expect(moduleFor(defaultDataset, desert, 'productivity', {})).toBeUndefined();
   });
 
   it('is the one speed family either way, and reaches a machine which will not hold it', () => {
-    expect(moduleFor(desert, 'speed', chosen)).toBe('speed-module-3');
+    expect(moduleFor(defaultDataset, desert, 'speed', chosen)).toBe('speed-module-3');
     // the machine refusing the category is the beacons' business, not this: a module is still named
     const picky = { ...assembler, allowedModuleCategories: ['angels-bio-yield'] };
-    expect(moduleFor(picky, 'speed', chosen)).toBe('speed-module-3');
-    expect(familyFor(picky, 'speed')).toBe('speed');
+    expect(moduleFor(defaultDataset, picky, 'speed', chosen)).toBe('speed-module-3');
+    expect(familyFor(picky, 'speed', defaultDataset)).toBe('speed');
   });
 
   it('is named on a row as the picker names it', () => {
-    expect(categoryName('angels-bio-yield')).toBe('agricultural');
-    expect(categoryName('productivity')).toBe('productivity');
+    expect(categoryName(defaultDataset, 'angels-bio-yield')).toBe('agricultural');
+    expect(categoryName(defaultDataset, 'productivity')).toBe('productivity');
   });
 });

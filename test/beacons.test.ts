@@ -12,6 +12,7 @@ import { chosenModule, SPEED_CATEGORY, type ChosenModules } from '../src/data/mo
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
 import { solveCell } from '../src/solve/index.ts';
 import type { Machine } from '../src/types.ts';
+import { defaultDataset } from '../src/dataset';
 
 const gears = staticData.recipes['iron-gear-wheel'];
 /** Does not allow productivity, which is the ordinary case; see `test/modules.test.ts`. */
@@ -268,14 +269,14 @@ describe('parseModules', () => {
 
 describe('chosenModule', () => {
   it("is the header's pick, whatever the progress", () => {
-    expect(chosenModule({ speed: SPEED_3 }, SPEED_CATEGORY, 0)).toBe(SPEED_3);
+    expect(chosenModule(defaultDataset, { speed: SPEED_3 }, SPEED_CATEGORY, 0)).toBe(SPEED_3);
     // `null` is a choice of its own, and the choice is none
-    expect(chosenModule({ speed: null }, SPEED_CATEGORY, 1)).toBeUndefined();
+    expect(chosenModule(defaultDataset, { speed: null }, SPEED_CATEGORY, 1)).toBeUndefined();
   });
 
   it('follows the slider where the header picked nothing', () => {
-    expect(chosenModule({}, SPEED_CATEGORY, 0)).toBeUndefined();
-    expect(chosenModule({}, SPEED_CATEGORY, 1)).toBe('bob-speed-module-5');
+    expect(chosenModule(defaultDataset, {}, SPEED_CATEGORY, 0)).toBeUndefined();
+    expect(chosenModule(defaultDataset, {}, SPEED_CATEGORY, 1)).toBe('bob-speed-module-5');
   });
 });
 

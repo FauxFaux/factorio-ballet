@@ -5,6 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { DatasetProvider, useDataset } from '../src/dataset/context.tsx';
 import { createDataset, defaultDataset } from '../src/dataset/index.ts';
 import { machinesFor } from '../src/data/machines.ts';
+import { categoryEffect, chosenModules, modulesIn } from '../src/data/modules.ts';
 
 afterEach(cleanup);
 
@@ -32,6 +33,27 @@ describe('useDataset', () => {
 });
 
 describe('createDataset', () => {
+  it('builds module families from each dataset’s modules', () => {
+    const speedModule = defaultDataset.data.modules['speed-module'];
+    const fasterModule = defaultDataset.data.modules['speed-module-2'];
+    const first = createDataset('first', {
+      ...defaultDataset.data,
+      modules: { 'speed-module': { ...speedModule, category: 'first-family' } },
+    });
+    const second = createDataset('second', {
+      ...defaultDataset.data,
+      modules: { 'speed-module-2': { ...fasterModule, category: 'second-family' } },
+    });
+
+    expect(first.moduleCategories.map(({ id }) => id)).toEqual(['first-family']);
+    expect(second.moduleCategories.map(({ id }) => id)).toEqual(['second-family']);
+    expect(modulesIn(first, 'first-family').map(({ id }) => id)).toEqual(['speed-module']);
+    expect(modulesIn(second, 'first-family')).toEqual([]);
+    expect(categoryEffect(first, 'first-family')).toBe('speed');
+    expect(chosenModules(first, {}, 1)).toEqual({ 'first-family': 'speed-module' });
+    expect(chosenModules(second, {}, 1)).toEqual({ 'second-family': 'speed-module-2' });
+  });
+
   it('indexes machines from the selected dataset', () => {
     const machine = Object.values(defaultDataset.data.machines)[0]!;
     const recipe = { ...defaultDataset.data.recipes['iron-plate'], categories: ['example'] };

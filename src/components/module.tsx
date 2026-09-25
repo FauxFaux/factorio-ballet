@@ -3,7 +3,6 @@ import { type BeaconChoice, type BeltChoice, resourceName } from '../data/index.
 import {
   defaultModule,
   headlineEffect,
-  moduleCategories,
   type ModuleCategory,
   type ModuleChoice,
   type ModuleMatch,
@@ -17,6 +16,7 @@ import type { Module, ModuleId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 import { UnlitIcon } from './unlit-module-icon.tsx';
 import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 
 /** One of a module's effects as a percentage, sign and all: `+40%`, `−15%`. */
 const percent = (value: number): string => `${value < 0 ? '−' : '+'}${fmt(Math.abs(value) * 100)}%`;
@@ -46,7 +46,7 @@ export function ModulePicker({
   onChoose,
 }: {
   category: ModuleCategory;
-  modules: ModuleMatch[];
+  modules: readonly ModuleMatch[];
   /** What the user picked: a module, `null` for none, or absent for auto. */
   choice?: ModuleId | null;
   /** The module in use, whether that was chosen or defaulted; absent means none is. */
@@ -185,12 +185,13 @@ export function ModuleBar({
   belt: State<BeltChoice>;
   progress: number;
 }) {
+  const ds = useDataset();
   return (
     <fieldset class="module-bar">
       <legend>Default entities</legend>
       <BeltPicker belt={belt} progress={progress} />
-      {moduleCategories.map((category) => {
-        const modules = modulesIn(category.id);
+      {ds.moduleCategories.map((category) => {
+        const modules = modulesIn(ds, category.id);
         const choice = category.id in chosen ? chosen[category.id] : undefined;
         return (
           <ModulePicker

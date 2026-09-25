@@ -1,8 +1,10 @@
 import { staticData } from '../data/decode.ts';
 import type { ResourceId, StaticData } from '../types.ts';
 import type { MachineMatch } from '../data/machines.ts';
+import type { ModuleCategory, ModuleMatch } from '../data/modules.ts';
 import {
   buildMachinesByCategory,
+  buildModuleIndex,
   buildSoleProducerIndex,
   buildSuggestionPlanIndex,
   type SuggestionPlanIndex,
@@ -16,15 +18,20 @@ export interface Dataset {
   readonly id: DatasetId;
   readonly data: StaticData;
   readonly machinesByCategory: ReadonlyMap<string, readonly MachineMatch[]>;
+  readonly modulesByCategory: ReadonlyMap<string, readonly ModuleMatch[]>;
+  readonly moduleCategories: readonly ModuleCategory[];
   readonly soleProducerByResource: ReadonlyMap<ResourceId, string>;
   readonly suggestionPlans: SuggestionPlanIndex;
 }
 
 export function createDataset(id: DatasetId, data: StaticData): Dataset {
+  const moduleIndex = buildModuleIndex(data);
   return {
     id,
     data,
     machinesByCategory: buildMachinesByCategory(data),
+    modulesByCategory: moduleIndex.byCategory,
+    moduleCategories: moduleIndex.categories,
     soleProducerByResource: buildSoleProducerIndex(data),
     suggestionPlans: buildSuggestionPlanIndex(data),
   };

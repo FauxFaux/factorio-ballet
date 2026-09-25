@@ -1,5 +1,6 @@
 import type { Machine, ResourceId, StaticData } from '../types.ts';
 import type { MachineMatch } from '../data/machines.ts';
+import type { ModuleCategory, ModuleMatch } from '../data/modules.ts';
 import { isBarrelling, isUnbarrelling, isVoid } from '../compute/recipes.ts';
 import { resourceChainFinder } from '../compute/void-path.ts';
 
@@ -21,6 +22,48 @@ export function buildMachinesByCategory(
     }
   }
   return index;
+}
+
+const KNOWN_MODULE_CATEGORIES: ModuleCategory[] = [
+  { id: 'speed', human: 'speed', effect: 'speed' },
+  { id: 'productivity', human: 'productivity', effect: 'productivity' },
+  { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
+];
+
+const complexityOf = (match: { complexity?: number }): number => match.complexity ?? Infinity;
+
+export const cheapestModule = (a: ModuleMatch, b: ModuleMatch): number =>
+  complexityOf(a) - complexityOf(b) || a.module.tier - b.module.tier || a.id.localeCompare(b.id);
+
+export interface ModuleIndex {
+  byCategory: ReadonlyMap<string, readonly ModuleMatch[]>;
+  categories: readonly ModuleCategory[];
+}
+
+/** Build the sorted module families and their display categories for one dataset. */
+export function buildModuleIndex(data: StaticData): ModuleIndex {
+  const byCategory = new Map<string, ModuleMatch[]>();
+  for (const [id, module] of Object.entries(data.modules)) {
+    let list = byCategory.get(module.category);
+    if (!list) byCategory.set(module.category, (list = []));
+    list.push({ id, module, complexity: data.resources[`item:${id}`]?.complexity });
+  }
+  for (const list of byCategory.values()) list.sort(cheapestModule);
+  return {
+    byCategory,
+    categories: [
+      ...KNOWN_MODULE_CATEGORIES.filter(({ id }) => byCategory.has(id)),
+      ...[...byCategory]
+        .filter(([id]) => !KNOWN_MODULE_CATEGORIES.some((known) => known.id === id))
+        .map(([id, modules]) => ({
+          id,
+          human: id,
+          effect: modules.some(({ module }) => (module.productivity ?? 0) > 0)
+            ? ('productivity' as const)
+            : ('speed' as const),
+        })),
+    ],
+  };
 }
 
 export interface SuggestionPlanIndex {

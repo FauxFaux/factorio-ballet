@@ -9,6 +9,7 @@ import type { MachineId, Recipe } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { UnlitIcon } from '../unlit-module-icon.tsx';
 import { useDataset } from '../../dataset/context.tsx';
+import { defaultDataset } from '../../dataset';
 
 /**
  * What reaches this row's machine: its productivity modules (or speed modules where productivity
@@ -104,7 +105,7 @@ function BeaconBox({
           aria-hidden="true"
         />
       ) : (
-        <UnlitIcon modules={modulesIn('speed')} class="cell-module-icon" />
+        <UnlitIcon modules={modulesIn(defaultDataset, 'speed')} class="cell-module-icon" />
       )}
       <input
         class="cell-module-count"
@@ -168,7 +169,7 @@ function ModuleBox({
           aria-hidden="true"
         />
       ) : (
-        <UnlitIcon modules={modulesIn(family)} class="cell-module-icon" />
+        <UnlitIcon modules={modulesIn(defaultDataset, family)} class="cell-module-icon" />
       )}
       <input
         class={auto ? 'cell-module-count is-derived' : 'cell-module-count'}
@@ -181,7 +182,7 @@ function ModuleBox({
            not placeholders. The derived styling says it is what would happen, not what was
            explicitly asked for. */
         value={draft ?? count ?? boost.wanted}
-        aria-label={`${categoryName(family)} modules`}
+        aria-label={`${categoryName(defaultDataset, family)} modules`}
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;
           setDraft(raw);
@@ -198,10 +199,16 @@ function ModuleBox({
 function inMachineTitle(layout: Layout, effects: Effects): string {
   const productivity = layout.reaches.productivity;
   const boost = productivity ? layout.productivity : layout.speed;
-  const family = categoryName(productivity ? layout.families.productivity : layout.families.speed);
+  const family = categoryName(
+    defaultDataset,
+    productivity ? layout.families.productivity : layout.families.speed,
+  );
   const modules = [
-    moduleCount(layout.productivity.inMachine, categoryName(layout.families.productivity)),
-    moduleCount(layout.speed.inMachine, categoryName(layout.families.speed)),
+    moduleCount(
+      layout.productivity.inMachine,
+      categoryName(defaultDataset, layout.families.productivity),
+    ),
+    moduleCount(layout.speed.inMachine, categoryName(defaultDataset, layout.families.speed)),
   ].filter((module): module is string => module !== undefined);
   if (!modules.length) {
     return boost.module
@@ -228,7 +235,7 @@ function moduleCount(count: number, family: string): string | undefined {
 /** What the beacon box did: every selected beacon is full of the selected speed module. */
 function beaconTitle(layout: Layout, effects: Effects): string {
   const boost = layout.speed;
-  const family = categoryName(layout.families.speed);
+  const family = categoryName(defaultDataset, layout.families.speed);
   if (!boost.module) {
     return (
       `${sentence(family)} modules for this row. ` +

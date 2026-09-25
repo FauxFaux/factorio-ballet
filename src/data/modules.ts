@@ -1,5 +1,6 @@
 import type { Beacon, Effect, Machine, Module, ModuleId, Recipe, StaticData } from '../types.ts';
-import { staticData } from './decode.ts';
+import { type Dataset } from '../dataset';
+import { cheapestModule } from '../dataset/precompute.ts';
 
 /** Whether a machine applies one of the module effects. */
 export function allowsEffect(machine: Machine, effect: Effect): boolean {
@@ -49,52 +50,22 @@ export const BOOST_CATEGORY: Record<BoostEffect, string> = {
   productivity: PRODUCTIVITY_CATEGORY,
 };
 
-const KNOWN_CATEGORIES: ModuleCategory[] = [
-  { id: 'speed', human: 'speed', effect: 'speed' },
-  { id: 'productivity', human: 'productivity', effect: 'productivity' },
-  { id: 'angels-bio-yield', human: 'agricultural', effect: 'productivity' },
-];
-
-const cheapestModule = (a: ModuleMatch, b: ModuleMatch): number =>
-  complexityOf(a) - complexityOf(b) || a.module.tier - b.module.tier || a.id.localeCompare(b.id);
-
-const byModuleCategory = ((): Map<string, ModuleMatch[]> => {
-  const index = new Map<string, ModuleMatch[]>();
-  for (const [id, module] of Object.entries(staticData.modules)) {
-    let list = index.get(module.category);
-    if (!list) index.set(module.category, (list = []));
-    list.push({ id, module, complexity: staticData.resources[`item:${id}`]?.complexity });
-  }
-  for (const list of index.values()) list.sort(cheapestModule);
-  return index;
-})();
-
-export const moduleCategories: ModuleCategory[] = [
-  ...KNOWN_CATEGORIES.filter(({ id }) => byModuleCategory.has(id)),
-  ...[...byModuleCategory]
-    .filter(([id]) => !KNOWN_CATEGORIES.some((known) => known.id === id))
-    .map(([id, modules]) => ({
-      id,
-      human: id,
-      effect: modules.some(({ module }) => (module.productivity ?? 0) > 0)
-        ? ('productivity' as const)
-        : ('speed' as const),
-    })),
-];
-
-export function modulesIn(category: string): ModuleMatch[] {
-  return byModuleCategory.get(category) ?? [];
+export function modulesIn(ds: Dataset, category: string): readonly ModuleMatch[] {
+  return ds.modulesByCategory.get(category) ?? [];
 }
 
-export function categoryEffect(category: string): BoostEffect {
-  return moduleCategories.find(({ id }) => id === category)?.effect ?? 'speed';
+export function categoryEffect(ds: Dataset, category: string): BoostEffect {
+  return ds.moduleCategories.find(({ id }) => id === category)?.effect ?? 'speed';
 }
 
 export function headlineEffect(category: ModuleCategory, module: Module): number {
   return module[category.effect] ?? 0;
 }
 
-export function defaultModule(modules: ModuleMatch[], progress: number): ModuleMatch | undefined {
+export function defaultModule(
+  modules: readonly ModuleMatch[],
+  progress: number,
+): ModuleMatch | undefined {
   return modules.findLast((match) => complexityOf(match) <= progress);
 }
 
@@ -103,33 +74,35 @@ export type ChosenModules = Record<string, ModuleId | undefined>;
 export type ModuleChoice = Record<string, ModuleId | null>;
 
 export function chosenModule(
+  ds: Dataset,
   choice: ModuleChoice,
   category: string,
   progress: number,
 ): ModuleId | undefined {
   const picked = choice[category];
   if (picked !== undefined) return picked ?? undefined;
-  return defaultModule(modulesIn(category), progress)?.id;
+  return defaultModule(modulesIn(ds, category), progress)?.id;
 }
 
-export function chosenModules(choice: ModuleChoice, progress: number): ChosenModules {
+export function chosenModules(ds: Dataset, choice: ModuleChoice, progress: number): ChosenModules {
   return Object.fromEntries(
-    moduleCategories.map(({ id }) => [id, chosenModule(choice, id, progress)]),
+    ds.moduleCategories.map(({ id }) => [id, chosenModule(ds, choice, id, progress)]),
   );
 }
 
-const familiesOf = (effect: BoostEffect): ModuleCategory[] =>
-  moduleCategories.filter((category) => category.effect === effect);
+const familiesOf = (ds: Dataset, effect: BoostEffect): ModuleCategory[] =>
+  ds.moduleCategories.filter((category) => category.effect === effect);
 
-const worthOf = (id: ModuleId | undefined, effect: BoostEffect): number =>
-  (id === undefined ? 0 : (staticData.modules[id]?.[effect] ?? 0)) || 0;
+const worthOf = (data: StaticData, id: ModuleId | undefined, effect: BoostEffect): number =>
+  (id === undefined ? 0 : (data.modules[id]?.[effect] ?? 0)) || 0;
 
 export function moduleFor(
+  ds: Dataset,
   machine: Machine,
   effect: BoostEffect,
   chosen: ChosenModules,
 ): ModuleId | undefined {
-  const named = familiesOf(effect).filter(({ id }) => chosen[id] !== undefined);
+  const named = familiesOf(ds, effect).filter(({ id }) => chosen[id] !== undefined);
   const takes = named.filter((category) => takesCategory(machine, category.id));
   /* Productivity only works from the machine's own slots, so a category the machine refuses is
      not a usable fallback. Speed can still be named for a machine which will not hold it itself:
@@ -137,24 +110,24 @@ export function moduleFor(
   const pool = takes.length > 0 ? takes : effect === 'productivity' ? [] : named;
   return pool
     .map(({ id }) => chosen[id])
-    .toSorted((a, b) => worthOf(b, effect) - worthOf(a, effect))[0];
+    .toSorted((a, b) => worthOf(ds.data, b, effect) - worthOf(ds.data, a, effect))[0];
 }
 
-export function familyFor(machine: Machine | undefined, effect: BoostEffect): string {
-  const families = familiesOf(effect);
+export function familyFor(machine: Machine | undefined, effect: BoostEffect, ds: Dataset): string {
+  const families = familiesOf(ds, effect);
   const takes = machine
     ? families.filter((category) => takesCategory(machine, category.id))
     : families;
   const best = (category: ModuleCategory) =>
-    Math.max(0, ...modulesIn(category.id).map(({ module }) => module[effect] ?? 0));
+    Math.max(0, ...modulesIn(ds, category.id).map(({ module }) => module[effect] ?? 0));
   return (
     (takes.length > 0 ? takes : families).toSorted((a, b) => best(b) - best(a))[0]?.id ??
     (effect === 'speed' ? 'speed' : 'productivity')
   );
 }
 
-export function categoryName(category: string): string {
-  return moduleCategories.find(({ id }) => id === category)?.human ?? category;
+export function categoryName(ds: Dataset, category: string): string {
+  return ds.moduleCategories.find(({ id }) => id === category)?.human ?? category;
 }
 
 function complexityOf(of: { complexity?: number }): number {
