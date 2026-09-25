@@ -80,7 +80,12 @@
 
 .cell-layout-module-label {
   fill: white;
-  font-size: 2.5px;
+  font-size: 2.1px;
+  font-weight: 700;
+}
+
+.cell-layout-module-icon {
+  overflow: hidden;
 }
 
 .cell-layout-station-building {
