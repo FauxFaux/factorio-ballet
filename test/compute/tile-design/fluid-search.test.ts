@@ -5,6 +5,7 @@ import {
 } from '../../../src/compute/tile-design/search.ts';
 import { normalizeTileDesignInput } from '../../../src/compute/tile-design/problem.ts';
 import { assemblerProblem } from '../../../src/compute/kernel-problems.ts';
+import { solveKernelTileDesign } from '../../../src/compute/tile-design/kernel-result.ts';
 import { validateTileDesign } from '../../../src/compute/design-validation/validate.ts';
 import { orientFluidPort } from '../../../src/compute/tile-design/orientation.ts';
 import type {
@@ -118,7 +119,142 @@ function pairedOutputsProblem(items = false): TileDesignInput {
   return input;
 }
 
+function pairedInputsProblem(): TileDesignInput {
+  const input = pairedOutputsProblem();
+  input.machines[0].inputs.fluids = input.machines[0].outputs.fluids;
+  input.machines[0].outputs.fluids = [];
+  input.boundary.inputs.fluids = input.boundary.outputs.fluids;
+  input.boundary.outputs.fluids = [];
+  return input;
+}
+
 describe('fluid tile search', () => {
+  it('solves the exported chemical plant shapes through the preview entry point', () => {
+    const fluidBoxes = [
+      ...[-1, 1].map((x) => ({
+        productionType: 'input' as const,
+        connections: [
+          { position: { x, y: -1 }, direction: 'north' as const, flowDirection: 'input' as const },
+        ],
+      })),
+      ...[-1, 1].map((x) => ({
+        productionType: 'output' as const,
+        connections: [
+          { position: { x, y: 1 }, direction: 'south' as const, flowDirection: 'output' as const },
+        ],
+      })),
+    ];
+    for (const fluidInputs of [[], [200, 200]]) {
+      const problem = assemblerProblem({
+        assemblerName: 'Chemical plant',
+        fluidInputs,
+        fluidOutputs: [200, 200],
+        fluidBoxes,
+      });
+      const result = solveKernelTileDesign(problem, {
+        beltItemsPerSecond: 30,
+        inserterItemsPerSecond: 8,
+        longInserterItemsPerSecond: 2.6,
+      });
+      expect('status' in result && result.status, JSON.stringify(result)).toBe('found');
+      if ('status' in result && result.status === 'found') {
+        expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+        expect(result.candidate.width).toBe(fluidInputs.length ? 7 : 5);
+        expect(
+          result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
+        ).toHaveLength(fluidInputs.length ? 8 : 4);
+      }
+    }
+  });
+
+  it('uses compact underground trunks for two fluid inputs', () => {
+    const input = pairedInputsProblem();
+    const result = found(solveTileDesign(input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate).toMatchObject({ width: 5, pitch: 6 });
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
+    ).toHaveLength(4);
+  });
+
+  it('uses compact trunks when unused input fluid boxes accompany two outputs', () => {
+    const settings = problem();
+    noItems(settings);
+    const normalized = normalizeTileDesignInput(
+      assemblerProblem({
+        assemblerName: 'Chemical plant',
+        fluidOutputs: [200, 200],
+        fluidBoxes: [
+          ...[-1, 1].map((x) => ({
+            productionType: 'input' as const,
+            connections: [
+              {
+                position: { x, y: -1 },
+                direction: 'north' as const,
+                flowDirection: 'input' as const,
+              },
+            ],
+          })),
+          ...[-1, 1].map((x) => ({
+            productionType: 'output' as const,
+            connections: [
+              {
+                position: { x, y: 1 },
+                direction: 'south' as const,
+                flowDirection: 'output' as const,
+              },
+            ],
+          })),
+        ],
+      }),
+      { transport: settings.transport, envelope: settings.envelope },
+    );
+    if (!normalized.success) throw new Error(normalized.message);
+    const result = found(solveTileDesign(normalized.input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.pitch).toBe(6);
+    expect(result.candidate.width).toBeLessThanOrEqual(6);
+  });
+
+  it('finds the mirrored pair through the adapter for two chemical-plant inputs', () => {
+    const settings = problem();
+    noItems(settings);
+    const normalized = normalizeTileDesignInput(
+      assemblerProblem({
+        assemblerName: 'Chemical plant',
+        fluidInputs: [200, 200],
+        fluidBoxes: [
+          ...[-1, 1].map((x) => ({
+            productionType: 'input' as const,
+            connections: [
+              {
+                position: { x, y: -1 },
+                direction: 'north' as const,
+                flowDirection: 'input' as const,
+              },
+            ],
+          })),
+          ...[-1, 1].map((x) => ({
+            productionType: 'output' as const,
+            connections: [
+              {
+                position: { x, y: 1 },
+                direction: 'south' as const,
+                flowDirection: 'output' as const,
+              },
+            ],
+          })),
+        ],
+      }),
+      { transport: settings.transport, envelope: settings.envelope },
+    );
+    if (!normalized.success) throw new Error(normalized.message);
+    const result = found(solveTileDesign(normalized.input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.pitch).toBe(6);
+    expect(result.candidate.width).toBeLessThanOrEqual(6);
+  });
+
   it('uses a reflected two-plant repeat for separate fluid outputs', () => {
     const input = pairedOutputsProblem();
     const result = found(solveTileDesign(input));

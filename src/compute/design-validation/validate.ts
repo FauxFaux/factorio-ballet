@@ -111,7 +111,10 @@ export function validateTileDesign(
     if (
       input.machines.length !== 1 ||
       placed.length !== 2 ||
-      new Set(machines.get(id)?.outputs.fluids.map(({ resource }) => resource)).size < 2 ||
+      !(['inputs', 'outputs'] as const).some(
+        (side) =>
+          new Set(machines.get(id)?.[side].fluids.map(({ resource }) => resource)).size >= 2,
+      ) ||
       placed[0].direction !== placed[1].direction ||
       Boolean(placed[0].mirrored) === Boolean(placed[1].mirrored) ||
       placed[0].position.x !== placed[1].position.x ||

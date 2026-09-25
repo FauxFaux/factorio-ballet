@@ -22,7 +22,9 @@ export function mirroredFluidPair(
   const machine = input.machines[0];
   if (
     input.machines.length !== 1 ||
-    new Set(machine.outputs.fluids.map(({ resource }) => resource)).size < 2 ||
+    !(['inputs', 'outputs'] as const).some(
+      (side) => new Set(machine[side].fluids.map(({ resource }) => resource)).size >= 2,
+    ) ||
     machine.inputs.items.length > 0 ||
     machine.outputs.items.length > 0 ||
     input.boundary.inputs.items.length > 0 ||
@@ -215,7 +217,7 @@ export function mirroredFluidPair(
           const validation = validateTileDesign(input, candidate);
           return validation.valid ? { candidate, validation } : undefined;
         }
-        const profile = interleavedOutputTrunks(
+        const profile = interleavedFluidTrunks(
           ports,
           trunks,
           pitch,
@@ -241,20 +243,45 @@ function horizontalPort(
   }
 }
 
-/** Complementary vertical underground spans let adjacent output trunks pass through each
+/** Complementary vertical underground spans let adjacent fluid trunks pass through each
  * other's active rows. The outer trunk's pair is in the tile; the inner pair spans its seam. */
-function interleavedOutputTrunks(
+function interleavedFluidTrunks(
   ports: Port[],
   trunks: Map<string, number>,
   pitch: number,
   reach: number,
 ): Map<string, Pipe[]> | undefined {
-  const outputs = ports.filter(({ flowSide }) => flowSide === 'output');
-  const resources = [...new Set(outputs.map(({ resource }) => resource))];
-  if (resources.length !== 2 || outputs.length !== 4) return;
+  const profiles = (['input', 'output'] as const)
+    .map((side) =>
+      interleavedSideTrunks(
+        ports.filter((port) => port.flowSide === side),
+        trunks,
+        pitch,
+        reach,
+      ),
+    )
+    .filter((profile): profile is Map<string, Pipe[]> => profile !== undefined);
+  if (!profiles.length) return;
+  if (
+    profiles.length === 2 &&
+    [...profiles[0].keys()].some((resource) => profiles[1].has(resource))
+  )
+    return;
+  return new Map(profiles.flatMap((profile) => [...profile]));
+}
+
+function interleavedSideTrunks(
+  matchingPorts: Port[],
+  trunks: Map<string, number>,
+  pitch: number,
+  reach: number,
+): Map<string, Pipe[]> | undefined {
+  const resources = [...new Set(matchingPorts.map(({ resource }) => resource))];
+  if (resources.length !== 2 || matchingPorts.length !== 4) return;
   const groups = resources.map((resource) =>
-    outputs.filter((port) => port.resource === resource).sort((a, b) => a.y - b.y),
+    matchingPorts.filter((port) => port.resource === resource).sort((a, b) => a.y - b.y),
   );
+  if (groups.some((group) => group.length !== 2)) return;
   const outer = groups.find((group) => group[0].y === 0 && group[1].y === pitch - 1);
   const inner = groups.find((group) => group !== outer);
   if (!outer || !inner || outer.length !== 2 || inner.length !== 2) return;

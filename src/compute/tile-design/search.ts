@@ -98,7 +98,12 @@ export function solveTileDesign(input: TileDesignInput, allowPair = true): TileD
         'Gross machine transfers must be supplied/exported externally; internal recirculation is not supported.',
       );
   }
-  if (allowPair && new Set(machine.outputs.fluids.map(({ resource }) => resource)).size >= 2) {
+  if (
+    allowPair &&
+    (['inputs', 'outputs'] as const).some(
+      (side) => new Set(machine[side].fluids.map(({ resource }) => resource)).size >= 2,
+    )
+  ) {
     const pairBudget = Math.min(2_000, Math.floor(input.envelope.maxStates / 4));
     const pair = mirroredFluidPair(input, () => {
       if (diagnostics.exploredStates >= pairBudget) return false;
