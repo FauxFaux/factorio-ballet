@@ -22,7 +22,7 @@ export function SplitProposals({
   belt: Belt;
 }) {
   const proposals = useMemo(
-    () => proposedSplits(entries, solution, belt),
+    () => proposedSplits(entries, solution, belt, staticData),
     [entries, solution, belt],
   );
   if (proposals.length === 0) return null;

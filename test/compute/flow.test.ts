@@ -193,7 +193,7 @@ describe('netRates', () => {
 describe('flowTitle', () => {
   it('names the resource, its amount per craft, and any note', () => {
     const { ins, outs } = recipeFlows(uranium, [], 1);
-    expect(flowTitle(ins[0])).toBe('Uranium ore: 10 per craft');
-    expect(flowTitle(outs[0])).toBe('Uranium-235: 1 per craft, 0.7%');
+    expect(flowTitle(staticData, ins[0])).toBe('Uranium ore: 10 per craft');
+    expect(flowTitle(staticData, outs[0])).toBe('Uranium-235: 1 per craft, 0.7%');
   });
 });

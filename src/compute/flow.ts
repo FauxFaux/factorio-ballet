@@ -9,9 +9,9 @@ import type {
   ProductAmount,
   Recipe,
   ResourceId,
+  StaticData,
 } from '../types.ts';
 import type { Effects } from '../data/module-effects.ts';
-import { staticData } from '../data/decode.ts';
 
 export interface Flow {
   resource: ResourceId;
@@ -77,9 +77,9 @@ export function recipeFlows(
   };
 }
 
-export function flowTitle(flow: Flow): string {
+export function flowTitle(data: StaticData, flow: Flow): string {
   const note = flow.note ? `, ${flow.note}` : '';
-  return `${resourceName(staticData, flow.resource)}: ${flow.amount} per craft${note}`;
+  return `${resourceName(data, flow.resource)}: ${flow.amount} per craft${note}`;
 }
 
 function ingredientFlow(ingredient: Ingredient, crafts: number, rate: Fmt): Flow {

@@ -1,6 +1,7 @@
 import { Fragment } from 'preact';
 import { flowTitle, type Flow } from '../compute/flow.ts';
 import { ResourceIcon } from './resource.tsx';
+import { staticData } from '../data/decode.ts';
 
 /** The folded form: `2.0 [iron] + 8.0 [water] → 4.0 [plate]`, names and amounts in tooltips. */
 export function FlowSummary({ ins, outs }: { ins: Flow[]; outs: Flow[] }) {
@@ -21,7 +22,7 @@ function FlowChips({ flows }: { flows: Flow[] }) {
       {flows.map((flow, i) => (
         <Fragment key={`${flow.resource}-${i}`}>
           {i === 0 ? null : <span class="flow-chip-sep">+</span>}
-          <span class="flow-chip" title={flowTitle(flow)}>
+          <span class="flow-chip" title={flowTitle(staticData, flow)}>
             <abbr class="flow-chip-rate" title={`${flow.fullRate} per second`}>
               {flow.rate}
             </abbr>

@@ -1,8 +1,7 @@
 import type { CellEntry } from '../cell.ts';
 import { recipeName, resourceName } from '../data';
 import type { Solution } from '../solve';
-import { isFluid, type Belt, type ResourceId } from '../types.ts';
-import { staticData } from '../data/decode.ts';
+import { isFluid, type Belt, type ResourceId, type StaticData } from '../types.ts';
 
 const EPSILON = 1e-7;
 
@@ -108,7 +107,11 @@ function isConnected(entries: number[], solution: Solution) {
   return true;
 }
 
-function utilityGroup(solution: Solution, belt: Belt): CandidateGroup | undefined {
+function utilityGroup(
+  solution: Solution,
+  belt: Belt,
+  data: StaticData,
+): CandidateGroup | undefined {
   const entryCount = solution.counts.length;
   if (entryCount > 15) return undefined;
   let best: { entries: number[]; installed: number; output: ResourceId } | undefined;
@@ -136,7 +139,7 @@ function utilityGroup(solution: Solution, belt: Belt): CandidateGroup | undefine
   }
 
   return best
-    ? { entries: best.entries, name: `${resourceName(staticData, best.output)} utility` }
+    ? { entries: best.entries, name: `${resourceName(data, best.output)} utility` }
     : undefined;
 }
 
@@ -144,6 +147,7 @@ function terminalGroup(
   entries: CellEntry[],
   solution: Solution,
   excluded: ReadonlySet<number>,
+  data: StaticData,
 ): { group: CandidateGroup; terminal: number; producers: number[] } | undefined {
   const consumed = totalRates(solution.inputRates, solution.counts);
   const produced = totalRates(solution.outputRates, solution.counts);
@@ -178,19 +182,19 @@ function terminalGroup(
   return {
     group: {
       entries: members,
-      name: `${recipeName(staticData, entries[terminal]!.recipe)} finishing`,
+      name: `${recipeName(data, entries[terminal]!.recipe)} finishing`,
     },
     terminal,
     producers,
   };
 }
 
-function productionName(entries: number[], solution: Solution) {
+function productionName(entries: number[], solution: Solution, data: StaticData) {
   const outputs = [...ratesForEntries(solution.rates, solution.counts, entries)].filter(
     ([, rate]) => rate > EPSILON,
   );
   return outputs.length === 1
-    ? `${resourceName(staticData, outputs[0]![0])} production`
+    ? `${resourceName(data, outputs[0]![0])} production`
     : 'Intermediate production';
 }
 
@@ -198,6 +202,7 @@ function sharedImportGroup(
   entries: CellEntry[],
   solution: Solution,
   excluded: ReadonlySet<number>,
+  data: StaticData,
 ): CandidateGroup | undefined {
   const produced = totalRates(solution.outputRates, solution.counts);
   const consumers = new Map<ResourceId, number[]>();
@@ -215,7 +220,7 @@ function sharedImportGroup(
     .filter(([, members]) => members.length >= 2 && members.length <= 4)
     .map(([resource, members]) => ({
       entries: members,
-      name: `${resourceName(staticData, resource)} conversion`,
+      name: `${resourceName(data, resource)} conversion`,
       installed: installedMachines(members, solution.counts),
     }))
     .filter(({ installed }) => installed <= 16)
@@ -243,15 +248,16 @@ function ratiosFor(
   solution: Solution,
   terminal: number,
   producers: number[],
+  data: StaticData,
 ): SplitRatio[] {
   return producers.flatMap((producer) => {
     const ratio = smallRatio(solution.counts[producer]!, solution.counts[terminal]!);
     return ratio
       ? [
           {
-            producer: recipeName(staticData, entries[producer]!.recipe),
+            producer: recipeName(data, entries[producer]!.recipe),
             producerMachines: ratio[0],
-            consumer: recipeName(staticData, entries[terminal]!.recipe),
+            consumer: recipeName(data, entries[terminal]!.recipe),
             consumerMachines: ratio[1],
           },
         ]
@@ -300,6 +306,7 @@ export function proposedSplits(
   entries: CellEntry[],
   solution: Solution,
   belt: Belt,
+  data: StaticData,
 ): ProposedSplit[] {
   if (
     entries.length < 4 ||
@@ -309,15 +316,15 @@ export function proposedSplits(
     return [];
   }
 
-  const utility = utilityGroup(solution, belt);
+  const utility = utilityGroup(solution, belt, data);
   const utilityEntries = new Set(utility?.entries ?? []);
-  const terminal = terminalGroup(entries, solution, utilityEntries);
+  const terminal = terminalGroup(entries, solution, utilityEntries, data);
   if (!terminal) return [];
 
   const claimed = new Set([...utilityEntries, ...terminal.group.entries]);
   const upstreamEntries = entries.map((_, index) => index).filter((index) => !claimed.has(index));
   if (upstreamEntries.length === 0) return [];
-  const ratios = ratiosFor(entries, solution, terminal.terminal, terminal.producers);
+  const ratios = ratiosFor(entries, solution, terminal.terminal, terminal.producers, data);
   const plans: ProposedSplit[] = [];
   const coarse = [
     ...(utility ? [utility] : []),
@@ -336,7 +343,7 @@ export function proposedSplits(
     ),
   );
 
-  const hub = sharedImportGroup(entries, solution, claimed);
+  const hub = sharedImportGroup(entries, solution, claimed, data);
   if (hub) {
     const hubEntries = new Set(hub.entries);
     const remaining = upstreamEntries.filter((entry) => !hubEntries.has(entry));
@@ -349,7 +356,7 @@ export function proposedSplits(
           [
             ...(utility ? [utility] : []),
             hub,
-            { entries: remaining, name: productionName(remaining, solution) },
+            { entries: remaining, name: productionName(remaining, solution, data) },
             terminal.group,
           ],
           solution,

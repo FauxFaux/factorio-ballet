@@ -1,4 +1,4 @@
-import type {Beacon, Effect, Machine, Module, ModuleId, Recipe, StaticData} from '../types.ts';
+import type { Beacon, Effect, Machine, Module, ModuleId, Recipe, StaticData } from '../types.ts';
 import { staticData } from './decode.ts';
 
 /** Whether a machine applies one of the module effects. */

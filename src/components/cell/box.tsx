@@ -34,6 +34,7 @@ import { CellAsJson } from './as-json.tsx';
 import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
 import { useDataset } from '../../dataset/context.tsx';
+import {staticData} from "../../data/decode.ts";
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -78,7 +79,7 @@ export function CellBox({
   );
   const portFlows = useMemo(() => assignModulePorts(modules, moduleFlows), [modules, moduleFlows]);
   const zeroInputRegionRecipes = useMemo(() => {
-    const groups = proposedSplits(cell.entries, solution, chosen.belt)[0]?.groups ?? [];
+    const groups = proposedSplits(cell.entries, solution, chosen.belt, staticData)[0]?.groups ?? [];
     return new Set(
       groups
         .filter((group) => group.inputs.resources === 0)

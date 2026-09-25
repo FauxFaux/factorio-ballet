@@ -14,7 +14,6 @@ import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId, StaticData } from './types.ts';
-import { staticData } from './data/decode.ts';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -369,6 +368,6 @@ function simplestFirst(data: StaticData, ids: ResourceId[]): ResourceId[] {
   return ids.toSorted(
     (a, b) =>
       complexityOf(data.resources[a] ?? {}) - complexityOf(data.resources[b] ?? {}) ||
-      resourceName(staticData, a).localeCompare(resourceName(staticData, b)),
+      resourceName(data, a).localeCompare(resourceName(data, b)),
   );
 }

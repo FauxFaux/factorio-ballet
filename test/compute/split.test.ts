@@ -3,6 +3,7 @@ import type { CellEntry } from '../../src/cell.ts';
 import type { Solution } from '../../src/solve/index.ts';
 import { proposedSplits } from '../../src/compute/split.ts';
 import type { ResourceId } from '../../src/types.ts';
+import {staticData} from "../../src/data/decode.ts";
 
 const recipeRows = [
   {
@@ -102,10 +103,15 @@ function cpuSolution(): { entries: CellEntry[]; solution: Solution } {
 describe('proposedSplits', () => {
   it('finds compatible regional and transport-first CPU partitions', () => {
     const { entries, solution } = cpuSolution();
-    const proposals = proposedSplits(entries, solution, {
-      itemsPerSecond: 30,
-      undergroundLength: 7,
-    });
+    const proposals = proposedSplits(
+      entries,
+      solution,
+      {
+        itemsPerSecond: 30,
+        undergroundLength: 7,
+      },
+      staticData,
+    );
 
     expect(proposals.map(({ name }) => name)).toEqual(['3 regions', '4 units']);
     expect(
@@ -130,10 +136,15 @@ describe('proposedSplits', () => {
 
   it('reports the exact direct-producer ratios without using installed counts', () => {
     const { entries, solution } = cpuSolution();
-    const [proposal] = proposedSplits(entries, solution, {
-      itemsPerSecond: 30,
-      undergroundLength: 7,
-    });
+    const [proposal] = proposedSplits(
+      entries,
+      solution,
+      {
+        itemsPerSecond: 30,
+        undergroundLength: 7,
+      },
+      staticData,
+    );
 
     expect(proposal!.ratios).toEqual([
       { producer: 'nitride', producerMachines: 7, consumer: 'cpu', consumerMachines: 4 },
@@ -151,6 +162,7 @@ describe('proposedSplits', () => {
           itemsPerSecond: 30,
           undergroundLength: 7,
         },
+        staticData,
       ),
     ).toEqual([]);
     expect(
@@ -161,6 +173,7 @@ describe('proposedSplits', () => {
           itemsPerSecond: 30,
           undergroundLength: 7,
         },
+        staticData,
       ),
     ).toEqual([]);
   });
