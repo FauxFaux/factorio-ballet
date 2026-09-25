@@ -22,6 +22,7 @@ import { KernelDebugButton } from './components/kernel-debug-button.tsx';
 import { KernelDebug, kernelCustomStateFor } from './components/kernel-debug.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
 import { useDataset } from './dataset/context.tsx';
+import { defaultDataset } from './dataset';
 
 export function App({ uss }: { uss: State<UrlState> }) {
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
@@ -36,7 +37,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
    * so the cells are handed the modules and beacon rather than a preference to re-resolve — and
    * memoised, because a cell's solution is memoised against this. */
   const chosen = useMemo(
-    () => resolveChosen(us.mo, us.be, us.bt, progress),
+    () => resolveChosen(defaultDataset, us.mo, us.be, us.bt, progress),
     [us.mo, us.be, us.bt, progress],
   );
   const debugProblem = (problem: KernelProblem) =>

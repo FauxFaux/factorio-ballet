@@ -54,6 +54,7 @@ describe('App', () => {
 
     const progress = kernelDesignState.gp / 100;
     const chosen = resolveChosen(
+      defaultDataset,
       kernelDesignState.mo,
       kernelDesignState.be,
       kernelDesignState.bt,

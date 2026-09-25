@@ -79,16 +79,16 @@ describe('the chosen beacon', () => {
   });
 
   it("is the header's pick, whatever the progress", () => {
-    expect(chosenBeacon('beacon', 1)).toBe(VANILLA);
+    expect(chosenBeacon(defaultDataset, 'beacon', 1)).toBe(VANILLA);
     // `null` is a choice of its own, and the choice is none
-    expect(chosenBeacon(null, 1)).toBeUndefined();
+    expect(chosenBeacon(defaultDataset, null, 1)).toBeUndefined();
     // as is a beacon this dataset does not have, which is a stale URL rather than a choice
-    expect(chosenBeacon('no-such-beacon', 1)).toBeUndefined();
+    expect(chosenBeacon(defaultDataset, 'no-such-beacon', 1)).toBeUndefined();
   });
 
   it('follows the slider where the header picked nothing', () => {
-    expect(chosenBeacon(undefined, 0)).toBeUndefined();
-    expect(chosenBeacon(undefined, 1)).toBe(staticData.beacons['bob-beacon-3']);
+    expect(chosenBeacon(defaultDataset, undefined, 0)).toBeUndefined();
+    expect(chosenBeacon(defaultDataset, undefined, 1)).toBe(staticData.beacons['bob-beacon-3']);
   });
 });
 

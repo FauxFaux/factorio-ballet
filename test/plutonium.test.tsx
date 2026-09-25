@@ -13,9 +13,10 @@ import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
 import { staticData } from '../src/data/decode.ts';
+import { defaultDataset } from '../src/dataset';
 
 const cell: Cell = state.cl[0];
-const chosen = resolveChosen(state.mo, undefined, undefined, state.gp);
+const chosen = resolveChosen(defaultDataset, state.mo, undefined, undefined, state.gp);
 const u238 = 'item:uranium-238';
 afterEach(cleanup);
 

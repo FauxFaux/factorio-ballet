@@ -48,7 +48,7 @@ export const packLandmarks: Landmark[] = (() => {
 
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
-import { defaultDataset } from '../dataset';
+import { type Dataset } from '../dataset';
 
 /**
  * The beacons this pack has, cheapest first: one tier of the same idea, as the module families are.
@@ -116,8 +116,12 @@ export function defaultBeacon(progress: number): BeaconMatch | undefined {
 export type BeaconChoice = BeaconId | null | undefined;
 
 /** Which beacon a row builds right now: the one pinned, or {@link defaultBeacon}'s. */
-export function chosenBeacon(choice: BeaconChoice, progress: number): Beacon | undefined {
-  if (choice !== undefined) return choice === null ? undefined : staticData.beacons[choice];
+export function chosenBeacon(
+  ds: Dataset,
+  choice: BeaconChoice,
+  progress: number,
+): Beacon | undefined {
+  if (choice !== undefined) return choice === null ? undefined : ds.data.beacons[choice];
   return defaultBeacon(progress)?.beacon;
 }
 
@@ -157,8 +161,8 @@ export function defaultBelt(progress: number): BeltMatch {
 export type BeltChoice = BeltId | undefined;
 
 /** The belt the header means right now: a pinned choice, or {@link defaultBelt}'s. */
-export function chosenBelt(choice: BeltChoice, progress: number): Belt {
-  if (choice !== undefined) return staticData.belts[choice];
+export function chosenBelt(ds: Dataset, choice: BeltChoice, progress: number): Belt {
+  if (choice !== undefined) return ds.data.belts[choice];
   return defaultBelt(progress).belt;
 }
 
@@ -183,14 +187,15 @@ export const NO_CHOICE: Chosen = { modules: {}, belt: defaultBelt(0).belt };
 
 /** Every part of {@link Chosen} resolved against the header's choices and the progress slider. */
 export function resolveChosen(
+  ds: Dataset,
   choice: ModuleChoice,
   beacon: BeaconChoice,
   belt: BeltChoice,
   progress: number,
 ): Chosen {
   return {
-    modules: chosenModules(defaultDataset, choice, progress),
-    beacon: chosenBeacon(beacon, progress),
-    belt: chosenBelt(belt, progress),
+    modules: chosenModules(ds, choice, progress),
+    beacon: chosenBeacon(ds, beacon, progress),
+    belt: chosenBelt(ds, belt, progress),
   };
 }

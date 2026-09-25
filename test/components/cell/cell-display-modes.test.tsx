@@ -9,9 +9,10 @@ import { resolveChosen, resourceName } from '../../../src/data';
 import { CellBox } from '../../../src/components/cell/box.tsx';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
 import { staticData } from '../../../src/data/decode.ts';
+import { defaultDataset } from '../../../src/dataset';
 
 const cell: Cell = state.cl[0];
-const chosen = resolveChosen({}, undefined, undefined, state.gp);
+const chosen = resolveChosen(defaultDataset, {}, undefined, undefined, state.gp);
 
 afterEach(cleanup);
 
