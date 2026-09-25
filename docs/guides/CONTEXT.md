@@ -9,9 +9,9 @@ game's `script-output/` directory) into `static.json`:
 APP=<factorio-user-dir> node scripts/ingest-data.ts   # reads $APP/script-output/, writes ./static.json
 ```
 
-The checked-in `src/assets/static.json` comes from `APP=~/ins/factorio-2-73-ab` (Bob's + Angel's);
-regenerating from any other dump replaces the dataset. The script writes minified, and
-`npm run format` prettifies it in place. Zod validators for the raw game data live in
+The checked-in `src/assets/dataset/bobang/static.json` comes from `APP=~/ins/factorio-2-73-ab`
+(Bob's + Angel's); regenerating from any other dump replaces the dataset. The script writes
+minified, and `npm run format` prettifies it in place. Zod validators for the raw game data live in
 `scripts/raw-validators.ts` (typed against the `factorio-raw-types` package).
 
 Two things the ingest gets right that are easy to get wrong again:
@@ -100,9 +100,9 @@ walk, so not an approximation), and hand crafting is 0 because you start with th
 `sciencePacks` is that walk's own list of research ingredients, cheapest first — the packs are the
 only readable landmarks on the complexity scale, so the slider is labelled with their icons instead
 of numbers (`components/progress-slider.tsx`, thinned by `packLandmarks` because ten of Bob's packs
-land between 53% and 58%). `src/data/decode.ts` loads `src/assets/static.json` at module level.
-Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map, keys like
-`craft:<name>`) via `components/resource.tsx`.
+land between 53% and 58%). `src/data/decode.ts` loads `src/assets/dataset/bobang/static.json` at
+module level. Icons render from a spritesheet (`src/assets/icons.avif` + `icons.json` position map,
+keys like `craft:<name>`) via `components/resource.tsx`.
 
 `../../src/compute/flow.ts` is the arithmetic between a `Recipe` and a card: amounts per craft,
 rates per second at a given machine's speed, and the decimal precision, decided once per recipe over

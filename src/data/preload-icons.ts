@@ -1,8 +1,8 @@
-import iconsUiUrl from '../assets/icons-ui.avif';
-import icons0Url from '../assets/icons-0.avif';
-import icons1Url from '../assets/icons-1.avif';
-import icons2Url from '../assets/icons-2.avif';
-import icons3Url from '../assets/icons-3.avif';
+import iconsUiUrl from '../assets/dataset/bobang/icons-ui.avif';
+import icons0Url from '../assets/dataset/bobang/icons-0.avif';
+import icons1Url from '../assets/dataset/bobang/icons-1.avif';
+import icons2Url from '../assets/dataset/bobang/icons-2.avif';
+import icons3Url from '../assets/dataset/bobang/icons-3.avif';
 
 async function preloadImage(url: string) {
   try {

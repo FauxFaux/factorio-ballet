@@ -66,8 +66,9 @@ Each generated dataset package supplies:
 - its data icon sheets and coordinate maps;
 - an exact dataset ID and a display label.
 
-Application artwork such as `icons-ui.avif` is not dataset data and stays outside these packages.
-Factorio item, fluid, recipe, and entity artwork belongs to the dataset.
+Factorio item, fluid, recipe, and entity artwork belongs to the dataset. The current Bob's and
+Angel's package also contains `icons-ui.avif`; it can move to shared assets when icon loading is
+made dataset-specific.
 
 Use an explicit TypeScript catalogue with literal imports so Vite can create a chunk per dataset
 without a custom loader or filename convention:

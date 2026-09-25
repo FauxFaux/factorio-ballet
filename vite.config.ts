@@ -41,7 +41,7 @@ function copyKnownVersions(): Plugin {
 
 function injectIcons(): Plugin {
   const placeholder = 'INJECT_ICONS_ARRAY';
-  const sources = ['src/assets/icons-ui.avif'];
+  const sources = ['src/assets/dataset/bobang/icons-ui.avif'];
   let config: ResolvedConfig;
 
   return {

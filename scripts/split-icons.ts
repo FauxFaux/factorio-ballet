@@ -187,9 +187,11 @@ async function loadIconData(): Promise<IconData> {
   type PackedRecipes = { recipes: Record<string, PackedEntry> };
   const readJson = async (path: string): Promise<unknown> =>
     JSON.parse(await readFile(path, 'utf8')) as unknown;
-  const packed = (await readJson(join(repositoryRoot, 'src/assets/static.json'))) as PackedData;
+  const packed = (await readJson(
+    join(repositoryRoot, 'src/assets/dataset/bobang/static.json'),
+  )) as PackedData;
   const recipeFile = (await readJson(
-    join(repositoryRoot, 'src/assets/static-recipes.json'),
+    join(repositoryRoot, 'src/assets/dataset/bobang/static-recipes.json'),
   )) as PackedRecipes;
   const complexity = (entries: Record<string, PackedEntry>) =>
     Object.fromEntries(Object.entries(entries).map(([id, entry]) => [id, { complexity: entry.x }]));

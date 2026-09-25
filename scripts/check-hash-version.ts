@@ -21,8 +21,8 @@ function fingerprint(...idTables: Record<string, unknown>[]): string {
 async function main() {
   const [urlHandler, staticData, staticRecipes] = await Promise.all([
     fs.readFile('src/boot/url-handler.tsx', 'utf8'),
-    fs.readFile('src/assets/static.json', 'utf8'),
-    fs.readFile('src/assets/static-recipes.json', 'utf8'),
+    fs.readFile('src/assets/dataset/bobang/static.json', 'utf8'),
+    fs.readFile('src/assets/dataset/bobang/static-recipes.json', 'utf8'),
   ]);
   const hashVersion = HASH_VERSION.exec(urlHandler)?.[1];
   if (!hashVersion) throw new Error('Could not find HASH_VERSION in src/boot/url-handler.tsx');

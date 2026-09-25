@@ -7,8 +7,8 @@ extending it.
 ## The dumps
 
 `scripts/ingest-data.ts` reads a Factorio user directory's `script-output/`. Several exist on this
-machine; they are not interchangeable, and the checked-in `src/assets/static.json` comes from one
-specific pack:
+machine; they are not interchangeable, and the checked-in `src/assets/dataset/bobang/static.json`
+comes from one specific pack:
 
 | `APP=`                     | modpack                    | raw recipes | note                       |
 | -------------------------- | -------------------------- | ----------- | -------------------------- |
@@ -77,7 +77,7 @@ Re-running the ingest must not disturb the fields already in the file. Diff old 
 new keys stripped — anything but `0` means you used a different dump:
 
 ```js
-const a = require("./src/assets/static.json"),
+const a = require("./src/assets/dataset/bobang/static.json"),
   b = require("./static.json");
 const strip = (r) => {
   const { categories, ...rest } = r;
