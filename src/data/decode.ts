@@ -27,7 +27,7 @@ const decodeTemperature = (
   return { max: temperature.x };
 };
 
-function decodeStaticData(data: StaticDataPacked): StaticData {
+export function decodeStaticData(data: StaticDataPacked): StaticData {
   const resourceIds = Object.keys(data.resources) as ResourceId[];
   const resourceId = (index: number): ResourceId => {
     const id = resourceIds[index];

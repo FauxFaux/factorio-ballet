@@ -1,8 +1,8 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen, within } from '@testing-library/preact';
+import { cleanup, render as testingRender, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
-import { h } from 'preact';
+import { h, type ComponentChild } from 'preact';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cellInterface, newCell, type Cell } from '../src/cell.ts';
@@ -10,6 +10,8 @@ import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-s
 import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
 import { staticData } from '../src/data/decode.ts';
+import { DatasetProvider } from '../src/dataset/context.tsx';
+import { defaultDataset } from '../src/dataset/index.ts';
 import {
   scoreRecipeSuggestion,
   suggestedRecipePaths,
@@ -27,6 +29,10 @@ import {
 const waste = 'fluid:angels-water-yellow-waste' as const;
 
 afterEach(cleanup);
+
+function render(child: ComponentChild) {
+  return testingRender(h(DatasetProvider, { value: defaultDataset, children: child }));
+}
 
 function SuggestionsExample({ initialCell }: { initialCell: Cell }) {
   const [cell, setCell] = useState(initialCell);

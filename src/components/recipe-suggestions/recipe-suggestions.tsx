@@ -4,7 +4,7 @@ import { Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import type { Cell } from '../../cell.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
 import { AddToCell } from '../recipe.tsx';
@@ -29,6 +29,7 @@ export function RecipeSuggestions({
   inCell?: (recipe: string) => boolean;
   onMakeExplicit?: (resource: ResourceId, direction: 'import' | 'export') => void;
 }) {
+  const { data } = useDataset();
   const suggestions = useMemo(() => {
     const imports = new Set(cell?.imports);
     const exports = new Set(cell?.exports);
@@ -136,7 +137,7 @@ export function RecipeSuggestions({
                     }
                   >
                     {plan.recipes.map((id, step) => {
-                      const recipe = staticData.recipes[id];
+                      const recipe = data.recipes[id];
                       return (
                         <li key={`${id}-${step}`}>
                           {recipe ? (
