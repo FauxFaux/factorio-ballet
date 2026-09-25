@@ -1,6 +1,27 @@
-import type { ResourceId, StaticData } from '../types.ts';
+import type { Machine, ResourceId, StaticData } from '../types.ts';
+import type { MachineMatch } from '../data/machines.ts';
 import { isBarrelling, isUnbarrelling, isVoid } from '../compute/recipes.ts';
 import { resourceChainFinder } from '../compute/void-path.ts';
+
+function machineComplexity(data: StaticData, machine: Machine): number | undefined {
+  if (machine.item === undefined) return machine.kind === 'character' ? 0 : undefined;
+  return data.resources[`item:${machine.item}`]?.complexity;
+}
+
+/** Machines indexed by the categories they can craft for one dataset. */
+export function buildMachinesByCategory(
+  data: StaticData,
+): ReadonlyMap<string, readonly MachineMatch[]> {
+  const index = new Map<string, MachineMatch[]>();
+  for (const [id, machine] of Object.entries(data.machines)) {
+    for (const category of machine.categories) {
+      let list = index.get(category);
+      if (!list) index.set(category, (list = []));
+      list.push({ id, machine, complexity: machineComplexity(data, machine) });
+    }
+  }
+  return index;
+}
 
 export interface SuggestionPlanIndex {
   resourceChains: ReturnType<typeof resourceChainFinder>;

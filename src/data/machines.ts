@@ -1,5 +1,4 @@
 import type { Machine, MachineId, Recipe, StaticData } from '../types.ts';
-import { staticData } from './decode.ts';
 import type { Dataset } from '../dataset';
 
 function complexityOf(of: { complexity?: number }): number {
@@ -22,24 +21,6 @@ export interface MachineMatch {
   complexity?: number;
 }
 
-function machineComplexity(data: StaticData, machine: Machine): number | undefined {
-  if (machine.item === undefined) return machine.kind === 'character' ? 0 : undefined;
-  return data.resources[`item:${machine.item}`]?.complexity;
-}
-
-/** Machines by the categories they can craft, built once. */
-const byCategory = ((data: StaticData): Map<string, MachineMatch[]> => {
-  const index = new Map<string, MachineMatch[]>();
-  for (const [id, machine] of Object.entries(data.machines)) {
-    for (const category of machine.categories) {
-      let list = index.get(category);
-      if (!list) index.set(category, (list = []));
-      list.push({ id, machine, complexity: machineComplexity(data, machine) });
-    }
-  }
-  return index;
-})(staticData);
-
 /**
  * The machines which can run a recipe: anything handling any of its categories, slowest first, so
  * the tiers of a machine family read in order.
@@ -47,7 +28,7 @@ const byCategory = ((data: StaticData): Map<string, MachineMatch[]> => {
 export function machinesFor(ds: Dataset, recipe: Recipe): MachineMatch[] {
   const found = new Map<MachineId, MachineMatch>();
   for (const category of recipe.categories) {
-    for (const match of byCategory.get(category) ?? []) found.set(match.id, match);
+    for (const match of ds.machinesByCategory.get(category) ?? []) found.set(match.id, match);
   }
   return [...found.values()].sort(
     (a, b) => a.machine.speed - b.machine.speed || a.id.localeCompare(b.id),
