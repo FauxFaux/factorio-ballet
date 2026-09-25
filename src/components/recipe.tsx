@@ -2,7 +2,7 @@ import './recipe.css';
 import type { MachineId, ResourceId } from '../types.ts';
 import { useState } from 'preact/hooks';
 import type { RecipeMatch } from '../data/search.ts';
-import { NO_CHOICE, type Chosen } from '../data/index.ts';
+import { type Chosen, noChoice } from '../data/index.ts';
 import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
 import { recipeFlows, speedOf, type Flow } from '../compute/flow.ts';
 import { laidOutEffects } from '../data/module-effects.ts';
@@ -62,7 +62,14 @@ export function RecipeCard({
     : (hoveredMachine ?? selectedMachine ?? defaultMachineId);
   const baseSpeed = speedOf(machines, displayedMachine);
   const beaconSpeed = beaconCount
-    ? beaconedSpeed(ds.data, machines, defaultMachineId, recipe, chosen ?? NO_CHOICE, beaconCount)
+    ? beaconedSpeed(
+        ds.data,
+        machines,
+        defaultMachineId,
+        recipe,
+        chosen ?? noChoice(ds),
+        beaconCount,
+      )
     : 1;
   const speed = baseSpeed * beaconSpeed;
   const { ins, outs } = recipeFlows(recipe, machines, speed);

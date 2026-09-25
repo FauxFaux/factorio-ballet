@@ -19,7 +19,7 @@ import {
   type Cell,
 } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
-import { complexityOf } from '../src/data/index.ts';
+import { complexityOf, noChoice } from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
 
@@ -198,7 +198,13 @@ describe('entryEffects', () => {
   const entry = { recipe: 'iron-gear-wheel', modules: { 'productivity-module-3': 3 } };
 
   it('is what the modules do in the machine the row is in', () => {
-    const effects = entryEffects(staticData, entry, recipe, 'assembling-machine-3');
+    const effects = entryEffects(
+      staticData,
+      entry,
+      recipe,
+      'assembling-machine-3',
+      noChoice(defaultDataset),
+    );
     expect(effects.productivity).toBeCloseTo(1.36);
     expect(effects.speed).toBeCloseTo(0.55);
   });
@@ -206,14 +212,17 @@ describe('entryEffects', () => {
   it('is worth less in a machine with fewer slots, and nothing in one with none', () => {
     // the same three modules in an assembling machine 2: two slots, so two of them go in
     expect(
-      entryEffects(staticData, entry, recipe, 'assembling-machine-2').productivity,
+      entryEffects(staticData, entry, recipe, 'assembling-machine-2', noChoice(defaultDataset))
+        .productivity,
     ).toBeCloseTo(1.24);
     // and an assembling machine 1 has no slots at all, as the character has not
-    expect(entryEffects(staticData, entry, recipe, 'assembling-machine-1')).toEqual({
+    expect(
+      entryEffects(staticData, entry, recipe, 'assembling-machine-1', noChoice(defaultDataset)),
+    ).toEqual({
       speed: 1,
       productivity: 1,
     });
-    expect(entryEffects(staticData, entry, recipe, 'character')).toEqual({
+    expect(entryEffects(staticData, entry, recipe, 'character', noChoice(defaultDataset))).toEqual({
       speed: 1,
       productivity: 1,
     });
@@ -221,15 +230,19 @@ describe('entryEffects', () => {
 
   it('is 1× for an empty machine, or one the data does not have', () => {
     const bare = { recipe: 'iron-gear-wheel' };
-    expect(entryEffects(staticData, bare, recipe, 'assembling-machine-3')).toEqual({
+    expect(
+      entryEffects(staticData, bare, recipe, 'assembling-machine-3', noChoice(defaultDataset)),
+    ).toEqual({
       speed: 1,
       productivity: 1,
     });
-    expect(entryEffects(staticData, entry, recipe, 'no-such-machine')).toEqual({
+    expect(
+      entryEffects(staticData, entry, recipe, 'no-such-machine', noChoice(defaultDataset)),
+    ).toEqual({
       speed: 1,
       productivity: 1,
     });
-    expect(entryEffects(staticData, entry, recipe, undefined)).toEqual({
+    expect(entryEffects(staticData, entry, recipe, undefined, noChoice(defaultDataset))).toEqual({
       speed: 1,
       productivity: 1,
     });

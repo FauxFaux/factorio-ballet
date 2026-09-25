@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { entryEffects, entryRun, parseModules, type Cell } from '../src/cell.ts';
-import { chosenBeacon, defaultBeacon, type Chosen, defaultBelt } from '../src/data/index.ts';
+import {
+  chosenBeacon,
+  defaultBeacon,
+  type Chosen,
+  defaultBelt,
+  noChoice,
+} from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
 import { chosenModule, SPEED_CATEGORY, type ChosenModules } from '../src/data/modules.ts';
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
@@ -224,10 +230,12 @@ describe('a cell row with beacons', () => {
       beacons: 3,
     });
     // and nothing at all until the header names one
-    expect(entryEffects(staticData, entry, gears, entry.machine)).toEqual({
-      speed: 1,
-      productivity: 1,
-    });
+    expect(entryEffects(staticData, entry, gears, entry.machine, noChoice(defaultDataset))).toEqual(
+      {
+        speed: 1,
+        productivity: 1,
+      },
+    );
   });
 
   it('fills the machine when the row asks for nothing', () => {
@@ -246,8 +254,8 @@ describe('a cell row with beacons', () => {
     // has to be that much bigger: 3.8785 / 1.8, the beaconed row against the auto one
     expect(plates(cell(3)) / plates(cell(undefined))).toBeCloseTo(2.1547);
     // with no speed module chosen at all, the count is the unmodded one
-    expect(solveCell(staticData, cell(3), 0).counts[1]).toBeCloseTo(
-      solveCell(staticData, cell(0), 0).counts[1]!,
+    expect(solveCell(staticData, cell(3), 0, noChoice(defaultDataset)).counts[1]).toBeCloseTo(
+      solveCell(staticData, cell(0), 0, noChoice(defaultDataset)).counts[1]!,
     );
   });
 });

@@ -200,7 +200,7 @@ stays an answer rather than a question.
 
 `Chosen` is the pair of those decisions — `{ modules, beacon }` — resolved once by `resolveChosen`
 in `App` and handed down to the cells, so a row is given modules and a beacon rather than a
-preference to re-resolve. `NO_CHOICE` is the empty one: no modules, no beacons, which is the crash
+preference to re-resolve. `noChoice()` is the empty one: no modules, no beacons, which is the crash
 site and what every default argument takes.
 
 `defaultModule` is deliberately **not** `defaultMachine`'s nearest-`progress` rule — it is the best

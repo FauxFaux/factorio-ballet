@@ -1,4 +1,4 @@
-import { complexityOf, NO_CHOICE, resourceName, type Chosen } from './data/index.ts';
+import { complexityOf, resourceName, type Chosen } from './data/index.ts';
 import { defaultMachine, machinesFor } from './data/machines.ts';
 import { netRates } from './compute/flow.ts';
 import {
@@ -139,7 +139,7 @@ export function entryEffects(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  chosen: Chosen = NO_CHOICE,
+  chosen: Chosen,
 ): Effects {
   return entryRun(data, entry, recipe, machine, chosen).effects;
 }
@@ -165,7 +165,7 @@ export function entryRun(
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
-  chosen: Chosen = NO_CHOICE,
+  chosen: Chosen,
 ): EntryRun {
   const found = machine === undefined ? undefined : data.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };

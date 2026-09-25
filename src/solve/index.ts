@@ -1,6 +1,6 @@
 import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } from '../cell.ts';
 import { machinesFor } from '../data/machines.ts';
-import { NO_CHOICE, recipeName, resourceName, type Chosen } from '../data/index.ts';
+import { recipeName, resourceName, type Chosen } from '../data/index.ts';
 import { directionalRates, netRates, speedOf } from '../compute/flow.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId, StaticData } from '../types.ts';
@@ -69,7 +69,7 @@ export function solveCell(
   data: StaticData,
   cell: Cell,
   progress: number,
-  chosen: Chosen = NO_CHOICE,
+  chosen: Chosen,
   solver: Solver = defaultSolver,
 ): Solution {
   const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen, defaultDataset));

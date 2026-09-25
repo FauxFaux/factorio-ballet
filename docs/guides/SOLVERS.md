@@ -155,7 +155,7 @@ It does not recommend underdetermined trials, combinations of boundaries, or cha
 ### Investigation steps
 
 1. Preserve the user's state and debug fixtures. Resolve the same progress, machines, modules and
-   beacons as the UI. `solveCell` defaults to `NO_CHOICE`; calling it without the saved header's
+   beacons as the UI. `solveCell` defaults to `noChoice`; calling it without the saved header's
    resolved `Chosen` can reproduce different rates.
    `../../test/components/cell/cell-export.test.tsx` shows how to resolve the uranium fixture using
    `resolveChosen`.

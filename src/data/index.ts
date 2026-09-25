@@ -1,5 +1,5 @@
 import type { Beacon, BeaconId, Belt, BeltId, ResourceId, StaticData } from '../types.ts';
-import { defaultDataset, type Dataset } from '../dataset';
+import { type Dataset } from '../dataset';
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
 
@@ -130,7 +130,7 @@ export function chosenBelt(ds: Dataset, choice: BeltChoice, progress: number): B
  * One object because it is one decision — what you have built by now — and every row spends all of
  * it. A row states how many modules it wants for an effect and never which module, which family or
  * which beacon, so this is where those decisions are answered once for the app rather than once per
- * row. {@link NO_CHOICE} is the empty answer: no modules, no beacons, which is the crash site.
+ * row. {@link noChoice} is the empty answer: no modules, no beacons, which is the crash site.
  */
 export interface Chosen {
   modules: ChosenModules;
@@ -140,7 +140,9 @@ export interface Chosen {
 }
 
 /** Nothing chosen at all: an unmodded machine with no beacons round it. */
-export const NO_CHOICE: Chosen = { modules: {}, belt: defaultBelt(defaultDataset, 0).belt };
+export function noChoice(ds: Dataset): Chosen {
+  return { modules: {}, belt: defaultBelt(ds, 0).belt };
+}
 
 /** Every part of {@link Chosen} resolved against the header's choices and the progress slider. */
 export function resolveChosen(

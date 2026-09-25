@@ -8,12 +8,14 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { CellList } from '../../src/components/cell-list.tsx';
 import { CellLayoutSurface } from '../../src/components/layout/layout.tsx';
 import { newCell, type Cell } from '../../src/cell.ts';
-import { NO_CHOICE } from '../../src/data';
+import { noChoice } from '../../src/data';
 import type { ResourceId } from '../../src/types.ts';
+import { useDataset } from '../../src/dataset/context.tsx';
 
 afterEach(cleanup);
 
 function CellListExample({ cell = newCell() }: { cell?: Cell }) {
+  const ds = useDataset();
   const cells = useState<Cell[]>([cell]);
   const active = useState(0);
   return (
@@ -21,7 +23,7 @@ function CellListExample({ cell = newCell() }: { cell?: Cell }) {
       cells={cells}
       active={active}
       progress={0}
-      chosen={NO_CHOICE}
+      chosen={noChoice(ds)}
       setSearch={() => undefined}
     />
   );
