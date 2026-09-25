@@ -33,11 +33,11 @@ export function RecipeSuggestions({
   const suggestions = useMemo(() => {
     const imports = new Set(cell?.imports);
     const exports = new Set(cell?.exports);
-    return suggestedRecipePaths(search, cell, resource).filter((suggestion) => {
+    return suggestedRecipePaths(data, search, cell, resource).filter((suggestion) => {
       if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
       return !exports.has(suggestion.resource);
     });
-  }, [search, cell, resource]);
+  }, [data, search, cell, resource]);
   return (
     <section class="recipe-suggestions" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>

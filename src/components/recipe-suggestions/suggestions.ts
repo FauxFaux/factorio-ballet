@@ -1,5 +1,5 @@
 import { cellInterface, type Cell } from '../../cell.ts';
-import { staticData } from '../../data/decode.ts';
+import type { StaticData } from '../../types.ts';
 import { isBarrelling, isUnbarrelling } from '../../compute/recipes.ts';
 import type { ResourceId } from '../../types.ts';
 import { voidPlanFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
@@ -43,33 +43,29 @@ export const suggestionScoreWeights = {
   void: 10,
 } as const;
 
-const staticVoidPlans = voidPlanFinder(staticData);
-const freeOneStepProducts = new Set(staticData.suggestionPreload.fromAirOneStepProducts);
-const singleStepVoidableResources = new Set(
-  staticData.suggestionPreload.singleStepVoidableResources,
-);
-
-function isRecommendedPlan(plan: ResourceChain | VoidPlan) {
+function isRecommendedPlan(data: StaticData, plan: ResourceChain | VoidPlan) {
   return plan.recipes.every((id) => {
-    const recipe = staticData.recipes[id];
+    const recipe = data.recipes[id];
     return recipe && !isBarrelling(recipe) && !isUnbarrelling(recipe);
   });
 }
 
 function calculateScoreFactors(
   plan: ResourceChain | VoidPlan,
+  data: StaticData,
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
   present: ReadonlySet<ResourceId>,
   involvedRecipeCount = 0,
   suppliedInputs = existingInputs,
 ) {
+  const singleStepVoidableResources = new Set(data.suggestionPreload.singleStepVoidableResources);
   const inputs = isResourceChain(plan) ? plan.inputs : [];
   const outputs = isResourceChain(plan) ? plan.outputs : [];
   const catalysts = [
     ...new Set(
       plan.recipes.flatMap((id) => {
-        const recipe = staticData.recipes[id];
+        const recipe = data.recipes[id];
         if (!recipe) return [];
         const ingredients = new Set(recipe.ingredients.map(({ resource }) => resource));
         return recipe.products
@@ -83,7 +79,7 @@ function calculateScoreFactors(
   ].filter((resource) => !present.has(resource) && !inputs.includes(resource));
   const allInputs = [...inputs, ...catalysts];
   const inputComplexity = allInputs.reduce(
-    (total, resource) => total + 1 + (staticData.resources[resource]?.complexity ?? 0),
+    (total, resource) => total + 1 + (data.resources[resource]?.complexity ?? 0),
     0,
   );
   return {
@@ -112,6 +108,7 @@ function calculateScoreFactors(
 }
 
 export function scoreRecipeSuggestion(
+  data: StaticData,
   plan: ResourceChain | VoidPlan,
   existingInputs: ReadonlySet<ResourceId>,
   existingOutputs: ReadonlySet<ResourceId>,
@@ -120,6 +117,7 @@ export function scoreRecipeSuggestion(
 ) {
   const factors = calculateScoreFactors(
     plan,
+    data,
     existingInputs,
     existingOutputs,
     present,
@@ -129,6 +127,7 @@ export function scoreRecipeSuggestion(
 }
 
 function pathSuggestion(
+  data: StaticData,
   resource: ResourceId,
   kind: PathSuggestion['kind'],
   plan: ResourceChain | VoidPlan,
@@ -141,6 +140,7 @@ function pathSuggestion(
 ): PathSuggestion {
   const scoreFactors = calculateScoreFactors(
     plan,
+    data,
     inputs,
     outputs,
     present,
@@ -165,10 +165,13 @@ function pathSuggestion(
 }
 
 export function suggestedRecipePaths(
+  data: StaticData,
   search: string,
   cell?: Cell,
   resource?: ResourceId,
 ): PathSuggestion[] {
+  const staticVoidPlans = voidPlanFinder(data);
+  const freeOneStepProducts = new Set(data.suggestionPreload.fromAirOneStepProducts);
   const searched = new Set(usedSearchResources(search, cell));
   const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
@@ -182,7 +185,7 @@ export function suggestedRecipePaths(
     ...existingInputs,
     ...existingOutputs,
     ...(cell?.entries.flatMap(({ recipe: id }) => {
-      const recipe = staticData.recipes[id];
+      const recipe = data.recipes[id];
       return recipe
         ? [...recipe.ingredients, ...recipe.products].map(({ resource }) => resource)
         : [];
@@ -195,12 +198,15 @@ export function suggestedRecipePaths(
     if (!searched.has(id) && id !== resource && !plans.length && !resourceChains.length) return [];
     return [
       ...plans
-        .filter(isRecommendedPlan)
-        .map((plan) => pathSuggestion(id, 'void', plan, existingInputs, existingOutputs, present)),
+        .filter((plan) => isRecommendedPlan(data, plan))
+        .map((plan) =>
+          pathSuggestion(data, id, 'void', plan, existingInputs, existingOutputs, present),
+        ),
       ...resourceChains
-        .filter(isRecommendedPlan)
+        .filter((plan) => isRecommendedPlan(data, plan))
         .map((plan) =>
           pathSuggestion(
+            data,
             id,
             'chain',
             plan,
@@ -215,16 +221,27 @@ export function suggestedRecipePaths(
     ];
   });
   const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>
-    pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
+    pathSuggestion(data, plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
   );
   const freeInputSuggestions = suggestedFreeInputs(cell).map((plan) =>
-    pathSuggestion(plan.target, 'input', plan, existingInputs, existingOutputs, present, 0, true),
+    pathSuggestion(
+      data,
+      plan.target,
+      'input',
+      plan,
+      existingInputs,
+      existingOutputs,
+      present,
+      0,
+      true,
+    ),
   );
   const outputSuggestions = suggestedSoleConsumerOutputs(cell).map((plan) =>
-    pathSuggestion(plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
+    pathSuggestion(data, plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
   );
   const fewInputSuggestions = suggestedFewProducerInputs(cell).map((plan) =>
     pathSuggestion(
+      data,
       plan.target,
       'input',
       plan,
@@ -236,6 +253,7 @@ export function suggestedRecipePaths(
   );
   const fewOutputSuggestions = suggestedFewConsumerOutputs(cell).map((plan) =>
     pathSuggestion(
+      data,
       plan.target,
       'output',
       plan,

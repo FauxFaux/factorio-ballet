@@ -132,7 +132,9 @@ describe('single-recipe interface suggestions', () => {
   });
 
   it('gives a sole consumer a high certainty score', () => {
-    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'bob-speed-processor' }] });
+    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+      entries: [{ recipe: 'bob-speed-processor' }],
+    });
     const soleConsumer = paths.find(
       (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
     );
@@ -161,7 +163,9 @@ describe('free input suggestions', () => {
   });
 
   it('puts a free chain ahead of ordinary ways to supply the same cell input', () => {
-    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-water-gas-shift-1' }] });
+    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+      entries: [{ recipe: 'angels-water-gas-shift-1' }],
+    });
     const steam = paths.find(
       (path) =>
         path.kind === 'input' &&
@@ -174,7 +178,9 @@ describe('free input suggestions', () => {
   });
 
   it('does not repeat a free input which is also the sole producer', () => {
-    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-steam-water' }] });
+    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+      entries: [{ recipe: 'angels-steam-water' }],
+    });
     const pumpingWater = paths.filter(
       (path) =>
         path.kind === 'input' &&
@@ -219,7 +225,9 @@ describe('few-recipe interface suggestions', () => {
   });
 
   it('extends competing producers with their free upstream inputs before scoring them', () => {
-    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'angels-gas-carbon-monoxide' }] });
+    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+      entries: [{ recipe: 'angels-gas-carbon-monoxide' }],
+    });
     const carbonPlans = paths.filter(
       (path) => path.kind === 'input' && path.resource === 'item:angels-solid-carbon',
     );
@@ -253,14 +261,14 @@ describe('few-recipe interface suggestions', () => {
 describe('scoreRecipeSuggestion', () => {
   it('gives two- and three-recipe alternatives progressively lower certainty scores', () => {
     const plan = { recipes: ['first'] };
-    const base = scoreRecipeSuggestion(plan, new Set(), new Set());
+    const base = scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set());
 
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set(), undefined, 2) - base).toBe(
-      suggestionScoreWeights.twoRecipes,
-    );
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set(), undefined, 3) - base).toBe(
-      suggestionScoreWeights.threeRecipes,
-    );
+    expect(
+      scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set(), undefined, 2) - base,
+    ).toBe(suggestionScoreWeights.twoRecipes);
+    expect(
+      scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set(), undefined, 3) - base,
+    ).toBe(suggestionScoreWeights.threeRecipes);
     expect(suggestionScoreWeights.twoRecipes).toBeGreaterThan(suggestionScoreWeights.threeRecipes);
     expect(suggestionScoreWeights.twoRecipes).toBeLessThan(suggestionScoreWeights.soleProducer);
   });
@@ -273,9 +281,9 @@ describe('scoreRecipeSuggestion', () => {
       outputs: [],
     };
 
-    expect(scoreRecipeSuggestion(plan, new Set(['item:iron-plate']), new Set())).toBeGreaterThan(
-      scoreRecipeSuggestion(plan, new Set(), new Set()),
-    );
+    expect(
+      scoreRecipeSuggestion(defaultDataset.data, plan, new Set(['item:iron-plate']), new Set()),
+    ).toBeGreaterThan(scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set()));
   });
 
   it('charges every required input, including zero-complexity resources', () => {
@@ -290,11 +298,15 @@ describe('scoreRecipeSuggestion', () => {
       outputs: [],
     };
 
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeCloseTo(-19.935);
+    expect(scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set())).toBeCloseTo(
+      -19.935,
+    );
   });
 
   it('shows the supplied-input bonus as an output score factor', () => {
-    const paths = suggestedRecipePaths('', { entries: [{ recipe: 'speed-module-3' }] });
+    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+      entries: [{ recipe: 'speed-module-3' }],
+    });
     const suggestion = paths.find(
       (path) => path.kind === 'input' && path.resource === 'item:speed-module-2',
     );
@@ -313,8 +325,15 @@ describe('scoreRecipeSuggestion', () => {
     const disconnected = { ...connected, inputs: ['item:wood'], outputs: ['item:fish'] };
 
     expect(
-      scoreRecipeSuggestion(connected, new Set(['item:coal']), new Set(['item:stone'])),
-    ).toBeGreaterThan(scoreRecipeSuggestion(disconnected, new Set(), new Set()));
+      scoreRecipeSuggestion(
+        defaultDataset.data,
+        connected,
+        new Set(['item:coal']),
+        new Set(['item:stone']),
+      ),
+    ).toBeGreaterThan(
+      scoreRecipeSuggestion(defaultDataset.data, disconnected, new Set(), new Set()),
+    );
   });
 
   it('does not penalize a side product which can be voided in one step', () => {
@@ -325,8 +344,8 @@ describe('scoreRecipeSuggestion', () => {
       outputs: [waste],
     };
 
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBe(
-      scoreRecipeSuggestion({ ...plan, outputs: [] }, new Set(), new Set()),
+    expect(scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set())).toBe(
+      scoreRecipeSuggestion(defaultDataset.data, { ...plan, outputs: [] }, new Set(), new Set()),
     );
   });
 
@@ -334,8 +353,8 @@ describe('scoreRecipeSuggestion', () => {
     const plan = { recipes: ['angels-ore8-powder'] };
     const catalyst = 'item:angels-milling-drum';
 
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeLessThan(
-      scoreRecipeSuggestion(plan, new Set(), new Set([catalyst])),
+    expect(scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set())).toBeLessThan(
+      scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set([catalyst])),
     );
   });
 
@@ -343,22 +362,22 @@ describe('scoreRecipeSuggestion', () => {
     const plan = { recipes: ['angels-water-enriched-cooling-1'] };
     const catalyst = 'fluid:angels-liquid-water-semiheavy-1';
 
-    expect(scoreRecipeSuggestion(plan, new Set(), new Set())).toBeLessThan(
-      scoreRecipeSuggestion(plan, new Set(), new Set([catalyst])),
+    expect(scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set())).toBeLessThan(
+      scoreRecipeSuggestion(defaultDataset.data, plan, new Set(), new Set([catalyst])),
     );
   });
 });
 
 describe('suggestedRecipePaths', () => {
   it('gives void suggestions an additional certainty score', () => {
-    const paths = suggestedRecipePaths(`uses:${waste}`);
+    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`);
     const voidSuggestion = paths.find((path) => path.kind === 'void');
 
     expect(voidSuggestion?.scoreFactors.certainty).toBe(suggestionScoreWeights.void);
   });
 
   it('puts a chain which supplies a cell input ahead of a shorter void route', () => {
-    const paths = suggestedRecipePaths(`uses:${waste}`, {
+    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
     });
 
@@ -378,7 +397,7 @@ describe('suggestedRecipePaths', () => {
     const entries = [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }];
     const target = 'fluid:angels-liquid-sulfuric-acid' as const;
     const findCycle = (cell: Cell) =>
-      suggestedRecipePaths(`uses:${waste}`, cell).find(
+      suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, cell).find(
         (path) => path.kind === 'chain' && 'target' in path.plan && path.plan.target === target,
       );
 
@@ -390,7 +409,7 @@ describe('suggestedRecipePaths', () => {
   });
 
   it('treats products one free air-processing step away as available inputs', () => {
-    const paths = suggestedRecipePaths(`uses:${waste}`, {
+    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
     });
     const sulfuricAcid = paths.find(
@@ -405,7 +424,7 @@ describe('suggestedRecipePaths', () => {
   });
 
   it('limits the combined path suggestions to the ten best candidates', () => {
-    const paths = suggestedRecipePaths(`uses:${waste}`);
+    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`);
 
     expect(paths.length).toBeLessThanOrEqual(10);
     expect(paths.map((path) => path.score)).toEqual(
@@ -415,7 +434,7 @@ describe('suggestedRecipePaths', () => {
 
   it('excludes barrel conversion recipes from void recommendations', () => {
     const water = 'fluid:water' as const;
-    const paths = suggestedRecipePaths(`uses:${water}`);
+    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${water}`);
 
     expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('water-barrel');
     expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('empty-water-barrel');
@@ -486,7 +505,7 @@ describe('RecipeSuggestions', () => {
 
   it('shows the effects of a suggested output recipe', () => {
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
-    const suggestion = suggestedRecipePaths('', cell).find(
+    const suggestion = suggestedRecipePaths(defaultDataset.data, '', cell).find(
       (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
     );
     expect(suggestion).toBeDefined();
@@ -513,7 +532,7 @@ describe('RecipeSuggestions', () => {
   it('adds every recipe in a suggested path from its card button in reverse order', async () => {
     const user = userEvent.setup();
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
-    const path = suggestedRecipePaths('', cell)[0]!;
+    const path = suggestedRecipePaths(defaultDataset.data, '', cell)[0]!;
     const onAdd = vi.fn();
     const { container } = render(h(RecipeSuggestions, { search: '', cell, progress: 0, onAdd }));
 
