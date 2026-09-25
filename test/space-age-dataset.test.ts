@@ -22,5 +22,6 @@ describe('Space Age dataset', () => {
     expect(staticData.recipes['casting-iron'].categories).toEqual(['metallurgy']);
     expect(new Set(Object.values(iconMap).map(([url]) => url)).size).toBe(1);
     expect(iconMap['item:item-unknown']).toBeDefined();
+    expect(iconMap['item:item-unknown']?.slice(3)).toEqual([896, 864]);
   });
 });

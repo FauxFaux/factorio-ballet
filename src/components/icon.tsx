@@ -1,4 +1,4 @@
-import { type IconMap } from '../data/icon-map.ts';
+import { type Icon, type IconMap } from '../data/icon-map.ts';
 import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 
 /** A plain fluid droplet for fluids which have a colour, but no icon artwork. */
@@ -25,7 +25,7 @@ export function GenericSolidIcon({ color }: { color: string }) {
 }
 
 /** Look up an icon sprite without exposing the decoded sprite table to eager modules. */
-export function iconSprite(iconMap: IconMap, ...keys: string[]): [string, number, number, number] {
+export function iconSprite(iconMap: IconMap, ...keys: string[]): Icon {
   for (const key of keys) {
     const icon = iconMap[key];
     if (icon) return icon;
@@ -45,8 +45,8 @@ export function iconStyle(iconMap: IconMap, ...keys: string[]): string {
   return spriteStyle(iconSprite(iconMap, ...keys));
 }
 
-function spriteStyle([url, x, y, sheetSize]: [string, number, number, number]): string {
-  return `background: url("${url}") ${-x / 18}rem ${-y / 18}rem / ${sheetSize / 18}rem no-repeat`;
+function spriteStyle([url, x, y, sheetWidth]: Icon): string {
+  return `background: url("${url}") ${-x / 18}rem ${-y / 18}rem / ${sheetWidth / 18}rem no-repeat`;
 }
 
 /** Machines with no item of their own to borrow an icon from, and what stands in instead. */

@@ -18,6 +18,6 @@ export async function spaceAge(): Promise<DatasetInput> {
   if (typeof Image !== 'undefined') void preloadImage(iconsUrl);
   return {
     staticData: decodeStaticData(packed),
-    iconMap: iconsFromSheet(iconsUrl, iconsJson.default, 896),
+    iconMap: iconsFromSheet(iconsUrl, iconsJson.default, 896, 864),
   };
 }

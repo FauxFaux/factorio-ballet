@@ -199,7 +199,7 @@ function RecipeIcon({
   const { data, iconMap } = useDataset();
   const recipeData = data.recipes[recipe];
   const product = recipeData?.products[0]?.resource;
-  const [url, spriteX, spriteY, sheetSize] = iconSprite(
+  const [url, spriteX, spriteY, sheetWidth, sheetHeight] = iconSprite(
     iconMap,
     `recipe:${recipe}`,
     ...(product ? [product] : []),
@@ -217,7 +217,7 @@ function RecipeIcon({
       aria-label={name}
     >
       <title>{name}</title>
-      <image href={url} width={sheetSize} height={sheetSize} />
+      <image href={url} width={sheetWidth} height={sheetHeight} />
     </svg>
   );
 }

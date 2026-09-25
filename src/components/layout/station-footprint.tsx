@@ -12,7 +12,7 @@ export const OUTPUT_STATION_BOUNDS = { left: -8, top: 2, right: -3, bottom: 20.5
 
 function StationResourceIcon({ resource, x, y }: { resource: ResourceId; x: number; y: number }) {
   const { iconMap } = useDataset();
-  const [url, spriteX, spriteY, sheetSize] = iconSprite(
+  const [url, spriteX, spriteY, sheetWidth, sheetHeight] = iconSprite(
     iconMap,
     resource,
     resource.startsWith('fluid:') ? 'fluid:fluid-unknown' : 'item:item-unknown',
@@ -30,7 +30,7 @@ function StationResourceIcon({ resource, x, y }: { resource: ResourceId; x: numb
         viewBox={`${spriteX} ${spriteY} 32 32`}
         aria-hidden="true"
       >
-        <image href={url} width={sheetSize} height={sheetSize} />
+        <image href={url} width={sheetWidth} height={sheetHeight} />
       </svg>
     </g>
   );

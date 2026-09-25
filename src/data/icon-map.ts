@@ -1,11 +1,19 @@
-type Icon = [url: string, x: number, y: number, sheetSize: number];
+export type Icon = [url: string, x: number, y: number, sheetWidth: number, sheetHeight: number];
 type IconData = Record<string, [number, number]>;
 
 export type IconMap = Record<string, Icon>;
 
-export function iconsFromSheet(url: string, data: unknown, sheetSize: number): IconMap {
+export function iconsFromSheet(
+  url: string,
+  data: unknown,
+  sheetWidth: number,
+  sheetHeight = sheetWidth,
+): IconMap {
   return Object.fromEntries(
-    Object.entries(data as IconData).map(([key, [x, y]]) => [key, [url, x, y, sheetSize]]),
+    Object.entries(data as IconData).map(([key, [x, y]]) => [
+      key,
+      [url, x, y, sheetWidth, sheetHeight],
+    ]),
   );
 }
 

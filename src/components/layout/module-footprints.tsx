@@ -197,7 +197,7 @@ export function ModuleFootprints({
       })}
       {placed.map(({ module, x, y }) => {
         const product = data.recipes[module.recipe]?.products[0]?.resource;
-        const [url, spriteX, spriteY, sheetSize] = iconSprite(
+        const [url, spriteX, spriteY, sheetWidth, sheetHeight] = iconSprite(
           iconMap,
           `recipe:${module.recipe}`,
           ...(product ? [product] : []),
@@ -248,7 +248,7 @@ export function ModuleFootprints({
               viewBox={`${spriteX} ${spriteY} 32 32`}
               aria-hidden="true"
             >
-              <image href={url} width={sheetSize} height={sheetSize} />
+              <image href={url} width={sheetWidth} height={sheetHeight} />
             </svg>
           </g>
         );
