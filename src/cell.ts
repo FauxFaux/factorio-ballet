@@ -169,6 +169,7 @@ export function entryRun(
   const found = machine === undefined ? undefined : data.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
   return laidOutEffects(
+    data,
     found,
     entry.modules,
     recipe,

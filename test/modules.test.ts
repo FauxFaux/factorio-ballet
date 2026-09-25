@@ -93,12 +93,17 @@ describe('modulesFor', () => {
 
 describe('moduleEffects', () => {
   it('is 1× on both counts for an empty machine', () => {
-    expect(moduleEffects(assembler, {}, gears)).toEqual({ speed: 1, productivity: 1 });
+    expect(moduleEffects(staticData, assembler, {}, gears)).toEqual({ speed: 1, productivity: 1 });
   });
 
   it('adds a module up once per slot, not compounding', () => {
     // three speed module 3s at +40% each: 2.2×, and an assembling machine 3 is 1.25 to start with
-    const effects = moduleEffects(assembler, fillSlots(assembler, 'speed-module-3'), gears);
+    const effects = moduleEffects(
+      staticData,
+      assembler,
+      fillSlots(assembler, 'speed-module-3'),
+      gears,
+    );
     expect(fillSlots(assembler, 'speed-module-3')).toEqual({ 'speed-module-3': 3 });
     expect(effects.speed).toBeCloseTo(2.2);
     expect(effects.productivity).toBe(1);
@@ -106,23 +111,33 @@ describe('moduleEffects', () => {
   });
 
   it('pays for productivity in speed', () => {
-    const effects = moduleEffects(assembler, fillSlots(assembler, 'productivity-module-3'), gears);
+    const effects = moduleEffects(
+      staticData,
+      assembler,
+      fillSlots(assembler, 'productivity-module-3'),
+      gears,
+    );
     expect(effects.productivity).toBeCloseTo(1.36);
     expect(effects.speed).toBeCloseTo(0.55);
   });
 
   it('gives no productivity on a recipe which does not allow it, and still charges the speed', () => {
     const fill = fillSlots(assembler, 'productivity-module-3');
-    expect(moduleEffects(assembler, fill, circuits)).toEqual({
-      ...moduleEffects(assembler, fill, gears),
+    expect(moduleEffects(staticData, assembler, fill, circuits)).toEqual({
+      ...moduleEffects(staticData, assembler, fill, gears),
       productivity: 1,
     });
   });
 
   it('mixes modules, and ignores one we did not ingest', () => {
     const effects = moduleEffects(
+      staticData,
       assembler,
-      { 'speed-module-3': 2, 'productivity-module-3': 1, 'efficiency-module-3': 1 },
+      {
+        'speed-module-3': 2,
+        'productivity-module-3': 1,
+        'efficiency-module-3': 1,
+      },
       gears,
     );
     expect(effects.speed).toBeCloseTo(1.65);
@@ -131,12 +146,15 @@ describe('moduleEffects', () => {
 
   it('takes only as many modules as the machine has slots', () => {
     // five named, three slots: the loadout outlived a change of machine, and the answer must not
-    expect(moduleEffects(assembler, { 'speed-module-3': 5 }, gears).speed).toBeCloseTo(2.2);
+    expect(moduleEffects(staticData, assembler, { 'speed-module-3': 5 }, gears).speed).toBeCloseTo(
+      2.2,
+    );
   });
 
   it('fills those slots in the order the modules were chosen', () => {
     // two speed and two productivity into three slots: the last one named is the one left out
     const effects = moduleEffects(
+      staticData,
       assembler,
       { 'productivity-module-3': 2, 'speed-module-3': 2 },
       gears,
@@ -147,14 +165,18 @@ describe('moduleEffects', () => {
 
   it('ignores a module the machine will not take, slot and all', () => {
     const fill = { 'angels-bio-yield-module-5': 2 };
-    expect(moduleEffects(assembler, fill, gears)).toEqual({ speed: 1, productivity: 1 });
+    expect(moduleEffects(staticData, assembler, fill, gears)).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
     // the same two modules in the machine which is their only home
-    expect(moduleEffects(farm, fill, garden)).toEqual({ speed: 1, productivity: 2 });
+    expect(moduleEffects(staticData, farm, fill, garden)).toEqual({ speed: 1, productivity: 2 });
   });
 
   it('will not slow a machine below a fifth of its speed', () => {
     // eight bob productivity module 5s is −200%, which the game floors at 20%
     const effects = moduleEffects(
+      staticData,
       drill,
       fillSlots(drill, 'bob-productivity-module-5'),
       staticData.recipes['synthetic:mining-coal'],

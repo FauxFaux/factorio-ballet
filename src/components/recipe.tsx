@@ -10,6 +10,7 @@ import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
+import { staticData } from '../data/decode.ts';
 
 /**
  * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
@@ -133,11 +134,16 @@ function beaconedSpeed(
   const machine = machines.find(({ id }) => id === machineId)?.machine;
   if (!machine) return 1;
   return laidOutEffects(
+    staticData,
     machine,
     undefined,
     recipe,
     chosen.modules,
-    { productivity: 0, speed: 0, beacons },
+    {
+      productivity: 0,
+      speed: 0,
+      beacons,
+    },
     chosen.beacon,
   ).effects.speed;
 }

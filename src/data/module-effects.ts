@@ -8,8 +8,7 @@ import {
   type BoostEffect,
   type ChosenModules,
 } from './modules.ts';
-import { staticData } from './decode.ts';
-import type { Beacon, Machine, ModuleId, Recipe } from '../types.ts';
+import type { Beacon, Machine, ModuleId, Recipe, StaticData } from '../types.ts';
 
 export interface Effects {
   speed: number;
@@ -32,13 +31,13 @@ interface Slots {
   free: number;
 }
 
-function slotEffects(machine: Machine, fill: ModuleFill): Slots {
+function slotEffects(data: StaticData, machine: Machine, fill: ModuleFill): Slots {
   let speed = 0;
   let productivity = 0;
   let free = machine.moduleSlots ?? 0;
   for (const [id, count] of Object.entries(fill)) {
     if (free <= 0) break;
-    const module = staticData.modules[id];
+    const module = data.modules[id];
     if (!module || !(count > 0)) continue;
     if (!takesCategory(machine, module.category)) continue;
     const fitted = Math.min(count, free);
@@ -58,8 +57,13 @@ function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: B
   return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
 }
 
-export function moduleEffects(machine: Machine, fill: ModuleFill, recipe: Recipe): Effects {
-  return applyBoost(machine, recipe, slotEffects(machine, fill));
+export function moduleEffects(
+  data: StaticData,
+  machine: Machine,
+  fill: ModuleFill,
+  recipe: Recipe,
+): Effects {
+  return applyBoost(machine, recipe, slotEffects(data, machine, fill));
 }
 
 export interface Boost {
@@ -84,6 +88,7 @@ export const NO_BOOST: Boost = {
 };
 
 export function moduleBoost(
+  data: StaticData,
   machine: Machine,
   free: number,
   module: ModuleId | undefined,
@@ -91,7 +96,7 @@ export function moduleBoost(
   beacon: Beacon | undefined,
   wantedBeacons = 0,
 ): Boost {
-  const found = module === undefined ? undefined : staticData.modules[module];
+  const found = module === undefined ? undefined : data.modules[module];
   if (!module || !found || !machine.moduleSlots) return NO_BOOST;
   const effect = categoryEffect(found.category);
   const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
@@ -143,6 +148,7 @@ export const NO_LAYOUT: Layout = {
 };
 
 export function moduleLayout(
+  data: StaticData,
   machine: Machine,
   free: number,
   recipe: Recipe,
@@ -158,6 +164,7 @@ export function moduleLayout(
   };
   const auto = reaches.productivity ? slots : 0;
   const productivity = moduleBoost(
+    data,
     machine,
     slots,
     moduleFor(machine, 'productivity', modules),
@@ -165,6 +172,7 @@ export function moduleLayout(
     beacon,
   );
   const speed = moduleBoost(
+    data,
     machine,
     slots - productivity.inMachine,
     moduleFor(machine, 'speed', modules),
@@ -185,6 +193,7 @@ export function moduleLayout(
 }
 
 export function laidOutEffects(
+  data: StaticData,
   machine: Machine,
   fill: ModuleFill | undefined,
   recipe: Recipe,
@@ -192,8 +201,8 @@ export function laidOutEffects(
   wants: ModuleWants,
   beacon: Beacon | undefined,
 ): { effects: Effects; layout: Layout } {
-  const slots = slotEffects(machine, fill ?? {});
-  const layout = moduleLayout(machine, slots.free, recipe, modules, wants, beacon);
+  const slots = slotEffects(data, machine, fill ?? {});
+  const layout = moduleLayout(data, machine, slots.free, recipe, modules, wants, beacon);
   return {
     effects: applyBoost(machine, recipe, slots, layout.productivity, layout.speed),
     layout,
