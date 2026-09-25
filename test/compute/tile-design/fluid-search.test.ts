@@ -306,6 +306,59 @@ describe('fluid tile search', () => {
     }
   });
 
+  it('keeps compact fluid input trunks beside a solid output belt', () => {
+    const problem = assemblerProblem({
+      assemblerName: 'Chemical plant',
+      fluidInputs: [200, 200],
+      solidOutputs: [5],
+      fluidBoxes: [
+        ...[-1, 1].map((x) => ({
+          productionType: 'input' as const,
+          connections: [
+            {
+              position: { x, y: -1 },
+              direction: 'north' as const,
+              flowDirection: 'input' as const,
+            },
+          ],
+        })),
+        ...[-1, 1].map((x) => ({
+          productionType: 'output' as const,
+          connections: [
+            {
+              position: { x, y: 1 },
+              direction: 'south' as const,
+              flowDirection: 'output' as const,
+            },
+          ],
+        })),
+      ],
+    });
+    const result = solveKernelTileDesign(problem, {
+      beltItemsPerSecond: 75,
+      inserterItemsPerSecond: 37.5,
+      longInserterItemsPerSecond: 5.1,
+    });
+    expect('status' in result && result.status, JSON.stringify(result)).toBe('found');
+    if ('status' in result && result.status === 'found') {
+      expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+      expect(result.candidate.width).toBe(7);
+      expect(result.candidate.boundary.filter(({ kind }) => kind === 'belt')).toHaveLength(1);
+      expect(result.candidate.transfers).toHaveLength(2);
+    }
+  });
+
+  it('keeps compact fluid output trunks beside a solid input belt', () => {
+    const input = pairedOutputsProblem(true);
+    input.machines[0].inputs.fluids = [];
+    input.boundary.inputs.fluids = [];
+    const result = found(solveTileDesign(input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(result.candidate.width).toBe(7);
+    expect(result.candidate.transfers).toHaveLength(2);
+    expect(result.candidate.boundary.filter(({ kind }) => kind === 'belt')).toHaveLength(1);
+  });
+
   it('uses compact underground trunks for two fluid inputs', () => {
     const input = pairedInputsProblem();
     const result = found(solveTileDesign(input));

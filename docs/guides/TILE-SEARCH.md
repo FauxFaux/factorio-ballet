@@ -76,18 +76,25 @@ one assigned box per fluid and side to connect to an advertised trunk. Pipes tou
 boxes must still carry the correct fluid. Per-pipe resource assignments and per-trunk fluid
 identities are emitted explicitly.
 
-The current family uses full surface pipe trunks and horizontal pipe pairs. Belt tunnels stay wholly
-inside one tile, with exposed surface connections at the top and bottom, so finite modules need no
-extra tunnel end caps. Periodic fluid adjacency is checked with wrapped seam edges; horizontal
-pairing cannot reach a neighboring copy. Straight, non-overlapping in-tile belt pairs likewise
-cannot steal another copy's partner. Validation rejects vertical underground pipe phases and
-unsupported belt routes.
+The one-machine family uses full surface pipe trunks and horizontal pipe pairs. Belt tunnels stay
+wholly inside one tile, with exposed surface connections at the top and bottom, so finite modules
+need no extra tunnel end caps. Periodic fluid adjacency is checked with wrapped seam edges;
+horizontal pairing cannot reach a neighboring copy. Straight, non-overlapping in-tile belt pairs
+likewise cannot steal another copy's partner. Validation also checks vertical underground pipe
+phases, including pairs that cross the seam, and rejects unsupported belt routes.
 
-Other north/south fluid branches, seam-spanning tunnels, adapters for uneven stacking, and
-alternating machine orientations across copies remain outside this family. A larger general routing
-model can add new route primitives and boundary phases; the item rate allocation contract need not
-change. Kernel debug cards enable both connection schemes and display the selected geometry;
-integration with editable designs and module export remains separate.
+For machines with at least two distinct fluid inputs or outputs, a separate two-machine repeat tries
+opposite mirror states. Complementary vertical underground pipe spans can put the two fluid trunks
+immediately beside the machine without mixing them. It can also place straight item belts and
+inserters on free east or west faces; each such belt serves both machines in the repeat. This pair
+search returns the first validated candidate within its reserved budget, while the one-machine
+search remains the fallback.
+
+Other north/south fluid branches, adapters for uneven stacking, and general alternating machine
+orientations across copies remain outside this family. A larger routing model can add new route
+primitives and boundary phases; the item rate allocation contract need not change. Kernel debug
+cards display the selected geometry; integration with editable designs and module export remains
+separate.
 
 ## Search and capacity
 
