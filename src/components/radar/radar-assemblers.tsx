@@ -179,7 +179,7 @@ export function RadarAssemblers({
                 width={Math.max(0, endX - startX)}
                 height={transportLaneWidth}
               >
-                <title>{resourceName(resource)}</title>
+                <title>{resourceName(staticData, resource)}</title>
               </rect>
               {inputStation ? (
                 <StationConnection

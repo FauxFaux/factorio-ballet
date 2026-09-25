@@ -298,12 +298,12 @@ function ConnectionRow({
       <button
         type="button"
         class="cell-connection-item cell-btn"
-        title={`${fullRate}/s ${resourceName(resource)} (${resource})`}
-        aria-label={`Show recipes for ${resourceName(resource)}`}
+        title={`${fullRate}/s ${resourceName(staticData, resource)} (${resource})`}
+        aria-label={`Show recipes for ${resourceName(staticData, resource)}`}
         onClick={() => onSelectResource(resource)}
       >
         <ResourceIcon id={resource} />
-        <span>{resourceName(resource)}</span>
+        <span>{resourceName(staticData, resource)}</span>
       </button>
       <ConnectionRate rate={rate} decimalPlaces={rateDecimalPlaces} />
       <MachineRatio
@@ -339,12 +339,13 @@ function MachineRatio({
   }
   const ratio = simplifiedMachineRatio(connectedMachineCount, machineCount);
   const [connectedRatio, machineRatio] = ratio.split(':');
-  const connectedRecipe = connectedRecipes?.map(recipeName).join(', ') ?? 'connected';
+  const connectedRecipe =
+    connectedRecipes?.map((v) => recipeName(staticData, v)).join(', ') ?? 'connected';
   const connectedAssemblers = `${connectedRatio} ${connectedRecipe} assembler${
     connectedRatio === '1' ? '' : 's'
   }`;
   const machinePrefix = machineRatio === '1' ? '' : `${machineRatio} `;
-  const machineAssemblers = `${machinePrefix}${recipeName(recipe)} assembler${
+  const machineAssemblers = `${machinePrefix}${recipeName(staticData, recipe)} assembler${
     machineRatio === '1' ? '' : 's'
   }`;
   return (

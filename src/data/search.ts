@@ -83,7 +83,7 @@ export function resolveResources(query: string, scope?: SearchScope): Set<Resour
   );
   if (exact.length) return new Set(exact);
 
-  return new Set(ids.filter((id) => smatch(id, q) || smatch(resourceName(id), q)));
+  return new Set(ids.filter((id) => smatch(id, q) || smatch(resourceName(staticData, id), q)));
 }
 
 /**
@@ -171,7 +171,7 @@ export function searchResources(search: string, progress: number): ResourceMatch
   );
 
   return (Object.entries(staticData.resources) as [ResourceId, Resource][])
-    .map(([id, resource]) => ({ id, resource, name: resourceName(id) }))
+    .map(([id, resource]) => ({ id, resource, name: resourceName(staticData, id) }))
     .filter(({ id, name }) =>
       textTerms.every((term) => smatch(id, term.text) || smatch(name, term.text)),
     )

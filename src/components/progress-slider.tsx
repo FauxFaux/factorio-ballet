@@ -4,6 +4,7 @@ import type { Landmark } from '../compute/landmarks.ts';
 import type { State } from '../ts.ts';
 import { HelpInfo } from './help-info.tsx';
 import { iconStyle } from './icon.tsx';
+import { staticData } from '../data/decode.ts';
 
 /**
  * How near, in whole percent, the slider has to be for it to be sitting *at* a pack. The kept packs
@@ -37,7 +38,11 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
   // Failing that, the last pack you are definitely past — true wherever the slider is, where
   // "around <nearest>" would overclaim in exactly the way the box did.
   const passed = at ? undefined : packLandmarks.findLast((pack) => pack.complexity * 100 < gp);
-  const era = at ? `at ${resourceName(at.id)}` : passed ? `past ${resourceName(passed.id)}` : '';
+  const era = at
+    ? `at ${resourceName(staticData, at.id)}`
+    : passed
+      ? `past ${resourceName(staticData, passed.id)}`
+      : '';
 
   return (
     <fieldset class="progress-slider">
@@ -68,7 +73,7 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
       />
       <div class="progress-packs">
         {packLandmarks.map((pack) => {
-          const name = resourceName(pack.id);
+          const name = resourceName(staticData, pack.id);
           const percent = Math.round(pack.complexity * 100);
           return (
             <button

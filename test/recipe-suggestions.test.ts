@@ -528,14 +528,16 @@ describe('RecipeSuggestions', () => {
     render(h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'speed-module-3' }] } }));
 
     const card = screen
-      .getByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` })
+      .getByRole('heading', { name: `Make ${resourceName(staticData, 'item:speed-module-2')}` })
       .closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
     await user.click(within(card).getByRole('button', { name: 'make explicit import' }));
 
     expect(
-      screen.queryByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` }),
+      screen.queryByRole('heading', {
+        name: `Make ${resourceName(staticData, 'item:speed-module-2')}`,
+      }),
     ).toBeNull();
   });
 
@@ -548,7 +550,9 @@ describe('RecipeSuggestions', () => {
     await user.click(screen.getByRole('button', { name: 'make explicit export' }));
 
     expect(
-      screen.queryByRole('heading', { name: `Use ${resourceName('item:bob-speed-processor')}` }),
+      screen.queryByRole('heading', {
+        name: `Use ${resourceName(staticData, 'item:bob-speed-processor')}`,
+      }),
     ).toBeNull();
   });
 
@@ -560,7 +564,7 @@ describe('RecipeSuggestions', () => {
     const { queryByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
 
     expect(
-      queryByRole('heading', { name: `Make ${resourceName('item:speed-module-2')}` }),
+      queryByRole('heading', { name: `Make ${resourceName(staticData, 'item:speed-module-2')}` }),
     ).toBeNull();
   });
 
@@ -572,7 +576,9 @@ describe('RecipeSuggestions', () => {
     const { queryByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
 
     expect(
-      queryByRole('heading', { name: `Use ${resourceName('item:bob-speed-processor')}` }),
+      queryByRole('heading', {
+        name: `Use ${resourceName(staticData, 'item:bob-speed-processor')}`,
+      }),
     ).toBeNull();
   });
 
@@ -589,7 +595,7 @@ describe('RecipeSuggestions', () => {
 
     const { getByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
     const card = getByRole('heading', {
-      name: `Use ${resourceName(suggestion.resource)}`,
+      name: `Use ${resourceName(staticData, suggestion.resource)}`,
     }).closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
@@ -597,11 +603,13 @@ describe('RecipeSuggestions', () => {
     const { plan } = suggestion;
     expect(
       within(card).getByLabelText(
-        `Needs: ${[plan.target, ...plan.inputs].map(resourceName).join(', ')}`,
+        `Needs: ${[plan.target, ...plan.inputs].map((v) => resourceName(staticData, v)).join(', ')}`,
       ),
     ).toBeTruthy();
     expect(
-      within(card).getByLabelText(`Makes: ${plan.outputs.map(resourceName).join(', ')}`),
+      within(card).getByLabelText(
+        `Makes: ${plan.outputs.map((v) => resourceName(staticData, v)).join(', ')}`,
+      ),
     ).toBeTruthy();
   });
 

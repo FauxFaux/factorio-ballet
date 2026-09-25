@@ -102,7 +102,7 @@ export function solveCell(
         kind: 'solver',
         entry: 0,
         detail:
-          `${resourceName(resource)} is marked for ${boundary} but has a ${imbalance}. ` +
+          `${resourceName(staticData, resource)} is marked for ${boundary} but has a ${imbalance}. ` +
           `${remedy} or clear its explicit ${boundary}.`,
       });
     }
@@ -122,7 +122,7 @@ export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
     ? ' This alternative needs the Matrix solver; the dumb solver still cannot balance it.'
     : '';
   return (
-    `Allow ${resourceName(resource)} ${direction}: recalculating with this boundary ` +
+    `Allow ${resourceName(staticData, resource)} ${direction}: recalculating with this boundary ` +
     `balances all other internal resources, with ${boundaryRate} Choose “${choice}” ` +
     `if that matches your factory.${matrixNote}`
   );
@@ -162,13 +162,13 @@ export function noteText(note: SolveNote): string {
       );
     case 'contested':
       return (
-        `This and another row could both balance ${resourceName(note.resource)}, ` +
+        `This and another row could both balance ${resourceName(staticData, note.resource)}, ` +
         "and picking between them is not the solver's call: type a count on one of them."
       );
     case 'conflict':
       return (
-        `${fmt(note.needed)} would balance ${resourceName(note.resource)}, ` +
-        `${fmt(note.used)} is needed elsewhere, so ${resourceName(note.resource)} is left over.`
+        `${fmt(note.needed)} would balance ${resourceName(staticData, note.resource)}, ` +
+        `${fmt(note.used)} is needed elsewhere, so ${resourceName(staticData, note.resource)} is left over.`
       );
     case 'stranded':
       return (
@@ -185,5 +185,5 @@ export function noteText(note: SolveNote): string {
 /** `noteText` with the row's recipe in front of it, for a list away from the row itself. */
 export function noteLine(cell: Cell, note: SolveNote): string {
   const entry = cell.entries[note.entry];
-  return `${entry ? recipeName(entry.recipe) : '?'}: ${noteText(note)}`;
+  return `${entry ? recipeName(staticData, entry.recipe) : '?'}: ${noteText(note)}`;
 }

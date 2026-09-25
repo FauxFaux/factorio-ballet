@@ -9,6 +9,7 @@ import { ResourceIcon } from '../resource.tsx';
 import { internalConnections } from './internal-calc.ts';
 import { InPlayConnectionsView, ResourceActions } from './in-play-connections.tsx';
 import { WarnIcon } from './notes.tsx';
+import { staticData } from '../../data/decode.ts';
 
 /** Every resource a recipe in this cell consumes or produces, including its open edges. */
 export function InPlayRow({
@@ -126,7 +127,7 @@ export function InPlayRow({
                 onClick={() => applyBoundarySuggestion(suggestion)}
               >
                 <ResourceIcon id={suggestion.resource} />
-                {suggestion.direction} {resourceName(suggestion.resource)}
+                {suggestion.direction} {resourceName(staticData, suggestion.resource)}
               </button>
             ))}
           </p>
@@ -175,7 +176,7 @@ function InPlayChip({
   const suggestion = solution.boundarySuggestions?.find((candidate) => candidate.resource === id);
   const unbalanced = !input && !output && rate !== 0;
   const imbalanceTitle =
-    `${resourceName(id)} is unbalanced. ` +
+    `${resourceName(staticData, id)} is unbalanced. ` +
     'Open its details to review supply and consumption or allow ' +
     `${rate > 0 ? 'surplus export' : 'shortfall import'}.`;
 
@@ -183,14 +184,14 @@ function InPlayChip({
     <button
       type="button"
       class={selected ? 'cell-in-play-chip cell-btn is-selected' : 'cell-in-play-chip cell-btn'}
-      title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
-      aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(id)}`}
+      title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(staticData, id)}`}
+      aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(staticData, id)}`}
       aria-pressed={selected}
       onClick={onClick}
     >
       {vertical ? <span aria-hidden="true">{selected ? '▾' : '▸'}</span> : null}
       <ResourceIcon id={id} />
-      {vertical ? <span class="cell-in-play-name">{resourceName(id)}</span> : null}
+      {vertical ? <span class="cell-in-play-name">{resourceName(staticData, id)}</span> : null}
       {unbalanced || suggestion ? (
         <span
           class="cell-leftover"
@@ -198,7 +199,9 @@ function InPlayChip({
         >
           <WarnIcon
             label={
-              suggestion ? `Review ${suggestion.direction} for ${resourceName(id)}` : undefined
+              suggestion
+                ? `Review ${suggestion.direction} for ${resourceName(staticData, id)}`
+                : undefined
             }
           />
           {unbalanced ? `${rate > 0 ? '+' : '−'}${fmt(Math.abs(rate))}` : null}

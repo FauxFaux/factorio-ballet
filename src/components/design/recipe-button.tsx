@@ -43,7 +43,7 @@ export function RecipeButton({
     );
   const disabled =
     target === undefined || !machine || (current.length === target && currentMatchesMachine);
-  const name = recipeName(entry.recipe);
+  const name = recipeName(staticData, entry.recipe);
 
   return (
     <button

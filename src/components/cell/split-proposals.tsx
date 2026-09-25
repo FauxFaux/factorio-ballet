@@ -5,6 +5,7 @@ import type { Solution } from '../../solve/index.ts';
 import { proposedSplits } from '../../compute/split.ts';
 import type { Belt } from '../../types.ts';
 import { useMemo } from 'preact/hooks';
+import { staticData } from '../../data/decode.ts';
 
 function countLabel(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
@@ -46,7 +47,9 @@ export function SplitProposals({
                   {group.outputs.routes} out
                 </span>
                 <span class="cell-split-group-recipes">
-                  {group.entries.map((entry) => recipeName(entries[entry]!.recipe)).join(', ')}
+                  {group.entries
+                    .map((entry) => recipeName(staticData, entries[entry]!.recipe))
+                    .join(', ')}
                 </span>
               </li>
             ))}

@@ -84,7 +84,9 @@ describe('explicit cell imports', () => {
     const user = userEvent.setup();
     render(<Example />);
     await user.click(
-      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-235')}` }),
+      screen.getByRole('button', {
+        name: `Show recipes for ${resourceName(staticData, 'item:uranium-235')}`,
+      }),
     );
     expect(screen.getByText(/or import the shortfall/)).toBeTruthy();
     await user.click(screen.getByRole('button', { name: 'import shortfall' }));
@@ -217,7 +219,9 @@ describe('cell side resource selection', () => {
     );
 
     await user.click(
-      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-ore')}` }),
+      screen.getByRole('button', {
+        name: `Show recipes for ${resourceName(staticData, 'item:uranium-ore')}`,
+      }),
     );
     await user.click(screen.getAllByRole('button', { name: /Toggle connections for/ })[0]!);
 
@@ -239,7 +243,9 @@ describe('cell side resource selection', () => {
     );
 
     await user.click(
-      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-ore')}` }),
+      screen.getByRole('button', {
+        name: `Show recipes for ${resourceName(staticData, 'item:uranium-ore')}`,
+      }),
     );
     const marker = screen.getByText('[input]');
     fireEvent.mouseEnter(marker);
@@ -302,7 +308,9 @@ describe('explicit cell exports', () => {
     const user = userEvent.setup();
     render(<Example />);
     await user.click(
-      screen.getByRole('button', { name: `Show recipes for ${resourceName('item:uranium-238')}` }),
+      screen.getByRole('button', {
+        name: `Show recipes for ${resourceName(staticData, 'item:uranium-238')}`,
+      }),
     );
     await user.click(screen.getByRole('button', { name: 'export surplus' }));
     expect(

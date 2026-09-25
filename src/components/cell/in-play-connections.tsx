@@ -12,6 +12,7 @@ import {
   PackageDependentsIcon,
   PackageIcon,
 } from '@primer/octicons-react';
+import { staticData } from '../../data/decode.ts';
 
 /** The recipe flow breakdown shown when an in-play resource is expanded. */
 export function InPlayConnectionsView({
@@ -116,7 +117,7 @@ function ResourceDetails({
 }) {
   return (
     <div class="cell-in-play-resource-details">
-      <strong>{resourceName(id)}</strong>
+      <strong>{resourceName(staticData, id)}</strong>
       <span>
         {' · '}
         {id}
@@ -178,8 +179,8 @@ export function ResourceActions({
       <button
         type="button"
         class="cell-btn cell-in-play-resource-action"
-        title={`Search for recipes making ${resourceName(id)} (makes:${id})`}
-        aria-label={`Search for recipes making ${resourceName(id)}`}
+        title={`Search for recipes making ${resourceName(staticData, id)} (makes:${id})`}
+        aria-label={`Search for recipes making ${resourceName(staticData, id)}`}
         onClick={() => onSearch(`makes:${id}`)}
       >
         ⌕ makes
@@ -187,8 +188,8 @@ export function ResourceActions({
       <button
         type="button"
         class="cell-btn cell-in-play-resource-action"
-        title={`Search for recipes using ${resourceName(id)} (uses:${id})`}
-        aria-label={`Search for recipes using ${resourceName(id)}`}
+        title={`Search for recipes using ${resourceName(staticData, id)} (uses:${id})`}
+        aria-label={`Search for recipes using ${resourceName(staticData, id)}`}
         onClick={() => onSearch(`uses:${id}`)}
       >
         ⌕ uses
@@ -345,8 +346,8 @@ function ConnectionRecipeFlow({
     <button
       type="button"
       class="cell-in-play-connection-recipe cell-btn"
-      title={`${fmt(flow.rate)}/s ${recipeName(flow.recipe)}`}
-      aria-label={`Toggle connections for ${recipeName(flow.recipe)}`}
+      title={`${fmt(flow.rate)}/s ${recipeName(staticData, flow.recipe)}`}
+      aria-label={`Toggle connections for ${recipeName(staticData, flow.recipe)}`}
       onClick={() => onToggleRecipe(flow.recipe!)}
       onMouseEnter={() => onRecipeHover(flow.recipe)}
       onMouseLeave={() => onRecipeHover(undefined)}
@@ -356,7 +357,7 @@ function ConnectionRecipeFlow({
         style={recipe ? recipeIconStyle(flow.recipe, recipe) : undefined}
         aria-hidden="true"
       />
-      <span>{recipeName(flow.recipe)}</span>
+      <span>{recipeName(staticData, flow.recipe)}</span>
     </button>
   );
 }

@@ -84,14 +84,22 @@ describe('plutonium boundary diagnosis', () => {
     }
     const user = userEvent.setup();
     render(<Example />);
-    const chip = screen.getByRole('button', { name: `Show recipes for ${resourceName(u238)}` });
-    expect(within(chip).getByLabelText(`Review export for ${resourceName(u238)}`)).toBeTruthy();
-    await user.click(screen.getByRole('button', { name: `export ${resourceName(u238)}` }));
+    const chip = screen.getByRole('button', {
+      name: `Show recipes for ${resourceName(staticData, u238)}`,
+    });
+    expect(
+      within(chip).getByLabelText(`Review export for ${resourceName(staticData, u238)}`),
+    ).toBeTruthy();
+    await user.click(
+      screen.getByRole('button', { name: `export ${resourceName(staticData, u238)}` }),
+    );
     expect(
       screen.queryByText(/recalculating with this boundary balances all other internal resources/),
     ).toBeNull();
     expect(screen.queryByText(/These internal balances cannot all close together/)).toBeNull();
-    expect(screen.queryByLabelText(`Review export for ${resourceName(u238)}`)).toBeNull();
+    expect(
+      screen.queryByLabelText(`Review export for ${resourceName(staticData, u238)}`),
+    ).toBeNull();
     expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
   });
 });

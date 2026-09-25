@@ -1,16 +1,16 @@
-import type { Beacon, BeaconId, Belt, BeltId, ModuleId, ResourceId } from '../types.ts';
+import type { Beacon, BeaconId, Belt, BeltId, ModuleId, ResourceId, StaticData } from '../types.ts';
 import { staticData } from './decode.ts';
 import { selectPackLandmarks } from '../compute/landmarks.ts';
 import type { Landmark } from '../compute/landmarks.ts';
 
 /** The display name for a resource, falling back to its id. */
-export function resourceName(id: ResourceId): string {
-  return staticData.resources[id]?.human ?? id;
+export function resourceName(data: StaticData, id: ResourceId): string {
+  return data.resources[id]?.human ?? id;
 }
 
 /** The display name for a recipe, falling back to its id. */
-export function recipeName(id: string): string {
-  return staticData.recipes[id]?.human ?? id;
+export function recipeName(data: StaticData, id: string): string {
+  return data.recipes[id]?.human ?? id;
 }
 
 /**
@@ -48,7 +48,7 @@ export const packLandmarks: Landmark[] = (() => {
 
 /** The display name for a module: the item's, because a module is the item you craft. */
 export function moduleName(id: ModuleId): string {
-  return resourceName(`item:${id}`);
+  return resourceName(staticData, `item:${id}`);
 }
 
 import { chosenModules } from './modules.ts';

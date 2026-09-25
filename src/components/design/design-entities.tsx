@@ -17,6 +17,7 @@ import type { DesignSceneItems } from './design-scene.tsx';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
+import { staticData } from '../../data/decode.ts';
 export { entityPositionStatuses } from '../../compute/design-validation/geometry.ts';
 export type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
 
@@ -69,7 +70,7 @@ export function Belt({
       const details = items?.[item];
       return details
         ? `${side} side: ${details.name}, ${fmt(details.rate)}/s`
-        : `${side} side: ${resourceName(item)} (${item})`;
+        : `${side} side: ${resourceName(staticData, item)} (${item})`;
     })
     .join('; ');
   const errorDescription = [
@@ -200,7 +201,7 @@ export function Pipe({
       const details = resources?.[fluid];
       return details
         ? `${details.name}, ${fmt(details.rate)}/s`
-        : `${resourceName(fluid)} (${fluid})`;
+        : `${resourceName(staticData, fluid)} (${fluid})`;
     })
     .join(', ');
   const errorDescription = [
@@ -262,7 +263,7 @@ export function UndergroundPipe({
       const details = resources?.[fluid];
       return details
         ? `${details.name}, ${fmt(details.rate)}/s`
-        : `${resourceName(fluid)} (${fluid})`;
+        : `${resourceName(staticData, fluid)} (${fluid})`;
     })
     .join(', ');
   const errorDescription = [
@@ -328,7 +329,7 @@ export function Assembler({
 }) {
   const { data } = useDataset();
   const recipe = data.recipes[assembler.recipe];
-  const name = recipeName(assembler.recipe);
+  const name = recipeName(staticData, assembler.recipe);
   const { x, y } = assembler.position;
   const { width, height } = assembler.size;
   const viewportPosition = worldToViewport(assembler.position, worldOrigin);
@@ -341,7 +342,7 @@ export function Assembler({
         ? ' cell-design-assembler-all-inputs-missing'
         : ' cell-design-assembler-some-inputs-missing';
   const missingDescription = missing
-    .map((resource) => `${resourceName(resource)} (${resource})`)
+    .map((resource) => `${resourceName(staticData, resource)} (${resource})`)
     .join(', ');
 
   return (

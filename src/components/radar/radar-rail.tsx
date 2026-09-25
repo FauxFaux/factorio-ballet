@@ -3,6 +3,7 @@ import type { ResourceId } from '../../types.ts';
 import { buildRailBrick, encodeBlueprintDocument } from '../../bp/rail-blueprint.ts';
 import { iconStyle } from '../icon.tsx';
 import { useState } from 'preact/hooks';
+import { staticData } from '../../data/decode.ts';
 
 /** Copies a Factorio blueprint matching the rail diagram's current station layout. */
 export function RailBlueprintCopy({
@@ -157,7 +158,7 @@ export function StationStops({
             data-bus-direction={side === 'in' ? 'onto-bus' : 'off-bus'}
             data-station-id={`station:${side === 'in' ? 'import' : 'export'}:${resource}`}
           >
-            <title>{resourceName(resource)}</title>
+            <title>{resourceName(staticData, resource)}</title>
           </circle>
         );
       })}

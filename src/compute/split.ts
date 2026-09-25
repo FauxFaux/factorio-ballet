@@ -2,6 +2,7 @@ import type { CellEntry } from '../cell.ts';
 import { recipeName, resourceName } from '../data';
 import type { Solution } from '../solve';
 import { isFluid, type Belt, type ResourceId } from '../types.ts';
+import { staticData } from '../data/decode.ts';
 
 const EPSILON = 1e-7;
 
@@ -134,7 +135,9 @@ function utilityGroup(solution: Solution, belt: Belt): CandidateGroup | undefine
     }
   }
 
-  return best ? { entries: best.entries, name: `${resourceName(best.output)} utility` } : undefined;
+  return best
+    ? { entries: best.entries, name: `${resourceName(staticData, best.output)} utility` }
+    : undefined;
 }
 
 function terminalGroup(
@@ -175,7 +178,7 @@ function terminalGroup(
   return {
     group: {
       entries: members,
-      name: `${recipeName(entries[terminal]!.recipe)} finishing`,
+      name: `${recipeName(staticData, entries[terminal]!.recipe)} finishing`,
     },
     terminal,
     producers,
@@ -187,7 +190,7 @@ function productionName(entries: number[], solution: Solution) {
     ([, rate]) => rate > EPSILON,
   );
   return outputs.length === 1
-    ? `${resourceName(outputs[0]![0])} production`
+    ? `${resourceName(staticData, outputs[0]![0])} production`
     : 'Intermediate production';
 }
 
@@ -212,7 +215,7 @@ function sharedImportGroup(
     .filter(([, members]) => members.length >= 2 && members.length <= 4)
     .map(([resource, members]) => ({
       entries: members,
-      name: `${resourceName(resource)} conversion`,
+      name: `${resourceName(staticData, resource)} conversion`,
       installed: installedMachines(members, solution.counts),
     }))
     .filter(({ installed }) => installed <= 16)
@@ -246,9 +249,9 @@ function ratiosFor(
     return ratio
       ? [
           {
-            producer: recipeName(entries[producer]!.recipe),
+            producer: recipeName(staticData, entries[producer]!.recipe),
             producerMachines: ratio[0],
-            consumer: recipeName(entries[terminal]!.recipe),
+            consumer: recipeName(staticData, entries[terminal]!.recipe),
             consumerMachines: ratio[1],
           },
         ]
