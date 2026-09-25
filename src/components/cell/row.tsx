@@ -15,7 +15,6 @@ import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
 import { useDataset } from '../../dataset/context.tsx';
-import { defaultDataset } from '../../dataset';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -64,7 +63,8 @@ export function CellRow({
   onToggleExpand: () => void;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
+  const { data } = ds;
   const recipe = entryRecipe(data, entry);
   const connections = useMemo(
     () => recipeConnections(entryIndex, solution, recipeIds),
@@ -141,7 +141,7 @@ export function CellRow({
             solved={count !== undefined}
             belt={chosen.belt}
             recipe={entry.recipe}
-            machine={recipe ? entryMachine(entry, recipe, progress, defaultDataset) : undefined}
+            machine={recipe ? entryMachine(entry, recipe, progress, ds) : undefined}
             inputRates={solution.inputRates[entryIndex]}
             outputRates={solution.outputRates[entryIndex]}
             machineCount={count}
@@ -156,7 +156,7 @@ export function CellRow({
           solved={count !== undefined}
           belt={chosen.belt}
           recipe={entry.recipe}
-          machine={recipe ? entryMachine(entry, recipe, progress, defaultDataset) : undefined}
+          machine={recipe ? entryMachine(entry, recipe, progress, ds) : undefined}
           inputRates={solution.inputRates[entryIndex]}
           outputRates={solution.outputRates[entryIndex]}
           machineCount={count}
@@ -224,6 +224,7 @@ function RecipeControls({
   onChange: (entry: CellEntry) => void;
   onRemove: () => void;
 }) {
+  const ds = useDataset();
   return (
     <div class="cell-row-controls">
       {recipe ? (
@@ -232,7 +233,7 @@ function RecipeControls({
           <ModuleBoxes
             entry={entry}
             recipe={recipe}
-            machine={entryMachine(entry, recipe, progress, defaultDataset)}
+            machine={entryMachine(entry, recipe, progress, ds)}
             chosen={chosen}
             onChange={onChange}
           />
@@ -270,7 +271,7 @@ function CellMachines({
   return (
     <MachinePicker
       machines={machinesFor(ds, recipe)}
-      chosen={entryMachine(entry, recipe, progress, defaultDataset)}
+      chosen={entryMachine(entry, recipe, progress, ds)}
       pinned={entry.machine !== undefined}
       onChoose={(machine) => onChange({ ...entry, machine })}
     />

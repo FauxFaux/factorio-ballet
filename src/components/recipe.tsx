@@ -11,7 +11,7 @@ import { MachineChip } from './machine.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 import { useDataset } from '../dataset/context.tsx';
-import { defaultDataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 
 /**
  * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
@@ -63,14 +63,7 @@ export function RecipeCard({
     : (hoveredMachine ?? selectedMachine ?? defaultMachineId);
   const baseSpeed = speedOf(machines, displayedMachine);
   const beaconSpeed = beaconCount
-    ? beaconedSpeed(
-        ds.data,
-        machines,
-        defaultMachineId,
-        recipe,
-        chosen ?? noChoice(ds),
-        beaconCount,
-      )
+    ? beaconedSpeed(ds, machines, defaultMachineId, recipe, chosen ?? noChoice(ds), beaconCount)
     : 1;
   const speed = baseSpeed * beaconSpeed;
   const { ins, outs } = recipeFlows(recipe, machines, speed);
@@ -134,7 +127,7 @@ export function RecipeCard({
 
 /** The speed multiplier from full selected beacons around an otherwise unmodded default machine. */
 function beaconedSpeed(
-  data: ReturnType<typeof useDataset>['data'],
+  ds: Dataset,
   machines: MachineMatch[],
   machineId: MachineId | undefined,
   recipe: RecipeMatch['recipe'],
@@ -144,8 +137,8 @@ function beaconedSpeed(
   const machine = machines.find(({ id }) => id === machineId)?.machine;
   if (!machine) return 1;
   return laidOutEffects(
-    defaultDataset,
-    data,
+    ds,
+    ds.data,
     machine,
     undefined,
     recipe,
