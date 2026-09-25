@@ -14,7 +14,7 @@ import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId, StaticData } from './types.ts';
-import { defaultDataset } from './dataset';
+import { type Dataset } from './dataset';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -123,8 +123,9 @@ export function entryMachine(
   entry: CellEntry,
   recipe: Recipe,
   progress: number,
+  ds: Dataset,
 ): MachineId | undefined {
-  return entry.machine ?? defaultMachine(machinesFor(defaultDataset, recipe), progress)?.id;
+  return entry.machine ?? defaultMachine(machinesFor(ds, recipe), progress)?.id;
 }
 
 /**
@@ -135,13 +136,14 @@ export function entryMachine(
  * as its machine does.
  */
 export function entryEffects(
+  ds: Dataset,
   data: StaticData,
   entry: CellEntry,
   recipe: Recipe,
   machine: MachineId | undefined,
   chosen: Chosen,
 ): Effects {
-  return entryRun(data, entry, recipe, machine, chosen).effects;
+  return entryRun(ds, data, entry, recipe, machine, chosen).effects;
 }
 
 /** What a row is running at, and where its modules went; see {@link entryRun}. */
@@ -161,6 +163,7 @@ export interface EntryRun {
  * beacon — upgrades every row at once.
  */
 export function entryRun(
+  ds: Dataset,
   data: StaticData,
   entry: CellEntry,
   recipe: Recipe,
@@ -170,6 +173,7 @@ export function entryRun(
   const found = machine === undefined ? undefined : data.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
   return laidOutEffects(
+    ds,
     data,
     found,
     entry.modules,

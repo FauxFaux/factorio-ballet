@@ -7,6 +7,7 @@ import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
 import { solveKernelTileDesign } from './tile-design/kernel-result.ts';
+import { type Dataset } from '../dataset';
 
 export const MAX_MODULE_HEIGHT = 100;
 
@@ -343,12 +344,13 @@ export function modulesForCell(
   solution: Solution,
   belt: Belt,
   progress: number,
+  ds: Dataset,
 ): FactoryModule[] {
   return entries.flatMap((entry, index) => {
     const recipe = data.recipes[entry.recipe];
     const count = solution.counts[index];
     if (!recipe || count === undefined || count <= 0) return [];
-    const machine = entryMachine(entry, recipe, progress);
+    const machine = entryMachine(entry, recipe, progress, ds);
     const problem = recipeKernelProblem(
       data,
       entry.recipe,

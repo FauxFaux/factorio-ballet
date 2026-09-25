@@ -9,7 +9,7 @@ import {
   type ChosenModules,
 } from './modules.ts';
 import type { Beacon, Machine, ModuleId, Recipe, StaticData } from '../types.ts';
-import { defaultDataset } from '../dataset';
+import { type Dataset } from '../dataset';
 
 export interface Effects {
   speed: number;
@@ -89,6 +89,7 @@ export const NO_BOOST: Boost = {
 };
 
 export function moduleBoost(
+  ds: Dataset,
   data: StaticData,
   machine: Machine,
   free: number,
@@ -99,7 +100,7 @@ export function moduleBoost(
 ): Boost {
   const found = module === undefined ? undefined : data.modules[module];
   if (!module || !found || !machine.moduleSlots) return NO_BOOST;
-  const effect = categoryEffect(defaultDataset, found.category);
+  const effect = categoryEffect(ds, found.category);
   const slots = takesCategory(machine, found.category) ? Math.max(0, free) : 0;
   const asked = wanted ?? slots;
   const inMachine = Math.min(asked, slots);
@@ -149,6 +150,7 @@ export const NO_LAYOUT: Layout = {
 };
 
 export function moduleLayout(
+  ds: Dataset,
   data: StaticData,
   machine: Machine,
   free: number,
@@ -165,18 +167,20 @@ export function moduleLayout(
   };
   const auto = reaches.productivity ? slots : 0;
   const productivity = moduleBoost(
+    ds,
     data,
     machine,
     slots,
-    moduleFor(defaultDataset, machine, 'productivity', modules),
+    moduleFor(ds, machine, 'productivity', modules),
     Math.min(wants.productivity ?? auto, slots),
     beacon,
   );
   const speed = moduleBoost(
+    ds,
     data,
     machine,
     slots - productivity.inMachine,
-    moduleFor(defaultDataset, machine, 'speed', modules),
+    moduleFor(ds, machine, 'speed', modules),
     wants.speed,
     beacon,
     wants.beacons,
@@ -187,13 +191,14 @@ export function moduleLayout(
     slots,
     reaches,
     families: {
-      productivity: familyFor(machine, 'productivity', defaultDataset),
-      speed: familyFor(machine, 'speed', defaultDataset),
+      productivity: familyFor(machine, 'productivity', ds),
+      speed: familyFor(machine, 'speed', ds),
     },
   };
 }
 
 export function laidOutEffects(
+  ds: Dataset,
   data: StaticData,
   machine: Machine,
   fill: ModuleFill | undefined,
@@ -202,8 +207,8 @@ export function laidOutEffects(
   wants: ModuleWants,
   beacon: Beacon | undefined,
 ): { effects: Effects; layout: Layout } {
-  const slots = slotEffects(data, machine, fill ?? {});
-  const layout = moduleLayout(data, machine, slots.free, recipe, modules, wants, beacon);
+  const slots = slotEffects(ds.data, machine, fill ?? {});
+  const layout = moduleLayout(ds, data, machine, slots.free, recipe, modules, wants, beacon);
   return {
     effects: applyBoost(machine, recipe, slots, layout.productivity, layout.speed),
     layout,

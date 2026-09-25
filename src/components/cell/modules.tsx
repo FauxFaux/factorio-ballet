@@ -9,7 +9,7 @@ import type { MachineId, Recipe } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { UnlitIcon } from '../unlit-module-icon.tsx';
 import { useDataset } from '../../dataset/context.tsx';
-import type { Dataset } from '../../dataset/index.ts';
+import { type Dataset, defaultDataset } from '../../dataset/index.ts';
 
 /**
  * What reaches this row's machine: its productivity modules (or speed modules where productivity
@@ -37,7 +37,7 @@ export function ModuleBoxes({
 }) {
   const ds = useDataset();
   const { data } = ds;
-  const { effects, layout } = entryRun(data, entry, recipe, machine, chosen);
+  const { effects, layout } = entryRun(defaultDataset, data, entry, recipe, machine, chosen);
   const inMachine = layout.reaches.productivity ? layout.productivity : layout.speed;
   const inMachineCount = layout.reaches.productivity
     ? entry.productivityModules

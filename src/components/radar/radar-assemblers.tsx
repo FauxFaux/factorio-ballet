@@ -8,6 +8,7 @@ import { stackAssemblerDistricts, type AssemblerStack } from './radar-assembler-
 import { RadarAssemblerColumn } from './radar-assembler-column.tsx';
 import { stationStop } from './radar-rail.tsx';
 import { busConnectionTopLane, busLayout, type BusLane, type BusLayout } from './radar-layout.ts';
+import { defaultDataset } from '../../dataset';
 
 const assemblerTopY = 20;
 const busBottomY = assemblerTopY - 1;
@@ -44,7 +45,7 @@ export function RadarAssemblers({
     .flatMap(({ entry, count: solvedCount, index }) => {
       const recipe = entryRecipe(data, entry);
       if (!recipe) return [];
-      const machineId = entryMachine(entry, recipe, progress);
+      const machineId = entryMachine(entry, recipe, progress, defaultDataset);
       const machine = machineId ? data.machines[machineId] : undefined;
       if (!machine) return [];
       const connections = recipeConnections(index, solution);

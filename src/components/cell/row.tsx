@@ -15,6 +15,7 @@ import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
 import { useDataset } from '../../dataset/context.tsx';
+import { defaultDataset } from '../../dataset';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -140,7 +141,7 @@ export function CellRow({
             solved={count !== undefined}
             belt={chosen.belt}
             recipe={entry.recipe}
-            machine={recipe ? entryMachine(entry, recipe, progress) : undefined}
+            machine={recipe ? entryMachine(entry, recipe, progress, defaultDataset) : undefined}
             inputRates={solution.inputRates[entryIndex]}
             outputRates={solution.outputRates[entryIndex]}
             machineCount={count}
@@ -155,7 +156,7 @@ export function CellRow({
           solved={count !== undefined}
           belt={chosen.belt}
           recipe={entry.recipe}
-          machine={recipe ? entryMachine(entry, recipe, progress) : undefined}
+          machine={recipe ? entryMachine(entry, recipe, progress, defaultDataset) : undefined}
           inputRates={solution.inputRates[entryIndex]}
           outputRates={solution.outputRates[entryIndex]}
           machineCount={count}
@@ -231,7 +232,7 @@ function RecipeControls({
           <ModuleBoxes
             entry={entry}
             recipe={recipe}
-            machine={entryMachine(entry, recipe, progress)}
+            machine={entryMachine(entry, recipe, progress, defaultDataset)}
             chosen={chosen}
             onChange={onChange}
           />
@@ -269,7 +270,7 @@ function CellMachines({
   return (
     <MachinePicker
       machines={machinesFor(ds, recipe)}
-      chosen={entryMachine(entry, recipe, progress)}
+      chosen={entryMachine(entry, recipe, progress, defaultDataset)}
       pinned={entry.machine !== undefined}
       onChoose={(machine) => onChange({ ...entry, machine })}
     />

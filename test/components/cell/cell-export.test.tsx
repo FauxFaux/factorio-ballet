@@ -25,7 +25,7 @@ describe('explicit cell imports', () => {
   const imported: Cell = { ...uranium, imports: ['item:uranium-235'] };
 
   it('closes the uranium recycling loop with external U-235', () => {
-    const solution = solveCell(staticData, imported, state.gp, chosen);
+    const solution = solveCell(defaultDataset, staticData, imported, state.gp, chosen);
     expect(solution.complete).toBe(true);
     expect(solution.notes).toEqual([]);
     expect(solution.balance.get('item:uranium-235')).toBeLessThan(0);
@@ -52,6 +52,7 @@ describe('explicit cell imports', () => {
     'rejects a surplus on an explicit import with $id',
     (solver) => {
       const solution = solveCell(
+        defaultDataset,
         staticData,
         {
           ...exported,
@@ -264,7 +265,7 @@ describe('cell side resource selection', () => {
 
 describe('explicit cell exports', () => {
   it.each([matrixSolver, dumbSolver])('balances the uranium chain with $id', (solver) => {
-    const solution = solveCell(staticData, exported, state.gp, chosen, solver);
+    const solution = solveCell(defaultDataset, staticData, exported, state.gp, chosen, solver);
     expect(solution.complete).toBe(true);
     expect(solution.notes).toEqual([]);
     expect(solution.balance.get('item:uranium-238')).toBeCloseTo(7.9007091625);
@@ -289,6 +290,7 @@ describe('explicit cell exports', () => {
 
   it('rejects an export that requires external supply', () => {
     const solution = solveCell(
+      defaultDataset,
       staticData,
       { ...uranium, exports: ['item:uranium-ore'] },
       state.gp,

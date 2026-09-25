@@ -34,6 +34,7 @@ import { CellAsJson } from './as-json.tsx';
 import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
 import { useDataset } from '../../dataset/context.tsx';
+import { defaultDataset } from '../../dataset';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -67,11 +68,14 @@ export function CellBox({
   const iface = useMemo(() => cellInterface(data, cell), [data, cell]);
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(
-    () => solveCell(data, cell, progress, chosen),
+    () => solveCell(defaultDataset, data, cell, progress, chosen),
     [data, cell, progress, chosen],
   );
   const modules = useMemo(
-    () => (cell.layout ? modulesForCell(data, cell.entries, solution, chosen.belt, progress) : []),
+    () =>
+      cell.layout
+        ? modulesForCell(data, cell.entries, solution, chosen.belt, progress, defaultDataset)
+        : [],
     [data, cell.layout, cell.entries, solution, chosen.belt, progress],
   );
   const moduleFlows = useMemo(

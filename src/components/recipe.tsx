@@ -11,6 +11,7 @@ import { MachineChip } from './machine.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 import { useDataset } from '../dataset/context.tsx';
+import { defaultDataset } from '../dataset';
 
 /**
  * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
@@ -143,6 +144,7 @@ function beaconedSpeed(
   const machine = machines.find(({ id }) => id === machineId)?.machine;
   if (!machine) return 1;
   return laidOutEffects(
+    defaultDataset,
     data,
     machine,
     undefined,

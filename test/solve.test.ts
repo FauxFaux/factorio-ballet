@@ -53,8 +53,16 @@ describe('Solver interface', () => {
     };
 
     const answer = solveCell(
+      defaultDataset,
       staticData,
-      { entries: [{ recipe: 'iron-plate', count: 3 }] },
+      {
+        entries: [
+          {
+            recipe: 'iron-plate',
+            count: 3,
+          },
+        ],
+      },
       0,
       noChoice(defaultDataset),
       solver,
@@ -182,7 +190,13 @@ describe('solveCell', () => {
   };
 
   it('takes one of a lone recipe, and quotes its edges', () => {
-    const answer = solveCell(staticData, newCell('iron-plate'), 0, noChoice(defaultDataset));
+    const answer = solveCell(
+      defaultDataset,
+      staticData,
+      newCell('iron-plate'),
+      0,
+      noChoice(defaultDataset),
+    );
     expect(answer.counts).toEqual([1]);
     expect(answer.balance.get('item:iron-plate')).toBeCloseTo(rateOf(plate, 'item:iron-plate'), 9);
   });
@@ -191,7 +205,7 @@ describe('solveCell', () => {
     const cell: Cell = {
       entries: [{ recipe: 'iron-plate', count: 3 }, { recipe: 'iron-gear-wheel' }],
     };
-    const answer = solveCell(staticData, cell, 0, noChoice(defaultDataset));
+    const answer = solveCell(defaultDataset, staticData, cell, 0, noChoice(defaultDataset));
     const made = 3 * rateOf(plate, 'item:iron-plate');
     const used = -rateOf(gears, 'item:iron-plate');
     expect(answer.counts[1]).toBeCloseTo(made / used, 9);
@@ -201,6 +215,7 @@ describe('solveCell', () => {
 
   it('makes replacement saws for the expected loss from wood sawing', () => {
     const answer = solveCell(
+      defaultDataset,
       staticData,
       {
         entries: [{ recipe: 'angels-wood-sawing-1', count: 1 }, { recipe: 'angels-solid-saw' }],
@@ -225,14 +240,23 @@ describe('solveCell', () => {
   it('runs a row at the rates its modules give it', () => {
     // three productivity module 3s: 1.36 gears where there was one, at 0.55× the crafts
     const bare = solveCell(
+      defaultDataset,
       staticData,
       { entries: [{ ...gearRow(), count: 1 }] },
       0,
       noChoice(defaultDataset),
     ).balance;
     const modded = solveCell(
+      defaultDataset,
       staticData,
-      { entries: [{ ...gearRow({ 'productivity-module-3': 3 }), count: 1 }] },
+      {
+        entries: [
+          {
+            ...gearRow({ 'productivity-module-3': 3 }),
+            count: 1,
+          },
+        ],
+      },
       0,
       noChoice(defaultDataset),
     ).balance;
@@ -251,8 +275,17 @@ describe('solveCell', () => {
   it('counts the machines the modules make necessary', () => {
     const against = (modules?: Record<string, number>) =>
       solveCell(
+        defaultDataset,
         staticData,
-        { entries: [{ recipe: 'iron-plate', count: 3 }, gearRow(modules)] },
+        {
+          entries: [
+            {
+              recipe: 'iron-plate',
+              count: 3,
+            },
+            gearRow(modules),
+          ],
+        },
         0,
         noChoice(defaultDataset),
       ).counts[1]!;
@@ -264,7 +297,7 @@ describe('solveCell', () => {
     const cell: Cell = {
       entries: [{ recipe: 'iron-plate', count: 1 }, { recipe: 'no-such-recipe' }],
     };
-    expect(solveCell(staticData, cell, 0, noChoice(defaultDataset)).notes).toEqual([
+    expect(solveCell(defaultDataset, staticData, cell, 0, noChoice(defaultDataset)).notes).toEqual([
       { kind: 'stranded', entry: 1 },
       {
         kind: 'fallback',
