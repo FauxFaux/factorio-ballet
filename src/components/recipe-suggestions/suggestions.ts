@@ -1,5 +1,6 @@
 import { cellInterface, type Cell } from '../../cell.ts';
 import type { StaticData } from '../../types.ts';
+import type { SuggestionPlanIndex } from '../../dataset/precompute.ts';
 import { isBarrelling, isUnbarrelling } from '../../compute/recipes.ts';
 import type { ResourceId } from '../../types.ts';
 import { voidPlanFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
@@ -166,6 +167,7 @@ function pathSuggestion(
 
 export function suggestedRecipePaths(
   data: StaticData,
+  index: SuggestionPlanIndex,
   search: string,
   cell?: Cell,
   resource?: ResourceId,
@@ -191,7 +193,7 @@ export function suggestedRecipePaths(
         : [];
     }) ?? []),
   ]);
-  const chains = suggestedResourceChains(cell);
+  const chains = suggestedResourceChains(index, cell);
   const resourceSuggestions = suggestedVoidResources(search, cell, resource).flatMap((id) => {
     const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
     const resourceChains = chains.get(id) ?? [];
@@ -220,10 +222,10 @@ export function suggestedRecipePaths(
         ),
     ];
   });
-  const inputSuggestions = suggestedSoleProducerInputs(cell).map((plan) =>
+  const inputSuggestions = suggestedSoleProducerInputs(data, index, cell).map((plan) =>
     pathSuggestion(data, plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
   );
-  const freeInputSuggestions = suggestedFreeInputs(cell).map((plan) =>
+  const freeInputSuggestions = suggestedFreeInputs(data, index, cell).map((plan) =>
     pathSuggestion(
       data,
       plan.target,
@@ -236,10 +238,10 @@ export function suggestedRecipePaths(
       true,
     ),
   );
-  const outputSuggestions = suggestedSoleConsumerOutputs(cell).map((plan) =>
+  const outputSuggestions = suggestedSoleConsumerOutputs(data, index, cell).map((plan) =>
     pathSuggestion(data, plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
   );
-  const fewInputSuggestions = suggestedFewProducerInputs(cell).map((plan) =>
+  const fewInputSuggestions = suggestedFewProducerInputs(data, index, cell).map((plan) =>
     pathSuggestion(
       data,
       plan.target,
@@ -248,10 +250,10 @@ export function suggestedRecipePaths(
       existingInputs,
       existingOutputs,
       present,
-      producerCount(plan.target),
+      producerCount(index, plan.target),
     ),
   );
-  const fewOutputSuggestions = suggestedFewConsumerOutputs(cell).map((plan) =>
+  const fewOutputSuggestions = suggestedFewConsumerOutputs(data, index, cell).map((plan) =>
     pathSuggestion(
       data,
       plan.target,
@@ -260,7 +262,7 @@ export function suggestedRecipePaths(
       existingInputs,
       existingOutputs,
       present,
-      consumerCount(plan.target),
+      consumerCount(index, plan.target),
     ),
   );
   const ranked = [

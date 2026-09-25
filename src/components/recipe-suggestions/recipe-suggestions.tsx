@@ -29,15 +29,17 @@ export function RecipeSuggestions({
   inCell?: (recipe: string) => boolean;
   onMakeExplicit?: (resource: ResourceId, direction: 'import' | 'export') => void;
 }) {
-  const { data } = useDataset();
+  const { data, suggestionPlans } = useDataset();
   const suggestions = useMemo(() => {
     const imports = new Set(cell?.imports);
     const exports = new Set(cell?.exports);
-    return suggestedRecipePaths(data, search, cell, resource).filter((suggestion) => {
-      if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
-      return !exports.has(suggestion.resource);
-    });
-  }, [data, search, cell, resource]);
+    return suggestedRecipePaths(data, suggestionPlans, search, cell, resource).filter(
+      (suggestion) => {
+        if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
+        return !exports.has(suggestion.resource);
+      },
+    );
+  }, [data, suggestionPlans, search, cell, resource]);
   return (
     <section class="recipe-suggestions" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>

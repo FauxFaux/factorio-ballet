@@ -44,5 +44,7 @@ describe('createDataset', () => {
 
     expect(first.soleProducerByResource.get('item:iron-plate')).toBe('first');
     expect(second.soleProducerByResource.get('item:iron-plate')).toBe('second');
+    expect(first.suggestionPlans.soleProducer.get('item:iron-plate')).toBe('first');
+    expect(second.suggestionPlans.soleProducer.get('item:iron-plate')).toBe('second');
   });
 });

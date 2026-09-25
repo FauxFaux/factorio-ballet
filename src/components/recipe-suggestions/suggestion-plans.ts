@@ -1,9 +1,8 @@
 import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
-import { staticData } from '../../data/decode.ts';
-import { isBarrelling, isUnbarrelling, isVoid } from '../../compute/recipes.ts';
 import { parseSearch } from '../../data/search.ts';
-import type { ResourceId } from '../../types.ts';
-import { resourceChainFinder, type ResourceChain, type VoidPlan } from '../../compute/void-path.ts';
+import type { ResourceId, StaticData } from '../../types.ts';
+import type { ResourceChain, VoidPlan } from '../../compute/void-path.ts';
+import type { SuggestionPlanIndex } from '../../dataset/precompute.ts';
 
 export interface SynthesisedResourceChain extends ResourceChain {
   /** Number of free boundary inputs made internal by this suggestion. */
@@ -11,35 +10,6 @@ export interface SynthesisedResourceChain extends ResourceChain {
 }
 
 const CANDIDATES_PER_RESOURCE = 24;
-const staticResourceChains = resourceChainFinder(staticData);
-const producers = indexRecipes('products');
-const consumers = indexRecipes('ingredients');
-const soleProducer = uniqueRecipes(producers);
-const soleConsumer = uniqueRecipes(consumers);
-const freeRecipeByProduct = new Map(
-  Object.entries(staticData.suggestionPreload.fromAirRecipeByProduct) as [ResourceId, string][],
-);
-
-function indexRecipes(direction: 'ingredients' | 'products') {
-  const recipes = new Map<ResourceId, string[]>();
-  for (const [id, recipe] of Object.entries(staticData.recipes)) {
-    if (isVoid(recipe) || isBarrelling(recipe) || isUnbarrelling(recipe)) continue;
-    for (const resource of new Set(recipe[direction].map(({ resource }) => resource))) {
-      const indexed = recipes.get(resource);
-      if (indexed) indexed.push(id);
-      else recipes.set(resource, [id]);
-    }
-  }
-  return recipes;
-}
-
-function uniqueRecipes(recipesByResource: ReadonlyMap<ResourceId, readonly string[]>) {
-  return new Map(
-    [...recipesByResource].flatMap(([resource, recipes]) =>
-      recipes.length === 1 ? [[resource, recipes[0]!]] : [],
-    ),
-  );
-}
 
 export function isResourceChain(plan: ResourceChain | VoidPlan): plan is ResourceChain {
   return 'target' in plan;
@@ -62,6 +32,7 @@ export function suggestedVoidResources(search: string, cell?: Cell, resource?: R
 }
 
 export function suggestedResourceChains(
+  index: SuggestionPlanIndex,
   cell?: Cell,
   maxResults = CANDIDATES_PER_RESOURCE,
 ): Map<ResourceId, ResourceChain[]> {
@@ -69,16 +40,12 @@ export function suggestedResourceChains(
   const { inputs, outputs } = cellInterface(cell);
   return new Map(
     outputs
-      .map((output) => [output, staticResourceChains(output, inputs, maxResults)] as const)
+      .map((output) => [output, index.resourceChains(output, inputs, maxResults)] as const)
       .filter(([, chains]) => chains.length),
   );
 }
 
-function directSuggestion(
-  target: ResourceId,
-  id: string,
-  recipe: (typeof staticData.recipes)[string],
-) {
+function directSuggestion(target: ResourceId, id: string, recipe: StaticData['recipes'][string]) {
   const inputs = [...new Set(recipe.ingredients.map(({ resource }) => resource))];
   return {
     target,
@@ -90,11 +57,15 @@ function directSuggestion(
   };
 }
 
-export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
+export function suggestedSoleProducerInputs(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+): ResourceChain[] {
   if (!cell) return [];
   return cellInterface(cell).inputs.flatMap((target) => {
-    const id = soleProducer.get(target);
-    const recipe = id && staticData.recipes[id];
+    const id = index.soleProducer.get(target);
+    const recipe = id && data.recipes[id];
     return id && recipe ? [directSuggestion(target, id, recipe)] : [];
   });
 }
@@ -104,20 +75,28 @@ export function suggestedSoleProducerInputs(cell?: Cell): ResourceChain[] {
  * and that water can immediately be turned into steam. Keep their actual recipes so the suggestion
  * can be added to a cell, rather than merely treating their product as already available.
  */
-export function suggestedFreeInputs(cell?: Cell): ResourceChain[] {
+export function suggestedFreeInputs(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+): ResourceChain[] {
   if (!cell) return [];
   return cellInterface(cell).inputs.flatMap((target) => {
-    const plan = freeInputPlan(target);
+    const plan = freeInputPlan(data, index, target);
     return plan ? [plan] : [];
   });
 }
 
-function freeInputPlan(target: ResourceId): ResourceChain | undefined {
+function freeInputPlan(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  target: ResourceId,
+): ResourceChain | undefined {
   const recipes: string[] = [];
   const added = new Set<string>();
   const addProducer = (resource: ResourceId): boolean => {
-    const id = freeRecipeByProduct.get(resource);
-    const producer = id && staticData.recipes[id];
+    const id = index.freeRecipeByProduct.get(resource);
+    const producer = id && data.recipes[id];
     if (!producer) return false;
     if (!producer.ingredients.every(({ resource }) => addProducer(resource))) return false;
     if (!added.has(id)) {
@@ -127,18 +106,16 @@ function freeInputPlan(target: ResourceId): ResourceChain | undefined {
     return true;
   };
   if (!addProducer(target)) return undefined;
-  return recipePlan(target, recipes);
+  return recipePlan(data, target, recipes);
 }
 
 /** Calculate the boundary flows for a recipe set which makes `target`. */
-function recipePlan(target: ResourceId, recipes: string[]): ResourceChain {
+function recipePlan(data: StaticData, target: ResourceId, recipes: string[]): ResourceChain {
   const used = new Set(
-    recipes.flatMap(
-      (id) => staticData.recipes[id]?.ingredients.map(({ resource }) => resource) ?? [],
-    ),
+    recipes.flatMap((id) => data.recipes[id]?.ingredients.map(({ resource }) => resource) ?? []),
   );
   const made = new Set(
-    recipes.flatMap((id) => staticData.recipes[id]?.products.map(({ resource }) => resource) ?? []),
+    recipes.flatMap((id) => data.recipes[id]?.products.map(({ resource }) => resource) ?? []),
   );
   return {
     target,
@@ -148,11 +125,15 @@ function recipePlan(target: ResourceId, recipes: string[]): ResourceChain {
   };
 }
 
-export function suggestedSoleConsumerOutputs(cell?: Cell): ResourceChain[] {
+export function suggestedSoleConsumerOutputs(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+): ResourceChain[] {
   if (!cell) return [];
   return cellInterface(cell).outputs.flatMap((target) => {
-    const id = soleConsumer.get(target);
-    const recipe = id && staticData.recipes[id];
+    const id = index.soleConsumer.get(target);
+    const recipe = id && data.recipes[id];
     if (!id || !recipe) return [];
     return [withoutTargetInput(directSuggestion(target, id, recipe))];
   });
@@ -168,6 +149,7 @@ function withoutTargetInput(suggestion: ResourceChain): ResourceChain {
 }
 
 function suggestedFewRecipeInterfaces(
+  data: StaticData,
   cell: Cell | undefined,
   direction: 'inputs' | 'outputs',
   recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
@@ -177,21 +159,25 @@ function suggestedFewRecipeInterfaces(
     const recipes = recipesByResource.get(target);
     if (!recipes || recipes.length < 2 || recipes.length > 3) return [];
     return recipes.flatMap((id) => {
-      const recipe = staticData.recipes[id];
+      const recipe = data.recipes[id];
       return recipe ? [directSuggestion(target, id, recipe)] : [];
     });
   });
 }
 
-export function suggestedFewProducerInputs(cell?: Cell): ResourceChain[] {
-  return suggestedFewRecipeInterfaces(cell, 'inputs', producers).flatMap((plan) => [
+export function suggestedFewProducerInputs(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+): ResourceChain[] {
+  return suggestedFewRecipeInterfaces(data, cell, 'inputs', index.producers).flatMap((plan) => [
     plan,
     ...plan.inputs.flatMap((input) => {
-      const supply = freeInputPlan(input);
+      const supply = freeInputPlan(data, index, input);
       return supply
         ? [
             {
-              ...recipePlan(plan.target, [...supply.recipes, ...plan.recipes]),
+              ...recipePlan(data, plan.target, [...supply.recipes, ...plan.recipes]),
               synthesisedFreeInputs: 1,
             },
           ]
@@ -200,14 +186,20 @@ export function suggestedFewProducerInputs(cell?: Cell): ResourceChain[] {
   ]);
 }
 
-export function suggestedFewConsumerOutputs(cell?: Cell): ResourceChain[] {
-  return suggestedFewRecipeInterfaces(cell, 'outputs', consumers).map(withoutTargetInput);
+export function suggestedFewConsumerOutputs(
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+): ResourceChain[] {
+  return suggestedFewRecipeInterfaces(data, cell, 'outputs', index.consumers).map(
+    withoutTargetInput,
+  );
 }
 
-export function producerCount(resource: ResourceId) {
-  return producers.get(resource)?.length;
+export function producerCount(index: SuggestionPlanIndex, resource: ResourceId) {
+  return index.producers.get(resource)?.length;
 }
 
-export function consumerCount(resource: ResourceId) {
-  return consumers.get(resource)?.length;
+export function consumerCount(index: SuggestionPlanIndex, resource: ResourceId) {
+  return index.consumers.get(resource)?.length;
 }

@@ -12,12 +12,14 @@ import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
 import { staticData } from '../src/data/decode.ts';
 import { DatasetProvider } from '../src/dataset/context.tsx';
 import { defaultDataset } from '../src/dataset/index.ts';
+import { buildSuggestionPlanIndex } from '../src/dataset/precompute.ts';
 import {
   scoreRecipeSuggestion,
   suggestedRecipePaths,
   suggestionScoreWeights,
 } from '../src/components/recipe-suggestions/suggestions.ts';
 import {
+  producerCount,
   suggestedResourceChains,
   suggestedFewProducerInputs,
   suggestedFreeInputs,
@@ -75,7 +77,7 @@ describe('suggestedResourceChains', () => {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
     };
 
-    const chains = suggestedResourceChains(cell).get(waste) ?? [];
+    const chains = suggestedResourceChains(defaultDataset.suggestionPlans, cell).get(waste) ?? [];
 
     expect(chains).toContainEqual({
       target: 'fluid:angels-liquid-sulfuric-acid',
@@ -90,11 +92,30 @@ describe('suggestedResourceChains', () => {
   });
 });
 
+describe('suggestion plan indexes', () => {
+  it('counts producers from the supplied static data', () => {
+    const recipe = staticData.recipes['iron-plate'];
+    const withProducer = { ...staticData, recipes: { only: recipe } };
+    const withoutProducer = { ...staticData, recipes: {} };
+
+    const first = buildSuggestionPlanIndex(withProducer);
+    const second = buildSuggestionPlanIndex(withoutProducer);
+
+    expect(producerCount(first, 'item:iron-plate')).toBe(1);
+    expect(producerCount(second, 'item:iron-plate')).toBeUndefined();
+    expect(producerCount(first, 'item:iron-plate')).toBe(1);
+  });
+});
+
 describe('single-recipe interface suggestions', () => {
   it('suggests the sole recipe which can make a required input', () => {
-    const suggestions = suggestedSoleProducerInputs({
-      entries: [{ recipe: 'speed-module-3' }],
-    });
+    const suggestions = suggestedSoleProducerInputs(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      {
+        entries: [{ recipe: 'speed-module-3' }],
+      },
+    );
 
     expect(suggestions).toContainEqual(
       expect.objectContaining({
@@ -106,9 +127,13 @@ describe('single-recipe interface suggestions', () => {
 
   it('does not count fluid unbarrelling as a competing producer', () => {
     const nitrogen = 'fluid:angels-gas-nitrogen' as const;
-    const suggestions = suggestedSoleProducerInputs({
-      entries: [{ recipe: 'bob-silicon-nitride' }],
-    });
+    const suggestions = suggestedSoleProducerInputs(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      {
+        entries: [{ recipe: 'bob-silicon-nitride' }],
+      },
+    );
 
     expect(cellInterface({ entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs).toContain(
       nitrogen,
@@ -119,9 +144,13 @@ describe('single-recipe interface suggestions', () => {
   });
 
   it('suggests the sole recipe which can use an output', () => {
-    const suggestions = suggestedSoleConsumerOutputs({
-      entries: [{ recipe: 'bob-speed-processor' }],
-    });
+    const suggestions = suggestedSoleConsumerOutputs(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      {
+        entries: [{ recipe: 'bob-speed-processor' }],
+      },
+    );
 
     expect(suggestions).toContainEqual(
       expect.objectContaining({
@@ -132,7 +161,7 @@ describe('single-recipe interface suggestions', () => {
   });
 
   it('gives a sole consumer a high certainty score', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+    const paths = suggestedRecipePaths(defaultDataset.data, defaultDataset.suggestionPlans, '', {
       entries: [{ recipe: 'bob-speed-processor' }],
     });
     const soleConsumer = paths.find(
@@ -145,14 +174,20 @@ describe('single-recipe interface suggestions', () => {
 
 describe('free input suggestions', () => {
   it('suggests the no-cost recipe chain for water and steam inputs', () => {
-    expect(suggestedFreeInputs({ entries: [{ recipe: 'angels-steam-water' }] })).toContainEqual({
+    expect(
+      suggestedFreeInputs(defaultDataset.data, defaultDataset.suggestionPlans, {
+        entries: [{ recipe: 'angels-steam-water' }],
+      }),
+    ).toContainEqual({
       target: 'fluid:water',
       recipes: ['synthetic:pumping-water'],
       inputs: [],
       outputs: [],
     });
     expect(
-      suggestedFreeInputs({ entries: [{ recipe: 'angels-water-gas-shift-1' }] }),
+      suggestedFreeInputs(defaultDataset.data, defaultDataset.suggestionPlans, {
+        entries: [{ recipe: 'angels-water-gas-shift-1' }],
+      }),
     ).toContainEqual(
       expect.objectContaining({
         target: 'fluid:steam',
@@ -163,7 +198,7 @@ describe('free input suggestions', () => {
   });
 
   it('puts a free chain ahead of ordinary ways to supply the same cell input', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+    const paths = suggestedRecipePaths(defaultDataset.data, defaultDataset.suggestionPlans, '', {
       entries: [{ recipe: 'angels-water-gas-shift-1' }],
     });
     const steam = paths.find(
@@ -178,7 +213,7 @@ describe('free input suggestions', () => {
   });
 
   it('does not repeat a free input which is also the sole producer', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+    const paths = suggestedRecipePaths(defaultDataset.data, defaultDataset.suggestionPlans, '', {
       entries: [{ recipe: 'angels-steam-water' }],
     });
     const pumpingWater = paths.filter(
@@ -195,10 +230,20 @@ describe('free input suggestions', () => {
 
 describe('few-recipe interface suggestions', () => {
   it('suggests each producer for inputs with two or three possible recipes', () => {
-    const copperCable = suggestedFewProducerInputs({
-      entries: [{ recipe: 'small-electric-pole' }],
-    });
-    const ironPlate = suggestedFewProducerInputs({ entries: [{ recipe: 'gun-turret' }] });
+    const copperCable = suggestedFewProducerInputs(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      {
+        entries: [{ recipe: 'small-electric-pole' }],
+      },
+    );
+    const ironPlate = suggestedFewProducerInputs(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      {
+        entries: [{ recipe: 'gun-turret' }],
+      },
+    );
 
     expect(copperCable).toEqual(
       expect.arrayContaining([
@@ -225,7 +270,7 @@ describe('few-recipe interface suggestions', () => {
   });
 
   it('extends competing producers with their free upstream inputs before scoring them', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+    const paths = suggestedRecipePaths(defaultDataset.data, defaultDataset.suggestionPlans, '', {
       entries: [{ recipe: 'angels-gas-carbon-monoxide' }],
     });
     const carbonPlans = paths.filter(
@@ -304,7 +349,7 @@ describe('scoreRecipeSuggestion', () => {
   });
 
   it('shows the supplied-input bonus as an output score factor', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, '', {
+    const paths = suggestedRecipePaths(defaultDataset.data, defaultDataset.suggestionPlans, '', {
       entries: [{ recipe: 'speed-module-3' }],
     });
     const suggestion = paths.find(
@@ -370,16 +415,25 @@ describe('scoreRecipeSuggestion', () => {
 
 describe('suggestedRecipePaths', () => {
   it('gives void suggestions an additional certainty score', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`);
+    const paths = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      `uses:${waste}`,
+    );
     const voidSuggestion = paths.find((path) => path.kind === 'void');
 
     expect(voidSuggestion?.scoreFactors.certainty).toBe(suggestionScoreWeights.void);
   });
 
   it('puts a chain which supplies a cell input ahead of a shorter void route', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, {
-      entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
-    });
+    const paths = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      `uses:${waste}`,
+      {
+        entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
+      },
+    );
 
     const sulfuricAcid = paths.find(
       (path) =>
@@ -397,7 +451,12 @@ describe('suggestedRecipePaths', () => {
     const entries = [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }];
     const target = 'fluid:angels-liquid-sulfuric-acid' as const;
     const findCycle = (cell: Cell) =>
-      suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, cell).find(
+      suggestedRecipePaths(
+        defaultDataset.data,
+        defaultDataset.suggestionPlans,
+        `uses:${waste}`,
+        cell,
+      ).find(
         (path) => path.kind === 'chain' && 'target' in path.plan && path.plan.target === target,
       );
 
@@ -409,9 +468,14 @@ describe('suggestedRecipePaths', () => {
   });
 
   it('treats products one free air-processing step away as available inputs', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`, {
-      entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
-    });
+    const paths = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      `uses:${waste}`,
+      {
+        entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
+      },
+    );
     const sulfuricAcid = paths.find(
       (path) =>
         path.kind === 'chain' &&
@@ -424,7 +488,11 @@ describe('suggestedRecipePaths', () => {
   });
 
   it('limits the combined path suggestions to the ten best candidates', () => {
-    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${waste}`);
+    const paths = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      `uses:${waste}`,
+    );
 
     expect(paths.length).toBeLessThanOrEqual(10);
     expect(paths.map((path) => path.score)).toEqual(
@@ -434,7 +502,11 @@ describe('suggestedRecipePaths', () => {
 
   it('excludes barrel conversion recipes from void recommendations', () => {
     const water = 'fluid:water' as const;
-    const paths = suggestedRecipePaths(defaultDataset.data, `uses:${water}`);
+    const paths = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      `uses:${water}`,
+    );
 
     expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('water-barrel');
     expect(paths.flatMap((path) => path.plan.recipes)).not.toContain('empty-water-barrel');
@@ -505,9 +577,12 @@ describe('RecipeSuggestions', () => {
 
   it('shows the effects of a suggested output recipe', () => {
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
-    const suggestion = suggestedRecipePaths(defaultDataset.data, '', cell).find(
-      (path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor',
-    );
+    const suggestion = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      '',
+      cell,
+    ).find((path) => path.kind === 'output' && path.resource === 'item:bob-speed-processor');
     expect(suggestion).toBeDefined();
     if (!suggestion || !('target' in suggestion.plan)) return;
 
@@ -532,7 +607,12 @@ describe('RecipeSuggestions', () => {
   it('adds every recipe in a suggested path from its card button in reverse order', async () => {
     const user = userEvent.setup();
     const cell = { entries: [{ recipe: 'bob-speed-processor' }] };
-    const path = suggestedRecipePaths(defaultDataset.data, '', cell)[0]!;
+    const path = suggestedRecipePaths(
+      defaultDataset.data,
+      defaultDataset.suggestionPlans,
+      '',
+      cell,
+    )[0]!;
     const onAdd = vi.fn();
     const { container } = render(h(RecipeSuggestions, { search: '', cell, progress: 0, onAdd }));
 
