@@ -13,10 +13,12 @@ is for pure functions producing insight. `src/bp` is related to modelling the re
 blueprints. `src/data` is for managing and loading of static datasets.
 
 Within `src/compute/`, `assembler-design/` contains the strategy-based assembler kernel generator,
-`tile-design/` contains normalized inputs and fluid access modeling for tile design, and
-`design-validation/` checks emitted tile candidates and shared entity geometry. The completed
-assembler solver planning project is recorded in `docs/ASSEMBLER-SOLVER-PLAN.md`; read it as
-migration history, and use the source to determine which parts are implemented and used today.
+`tile-design/` contains normalized inputs and the item/fluid search, routing, capacity allocation,
+and emission logic, and `design-validation/` checks emitted tile candidates and shared entity
+geometry. Read `docs/guides/TILE-SEARCH.md` before changing tile-design search, routing, capacity,
+or validation behavior. The completed assembler solver planning project is recorded in
+`docs/ASSEMBLER-SOLVER-PLAN.md`; read it as migration history, and use the source to determine
+which parts are implemented and used today.
 
 Read `docs/guides/FACTORIO.md` before changing domain, cell, kernel, or layout behavior. Read
 `docs/guides/STYLING.md` before changing page layout, responsive behavior, or shared visual sizing.
