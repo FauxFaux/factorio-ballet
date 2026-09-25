@@ -1,7 +1,7 @@
 # Rail blueprint notes
 
 These notes describe the Factorio 2.x rail geometry demonstrated by the fixtures in this directory.
-The fixtures are the authority when they disagree with the older `../blueprint.wiki`.
+The fixtures are the authority when they disagree with the older `../blueprint-string.wiki`.
 
 ## Blueprint representation
 

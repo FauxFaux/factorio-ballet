@@ -1,0 +1,754 @@
+{{Cleanup|Needs to be updated for 2.0}}
+[[File:blueprint_string_preview.png|thumb|340px|right|Preview of a blueprint string.]]This is a technical description of the blueprint string format, used to share blueprints with other users.
+
+A blueprint string is a JSON representation of the blueprint, compressed with zlib deflate using compression level 9 and then encoded using base64 with a version byte in front of the encoded string. The version byte is currently 0 (for all Factorio versions through 2.0).
+So to get the JSON representation of a blueprint from a blueprint string, skip the first byte, base64 decode the string, and finally decompress using zlib inflate.
+
+As of 2.0 the game can also import the uncompressed JSON blueprint string directly.
+
+== Json representation of a blueprint/blueprint book ==
+
+The json representation of a blueprint or blueprint book is one large object inside another "wrapping" object, its key inside that object is either blueprint or blueprint_book.
+
+=== Blueprint book object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| item
+| String, the name of the item that was saved ("blueprint-book" in vanilla). Note that the key within the wrapping object is "blueprint_book" (with an underscore).
+| String
+|-
+| label
+| String, the name of the blueprint set by the user.
+| String
+|-
+| label_color
+| The color of the label of this blueprint. Optional. [[#Color object]].
+| Object
+|-
+| blueprints
+| The actual content of the blueprint book, array of objects containing an "index" key and 0-based value and a "blueprint" key with a [[#Blueprint object]] as the value.
+| Array
+|-
+| active_index
+| Index of the currently selected blueprint, 0-based.
+| Integer
+|-
+| icons
+| The icons of the blueprint book set by the user, array of [[#Icon object]]s.
+| Array
+|-
+| description
+| The description of the blueprint book. Optional.
+| String
+|-
+| version
+| The map version of the map the blueprint was created in, see [[Version string format]].
+| Integer (long)
+|}
+
+=== Blueprint object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| item
+| String, the name of the item that was saved ("blueprint" in vanilla).
+| String
+|-
+| label
+| String, the name of the blueprint set by the user.
+| String
+|-
+| label_color
+| The color of the label of this blueprint. Optional. [[#Color object]].
+| Object
+|-
+| entities
+| The actual content of the blueprint, array of [[#Entity object]]s.
+| Array
+|-
+| tiles
+| The tiles included in the blueprint, array of [[#Tile object]]s.
+| Array
+|-
+| icons
+| The icons of the blueprint set by the user, array of [[#Icon object]]s.
+| Array
+|-
+| schedules
+| The schedules for trains in this blueprint, array of [[#Schedule object]]s.
+| Array
+|-
+| description
+| The description of the blueprint. Optional.
+| String
+|-
+| snap-to-grid
+| The dimensions of the grid to use for snapping. Optional. [[#Position object]].
+| Object
+|-
+| absolute-snapping
+| Whether the blueprint uses absolute or relative snapping. Optional.
+| Boolean
+|-
+| position-relative-to-grid
+| Offset relative to the global absolute snapping grid. Optional. [[#Position object]].
+| Object
+|-
+| version
+| The map version of the map the blueprint was created in.
+| Integer (long)
+|}
+
+=== Icon object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| index
+| Index of the icon, 1-based.
+| Integer
+|-
+| signal
+| The icon that is displayed, [[#SignalID object]].
+| Object
+|}
+
+=== SignalID object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| name
+| Name of the signal prototype this signal is set to.
+| String
+|-
+| type
+| Type of the signal. See [https://lua-api.factorio.com/stable/concepts/SignalIDType.html SignalIDType] for possible values. <br> '''Note for 2.x:''' property is optional and defaults to "item".
+| String
+|}
+
+=== Entity object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| entity_number
+| Index of the entity, 1-based.
+| Integer
+|-
+| name
+| Prototype name of the entity (e.g. "offshore-pump").
+| String
+|-
+| position
+| [[#Position object]], position of the entity within the blueprint.
+| Object
+|-
+| direction
+| Direction of the entity, uint (optional).<br> '''Note for 2.x:''' Direction appears to be double the previous values
+| Integer
+|-
+| orientation
+| Orientation of cargo wagon or locomotive, value 0 to 1 (optional).
+| Floating Point
+|-
+| connections
+| Circuit connection, object with keys starting from 1, values are [[#Connection object]]s (optional).
+| Object
+|-
+| neighbours
+| Copper wire connections, array of entity_numbers (optional).
+| Array
+|-
+| control_behavior
+| [[#Control behavior object]] of this entity (optional).
+| Object
+|-
+| items
+| Item requests by this entity, this is what defines the item-request-proxy when the blueprint is placed, optional. [[#Item request object]]
+| Object
+|-
+| recipe
+| Name of the recipe prototype this assembling machine is set to, optional, string.
+| String
+|-
+| bar
+| Used by [[Prototype/Container]], optional. The index of the first inaccessible item slot due to limiting with the red "bar". 0-based [[Types/ItemStackIndex]].
+| Integer
+|-
+| ammo_inventory
+| Ammo inventory of an entity (e.g. [[Spidertron]]), optional. [[#Inventory object]]
+| Object
+|-
+| trunk_inventory
+| Boot/Luggage inventory of an entity (e.g. storage inventory of a Spidertron), optional. [[#Inventory object]]
+| Object
+|-
+| inventory
+| Cargo wagon inventory configuration, optional. [[#Inventory object]]
+| Object
+|-
+| infinity_settings
+| Used by [[Prototype/InfinityContainer]], optional. [[#Infinity settings object]]
+| Object
+|-
+| type
+| Type of the underground belt or loader, optional. Either "input" or "output".
+| String
+|-
+| input_priority
+| Input priority of the splitter, optional. Either "right" or "left", "none" is omitted.
+| String
+|-
+| output_priority
+| Output priority of the splitter, optional. Either "right" or "left", "none" is omitted.
+| String
+|-
+| filter
+| Filter of the splitter, optional. Name of the item prototype the filter is set to, string.
+| String
+|-
+| filters
+| Filters of the filter inserter or loader, optional. Array of [[#Item filter object]]s.
+| Array
+|-
+| filter_mode
+| Filter mode of the filter inserter, optional. Either "whitelist" or "blacklist".
+| String
+|-
+| override_stack_size
+| The stack size the inserter is set to, optional. [[Types/uint8]].
+| Integer
+|-
+| drop_position
+| The drop position the inserter is set to, optional. [[#Position object]].
+| Object
+|-
+| pickup_position
+| The pickup position the inserter is set to, optional. [[#Position object]].
+| Object
+|-
+| request_filters
+| Used by [[Prototype/LogisticContainer]], optional. [[#Logistic filter object]].
+| Array
+|-
+| request_from_buffers
+| Boolean. Whether this requester chest can request from buffer chests.
+| Boolean
+|-
+| parameters
+| Used by [[Programmable speaker]], optional. [[#Speaker parameter object]].
+| Object
+|-
+| alert_parameters
+| Used by [[Programmable speaker]], optional. [[#Speaker alert parameter object]]
+| Object
+|-
+| auto_launch
+| Used by the rocket silo, optional. Boolean, whether auto launch is enabled.
+| Boolean
+|-
+| variation
+| Used by [[Prototype/SimpleEntityWithForce]] or [[Prototype/SimpleEntityWithOwner]], optional. [[Types/GraphicsVariation]]
+|
+|-
+| color
+| Color of the [[Prototype/SimpleEntityWithForce]], [[Prototype/SimpleEntityWithOwner]], or train station, optional. [[#Color object]].
+| Object
+|-
+| station
+| The name of the train station, optional.
+| String
+|-
+| manual_trains_limit
+| The manually set train limit of the train station, optional.
+| Integer
+|-
+| switch_state
+| The current state of the power switch, optional.
+| Boolean
+|-
+| tags
+| Dictionary of arbitrary data, optional. [https://lua-api.factorio.com/latest/concepts/Tags.html Tags].
+| Object
+|}
+
+=== Inventory object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| filters
+| Array of [[#Item filter object]]s.
+| Array
+|-
+| bar
+| The index of the first inaccessible item slot due to limiting with the red "bar". 0-based, optional.  [[Types/ItemStackIndex]].
+| Integer
+|}
+
+=== Schedule object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| schedule
+| Array of [[#Schedule Record object]]s.
+| Array
+|-
+| locomotives
+| Array of entity numbers of locomotives using this schedule.
+| Array
+|}
+
+=== Schedule Record object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| station
+| The name of the stop for this schedule record.
+| String
+|-
+| wait_conditions
+| Array of [[#Wait Condition object]]s.
+| Array
+|-
+| temporary
+| Whether this is a temporary schedule record. Optional.
+| Boolean
+|}
+
+=== Wait Condition object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| type
+| One of "time", "inactivity", "full", "empty", "item_count", "circuit", "robots_inactive", "fluid_count", "passenger_present", "passenger_not_present".
+| String
+|-
+| compare_type
+| Either "and", or "or". Tells how this condition is to be compared with the preceding conditions in the corresponding wait_conditions array.
+| String
+|-
+| ticks
+| Number of ticks to wait or of inactivity. Only present when type is "time" or "inactivity". Optional.
+| uint
+|-
+| condition
+| [https://lua-api.factorio.com/latest/concepts/CircuitCondition.html CircuitCondition object], only present when type is "item_count", "circuit" or "fluid_count".
+| Object
+|}
+
+=== Tile object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| name
+| Prototype name of the tile (e.g. "concrete")
+| String
+|-
+| position
+| [[#Position object]], position of the entity within the blueprint.
+| Object
+|}
+
+=== Position object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| x
+| X position within the blueprint, 0 is the center.
+| Floating point
+|-
+| y
+| Y position within the blueprint, 0 is the center.
+| Floating point
+|}
+
+=== Connection object ===
+Object containing information about the connections to other entities formed by red or green wires.
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| 1
+| First connection point. The default for everything that doesn't have multiple connection points.[[#Connection point object]]
+| Object
+|-
+| 2
+| Second connection point. For example, the "output" part of an arithmetic combinator.[[#Connection point object]]
+| Object
+|}
+
+=== Connection point object ===
+The actual point where a wire is connected to. Contains information about where it is connected to.
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| red
+| An array of [[#Connection data object]] containing all the connections from this point created by red wire.
+| Array
+|-
+| green
+| An array of [[#Connection data object]] containing all the connections from this point created by green wire.
+| Array
+|}
+
+=== Connection data object ===
+Information about a single connection between two connection points.
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| entity_id
+| ID of the entity this connection is connected with.
+| Integer
+|-
+| circuit_id
+| The circuit connector id of the entity this connection is connected to, see [https://lua-api.factorio.com/latest/defines.html#defines.circuit_connector_id defines.circuit_connector_id].
+| Integer
+|}
+
+=== Item request object ===
+1 or more instances of key/value pairs.
+Key is the name of the item, string.
+Value is the amount of items to be requested, [[Types/ItemCountType]].
+
+=== Item filter object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| name
+| Name of the item prototype this filter is set to.
+| String
+|-
+| index
+| Index of the filter, 1-based. 
+| Integer
+|}
+
+=== Infinity settings object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| remove_unfiltered_items
+| Boolean. Whether the "remove unfiltered items" checkbox is checked.
+| Boolean
+|-
+| filters
+| Filters of the infinity container, optional. Array of [[#Infinity filter object]]s.
+| Array
+|}
+
+=== Infinity filter object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| name
+| Name of the item prototype the filter is set to, string.
+| String
+|-
+| count
+| Number the filter is set to, [[Types/ItemCountType]].
+| Integer
+|-
+| mode
+| Mode of the filter. Either "at-least", "at-most", or "exactly".
+| String
+|-
+| index
+| Index of the filter, 1-based.
+| Integer
+|}
+
+=== Logistic filter object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| name
+| Name of the item prototype this filter is set to.
+| String
+|-
+| index
+| Index of the filter, 1-based.
+| Integer
+|-
+| count
+| Number the filter is set to, [[Types/ItemCountType]]. Is 0 for storage chests.
+| Integer
+|}
+
+=== Speaker parameter object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| playback_volume
+| [[Types/double]]. Volume of the speaker.
+| Floating point
+|-
+| playback_globally
+| Boolean, whether global playback is enabled.
+| Boolean
+|-
+| allow_polyphony
+| Boolean, whether polyphony is allowed.
+| Boolean
+|}
+
+=== Speaker alert parameter object ===
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| show_alert
+| Boolean, whether an alert is shown.
+| Boolean
+|-
+| show_on_map
+| Boolean, whether an alert icon is shown on the map.
+| Boolean
+|-
+| icon_signal_id
+| The icon that is displayed with the alert, [[#SignalID object]].
+| Object
+|-
+| alert_message
+| String, message of the alert.
+| String
+|}
+
+=== Color object ===
+
+{| class="wikitable"
+! Key !! Description !! Data type
+|-
+| r
+| red, number from 0 to 1.
+| Floating point
+|-
+| g
+| green, number from 0 to 1.
+| Floating point
+|-
+| b
+| blue, number from 0 to 1.
+| Floating point
+|-
+| a
+| transparency, number from 0 to 1.
+| Floating point
+|}
+
+=== Control behavior object ===
+
+'''ALL fields are optional''' and depend on the type of the entity.
+
+{| class="wikitable"
+|-
+! Key !! Description !! Data type 
+|-
+| logistic_condition
+| [https://lua-api.factorio.com/latest/concepts/CircuitCondition.html CircuitCondition]
+| Object
+|-
+| connect_to_logistic_network
+| Whether this entity is connected to the logistic network and enables/disables based on logistic_condition.
+| Boolean
+|-
+| circuit_close_signal
+| Whether this rail signal can be closed by circuit_condition.
+| Boolean
+|-
+| circuit_read_signal
+| Whether or not to read the state of this rail/chain signal.
+| Boolean
+|-
+| red_output_signal
+| [[#SignalID]] to use if the rail/chain signal is currently red.
+| Object
+|-
+| orange_output_signal
+| [[#SignalID]] to use if the rail/chain signal is currently orange.
+| Object
+|-
+| green_output_signal
+| [[#SignalID]] to use if the rail/chain signal is currently green.
+| Object
+|-
+| blue_output_signal
+| [[#SignalID]] to use if the chain signal is currently blue.
+| Object
+|-
+| circuit_condition
+| [https://lua-api.factorio.com/latest/concepts/CircuitCondition.html CircuitCondition]
+| Object
+|-
+| circuit_enable_disable
+| Enable or disable based on circuit_condition.
+| Boolean
+|-
+| send_to_train
+| Send circuit values to the train to use in schedule conditions.
+| Boolean
+|-
+| read_from_train
+| Get the currently stopped trains cargo.
+| Boolean
+|-
+| read_stopped_train
+| Get the currently stopped trains ID.
+| Boolean
+|-
+| train_stopped_signal
+| [[#SignalID]] to output the train ID on.
+| Object
+|-
+| set_trains_limit
+| Whether this stations trains limit will be set through circuit values.
+| Boolean
+|-
+| trains_limit_signal
+| [[#SignalID]] to use to set the trains limit.
+| Object
+|-
+| read_trains_count
+| Whether to read this stations currently on route trains count.
+| Boolean
+|-
+| trains_count_signal
+| [[#SignalID]] to output the on route trains count on.
+| Object
+|-
+| read_logistics
+| Whether this roboport should output the contents of its network.
+| Boolean
+|-
+| read_robot_stats
+| Whether this roboport should output the robot stats of its network.
+| Boolean
+|-
+| available_logistic_output_signal
+| [[#SignalID]] to output available logistic robots on.
+| Object
+|-
+| total_logistic_output_signal
+| [[#SignalID]] to output the total count of logistic robots on.
+| Object
+|-
+| available_construction_output_signal
+| [[#SignalID]] to output available construction robots on.
+| Object
+|-
+| total_construction_output_signal
+| [[#SignalID]] to output the total count of construction robots on.
+| Object
+|-
+| circuit_open_gate
+| Whether to limit the gate opening with circuit_condition.
+| Boolean
+|-
+| circuit_read_sensor
+| Whether to send the wall-gate proximity sensor to the circuit network.
+| Boolean
+|-
+| output_signal
+| [[#SignalID]] to output the wall-gate sensor / accumulator charge on.
+| Object
+|-
+| circuit_read_hand_contents
+| Whether to read this belts content or inserters hand.
+| Boolean
+|-
+| circuit_contents_read_mode
+| [https://lua-api.factorio.com/latest/defines.html#defines.control_behavior.transport_belt.content_read_mode defines.control_behavior.transport_belt.content_read_mode]
+| Integer
+|-
+| circuit_mode_of_operation
+| 
+| Integer
+|-
+| circuit_hand_read_mode
+| [https://lua-api.factorio.com/latest/defines.html#defines.control_behavior.inserter.hand_read_mode defines.control_behavior.inserter.hand_read_mode]
+| Integer
+|-
+| circuit_set_stack_size
+| Whether to set the inserters stack size from a circuit signal.
+| Boolean
+|-
+| stack_control_input_signal
+| [[#SignalID]] to use to set the inserters stack size.
+| Object
+|-
+| circuit_read_resources
+| Whether this miner should output its remaining resource amounts to the circuit network.
+| Boolean
+|-
+| circuit_resource_read_mode
+| [https://lua-api.factorio.com/latest/defines.html#defines.control_behavior.mining_drill.resource_read_mode defines.control_behavior.mining_drill.resource_read_mode]
+| Integer
+|-
+| is_on
+| Whether this constant combinator is currently on or off.
+| Boolean
+|-
+| filters
+| Array of <s>[https://lua-api.factorio.com/latest/concepts/BlueprintLogisticFilter.html ConstantCombinatorParameters].</s> It's now a kind of [https://lua-api.factorio.com/latest/concepts/LogisticSections.html LogisticSections] instead.
+''We might be missing a type for it specifically.''
+| Array
+|-
+| arithmetic_conditions
+| [https://lua-api.factorio.com/latest/concepts/ArithmeticCombinatorParameters.html ArithmeticCombinatorParameters]
+| Object
+|-
+| decider_conditions
+| [https://lua-api.factorio.com/latest/concepts/DeciderCombinatorParameters.html DeciderCombinatorParameters]
+| Object
+|-
+| circuit_parameters
+| [https://lua-api.factorio.com/latest/concepts/ProgrammableSpeakerCircuitParameters.html ProgrammableSpeakerCircuitParameters]
+| Object
+|-
+| use_colors
+| Whether this lamp should use colors or not.
+| Boolean
+|}
+
+[[Category:Technical]]
+
+== Example code ==
+
+On a typical Bash command line, the blueprint can be decoded like so:
+
+<syntaxhighlight lang="bash">echo "$blueprint_string" | cut -c2- | base64 -d | pigz -d</syntaxhighlight>
+
+If you don't have <code>pigz</code> installed, you can use <code>zlib-flate -uncompress</code> instead (part of "qpdf").
+
+How to decode a string to Lua table:
+<syntaxhighlight lang="lua">
+local str="$blueprint_string";
+
+local bp_to_table=function(instr)
+  
+  --[[version and the body part]]
+  local version=string.sub(instr,1,1);
+  local body=string.sub(instr,2);
+  --[[then decode it]]
+  local json_str=helpers.decode_string(body);
+  --[[then turn it into table]]
+  local output=helpers.json_to_table(json_str);
+  
+  return output;
+end
+
+--[[and this could test if it print properly]]
+game.print( serpent.block( bp_to_table(str) ) );
+
+</syntaxhighlight>
+
+

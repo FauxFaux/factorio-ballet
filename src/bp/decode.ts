@@ -84,7 +84,7 @@ export interface Schedule {
 
 /**
  * Factorio 2.x stores circuit/copper connections separately from entities. The bundled examples
- * establish this tuple shape even though docs/blueprint.wiki does not yet describe it.
+ * establish this tuple shape even though docs/blueprint-string.wiki does not yet describe it.
  */
 export type Wire = [
   sourceEntity: number,

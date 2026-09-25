@@ -2,8 +2,8 @@
 
 These notes describe Factorio 2.x blueprint books, using `balancers-truncated.json` as the primary
 fixture. The fixture and other files in this directory are authoritative when they disagree with the
-older `../blueprint.wiki`. See `RAIL.md` for the modern entity, direction, wire, and rail rules that
-still apply to blueprints stored inside a book.
+older `../blueprint-string.wiki`. See `RAIL.md` for the modern entity, direction, wire, and rail
+rules that still apply to blueprints stored inside a book.
 
 ## Documents and wrappers
 
