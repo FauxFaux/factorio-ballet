@@ -174,7 +174,6 @@ export function entryRun(
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
   return laidOutEffects(
     ds,
-    data,
     found,
     entry.modules,
     recipe,

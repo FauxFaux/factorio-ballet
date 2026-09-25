@@ -138,7 +138,6 @@ function beaconedSpeed(
   if (!machine) return 1;
   return laidOutEffects(
     ds,
-    ds.data,
     machine,
     undefined,
     recipe,

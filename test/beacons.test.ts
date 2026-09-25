@@ -42,7 +42,7 @@ const boost = (
   wanted: number | undefined,
   free = machine.moduleSlots ?? 0,
   beacons = 0,
-) => moduleBoost(defaultDataset, staticData, machine, free, SPEED_3, wanted, VANILLA, beacons);
+) => moduleBoost(defaultDataset, machine, free, SPEED_3, wanted, VANILLA, beacons);
 
 describe('the ingested beacons', () => {
   it('is the three the pack has, with their slots and their transmission', () => {
@@ -132,10 +132,8 @@ describe('moduleBoost', () => {
   });
 
   it('is nothing at all with no module chosen', () => {
-    expect(moduleBoost(defaultDataset, staticData, three, 3, undefined, 8, VANILLA).speed).toBe(0);
-    expect(
-      moduleBoost(defaultDataset, staticData, three, 3, 'no-such-module', 8, VANILLA).speed,
-    ).toBe(0);
+    expect(moduleBoost(defaultDataset, three, 3, undefined, 8, VANILLA).speed).toBe(0);
+    expect(moduleBoost(defaultDataset, three, 3, 'no-such-module', 8, VANILLA).speed).toBe(0);
   });
 
   it('reaches no machine which takes no modules', () => {
@@ -163,12 +161,12 @@ describe('moduleBoost', () => {
 
   it('drops what a beacon will not hold rather than putting it in the machine', () => {
     const picky = { ...VANILLA, allowedModuleCategories: ['productivity'] };
-    const dropped = moduleBoost(defaultDataset, staticData, two, 2, SPEED_3, 8, picky);
+    const dropped = moduleBoost(defaultDataset, two, 2, SPEED_3, 8, picky);
     expect(dropped).toMatchObject({ wanted: 8, inMachine: 2, inBeacons: 0, beacons: 0 });
     expect(dropped.speed).toBeCloseTo(0.8);
     // and the same for a beacon which takes the module but transmits no speed
     const quiet = { ...VANILLA, allowedEffects: ['consumption' as const] };
-    expect(moduleBoost(defaultDataset, staticData, two, 2, SPEED_3, 8, quiet)).toMatchObject({
+    expect(moduleBoost(defaultDataset, two, 2, SPEED_3, 8, quiet)).toMatchObject({
       inBeacons: 0,
       beacons: 0,
     });
@@ -182,7 +180,6 @@ describe('laidOutEffects', () => {
   it('multiplies the machine, and leaves what comes out of it alone', () => {
     const { effects } = laidOutEffects(
       defaultDataset,
-      staticData,
       two,
       undefined,
       gears,
@@ -201,7 +198,6 @@ describe('laidOutEffects', () => {
     // one productivity module 3 in an assembling machine 3 leaves two slots for speed modules
     const { effects, layout } = laidOutEffects(
       defaultDataset,
-      staticData,
       three,
       { 'productivity-module-3': 1 },
       gears,
@@ -218,16 +214,8 @@ describe('laidOutEffects', () => {
     // no machine in this pack does, so this is the gate rather than a case from the data
     const deaf: Machine = { ...two, allowedEffects: ['productivity'] };
     expect(
-      laidOutEffects(
-        defaultDataset,
-        staticData,
-        deaf,
-        undefined,
-        gears,
-        fast,
-        { speed: 8 },
-        VANILLA,
-      ).effects.speed,
+      laidOutEffects(defaultDataset, deaf, undefined, gears, fast, { speed: 8 }, VANILLA).effects
+        .speed,
     ).toBe(1);
   });
 });
@@ -353,7 +341,7 @@ describe('moduleLayout', () => {
     // no machine in this pack runs a productivity recipe and ignores productivity; the gate is the
     // game's all the same, and getting it wrong is a machine slowed for nothing
     const deaf: Machine = { ...two, allowedEffects: ['speed'] };
-    const laid = moduleLayout(defaultDataset, staticData, deaf, 2, gears, both, {}, VANILLA);
+    const laid = moduleLayout(defaultDataset, deaf, 2, gears, both, {}, VANILLA);
     expect(laid.productivity).toMatchObject({ wanted: 0, inMachine: 0 });
     expect(laid.speed).toMatchObject({ wanted: 2, inMachine: 2 });
   });
