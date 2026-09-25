@@ -13,7 +13,7 @@ export function emitTile(frame: RoutedFrame, allocated: AllocatedTransfer[]): Ti
   const candidate: TileDesignCandidate = {
     column: { entities: [] },
     width: maxX - minX + 1,
-    pitch: machine.size.height,
+    pitch: frame.pitch,
     machineIds: {},
     lanes: [],
     transfers: [],

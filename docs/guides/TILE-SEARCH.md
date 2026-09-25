@@ -23,8 +23,9 @@ available for item inserters.
 - Enumerate ordinary and long inserter bases on all four faces. Long inserters can stand either one
   or two cells from the edge, provided their machine endpoint lies inside the footprint. Ordinary
   and long configurations at the same base are alternatives.
-- Straight trunks can serve east/west faces only. North/south access needs later item branches.
-  Pitch equals the rotated machine height. The search does not add adapter rows or stagger machines.
+- Straight item trunks can serve east/west faces only. North/south item access needs later item
+  branches. Most tiles repeat at the rotated machine height; the south fluid adaptor adds one row.
+  The search does not stagger machines.
 - One resource and one external flow role per lane. Inputs can pick either lane; outputs use the
   actual far lane. Several inserters on one face do not unlock the other output lane.
 - All supplied inserter rules currently describe filter-capable configurations with constant total
@@ -44,8 +45,8 @@ applied before rotation, including port normals; resource and physical box ident
 to the transformed ports. Rectangular and even footprints use centre-relative prototype positions,
 including half-cell coordinates. Emitted assemblers retain `direction` and `mirrored`.
 
-`routes.ts` enumerates two connection schemes for each required fluid and side, choosing one of its
-assigned boxes and alternative ports:
+`routes.ts` chooses one assigned box and alternative port for each required fluid and side. For
+east/west ports it enumerates two connection schemes:
 
 1. A surface pipe trunk immediately beside the selected east/west port.
 2. An inward-facing pipe-to-ground at the machine and an outward-facing partner beside a more
@@ -57,6 +58,16 @@ choices can preserve different inserter sites, or combine several obstructions i
 rows cannot supply inserters; both exposed endpoints can. Inserter bases reserve only their actual
 cells, so arms may cross pipes and other transport. Both underground reach settings count hidden
 cells between endpoints; adapters from prototype fields must convert their distance convention.
+
+For a south port at the rightmost machine column, it can add one adaptor row when `branch` and
+`underground` are available. A pipe immediately below the port turns east into a vertical trunk
+beside the machine. The trunk has a north-facing underground endpoint in row 0, a south-facing
+endpoint at the machine's last row, and a surface pipe in the adaptor row. The tunnel passes under
+the east-side inserter site; the endpoints pair within each tile, while the exposed top endpoint
+meets the previous tile's adaptor pipe across the seam. Other full surface trunks extend through the
+adaptor row. This gives the mono-silicon casting machine two isolated input networks in a four-row,
+six-column tile with an east output belt. The adaptor is wrapper geometry: the machine's physical
+port and recipe-fluid assignment stay unchanged.
 
 Routes may share compatible geometry. Distinct fluid networks must remain isolated, including at
 unselected ports and across the repeat seam. The validator reconstructs surface adjacency and mutual
@@ -72,11 +83,11 @@ pairing cannot reach a neighboring copy. Straight, non-overlapping in-tile belt 
 cannot steal another copy's partner. Validation rejects vertical underground pipe phases and
 unsupported belt routes.
 
-North/south fluid branches, seam-spanning tunnels, adapters for uneven stacking, and alternating
-machine orientations across copies remain outside this family. A larger general routing model can
-add new route primitives and boundary phases; the item rate allocation contract need not change.
-Kernel debug cards enable both connection schemes and display the selected geometry; integration
-with editable designs and module export remains separate.
+Other north/south fluid branches, seam-spanning tunnels, adapters for uneven stacking, and
+alternating machine orientations across copies remain outside this family. A larger general routing
+model can add new route primitives and boundary phases; the item rate allocation contract need not
+change. Kernel debug cards enable both connection schemes and display the selected geometry;
+integration with editable designs and module export remains separate.
 
 ## Search and capacity
 
@@ -123,4 +134,5 @@ enumerates demand splits between faces independently of the production flow/sear
 `test/compute/tile-design/fluid-search.test.ts` covers adjacent and remote trunks, rotations and
 mirrors, rectangular half-cell geometry, multiple isolated networks, alternative and distinct box
 obligations, four-inserter outputs around a blocked row, repeat/budget limits, and corrupted pipe or
-belt certificates. It also checks periodic fluid mixing and rejects disconnected labelled stubs.
+belt certificates. It also covers the mono-silicon south-port adaptor, checks periodic fluid mixing,
+and rejects disconnected labelled stubs.

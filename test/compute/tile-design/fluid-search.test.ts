@@ -4,7 +4,7 @@ import {
   type TileDesignSearchResult,
 } from '../../../src/compute/tile-design/search.ts';
 import { normalizeTileDesignInput } from '../../../src/compute/tile-design/problem.ts';
-import { assemblerProblem } from '../../../src/compute/kernel-problems.ts';
+import { assemblerProblem, kernelProblems } from '../../../src/compute/kernel-problems.ts';
 import { solveKernelTileDesign } from '../../../src/compute/tile-design/kernel-result.ts';
 import { validateTileDesign } from '../../../src/compute/design-validation/validate.ts';
 import { orientFluidPort } from '../../../src/compute/tile-design/orientation.ts';
@@ -81,6 +81,73 @@ function noItems(input: TileDesignInput) {
 function codes(input: TileDesignInput, candidate: ReturnType<typeof found>['candidate']) {
   return validateTileDesign(input, candidate).issues.map(({ code }) => code);
 }
+
+it('adapts the mono-silicon south port into a four-row tile', () => {
+  const monoSilicon = kernelProblems.fluidInput.find(
+    ({ assemblers }) => assemblers[0].name === 'Mono-silicon',
+  )!;
+  const normalized = normalizeTileDesignInput(monoSilicon, {
+    transport: {
+      beltLaneCapacity: 15,
+      undergroundBeltReach: 4,
+      undergroundPipeReach: 10,
+      inserters: [{ id: 'ordinary', capacity: 3, reach: 1 }],
+      fluidThroughput: 'unlimited',
+    },
+    envelope: {
+      maxWidth: 6,
+      maxPitch: 4,
+      maxStates: 100_000,
+      primitives: ['surface', 'underground', 'branch'],
+    },
+  });
+  expect(normalized.success).toBe(true);
+  if (!normalized.success) return;
+  const result = found(solveTileDesign(normalized.input));
+  expect(result.candidate).toMatchObject({ pitch: 4, width: 6 });
+  expect(result.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(2);
+  expect(result.candidate.boundary.map(({ x }) => x)).toEqual([5, 4, 0]);
+  const entities = result.candidate.column.entities;
+  expect(entities).toContainEqual({ kind: 'pipe', position: { x: 3, y: 3 } });
+  expect(entities).toContainEqual({
+    kind: 'underground-pipe',
+    position: { x: 4, y: 0 },
+    direction: 'north',
+  });
+  expect(entities).toContainEqual({
+    kind: 'underground-pipe',
+    position: { x: 4, y: 2 },
+    direction: 'south',
+  });
+  expect(entities).toContainEqual({
+    kind: 'inserter',
+    position: { x: 4, y: 1 },
+    direction: 'east',
+  });
+  expect(codes(normalized.input, result.candidate)).toEqual([]);
+  const disconnected = structuredClone(result.candidate);
+  const endpoint = disconnected.column.entities.find(
+    (entity) =>
+      entity.kind === 'underground-pipe' && entity.position.x === 4 && entity.position.y === 2,
+  );
+  if (endpoint?.kind === 'underground-pipe') endpoint.direction = 'east';
+  expect(codes(normalized.input, disconnected)).toContain('underground-pipe-pair');
+
+  const tooShort = structuredClone(normalized.input);
+  tooShort.envelope.maxPitch = 3;
+  expect(solveTileDesign(tooShort).status).toBe('envelope-exhausted');
+  const noUnderground = structuredClone(normalized.input);
+  noUnderground.envelope.primitives = ['surface', 'branch'];
+  expect(solveTileDesign(noUnderground).status).toBe('envelope-exhausted');
+
+  const preview = solveKernelTileDesign(monoSilicon, {
+    beltItemsPerSecond: 30,
+    inserterItemsPerSecond: 8,
+    longInserterItemsPerSecond: 2.6,
+  });
+  expect('status' in preview && preview.status, JSON.stringify(preview)).toBe('found');
+  if ('status' in preview && preview.status === 'found') expect(preview.candidate.pitch).toBe(4);
+});
 
 function pairedOutputsProblem(items = false): TileDesignInput {
   const input = problem();
@@ -725,7 +792,7 @@ describe('fluid tile search', () => {
     expect(incumbent).toMatchObject({ optimal: false, stopReason: 'budget-exhausted' });
   });
 
-  it('rejects invalid port geometry and leaves north/south adapters outside the envelope', () => {
+  it('rejects invalid port geometry and unsupported north ports', () => {
     const input = problem();
     input.machines[0].inputs.fluids[0].positions[0].position.x = 0;
     expect(solveTileDesign(input).status).toBe('invalid-input');

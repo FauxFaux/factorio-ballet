@@ -24,7 +24,7 @@ export interface TileSearchDiagnostics {
   /** The actually searched family, even when the caller permits additional primitives. */
   scope:
     | 'one-machine/external-items/straight-surface-trunks'
-    | 'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels'
+    | 'one-machine/external-items-and-fluids/horizontal-branches/south-port-adaptor/in-tile-belt-tunnels'
     | 'mirrored-fluid-pair/horizontal-branches';
   bestScore?: { area: number; transportEntities: number };
 }
@@ -45,10 +45,9 @@ export type TileDesignSearchResult =
       diagnostics: TileSearchDiagnostics;
     };
 
-/** Bounded geometry and rate allocation with independent emission validation. Translation and
- * machine-height pitch (twice that height for a mirrored pair) are fixed; selected ports face east/west trunks. Northbound
- * belts are canonical because reversal swaps free lane variables in this route family. Adapter
- * margins, phased trunks and bent belts will need additional route frames. */
+/** Bounded geometry and rate allocation with independent emission validation. Most frames use
+ * machine-height pitch; a south-port adaptor adds a row, and a mirrored pair doubles the height.
+ * Northbound belts are canonical because reversal swaps free lane variables in this route family. */
 export function solveTileDesign(input: TileDesignInput, allowPair = true): TileDesignSearchResult {
   const diagnostics: TileSearchDiagnostics = {
     exploredStates: 0,
@@ -68,7 +67,7 @@ export function solveTileDesign(input: TileDesignInput, allowPair = true): TileD
   const hasFluids = machine.inputs.fluids.length + machine.outputs.fluids.length > 0;
   if (hasFluids)
     diagnostics.scope =
-      'one-machine/external-items-and-fluids/horizontal-branches/in-tile-belt-tunnels';
+      'one-machine/external-items-and-fluids/horizontal-branches/south-port-adaptor/in-tile-belt-tunnels';
   if (!input.envelope.primitives.includes('surface'))
     return failure('unsupported', 'Surface trunks are required.');
   if (input.transport.inserters.some(({ reach }) => reach !== 1 && reach !== 2))

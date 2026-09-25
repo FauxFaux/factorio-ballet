@@ -9,14 +9,15 @@ type Pipe = Extract<DesignEntity, { kind: 'pipe' | 'underground-pipe' }>;
 export interface FluidRoute {
   pipes: { entity: Pipe; resource: FluidId }[];
   trunks: { x: number; resource: FluidId }[];
+  pitch?: number;
 }
 export interface RoutedFrame extends SolidTrackFrame {
   fluid: FluidRoute;
+  pitch: number;
 }
 
-/** Choose physical ports and horizontal branches before allocating the remaining inserter sites.
- * All geometry is relative to the machine. Uniform pitch and in-tile tunnels are deliberate:
- * future adapters can supply other route primitives without changing the allocation contract. */
+/** Choose physical ports and branches before allocating the remaining inserter sites.
+ * All geometry is relative to the machine. Tunnels stay inside one tile. */
 export function* routeFrames(
   input: TileDesignInput,
   frame: SolidTrackFrame,
@@ -44,6 +45,44 @@ export function* routeFrames(
         for (const source of access.positions) {
           const port = orientFluidPort(source, machine.size, frame);
           const { x, y } = port.position;
+          if (
+            port.direction === 'south' &&
+            height >= 2 &&
+            x === machine.size.width - 1 &&
+            y === height &&
+            input.envelope.primitives.includes('branch') &&
+            input.envelope.primitives.includes('underground') &&
+            input.transport.undergroundPipeReach >= height - 2
+          ) {
+            const trunkX = x + 1;
+            routes.push({
+              pitch: height + 1,
+              pipes: [
+                {
+                  entity: {
+                    kind: 'underground-pipe',
+                    position: { x: trunkX, y: 0 },
+                    direction: 'north',
+                  },
+                  resource: access.resource,
+                },
+                {
+                  entity: {
+                    kind: 'underground-pipe',
+                    position: { x: trunkX, y: height - 1 },
+                    direction: 'south',
+                  },
+                  resource: access.resource,
+                },
+                {
+                  entity: { kind: 'pipe', position: { x: trunkX, y: height } },
+                  resource: access.resource,
+                },
+                { entity: { kind: 'pipe', position: { x, y: height } }, resource: access.resource },
+              ],
+              trunks: [{ x: trunkX, resource: access.resource }],
+            });
+          }
           if ((port.direction !== 'east' && port.direction !== 'west') || y < 0 || y >= height)
             continue;
           const sign = port.direction === 'east' ? 1 : -1;
@@ -114,6 +153,13 @@ export function* routeFrames(
       }
       return;
     }
+    const pitch = fluid.pitch ?? height;
+    if (
+      pitch > input.envelope.maxPitch ||
+      pitch * input.repeat.count > (input.repeat.moduleHeight ?? Infinity)
+    )
+      return;
+    if (pitch > height) fluid = extendSurfaceTrunks(fluid, height);
     // Check real connectivity, including unselected ports, before expensive item allocation.
     const entity = {
       kind: 'assembler' as const,
@@ -125,7 +171,7 @@ export function* routeFrames(
     };
     const partial: TileDesignCandidate = {
       width: rectangleWidth(fluid),
-      pitch: height,
+      pitch,
       column: { entities: [entity, ...fluid.pipes.map(({ entity }) => entity)] },
       fluids: fluid.pipes.map(({ resource }, index) => ({ pipeIndex: index + 1, resource })),
       boundary: fluid.trunks.map((trunk) => ({ ...trunk, kind: 'pipe' })),
@@ -157,7 +203,8 @@ export function* routeFrames(
           tracks: [...tracks],
           options,
           fluid,
-          area: rectangleWidth(fluid) * height,
+          area: rectangleWidth(fluid) * pitch,
+          pitch,
         };
         return;
       }
@@ -165,7 +212,7 @@ export function* routeFrames(
       const blocked = fluid.pipes
         .filter(({ entity }) => entity.position.x === track.x)
         .map(({ entity }) => entity.position.y);
-      for (const tunnels of tunnelProfiles(blocked, height, input, visit)) {
+      for (const tunnels of tunnelProfiles(blocked, pitch, input, visit)) {
         tracks.push({ ...track, profile: tunnels.length ? 'underground' : 'surface', tunnels });
         yield* profiles(index + 1);
         tracks.pop();
@@ -204,7 +251,27 @@ function mergeRoutes(a: FluidRoute, b: FluidRoute): FluidRoute | undefined {
     if (trunks.has(trunk.x) && trunks.get(trunk.x)!.resource !== trunk.resource) return;
     trunks.set(trunk.x, trunk);
   }
-  return { pipes: [...pipes.values()], trunks: [...trunks.values()] };
+  return {
+    pipes: [...pipes.values()],
+    trunks: [...trunks.values()],
+    pitch: Math.max(a.pitch ?? 0, b.pitch ?? 0) || undefined,
+  };
+}
+
+function extendSurfaceTrunks(fluid: FluidRoute, machineHeight: number): FluidRoute {
+  const pipes = [...fluid.pipes];
+  for (const { x, resource } of fluid.trunks) {
+    if (
+      Array.from({ length: machineHeight }, (_, y) => y).every((y) =>
+        pipes.some(
+          ({ entity }) =>
+            entity.kind === 'pipe' && entity.position.x === x && entity.position.y === y,
+        ),
+      )
+    )
+      pipes.push({ entity: { kind: 'pipe', position: { x, y: machineHeight } }, resource });
+  }
+  return { ...fluid, pipes };
 }
 
 /** Enumerate non-overlapping, in-tile tunnels covering every obstruction. Each tunnel must
