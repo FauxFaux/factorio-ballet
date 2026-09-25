@@ -7,7 +7,7 @@ import { RecipeConnections } from '../../../src/components/cell/connections.tsx'
 import { staticData } from '../../../src/data/decode.ts';
 
 describe('RecipeConnections', () => {
-  it('uses per-machine rates when estimating the molten-silicon column height', () => {
+  it('uses the tile design search to estimate the molten-silicon column height', () => {
     const row = cpuCell.recipes.find(({ recipe }) => recipe === 'angels-liquid-molten-silicon')!;
     render(
       <RecipeConnections
@@ -28,6 +28,6 @@ describe('RecipeConnections', () => {
 
     expect(
       screen.getByText('Max column height').closest('div')?.querySelector('dd')?.textContent,
-    ).toBe('×2');
+    ).toBe('×1');
   });
 });

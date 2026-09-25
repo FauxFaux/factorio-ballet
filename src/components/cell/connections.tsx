@@ -2,17 +2,12 @@ import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import { staticData } from '../../data/decode.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
-import {
-  generateAssemblerDesign,
-  isAssemblerDesignFailure,
-} from '../../compute/assembler-design.ts';
+import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
 import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import { designBounds } from '../design/design-preview.tsx';
-import type { DesignSceneRecipes } from '../design/design-scene.tsx';
-import { beltStackLimit } from '../design/design-stack-limit.ts';
 import {
   itemRateTotal,
   simplifiedMachineRatio,
@@ -127,27 +122,24 @@ function AssemblerDesignSummary({
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt),
     longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt, 2),
   };
-  const design = generateAssemblerDesign(problem, throughput);
-  if (isAssemblerDesignFailure(design)) {
-    return <p class="cell-assembler-design">Assembler design: {design.failure.join(' ')}</p>;
+  const result = solveKernelTileDesign(problem, throughput);
+  if ('success' in result) {
+    return <p class="cell-tile-design">Tile design: {result.message}</p>;
+  }
+  if (result.status !== 'found') {
+    return <p class="cell-tile-design">Tile design: {result.reason}</p>;
   }
 
-  const column = design.columns[0];
+  const column = result.candidate.column;
   const bounds = designBounds(column.entities)!;
-  const recipes: DesignSceneRecipes = {
-    [recipe]: {
-      ingredients: [...(inputRates?.keys() ?? [])].map((resource) => ({ resource })),
-      products: [...(outputRates?.keys() ?? [])].map((resource) => ({ resource })),
-    },
-  };
-  const maxHeight = beltStackLimit(column, recipes, problem, belt.itemsPerSecond);
+  const maxHeight = result.validation.supportedCopies;
   if (maxHeight < 1 || machineCount === undefined) {
-    return <p class="cell-assembler-design">Assembler design: no solution</p>;
+    return <p class="cell-tile-design">Tile design: no solution</p>;
   }
-  const moduleCount = Math.ceil(machineCount / maxHeight);
+  const moduleCount = Math.max(1, Math.ceil(machineCount / maxHeight));
 
   return (
-    <dl class="cell-assembler-design" aria-label="Assembler design">
+    <dl class="cell-tile-design" aria-label="Tile design">
       <div>
         <dt>Kernel size</dt>
         <dd>

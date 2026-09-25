@@ -44,7 +44,7 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+    expect(screen.getByLabelText('Tile design')).toBeTruthy();
   });
 
   it('summarizes the 2×2 oxygen flare with no output', () => {
@@ -63,7 +63,10 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+    const summary = screen.getByLabelText('Tile design');
+    expect(
+      within(summary).getByText('Columns/modules needed').nextElementSibling?.textContent,
+    ).toBe('×1');
   });
 
   it('summarizes air separation with two fluid outputs', () => {
@@ -87,7 +90,7 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Assembler design')).toBeTruthy();
+    expect(screen.getByLabelText('Tile design')).toBeTruthy();
   });
 
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
@@ -154,7 +157,7 @@ describe('cell display modes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
 
-    const summary = screen.getByLabelText('Assembler design');
+    const summary = screen.getByLabelText('Tile design');
     expect(within(summary).getByText('Kernel size')).toBeTruthy();
     expect(within(summary).getByText(/\d+×\d+ tiles/)).toBeTruthy();
     expect(within(summary).getByText('Max column height')).toBeTruthy();
@@ -181,7 +184,7 @@ describe('cell display modes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
 
-    const summary = document.querySelector('.cell-assembler-design');
+    const summary = document.querySelector('.cell-tile-design');
     expect(summary).toBeTruthy();
     expect(summary?.textContent).not.toContain('size or fluid-port geometry is missing');
   });
