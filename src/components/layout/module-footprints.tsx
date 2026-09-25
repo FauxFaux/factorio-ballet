@@ -7,7 +7,8 @@ import type {
 import type { Position } from '../../bp/decode.ts';
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
-import { initialSpringPlacements, portPoint, stepSpringLayout } from './spring-layout.ts';
+import { portPoint, stepSpringLayout } from './spring-layout.ts';
+import { preLayoutModules } from './pre-layout.ts';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
@@ -24,12 +25,14 @@ export function ModuleFootprints({
   stationConnections = NO_STATION_CONNECTIONS,
   inputStationStops = NO_STOPS,
   outputStationStops = NO_STOPS,
+  zeroInputRegionRecipes,
 }: {
   modules: FactoryModule[];
   connections?: AttachedModuleConnection[];
   stationConnections?: AttachedStationConnection[];
   inputStationStops?: Position[];
   outputStationStops?: Position[];
+  zeroInputRegionRecipes?: ReadonlySet<string>;
 }) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -40,10 +43,22 @@ export function ModuleFootprints({
     offsetY: number;
   } | null>(null);
   const wake = useRef<() => void>(() => {});
-  const physics = useRef(initialSpringPlacements(modules));
-  const [placed, setPlaced] = useState(physics.current);
+  const [placed, setPlaced] = useState(() =>
+    preLayoutModules(
+      modules,
+      {
+        connections,
+        stationConnections,
+        inputStationStops,
+        outputStationStops,
+      },
+      zeroInputRegionRecipes,
+    ),
+  );
+  const physics = useRef(placed);
   useEffect(() => {
-    physics.current = initialSpringPlacements(modules, physics.current);
+    const links = { connections, stationConnections, inputStationStops, outputStationStops };
+    physics.current = preLayoutModules(modules, links, zeroInputRegionRecipes);
     setPlaced(physics.current);
     let frame = 0;
     let steps = 0;
@@ -52,16 +67,7 @@ export function ModuleFootprints({
     };
     const tick = () => {
       frame = 0;
-      const next = stepSpringLayout(
-        physics.current,
-        {
-          connections,
-          stationConnections,
-          inputStationStops,
-          outputStationStops,
-        },
-        drag.current?.moduleId,
-      );
+      const next = stepSpringLayout(physics.current, links, drag.current?.moduleId);
       physics.current = next;
       setPlaced(next);
       steps++;
@@ -76,7 +82,14 @@ export function ModuleFootprints({
       cancelAnimationFrame(frame);
       wake.current = () => {};
     };
-  }, [modules, connections, stationConnections, inputStationStops, outputStationStops]);
+  }, [
+    modules,
+    connections,
+    stationConnections,
+    inputStationStops,
+    outputStationStops,
+    zeroInputRegionRecipes,
+  ]);
 
   const pointerPosition = (clientX: number, clientY: number) => {
     const bounds = svgRef.current?.getBoundingClientRect();

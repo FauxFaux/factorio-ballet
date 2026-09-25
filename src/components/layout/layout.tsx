@@ -27,6 +27,7 @@ export function CellLayoutSurface({
   connections = [],
   stationConnections = [],
   stackedStations = stackedRailStations(inputs.length, outputs.length),
+  zeroInputRegionRecipes,
 }: {
   layout: CellLayout;
   inputs: ResourceId[];
@@ -36,6 +37,7 @@ export function CellLayoutSurface({
   stationConnections?: AttachedStationConnection[];
   /** Uses the same input-station arrangement as the cell's embedded rail radar. */
   stackedStations?: boolean;
+  zeroInputRegionRecipes?: ReadonlySet<string>;
 }) {
   const blueprint = useMemo(
     () => buildRailBrick(stackedStations ? -inputs.length : inputs.length, outputs.length),
@@ -60,6 +62,7 @@ export function CellLayoutSurface({
         stationConnections={stationConnections}
         inputStationStops={stationStops}
         outputStationStops={outputStationStops}
+        zeroInputRegionRecipes={zeroInputRegionRecipes}
       />
       <InputStationFootprints stops={stationStops} resources={inputs} />
       <OutputStationFootprints stops={outputStationStops} resources={outputs} />
