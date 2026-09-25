@@ -86,9 +86,10 @@ phases, including pairs that cross the seam, and rejects unsupported belt routes
 For machines with at least two distinct fluid inputs or outputs, a separate two-machine repeat tries
 opposite mirror states. Complementary vertical underground pipe spans can put the two fluid trunks
 immediately beside the machine without mixing them. It can also place straight item belts and
-inserters on free east or west faces; each such belt serves both machines in the repeat. This pair
-search returns the first validated candidate within its reserved budget, while the one-machine
-search remains the fallback.
+inserters on free east or west faces; each such belt serves both machines in the repeat. An item
+input can use both belt lanes when the combined rate exceeds one lane's capacity. This pair search
+returns the first validated candidate within its reserved budget, while the one-machine search
+remains the fallback.
 
 Other north/south fluid branches, adapters for uneven stacking, and general alternating machine
 orientations across copies remain outside this family. A larger routing model can add new route

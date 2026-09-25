@@ -195,6 +195,23 @@ function pairedInputsProblem(): TileDesignInput {
   return input;
 }
 
+function chemicalPlantFluidBoxes() {
+  return [
+    ...[-1, 1].map((x) => ({
+      productionType: 'input' as const,
+      connections: [
+        { position: { x, y: -1 }, direction: 'north' as const, flowDirection: 'input' as const },
+      ],
+    })),
+    ...[-1, 1].map((x) => ({
+      productionType: 'output' as const,
+      connections: [
+        { position: { x, y: 1 }, direction: 'south' as const, flowDirection: 'output' as const },
+      ],
+    })),
+  ];
+}
+
 describe('fluid tile search', () => {
   it('connects one of two boxes for the same fluid and leaves room for three solid inputs', () => {
     const fluidBoxes = [
@@ -311,28 +328,7 @@ describe('fluid tile search', () => {
       assemblerName: 'Chemical plant',
       fluidInputs: [200, 200],
       solidOutputs: [5],
-      fluidBoxes: [
-        ...[-1, 1].map((x) => ({
-          productionType: 'input' as const,
-          connections: [
-            {
-              position: { x, y: -1 },
-              direction: 'north' as const,
-              flowDirection: 'input' as const,
-            },
-          ],
-        })),
-        ...[-1, 1].map((x) => ({
-          productionType: 'output' as const,
-          connections: [
-            {
-              position: { x, y: 1 },
-              direction: 'south' as const,
-              flowDirection: 'output' as const,
-            },
-          ],
-        })),
-      ],
+      fluidBoxes: chemicalPlantFluidBoxes(),
     });
     const result = solveKernelTileDesign(problem, {
       beltItemsPerSecond: 75,
@@ -345,6 +341,34 @@ describe('fluid tile search', () => {
       expect(result.candidate.width).toBe(7);
       expect(result.candidate.boundary.filter(({ kind }) => kind === 'belt')).toHaveLength(1);
       expect(result.candidate.transfers).toHaveLength(2);
+    }
+  });
+
+  it('uses both input belt lanes when a mirrored fluid pair needs 29.2 items per machine', () => {
+    const problem = assemblerProblem({
+      assemblerName: 'Chemical plant',
+      solidInputs: [29.2],
+      fluidInputs: [200, 200],
+      solidOutputs: [5],
+      fluidBoxes: chemicalPlantFluidBoxes(),
+    });
+    const result = solveKernelTileDesign(problem, {
+      beltItemsPerSecond: 75,
+      inserterItemsPerSecond: 37.5,
+      longInserterItemsPerSecond: 5.1,
+    });
+    expect('status' in result && result.status, JSON.stringify(result)).toBe('found');
+    if ('status' in result && result.status === 'found') {
+      expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+      expect(result.candidate.width).toBe(8);
+      const inputBelt = result.candidate.boundary.find(
+        (track) => track.kind === 'belt' && track.laneFlows?.left?.side === 'input',
+      );
+      expect(inputBelt?.laneFlows).toMatchObject({
+        left: { side: 'input', rate: 29.2 },
+        right: { side: 'input', rate: 29.2 },
+      });
+      expect(result.candidate.transfers).toHaveLength(6);
     }
   });
 

@@ -3,6 +3,7 @@ import { validateTileDesign } from '../design-validation/validate.ts';
 import type { TileDesignCandidate, TileValidationResult } from '../design-validation/types.ts';
 import { oppositeDirection, orientFluidPort, positionKey } from './orientation.ts';
 import { solidAccessOptions, type SolidAccessOption } from './access.ts';
+import { requiredUnits } from './capacity.ts';
 import type { FluidAccess, ItemFlow, TileDesignInput, TileMachineOrientation } from './types.ts';
 
 type Pipe = Extract<DesignEntity, { kind: 'pipe' | 'underground-pipe' }>;
@@ -267,6 +268,19 @@ function addPairItems(
     pipes.map((entity) => positionKey({ x: entity.position.x + fluidMinX, y: entity.position.y })),
   );
   const pipeXs = new Set(pipes.map((entity) => entity.position.x + fluidMinX));
+  const lanes = demands.map(({ flow, side }) => {
+    const needed = requiredUnits(
+      flow.rate * 2,
+      input.transport.beltLaneCapacity / input.repeat.count,
+    );
+    if (needed > (side === 'input' ? 2 : 1)) return [];
+    return side === 'output'
+      ? (['left'] as const)
+      : needed === 2
+        ? (['left', 'right'] as const)
+        : (['left'] as const);
+  });
+  if (lanes.some((assignment) => !assignment.length)) return;
   const choices = demands.map(({ flow, side }) =>
     access
       .filter(
@@ -315,18 +329,26 @@ function addPairItems(
     for (const [index, option] of selected.entries()) {
       const { flow, side } = demands[index];
       const x = option.belt.x - minX;
-      const lane = side === 'output' && option.face === 'east' ? 'right' : 'left';
+      const assignedLanes =
+        side === 'output' && option.face === 'east' ? (['right'] as const) : lanes[index];
+      const laneResources: { left?: string; right?: string } = {};
+      const laneFlows: TileDesignCandidate['boundary'][number]['laneFlows'] = {};
+      for (const lane of assignedLanes) {
+        laneResources[lane] = flow.resource;
+        laneFlows[lane] = { side, rate: (flow.rate * 2) / assignedLanes.length };
+      }
       candidate.boundary.push({
         kind: 'belt',
         x,
         direction: 'north',
-        lanes: { [lane]: flow.resource },
-        laneFlows: { [lane]: { side, rate: flow.rate * 2 } },
+        lanes: laneResources,
+        laneFlows,
       });
       for (let y = 0; y < candidate.pitch; y++) {
         const entityIndex = candidate.column.entities.length;
         candidate.column.entities.push({ kind: 'belt', position: { x, y }, direction: 'north' });
-        candidate.lanes.push({ entityIndex, lane, resource: flow.resource });
+        for (const lane of assignedLanes)
+          candidate.lanes.push({ entityIndex, lane, resource: flow.resource });
       }
       for (const copy of [0, 1]) {
         const inserterIndex = candidate.column.entities.length;
@@ -339,14 +361,15 @@ function addPairItems(
             ? { filter: flow.resource }
             : {}),
         });
-        candidate.transfers.push({
-          inserterIndex,
-          machineId: machine.id,
-          side,
-          resource: flow.resource,
-          beltLane: lane,
-          rate: flow.rate,
-        });
+        for (const lane of assignedLanes)
+          candidate.transfers.push({
+            inserterIndex,
+            machineId: machine.id,
+            side,
+            resource: flow.resource,
+            beltLane: lane,
+            rate: flow.rate / assignedLanes.length,
+          });
       }
     }
     const validation = validateTileDesign(input, candidate);
