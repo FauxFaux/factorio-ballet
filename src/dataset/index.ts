@@ -1,4 +1,3 @@
-import { staticData } from '../data/decode.ts';
 import type { ResourceId, StaticData } from '../types.ts';
 import type { MachineMatch } from '../data/machines.ts';
 import type { ModuleCategory, ModuleMatch } from '../data/modules.ts';
@@ -48,5 +47,3 @@ export function createDataset(id: DatasetId, data: StaticData): Dataset {
   };
 }
 
-/** Compatibility fixture until dataset assets and derived indexes move here. */
-export const defaultDataset = createDataset('bobang-r4q', staticData);
