@@ -177,6 +177,23 @@ describe('fluid tile search', () => {
     ).toHaveLength(4);
   });
 
+  it('keeps a compact pair when another fluid uses the opposite side', () => {
+    const input = pairedOutputsProblem();
+    input.machines[0].inputs.fluids = [];
+    input.boundary.inputs.fluids = [];
+    input.machines[0].outputs.fluids.push({
+      resource: 'fluid:extra',
+      boxIndex: 3,
+      positions: [{ position: { x: 0, y: -1 }, direction: 'north' }],
+    });
+    input.boundary.outputs.fluids.push('fluid:extra');
+    const result = found(solveTileDesign(input));
+    expect(result.diagnostics.scope).toBe('mirrored-fluid-pair/horizontal-branches');
+    expect(
+      result.candidate.column.entities.filter(({ kind }) => kind === 'underground-pipe'),
+    ).toHaveLength(4);
+  });
+
   it('uses compact trunks when unused input fluid boxes accompany two outputs', () => {
     const settings = problem();
     noItems(settings);

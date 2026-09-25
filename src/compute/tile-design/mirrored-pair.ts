@@ -276,15 +276,31 @@ function interleavedSideTrunks(
   pitch: number,
   reach: number,
 ): Map<string, Pipe[]> | undefined {
-  const resources = [...new Set(matchingPorts.map(({ resource }) => resource))];
-  if (resources.length !== 2 || matchingPorts.length !== 4) return;
-  const groups = resources.map((resource) =>
-    matchingPorts.filter((port) => port.resource === resource).sort((a, b) => a.y - b.y),
-  );
+  const byResource = new Map<string, Port[]>();
+  for (const port of matchingPorts) {
+    const group = byResource.get(port.resource) ?? [];
+    group.push(port);
+    byResource.set(port.resource, group);
+  }
+  const groups = [...byResource.values()].map((group) => group.toSorted((a, b) => a.y - b.y));
+  // Each logical fluid needs one port on each of the two mirrored copies.
   if (groups.some((group) => group.length !== 2)) return;
   const outer = groups.find((group) => group[0].y === 0 && group[1].y === pitch - 1);
-  const inner = groups.find((group) => group !== outer);
-  if (!outer || !inner || outer.length !== 2 || inner.length !== 2) return;
+  if (!outer) return;
+  for (const inner of groups) {
+    if (inner === outer) continue;
+    const profile = interleavedPairTrunks(outer, inner, trunks, pitch, reach);
+    if (profile) return profile;
+  }
+}
+
+function interleavedPairTrunks(
+  outer: Port[],
+  inner: Port[],
+  trunks: Map<string, number>,
+  pitch: number,
+  reach: number,
+): Map<string, Pipe[]> | undefined {
   const side = outer[0].side;
   const portX = outer[0].x;
   if ([...outer, ...inner].some((port) => port.side !== side || port.x !== portX)) return;
