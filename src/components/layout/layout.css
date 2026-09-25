@@ -78,6 +78,16 @@
   stroke-width: 0.35;
 }
 
+.cell-layout-module-connection {
+  fill: none;
+  stroke: #facc15;
+  stroke-width: 0.55;
+}
+
+.cell-layout-module-connection.is-fluid {
+  stroke: #67e8f9;
+}
+
 .cell-layout-module-label {
   fill: white;
   font-size: 2.1px;
