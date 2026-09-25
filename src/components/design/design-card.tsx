@@ -29,7 +29,15 @@ export function DesignCard({
 }) {
   const title = problem.assemblers.map(({ name }) => name).join(', ');
   const resourceColours = resourceColoursFor(problem);
-  const design = generateAssemblerDesign(problem, throughput);
+  const design = useMemo(
+    () => generateAssemblerDesign(problem, throughput),
+    [
+      problem,
+      throughput.beltItemsPerSecond,
+      throughput.inserterItemsPerSecond,
+      throughput.longInserterItemsPerSecond,
+    ],
+  );
   const tileResult = useMemo(
     () => solveKernelTileDesign(problem, throughput),
     [

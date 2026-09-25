@@ -8,6 +8,7 @@ import { DesignCard } from './design/design-card.tsx';
 import { KernelCustomProblem } from './kernel-custom-problem.tsx';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
+import { useMemo } from 'preact/hooks';
 
 export function KernelDebug({
   progress,
@@ -18,18 +19,25 @@ export function KernelDebug({
   chosen: Chosen;
   custom: State<KernelCustomState | undefined>;
 }) {
-  const throughput = {
-    beltItemsPerSecond: chosen.belt.itemsPerSecond,
-    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
-    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
-  };
-  const sortedProblems = allKernelProblems
-    .map((problem, index) => ({ problem, index }))
-    .toSorted(
-      (left, right) =>
-        Number(isAssemblerDesignFailure(generateAssemblerDesign(left.problem, throughput))) -
-        Number(isAssemblerDesignFailure(generateAssemblerDesign(right.problem, throughput))),
-    );
+  const throughput = useMemo(
+    () => ({
+      beltItemsPerSecond: chosen.belt.itemsPerSecond,
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
+    }),
+    [progress, chosen.belt],
+  );
+  const sortedProblems = useMemo(
+    () =>
+      allKernelProblems
+        .map((problem, index) => ({
+          problem,
+          index,
+          failed: isAssemblerDesignFailure(generateAssemblerDesign(problem, throughput)),
+        }))
+        .toSorted((left, right) => Number(left.failed) - Number(right.failed)),
+    [throughput],
+  );
   const useProblem = (problem: (typeof allKernelProblems)[number]) => {
     const assembler = problem.assemblers[0];
     if (!assembler) return;
