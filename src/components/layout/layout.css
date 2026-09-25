@@ -74,6 +74,12 @@
 
 .cell-layout-modules [data-layout-module] {
   pointer-events: visiblePainted;
+  cursor: grab;
+  touch-action: none;
+}
+
+.cell-layout-modules [data-layout-module].is-dragging {
+  cursor: grabbing;
 }
 
 .cell-layout-module {

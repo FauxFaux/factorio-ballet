@@ -1,5 +1,5 @@
 // @vitest-environment happy-dom
-import { act, render } from '@testing-library/preact';
+import { act, fireEvent, render } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ModuleFootprints } from '../../src/components/layout/module-footprints.tsx';
@@ -19,6 +19,62 @@ function module(id: string): FactoryModule {
 }
 
 describe('ModuleFootprints', () => {
+  it('drags a module in tile coordinates while its neighbors follow, then releases it', () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frames.push(callback);
+      return frames.length;
+    });
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    try {
+      const port = { edge: 'top' as const, x: 0, transport: 'belt' as const };
+      const { container, unmount } = render(
+        <ModuleFootprints
+          modules={[module('A'), module('B')]}
+          connections={[
+            {
+              producerId: 'A',
+              consumerId: 'B',
+              resource: 'item:iron',
+              rate: 60,
+              producerPort: port,
+              consumerPort: port,
+            },
+          ]}
+        />,
+      );
+      const svg = container.querySelector('svg.cell-layout-modules')!;
+      vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({
+        left: 10,
+        top: 20,
+        width: 384,
+        height: 256,
+      } as DOMRect);
+      const a = container.querySelector('[data-layout-module="A"]')!;
+      const aRect = a.querySelector('rect')!;
+      const bRect = container.querySelector('[data-layout-module="B"] rect')!;
+      const path = container.querySelector('[data-layout-resource="item:iron"]')!;
+      const initialB = Number(bRect.getAttribute('x'));
+      const initialPath = path.getAttribute('d');
+
+      fireEvent.pointerDown(a, { pointerId: 1, button: 0, clientX: 28, clientY: 74 });
+      fireEvent.pointerMove(svg, { pointerId: 1, clientX: 92, clientY: 122 });
+      expect(Number(aRect.getAttribute('x'))).toBe(40);
+      expect(Number(aRect.getAttribute('y'))).toBe(50);
+      expect(path.getAttribute('d')).not.toBe(initialPath);
+      act(() => frames.shift()!(0));
+      expect(Number(aRect.getAttribute('x'))).toBe(40);
+      expect(Number(bRect.getAttribute('x'))).not.toBe(initialB);
+
+      fireEvent.pointerUp(svg, { pointerId: 1 });
+      act(() => frames.shift()!(0));
+      expect(Number(aRect.getAttribute('x'))).not.toBe(40);
+      unmount();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('moves footprints and connected paths on animation frames', () => {
     const frames: FrameRequestCallback[] = [];
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {

@@ -149,4 +149,21 @@ describe('spring layout', () => {
     expect(next[0]!.x).toBeLessThan(80);
     expect(Math.abs(next[0]!.x - next[1]!.x)).toBeGreaterThanOrEqual(9);
   });
+
+  it('keeps a dragged module fixed while springs and collision move its neighbor', () => {
+    const placed = initialSpringPlacements([module('A'), module('B')]);
+    placed[0]!.x = 30;
+    placed[1]!.x = 32;
+    const next = stepSpringLayout(
+      placed,
+      {
+        ...emptyLinks,
+        connections: [link('item:iron', 60)],
+      },
+      'A',
+    );
+    expect(next[0]).toMatchObject({ x: 30, y: 26, vx: 0, vy: 0 });
+    expect(next[1]!.x).toBeGreaterThan(placed[1]!.x);
+    expect(next[1]!.x - next[0]!.x).toBeGreaterThanOrEqual(9);
+  });
 });

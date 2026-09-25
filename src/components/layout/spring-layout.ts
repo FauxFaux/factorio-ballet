@@ -74,6 +74,7 @@ function strength(resource: string, rate: number): number {
 export function stepSpringLayout(
   placements: readonly SpringPlacement[],
   links: SpringLinks,
+  pinnedModuleId?: string,
 ): SpringPlacement[] {
   const indexById = new Map(placements.map((placement, index) => [placement.module.id, index]));
   const forces = placements.map(() => ({ x: 0, y: 0 }));
@@ -130,6 +131,7 @@ export function stepSpringLayout(
   }
 
   const next = placements.map((placement, index) => {
+    if (placement.module.id === pinnedModuleId) return { ...placement, vx: 0, vy: 0 };
     // A weak centre pull keeps disconnected modules in the working area.
     const point = center(placement);
     const vx = Math.max(
@@ -157,13 +159,17 @@ export function stepSpringLayout(
       if (overlapX <= 0 || overlapY <= 0) continue;
       if (overlapX < overlapY) {
         const sign = ac.x <= bc.x ? -1 : 1;
-        first.x += (sign * overlapX) / 2;
-        second.x -= (sign * overlapX) / 2;
+        const firstPinned = first.module.id === pinnedModuleId;
+        const secondPinned = second.module.id === pinnedModuleId;
+        first.x += firstPinned ? 0 : (sign * overlapX) / (secondPinned ? 1 : 2);
+        second.x -= secondPinned ? 0 : (sign * overlapX) / (firstPinned ? 1 : 2);
         first.vx = second.vx = 0;
       } else {
         const sign = ac.y <= bc.y ? -1 : 1;
-        first.y += (sign * overlapY) / 2;
-        second.y -= (sign * overlapY) / 2;
+        const firstPinned = first.module.id === pinnedModuleId;
+        const secondPinned = second.module.id === pinnedModuleId;
+        first.y += firstPinned ? 0 : (sign * overlapY) / (secondPinned ? 1 : 2);
+        second.y -= secondPinned ? 0 : (sign * overlapY) / (firstPinned ? 1 : 2);
         first.vy = second.vy = 0;
       }
     }

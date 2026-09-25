@@ -32,6 +32,14 @@ export function ModuleFootprints({
   outputStationStops?: Position[];
 }) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const drag = useRef<{
+    pointerId: number;
+    moduleId: string;
+    offsetX: number;
+    offsetY: number;
+  } | null>(null);
+  const wake = useRef<() => void>(() => {});
   const physics = useRef(initialSpringPlacements(modules));
   const [placed, setPlaced] = useState(physics.current);
   useEffect(() => {
@@ -39,29 +47,85 @@ export function ModuleFootprints({
     setPlaced(physics.current);
     let frame = 0;
     let steps = 0;
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(tick);
+    };
     const tick = () => {
-      const next = stepSpringLayout(physics.current, {
-        connections,
-        stationConnections,
-        inputStationStops,
-        outputStationStops,
-      });
+      frame = 0;
+      const next = stepSpringLayout(
+        physics.current,
+        {
+          connections,
+          stationConnections,
+          inputStationStops,
+          outputStationStops,
+        },
+        drag.current?.moduleId,
+      );
       physics.current = next;
       setPlaced(next);
       steps++;
-      if (steps < 360 && next.some(({ vx, vy }) => Math.hypot(vx, vy) > 0.01))
-        frame = requestAnimationFrame(tick);
+      if (steps < 360 && next.some(({ vx, vy }) => Math.hypot(vx, vy) > 0.01)) schedule();
     };
-    if (modules.length) frame = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(frame);
+    wake.current = () => {
+      steps = 0;
+      schedule();
+    };
+    if (modules.length) schedule();
+    return () => {
+      cancelAnimationFrame(frame);
+      wake.current = () => {};
+    };
   }, [modules, connections, stationConnections, inputStationStops, outputStationStops]);
+
+  const pointerPosition = (clientX: number, clientY: number) => {
+    const bounds = svgRef.current?.getBoundingClientRect();
+    if (!bounds?.width || !bounds.height) return null;
+    return {
+      x: ((clientX - bounds.left) / bounds.width) * 192,
+      y: ((clientY - bounds.top) / bounds.height) * 128,
+    };
+  };
+  const finishDrag = (pointerId: number) => {
+    if (drag.current?.pointerId !== pointerId) return;
+    drag.current = null;
+    wake.current();
+  };
   const byId = new Map(placed.map((placement) => [placement.module.id, placement]));
   const pairCounts = new Map<string, number>();
   return (
     <svg
+      ref={svgRef}
       class="cell-layout-modules"
       viewBox="0 0 192 128"
       aria-label={`${modules.length} factory modules`}
+      onPointerMove={(event) => {
+        const active = drag.current;
+        if (!active || event.pointerId !== active.pointerId) return;
+        const pointer = pointerPosition(event.clientX, event.clientY);
+        if (!pointer) return;
+        physics.current = physics.current.map((placement) =>
+          placement.module.id === active.moduleId
+            ? {
+                ...placement,
+                x: Math.max(
+                  0,
+                  Math.min(192 - placement.module.size.width, pointer.x - active.offsetX),
+                ),
+                y: Math.max(
+                  0,
+                  Math.min(128 - placement.module.size.height, pointer.y - active.offsetY),
+                ),
+                vx: 0,
+                vy: 0,
+              }
+            : placement,
+        );
+        setPlaced(physics.current);
+        wake.current();
+      }}
+      onPointerUp={(event) => finishDrag(event.pointerId)}
+      onPointerCancel={(event) => finishDrag(event.pointerId)}
     >
       {stationConnections.map((connection, index) => {
         const placement = byId.get(connection.moduleId);
@@ -129,8 +193,25 @@ export function ModuleFootprints({
           <g
             key={module.id}
             data-layout-module={module.id}
+            class={drag.current?.moduleId === module.id ? 'is-dragging' : undefined}
             onMouseEnter={() => setHoveredModuleId(module.id)}
             onMouseLeave={() => setHoveredModuleId(null)}
+            onPointerDown={(event) => {
+              if (event.button !== 0 || drag.current) return;
+              const pointer = pointerPosition(event.clientX, event.clientY);
+              if (!pointer) return;
+              const placement = physics.current.find((item) => item.module.id === module.id);
+              if (!placement) return;
+              drag.current = {
+                pointerId: event.pointerId,
+                moduleId: module.id,
+                offsetX: pointer.x - placement.x,
+                offsetY: pointer.y - placement.y,
+              };
+              event.currentTarget.setPointerCapture?.(event.pointerId);
+              event.preventDefault();
+              setPlaced([...physics.current]);
+            }}
           >
             <title>{`${module.recipe}: ${module.machineCount} machines, ${module.size.width}×${module.size.height} tiles`}</title>
             <rect
