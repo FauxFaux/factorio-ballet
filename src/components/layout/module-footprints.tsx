@@ -215,7 +215,7 @@ export function ModuleFootprints({
           >
             <title>{`${module.recipe}: ${module.machineCount} machines, ${module.size.width}×${module.size.height} tiles`}</title>
             <rect
-              class="cell-layout-module"
+              class={`cell-layout-module${module.estimated ? ' is-estimated' : ''}`}
               x={x}
               y={y}
               width={module.size.width}

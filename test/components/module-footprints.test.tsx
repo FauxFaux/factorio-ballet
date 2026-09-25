@@ -19,6 +19,30 @@ function module(id: string): FactoryModule {
 }
 
 describe('ModuleFootprints', () => {
+  it('draws estimated modules with a warning color and keeps their connections', () => {
+    const estimated = { ...module('A'), estimated: true };
+    const { container } = render(
+      <ModuleFootprints
+        modules={[estimated]}
+        inputStationStops={[{ x: 2, y: 50 }]}
+        stationConnections={[
+          {
+            stationId: 'station:iron',
+            stationIndex: 0,
+            moduleId: 'A',
+            resource: 'item:iron',
+            rate: 2,
+            side: 'input',
+            modulePort: { edge: 'bottom', x: 1, transport: 'belt', lane: 'left' },
+          },
+        ]}
+      />,
+    );
+    expect(
+      container.querySelector('[data-layout-module="A"] rect')?.classList.contains('is-estimated'),
+    ).toBe(true);
+    expect(container.querySelector('[data-layout-station-connection="input"]')).not.toBeNull();
+  });
   it('drags a module in tile coordinates while its neighbors follow, then releases it', () => {
     const frames: FrameRequestCallback[] = [];
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {

@@ -88,6 +88,11 @@
   stroke-width: 0.35;
 }
 
+.cell-layout-module.is-estimated {
+  fill: #f9731688;
+  stroke: #fdba74;
+}
+
 .cell-layout-module-connection {
   fill: none;
   stroke: #facc15;

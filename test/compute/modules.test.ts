@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { modulesForTile } from '../../src/compute/modules.ts';
+import { estimatedModulesForRecipe, modulesForTile } from '../../src/compute/modules.ts';
+import { allocateModuleFlows, connectStationFlows } from '../../src/compute/module-connections.ts';
+import { assignModulePorts } from '../../src/compute/module-port-connections.ts';
 import type { TileDesignCandidate } from '../../src/compute/design-validation/types.ts';
 import type { KernelProblem } from '../../src/compute/kernel-problems.ts';
 
@@ -139,5 +141,65 @@ describe('modulesForTile', () => {
     expect(modules[0]?.inputs).toEqual({ 'item:iron': 8 });
     expect(modules[0]?.outputs).toEqual({ 'item:gear': 4 });
     expect(modules[0]?.ports[0]?.lanes?.left?.rate).toBe(8);
+  });
+});
+
+describe('estimatedModulesForRecipe', () => {
+  it('sizes and splits a stack by its allocated belt throughput and exposes regular ports', () => {
+    const estimated = estimatedModulesForRecipe(
+      'gear',
+      9,
+      {
+        ...problem,
+        inputs: { solids: { 'item:iron': 10 }, fluids: { 'fluid:water': 40 } },
+        outputs: { solids: { 'item:gear': 4 }, fluids: { 'fluid:steam': 20 } },
+        assemblers: [
+          { name: 'gear', size: { width: 3, height: 3 }, inputPerSecond: {}, outputPerSecond: {} },
+        ],
+      },
+      30,
+    );
+    expect(estimated.map(({ machineCount, size }) => ({ machineCount, size }))).toEqual([
+      { machineCount: 3, size: { width: 9, height: 15 } },
+      { machineCount: 3, size: { width: 9, height: 15 } },
+      { machineCount: 3, size: { width: 9, height: 15 } },
+    ]);
+    expect(estimated[0]).toMatchObject({
+      estimated: true,
+      inputs: { 'item:iron': 30, 'fluid:water': 120 },
+      outputs: { 'item:gear': 12, 'fluid:steam': 60 },
+      ports: [
+        { edge: 'bottom', x: 1, lanes: { left: { rate: 15 }, right: { rate: 15 } } },
+        { edge: 'bottom', x: 2, fluid: { inputRate: 120 } },
+        { edge: 'top', x: 3, lanes: { left: { rate: 12 } } },
+        { edge: 'top', x: 4, fluid: { outputRate: 60 } },
+      ],
+    });
+    const allocation = connectStationFlows(
+      allocateModuleFlows(estimated, ['item:iron', 'fluid:water', 'item:gear', 'fluid:steam']),
+      ['item:iron', 'fluid:water'],
+      ['item:gear', 'fluid:steam'],
+    );
+    const assigned = assignModulePorts(estimated, allocation);
+    expect(assigned.unattached).toEqual([]);
+    expect(assigned.stationConnections).toHaveLength(15);
+  });
+
+  it('allocates more than one belt when one assembler exceeds belt throughput', () => {
+    const estimated = estimatedModulesForRecipe(
+      'gear',
+      2,
+      { ...problem, inputs: { solids: { 'item:iron': 40 }, fluids: {} } },
+      30,
+    );
+    expect(estimated).toHaveLength(2);
+    expect(estimated[0]?.size.width).toBe(8);
+    expect(estimated[0]?.ports.slice(0, 2).map((port) => port.lanes)).toEqual([
+      {
+        left: { resource: 'item:iron', side: 'input', rate: 15 },
+        right: { resource: 'item:iron', side: 'input', rate: 15 },
+      },
+      { left: { resource: 'item:iron', side: 'input', rate: 10 } },
+    ]);
   });
 });

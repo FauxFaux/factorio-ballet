@@ -38,6 +38,121 @@ export interface FactoryModule {
   ports: ModulePort[];
   inputs: Record<ResourceId, number>;
   outputs: Record<ResourceId, number>;
+  /** Approximate footprint used when no validated tile design is available. */
+  estimated?: boolean;
+}
+
+const RATE_EPSILON = 1e-8;
+
+/** A coarse stack with one transport column per required belt or fluid. */
+export function estimatedModulesForRecipe(
+  recipe: string,
+  machineCount: number,
+  problem: KernelProblem,
+  beltItemsPerSecond: number,
+): FactoryModule[] {
+  if (!Number.isFinite(machineCount) || machineCount <= 0) return [];
+  const machineSize = problem.assemblers[0]?.size ?? { width: 3, height: 3 };
+  const pitch = machineSize.height + 2;
+  const flows = [
+    ...Object.entries(problem.inputs.solids).map(([resource, rate]) => ({
+      resource,
+      rate,
+      side: 'input' as const,
+    })),
+    ...Object.entries(problem.inputs.fluids).map(([resource, rate]) => ({
+      resource,
+      rate,
+      side: 'input' as const,
+    })),
+    ...Object.entries(problem.outputs.solids).map(([resource, rate]) => ({
+      resource,
+      rate,
+      side: 'output' as const,
+    })),
+    ...Object.entries(problem.outputs.fluids).map(([resource, rate]) => ({
+      resource,
+      rate,
+      side: 'output' as const,
+    })),
+  ].filter(({ rate }) => rate > RATE_EPSILON);
+  const routes = flows.map((flow) => ({
+    ...flow,
+    belts: flow.resource.startsWith('fluid:')
+      ? 1
+      : Math.max(1, Math.ceil((flow.rate - RATE_EPSILON) / beltItemsPerSecond)),
+  }));
+  const width = machineSize.width + 2 + routes.reduce((sum, route) => sum + route.belts, 0);
+  const physicalLimit = Math.max(1, Math.floor(MAX_MODULE_HEIGHT / pitch));
+  const stackLimit = Math.max(
+    1,
+    Math.min(
+      physicalLimit,
+      ...routes
+        .filter(({ resource }) => resource.startsWith('item:'))
+        .map(({ rate, belts }) => Math.floor((belts * beltItemsPerSecond + RATE_EPSILON) / rate)),
+    ),
+  );
+  const moduleCount = Math.ceil(machineCount / stackLimit);
+  const installedCount = Math.ceil(machineCount);
+  return Array.from({ length: moduleCount }, (_, index) => {
+    const copies =
+      Math.floor(installedCount / moduleCount) + (index < installedCount % moduleCount ? 1 : 0);
+    let x = 1;
+    const ports: ModulePort[] = [];
+    for (const { resource, rate, side, belts } of routes) {
+      let remaining = rate * copies;
+      for (let belt = 0; belt < belts; belt++, x++) {
+        if (resource.startsWith('fluid:')) {
+          ports.push({
+            edge: side === 'input' ? 'bottom' : 'top',
+            x,
+            transport: 'pipe',
+            fluid: {
+              resource,
+              inputRate: side === 'input' ? remaining : 0,
+              outputRate: side === 'output' ? remaining : 0,
+            },
+          });
+          continue;
+        }
+        const laneCapacity = beltItemsPerSecond / 2;
+        const left = Math.min(remaining, laneCapacity);
+        remaining -= left;
+        const right = Math.min(remaining, laneCapacity);
+        remaining -= right;
+        ports.push({
+          edge: side === 'input' ? 'bottom' : 'top',
+          x,
+          transport: 'belt',
+          direction: 'north',
+          lanes: {
+            ...(left > RATE_EPSILON ? { left: { resource, side, rate: left } } : {}),
+            ...(right > RATE_EPSILON ? { right: { resource, side, rate: right } } : {}),
+          },
+        });
+      }
+    }
+    return {
+      id: `${recipe}:${index}`,
+      recipe,
+      machineCount: copies,
+      copies,
+      size: { width, height: pitch * copies },
+      ports,
+      inputs: Object.fromEntries(
+        Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
+          ([resource, rate]) => [resource, rate * copies],
+        ),
+      ),
+      outputs: Object.fromEntries(
+        Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
+          ([resource, rate]) => [resource, rate * copies],
+        ),
+      ),
+      estimated: true,
+    };
+  });
 }
 
 function splitRates(rates: Map<ResourceId, number>): KernelFlows {
@@ -252,6 +367,6 @@ export function modulesForCell(
           result.candidate,
           result.validation.supportedCopies,
         )
-      : [];
+      : estimatedModulesForRecipe(entry.recipe, count, problem, belt.itemsPerSecond);
   });
 }
