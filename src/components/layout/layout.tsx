@@ -10,7 +10,10 @@ import {
 } from './station-footprint.tsx';
 import type { CellLayout } from '../../compute/layout.ts';
 import type { FactoryModule } from '../../compute/modules.ts';
-import type { ModuleConnection, StationConnection } from '../../compute/module-connections.ts';
+import type {
+  AttachedModuleConnection,
+  AttachedStationConnection,
+} from '../../compute/module-port-connections.ts';
 import type { ResourceId } from '../../types.ts';
 import { stackedRailStations } from '../cell/rail-mode.ts';
 import { ModuleFootprints } from './module-footprints.tsx';
@@ -29,8 +32,8 @@ export function CellLayoutSurface({
   inputs: ResourceId[];
   outputs: ResourceId[];
   modules?: FactoryModule[];
-  connections?: ModuleConnection[];
-  stationConnections?: StationConnection[];
+  connections?: AttachedModuleConnection[];
+  stationConnections?: AttachedStationConnection[];
   /** Uses the same input-station arrangement as the cell's embedded rail radar. */
   stackedStations?: boolean;
 }) {

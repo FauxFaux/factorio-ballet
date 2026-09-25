@@ -19,6 +19,7 @@ import type { ResourceId } from '../../types.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { modulesForCell } from '../../compute/modules.ts';
 import { allocateModuleFlows, connectStationFlows } from '../../compute/module-connections.ts';
+import { assignModulePorts } from '../../compute/module-port-connections.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
@@ -72,6 +73,7 @@ export function CellBox({
       connectStationFlows(allocateModuleFlows(modules, iface.inPlay), iface.inputs, iface.outputs),
     [modules, iface.inPlay, iface.inputs, iface.outputs],
   );
+  const portFlows = useMemo(() => assignModulePorts(modules, moduleFlows), [modules, moduleFlows]);
   const recipeIds = useMemo(() => cell.entries.map(({ recipe }) => recipe), [cell.entries]);
   const rowDrag = useRowDrag(cell.entries.length, (from, to) =>
     setCell((prev) => moveEntry(prev, from, to)),
@@ -363,8 +365,8 @@ export function CellBox({
             inputs={iface.inputs}
             outputs={iface.outputs}
             modules={modules}
-            connections={moduleFlows.connections}
-            stationConnections={moduleFlows.stationConnections}
+            connections={portFlows.connections}
+            stationConnections={portFlows.stationConnections}
             stackedStations={stackedStations}
           />
           <SplitProposals entries={cell.entries} solution={solution} belt={chosen.belt} />

@@ -1,8 +1,25 @@
 import type { FactoryModule } from '../../compute/modules.ts';
-import type { ModuleConnection, StationConnection } from '../../compute/module-connections.ts';
+import type {
+  AttachedModuleConnection,
+  AttachedStationConnection,
+  ModulePortReference,
+} from '../../compute/module-port-connections.ts';
 import type { Position } from '../../bp/decode.ts';
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
+
+function portPoint(
+  placement: { module: FactoryModule; x: number; y: number },
+  port: ModulePortReference,
+): Position {
+  const leftOffset = port.direction === 'south' ? 0.75 : 0.25;
+  const laneOffset =
+    port.lane === 'left' ? leftOffset : port.lane === 'right' ? 1 - leftOffset : 0.5;
+  return {
+    x: placement.x + port.x + laneOffset,
+    y: placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
+  };
+}
 
 /** A provisional left-to-right row in the layout's 192 by 128 tile space. */
 export function ModuleFootprints({
@@ -13,8 +30,8 @@ export function ModuleFootprints({
   outputStationStops = [],
 }: {
   modules: FactoryModule[];
-  connections?: ModuleConnection[];
-  stationConnections?: StationConnection[];
+  connections?: AttachedModuleConnection[];
+  stationConnections?: AttachedStationConnection[];
   inputStationStops?: Position[];
   outputStationStops?: Position[];
 }) {
@@ -33,7 +50,7 @@ export function ModuleFootprints({
       viewBox="0 0 192 128"
       aria-label={`${modules.length} factory modules`}
     >
-      {stationConnections.map((connection) => {
+      {stationConnections.map((connection, index) => {
         const placement = byId.get(connection.moduleId);
         const stop = (connection.side === 'input' ? inputStationStops : outputStationStops)[
           connection.stationIndex
@@ -42,46 +59,46 @@ export function ModuleFootprints({
         const stationX =
           connection.side === 'input' ? stop.x + 8 : stop.x + (placement.x < stop.x ? -8 : -4);
         const stationY = stop.y + (connection.side === 'input' ? 4.5 : 4);
-        const moduleX =
-          stationX < placement.x ? placement.x : placement.x + placement.module.size.width;
-        const moduleY = placement.y + placement.module.size.height / 2;
-        const start = connection.side === 'input' ? [stationX, stationY] : [moduleX, moduleY];
-        const end = connection.side === 'input' ? [moduleX, moduleY] : [stationX, stationY];
+        const modulePoint = portPoint(placement, connection.modulePort);
+        const start =
+          connection.side === 'input' ? [stationX, stationY] : [modulePoint.x, modulePoint.y];
+        const end =
+          connection.side === 'input' ? [modulePoint.x, modulePoint.y] : [stationX, stationY];
         return (
           <path
-            key={`${connection.stationId}|${connection.moduleId}`}
+            key={`${connection.stationId}|${connection.moduleId}|${index}`}
             class={`cell-layout-module-connection is-station${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}`}
             d={`M ${start[0]} ${start[1]} L ${end[0]} ${end[1]}`}
             data-layout-station-connection={connection.side}
             data-layout-station-id={connection.stationId}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
+            data-layout-module-port={`${connection.modulePort.edge}:${connection.modulePort.x}:${connection.modulePort.lane ?? 'pipe'}`}
           >
             <title>{`${connection.resource}: ${connection.rate}/s ${connection.side === 'input' ? 'from' : 'to'} ${connection.stationId}`}</title>
           </path>
         );
       })}
-      {connections.map((connection) => {
+      {connections.map((connection, connectionIndex) => {
         const producer = byId.get(connection.producerId);
         const consumer = byId.get(connection.consumerId);
         if (!producer || !consumer) return null;
-        const rightward = producer.x < consumer.x;
-        const startX = producer.x + (rightward ? producer.module.size.width : 0);
-        const endX = consumer.x + (rightward ? 0 : consumer.module.size.width);
-        const startY = producer.y + producer.module.size.height / 2;
-        const endY = consumer.y + consumer.module.size.height / 2;
+        const start = portPoint(producer, connection.producerPort);
+        const end = portPoint(consumer, connection.consumerPort);
         const pair = `${connection.producerId}|${connection.consumerId}`;
         const index = pairCounts.get(pair) ?? 0;
         pairCounts.set(pair, index + 1);
         const bend = index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 ? 3 : -3);
-        const middleX = (startX + endX) / 2;
+        const middleX = (start.x + end.x) / 2;
         return (
           <path
-            key={`${pair}|${connection.resource}`}
+            key={`${pair}|${connection.resource}|${connectionIndex}`}
             class={`cell-layout-module-connection${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}`}
-            d={`M ${startX} ${startY} Q ${middleX} ${(startY + endY) / 2 + bend} ${endX} ${endY}`}
+            d={`M ${start.x} ${start.y} Q ${middleX} ${(start.y + end.y) / 2 + bend} ${end.x} ${end.y}`}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
+            data-layout-producer-port={`${connection.producerPort.edge}:${connection.producerPort.x}:${connection.producerPort.lane ?? 'pipe'}`}
+            data-layout-consumer-port={`${connection.consumerPort.edge}:${connection.consumerPort.x}:${connection.consumerPort.lane ?? 'pipe'}`}
           >
             <title>{`${connection.resource}: ${connection.rate}/s from ${connection.producerId} to ${connection.consumerId}`}</title>
           </path>

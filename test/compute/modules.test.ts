@@ -49,6 +49,7 @@ describe('modulesForTile', () => {
         edge: 'top',
         x: 0,
         transport: 'belt',
+        direction: 'north',
         lanes: {
           left: { resource: 'item:iron', side: 'input', rate: 28 },
           right: { resource: 'item:gear', side: 'output', rate: 14 },
@@ -58,6 +59,7 @@ describe('modulesForTile', () => {
         edge: 'bottom',
         x: 0,
         transport: 'belt',
+        direction: 'north',
         lanes: {
           left: { resource: 'item:iron', side: 'input', rate: 28 },
           right: { resource: 'item:gear', side: 'output', rate: 14 },
@@ -115,5 +117,27 @@ describe('modulesForTile', () => {
       inputRate: 20,
       outputRate: 0,
     });
+  });
+
+  it('scales rates by both machines in a two-machine repeating tile', () => {
+    const pair = {
+      ...candidate,
+      machineIds: { 0: 'machine', 1: 'machine' },
+      boundary: [
+        {
+          ...candidate.boundary[0]!,
+          laneFlows: {
+            left: { side: 'input' as const, rate: 4 },
+            right: { side: 'output' as const, rate: 2 },
+          },
+        },
+      ],
+    };
+    const modules = modulesForTile('gear', 4, problem, pair, 23);
+    expect(modules).toHaveLength(1);
+    expect(modules[0]?.machineCount).toBe(4);
+    expect(modules[0]?.inputs).toEqual({ 'item:iron': 8 });
+    expect(modules[0]?.outputs).toEqual({ 'item:gear': 4 });
+    expect(modules[0]?.ports[0]?.lanes?.left?.rate).toBe(8);
   });
 });

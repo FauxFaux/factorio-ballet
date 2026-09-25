@@ -4,7 +4,7 @@ import { staticData } from '../data/decode.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
 import type { Solution } from '../solve/index.ts';
 import type { Belt, ResourceId } from '../types.ts';
-import type { DesignEntity } from './design.ts';
+import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
 import { solveKernelTileDesign } from './tile-design/kernel-result.ts';
@@ -16,6 +16,8 @@ export interface ModulePort {
   edge: 'top' | 'bottom';
   x: number;
   transport: 'belt' | 'underground-belt' | 'pipe' | 'underground-pipe';
+  /** Belt travel direction, or the exposed direction of an underground pipe end. */
+  direction?: DesignDirection;
   /** Lane names are relative to the track's travel direction. */
   lanes?: {
     left?: { resource: string; side: 'input' | 'output'; rate: number };
@@ -97,6 +99,7 @@ function modulePorts(
   candidate: TileDesignCandidate,
   problem: KernelProblem,
   copies: number,
+  machinesPerCopy: number,
 ): ModulePort[] {
   return candidate.boundary.flatMap((track) =>
     (['top', 'bottom'] as const).flatMap((edge): ModulePort[] => {
@@ -109,7 +112,12 @@ function modulePorts(
         entity.kind !== 'underground-pipe'
       )
         return [];
-      const base = { edge, x: track.x, transport: entity.kind };
+      const base = {
+        edge,
+        x: track.x,
+        transport: entity.kind,
+        ...('direction' in entity ? { direction: entity.direction } : {}),
+      };
       if (track.kind === 'belt') {
         const lanes: NonNullable<ModulePort['lanes']> = {};
         for (const lane of ['left', 'right'] as const) {
@@ -127,8 +135,10 @@ function modulePorts(
           ...base,
           fluid: {
             resource,
-            inputRate: (problem.inputs.fluids[resource as ResourceId] ?? 0) * copies,
-            outputRate: (problem.outputs.fluids[resource as ResourceId] ?? 0) * copies,
+            inputRate:
+              (problem.inputs.fluids[resource as ResourceId] ?? 0) * copies * machinesPerCopy,
+            outputRate:
+              (problem.outputs.fluids[resource as ResourceId] ?? 0) * copies * machinesPerCopy,
           },
         },
       ];
@@ -153,23 +163,24 @@ export function modulesForTile(
   return Array.from({ length: moduleCount }, (_, index) => {
     const copies =
       Math.floor(neededCopies / moduleCount) + (index < neededCopies % moduleCount ? 1 : 0);
+    const installedMachines = copies * machinesPerCopy;
     const inputs = Object.fromEntries(
       Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
-        ([resource, rate]) => [resource, rate * copies],
+        ([resource, rate]) => [resource, rate * installedMachines],
       ),
     );
     const outputs = Object.fromEntries(
       Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
-        ([resource, rate]) => [resource, rate * copies],
+        ([resource, rate]) => [resource, rate * installedMachines],
       ),
     );
     return {
       id: `${recipe}:${index}`,
       recipe,
-      machineCount: copies * machinesPerCopy,
+      machineCount: installedMachines,
       copies,
       size: { width: candidate.width, height: candidate.pitch * copies },
-      ports: modulePorts(candidate, problem, copies),
+      ports: modulePorts(candidate, problem, copies, machinesPerCopy),
       inputs,
       outputs,
     };
