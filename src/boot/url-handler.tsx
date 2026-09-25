@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { debounce } from '../ts.ts';
 import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
-import { staticData } from '../data/decode.ts';
+import type { StaticData } from '../types.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelMachineChoice } from '../compute/kernel-problems.ts';
 import { CrashHandler } from './crash-handler.tsx';
-import { createIdTables, packCells, unpackCells, type PackedCell } from './pack.ts';
+import { createIdTables, packCells, unpackCells, type IdTables, type PackedCell } from './pack.ts';
 import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
 
 export interface KernelCustomState {
@@ -89,8 +89,8 @@ type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
  */
 export const HASH_VERSION = `yr4q`;
 
-const setHash = debounce((v: UrlState) => {
-  window.location.hash = packUs(v);
+const setHash = debounce((v: UrlState, idTables: IdTables) => {
+  window.location.hash = packUs(v, idTables);
 }, 50);
 
 type ParseResult =
@@ -98,11 +98,11 @@ type ParseResult =
   | { kind: 'version-error' }
   | { kind: 'unpack-error'; hash: string; message: string };
 
-function parseHash(hash: string): ParseResult {
+function parseHash(hash: string, idTables: IdTables): ParseResult {
   if (hash.length <= 1) return { kind: 'ok', us: defaultUs };
   if (!hash.slice(1).startsWith(HASH_VERSION)) return { kind: 'version-error' };
   try {
-    return { kind: 'ok', us: unpackUs(hash) };
+    return { kind: 'ok', us: unpackUs(hash, idTables) };
   } catch (e) {
     return {
       kind: 'unpack-error',
@@ -112,8 +112,9 @@ function parseHash(hash: string): ParseResult {
   }
 }
 
-export function UrlHandler() {
-  const [initResult] = useState(() => parseHash(window.location.hash));
+export function UrlHandler({ data }: { data: StaticData }) {
+  const idTables = useMemo(() => createIdTables(data), [data]);
+  const [initResult] = useState(() => parseHash(window.location.hash, idTables));
   const [unpackError, setUnpackError] = useState<{ hash: string; message: string } | undefined>(
     initResult.kind === 'unpack-error' ? initResult : undefined,
   );
@@ -121,7 +122,7 @@ export function UrlHandler() {
 
   useEffect(() => {
     window.onhashchange = () => {
-      const result = parseHash(window.location.hash);
+      const result = parseHash(window.location.hash, idTables);
       if (result.kind === 'ok') {
         setUnpackError(undefined);
         setUs(result.us);
@@ -129,9 +130,9 @@ export function UrlHandler() {
         setUnpackError(result);
       }
     };
-  }, []);
+  }, [idTables]);
 
-  useEffect(() => setHash(us), [us]);
+  useEffect(() => setHash(us, idTables), [us, idTables]);
 
   if (initResult.kind === 'version-error') {
     return (
@@ -166,9 +167,7 @@ export function UrlHandler() {
 }
 
 const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(REFERENCE_STATE)));
-const idTables = createIdTables(staticData);
-
-function packUs(us: UrlState): string {
+function packUs(us: UrlState, idTables: IdTables): string {
   const packed: PackedState = { ...us, cl: packCells(us.cl, idTables) };
   const json = JSON.stringify(shallowSortKeys(packed));
   const data = deflateSync(strToU8(json), {
@@ -179,7 +178,7 @@ function packUs(us: UrlState): string {
   return HASH_VERSION + data.toBase64({ alphabet: 'base64url' });
 }
 
-function unpackUs(hash: string): UrlState {
+function unpackUs(hash: string, idTables: IdTables): UrlState {
   const encoded = hash.slice(1 + HASH_VERSION.length);
   // @ts-expect-error (fromBase64 is missing from Uint8Array typings)
   const data = Uint8Array.fromBase64(encoded, { alphabet: 'base64url' });

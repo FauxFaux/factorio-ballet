@@ -46,4 +46,3 @@ export function createDataset(id: DatasetId, data: StaticData): Dataset {
     suggestionPlans: buildSuggestionPlanIndex(data),
   };
 }
-

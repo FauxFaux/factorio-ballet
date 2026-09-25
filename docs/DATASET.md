@@ -182,8 +182,8 @@ changes.
 
 ## Packing API
 
-`src/boot/pack.ts` must not import `staticData` or construct tables at module evaluation time. Build
-a codec from the selected dataset:
+`src/boot/pack.ts` must not import `data` or construct tables at module evaluation time. Build a
+codec from the selected dataset:
 
 ```ts
 export interface CellCodec {
@@ -230,8 +230,8 @@ shared assets; it cannot know which data sheets an unbooted user will select.
 
 ## Derived data migration
 
-Move every value computed from `staticData` at module scope into `createDataset` or a helper it
-calls. The initial known set is:
+Move every value computed from `data` at module scope into `createDataset` or a helper it calls. The
+initial known set is:
 
 - `data/machines.ts`: machines by crafting category;
 - `data/modules.ts`: modules by category and the available module categories;
@@ -249,9 +249,8 @@ may remain opaque, but it still belongs to the dataset instance rather than the 
 
 ### Current module-scope audit
 
-The following application values are currently computed from the built-in `staticData` while their
-modules are evaluated. They need to be constructed from the selected dataset as the migration
-proceeds:
+The following application values are currently computed from the built-in `data` while their modules
+are evaluated. They need to be constructed from the selected dataset as the migration proceeds:
 
 - `src/boot/pack.ts:104-106`: recipe, machine, and module ID tables.
 - `src/data/index.ts:45-47`: science-pack landmarks; `:72-83`: sorted beacon tiers; and `:137-146`:
@@ -259,13 +258,13 @@ proceeds:
 - `src/data/machines.ts:29-40`: machines indexed by crafting category.
 - `src/data/modules.ts:61-83`: modules indexed by module category and the derived module-category
   list.
-- `src/dataset/index.ts:20`: the built-in `defaultDataset` is constructed from `staticData` at
-  module scope. This is legacy default-dataset wiring rather than a reusable derived index.
+- `src/dataset/index.ts:20`: the built-in `defaultDataset` is constructed from `data` at module
+  scope. This is legacy default-dataset wiring rather than a reusable derived index.
 
 The recipe-suggestion indexes and resource-chain finder now come from `src/dataset/precompute.ts`
 when `createDataset` constructs a dataset.
 
-Other `staticData` references found in application source are inside functions and do not currently
+Other `data` references found in application source are inside functions and do not currently
 produce a module-scope derived value: `src/cell.ts:114,168,213,363`,
 `src/compute/kernel-problems.ts:121`, `src/compute/modules.ts:175,184,187,347`,
 `src/data/inserter-throughput.ts:144-153`, `src/data/machines.ts:13-26`,
@@ -274,9 +273,9 @@ produce a module-scope derived value: `src/cell.ts:114,168,213,363`,
 need explicit dataset inputs for multi-dataset operation, but are not eager module-scope
 derivations.
 
-`src/data/decode.ts:10-178` loads and decodes the generated artifact and exports `staticData`; this
-is the source value rather than a derived index. `src/dataset/index.ts:20` currently consumes it to
-create the legacy dataset.
+`src/data/decode.ts:10-178` loads and decodes the generated artifact and exports `data`; this is the
+source value rather than a derived index. `src/dataset/index.ts:20` currently consumes it to create
+the legacy dataset.
 
 ## Incremental implementation
 
@@ -288,15 +287,15 @@ Implement this in stages while retaining the current dataset as a compatibility 
    accept `Dataset`; update tests to pass `defaultDataset`.
 3. Change remaining data-dependent computation and cell helpers to explicit arguments. Pure
    functions which do not inspect dataset data remain unchanged.
-4. Introduce `DatasetProvider` and migrate components from direct `staticData`/global-icon imports
-   to `useDataset()` plus free functions.
+4. Introduce `DatasetProvider` and migrate components from direct `data`/global-icon imports to
+   `useDataset()` plus free functions.
 5. Split URL envelope parsing from cell hydration and replace `pack.ts`'s global tables with
    `createCellCodec(dataset)`. Preserve legacy URLs by defaulting a missing dataset field.
 6. Add the lightweight catalogue and boot selector, then package a second dataset to exercise the
    complete path. Do not expose selection while any production path still reads the old globals.
 7. Make icon loading and preloading dataset-specific. Confirm the initial bundle does not contain
    every dataset's data or sprites.
-8. Remove the compatibility `staticData` and global `icons` exports after `rg` finds no production
+8. Remove the compatibility `data` and global `icons` exports after `rg` finds no production
    imports. Tests may import `defaultDataset` as a fixture, but should use the same public free
    functions as the application.
 9. Update architecture documentation and ingestion output paths once the final package layout is
