@@ -1,9 +1,9 @@
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
 import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
-import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
+import { MAX_MODULE_HEIGHT, modulesForTile, recipeKernelProblem } from '../../compute/modules.ts';
+import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
@@ -99,29 +99,12 @@ function AssemblerDesignSummary({
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
   // Solution input and output rates already describe one machine.
-  const inputs = splitRates(inputRates);
-  const outputs = splitRates(outputRates);
-  const machineData = machine === undefined ? undefined : staticData.machines[machine];
-  const problem: KernelProblem = {
-    inputs,
-    outputs,
-    assemblers: [
-      {
-        name: recipe,
-        size: machineData?.size,
-        fluidBoxes: machineData?.fluidBoxes,
-        fluidIngredients: staticData.recipes[recipe]?.ingredients.filter(({ resource }) =>
-          resource.startsWith('fluid:'),
-        ),
-        fluidProducts: staticData.recipes[recipe]?.products.filter(({ resource }) =>
-          resource.startsWith('fluid:'),
-        ),
-        inputPerSecond: { ...inputs.solids, ...inputs.fluids },
-        outputPerSecond: { ...outputs.solids, ...outputs.fluids },
-      },
-    ],
-    design: { columns: [{ entities: [] }] },
-  };
+  const problem = recipeKernelProblem(
+    recipe,
+    machine,
+    inputRates ?? new Map(),
+    outputRates ?? new Map(),
+  );
   const throughput = {
     beltItemsPerSecond: belt.itemsPerSecond,
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, belt),
@@ -147,7 +130,10 @@ function AssemblerDesignSummary({
 
   const column = result.candidate.column;
   const bounds = designBounds(column.entities)!;
-  const maxHeight = result.validation.supportedCopies;
+  const maxHeight = Math.min(
+    result.validation.supportedCopies,
+    Math.floor(MAX_MODULE_HEIGHT / result.candidate.pitch),
+  );
   if (maxHeight < 1 || machineCount === undefined) {
     return (
       <div class="cell-tile-design">
@@ -156,7 +142,13 @@ function AssemblerDesignSummary({
       </div>
     );
   }
-  const moduleCount = Math.max(1, Math.ceil(machineCount / maxHeight));
+  const moduleCount = modulesForTile(
+    recipe,
+    machineCount,
+    problem,
+    result.candidate,
+    maxHeight,
+  ).length;
 
   return (
     <div class="cell-tile-design">
@@ -193,17 +185,6 @@ function DebugDesignButton({
       Debug design
     </button>
   );
-}
-
-function splitRates(rates: Map<ResourceId, number> | undefined): {
-  solids: ResourceRates;
-  fluids: ResourceRates;
-} {
-  const entries = [...(rates ?? [])].filter(([, rate]) => rate > 0);
-  return {
-    solids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('item:'))),
-    fluids: Object.fromEntries(entries.filter(([resource]) => resource.startsWith('fluid:'))),
-  };
 }
 
 function ConnectionSection({

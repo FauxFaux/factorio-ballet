@@ -17,6 +17,7 @@ import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
+import { modulesForCell } from '../../compute/modules.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
@@ -61,6 +62,10 @@ export function CellBox({
   const iface = useMemo(() => cellInterface(cell), [cell]);
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
+  const modules = useMemo(
+    () => (cell.layout ? modulesForCell(cell.entries, solution, chosen.belt, progress) : []),
+    [cell.layout, cell.entries, solution, chosen.belt, progress],
+  );
   const recipeIds = useMemo(() => cell.entries.map(({ recipe }) => recipe), [cell.entries]);
   const rowDrag = useRowDrag(cell.entries.length, (from, to) =>
     setCell((prev) => moveEntry(prev, from, to)),
@@ -351,6 +356,7 @@ export function CellBox({
             layout={cell.layout}
             inputs={iface.inputs}
             outputs={iface.outputs}
+            modules={modules}
             stackedStations={stackedStations}
           />
           <SplitProposals entries={cell.entries} solution={solution} belt={chosen.belt} />

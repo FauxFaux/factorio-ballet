@@ -9,19 +9,23 @@ import {
   outputStationFootprintStops,
 } from './station-footprint.tsx';
 import type { CellLayout } from '../../compute/layout.ts';
+import type { FactoryModule } from '../../compute/modules.ts';
 import type { ResourceId } from '../../types.ts';
 import { stackedRailStations } from '../cell/rail-mode.ts';
+import { ModuleFootprints } from './module-footprints.tsx';
 
 /** The initial, intentionally empty surface for a cell's factory layout. */
 export function CellLayoutSurface({
   layout: _layout,
   inputs,
   outputs,
+  modules = [],
   stackedStations = stackedRailStations(inputs.length, outputs.length),
 }: {
   layout: CellLayout;
   inputs: ResourceId[];
   outputs: ResourceId[];
+  modules?: FactoryModule[];
   /** Uses the same input-station arrangement as the cell's embedded rail radar. */
   stackedStations?: boolean;
 }) {
@@ -42,6 +46,7 @@ export function CellLayoutSurface({
   return (
     <section class="cell-layout" aria-label="Layout">
       <RailBlueprintPreview blueprint={blueprint.blueprint} embedded />
+      <ModuleFootprints modules={modules} />
       <InputStationFootprints stops={stationStops} />
       <OutputStationFootprints stops={outputStationStops} />
     </section>
