@@ -1,6 +1,32 @@
 import type { Blueprint, Position } from '../../bp/decode.ts';
+import type { ResourceId } from '../../types.ts';
+import { iconSprite } from '../icon.tsx';
 import { embeddedBlueprintOffset } from '../rail-blueprint-preview.tsx';
 import { stationStop } from '../radar/radar-rail.tsx';
+
+function StationResourceIcon({ resource, x, y }: { resource: ResourceId; x: number; y: number }) {
+  const [url, spriteX, spriteY, sheetSize] = iconSprite(
+    resource,
+    resource.startsWith('fluid:') ? 'fluid:fluid-unknown' : 'item:item-unknown',
+  );
+  return (
+    <g data-layout-resource={resource}>
+      <title>{resource}</title>
+      <rect class="cell-layout-station-icon-backdrop" x={x} y={y} width="4.5" height="4.5" />
+      <svg
+        class="cell-layout-station-icon"
+        x={x}
+        y={y}
+        width="4.5"
+        height="4.5"
+        viewBox={`${spriteX} ${spriteY} 32 32`}
+        aria-hidden="true"
+      >
+        <image href={url} width={sheetSize} height={sheetSize} />
+      </svg>
+    </g>
+  );
+}
 
 /**
  * A deliberately coarse version of the solid-request station in
@@ -151,7 +177,13 @@ export function outputStationFootprintStops(blueprint: Blueprint, count: number)
 }
 
 /** Render one solid-request footprint beside every input train stop. */
-export function InputStationFootprints({ stops }: { stops: Position[] }) {
+export function InputStationFootprints({
+  stops,
+  resources,
+}: {
+  stops: Position[];
+  resources: ResourceId[];
+}) {
   return (
     <svg
       class="cell-layout-stations"
@@ -161,6 +193,9 @@ export function InputStationFootprints({ stops }: { stops: Position[] }) {
       {stops.map((stop, index) => (
         <g key={index} transform={`translate(${stop.x} ${stop.y})`} data-layout-station={index + 1}>
           <SolidRequestFootprint />
+          {resources[index] && (
+            <StationResourceIcon resource={resources[index]} x={-3.75} y={-12.25} />
+          )}
         </g>
       ))}
     </svg>
@@ -168,7 +203,13 @@ export function InputStationFootprints({ stops }: { stops: Position[] }) {
 }
 
 /** Render one solid-provide footprint beside every output train stop. */
-export function OutputStationFootprints({ stops }: { stops: Position[] }) {
+export function OutputStationFootprints({
+  stops,
+  resources,
+}: {
+  stops: Position[];
+  resources: ResourceId[];
+}) {
   return (
     <svg
       class="cell-layout-stations"
@@ -182,6 +223,9 @@ export function OutputStationFootprints({ stops }: { stops: Position[] }) {
           data-layout-output-station={index + 1}
         >
           <SolidProvideFootprint />
+          {resources[index] && (
+            <StationResourceIcon resource={resources[index]} x={-7.75} y={7.75} />
+          )}
         </g>
       ))}
     </svg>

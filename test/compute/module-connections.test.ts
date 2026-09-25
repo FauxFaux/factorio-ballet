@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { allocateModuleFlows } from '../../src/compute/module-connections.ts';
+import { allocateModuleFlows, connectStationFlows } from '../../src/compute/module-connections.ts';
 import type { FactoryModule } from '../../src/compute/modules.ts';
 import type { ResourceId } from '../../src/types.ts';
 
@@ -62,5 +62,39 @@ describe('allocateModuleFlows', () => {
     expect(result.connections).toEqual([]);
     expect(result.unmetInputs).toEqual([{ moduleId: 'A', resource: 'item:ore', rate: 2 }]);
     expect(result.unusedOutputs).toEqual([{ moduleId: 'A', resource: 'item:plate', rate: 1 }]);
+  });
+
+  it('assigns only declared boundary remainders to their resource stations', () => {
+    const internal = allocateModuleFlows(
+      [
+        module('A', { 'item:ore': 5, 'fluid:water': 2 }, { 'item:plate': 4 }),
+        module('B', {}, { 'item:ore': 3 }),
+      ],
+      ['item:ore', 'fluid:water', 'item:plate'],
+    );
+    const result = connectStationFlows(internal, ['item:ore'], ['item:plate']);
+    expect(result.connections).toEqual([
+      { producerId: 'B', consumerId: 'A', resource: 'item:ore', rate: 3 },
+    ]);
+    expect(result.stationConnections).toEqual([
+      {
+        stationId: 'station:import:item:ore',
+        stationIndex: 0,
+        moduleId: 'A',
+        resource: 'item:ore',
+        rate: 2,
+        side: 'input',
+      },
+      {
+        stationId: 'station:export:item:plate',
+        stationIndex: 0,
+        moduleId: 'A',
+        resource: 'item:plate',
+        rate: 4,
+        side: 'output',
+      },
+    ]);
+    expect(result.unmetInputs).toEqual([{ moduleId: 'A', resource: 'fluid:water', rate: 2 }]);
+    expect(result.unusedOutputs).toEqual([]);
   });
 });

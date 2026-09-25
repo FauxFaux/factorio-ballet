@@ -115,7 +115,7 @@ describe('CellList', () => {
   });
 
   it('places solid-request footprints on the rendered input rails', () => {
-    const inputs = Array.from({ length: 2 }, () => 'item:iron-plate' as ResourceId);
+    const inputs: ResourceId[] = ['item:iron-plate', 'item:copper-plate'];
     const { container } = render(<CellLayoutSurface layout={{}} inputs={inputs} outputs={[]} />);
 
     expect(screen.getByLabelText('2 input station footprints')).toBeTruthy();
@@ -125,6 +125,16 @@ describe('CellList', () => {
     expect(container.querySelector('[data-layout-station="2"]')?.getAttribute('transform')).toBe(
       'translate(21 81)',
     );
+    expect(
+      container
+        .querySelector('[data-layout-station="1"] [data-layout-resource]')
+        ?.getAttribute('data-layout-resource'),
+    ).toBe('item:iron-plate');
+    expect(
+      container
+        .querySelector('[data-layout-station="2"] [data-layout-resource]')
+        ?.getAttribute('data-layout-resource'),
+    ).toBe('item:copper-plate');
     expect(container.querySelectorAll('[data-layout-building]')).toHaveLength(8);
     expect(container.querySelector('[data-layout-building="-2,-17"]')?.getAttribute('x')).toBe(
       '-4',
@@ -147,7 +157,7 @@ describe('CellList', () => {
   });
 
   it('places solid-provide footprints on the rendered output rails', () => {
-    const outputs = Array.from({ length: 2 }, () => 'item:iron-plate' as ResourceId);
+    const outputs: ResourceId[] = ['item:iron-plate', 'item:copper-plate'];
     const { container } = render(<CellLayoutSurface layout={{}} inputs={[]} outputs={outputs} />);
 
     expect(screen.getByLabelText('2 output station footprints')).toBeTruthy();
@@ -157,6 +167,16 @@ describe('CellList', () => {
     expect(
       container.querySelector('[data-layout-output-station="2"]')?.getAttribute('transform'),
     ).toBe('translate(171 47)');
+    expect(
+      container
+        .querySelector('[data-layout-output-station="1"] [data-layout-resource]')
+        ?.getAttribute('data-layout-resource'),
+    ).toBe('item:iron-plate');
+    expect(
+      container
+        .querySelector('[data-layout-output-station="2"] [data-layout-resource]')
+        ?.getAttribute('data-layout-resource'),
+    ).toBe('item:copper-plate');
     expect(container.querySelectorAll('[data-layout-output-building]')).toHaveLength(4);
     expect(
       container.querySelector('[data-layout-output-building="-6,10"]')?.getAttribute('x'),

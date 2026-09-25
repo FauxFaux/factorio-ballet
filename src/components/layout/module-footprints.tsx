@@ -1,5 +1,6 @@
 import type { FactoryModule } from '../../compute/modules.ts';
-import type { ModuleConnection } from '../../compute/module-connections.ts';
+import type { ModuleConnection, StationConnection } from '../../compute/module-connections.ts';
+import type { Position } from '../../bp/decode.ts';
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
 
@@ -7,9 +8,15 @@ import { iconSprite } from '../icon.tsx';
 export function ModuleFootprints({
   modules,
   connections = [],
+  stationConnections = [],
+  inputStationStops = [],
+  outputStationStops = [],
 }: {
   modules: FactoryModule[];
   connections?: ModuleConnection[];
+  stationConnections?: StationConnection[];
+  inputStationStops?: Position[];
+  outputStationStops?: Position[];
 }) {
   let nextX = 8;
   const placed = modules.map((module) => {
@@ -26,6 +33,34 @@ export function ModuleFootprints({
       viewBox="0 0 192 128"
       aria-label={`${modules.length} factory modules`}
     >
+      {stationConnections.map((connection) => {
+        const placement = byId.get(connection.moduleId);
+        const stop = (connection.side === 'input' ? inputStationStops : outputStationStops)[
+          connection.stationIndex
+        ];
+        if (!placement || !stop) return null;
+        const stationX =
+          connection.side === 'input' ? stop.x + 8 : stop.x + (placement.x < stop.x ? -8 : -4);
+        const stationY = stop.y + (connection.side === 'input' ? 4.5 : 4);
+        const moduleX =
+          stationX < placement.x ? placement.x : placement.x + placement.module.size.width;
+        const moduleY = placement.y + placement.module.size.height / 2;
+        const start = connection.side === 'input' ? [stationX, stationY] : [moduleX, moduleY];
+        const end = connection.side === 'input' ? [moduleX, moduleY] : [stationX, stationY];
+        return (
+          <path
+            key={`${connection.stationId}|${connection.moduleId}`}
+            class={`cell-layout-module-connection is-station${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}`}
+            d={`M ${start[0]} ${start[1]} L ${end[0]} ${end[1]}`}
+            data-layout-station-connection={connection.side}
+            data-layout-station-id={connection.stationId}
+            data-layout-resource={connection.resource}
+            data-layout-rate={connection.rate}
+          >
+            <title>{`${connection.resource}: ${connection.rate}/s ${connection.side === 'input' ? 'from' : 'to'} ${connection.stationId}`}</title>
+          </path>
+        );
+      })}
       {connections.map((connection) => {
         const producer = byId.get(connection.producerId);
         const consumer = byId.get(connection.consumerId);

@@ -24,6 +24,20 @@ export interface ModuleFlowAllocation {
   unusedOutputs: ModuleResourceRemainder[];
 }
 
+/** A remaining module flow assigned to the cell's matching external station. */
+export interface StationConnection {
+  stationId: string;
+  stationIndex: number;
+  moduleId: string;
+  resource: ResourceId;
+  rate: number;
+  side: 'input' | 'output';
+}
+
+export interface CellFlowAllocation extends ModuleFlowAllocation {
+  stationConnections: StationConnection[];
+}
+
 interface FlowEdge {
   to: number;
   reverse: number;
@@ -134,4 +148,51 @@ export function allocateModuleFlows(
     });
   }
   return allocation;
+}
+
+/** Assign internal remainders to declared input and output stations by resource. */
+export function connectStationFlows(
+  allocation: ModuleFlowAllocation,
+  inputResources: readonly ResourceId[],
+  outputResources: readonly ResourceId[],
+): CellFlowAllocation {
+  const inputStations = new Map(inputResources.map((resource, index) => [resource, index]));
+  const outputStations = new Map(outputResources.map((resource, index) => [resource, index]));
+  const result: CellFlowAllocation = {
+    connections: allocation.connections,
+    stationConnections: [],
+    unmetInputs: [],
+    unusedOutputs: [],
+  };
+  for (const remainder of allocation.unmetInputs) {
+    const stationIndex = inputStations.get(remainder.resource);
+    if (stationIndex === undefined) {
+      result.unmetInputs.push(remainder);
+      continue;
+    }
+    result.stationConnections.push({
+      stationId: `station:import:${remainder.resource}`,
+      stationIndex,
+      moduleId: remainder.moduleId,
+      resource: remainder.resource,
+      rate: remainder.rate,
+      side: 'input',
+    });
+  }
+  for (const remainder of allocation.unusedOutputs) {
+    const stationIndex = outputStations.get(remainder.resource);
+    if (stationIndex === undefined) {
+      result.unusedOutputs.push(remainder);
+      continue;
+    }
+    result.stationConnections.push({
+      stationId: `station:export:${remainder.resource}`,
+      stationIndex,
+      moduleId: remainder.moduleId,
+      resource: remainder.resource,
+      rate: remainder.rate,
+      side: 'output',
+    });
+  }
+  return result;
 }

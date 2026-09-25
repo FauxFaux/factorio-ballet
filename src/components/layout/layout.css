@@ -88,6 +88,10 @@
   stroke: #67e8f9;
 }
 
+.cell-layout-module-connection.is-station {
+  stroke-dasharray: 1 0.6;
+}
+
 .cell-layout-module-label {
   fill: white;
   font-size: 2.1px;
@@ -95,6 +99,16 @@
 }
 
 .cell-layout-module-icon {
+  overflow: hidden;
+}
+
+.cell-layout-station-icon-backdrop {
+  fill: #0f172acc;
+  stroke: #e9d5ff;
+  stroke-width: 0.2;
+}
+
+.cell-layout-station-icon {
   overflow: hidden;
 }
 
