@@ -2,10 +2,10 @@ import { render } from 'preact';
 import './index.css';
 import { UrlHandler } from './boot/url-handler.tsx';
 import { DatasetProvider } from './dataset/context.tsx';
-import { defaultDataset } from './dataset/index.ts';
+import { initialDataset } from './boot/initial-dataset.ts';
 
 render(
-  <DatasetProvider value={defaultDataset}>
+  <DatasetProvider value={initialDataset}>
     <UrlHandler />
   </DatasetProvider>,
   document.getElementById('app')!,

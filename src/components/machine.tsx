@@ -1,10 +1,10 @@
+import { useDataset } from '../dataset/context.tsx';
 import './machine.css';
 import { machineName, type MachineMatch } from '../data/machines.ts';
 import { useMenu } from './menu.ts';
 import { fmt } from '../ts.ts';
 import type { Machine, MachineId } from '../types.ts';
 import { machineIconStyle } from './icon.tsx';
-import { staticData } from '../data/decode.ts';
 
 /**
  * A machine as an icon and its crafting speed: the multiplier to apply to a recipe quoted at 1×.
@@ -33,11 +33,12 @@ export function MachineChip({
   onClick?: () => void;
   onMouseEnter?: () => void;
 }) {
+  const { data } = useDataset();
   const speed = `${formatMachineSpeed(machine.speed, compactSpeed)}×`;
   const classes = ['machine', active ? 'is-active' : '', speedBelow ? 'is-speed-below' : '']
     .filter(Boolean)
     .join(' ');
-  const label = title ?? `${machineName(staticData, id)} (${id}) at ${speed}`;
+  const label = title ?? `${machineName(data, id)} (${id}) at ${speed}`;
   const inner = (
     <>
       <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
@@ -94,13 +95,14 @@ export function MachinePicker({
   pinned: boolean;
   onChoose: (id: MachineId | undefined) => void;
 }) {
+  const { data } = useDataset();
   const { open, setOpen, box } = useMenu();
 
   if (machines.length === 0) return null;
 
   const current = machines.find(({ id }) => id === chosen);
   const label = current
-    ? `${machineName(staticData, current.id)} at ${fmt(current.machine.speed)}×` +
+    ? `${machineName(data, current.id)} at ${fmt(current.machine.speed)}×` +
       (pinned ? '' : ', by default for this progress')
     : 'No machine can run this';
 
@@ -164,7 +166,7 @@ export function MachinePicker({
             >
               <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
               <span class="machine-option-speed">{fmt(machine.speed)}×</span>
-              <span class="machine-option-name">{machineName(staticData, id)}</span>
+              <span class="machine-option-name">{machineName(data, id)}</span>
             </button>
           ))}
         </div>

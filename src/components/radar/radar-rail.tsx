@@ -1,9 +1,9 @@
+import { useDataset } from '../../dataset/context.tsx';
 import { resourceName } from '../../data/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { buildRailBrick, encodeBlueprintDocument } from '../../bp/rail-blueprint.ts';
 import { iconStyle } from '../icon.tsx';
 import { useState } from 'preact/hooks';
-import { staticData } from '../../data/decode.ts';
 
 /** Copies a Factorio blueprint matching the rail diagram's current station layout. */
 export function RailBlueprintCopy({
@@ -142,6 +142,7 @@ export function StationStops({
   resources: ResourceId[];
   stacked?: boolean;
 }) {
+  const { data } = useDataset();
   return (
     <g class="cell-radar-stops">
       {resources.map((resource, index) => {
@@ -158,7 +159,7 @@ export function StationStops({
             data-bus-direction={side === 'in' ? 'onto-bus' : 'off-bus'}
             data-station-id={`station:${side === 'in' ? 'import' : 'export'}:${resource}`}
           >
-            <title>{resourceName(staticData, resource)}</title>
+            <title>{resourceName(data, resource)}</title>
           </circle>
         );
       })}

@@ -1,3 +1,4 @@
+import { useDataset } from '../../dataset/context.tsx';
 import './in-play.css';
 import { useMemo } from 'preact/hooks';
 import type { CellEntry } from '../../cell.ts';
@@ -9,7 +10,6 @@ import { ResourceIcon } from '../resource.tsx';
 import { internalConnections } from './internal-calc.ts';
 import { InPlayConnectionsView, ResourceActions } from './in-play-connections.tsx';
 import { WarnIcon } from './notes.tsx';
-import { staticData } from '../../data/decode.ts';
 
 /** Every resource a recipe in this cell consumes or produces, including its open edges. */
 export function InPlayRow({
@@ -47,6 +47,7 @@ export function InPlayRow({
   selected?: ResourceId;
   onSelect: (id: ResourceId | undefined) => void;
 }) {
+  const { data } = useDataset();
   const select = (id: ResourceId) => {
     onSelect(selected === id ? undefined : id);
     onRecipeHover(undefined);
@@ -123,11 +124,11 @@ export function InPlayRow({
                 key={suggestion.resource}
                 type="button"
                 class="cell-btn cell-in-play-resource-action"
-                title={boundarySuggestionText(suggestion, staticData)}
+                title={boundarySuggestionText(suggestion, data)}
                 onClick={() => applyBoundarySuggestion(suggestion)}
               >
                 <ResourceIcon id={suggestion.resource} />
-                {suggestion.direction} {resourceName(staticData, suggestion.resource)}
+                {suggestion.direction} {resourceName(data, suggestion.resource)}
               </button>
             ))}
           </p>
@@ -172,11 +173,12 @@ function InPlayChip({
   vertical: boolean;
   onClick: () => void;
 }) {
+  const { data } = useDataset();
   const rate = solution.balance.get(id) ?? 0;
   const suggestion = solution.boundarySuggestions?.find((candidate) => candidate.resource === id);
   const unbalanced = !input && !output && rate !== 0;
   const imbalanceTitle =
-    `${resourceName(staticData, id)} is unbalanced. ` +
+    `${resourceName(data, id)} is unbalanced. ` +
     'Open its details to review supply and consumption or allow ' +
     `${rate > 0 ? 'surplus export' : 'shortfall import'}.`;
 
@@ -184,23 +186,23 @@ function InPlayChip({
     <button
       type="button"
       class={selected ? 'cell-in-play-chip cell-btn is-selected' : 'cell-in-play-chip cell-btn'}
-      title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(staticData, id)}`}
-      aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(staticData, id)}`}
+      title={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(data, id)}`}
+      aria-label={`${selected ? 'Hide' : 'Show'} recipes for ${resourceName(data, id)}`}
       aria-pressed={selected}
       onClick={onClick}
     >
       {vertical ? <span aria-hidden="true">{selected ? '▾' : '▸'}</span> : null}
       <ResourceIcon id={id} />
-      {vertical ? <span class="cell-in-play-name">{resourceName(staticData, id)}</span> : null}
+      {vertical ? <span class="cell-in-play-name">{resourceName(data, id)}</span> : null}
       {unbalanced || suggestion ? (
         <span
           class="cell-leftover"
-          title={suggestion ? boundarySuggestionText(suggestion, staticData) : imbalanceTitle}
+          title={suggestion ? boundarySuggestionText(suggestion, data) : imbalanceTitle}
         >
           <WarnIcon
             label={
               suggestion
-                ? `Review ${suggestion.direction} for ${resourceName(staticData, id)}`
+                ? `Review ${suggestion.direction} for ${resourceName(data, id)}`
                 : undefined
             }
           />

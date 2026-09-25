@@ -11,7 +11,6 @@ import { AddToCell } from '../recipe.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import { isResourceChain } from './suggestion-plans.ts';
 import { suggestedRecipePaths } from './suggestions.ts';
-import { staticData } from '../../data/decode.ts';
 
 export function RecipeSuggestions({
   resource,
@@ -66,7 +65,7 @@ export function RecipeSuggestions({
                         : kind === 'output'
                           ? 'Use'
                           : 'Make'}{' '}
-                    <ResourceIcon id={resource} /> {resourceName(staticData, resource)}
+                    <ResourceIcon id={resource} /> {resourceName(data, resource)}
                   </h3>
                   <span class="recipe-suggestions-card-actions">
                     <p class="recipe-suggestions-score">Score {score.toFixed(1)}</p>
@@ -75,7 +74,7 @@ export function RecipeSuggestions({
                         type="button"
                         class="recipe-suggestions-explicit"
                         aria-label={`make explicit ${direction}`}
-                        title={`Make ${resourceName(staticData, resource)} an explicit ${direction}; this prevents suggestions for it from appearing`}
+                        title={`Make ${resourceName(data, resource)} an explicit ${direction}; this prevents suggestions for it from appearing`}
                         onClick={() => onMakeExplicit(resource, direction)}
                       >
                         {direction === 'import' ? (
@@ -145,13 +144,13 @@ export function RecipeSuggestions({
                         <li key={`${id}-${step}`}>
                           {recipe ? (
                             <CompactRecipe
-                              match={{ id, recipe, name: recipeName(staticData, id) }}
+                              match={{ id, recipe, name: recipeName(data, id) }}
                               progress={progress}
                               onAdd={onAdd && (() => onAdd(id))}
                               inCell={inCell?.(id)}
                             />
                           ) : (
-                            recipeName(staticData, id)
+                            recipeName(data, id)
                           )}
                         </li>
                       );

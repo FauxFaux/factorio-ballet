@@ -8,7 +8,6 @@ import type { Recipe, ResourceId, StaticData } from '../types.ts';
 import type { UrlState } from '../boot/url-handler.tsx';
 import { recipeIconStyle } from './icon.tsx';
 import { ResourceIcon } from './resource.tsx';
-import { staticData } from '../data/decode.ts';
 
 export interface FromAirRecipe {
   id: string;
@@ -146,7 +145,7 @@ function productiveCycle(
   return {
     id: `from-air:cycle:${ids.join('+')}`,
     recipe: {
-      human: ids.map((v) => recipeName(staticData, v)).join(' + '),
+      human: component.map(([, recipe]) => recipe.human).join(' + '),
       ingredients: aggregateIngredients,
       products: aggregateProducts,
       duration: 1,
@@ -257,7 +256,7 @@ export function FromAir({
                     aria-hidden="true"
                   />
                   <span class="from-air-recipe-name" title={id}>
-                    {recipeName(staticData, id)}
+                    {recipeName(data, id)}
                   </span>
                   <span class="from-air-adds" aria-label="Adds">
                     {assumedInputs?.length ? (
@@ -266,7 +265,7 @@ export function FromAir({
                         {assumedInputs.map((resource) => (
                           <span class="from-air-resource" title={resource} key={resource}>
                             <ResourceIcon id={resource} />
-                            {resourceName(staticData, resource)}
+                            {resourceName(data, resource)}
                           </span>
                         ))}
                       </span>
@@ -277,7 +276,7 @@ export function FromAir({
                     {adds.map((resource) => (
                       <span class="from-air-resource" title={resource} key={resource}>
                         <ResourceIcon id={resource} />
-                        {resourceName(staticData, resource)}
+                        {resourceName(data, resource)}
                       </span>
                     ))}
                   </span>

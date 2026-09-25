@@ -1,3 +1,4 @@
+import { useDataset } from '../../dataset/context.tsx';
 import './split-proposals.css';
 import type { CellEntry } from '../../cell.ts';
 import { recipeName } from '../../data/index.ts';
@@ -5,7 +6,6 @@ import type { Solution } from '../../solve/index.ts';
 import { proposedSplits } from '../../compute/split.ts';
 import type { Belt } from '../../types.ts';
 import { useMemo } from 'preact/hooks';
-import { staticData } from '../../data/decode.ts';
 
 function countLabel(count: number, singular: string, plural = `${singular}s`) {
   return `${count} ${count === 1 ? singular : plural}`;
@@ -21,8 +21,9 @@ export function SplitProposals({
   solution: Solution;
   belt: Belt;
 }) {
+  const { data } = useDataset();
   const proposals = useMemo(
-    () => proposedSplits(entries, solution, belt, staticData),
+    () => proposedSplits(entries, solution, belt, data),
     [entries, solution, belt],
   );
   if (proposals.length === 0) return null;
@@ -48,7 +49,7 @@ export function SplitProposals({
                 </span>
                 <span class="cell-split-group-recipes">
                   {group.entries
-                    .map((entry) => recipeName(staticData, entries[entry]!.recipe))
+                    .map((entry) => recipeName(data, entries[entry]!.recipe))
                     .join(', ')}
                 </span>
               </li>

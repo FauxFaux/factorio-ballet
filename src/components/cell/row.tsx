@@ -14,7 +14,6 @@ import { ModuleBoxes } from './modules.tsx';
 import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
-import { staticData } from '../../data/decode.ts';
 import { useDataset } from '../../dataset/context.tsx';
 
 /**
@@ -64,7 +63,8 @@ export function CellRow({
   onToggleExpand: () => void;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
-  const recipe = entryRecipe(staticData, entry);
+  const { data } = useDataset();
+  const recipe = entryRecipe(data, entry);
   const connections = useMemo(
     () => recipeConnections(entryIndex, solution, recipeIds),
     [entryIndex, recipeIds, solution],
@@ -197,10 +197,11 @@ function RecipeName({ entry, recipe }: { entry: CellEntry; recipe: Recipe | unde
 }
 
 function RecipeWarning({ problem }: { problem: SolveNote | undefined }) {
+  const { data } = useDataset();
   return (
     <span
       class={problem ? 'cell-warn is-problem' : 'cell-warn'}
-      title={problem ? noteText(problem, staticData) : undefined}
+      title={problem ? noteText(problem, data) : undefined}
     >
       {problem ? <WarnIcon label="Not worked out" /> : null}
     </span>

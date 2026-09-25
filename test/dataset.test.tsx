@@ -7,6 +7,7 @@ import { createDataset, defaultDataset } from '../src/dataset/index.ts';
 import { machinesFor } from '../src/data/machines.ts';
 import { categoryEffect, chosenModules, modulesIn } from '../src/data/modules.ts';
 import { chosenBeacon, chosenBelt, defaultBeacon, defaultBelt } from '../src/data/index.ts';
+import { FlowSummary } from '../src/components/recipe-flow-summary.tsx';
 
 afterEach(cleanup);
 
@@ -30,6 +31,24 @@ describe('useDataset', () => {
     expect(() => render(<DatasetLabel />)).toThrow(
       'useDataset must be used inside DatasetProvider',
     );
+  });
+
+  it('uses the selected dataset for names in recipe flows', () => {
+    const resource = 'item:iron-plate' as const;
+    const selected = createDataset('renamed', {
+      ...defaultDataset.data,
+      resources: {
+        ...defaultDataset.data.resources,
+        [resource]: { ...defaultDataset.data.resources[resource], human: 'Custom iron' },
+      },
+    });
+    render(
+      <DatasetProvider value={selected}>
+        <FlowSummary ins={[]} outs={[{ resource, amount: '1', fullRate: 1, rate: '1' }]} />
+      </DatasetProvider>,
+    );
+
+    expect(screen.getByTitle('Custom iron: 1 per craft')).toBeTruthy();
   });
 });
 

@@ -12,7 +12,6 @@ import {
   PackageDependentsIcon,
   PackageIcon,
 } from '@primer/octicons-react';
-import { staticData } from '../../data/decode.ts';
 
 /** The recipe flow breakdown shown when an in-play resource is expanded. */
 export function InPlayConnectionsView({
@@ -115,9 +114,10 @@ function ResourceDetails({
   suggestion?: BoundarySuggestion;
   showActions: boolean;
 }) {
+  const { data } = useDataset();
   return (
     <div class="cell-in-play-resource-details">
-      <strong>{resourceName(staticData, id)}</strong>
+      <strong>{resourceName(data, id)}</strong>
       <span>
         {' · '}
         {id}
@@ -135,7 +135,7 @@ function ResourceDetails({
       ) : null}
       {suggestion ? (
         <p class="cell-export-note">
-          <WarnIcon /> {boundarySuggestionText(suggestion, staticData)}
+          <WarnIcon /> {boundarySuggestionText(suggestion, data)}
         </p>
       ) : null}
       {forcedImport ? (
@@ -174,13 +174,14 @@ export function ResourceActions({
   onToggleImport?: () => void;
   onToggleExport?: () => void;
 }) {
+  const { data } = useDataset();
   return (
     <span class="cell-in-play-resource-searches">
       <button
         type="button"
         class="cell-btn cell-in-play-resource-action"
-        title={`Search for recipes making ${resourceName(staticData, id)} (makes:${id})`}
-        aria-label={`Search for recipes making ${resourceName(staticData, id)}`}
+        title={`Search for recipes making ${resourceName(data, id)} (makes:${id})`}
+        aria-label={`Search for recipes making ${resourceName(data, id)}`}
         onClick={() => onSearch(`makes:${id}`)}
       >
         ⌕ makes
@@ -188,8 +189,8 @@ export function ResourceActions({
       <button
         type="button"
         class="cell-btn cell-in-play-resource-action"
-        title={`Search for recipes using ${resourceName(staticData, id)} (uses:${id})`}
-        aria-label={`Search for recipes using ${resourceName(staticData, id)}`}
+        title={`Search for recipes using ${resourceName(data, id)} (uses:${id})`}
+        aria-label={`Search for recipes using ${resourceName(data, id)}`}
         onClick={() => onSearch(`uses:${id}`)}
       >
         ⌕ uses
@@ -346,8 +347,8 @@ function ConnectionRecipeFlow({
     <button
       type="button"
       class="cell-in-play-connection-recipe cell-btn"
-      title={`${fmt(flow.rate)}/s ${recipeName(staticData, flow.recipe)}`}
-      aria-label={`Toggle connections for ${recipeName(staticData, flow.recipe)}`}
+      title={`${fmt(flow.rate)}/s ${recipeName(data, flow.recipe)}`}
+      aria-label={`Toggle connections for ${recipeName(data, flow.recipe)}`}
       onClick={() => onToggleRecipe(flow.recipe!)}
       onMouseEnter={() => onRecipeHover(flow.recipe)}
       onMouseLeave={() => onRecipeHover(undefined)}
@@ -357,7 +358,7 @@ function ConnectionRecipeFlow({
         style={recipe ? recipeIconStyle(flow.recipe, recipe) : undefined}
         aria-hidden="true"
       />
-      <span>{recipeName(staticData, flow.recipe)}</span>
+      <span>{recipeName(data, flow.recipe)}</span>
     </button>
   );
 }

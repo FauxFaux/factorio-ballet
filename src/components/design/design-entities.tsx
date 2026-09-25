@@ -17,7 +17,6 @@ import type { DesignSceneItems } from './design-scene.tsx';
 import { fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
-import { staticData } from '../../data/decode.ts';
 export { entityPositionStatuses } from '../../compute/design-validation/geometry.ts';
 export type { EntityPositionStatus } from '../../compute/design-validation/geometry.ts';
 
@@ -59,6 +58,7 @@ export function Belt({
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
+  const { data } = useDataset();
   const { x, y } = belt.position;
   const viewportPosition = worldToViewport(belt.position, worldOrigin);
   const isOverlapping = status === 'overlap';
@@ -70,7 +70,7 @@ export function Belt({
       const details = items?.[item];
       return details
         ? `${side} side: ${details.name}, ${fmt(details.rate)}/s`
-        : `${side} side: ${resourceName(staticData, item)} (${item})`;
+        : `${side} side: ${resourceName(data, item)} (${item})`;
     })
     .join('; ');
   const errorDescription = [
@@ -191,6 +191,7 @@ export function Pipe({
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
+  const { data } = useDataset();
   const { x, y } = pipe.position;
   const viewportPosition = worldToViewport(pipe.position, worldOrigin);
   const isOverlapping = status === 'overlap';
@@ -201,7 +202,7 @@ export function Pipe({
       const details = resources?.[fluid];
       return details
         ? `${details.name}, ${fmt(details.rate)}/s`
-        : `${resourceName(staticData, fluid)} (${fluid})`;
+        : `${resourceName(data, fluid)} (${fluid})`;
     })
     .join(', ');
   const errorDescription = [
@@ -253,6 +254,7 @@ export function UndergroundPipe({
   onPointerEnter: JSX.PointerEventHandler<SVGSVGElement>;
   onPointerLeave: JSX.PointerEventHandler<SVGSVGElement>;
 }) {
+  const { data } = useDataset();
   const { x, y } = pipe.position;
   const viewportPosition = worldToViewport(pipe.position, worldOrigin);
   const isOverlapping = status === 'overlap';
@@ -263,7 +265,7 @@ export function UndergroundPipe({
       const details = resources?.[fluid];
       return details
         ? `${details.name}, ${fmt(details.rate)}/s`
-        : `${resourceName(staticData, fluid)} (${fluid})`;
+        : `${resourceName(data, fluid)} (${fluid})`;
     })
     .join(', ');
   const errorDescription = [
@@ -329,7 +331,7 @@ export function Assembler({
 }) {
   const { data } = useDataset();
   const recipe = data.recipes[assembler.recipe];
-  const name = recipeName(staticData, assembler.recipe);
+  const name = recipeName(data, assembler.recipe);
   const { x, y } = assembler.position;
   const { width, height } = assembler.size;
   const viewportPosition = worldToViewport(assembler.position, worldOrigin);
@@ -342,7 +344,7 @@ export function Assembler({
         ? ' cell-design-assembler-all-inputs-missing'
         : ' cell-design-assembler-some-inputs-missing';
   const missingDescription = missing
-    .map((resource) => `${resourceName(staticData, resource)} (${resource})`)
+    .map((resource) => `${resourceName(data, resource)} (${resource})`)
     .join(', ');
 
   return (

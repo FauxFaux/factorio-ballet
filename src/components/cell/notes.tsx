@@ -1,8 +1,8 @@
+import { useDataset } from '../../dataset/context.tsx';
 import './notes.css';
 import { AlertFillIcon } from '@primer/octicons-react';
 import type { Cell } from '../../cell.ts';
 import { isProblem, noteLine, type Solution } from '../../solve/index.ts';
-import { staticData } from '../../data/decode.ts';
 
 /**
  * The glyph for a solver note, wherever one is shown: a row's own mark, or the sentence it points
@@ -18,6 +18,7 @@ export function WarnIcon({ label }: { label?: string }) {
  * ⚠ on a row points at the same sentence; this is the version you can read without hovering.
  */
 export function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution }) {
+  const { data } = useDataset();
   const notes = solution.notes.filter((note) => note.kind !== 'fallback');
   if (notes.length === 0) return null;
   return (
@@ -28,7 +29,7 @@ export function SolveNotes({ cell, solution }: { cell: Cell; solution: Solution 
           class={isProblem(note) ? 'cell-note is-problem' : 'cell-note'}
         >
           {isProblem(note) ? <WarnIcon /> : null}
-          {noteLine(cell, note, staticData)}
+          {noteLine(cell, note, data)}
         </li>
       ))}
     </ul>

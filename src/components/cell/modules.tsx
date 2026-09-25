@@ -9,7 +9,7 @@ import type { MachineId, Recipe } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { UnlitIcon } from '../unlit-module-icon.tsx';
 import { useDataset } from '../../dataset/context.tsx';
-import { defaultDataset } from '../../dataset';
+import type { Dataset } from '../../dataset/index.ts';
 
 /**
  * What reaches this row's machine: its productivity modules (or speed modules where productivity
@@ -35,7 +35,8 @@ export function ModuleBoxes({
   chosen: Chosen;
   onChange: (entry: CellEntry) => void;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
+  const { data } = ds;
   const { effects, layout } = entryRun(data, entry, recipe, machine, chosen);
   const inMachine = layout.reaches.productivity ? layout.productivity : layout.speed;
   const inMachineCount = layout.reaches.productivity
@@ -58,7 +59,7 @@ export function ModuleBoxes({
            allow it, a machine which ignores it, a machine with no slots — so the box goes invisible
            rather than away, and the speed boxes down the cell stay in one column. */
         hidden={!layout.reaches.speed}
-        title={inMachineTitle(layout, effects)}
+        title={inMachineTitle(ds, layout, effects)}
         onCount={(count) =>
           onChange(
             layout.reaches.productivity
@@ -71,7 +72,7 @@ export function ModuleBoxes({
         beacon={chosen.beacon}
         count={entry.beacons}
         hidden={!layout.reaches.speed || !chosen.beacon}
-        title={beaconTitle(layout, effects)}
+        title={beaconTitle(ds, layout, effects)}
         onCount={(count) => onChange({ ...entry, beacons: count })}
       />
     </span>
@@ -92,6 +93,7 @@ function BeaconBox({
   title: string;
   onCount: (count: number | undefined) => void;
 }) {
+  const ds = useDataset();
   const [draft, setDraft] = useState<string | undefined>(undefined);
   return (
     <span
@@ -105,7 +107,7 @@ function BeaconBox({
           aria-hidden="true"
         />
       ) : (
-        <UnlitIcon modules={modulesIn(defaultDataset, 'speed')} class="cell-module-icon" />
+        <UnlitIcon modules={modulesIn(ds, 'speed')} class="cell-module-icon" />
       )}
       <input
         class="cell-module-count"
@@ -149,6 +151,7 @@ function ModuleBox({
   title: string;
   onCount: (count: number | undefined) => void;
 }) {
+  const ds = useDataset();
   /* As `CountBox`'s: the box holds what is being typed, so a half-typed number is not rounded out
      from under the caret. */
   const [draft, setDraft] = useState<string | undefined>(undefined);
@@ -169,7 +172,7 @@ function ModuleBox({
           aria-hidden="true"
         />
       ) : (
-        <UnlitIcon modules={modulesIn(defaultDataset, family)} class="cell-module-icon" />
+        <UnlitIcon modules={modulesIn(ds, family)} class="cell-module-icon" />
       )}
       <input
         class={auto ? 'cell-module-count is-derived' : 'cell-module-count'}
@@ -182,7 +185,7 @@ function ModuleBox({
            not placeholders. The derived styling says it is what would happen, not what was
            explicitly asked for. */
         value={draft ?? count ?? boost.wanted}
-        aria-label={`${categoryName(defaultDataset, family)} modules`}
+        aria-label={`${categoryName(ds, family)} modules`}
         onInput={(e) => {
           const raw = (e.target as HTMLInputElement).value;
           setDraft(raw);
@@ -196,19 +199,16 @@ function ModuleBox({
 }
 
 /** What the first box did: productivity where available, speed otherwise. */
-function inMachineTitle(layout: Layout, effects: Effects): string {
+function inMachineTitle(ds: Dataset, layout: Layout, effects: Effects): string {
   const productivity = layout.reaches.productivity;
   const boost = productivity ? layout.productivity : layout.speed;
   const family = categoryName(
-    defaultDataset,
+    ds,
     productivity ? layout.families.productivity : layout.families.speed,
   );
   const modules = [
-    moduleCount(
-      layout.productivity.inMachine,
-      categoryName(defaultDataset, layout.families.productivity),
-    ),
-    moduleCount(layout.speed.inMachine, categoryName(defaultDataset, layout.families.speed)),
+    moduleCount(layout.productivity.inMachine, categoryName(ds, layout.families.productivity)),
+    moduleCount(layout.speed.inMachine, categoryName(ds, layout.families.speed)),
   ].filter((module): module is string => module !== undefined);
   if (!modules.length) {
     return boost.module
@@ -233,9 +233,9 @@ function moduleCount(count: number, family: string): string | undefined {
 }
 
 /** What the beacon box did: every selected beacon is full of the selected speed module. */
-function beaconTitle(layout: Layout, effects: Effects): string {
+function beaconTitle(ds: Dataset, layout: Layout, effects: Effects): string {
   const boost = layout.speed;
-  const family = categoryName(defaultDataset, layout.families.speed);
+  const family = categoryName(ds, layout.families.speed);
   if (!boost.module) {
     return (
       `${sentence(family)} modules for this row. ` +

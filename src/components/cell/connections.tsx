@@ -1,3 +1,4 @@
+import { useDataset } from '../../dataset/context.tsx';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
@@ -14,7 +15,6 @@ import {
   type ConnectionFlow,
   type RecipeConnections,
 } from './connection-calc.ts';
-import { staticData } from '../../data/decode.ts';
 
 /** The two compact columns below an expanded recipe row. */
 export function RecipeConnections({
@@ -99,9 +99,10 @@ function AssemblerDesignSummary({
   progress: number;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
+  const { data } = useDataset();
   // Solution input and output rates already describe one machine.
   const problem = recipeKernelProblem(
-    staticData,
+    data,
     recipe,
     machine,
     inputRates ?? new Map(),
@@ -109,13 +110,8 @@ function AssemblerDesignSummary({
   );
   const throughput = {
     beltItemsPerSecond: belt.itemsPerSecond,
-    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(staticData, progress, belt),
-    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-      staticData,
-      progress,
-      belt,
-      2,
-    ),
+    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt),
+    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt, 2),
   };
   const result = solveKernelTileDesign(problem, throughput);
   if ('success' in result) {
@@ -286,6 +282,7 @@ function ConnectionRow({
   transportDecimalPlaces: number;
   onSelectResource: (resource: ResourceId) => void;
 }) {
+  const { data } = useDataset();
   const isItem = resource.startsWith('item:');
   const proportion = isItem && total > 0 ? Math.min(rate / total, 1) : 0;
   const share = `${fmt(proportion * 100)}% of total`;
@@ -303,12 +300,12 @@ function ConnectionRow({
       <button
         type="button"
         class="cell-connection-item cell-btn"
-        title={`${fullRate}/s ${resourceName(staticData, resource)} (${resource})`}
-        aria-label={`Show recipes for ${resourceName(staticData, resource)}`}
+        title={`${fullRate}/s ${resourceName(data, resource)} (${resource})`}
+        aria-label={`Show recipes for ${resourceName(data, resource)}`}
         onClick={() => onSelectResource(resource)}
       >
         <ResourceIcon id={resource} />
-        <span>{resourceName(staticData, resource)}</span>
+        <span>{resourceName(data, resource)}</span>
       </button>
       <ConnectionRate rate={rate} decimalPlaces={rateDecimalPlaces} />
       <MachineRatio
@@ -339,18 +336,19 @@ function MachineRatio({
   connectedRecipes: string[] | undefined;
   recipe: string;
 }) {
+  const { data } = useDataset();
   if (connectedMachineCount === undefined || machineCount === undefined) {
     return <span class="cell-connection-machine-ratio" />;
   }
   const ratio = simplifiedMachineRatio(connectedMachineCount, machineCount);
   const [connectedRatio, machineRatio] = ratio.split(':');
   const connectedRecipe =
-    connectedRecipes?.map((v) => recipeName(staticData, v)).join(', ') ?? 'connected';
+    connectedRecipes?.map((v) => recipeName(data, v)).join(', ') ?? 'connected';
   const connectedAssemblers = `${connectedRatio} ${connectedRecipe} assembler${
     connectedRatio === '1' ? '' : 's'
   }`;
   const machinePrefix = machineRatio === '1' ? '' : `${machineRatio} `;
-  const machineAssemblers = `${machinePrefix}${recipeName(staticData, recipe)} assembler${
+  const machineAssemblers = `${machinePrefix}${recipeName(data, recipe)} assembler${
     machineRatio === '1' ? '' : 's'
   }`;
   return (

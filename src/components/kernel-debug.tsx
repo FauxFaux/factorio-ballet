@@ -14,7 +14,6 @@ import type { KernelCustomState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
 import { useMemo } from 'preact/hooks';
 import { useDataset } from '../dataset/context.tsx';
-import { staticData } from '../data/decode.ts';
 
 export function KernelDebug({
   progress,
@@ -30,13 +29,9 @@ export function KernelDebug({
   const throughput = useMemo(
     () => ({
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
-        progress,
-        chosen.belt,
-      ),
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, chosen.belt),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        staticData,
+        data,
         progress,
         chosen.belt,
         2,
