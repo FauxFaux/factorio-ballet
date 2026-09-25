@@ -12,6 +12,23 @@ export function beltStackLimit(
   problem: KernelProblem,
   beltItemsPerSecond: number,
 ): number {
+  return beltStackLimitDetails(column, recipes, problem, beltItemsPerSecond).limit;
+}
+
+export interface BeltStackLimitDetails {
+  limit: number;
+  reason:
+    | { kind: 'belt'; resource: ResourceId; rate: number; lanes: number }
+    | { kind: 'physical'; columnHeight: number; districtHeight: number };
+}
+
+/** Returns the limiting belt resource and rate, or the physical column-height cap. */
+export function beltStackLimitDetails(
+  column: DesignColumn,
+  recipes: DesignSceneRecipes,
+  problem: KernelProblem,
+  beltItemsPerSecond: number,
+): BeltStackLimitDetails {
   const inputLanes = beltItemLaneCounts(column, recipes, beltInputItemTraces(column, recipes));
   const outputLanes = beltItemLaneCounts(column, recipes, beltItemTraces(column, recipes, true));
   const laneItemsPerSecond = beltItemsPerSecond / 2;
@@ -19,9 +36,35 @@ export function beltStackLimit(
     ...sideStackLimits(problem.inputs.solids, inputLanes, laneItemsPerSecond),
     ...sideStackLimits(problem.outputs.solids, outputLanes, laneItemsPerSecond),
   ];
-  const beltLimit = limits.length > 0 ? Math.floor(Math.min(...limits)) : Infinity;
+  const beltLimiter = limits.toSorted((left, right) => left.copies - right.copies)[0];
+  const beltLimit = beltLimiter ? Math.floor(beltLimiter.copies) : Infinity;
   const physicalLimit = physicalStackLimit(column);
-  return Math.min(beltLimit, physicalLimit);
+  if (physicalLimit <= beltLimit) {
+    const height = columnHeight(column);
+    return {
+      limit: physicalLimit,
+      reason: {
+        kind: 'physical',
+        columnHeight: height,
+        districtHeight: MAX_ASSEMBLER_STACK_HEIGHT,
+      },
+    };
+  }
+  return {
+    limit: beltLimit,
+    reason: beltLimiter
+      ? {
+          kind: 'belt',
+          resource: beltLimiter.resource as ResourceId,
+          rate: beltLimiter.rate,
+          lanes: beltLimiter.lanes,
+        }
+      : {
+          kind: 'physical',
+          columnHeight: columnHeight(column),
+          districtHeight: MAX_ASSEMBLER_STACK_HEIGHT,
+        },
+  };
 }
 
 /** Copies of a kernel which fit in the brick's 100-tile assembler district. */
@@ -43,10 +86,10 @@ function sideStackLimits(
   rates: ResourceRates,
   laneCounts: ReadonlyMap<ResourceId, number>,
   laneItemsPerSecond: number,
-): number[] {
+): { copies: number; resource: string; rate: number; lanes: number }[] {
   return Object.entries(rates).map(([resource, rate]) => {
     const item = resource.startsWith('item:') ? resource : `item:${resource}`;
     const lanes = laneCounts.get(item as ResourceId) ?? 0;
-    return (lanes * laneItemsPerSecond) / rate;
+    return { copies: (lanes * laneItemsPerSecond) / rate, resource: item, rate, lanes };
   });
 }

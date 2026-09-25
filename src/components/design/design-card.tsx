@@ -1,5 +1,6 @@
 import './design-card.css';
 import { useMemo } from 'preact/hooks';
+import { toWords } from 'ts-number-to-words';
 import type { KernelProblem, ResourceRates } from '../../compute/kernel-problems.ts';
 import { CARBON_LIGHT_SHORT } from '../../compute/colours.ts';
 import {
@@ -12,7 +13,7 @@ import { HelpInfo } from '../help-info.tsx';
 import { DesignPreview } from './design-preview.tsx';
 import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
-import { beltStackLimit } from './design-stack-limit.ts';
+import { beltStackLimitDetails } from './design-stack-limit.ts';
 import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
@@ -54,9 +55,14 @@ export function DesignCard({
       [assembler.id ?? `machine-${index + 1}`, assembler],
     ]),
   );
-  const stackLimit = isAssemblerDesignFailure(design)
-    ? undefined
-    : beltStackLimit(design.columns[0], recipes, problem, throughput.beltItemsPerSecond);
+  const stackColumn = !isAssemblerDesignFailure(design)
+    ? design.columns[0]
+    : 'success' in tileResult || tileResult.status !== 'found'
+      ? undefined
+      : tileResult.candidate.column;
+  const stackLimit = stackColumn
+    ? beltStackLimitDetails(stackColumn, recipes, problem, throughput.beltItemsPerSecond)
+    : undefined;
 
   return (
     <article class="design-card" aria-labelledby={`design-card-title-${index}`}>
@@ -81,7 +87,35 @@ export function DesignCard({
               </HelpInfo>
               Max column height
             </dt>
-            <dd>×{stackLimit}</dd>
+            <dd>
+              ×{stackLimit.limit}
+              <small>
+                {stackLimit.reason.kind === 'belt' ? (
+                  <>
+                    Limited by {displayRate(stackLimit.reason.rate)}{' '}
+                    <span
+                      class="design-card-stack-limit-icon"
+                      title={stackLimit.reason.resource}
+                      aria-label={stackLimit.reason.resource}
+                      role="img"
+                    >
+                      <ResourceIcon
+                        resource={stackLimit.reason.resource}
+                        color={
+                          resourceColours[stackLimit.reason.resource] ??
+                          resourceColours[stackLimit.reason.resource.slice('item:'.length)] ??
+                          Object.values(CARBON_LIGHT_SHORT)[0]!
+                        }
+                      />
+                    </span>{' '}
+                    in {toWords(stackLimit.reason.lanes)} belt lane
+                    {stackLimit.reason.lanes === 1 ? '' : 's'}
+                  </>
+                ) : (
+                  `Limited by physical height: ${stackLimit.reason.columnHeight} tiles per column in a ${stackLimit.reason.districtHeight}-tile district.`
+                )}
+              </small>
+            </dd>
           </dl>
         )}
       </aside>
