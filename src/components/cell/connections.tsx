@@ -394,6 +394,7 @@ function BeltCount({
   belt: Belt;
   decimalPlaces: number;
 }) {
+  const { iconMap } = useDataset();
   const count = rate / belt.itemsPerSecond;
   const human = belt.human ?? belt.item ?? 'belt';
   const perBelt = `${fmt(belt.itemsPerSecond)}/s each`;
@@ -405,7 +406,7 @@ function BeltCount({
       <TransportValue count={count} decimalPlaces={decimalPlaces} />
       <span
         class="cell-connection-belt-icon"
-        style={resourceIconStyle(`item:${belt.item ?? 'belt-unknown'}`)}
+        style={resourceIconStyle(iconMap, `item:${belt.item ?? 'belt-unknown'}`)}
         aria-hidden="true"
       />
     </span>
@@ -413,13 +414,14 @@ function BeltCount({
 }
 
 function PumpCount({ rate, decimalPlaces }: { rate: number; decimalPlaces: number }) {
+  const { iconMap } = useDataset();
   const pumps = rate / 1200;
   return (
     <span class="cell-connection-pump" title={`${pumps.toFixed(2)} pumps`}>
       <TransportValue count={pumps} decimalPlaces={decimalPlaces} />
       <span
         class="cell-connection-belt-icon"
-        style={resourceIconStyle(`item:pump`)}
+        style={resourceIconStyle(iconMap, `item:pump`)}
         aria-hidden="true"
       />
     </span>

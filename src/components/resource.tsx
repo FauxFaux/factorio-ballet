@@ -17,7 +17,8 @@ export function ResourceWithIcon({ id }: { id: ResourceId }) {
 
 /** Just the sprite for a resource, for places which label it themselves. */
 export function ResourceIcon({ id }: { id: ResourceId }) {
-  return <span class="resource-icon" style={resourceIconStyle(id)} aria-hidden="true" />;
+  const { iconMap } = useDataset();
+  return <span class="resource-icon" style={resourceIconStyle(iconMap, id)} aria-hidden="true" />;
 }
 
 /** A resource which, when clicked, searches for the recipes making it. */

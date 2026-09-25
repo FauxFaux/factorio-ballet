@@ -329,7 +329,7 @@ function ConnectionRecipeFlow({
   onInterfaceHover: (resource: ResourceId | undefined) => void;
   resource: ResourceId;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   if (!flow) return <span class="cell-in-play-connection-recipe">—</span>;
   if (!flow.recipe) {
     return (
@@ -355,7 +355,7 @@ function ConnectionRecipeFlow({
     >
       <span
         class="recipe-icon"
-        style={recipe ? recipeIconStyle(flow.recipe, recipe) : undefined}
+        style={recipe ? recipeIconStyle(iconMap, flow.recipe, recipe) : undefined}
         aria-hidden="true"
       />
       <span>{recipeName(data, flow.recipe)}</span>

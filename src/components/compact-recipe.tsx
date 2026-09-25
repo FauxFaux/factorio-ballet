@@ -35,7 +35,7 @@ export function CompactRecipe({
         <span class="compact-recipe-icon" aria-hidden="true">
           <span
             class="recipe-icon compact-recipe-icon-sprite"
-            style={recipeIconStyle(id, recipe)}
+            style={recipeIconStyle(ds.iconMap, id, recipe)}
           />
         </span>
         <span class="recipe-name" title={id}>

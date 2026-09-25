@@ -196,10 +196,11 @@ function RecipeIcon({
   recipe: string;
   name: string;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const recipeData = data.recipes[recipe];
   const product = recipeData?.products[0]?.resource;
   const [url, spriteX, spriteY, sheetSize] = iconSprite(
+    iconMap,
     `recipe:${recipe}`,
     ...(product ? [product] : []),
     'recipe:recipe-unknown',

@@ -15,6 +15,7 @@ export function RailBlueprintCopy({
   outputCount: number;
   stacked: boolean;
 }) {
+  const { iconMap } = useDataset();
   const [copied, setCopied] = useState(false);
   const stationSummary = `${inputCount}${stacked ? ' stacked' : ''} input and ${outputCount} output stations`;
 
@@ -37,7 +38,7 @@ export function RailBlueprintCopy({
     >
       <span>{copied ? 'Copied!' : 'Copy'}</span>
       <span class="cell-radar-copy-icon" aria-hidden="true">
-        <span style={iconStyle('item:rail')} />
+        <span style={iconStyle(iconMap, 'item:rail')} />
       </span>
     </button>
   );

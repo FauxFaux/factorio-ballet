@@ -52,7 +52,7 @@ export function ModulePicker({
   chosen?: ModuleId;
   onChoose: (id: ModuleId | null | undefined) => void;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const { open, setOpen, box } = useMenu();
 
   if (modules.length === 0) return null;
@@ -83,7 +83,7 @@ export function ModulePicker({
           <>
             <span
               class="module-icon"
-              style={resourceIconStyle(`item:${current.id}`)}
+              style={resourceIconStyle(iconMap, `item:${current.id}`)}
               aria-hidden="true"
             />
             <span class="module-effect">{percent(headlineEffect(category, current.module))}</span>
@@ -152,7 +152,7 @@ export function ModulePicker({
             >
               <span
                 class="module-icon"
-                style={resourceIconStyle(`item:${id}`)}
+                style={resourceIconStyle(iconMap, `item:${id}`)}
                 aria-hidden="true"
               />
               <span class="module-option-effect">{percent(headlineEffect(category, module))}</span>

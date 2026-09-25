@@ -103,7 +103,7 @@ function BeaconBox({
       {beacon ? (
         <span
           class="cell-module-icon"
-          style={resourceIconStyle(`item:${beacon.item}`)}
+          style={resourceIconStyle(ds.iconMap, `item:${beacon.item}`)}
           aria-hidden="true"
         />
       ) : (
@@ -168,7 +168,7 @@ function ModuleBox({
       {boost.module ? (
         <span
           class="cell-module-icon"
-          style={resourceIconStyle(`item:${boost.module}`)}
+          style={resourceIconStyle(ds.iconMap, `item:${boost.module}`)}
           aria-hidden="true"
         />
       ) : (

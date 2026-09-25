@@ -82,7 +82,11 @@ export function RecipeCard({
   return (
     <div class={classes.join(' ')}>
       <div class="recipe-head">
-        <span class="recipe-icon" style={recipeIconStyle(id, recipe)} aria-hidden="true" />
+        <span
+          class="recipe-icon"
+          style={recipeIconStyle(ds.iconMap, id, recipe)}
+          aria-hidden="true"
+        />
         <span class="recipe-name" title={id}>
           {name}
         </span>
@@ -268,6 +272,7 @@ function BeaconButtons({
   onHover: (count: number | undefined) => void;
   onChoose: (count: number) => void;
 }) {
+  const { iconMap } = useDataset();
   return (
     <div class="recipe-beacons">
       {[1, 2, 3].map((count) => {
@@ -285,7 +290,7 @@ function BeaconButtons({
           >
             <span
               class="recipe-beacon-icon"
-              style={resourceIconStyle(`item:${beacon.item}`)}
+              style={resourceIconStyle(iconMap, `item:${beacon.item}`)}
               aria-hidden="true"
             />
           </button>

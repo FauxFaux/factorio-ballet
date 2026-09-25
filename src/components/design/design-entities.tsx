@@ -329,7 +329,7 @@ export function Assembler({
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const recipe = data.recipes[assembler.recipe];
   const name = recipeName(data, assembler.recipe);
   const { x, y } = assembler.position;
@@ -370,8 +370,8 @@ export function Assembler({
           class="cell-design-assembler-sprite"
           style={
             recipe
-              ? recipeIconStyle(assembler.recipe, recipe)
-              : iconStyle(`recipe:${assembler.recipe}`, 'recipe:recipe-unknown')
+              ? recipeIconStyle(iconMap, assembler.recipe, recipe)
+              : iconStyle(iconMap, `recipe:${assembler.recipe}`, 'recipe:recipe-unknown')
           }
         />
       </span>

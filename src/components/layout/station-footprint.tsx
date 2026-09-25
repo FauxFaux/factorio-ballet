@@ -3,6 +3,7 @@ import type { ResourceId, StaticData } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
 import { embeddedBlueprintOffset } from '../rail-blueprint-preview.tsx';
 import { stationStop } from '../radar/radar-rail.tsx';
+import { useDataset } from '../../dataset/context.tsx';
 
 // Extents of the coarse station drawings below, relative to their train stops.
 // Keep these in sync when changing the footprint rectangles.
@@ -10,7 +11,9 @@ export const INPUT_STATION_BOUNDS = { left: -4, top: -20.5, right: 8, bottom: 5 
 export const OUTPUT_STATION_BOUNDS = { left: -8, top: 2, right: -3, bottom: 20.5 };
 
 function StationResourceIcon({ resource, x, y }: { resource: ResourceId; x: number; y: number }) {
+  const { iconMap } = useDataset();
   const [url, spriteX, spriteY, sheetSize] = iconSprite(
+    iconMap,
     resource,
     resource.startsWith('fluid:') ? 'fluid:fluid-unknown' : 'item:item-unknown',
   );

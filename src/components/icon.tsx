@@ -1,4 +1,4 @@
-const { icons } = await import('../data/decode-icons.ts');
+import { type IconMap } from '../data/decode-icons.ts';
 import type { Machine, MachineId, Recipe, ResourceId } from '../types.ts';
 
 /** A plain fluid droplet for fluids which have a colour, but no icon artwork. */
@@ -25,12 +25,12 @@ export function GenericSolidIcon({ color }: { color: string }) {
 }
 
 /** Look up an icon sprite without exposing the decoded sprite table to eager modules. */
-export function iconSprite(...keys: string[]): [string, number, number, number] {
+export function iconSprite(iconMap: IconMap, ...keys: string[]): [string, number, number, number] {
   for (const key of keys) {
-    const icon = icons[key];
+    const icon = iconMap[key];
     if (icon) return icon;
   }
-  return icons['item:item-unknown'];
+  return iconMap['item:item-unknown'];
 }
 
 /**
@@ -41,8 +41,8 @@ export function iconSprite(...keys: string[]): [string, number, number, number] 
  * styled element at that size inside a wrapper and scale it from `top left`; shrinking this element
  * itself changes the crop rather than scaling the sprite.
  */
-export function iconStyle(...keys: string[]): string {
-  return spriteStyle(iconSprite(...keys));
+export function iconStyle(iconMap: IconMap, ...keys: string[]): string {
+  return spriteStyle(iconSprite(iconMap, ...keys));
 }
 
 function spriteStyle([url, x, y, sheetSize]: [string, number, number, number]): string {
@@ -58,9 +58,9 @@ const MACHINE_ICON_STANDIN: Record<MachineId, ResourceId> = {
  * A synthetic recipe has no `recipe:` artwork of its own — the game has no recipe to draw — so it
  * borrows its first product's. Real recipes all have their own key and never reach the fallback.
  */
-export function recipeIconStyle(id: string, recipe: Recipe): string {
+export function recipeIconStyle(iconMap: IconMap, id: string, recipe: Recipe): string {
   const product = recipe.products[0]?.resource;
-  return iconStyle(`recipe:${id}`, ...(product ? [product] : []), 'recipe:recipe-unknown');
+  return iconStyle(iconMap, `recipe:${id}`, ...(product ? [product] : []), 'recipe:recipe-unknown');
 }
 
 /**
@@ -68,9 +68,10 @@ export function recipeIconStyle(id: string, recipe: Recipe): string {
  * every machine, but not all — Angel's heavy offshore pump is the entity
  * `angels-sea-pump-placeable` placed by the item `angels-sea-pump`.
  */
-export function machineIconStyle(id: MachineId, machine: Machine): string {
+export function machineIconStyle(iconMap: IconMap, id: MachineId, machine: Machine): string {
   const standin = MACHINE_ICON_STANDIN[id];
   return iconStyle(
+    iconMap,
     `entity:${id}`,
     ...(machine.item ? [`item:${machine.item}`] : []),
     ...(standin ? [standin] : []),
@@ -79,6 +80,10 @@ export function machineIconStyle(id: MachineId, machine: Machine): string {
 }
 
 /** The sprite for a resource, for places which label it themselves. */
-export function resourceIconStyle(id: ResourceId): string {
-  return iconStyle(id, id.startsWith('fluid:') ? 'fluid:fluid-unknown' : 'item:item-unknown');
+export function resourceIconStyle(iconMap: IconMap, id: ResourceId): string {
+  return iconStyle(
+    iconMap,
+    id,
+    id.startsWith('fluid:') ? 'fluid:fluid-unknown' : 'item:item-unknown',
+  );
 }

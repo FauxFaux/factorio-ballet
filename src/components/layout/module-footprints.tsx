@@ -34,7 +34,7 @@ export function ModuleFootprints({
   outputStationStops?: Position[];
   zeroInputRegionRecipes?: ReadonlySet<string>;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{
@@ -198,6 +198,7 @@ export function ModuleFootprints({
       {placed.map(({ module, x, y }) => {
         const product = data.recipes[module.recipe]?.products[0]?.resource;
         const [url, spriteX, spriteY, sheetSize] = iconSprite(
+          iconMap,
           `recipe:${module.recipe}`,
           ...(product ? [product] : []),
           'recipe:recipe-unknown',

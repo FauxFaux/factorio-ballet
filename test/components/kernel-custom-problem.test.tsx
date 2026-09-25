@@ -9,6 +9,7 @@ import type { KernelCustomState, UrlState } from '../../src/boot/url-handler.tsx
 import { KernelCustomProblem } from '../../src/components/kernel-custom-problem.tsx';
 import { resourceIconStyle } from '../../src/components/icon.tsx';
 import { field } from '../../src/ts.ts';
+import { defaultDataset } from '../with-bobang.ts';
 
 const throughput = {
   beltItemsPerSecond: 15,
@@ -202,7 +203,7 @@ describe('KernelCustomProblem', () => {
         .closest('.kernel-custom-slider')
         ?.querySelector<HTMLElement>('.kernel-custom-transport-icon > span');
       const expected = document.createElement('span');
-      expected.style.cssText = resourceIconStyle(`item:${item}`);
+      expected.style.cssText = resourceIconStyle(defaultDataset.iconMap, `item:${item}`);
       expect(icon?.style.cssText).toBe(expected.style.cssText);
     }
   });

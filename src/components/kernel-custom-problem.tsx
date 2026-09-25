@@ -361,9 +361,10 @@ function ResourceIcon({ fluid = false, color }: { fluid?: boolean; color: string
 }
 
 function TransportIcon({ item }: { item: string }) {
+  const { iconMap } = useDataset();
   return (
     <span class="kernel-custom-transport-icon" aria-hidden="true">
-      <span style={resourceIconStyle(`item:${item}`)} />
+      <span style={resourceIconStyle(iconMap, `item:${item}`)} />
     </span>
   );
 }

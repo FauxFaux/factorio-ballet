@@ -64,7 +64,7 @@ export function CellRow({
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
   const ds = useDataset();
-  const { data } = ds;
+  const { data, iconMap } = ds;
   const recipe = entryRecipe(data, entry);
   const connections = useMemo(
     () => recipeConnections(entryIndex, solution, recipeIds),
@@ -102,7 +102,7 @@ export function CellRow({
       </button>
       <span
         class="recipe-icon"
-        style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
+        style={recipe ? recipeIconStyle(iconMap, entry.recipe, recipe) : undefined}
         title={!vertical ? (recipe?.human ?? entry.recipe) : undefined}
         aria-hidden="true"
       />

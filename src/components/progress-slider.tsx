@@ -26,7 +26,7 @@ const gap = (pack: Landmark, gp: number) => Math.abs(pack.complexity * 100 - gp)
  * one jumps there, since naming the pack is easier than aiming at a percentage.
  */
 export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<number> }) {
-  const { data, packLandmarks } = useDataset();
+  const { data, packLandmarks, iconMap } = useDataset();
   // The nearest pack, if the slider is close enough to be *at* it. Only marking the nearest one
   // unconditionally meant a box around white science while you were days of play short of it, which
   // reads as a claim rather than a marker. `undefined` also covers a regenerated dataset with no
@@ -86,7 +86,10 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
               aria-label={`Set progress to ${name}`}
               onClick={() => setGp(percent)}
             >
-              <span class="progress-pack-icon" style={iconStyle(pack.id, 'item:item-unknown')} />
+              <span
+                class="progress-pack-icon"
+                style={iconStyle(iconMap, pack.id, 'item:item-unknown')}
+              />
             </button>
           );
         })}

@@ -33,7 +33,7 @@ export function MachineChip({
   onClick?: () => void;
   onMouseEnter?: () => void;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const speed = `${formatMachineSpeed(machine.speed, compactSpeed)}×`;
   const classes = ['machine', active ? 'is-active' : '', speedBelow ? 'is-speed-below' : '']
     .filter(Boolean)
@@ -41,7 +41,11 @@ export function MachineChip({
   const label = title ?? `${machineName(data, id)} (${id}) at ${speed}`;
   const inner = (
     <>
-      <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
+      <span
+        class="machine-icon"
+        style={machineIconStyle(iconMap, id, machine)}
+        aria-hidden="true"
+      />
       <span class="machine-speed">{speed}</span>
     </>
   );
@@ -95,7 +99,7 @@ export function MachinePicker({
   pinned: boolean;
   onChoose: (id: MachineId | undefined) => void;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const { open, setOpen, box } = useMenu();
 
   if (machines.length === 0) return null;
@@ -125,7 +129,7 @@ export function MachinePicker({
           <>
             <span
               class="machine-icon"
-              style={machineIconStyle(current.id, current.machine)}
+              style={machineIconStyle(iconMap, current.id, current.machine)}
               aria-hidden="true"
             />
             <span class="machine-speed">{fmt(current.machine.speed)}×</span>
@@ -164,7 +168,11 @@ export function MachinePicker({
               title={id}
               onClick={() => choose(id)}
             >
-              <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
+              <span
+                class="machine-icon"
+                style={machineIconStyle(iconMap, id, machine)}
+                aria-hidden="true"
+              />
               <span class="machine-option-speed">{fmt(machine.speed)}×</span>
               <span class="machine-option-name">{machineName(data, id)}</span>
             </button>

@@ -221,7 +221,7 @@ export function FromAir({
   mode: State<UrlState['fa']>;
   progress: number;
 }) {
-  const { data } = useDataset();
+  const { data, iconMap } = useDataset();
   const infiniteMining = mode === 'infinite-mining';
   const stages = useMemo(
     () => fromAirStages(data, infiniteMining, progress),
@@ -252,7 +252,7 @@ export function FromAir({
                 <li class="from-air-recipe" key={id}>
                   <span
                     class="from-air-recipe-icon"
-                    style={recipeIconStyle(id, recipe)}
+                    style={recipeIconStyle(iconMap, id, recipe)}
                     aria-hidden="true"
                   />
                   <span class="from-air-recipe-name" title={id}>

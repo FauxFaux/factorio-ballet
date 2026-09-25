@@ -4,6 +4,7 @@ import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Belt, BeltId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
+import type { IconMap } from '../data/decode-icons.ts';
 
 /**
  * The belt tier a future throughput check will use. Like the module and beacon controls, this is a
@@ -17,7 +18,7 @@ export function BeltPicker({
   progress: number;
 }) {
   const ds = useDataset();
-  const { data, beltTiers } = ds;
+  const { data, beltTiers, iconMap } = ds;
   const { open, setOpen, box } = useMenu();
 
   if (beltTiers.length === 0) return null;
@@ -41,7 +42,11 @@ export function BeltPicker({
         title={`${label} — click to change`}
         onClick={() => setOpen(!open)}
       >
-        <span class="module-icon" style={beltIconStyle(current.id, data)} aria-hidden="true" />
+        <span
+          class="module-icon"
+          style={beltIconStyle(iconMap, current.id, data)}
+          aria-hidden="true"
+        />
         <span class="module-effect">{rate(current.belt)}</span>
         <span class="module-caret" aria-hidden="true">
           ▾
@@ -77,7 +82,11 @@ export function BeltPicker({
               title={`${id}: ${rateSummary(belt)}`}
               onClick={() => choose(id)}
             >
-              <span class="module-icon" style={beltIconStyle(id, data)} aria-hidden="true" />
+              <span
+                class="module-icon"
+                style={beltIconStyle(iconMap, id, data)}
+                aria-hidden="true"
+              />
               <span class="module-option-effect">{rate(belt)}</span>
               <span class="module-option-name">{beltName(data, id)}</span>
             </button>
@@ -94,6 +103,6 @@ function rateSummary(belt: Belt): string {
   return `${fmt(belt.itemsPerSecond)} items per second, both lanes fully compressed`;
 }
 
-function beltIconStyle(id: BeltId, data: StaticData): string {
-  return resourceIconStyle(`item:${data.belts[id]?.item ?? id}`);
+function beltIconStyle(iconMap: IconMap, id: BeltId, data: StaticData): string {
+  return resourceIconStyle(iconMap, `item:${data.belts[id]?.item ?? id}`);
 }

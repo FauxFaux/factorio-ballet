@@ -70,7 +70,7 @@ export function RecipeButton({
       <span class="cell-design-recipe-icon" aria-hidden="true">
         <span
           class="cell-design-recipe-icon-sprite"
-          style={recipe ? recipeIconStyle(entry.recipe, recipe) : undefined}
+          style={recipe ? recipeIconStyle(ds.iconMap, entry.recipe, recipe) : undefined}
         />
       </span>
     </button>

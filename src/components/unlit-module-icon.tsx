@@ -1,5 +1,6 @@
 import type { ModuleMatch } from '../data/modules.ts';
 import { resourceIconStyle } from './icon.tsx';
+import { useDataset } from '../dataset/context.tsx';
 
 /**
  * What "none" looks like: the family's cheapest module with its lights off.
@@ -18,11 +19,12 @@ export function UnlitIcon({
   modules: readonly ModuleMatch[];
   class: string;
 }) {
+  const { iconMap } = useDataset();
   const cheapest = modules[0];
   return (
     <span
       class={`${box} is-unlit`}
-      style={cheapest ? resourceIconStyle(`item:${cheapest.id}`) : undefined}
+      style={cheapest ? resourceIconStyle(iconMap, `item:${cheapest.id}`) : undefined}
       aria-hidden="true"
     />
   );

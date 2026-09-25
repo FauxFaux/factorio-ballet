@@ -14,13 +14,15 @@ import './preload-icons.ts';
 type Icon = [url: string, x: number, y: number, sheetSize: number];
 type IconData = Record<string, [number, number]>;
 
-function iconsFromSheet(url: string, data: unknown, sheetSize: number): Record<string, Icon> {
+export type IconMap = Record<string, Icon>;
+
+function iconsFromSheet(url: string, data: unknown, sheetSize: number): IconMap {
   return Object.fromEntries(
     Object.entries(data as IconData).map(([key, [x, y]]) => [key, [url, x, y, sheetSize]]),
   );
 }
 
-export const icons: Record<string, Icon> = {
+export const icons_BANNED_IMPORT: IconMap = {
   ...iconsFromSheet(icons0Url, icons0Data, 864),
   ...iconsFromSheet(icons1Url, icons1Data, 864),
   ...iconsFromSheet(icons2Url, icons2Data, 864),
