@@ -1,18 +1,14 @@
 import { describe, expect, it } from 'vitest';
 import { entryEffects, entryRun, parseModules, type Cell } from '../src/cell.ts';
-import {
-  beaconTiers,
-  chosenBeacon,
-  defaultBeacon,
-  type Chosen,
-  defaultBelt,
-} from '../src/data/index.ts';
+import { chosenBeacon, defaultBeacon, type Chosen, defaultBelt } from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
 import { chosenModule, SPEED_CATEGORY, type ChosenModules } from '../src/data/modules.ts';
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
 import { solveCell } from '../src/solve/index.ts';
 import type { Machine } from '../src/types.ts';
 import { defaultDataset } from '../src/dataset';
+
+const { beaconTiers } = defaultDataset;
 
 const gears = staticData.recipes['iron-gear-wheel'];
 /** Does not allow productivity, which is the ordinary case; see `test/modules.test.ts`. */
@@ -32,7 +28,7 @@ const VANILLA = staticData.beacons['beacon'];
 const kit = (modules: ChosenModules): Chosen => ({
   modules,
   beacon: VANILLA,
-  belt: defaultBelt(0).belt,
+  belt: defaultBelt(defaultDataset, 0).belt,
 });
 
 const boost = (
@@ -71,11 +67,11 @@ describe('the ingested beacons', () => {
  */
 describe('the chosen beacon', () => {
   it('is none at the crash site and the biggest one at the end of the tree', () => {
-    expect(defaultBeacon(0)).toBeUndefined();
-    expect(defaultBeacon(1)?.id).toBe('bob-beacon-3');
+    expect(defaultBeacon(defaultDataset, 0)).toBeUndefined();
+    expect(defaultBeacon(defaultDataset, 1)?.id).toBe('bob-beacon-3');
     // and it walks up the tiers in between rather than jumping to the end
     const vanilla = beaconTiers[0]!;
-    expect(defaultBeacon(vanilla.complexity!)?.id).toBe('beacon');
+    expect(defaultBeacon(defaultDataset, vanilla.complexity!)?.id).toBe('beacon');
   });
 
   it("is the header's pick, whatever the progress", () => {

@@ -1,10 +1,10 @@
 import './progress-slider.css';
-import { packLandmarks, resourceName } from '../data/index.ts';
+import { resourceName } from '../data/index.ts';
 import type { Landmark } from '../compute/landmarks.ts';
 import type { State } from '../ts.ts';
 import { HelpInfo } from './help-info.tsx';
 import { iconStyle } from './icon.tsx';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 
 /**
  * How near, in whole percent, the slider has to be for it to be sitting *at* a pack. The kept packs
@@ -26,6 +26,7 @@ const gap = (pack: Landmark, gp: number) => Math.abs(pack.complexity * 100 - gp)
  * one jumps there, since naming the pack is easier than aiming at a percentage.
  */
 export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<number> }) {
+  const { data, packLandmarks } = useDataset();
   // The nearest pack, if the slider is close enough to be *at* it. Only marking the nearest one
   // unconditionally meant a box around white science while you were days of play short of it, which
   // reads as a claim rather than a marker. `undefined` also covers a regenerated dataset with no
@@ -39,9 +40,9 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
   // "around <nearest>" would overclaim in exactly the way the box did.
   const passed = at ? undefined : packLandmarks.findLast((pack) => pack.complexity * 100 < gp);
   const era = at
-    ? `at ${resourceName(staticData, at.id)}`
+    ? `at ${resourceName(data, at.id)}`
     : passed
-      ? `past ${resourceName(staticData, passed.id)}`
+      ? `past ${resourceName(data, passed.id)}`
       : '';
 
   return (
@@ -73,7 +74,7 @@ export function ProgressSlider({ progress: [gp, setGp] }: { progress: State<numb
       />
       <div class="progress-packs">
         {packLandmarks.map((pack) => {
-          const name = resourceName(staticData, pack.id);
+          const name = resourceName(data, pack.id);
           const percent = Math.round(pack.complexity * 100);
           return (
             <button

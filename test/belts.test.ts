@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { beltTiers, chosenBelt, defaultBelt } from '../src/data/index.ts';
+import { chosenBelt, defaultBelt } from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
+
+const { beltTiers } = defaultDataset;
 
 describe('the chosen belt', () => {
   it('is the six tiers the pack has, in items per second', () => {
@@ -48,7 +50,7 @@ describe('the chosen belt', () => {
   });
 
   it('defaults to the fastest researched belt and lets the header pin or remove it', () => {
-    expect(defaultBelt(1)?.id).toBe('bob-ultimate-transport-belt');
+    expect(defaultBelt(defaultDataset, 1)?.id).toBe('bob-ultimate-transport-belt');
     expect(chosenBelt(defaultDataset, 'transport-belt', 1)).toBe(
       staticData.belts['transport-belt'],
     );

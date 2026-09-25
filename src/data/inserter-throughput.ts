@@ -1,5 +1,6 @@
 import type { Belt, Inserter, InserterCapacityBonus, StaticData } from '../types.ts';
 import { defaultBelt } from './index.ts';
+import type { Dataset } from '../dataset';
 
 type ThroughputGrid = ReadonlyArray<{
   rotationSpeed: number;
@@ -130,12 +131,13 @@ export function inserterItemsPerSecond(
  * latest capacity research come from the same progress scale; the inserter is whichever unlocked
  * non-stack prototype produces the highest estimate.
  */
-export function inserterItemsPerSecondAtProgress(
-  data: StaticData,
-  progress: number,
-  reach = 1,
-): number {
-  return inserterItemsPerSecondForBeltAtProgress(data, progress, defaultBelt(progress).belt, reach);
+export function inserterItemsPerSecondAtProgress(ds: Dataset, progress: number, reach = 1): number {
+  return inserterItemsPerSecondForBeltAtProgress(
+    ds.data,
+    progress,
+    defaultBelt(ds, progress).belt,
+    reach,
+  );
 }
 
 /** Estimate the best unlocked inserter's transfer rate against a caller-selected belt. */

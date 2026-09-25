@@ -1,16 +1,9 @@
-import {
-  beaconName,
-  beaconTiers,
-  beaconWorth,
-  defaultBeacon,
-  type BeaconChoice,
-} from '../data/index.ts';
+import { beaconName, beaconWorth, defaultBeacon, type BeaconChoice } from '../data/index.ts';
 import { useDataset } from '../dataset/context.tsx';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Beacon, BeaconId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
-import { staticData } from '../data/decode.ts';
 
 /**
  * Which beacon a row builds when its speed modules overflow the machine, as a dropdown: the header
@@ -34,7 +27,8 @@ export function BeaconPicker({
   beacon: State<BeaconChoice>;
   progress: number;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
+  const { data, beaconTiers } = ds;
   const { open, setOpen, box } = useMenu();
 
   if (beaconTiers.length === 0) return null;
@@ -43,9 +37,11 @@ export function BeaconPicker({
   /* The beacon in use, whether it was pinned or defaulted; `undefined` is none, which is both what
      `null` means and what the early game defaults to. A pinned id the dataset no longer has is none
      too — a stale URL, and the same answer `chosenBeacon` gives the arithmetic. */
-  const current = pinned ? beaconTiers.find(({ id }) => id === choice) : defaultBeacon(progress);
+  const current = pinned
+    ? beaconTiers.find(({ id }) => id === choice)
+    : defaultBeacon(ds, progress);
   const what = current
-    ? `${beaconName(staticData, current.id)}: ${slotSummary(current.beacon)}`
+    ? `${beaconName(data, current.id)}: ${slotSummary(current.beacon)}`
     : 'No beacons';
   const label = pinned ? what : `${what}, by default for this progress`;
 
@@ -140,7 +136,7 @@ export function BeaconPicker({
             >
               <span class="module-icon" style={beaconIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{worth(beacon)}</span>
-              <span class="module-option-name">{beaconName(staticData, id)}</span>
+              <span class="module-option-name">{beaconName(data, id)}</span>
             </button>
           ))}
         </div>
@@ -179,7 +175,7 @@ function beaconIconStyle(id: BeaconId, data: StaticData): string {
  * with a hole in it where the control still is.
  */
 function UnlitBeacon({ class: box }: { class: string }) {
-  const { data } = useDataset();
+  const { data, beaconTiers } = useDataset();
   const cheapest = beaconTiers[0];
   return (
     <span

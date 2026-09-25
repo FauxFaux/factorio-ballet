@@ -6,6 +6,7 @@ import {
   inserterItemsPerSecondForBeltAtProgress,
 } from '../../src/data/inserter-throughput.ts';
 import type { Belt, Inserter, InserterCapacityBonus } from '../../src/types.ts';
+import { defaultDataset } from '../../src/dataset';
 
 const fastInserter: Inserter = {
   rotationSpeed: 0.04,
@@ -85,7 +86,7 @@ describe('inserterItemsPerSecond', () => {
       2,
     );
 
-    expect(inserterItemsPerSecondAtProgress(staticData, 0.55, 2)).toBeCloseTo(expected);
+    expect(inserterItemsPerSecondAtProgress(defaultDataset, 0.55, 2)).toBeCloseTo(expected);
   });
 
   it('uses a chosen belt while resolving the inserter and capacity bonus from progress', () => {

@@ -2,9 +2,14 @@ import { staticData } from '../data/decode.ts';
 import type { ResourceId, StaticData } from '../types.ts';
 import type { MachineMatch } from '../data/machines.ts';
 import type { ModuleCategory, ModuleMatch } from '../data/modules.ts';
+import type { BeaconMatch, BeltMatch } from '../data/index.ts';
+import type { Landmark } from '../compute/landmarks.ts';
 import {
+  buildBeaconTiers,
+  buildBeltTiers,
   buildMachinesByCategory,
   buildModuleIndex,
+  buildPackLandmarks,
   buildSoleProducerIndex,
   buildSuggestionPlanIndex,
   type SuggestionPlanIndex,
@@ -20,6 +25,9 @@ export interface Dataset {
   readonly machinesByCategory: ReadonlyMap<string, readonly MachineMatch[]>;
   readonly modulesByCategory: ReadonlyMap<string, readonly ModuleMatch[]>;
   readonly moduleCategories: readonly ModuleCategory[];
+  readonly packLandmarks: readonly Landmark[];
+  readonly beaconTiers: readonly BeaconMatch[];
+  readonly beltTiers: readonly BeltMatch[];
   readonly soleProducerByResource: ReadonlyMap<ResourceId, string>;
   readonly suggestionPlans: SuggestionPlanIndex;
 }
@@ -32,6 +40,9 @@ export function createDataset(id: DatasetId, data: StaticData): Dataset {
     machinesByCategory: buildMachinesByCategory(data),
     modulesByCategory: moduleIndex.byCategory,
     moduleCategories: moduleIndex.categories,
+    packLandmarks: buildPackLandmarks(data),
+    beaconTiers: buildBeaconTiers(data),
+    beltTiers: buildBeltTiers(data),
     soleProducerByResource: buildSoleProducerIndex(data),
     suggestionPlans: buildSuggestionPlanIndex(data),
   };

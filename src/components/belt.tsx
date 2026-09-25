@@ -1,10 +1,9 @@
-import { beltName, beltTiers, defaultBelt, type BeltChoice } from '../data/index.ts';
+import { beltName, defaultBelt, type BeltChoice } from '../data/index.ts';
 import { useDataset } from '../dataset/context.tsx';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
 import type { Belt, BeltId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
-import { staticData } from '../data/decode.ts';
 
 /**
  * The belt tier a future throughput check will use. Like the module and beacon controls, this is a
@@ -17,14 +16,15 @@ export function BeltPicker({
   belt: State<BeltChoice>;
   progress: number;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
+  const { data, beltTiers } = ds;
   const { open, setOpen, box } = useMenu();
 
   if (beltTiers.length === 0) return null;
 
   const pinned = choice !== undefined;
-  const current = pinned ? beltTiers.find(({ id }) => id === choice)! : defaultBelt(progress);
-  const what = current ? `${beltName(staticData, current.id)}: ${rate(current.belt)}` : 'No belts';
+  const current = pinned ? beltTiers.find(({ id }) => id === choice)! : defaultBelt(ds, progress);
+  const what = current ? `${beltName(data, current.id)}: ${rate(current.belt)}` : 'No belts';
   const label = pinned ? what : `${what}, by default for this progress`;
   const choose = (id: BeltChoice) => {
     setChoice(id);
@@ -79,7 +79,7 @@ export function BeltPicker({
             >
               <span class="module-icon" style={beltIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{rate(belt)}</span>
-              <span class="module-option-name">{beltName(staticData, id)}</span>
+              <span class="module-option-name">{beltName(data, id)}</span>
             </button>
           ))}
         </div>

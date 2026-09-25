@@ -1,7 +1,7 @@
 import type { Beacon, BeaconId, Belt, BeltId, ResourceId, StaticData } from '../types.ts';
-import { staticData } from './decode.ts';
-import { selectPackLandmarks } from '../compute/landmarks.ts';
-import type { Landmark } from '../compute/landmarks.ts';
+import { defaultDataset, type Dataset } from '../dataset';
+import { chosenModules } from './modules.ts';
+import type { ChosenModules, ModuleChoice } from './modules.ts';
 
 /** The display name for a resource, falling back to its id. */
 export function resourceName(data: StaticData, id: ResourceId): string {
@@ -36,21 +36,6 @@ export function relevanceOf(of: { complexity?: number }, progress: number): numb
 }
 
 /**
- * The science packs the progress slider is labelled with: the game's own list, thinned so the icons
- * do not sit on top of each other. Ten of Bob's packs land between 0.53 and 0.58 — a real wall in
- * that pack, but ten icons in the width of one — so a pack within `MIN_PACK_GAP` of the last one
- * kept is dropped. Keeping the cheapest of each cluster is what leaves the survivors the packs
- * people actually name their progress after.
- */
-export const packLandmarks: Landmark[] = (() => {
-  return selectPackLandmarks(staticData.sciencePacks, staticData.resources);
-})();
-
-import { chosenModules } from './modules.ts';
-import type { ChosenModules, ModuleChoice } from './modules.ts';
-import { type Dataset } from '../dataset';
-
-/**
  * The beacons this pack has, cheapest first: one tier of the same idea, as the module families are.
  *
  * A beacon is placed by an item of the same name, so — exactly as for a {@link Module} — the icon
@@ -63,20 +48,6 @@ export interface BeaconMatch {
   /** The complexity of the item which places it, which is the beacon's; as {@link ModuleMatch}. */
   complexity?: number;
 }
-
-/** Cheapest first, then the smaller beacon, then by id — as {@link cheapestModule}. */
-export const beaconTiers: BeaconMatch[] = Object.entries(staticData.beacons ?? {})
-  .map(([id, beacon]) => ({
-    id,
-    beacon,
-    complexity: staticData.resources[`item:${beacon.item ?? id}`]?.complexity,
-  }))
-  .sort(
-    (a, b) =>
-      complexityOf(a) - complexityOf(b) ||
-      a.beacon.moduleSlots - b.beacon.moduleSlots ||
-      a.id.localeCompare(b.id),
-  );
 
 /** What a beacon is called; its own name, unlike a module's, which is its item's. */
 export function beaconName(data: StaticData, id: BeaconId): string {
@@ -103,8 +74,8 @@ export function beaconWorth(beacon: Beacon): number {
  * bigger beacon is fewer beacons for the same modules and so a better transmission, so a cell gets
  * quietly better as the game goes on rather than jumping about. Pin one in the header to stop it.
  */
-export function defaultBeacon(progress: number): BeaconMatch | undefined {
-  return beaconTiers.findLast((match) => complexityOf(match) <= progress);
+export function defaultBeacon(ds: Dataset, progress: number): BeaconMatch | undefined {
+  return ds.beaconTiers.findLast((match) => complexityOf(match) <= progress);
 }
 
 /**
@@ -122,7 +93,7 @@ export function chosenBeacon(
   progress: number,
 ): Beacon | undefined {
   if (choice !== undefined) return choice === null ? undefined : ds.data.beacons[choice];
-  return defaultBeacon(progress)?.beacon;
+  return defaultBeacon(ds, progress)?.beacon;
 }
 
 /** A belt tier, joined with the complexity of the item which places it. */
@@ -133,28 +104,14 @@ export interface BeltMatch {
   complexity?: number;
 }
 
-/** Every belt tier, cheapest first, then by throughput and id to give equal tiers a stable order. */
-export const beltTiers: BeltMatch[] = Object.entries(staticData.belts)
-  .map(([id, belt]) => ({
-    id,
-    belt,
-    complexity: staticData.resources[`item:${belt.item ?? id}`]?.complexity,
-  }))
-  .sort(
-    (a, b) =>
-      complexityOf(a) - complexityOf(b) ||
-      a.belt.itemsPerSecond - b.belt.itemsPerSecond ||
-      a.id.localeCompare(b.id),
-  );
-
 /** The belt's own name, unlike a module's, which is the name of its item. */
 export function beltName(data: StaticData, id: BeltId): string {
   return data.belts[id]?.human ?? id;
 }
 
 /** The fastest belt already available at this point in the tech tree. */
-export function defaultBelt(progress: number): BeltMatch {
-  return beltTiers.findLast((match) => complexityOf(match) <= progress) ?? beltTiers[0];
+export function defaultBelt(ds: Dataset, progress: number): BeltMatch {
+  return ds.beltTiers.findLast((match) => complexityOf(match) <= progress) ?? ds.beltTiers[0]!;
 }
 
 /** An id pins a belt, and absent follows {@link defaultBelt}. */
@@ -163,7 +120,7 @@ export type BeltChoice = BeltId | undefined;
 /** The belt the header means right now: a pinned choice, or {@link defaultBelt}'s. */
 export function chosenBelt(ds: Dataset, choice: BeltChoice, progress: number): Belt {
   if (choice !== undefined) return ds.data.belts[choice];
-  return defaultBelt(progress).belt;
+  return defaultBelt(ds, progress).belt;
 }
 
 /**
@@ -183,7 +140,7 @@ export interface Chosen {
 }
 
 /** Nothing chosen at all: an unmodded machine with no beacons round it. */
-export const NO_CHOICE: Chosen = { modules: {}, belt: defaultBelt(0).belt };
+export const NO_CHOICE: Chosen = { modules: {}, belt: defaultBelt(defaultDataset, 0).belt };
 
 /** Every part of {@link Chosen} resolved against the header's choices and the progress slider. */
 export function resolveChosen(

@@ -7,8 +7,11 @@ import {
   searchRecipes,
   type SearchScope,
 } from '../../src/data/search.ts';
-import { packLandmarks, relevanceOf } from '../../src/data/index.ts';
+import { relevanceOf } from '../../src/data/index.ts';
 import { staticData } from '../../src/data/decode.ts';
+import { defaultDataset } from '../../src/dataset';
+
+const { packLandmarks } = defaultDataset;
 
 describe('resolveResources', () => {
   it('takes an exact resource id alone', () => {

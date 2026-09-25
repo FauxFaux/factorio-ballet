@@ -6,6 +6,7 @@ import { DatasetProvider, useDataset } from '../src/dataset/context.tsx';
 import { createDataset, defaultDataset } from '../src/dataset/index.ts';
 import { machinesFor } from '../src/data/machines.ts';
 import { categoryEffect, chosenModules, modulesIn } from '../src/data/modules.ts';
+import { chosenBeacon, chosenBelt, defaultBeacon, defaultBelt } from '../src/data/index.ts';
 
 afterEach(cleanup);
 
@@ -33,6 +34,32 @@ describe('useDataset', () => {
 });
 
 describe('createDataset', () => {
+  it('precomputes progress landmarks, beacons, and belts for each dataset', () => {
+    const beacon = defaultDataset.data.beacons['beacon'];
+    const belt = defaultDataset.data.belts['transport-belt'];
+    const first = createDataset('first', {
+      ...defaultDataset.data,
+      sciencePacks: ['item:automation-science-pack'],
+      beacons: { first: { ...beacon, item: 'beacon' } },
+      belts: { first: { ...belt, item: 'transport-belt' } },
+    });
+    const second = createDataset('second', {
+      ...defaultDataset.data,
+      sciencePacks: ['item:logistic-science-pack'],
+      beacons: { second: { ...beacon, item: 'beacon' } },
+      belts: { second: { ...belt, item: 'transport-belt' } },
+    });
+
+    expect(first.packLandmarks.map(({ id }) => id)).toEqual(['item:automation-science-pack']);
+    expect(second.packLandmarks.map(({ id }) => id)).toEqual(['item:logistic-science-pack']);
+    expect(defaultBeacon(first, 1)?.id).toBe('first');
+    expect(defaultBeacon(second, 1)?.id).toBe('second');
+    expect(chosenBeacon(first, undefined, 1)).toBe(first.data.beacons.first);
+    expect(defaultBelt(first, 1).id).toBe('first');
+    expect(defaultBelt(second, 1).id).toBe('second');
+    expect(chosenBelt(second, undefined, 1)).toBe(second.data.belts.second);
+  });
+
   it('builds module families from each dataset’s modules', () => {
     const speedModule = defaultDataset.data.modules['speed-module'];
     const fasterModule = defaultDataset.data.modules['speed-module-2'];

@@ -1,7 +1,9 @@
 import type { Machine, ResourceId, StaticData } from '../types.ts';
 import type { MachineMatch } from '../data/machines.ts';
 import type { ModuleCategory, ModuleMatch } from '../data/modules.ts';
+import type { BeaconMatch, BeltMatch } from '../data/index.ts';
 import { isBarrelling, isUnbarrelling, isVoid } from '../compute/recipes.ts';
+import { selectPackLandmarks, type Landmark } from '../compute/landmarks.ts';
 import { resourceChainFinder } from '../compute/void-path.ts';
 
 function machineComplexity(data: StaticData, machine: Machine): number | undefined {
@@ -64,6 +66,43 @@ export function buildModuleIndex(data: StaticData): ModuleIndex {
         })),
     ],
   };
+}
+
+/** Science packs kept far enough apart to label the progress slider. */
+export function buildPackLandmarks(data: StaticData): readonly Landmark[] {
+  return selectPackLandmarks(data.sciencePacks, data.resources);
+}
+
+/** Beacon tiers ordered by unlock complexity, slots, and id. */
+export function buildBeaconTiers(data: StaticData): readonly BeaconMatch[] {
+  return Object.entries(data.beacons ?? {})
+    .map(([id, beacon]) => ({
+      id,
+      beacon,
+      complexity: data.resources[`item:${beacon.item ?? id}`]?.complexity,
+    }))
+    .sort(
+      (a, b) =>
+        complexityOf(a) - complexityOf(b) ||
+        a.beacon.moduleSlots - b.beacon.moduleSlots ||
+        a.id.localeCompare(b.id),
+    );
+}
+
+/** Belt tiers ordered by unlock complexity, throughput, and id. */
+export function buildBeltTiers(data: StaticData): readonly BeltMatch[] {
+  return Object.entries(data.belts)
+    .map(([id, belt]) => ({
+      id,
+      belt,
+      complexity: data.resources[`item:${belt.item ?? id}`]?.complexity,
+    }))
+    .sort(
+      (a, b) =>
+        complexityOf(a) - complexityOf(b) ||
+        a.belt.itemsPerSecond - b.belt.itemsPerSecond ||
+        a.id.localeCompare(b.id),
+    );
 }
 
 export interface SuggestionPlanIndex {
