@@ -1,5 +1,4 @@
 import { complexityOf, NO_CHOICE, resourceName, type Chosen } from './data/index.ts';
-import { staticData } from './data/decode.ts';
 import { defaultMachine, machinesFor } from './data/machines.ts';
 import { netRates } from './compute/flow.ts';
 import {
@@ -14,7 +13,7 @@ import {
 import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
-import type { MachineId, ModuleId, Recipe, ResourceId } from './types.ts';
+import type {MachineId, ModuleId, Recipe, ResourceId, StaticData} from './types.ts';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -110,8 +109,8 @@ export function newCell(recipe?: string, machine?: MachineId): Cell {
 }
 
 /** The recipe an entry names, or `undefined` if the data no longer has it (a stale URL). */
-export function entryRecipe(entry: CellEntry): Recipe | undefined {
-  return staticData.recipes[entry.recipe];
+export function entryRecipe(data: StaticData, entry: CellEntry): Recipe | undefined {
+  return data.recipes[entry.recipe];
 }
 
 /**
@@ -135,12 +134,12 @@ export function entryMachine(
  * as its machine does.
  */
 export function entryEffects(
-  entry: CellEntry,
-  recipe: Recipe,
-  machine: MachineId | undefined,
-  chosen: Chosen = NO_CHOICE,
+    data: StaticData,
+    entry: CellEntry,
+    recipe: Recipe,
+    machine: MachineId | undefined, chosen: Chosen = NO_CHOICE,
 ): Effects {
-  return entryRun(entry, recipe, machine, chosen).effects;
+  return entryRun(data, entry, recipe, machine, chosen).effects;
 }
 
 /** What a row is running at, and where its modules went; see {@link entryRun}. */
@@ -160,12 +159,12 @@ export interface EntryRun {
  * beacon — upgrades every row at once.
  */
 export function entryRun(
-  entry: CellEntry,
-  recipe: Recipe,
-  machine: MachineId | undefined,
-  chosen: Chosen = NO_CHOICE,
+    data: StaticData,
+    entry: CellEntry,
+    recipe: Recipe,
+    machine: MachineId | undefined, chosen: Chosen = NO_CHOICE,
 ): EntryRun {
-  const found = machine === undefined ? undefined : staticData.machines[machine];
+  const found = machine === undefined ? undefined : data.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
   return laidOutEffects(
     found,
@@ -206,11 +205,11 @@ export function withModule(entry: CellEntry, module: ModuleId, count: number): C
   return Object.keys(modules).length > 0 ? { ...entry, modules } : { ...entry, modules: undefined };
 }
 
-export function cellTitle(cell: Cell): string {
+export function cellTitle(data: StaticData, cell: Cell): string {
   if (cell.name) return cell.name;
   const first = cell.entries[0];
   if (!first) return 'Empty cell';
-  return staticData.recipes[first.recipe]?.human ?? first.recipe;
+  return data.recipes[first.recipe]?.human ?? first.recipe;
 }
 
 export function hasRecipe(cell: Cell, recipe: string): boolean {
@@ -292,12 +291,12 @@ export function activeAfterRemoval(active: number, removed: number, remaining: n
   return Math.min(active > removed ? active - 1 : active, Math.max(0, remaining - 1));
 }
 
-export function cellInterface(cell: Cell): CellInterface {
+export function cellInterface(data: StaticData, cell: Cell): CellInterface {
   const used = new Set<ResourceId>();
   const made = new Set<ResourceId>();
   const inPlay = new Set<ResourceId>();
   for (const entry of cell.entries) {
-    const recipe = entryRecipe(entry);
+    const recipe = entryRecipe(data, entry);
     if (!recipe) continue;
     for (const ingredient of recipe.ingredients) inPlay.add(ingredient.resource);
     for (const product of recipe.products) inPlay.add(product.resource);
@@ -310,22 +309,18 @@ export function cellInterface(cell: Cell): CellInterface {
   }
   const exports = new Set(cell.exports);
   const imports = new Set(cell.imports);
-  const inputs = simplestFirst(
-    [...inPlay].filter(
+  const inputs = simplestFirst(data, [...inPlay].filter(
       (id) => imports.has(id) || (used.has(id) && !made.has(id) && !exports.has(id)),
-    ),
-  );
-  const outputs = simplestFirst(
-    [...inPlay].filter(
+  ));
+  const outputs = simplestFirst(data, [...inPlay].filter(
       (id) => exports.has(id) || (made.has(id) && !used.has(id) && !imports.has(id)),
-    ),
-  );
+  ));
   const edges = new Set([...inputs, ...outputs]);
   const internal = new Set([...inPlay].filter((id) => !edges.has(id)));
   return {
     inputs,
     outputs,
-    inPlay: [...inputs, ...internalsBottomFirst(cell, internal), ...outputs],
+    inPlay: [...inputs, ...(internalsBottomFirst(data, cell, internal)), ...outputs],
   };
 }
 
@@ -334,10 +329,10 @@ export function cellInterface(cell: Cell): CellInterface {
  * rows, then its outputs. Walking from the bottom means an intermediate appears beside the row
  * that first needs it, rather than the one above which happens to make it.
  */
-function internalsBottomFirst(cell: Cell, remaining: Set<ResourceId>): ResourceId[] {
+function internalsBottomFirst(data: StaticData, cell: Cell, remaining: Set<ResourceId>): ResourceId[] {
   const ordered: ResourceId[] = [];
   for (let index = cell.entries.length - 1; index >= 0; index--) {
-    const recipe = entryRecipe(cell.entries[index]);
+    const recipe = entryRecipe(data, cell.entries[index]);
     if (!recipe) continue;
     for (const { resource } of [...recipe.ingredients, ...recipe.products]) {
       if (!remaining.delete(resource)) continue;
@@ -357,10 +352,10 @@ export function scopeOf(iface: CellInterface): SearchScope {
  * slider deliberately does not come into it, because where the player is says nothing about which
  * end of a cell's own interface to show first.
  */
-function simplestFirst(ids: ResourceId[]): ResourceId[] {
+function simplestFirst(data: StaticData, ids: ResourceId[]): ResourceId[] {
   return ids.toSorted(
     (a, b) =>
-      complexityOf(staticData.resources[a] ?? {}) - complexityOf(staticData.resources[b] ?? {}) ||
+      complexityOf(data.resources[a] ?? {}) - complexityOf(data.resources[b] ?? {}) ||
       resourceName(a).localeCompare(resourceName(b)),
   );
 }

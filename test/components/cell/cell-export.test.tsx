@@ -13,6 +13,7 @@ import { dumbSolver } from '../../../src/solve/dumb.ts';
 import { matrixSolver } from '../../../src/solve/matrix.ts';
 import { decodeDocument } from '../../../src/bp/decode.ts';
 import { CellBox } from '../../../src/components/cell/box.tsx';
+import {staticData} from "../../../src/data/decode.ts";
 
 const uranium: Cell = state.cl[0];
 const chosen = resolveChosen({}, undefined, undefined, state.gp);
@@ -42,8 +43,8 @@ describe('explicit cell imports', () => {
 
   it('preserves imports and classifies them as inputs', () => {
     expect(unpackCells(packCells([imported]))).toEqual([imported]);
-    expect(cellInterface(imported).inputs).toContain('item:uranium-235');
-    expect(cellInterface(imported).outputs).not.toContain('item:uranium-235');
+    expect(cellInterface(staticData, imported).inputs).toContain('item:uranium-235');
+    expect(cellInterface(staticData, imported).outputs).not.toContain('item:uranium-235');
   });
 
   it.each([matrixSolver, dumbSolver])(
@@ -105,7 +106,7 @@ describe('explicit cell imports', () => {
 describe('cell rail brick', () => {
   it('copies a blueprint matching the diagram station layout', async () => {
     const writeText = vi.spyOn(navigator.clipboard, 'writeText').mockResolvedValue(undefined);
-    const iface = cellInterface(uranium);
+    const iface = cellInterface(staticData, uranium);
     render(
       <CellBox
         cell={[uranium, () => {}]}
@@ -271,8 +272,8 @@ describe('explicit cell exports', () => {
 
   it('preserves exports in packed state and exposes them as outputs', () => {
     expect(unpackCells(packCells([exported]))).toEqual([exported]);
-    expect(cellInterface(exported).outputs).toContain('item:uranium-238');
-    expect(cellInterface(uranium).outputs).not.toContain('item:uranium-238');
+    expect(cellInterface(staticData, exported).outputs).toContain('item:uranium-238');
+    expect(cellInterface(staticData, uranium).outputs).not.toContain('item:uranium-238');
   });
 
   it('rejects an export that requires external supply', () => {

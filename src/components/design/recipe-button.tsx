@@ -8,6 +8,7 @@ import type {
   DesignPosition,
 } from '../../compute/design.ts';
 import { recipeIconStyle } from '../icon.tsx';
+import {staticData} from "../../data/decode.ts";
 
 /** A solved recipe's assembler-count control within a design column. */
 export function RecipeButton({
@@ -24,7 +25,7 @@ export function RecipeButton({
   onChange: (update: (column: DesignColumn) => DesignColumn) => void;
 }) {
   const { data } = useDataset();
-  const recipe = entryRecipe(entry);
+  const recipe = entryRecipe(staticData, entry);
   const machineId = recipe ? entryMachine(entry, recipe, progress) : undefined;
   const machine = machineId ? data.machines[machineId] : undefined;
   const target =

@@ -59,12 +59,12 @@ function SuggestionsExample({ initialCell }: { initialCell: Cell }) {
 
 describe('suggestedVoidResources', () => {
   it('includes the resource targeted by a uses search', () => {
-    expect(suggestedVoidResources(`uses:${waste}`)).toEqual([waste]);
+    expect(suggestedVoidResources(staticData, `uses:${waste}`)).toEqual([waste]);
   });
 
   it('includes cell outputs, including those named by uses:@out only once', () => {
     const cell = newCell('empty-angels-water-yellow-waste-barrel');
-    const suggestions = suggestedVoidResources('uses:@out', cell);
+    const suggestions = suggestedVoidResources(staticData, 'uses:@out', cell);
 
     expect(suggestions).toContain(waste);
     expect(suggestions.filter((resource) => resource === waste)).toHaveLength(1);
@@ -77,7 +77,7 @@ describe('suggestedResourceChains', () => {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
     };
 
-    const chains = suggestedResourceChains(defaultDataset.suggestionPlans, cell).get(waste) ?? [];
+    const chains = suggestedResourceChains(staticData, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
 
     expect(chains).toContainEqual({
       target: 'fluid:angels-liquid-sulfuric-acid',
@@ -135,7 +135,7 @@ describe('single-recipe interface suggestions', () => {
       },
     );
 
-    expect(cellInterface({ entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs).toContain(
+    expect(cellInterface(staticData, {entries: [{recipe: 'bob-silicon-nitride'}]}).inputs).toContain(
       nitrogen,
     );
     expect(suggestions).toContainEqual(

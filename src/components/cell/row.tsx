@@ -14,6 +14,7 @@ import { ModuleBoxes } from './modules.tsx';
 import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
+import {staticData} from "../../data/decode.ts";
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -62,7 +63,7 @@ export function CellRow({
   onToggleExpand: () => void;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
-  const recipe = entryRecipe(entry);
+  const recipe = entryRecipe(staticData, entry);
   const connections = useMemo(
     () => recipeConnections(entryIndex, solution, recipeIds),
     [entryIndex, recipeIds, solution],

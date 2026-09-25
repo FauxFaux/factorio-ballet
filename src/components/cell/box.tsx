@@ -33,6 +33,7 @@ import { CellLayoutSurface } from '../layout/layout.tsx';
 import { CellAsJson } from './as-json.tsx';
 import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
+import {useDataset} from "../../dataset/context.tsx";
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -62,7 +63,8 @@ export function CellBox({
   onSearch: (search: string) => void;
   onDebugProblem?: (problem: KernelProblem) => void;
 }) {
-  const iface = useMemo(() => cellInterface(cell), [cell]);
+  const { data } = useDataset();
+  const iface = useMemo(() => cellInterface(data, cell), [data, cell]);
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const modules = useMemo(
@@ -136,7 +138,7 @@ export function CellBox({
           title={active ? 'The cell being worked on' : 'Work on this cell'}
           onClick={onActivate}
         >
-          {cellTitle(cell)}
+          {cellTitle(data, cell)}
         </button>
         <span class="cell-size">
           {cell.entries.length} {cell.entries.length === 1 ? 'recipe' : 'recipes'}
@@ -302,7 +304,7 @@ export function CellBox({
             highlighted={hoveredInterfaceResource}
           />
           <CellRadar
-            title={cellTitle(cell)}
+            title={cellTitle(data, cell)}
             inputs={iface.inputs}
             outputs={iface.outputs}
             entries={cell.entries}
@@ -322,7 +324,7 @@ export function CellBox({
                 class="cell-radar-dialog"
                 role="dialog"
                 aria-modal="true"
-                aria-label={`Rail brick for ${cellTitle(cell)}`}
+                aria-label={`Rail brick for ${(cellTitle(data, cell))}`}
                 onClick={(event) => event.stopPropagation()}
               >
                 <header class="cell-radar-dialog-head">
@@ -338,7 +340,7 @@ export function CellBox({
                   </button>
                 </header>
                 <CellRadar
-                  title={cellTitle(cell)}
+                  title={cellTitle(data, cell)}
                   inputs={iface.inputs}
                   outputs={iface.outputs}
                   entries={cell.entries}

@@ -15,29 +15,29 @@ export function isResourceChain(plan: ResourceChain | VoidPlan): plan is Resourc
   return 'target' in plan;
 }
 
-export function usedSearchResources(search: string, cell?: Cell) {
-  return parseSearch(search, cell ? scopeOf(cellInterface(cell)) : undefined).flatMap((term) =>
+export function usedSearchResources(data: StaticData, search: string, cell?: Cell) {
+  return parseSearch(search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap((term) =>
     term.kind === 'uses' ? [...term.resources] : [],
   );
 }
 
-export function suggestedVoidResources(search: string, cell?: Cell, resource?: ResourceId) {
+export function suggestedVoidResources(data: StaticData, search: string, cell?: Cell, resource?: ResourceId) {
   return [
     ...new Set([
-      ...usedSearchResources(search, cell),
+      ...(usedSearchResources(data, search, cell)),
       ...(resource ? [resource] : []),
-      ...(cell ? cellInterface(cell).outputs : []),
+      ...(cell ? cellInterface(data, cell).outputs : []),
     ]),
   ];
 }
 
 export function suggestedResourceChains(
-  index: SuggestionPlanIndex,
-  cell?: Cell,
-  maxResults = CANDIDATES_PER_RESOURCE,
+    data: StaticData,
+    index: SuggestionPlanIndex,
+    cell?: Cell, maxResults = CANDIDATES_PER_RESOURCE,
 ): Map<ResourceId, ResourceChain[]> {
   if (!cell) return new Map();
-  const { inputs, outputs } = cellInterface(cell);
+  const { inputs, outputs } = cellInterface(data, cell);
   return new Map(
     outputs
       .map((output) => [output, index.resourceChains(output, inputs, maxResults)] as const)
@@ -63,7 +63,7 @@ export function suggestedSoleProducerInputs(
   cell?: Cell,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(cell).inputs.flatMap((target) => {
+  return cellInterface(data, cell).inputs.flatMap((target) => {
     const id = index.soleProducer.get(target);
     const recipe = id && data.recipes[id];
     return id && recipe ? [directSuggestion(target, id, recipe)] : [];
@@ -81,7 +81,7 @@ export function suggestedFreeInputs(
   cell?: Cell,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(cell).inputs.flatMap((target) => {
+  return cellInterface(data, cell).inputs.flatMap((target) => {
     const plan = freeInputPlan(data, index, target);
     return plan ? [plan] : [];
   });
@@ -131,7 +131,7 @@ export function suggestedSoleConsumerOutputs(
   cell?: Cell,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(cell).outputs.flatMap((target) => {
+  return cellInterface(data, cell).outputs.flatMap((target) => {
     const id = index.soleConsumer.get(target);
     const recipe = id && data.recipes[id];
     if (!id || !recipe) return [];
@@ -155,7 +155,7 @@ function suggestedFewRecipeInterfaces(
   recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(cell)[direction].flatMap((target) => {
+  return (cellInterface(data, cell))[direction].flatMap((target) => {
     const recipes = recipesByResource.get(target);
     if (!recipes || recipes.length < 2 || recipes.length > 3) return [];
     return recipes.flatMap((id) => {

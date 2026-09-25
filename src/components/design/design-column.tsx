@@ -8,6 +8,7 @@ import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
 import { DesignScene } from './design-scene.tsx';
 import { RecipeButton } from './recipe-button.tsx';
+import {staticData} from "../../data/decode.ts";
 
 /** The controls which bring this blueprint column in line with the cell's solved recipe rows. */
 export function DesignColumn({
@@ -62,7 +63,7 @@ export function DesignColumn({
   });
   const machinesByRecipe = Object.fromEntries(
     entries.flatMap((entry) => {
-      const recipe = entryRecipe(entry);
+      const recipe = entryRecipe(staticData, entry);
       const machine = recipe ? entryMachine(entry, recipe, progress) : undefined;
       return machine ? ([[entry.recipe, data.machines[machine]]] as const) : [];
     }),

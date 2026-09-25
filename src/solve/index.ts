@@ -7,6 +7,7 @@ import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
 import { matrixSolver } from './matrix.ts';
 import { boundarySuggestions, type BoundarySuggestion } from './boundary-suggestions.ts';
+import {staticData} from "../data/decode.ts";
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -128,12 +129,12 @@ export function boundarySuggestionText(suggestion: BoundarySuggestion): string {
 }
 
 function rowOf(entry: CellEntry, progress: number, chosen: Chosen): SolveRow {
-  const recipe = entryRecipe(entry);
+  const recipe = entryRecipe(staticData, entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
   const speed = speedOf(machinesFor(recipe), machine);
-  const effects = entryEffects(entry, recipe, machine, chosen);
+  const effects = entryEffects(staticData, entry, recipe, machine, chosen);
   return {
     rates: netRates(recipe, speed, effects),
     ...directionalRates(recipe, speed, effects),

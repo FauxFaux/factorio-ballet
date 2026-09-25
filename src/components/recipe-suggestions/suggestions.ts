@@ -174,8 +174,8 @@ export function suggestedRecipePaths(
 ): PathSuggestion[] {
   const staticVoidPlans = voidPlanFinder(data);
   const freeOneStepProducts = new Set(data.suggestionPreload.fromAirOneStepProducts);
-  const searched = new Set(usedSearchResources(search, cell));
-  const { inputs = [], outputs = [] } = cell ? cellInterface(cell) : {};
+  const searched = new Set(usedSearchResources(data, search, cell));
+  const { inputs = [], outputs = [] } = cell ? cellInterface(data, cell) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
   const nonImportedInputs = new Set([
     ...freeOneStepProducts,
@@ -193,8 +193,8 @@ export function suggestedRecipePaths(
         : [];
     }) ?? []),
   ]);
-  const chains = suggestedResourceChains(index, cell);
-  const resourceSuggestions = suggestedVoidResources(search, cell, resource).flatMap((id) => {
+  const chains = suggestedResourceChains(data, index, cell);
+  const resourceSuggestions = suggestedVoidResources(data, search, cell, resource).flatMap((id) => {
     const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
     const resourceChains = chains.get(id) ?? [];
     if (!searched.has(id) && id !== resource && !plans.length && !resourceChains.length) return [];

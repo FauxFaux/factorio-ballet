@@ -12,6 +12,7 @@ import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
+import {staticData} from "../src/data/decode.ts";
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen(state.mo, undefined, undefined, state.gp);
@@ -45,7 +46,7 @@ describe('plutonium boundary diagnosis', () => {
     expect(fixed.counts[0]).toBe(7);
     expect(fixed.balance.get(u238)).toBeCloseTo(suggestion!.rate, 9);
     expect(fixed.balance.get(u238)).toBeGreaterThan(0);
-    const iface = cellInterface(exported);
+    const iface = cellInterface(staticData, exported);
     for (const resource of iface.inPlay.filter(
       (id) => !iface.inputs.includes(id) && !iface.outputs.includes(id),
     )) {
@@ -56,7 +57,7 @@ describe('plutonium boundary diagnosis', () => {
   it('warns that exporting alone does not repair the dumb solver on this cycle', () => {
     const fixedBoundary: Cell = { ...cell, exports: [u238] };
     const dumb = solveCell(fixedBoundary, state.gp, chosen, dumbSolver);
-    const iface = cellInterface(fixedBoundary);
+    const iface = cellInterface(staticData, fixedBoundary);
     expect(
       iface.inPlay.some(
         (id) =>
