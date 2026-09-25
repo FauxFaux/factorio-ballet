@@ -13,6 +13,10 @@ const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
 const NO_STOPS: Position[] = [];
 
+function portLabel(port: { edge: string; x: number; y?: number; lane?: string }): string {
+  return `${port.edge}:${port.x}${port.y === undefined ? '' : `:${port.y}`}:${port.lane ?? 'pipe'}`;
+}
+
 /** Animated module positions and the resource links attached to them. */
 export function ModuleFootprints({
   modules,
@@ -82,7 +86,7 @@ export function ModuleFootprints({
             data-layout-station-id={connection.stationId}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
-            data-layout-module-port={`${connection.modulePort.edge}:${connection.modulePort.x}:${connection.modulePort.lane ?? 'pipe'}`}
+            data-layout-module-port={portLabel(connection.modulePort)}
           >
             <title>{`${connection.resource}: ${connection.rate}/s ${connection.side === 'input' ? 'from' : 'to'} ${connection.stationId}`}</title>
           </path>
@@ -106,8 +110,8 @@ export function ModuleFootprints({
             d={`M ${start.x} ${start.y} Q ${middleX} ${(start.y + end.y) / 2 + bend} ${end.x} ${end.y}`}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
-            data-layout-producer-port={`${connection.producerPort.edge}:${connection.producerPort.x}:${connection.producerPort.lane ?? 'pipe'}`}
-            data-layout-consumer-port={`${connection.consumerPort.edge}:${connection.consumerPort.x}:${connection.consumerPort.lane ?? 'pipe'}`}
+            data-layout-producer-port={portLabel(connection.producerPort)}
+            data-layout-consumer-port={portLabel(connection.consumerPort)}
           >
             <title>{`${connection.resource}: ${connection.rate}/s from ${connection.producerId} to ${connection.consumerId}`}</title>
           </path>

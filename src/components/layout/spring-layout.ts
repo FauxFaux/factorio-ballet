@@ -36,8 +36,16 @@ export function portPoint(
   const laneOffset =
     port.lane === 'left' ? leftOffset : port.lane === 'right' ? 1 - leftOffset : 0.5;
   return {
-    x: placement.x + port.x + laneOffset,
-    y: placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
+    x:
+      port.edge === 'left'
+        ? placement.x
+        : port.edge === 'right'
+          ? placement.x + placement.module.size.width
+          : placement.x + port.x + laneOffset,
+    y:
+      port.edge === 'left' || port.edge === 'right'
+        ? placement.y + (port.y ?? 0) + 0.5
+        : placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
   };
 }
 

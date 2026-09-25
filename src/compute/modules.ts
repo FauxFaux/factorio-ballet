@@ -13,8 +13,10 @@ export const MAX_MODULE_HEIGHT = 100;
 
 export interface ModulePort {
   /** The exposed end of the repeated transport track. */
-  edge: 'top' | 'bottom';
+  edge: 'top' | 'bottom' | 'left' | 'right';
   x: number;
+  /** Row of a side-facing fluid port within the module. */
+  y?: number;
   transport: 'belt' | 'underground-belt' | 'pipe' | 'underground-pipe';
   /** Belt travel direction, or the exposed direction of an underground pipe end. */
   direction?: DesignDirection;
@@ -101,7 +103,7 @@ function modulePorts(
   copies: number,
   machinesPerCopy: number,
 ): ModulePort[] {
-  return candidate.boundary.flatMap((track) =>
+  const endPorts = candidate.boundary.flatMap((track) =>
     (['top', 'bottom'] as const).flatMap((edge): ModulePort[] => {
       const entity = portEntity(candidate, track, edge);
       if (!entity) return [];
@@ -144,6 +146,38 @@ function modulePorts(
       ];
     }),
   );
+  // An interleaved mirrored pair can keep one fluid inside each repeat instead of
+  // carrying it through the top and bottom seams. Expose its surface pipe on the
+  // module's side once per copy so every repeat can be connected externally.
+  const sidePorts = candidate.boundary.flatMap((track): ModulePort[] => {
+    if (track.kind !== 'pipe' || !track.resource) return [];
+    if (endPorts.some((port) => port.fluid?.resource === track.resource)) return [];
+    const edge = track.x === 0 ? 'left' : track.x === candidate.width - 1 ? 'right' : undefined;
+    if (!edge) return [];
+    const pipe = candidate.fluids
+      .filter(({ resource }) => resource === track.resource)
+      .map(({ pipeIndex }) => candidate.column.entities[pipeIndex])
+      .find(
+        (entity) =>
+          entity?.kind === 'pipe' &&
+          entity.position.x === track.x &&
+          entity.position.y > 0 &&
+          entity.position.y < candidate.pitch - 1,
+      );
+    if (!pipe) return [];
+    return Array.from({ length: copies }, (_, copy) => ({
+      edge,
+      x: track.x,
+      y: pipe.position.y + copy * candidate.pitch,
+      transport: 'pipe' as const,
+      fluid: {
+        resource: track.resource!,
+        inputRate: (problem.inputs.fluids[track.resource as ResourceId] ?? 0) * machinesPerCopy,
+        outputRate: (problem.outputs.fluids[track.resource as ResourceId] ?? 0) * machinesPerCopy,
+      },
+    }));
+  });
+  return [...endPorts, ...sidePorts];
 }
 
 /** Divide the required integer machines evenly across the fewest supported stacks. */

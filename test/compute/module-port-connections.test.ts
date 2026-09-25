@@ -1,6 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import { allocateModuleFlows, connectStationFlows } from '../../src/compute/module-connections.ts';
 import { assignModulePorts } from '../../src/compute/module-port-connections.ts';
+import { recipeKernelProblem, modulesForTile } from '../../src/compute/modules.ts';
+import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
+import { staticData } from '../../src/data/decode.ts';
+import { portPoint } from '../../src/components/layout/spring-layout.ts';
 import type { FactoryModule, ModulePort } from '../../src/compute/modules.ts';
 import type { ResourceId } from '../../src/types.ts';
 
@@ -37,6 +41,62 @@ function beltPort(
 }
 
 describe('assignModulePorts', () => {
+  it('attaches both fluid products from air separation to their stations', () => {
+    const recipeId = 'angels-air-separation';
+    const recipe = staticData.recipes[recipeId]!;
+    const problem = recipeKernelProblem(
+      recipeId,
+      'chemical-plant',
+      new Map(recipe.ingredients.map(({ resource, amount }) => [resource, amount as number])),
+      new Map(recipe.products.map(({ resource }) => [resource, 50])),
+    );
+    const result = solveKernelTileDesign(problem, {
+      beltItemsPerSecond: 75,
+      inserterItemsPerSecond: 15,
+      longInserterItemsPerSecond: 15,
+    });
+    expect(result).toHaveProperty('status', 'found');
+    if (!('status' in result) || result.status !== 'found') return;
+    const modules = modulesForTile(
+      recipeId,
+      4,
+      problem,
+      result.candidate,
+      result.validation.supportedCopies,
+    );
+    const outputs = recipe.products.map(({ resource }) => resource);
+    const logical = connectStationFlows(
+      allocateModuleFlows(
+        modules,
+        recipe.ingredients.map(({ resource }) => resource).concat(outputs),
+      ),
+      recipe.ingredients.map(({ resource }) => resource),
+      outputs,
+    );
+    const assigned = assignModulePorts(modules, logical);
+    expect(
+      assigned.stationConnections
+        .filter(({ side }) => side === 'output')
+        .map(({ resource }) => resource),
+    ).toEqual([outputs[0], outputs[1], outputs[1]]);
+    expect(
+      assigned.stationConnections
+        .filter(({ resource }) => resource === outputs[1])
+        .map(({ modulePort }) => modulePort),
+    ).toEqual([
+      { edge: 'left', x: 0, y: 2, transport: 'pipe' },
+      { edge: 'left', x: 0, y: 8, transport: 'pipe' },
+    ]);
+    expect(
+      assigned.stationConnections
+        .filter(({ resource }) => resource === outputs[1])
+        .map(({ modulePort }) => portPoint({ module: modules[0]!, x: 10, y: 20 }, modulePort)),
+    ).toEqual([
+      { x: 10, y: 22.5 },
+      { x: 10, y: 28.5 },
+    ]);
+    expect(assigned.unattached).toEqual([]);
+  });
   it('splits connections across lanes and uses the exposed output and input edges', () => {
     const modules = [
       module('A', 5, 0, [beltPort('top', 0, 'input', 2, 3), beltPort('bottom', 0, 'input', 2, 3)]),

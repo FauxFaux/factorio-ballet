@@ -9,7 +9,10 @@ import type { ModulePort, FactoryModule } from './modules.ts';
 const EPSILON = 1e-8;
 
 /** One exposed transport lane or pipe endpoint on a module boundary. */
-export type ModulePortReference = Pick<ModulePort, 'edge' | 'x' | 'transport' | 'direction'> & {
+export type ModulePortReference = Pick<
+  ModulePort,
+  'edge' | 'x' | 'y' | 'transport' | 'direction'
+> & {
   lane?: 'left' | 'right';
 };
 
@@ -46,7 +49,7 @@ function budgetsFor(
   for (const port of module.ports) {
     const add = (lane: 'left' | 'right' | undefined, rate: number) => {
       if (rate <= EPSILON) return;
-      const key = `${port.x}:${lane ?? 'pipe'}`;
+      const key = `${port.x}:${port.y ?? 'end'}:${lane ?? 'pipe'}`;
       const existing = tracks.get(key);
       if (existing && existing.port.edge === preferredEdge) return;
       if (!existing || port.edge === preferredEdge)
@@ -54,6 +57,7 @@ function budgetsFor(
           port: {
             edge: port.edge,
             x: port.x,
+            ...(port.y === undefined ? {} : { y: port.y }),
             transport: port.transport,
             ...(port.direction ? { direction: port.direction } : {}),
             ...(lane ? { lane } : {}),
