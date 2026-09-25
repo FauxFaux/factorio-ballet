@@ -1,4 +1,4 @@
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { FactoryModule } from '../../compute/modules.ts';
 import type {
   AttachedModuleConnection,
@@ -8,6 +8,11 @@ import type {
 import type { Position } from '../../bp/decode.ts';
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
+import { initialSpringPlacements, stepSpringLayout } from './spring-layout.ts';
+
+const NO_CONNECTIONS: AttachedModuleConnection[] = [];
+const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
+const NO_STOPS: Position[] = [];
 
 function portPoint(
   placement: { module: FactoryModule; x: number; y: number },
@@ -22,13 +27,13 @@ function portPoint(
   };
 }
 
-/** A provisional left-to-right row in the layout's 192 by 128 tile space. */
+/** Animated module positions and the resource links attached to them. */
 export function ModuleFootprints({
   modules,
-  connections = [],
-  stationConnections = [],
-  inputStationStops = [],
-  outputStationStops = [],
+  connections = NO_CONNECTIONS,
+  stationConnections = NO_STATION_CONNECTIONS,
+  inputStationStops = NO_STOPS,
+  outputStationStops = NO_STOPS,
 }: {
   modules: FactoryModule[];
   connections?: AttachedModuleConnection[];
@@ -37,13 +42,29 @@ export function ModuleFootprints({
   outputStationStops?: Position[];
 }) {
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
-  let nextX = 8;
-  const placed = modules.map((module) => {
-    const x = nextX;
-    const labelWidth = `${module.machineCount}×`.length * 1.25 + 4;
-    nextX += Math.max(module.size.width, labelWidth) + 4;
-    return { module, x, y: 26 };
-  });
+  const physics = useRef(initialSpringPlacements(modules));
+  const [placed, setPlaced] = useState(physics.current);
+  useEffect(() => {
+    physics.current = initialSpringPlacements(modules, physics.current);
+    setPlaced(physics.current);
+    let frame = 0;
+    let steps = 0;
+    const tick = () => {
+      const next = stepSpringLayout(physics.current, {
+        connections,
+        stationConnections,
+        inputStationStops,
+        outputStationStops,
+      });
+      physics.current = next;
+      setPlaced(next);
+      steps++;
+      if (steps < 360 && next.some(({ vx, vy }) => Math.hypot(vx, vy) > 0.01))
+        frame = requestAnimationFrame(tick);
+    };
+    if (modules.length) frame = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(frame);
+  }, [modules, connections, stationConnections, inputStationStops, outputStationStops]);
   const byId = new Map(placed.map((placement) => [placement.module.id, placement]));
   const pairCounts = new Map<string, number>();
   return (

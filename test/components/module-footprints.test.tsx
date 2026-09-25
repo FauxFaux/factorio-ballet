@@ -1,7 +1,7 @@
 // @vitest-environment happy-dom
-import { render } from '@testing-library/preact';
+import { act, render } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { ModuleFootprints } from '../../src/components/layout/module-footprints.tsx';
 import type { FactoryModule } from '../../src/compute/modules.ts';
 
@@ -19,6 +19,44 @@ function module(id: string): FactoryModule {
 }
 
 describe('ModuleFootprints', () => {
+  it('moves footprints and connected paths on animation frames', () => {
+    const frames: FrameRequestCallback[] = [];
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frames.push(callback);
+      return frames.length;
+    });
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    try {
+      const port = { edge: 'top' as const, x: 0, transport: 'belt' as const };
+      const { container, unmount } = render(
+        <ModuleFootprints
+          modules={[module('A'), module('B')]}
+          connections={[
+            {
+              producerId: 'A',
+              consumerId: 'B',
+              resource: 'item:iron',
+              rate: 60,
+              producerPort: port,
+              consumerPort: port,
+            },
+          ]}
+        />,
+      );
+      const footprint = container.querySelector('[data-layout-module="A"] rect')!;
+      const path = container.querySelector('[data-layout-resource="item:iron"]')!;
+      const firstX = Number(footprint.getAttribute('x'));
+      const firstPath = path.getAttribute('d');
+      expect(frames).toHaveLength(1);
+      act(() => frames.shift()!(0));
+      expect(Number(footprint.getAttribute('x'))).not.toBe(firstX);
+      expect(path.getAttribute('d')).not.toBe(firstPath);
+      unmount();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('draws an allocated resource link between its producer and consumer', () => {
     const { container } = render(
       <ModuleFootprints
