@@ -33,7 +33,7 @@ import { CellLayoutSurface } from '../layout/layout.tsx';
 import { CellAsJson } from './as-json.tsx';
 import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
-import {useDataset} from "../../dataset/context.tsx";
+import { useDataset } from '../../dataset/context.tsx';
 
 /**
  * One cell: what it must be fed on the left, what it hands on on the right, and the recipes and
@@ -68,8 +68,8 @@ export function CellBox({
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(() => solveCell(cell, progress, chosen), [cell, progress, chosen]);
   const modules = useMemo(
-    () => (cell.layout ? modulesForCell(cell.entries, solution, chosen.belt, progress) : []),
-    [cell.layout, cell.entries, solution, chosen.belt, progress],
+    () => (cell.layout ? modulesForCell(data, cell.entries, solution, chosen.belt, progress) : []),
+    [data, cell.layout, cell.entries, solution, chosen.belt, progress],
   );
   const moduleFlows = useMemo(
     () =>
@@ -324,7 +324,7 @@ export function CellBox({
                 class="cell-radar-dialog"
                 role="dialog"
                 aria-modal="true"
-                aria-label={`Rail brick for ${(cellTitle(data, cell))}`}
+                aria-label={`Rail brick for ${cellTitle(data, cell)}`}
                 onClick={(event) => event.stopPropagation()}
               >
                 <header class="cell-radar-dialog-head">

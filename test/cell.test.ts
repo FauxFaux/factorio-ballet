@@ -41,7 +41,9 @@ describe('cellInterface', () => {
   /* A void sink consumes a fluid and produces nothing: the marker item its `results` names is
    * dropped by the ingest, so there is no fake output on the cell's right-hand side. */
   it('reads a sink as an input with nothing handed on', () => {
-    expect(cellInterface(staticData, newCell('angels-water-void-angels-water-yellow-waste'))).toEqual({
+    expect(
+      cellInterface(staticData, newCell('angels-water-void-angels-water-yellow-waste')),
+    ).toEqual({
       inputs: ['fluid:angels-water-yellow-waste'],
       outputs: [],
       inPlay: ['fluid:angels-water-yellow-waste'],
@@ -56,7 +58,7 @@ describe('cellInterface', () => {
     });
 
     const withSaws = cellInterface(staticData, {
-      entries: [{recipe: 'angels-solid-saw'}, {recipe: 'angels-wood-sawing-1'}],
+      entries: [{ recipe: 'angels-solid-saw' }, { recipe: 'angels-wood-sawing-1' }],
     });
     expect(withSaws.inputs).not.toContain('item:angels-solid-saw');
     expect(withSaws.outputs).not.toContain('item:angels-solid-saw');
@@ -72,12 +74,14 @@ describe('cellInterface', () => {
 
   it('ignores an entry the data no longer has', () => {
     const stale = { entries: [{ recipe: 'no-such-recipe' }, { recipe: 'iron-gear-wheel' }] };
-    expect(cellInterface(staticData, stale)).toEqual(cellInterface(staticData, newCell('iron-gear-wheel')));
+    expect(cellInterface(staticData, stale)).toEqual(
+      cellInterface(staticData, newCell('iron-gear-wheel')),
+    );
   });
 
   it('sorts each side simplest first', () => {
     const { inputs } = cellInterface(staticData, {
-      entries: [{recipe: 'iron-gear-wheel'}, {recipe: 'car'}],
+      entries: [{ recipe: 'iron-gear-wheel' }, { recipe: 'car' }],
     });
     const complexity = inputs.map((id) => staticData.resources[id].complexity ?? Infinity);
     expect(inputs.length).toBeGreaterThan(1);
@@ -198,13 +202,18 @@ describe('entryEffects', () => {
 
   it('is worth less in a machine with fewer slots, and nothing in one with none', () => {
     // the same three modules in an assembling machine 2: two slots, so two of them go in
-    expect(entryEffects(staticData, entry, recipe, 'assembling-machine-2').productivity).toBeCloseTo(1.24);
+    expect(
+      entryEffects(staticData, entry, recipe, 'assembling-machine-2').productivity,
+    ).toBeCloseTo(1.24);
     // and an assembling machine 1 has no slots at all, as the character has not
     expect(entryEffects(staticData, entry, recipe, 'assembling-machine-1')).toEqual({
       speed: 1,
       productivity: 1,
     });
-    expect(entryEffects(staticData, entry, recipe, 'character')).toEqual({ speed: 1, productivity: 1 });
+    expect(entryEffects(staticData, entry, recipe, 'character')).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
   });
 
   it('is 1× for an empty machine, or one the data does not have', () => {
@@ -213,8 +222,14 @@ describe('entryEffects', () => {
       speed: 1,
       productivity: 1,
     });
-    expect(entryEffects(staticData, entry, recipe, 'no-such-machine')).toEqual({ speed: 1, productivity: 1 });
-    expect(entryEffects(staticData, entry, recipe, undefined)).toEqual({ speed: 1, productivity: 1 });
+    expect(entryEffects(staticData, entry, recipe, 'no-such-machine')).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
+    expect(entryEffects(staticData, entry, recipe, undefined)).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
   });
 });
 
@@ -263,7 +278,7 @@ describe('cellTitle', () => {
   it('names a cell after its first recipe until the user names it', () => {
     expect(cellTitle(staticData, newCell())).toBe('Empty cell');
     expect(cellTitle(staticData, chain)).toBe('Iron plate');
-    expect(cellTitle(staticData, {...chain, name: 'Gears'})).toBe('Gears');
+    expect(cellTitle(staticData, { ...chain, name: 'Gears' })).toBe('Gears');
   });
 });
 
@@ -271,7 +286,10 @@ describe('cell list', () => {
   const three = [newCell('iron-plate'), newCell('iron-gear-wheel'), newCell('car')];
 
   it('removes a cell without touching the original list', () => {
-    expect(withoutCell(three, 1).map((c) => cellTitle(staticData, c))).toEqual(['Iron plate', 'Car']);
+    expect(withoutCell(three, 1).map((c) => cellTitle(staticData, c))).toEqual([
+      'Iron plate',
+      'Car',
+    ]);
     expect(three).toHaveLength(3);
   });
 

@@ -8,7 +8,7 @@ import { fmt } from '../../ts.ts';
 import type { MachineId, Recipe } from '../../types.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { UnlitIcon } from '../unlit-module-icon.tsx';
-import {useDataset} from "../../dataset/context.tsx";
+import { useDataset } from '../../dataset/context.tsx';
 
 /**
  * What reaches this row's machine: its productivity modules (or speed modules where productivity

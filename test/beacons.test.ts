@@ -215,21 +215,24 @@ describe('a cell row with beacons', () => {
 
   it("is the row's own count of the header's beacon", () => {
     expect(
-      entryRun(staticData, entry, gears, entry.machine, kit({speed: SPEED_3})).layout.speed,
+      entryRun(staticData, entry, gears, entry.machine, kit({ speed: SPEED_3 })).layout.speed,
     ).toMatchObject({
       module: SPEED_3,
       inMachine: 2,
       beacons: 3,
     });
     // and nothing at all until the header names one
-    expect(entryEffects(staticData, entry, gears, entry.machine)).toEqual({ speed: 1, productivity: 1 });
+    expect(entryEffects(staticData, entry, gears, entry.machine)).toEqual({
+      speed: 1,
+      productivity: 1,
+    });
   });
 
   it('fills the machine when the row asks for nothing', () => {
     const auto = { ...entry, beacons: undefined };
-    expect(entryRun(staticData, auto, gears, auto.machine, kit({speed: SPEED_3})).effects.speed).toBeCloseTo(
-      1.8,
-    );
+    expect(
+      entryRun(staticData, auto, gears, auto.machine, kit({ speed: SPEED_3 })).effects.speed,
+    ).toBeCloseTo(1.8);
   });
 
   it('scales what the rest of the cell has to keep up with', () => {
@@ -290,7 +293,13 @@ describe('moduleLayout', () => {
 
   it('asks for no productivity where the recipe would ignore it, and fills up with speed', () => {
     // a productivity module here would be nothing but its speed malus, so auto is none of them
-    const auto = entryRun(staticData, {...row, recipe: 'electronic-circuit'}, circuits, row.machine, kit(both));
+    const auto = entryRun(
+      staticData,
+      { ...row, recipe: 'electronic-circuit' },
+      circuits,
+      row.machine,
+      kit(both),
+    );
     expect(auto.layout.productivity).toMatchObject({ wanted: 0, inMachine: 0 });
     expect(auto.layout.speed).toMatchObject({ module: SPEED_3, wanted: 2, inMachine: 2 });
     expect(auto.effects).toEqual({ speed: 1.8, productivity: 1 });
@@ -306,7 +315,13 @@ describe('moduleLayout', () => {
   });
 
   it('gives speed whatever slots the productivity modules left', () => {
-    const one = entryRun(staticData, {...row, productivityModules: 1}, gears, row.machine, kit(both));
+    const one = entryRun(
+      staticData,
+      { ...row, productivityModules: 1 },
+      gears,
+      row.machine,
+      kit(both),
+    );
     expect(one.layout.productivity.inMachine).toBe(1);
     expect(one.layout.speed).toMatchObject({ wanted: 1, inMachine: 1, beacons: 0 });
     // +12% output, and the speed module's +40% against the productivity module's −15%
@@ -317,7 +332,7 @@ describe('moduleLayout', () => {
   it('beacons the speed a full machine has no room for', () => {
     // the point of the redesign: a machine full of productivity modules is still beaconable, and
     // eight speed modules over two-slot beacons is four of them at 1.5/sqrt(4) = 75% each
-    const eight = entryRun(staticData, {...row, beacons: 4}, gears, row.machine, kit(both));
+    const eight = entryRun(staticData, { ...row, beacons: 4 }, gears, row.machine, kit(both));
     expect(eight.layout.productivity.inMachine).toBe(2);
     expect(eight.layout.speed).toMatchObject({ inMachine: 0, inBeacons: 8, beacons: 4 });
     expect(eight.layout.speed.transmission).toBeCloseTo(0.75);
@@ -327,14 +342,20 @@ describe('moduleLayout', () => {
   });
 
   it('uses the row beacon count, filling every beacon with speed modules', () => {
-    const four = entryRun(staticData, {...row, beacons: 4}, gears, row.machine, kit(both));
+    const four = entryRun(staticData, { ...row, beacons: 4 }, gears, row.machine, kit(both));
     expect(four.layout.productivity.inMachine).toBe(2);
     expect(four.layout.speed).toMatchObject({ inMachine: 0, inBeacons: 8, beacons: 4 });
     expect(four.effects.speed).toBeCloseTo(3.1);
   });
 
   it('caps productivity at the slots there are, having nowhere else to put it', () => {
-    const asked = entryRun(staticData, {...row, productivityModules: 8}, gears, row.machine, kit(both));
+    const asked = entryRun(
+      staticData,
+      { ...row, productivityModules: 8 },
+      gears,
+      row.machine,
+      kit(both),
+    );
     expect(asked.layout.productivity).toMatchObject({ wanted: 2, inMachine: 2, beacons: 0 });
     expect(asked.effects.productivity).toBeCloseTo(1.24);
   });
@@ -344,10 +365,16 @@ describe('moduleLayout', () => {
     // wants the bio-yield one — two slots of pure +50% yield, and no speed malus to show for it
     const farm = { recipe: 'angels-desert-5', machine: 'angels-desert-farm' };
     const grown = staticData.recipes['angels-desert-5'];
-    const run = entryRun(staticData, farm, grown, farm.machine, kit({
-      ...both,
-      'angels-bio-yield': 'angels-bio-yield-module-5'
-    }));
+    const run = entryRun(
+      staticData,
+      farm,
+      grown,
+      farm.machine,
+      kit({
+        ...both,
+        'angels-bio-yield': 'angels-bio-yield-module-5',
+      }),
+    );
     expect(run.layout.families.productivity).toBe('angels-bio-yield');
     expect(run.layout.productivity).toMatchObject({
       module: 'angels-bio-yield-module-5',
@@ -360,12 +387,18 @@ describe('moduleLayout', () => {
     // a pump has no slots, so nothing reaches it — not a module, and not a beacon either
     const pump = staticData.recipes['synthetic:pumping-water'];
     expect(
-      entryRun(staticData, {recipe: 'synthetic:pumping-water'}, pump, 'offshore-pump', kit(both)).layout,
+      entryRun(staticData, { recipe: 'synthetic:pumping-water' }, pump, 'offshore-pump', kit(both))
+        .layout,
     ).toMatchObject({ reaches: { speed: false, productivity: false } });
     // an ordinary recipe reaches for speed and not productivity, and gears for both
     expect(
-      entryRun(staticData, {...row, recipe: 'electronic-circuit'}, circuits, row.machine, kit(both)).layout
-        .reaches,
+      entryRun(
+        staticData,
+        { ...row, recipe: 'electronic-circuit' },
+        circuits,
+        row.machine,
+        kit(both),
+      ).layout.reaches,
     ).toEqual({ speed: true, productivity: false });
     expect(entryRun(staticData, row, gears, row.machine, kit(both)).layout.reaches).toEqual({
       speed: true,
@@ -374,7 +407,7 @@ describe('moduleLayout', () => {
   });
 
   it('is nothing at all where the header has picked no module of that family', () => {
-    const speedOnly = entryRun(staticData, row, gears, row.machine, kit({speed: SPEED_3}));
+    const speedOnly = entryRun(staticData, row, gears, row.machine, kit({ speed: SPEED_3 }));
     // no productivity module to fill the slots with, so the speed request has them instead
     expect(speedOnly.layout.productivity.module).toBeUndefined();
     expect(speedOnly.effects).toEqual({ speed: 1.8, productivity: 1 });

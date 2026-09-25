@@ -21,7 +21,7 @@ import { RailBlueprints } from './components/rail-blueprints.tsx';
 import { KernelDebugButton } from './components/kernel-debug-button.tsx';
 import { KernelDebug, kernelCustomStateFor } from './components/kernel-debug.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
-import {useDataset} from "./dataset/context.tsx";
+import { useDataset } from './dataset/context.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
   const [selectedResource, setSelectedResource] = useState<ResourceId>();
@@ -49,7 +49,10 @@ export function App({ uss }: { uss: State<UrlState> }) {
   /* The cell being worked on, if any: what a recipe added from the search joins, and what the
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */
   const cell = us.cl[us.ci];
-  const scope = useMemo(() => (cell ? scopeOf(cellInterface(data, cell)) : undefined), [data, cell]);
+  const scope = useMemo(
+    () => (cell ? scopeOf(cellInterface(data, cell)) : undefined),
+    [data, cell],
+  );
 
   /* Both branches write `cl` and `ci` together, which is why this is not two `field` setters: the
    * first recipe added with no cell to put it in makes one, and that one becomes the cell being

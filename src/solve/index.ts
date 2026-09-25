@@ -7,7 +7,7 @@ import type { ResourceId } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
 import { matrixSolver } from './matrix.ts';
 import { boundarySuggestions, type BoundarySuggestion } from './boundary-suggestions.ts';
-import {staticData} from "../data/decode.ts";
+import { staticData } from '../data/decode.ts';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {

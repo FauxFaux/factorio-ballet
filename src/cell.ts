@@ -13,7 +13,7 @@ import {
 import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
-import type {MachineId, ModuleId, Recipe, ResourceId, StaticData} from './types.ts';
+import type { MachineId, ModuleId, Recipe, ResourceId, StaticData } from './types.ts';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -134,10 +134,11 @@ export function entryMachine(
  * as its machine does.
  */
 export function entryEffects(
-    data: StaticData,
-    entry: CellEntry,
-    recipe: Recipe,
-    machine: MachineId | undefined, chosen: Chosen = NO_CHOICE,
+  data: StaticData,
+  entry: CellEntry,
+  recipe: Recipe,
+  machine: MachineId | undefined,
+  chosen: Chosen = NO_CHOICE,
 ): Effects {
   return entryRun(data, entry, recipe, machine, chosen).effects;
 }
@@ -159,10 +160,11 @@ export interface EntryRun {
  * beacon — upgrades every row at once.
  */
 export function entryRun(
-    data: StaticData,
-    entry: CellEntry,
-    recipe: Recipe,
-    machine: MachineId | undefined, chosen: Chosen = NO_CHOICE,
+  data: StaticData,
+  entry: CellEntry,
+  recipe: Recipe,
+  machine: MachineId | undefined,
+  chosen: Chosen = NO_CHOICE,
 ): EntryRun {
   const found = machine === undefined ? undefined : data.machines[machine];
   if (!found) return { effects: NO_EFFECTS, layout: NO_LAYOUT };
@@ -309,18 +311,24 @@ export function cellInterface(data: StaticData, cell: Cell): CellInterface {
   }
   const exports = new Set(cell.exports);
   const imports = new Set(cell.imports);
-  const inputs = simplestFirst(data, [...inPlay].filter(
+  const inputs = simplestFirst(
+    data,
+    [...inPlay].filter(
       (id) => imports.has(id) || (used.has(id) && !made.has(id) && !exports.has(id)),
-  ));
-  const outputs = simplestFirst(data, [...inPlay].filter(
+    ),
+  );
+  const outputs = simplestFirst(
+    data,
+    [...inPlay].filter(
       (id) => exports.has(id) || (made.has(id) && !used.has(id) && !imports.has(id)),
-  ));
+    ),
+  );
   const edges = new Set([...inputs, ...outputs]);
   const internal = new Set([...inPlay].filter((id) => !edges.has(id)));
   return {
     inputs,
     outputs,
-    inPlay: [...inputs, ...(internalsBottomFirst(data, cell, internal)), ...outputs],
+    inPlay: [...inputs, ...internalsBottomFirst(data, cell, internal), ...outputs],
   };
 }
 
@@ -329,7 +337,11 @@ export function cellInterface(data: StaticData, cell: Cell): CellInterface {
  * rows, then its outputs. Walking from the bottom means an intermediate appears beside the row
  * that first needs it, rather than the one above which happens to make it.
  */
-function internalsBottomFirst(data: StaticData, cell: Cell, remaining: Set<ResourceId>): ResourceId[] {
+function internalsBottomFirst(
+  data: StaticData,
+  cell: Cell,
+  remaining: Set<ResourceId>,
+): ResourceId[] {
   const ordered: ResourceId[] = [];
   for (let index = cell.entries.length - 1; index >= 0; index--) {
     const recipe = entryRecipe(data, cell.entries[index]);

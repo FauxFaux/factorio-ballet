@@ -45,6 +45,7 @@ describe('assignModulePorts', () => {
     const recipeId = 'angels-air-separation';
     const recipe = staticData.recipes[recipeId]!;
     const problem = recipeKernelProblem(
+      staticData,
       recipeId,
       'chemical-plant',
       new Map(recipe.ingredients.map(({ resource, amount }) => [resource, amount as number])),

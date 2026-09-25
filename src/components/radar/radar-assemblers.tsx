@@ -8,7 +8,7 @@ import { stackAssemblerDistricts, type AssemblerStack } from './radar-assembler-
 import { RadarAssemblerColumn } from './radar-assembler-column.tsx';
 import { stationStop } from './radar-rail.tsx';
 import { busConnectionTopLane, busLayout, type BusLane, type BusLayout } from './radar-layout.ts';
-import {staticData} from "../../data/decode.ts";
+import { staticData } from '../../data/decode.ts';
 
 const assemblerTopY = 20;
 const busBottomY = assemblerTopY - 1;

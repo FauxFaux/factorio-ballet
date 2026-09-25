@@ -14,6 +14,7 @@ import {
   type ConnectionFlow,
   type RecipeConnections,
 } from './connection-calc.ts';
+import { staticData } from '../../data/decode.ts';
 
 /** The two compact columns below an expanded recipe row. */
 export function RecipeConnections({
@@ -100,6 +101,7 @@ function AssemblerDesignSummary({
 }) {
   // Solution input and output rates already describe one machine.
   const problem = recipeKernelProblem(
+    staticData,
     recipe,
     machine,
     inputRates ?? new Map(),

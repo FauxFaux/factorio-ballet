@@ -13,7 +13,7 @@ import { dumbSolver } from '../../../src/solve/dumb.ts';
 import { matrixSolver } from '../../../src/solve/matrix.ts';
 import { decodeDocument } from '../../../src/bp/decode.ts';
 import { CellBox } from '../../../src/components/cell/box.tsx';
-import {staticData} from "../../../src/data/decode.ts";
+import { staticData } from '../../../src/data/decode.ts';
 
 const uranium: Cell = state.cl[0];
 const chosen = resolveChosen({}, undefined, undefined, state.gp);

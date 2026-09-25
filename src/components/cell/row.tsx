@@ -14,7 +14,7 @@ import { ModuleBoxes } from './modules.tsx';
 import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
-import {staticData} from "../../data/decode.ts";
+import { staticData } from '../../data/decode.ts';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how

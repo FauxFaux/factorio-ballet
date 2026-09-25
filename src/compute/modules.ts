@@ -1,9 +1,8 @@
 import type { CellEntry } from '../cell.ts';
 import { entryMachine } from '../cell.ts';
-import { staticData } from '../data/decode.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
 import type { Solution } from '../solve/index.ts';
-import type { Belt, ResourceId } from '../types.ts';
+import type { Belt, ResourceId, StaticData } from '../types.ts';
 import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
@@ -165,6 +164,7 @@ function splitRates(rates: Map<ResourceId, number>): KernelFlows {
 
 /** Use the same one-row kernel input as the expanded recipe summary. */
 export function recipeKernelProblem(
+  data: StaticData,
   recipe: string,
   machine: string | undefined,
   inputRates: Map<ResourceId, number>,
@@ -172,7 +172,7 @@ export function recipeKernelProblem(
 ): KernelProblem {
   const inputs = splitRates(inputRates);
   const outputs = splitRates(outputRates);
-  const machineData = machine === undefined ? undefined : staticData.machines[machine];
+  const machineData = machine === undefined ? undefined : data.machines[machine];
   return {
     inputs,
     outputs,
@@ -181,10 +181,10 @@ export function recipeKernelProblem(
         name: recipe,
         size: machineData?.size,
         fluidBoxes: machineData?.fluidBoxes,
-        fluidIngredients: staticData.recipes[recipe]?.ingredients.filter(({ resource }) =>
+        fluidIngredients: data.recipes[recipe]?.ingredients.filter(({ resource }) =>
           resource.startsWith('fluid:'),
         ),
-        fluidProducts: staticData.recipes[recipe]?.products.filter(({ resource }) =>
+        fluidProducts: data.recipes[recipe]?.products.filter(({ resource }) =>
           resource.startsWith('fluid:'),
         ),
         inputPerSecond: { ...inputs.solids, ...inputs.fluids },
@@ -338,17 +338,19 @@ export function modulesForTile(
 
 /** Derive every recipe module from the current solved cell. */
 export function modulesForCell(
+  data: StaticData,
   entries: CellEntry[],
   solution: Solution,
   belt: Belt,
   progress: number,
 ): FactoryModule[] {
   return entries.flatMap((entry, index) => {
-    const recipe = staticData.recipes[entry.recipe];
+    const recipe = data.recipes[entry.recipe];
     const count = solution.counts[index];
     if (!recipe || count === undefined || count <= 0) return [];
     const machine = entryMachine(entry, recipe, progress);
     const problem = recipeKernelProblem(
+      data,
       entry.recipe,
       machine,
       solution.inputRates[index] ?? new Map(),

@@ -8,7 +8,7 @@ import type {
   DesignPosition,
 } from '../../compute/design.ts';
 import { recipeIconStyle } from '../icon.tsx';
-import {staticData} from "../../data/decode.ts";
+import { staticData } from '../../data/decode.ts';
 
 /** A solved recipe's assembler-count control within a design column. */
 export function RecipeButton({

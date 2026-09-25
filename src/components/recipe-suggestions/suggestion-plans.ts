@@ -16,15 +16,20 @@ export function isResourceChain(plan: ResourceChain | VoidPlan): plan is Resourc
 }
 
 export function usedSearchResources(data: StaticData, search: string, cell?: Cell) {
-  return parseSearch(search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap((term) =>
-    term.kind === 'uses' ? [...term.resources] : [],
+  return parseSearch(search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap(
+    (term) => (term.kind === 'uses' ? [...term.resources] : []),
   );
 }
 
-export function suggestedVoidResources(data: StaticData, search: string, cell?: Cell, resource?: ResourceId) {
+export function suggestedVoidResources(
+  data: StaticData,
+  search: string,
+  cell?: Cell,
+  resource?: ResourceId,
+) {
   return [
     ...new Set([
-      ...(usedSearchResources(data, search, cell)),
+      ...usedSearchResources(data, search, cell),
       ...(resource ? [resource] : []),
       ...(cell ? cellInterface(data, cell).outputs : []),
     ]),
@@ -32,9 +37,10 @@ export function suggestedVoidResources(data: StaticData, search: string, cell?: 
 }
 
 export function suggestedResourceChains(
-    data: StaticData,
-    index: SuggestionPlanIndex,
-    cell?: Cell, maxResults = CANDIDATES_PER_RESOURCE,
+  data: StaticData,
+  index: SuggestionPlanIndex,
+  cell?: Cell,
+  maxResults = CANDIDATES_PER_RESOURCE,
 ): Map<ResourceId, ResourceChain[]> {
   if (!cell) return new Map();
   const { inputs, outputs } = cellInterface(data, cell);
@@ -155,7 +161,7 @@ function suggestedFewRecipeInterfaces(
   recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
 ): ResourceChain[] {
   if (!cell) return [];
-  return (cellInterface(data, cell))[direction].flatMap((target) => {
+  return cellInterface(data, cell)[direction].flatMap((target) => {
     const recipes = recipesByResource.get(target);
     if (!recipes || recipes.length < 2 || recipes.length > 3) return [];
     return recipes.flatMap((id) => {

@@ -77,7 +77,8 @@ describe('suggestedResourceChains', () => {
       entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
     };
 
-    const chains = suggestedResourceChains(staticData, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
+    const chains =
+      suggestedResourceChains(staticData, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
 
     expect(chains).toContainEqual({
       target: 'fluid:angels-liquid-sulfuric-acid',
@@ -135,9 +136,9 @@ describe('single-recipe interface suggestions', () => {
       },
     );
 
-    expect(cellInterface(staticData, {entries: [{recipe: 'bob-silicon-nitride'}]}).inputs).toContain(
-      nitrogen,
-    );
+    expect(
+      cellInterface(staticData, { entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs,
+    ).toContain(nitrogen);
     expect(suggestions).toContainEqual(
       expect.objectContaining({ target: nitrogen, recipes: ['angels-air-separation'] }),
     );

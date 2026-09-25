@@ -12,7 +12,7 @@ import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
-import {staticData} from "../src/data/decode.ts";
+import { staticData } from '../src/data/decode.ts';
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen(state.mo, undefined, undefined, state.gp);
