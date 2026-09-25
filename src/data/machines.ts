@@ -1,5 +1,6 @@
 import type { Machine, MachineId, Recipe, StaticData } from '../types.ts';
 import { staticData } from './decode.ts';
+import type { Dataset } from '../dataset';
 
 function complexityOf(of: { complexity?: number }): number {
   return of.complexity ?? Infinity;
@@ -43,7 +44,7 @@ const byCategory = ((data: StaticData): Map<string, MachineMatch[]> => {
  * The machines which can run a recipe: anything handling any of its categories, slowest first, so
  * the tiers of a machine family read in order.
  */
-export function machinesFor(recipe: Recipe): MachineMatch[] {
+export function machinesFor(ds: Dataset, recipe: Recipe): MachineMatch[] {
   const found = new Map<MachineId, MachineMatch>();
   for (const category of recipe.categories) {
     for (const match of byCategory.get(category) ?? []) found.set(match.id, match);

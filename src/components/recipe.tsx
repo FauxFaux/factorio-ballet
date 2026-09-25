@@ -11,6 +11,7 @@ import { MachineChip } from './machine.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { ResourceButton, ResourceIcon } from './resource.tsx';
 import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 
 /**
  * The tier-1 productivity module, whose icon stands for "productivity applies here". This pack
@@ -40,6 +41,7 @@ export function RecipeCard({
   /** The header's modules and beacon, used to preview a beaconed default machine. */
   chosen?: Chosen;
 }) {
+  const ds = useDataset();
   const [open, setOpen] = useState(false);
   /** The machine chosen from this card, whose speed its numbers are quoted at. */
   const [selectedMachine, setSelectedMachine] = useState<MachineId | undefined>(undefined);
@@ -48,7 +50,7 @@ export function RecipeCard({
   /** The beacon count under the pointer, or the count selected with a click. */
   const [hoveredBeacons, setHoveredBeacons] = useState<number | undefined>(undefined);
   const [selectedBeacons, setSelectedBeacons] = useState<number | undefined>(undefined);
-  const machines = machinesFor(recipe);
+  const machines = machinesFor(ds, recipe);
   const defaultMachineId = defaultMachine(machines, progress)?.id;
   /* A machine under the pointer is a direct comparison with its unmodded rate. Keep a clicked
      beacon choice ready to resume afterwards, but do not combine it with that comparison. */

@@ -13,6 +13,9 @@ import {
 } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import type { ResourceId } from '../src/types.ts';
+import { defaultDataset } from '../src/dataset';
+
+const ds = defaultDataset;
 
 const X = 'item:x' as ResourceId;
 const Y = 'item:y' as ResourceId;
@@ -172,7 +175,7 @@ describe('solveCell', () => {
 
   /** What one machine of a recipe does, at the machine an unpinned row resolves to. */
   const rateOf = (recipe: typeof plate, resource: ResourceId) => {
-    const machines = machinesFor(recipe);
+    const machines = machinesFor(ds, recipe);
     const speed = speedOf(machines, defaultMachine(machines, 0)?.id);
     return netRates(recipe, speed, NO_EFFECTS).get(resource)!;
   };

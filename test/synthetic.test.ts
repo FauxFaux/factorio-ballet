@@ -3,6 +3,9 @@ import { machinesFor } from '../src/data/machines.ts';
 import { staticData } from '../src/data/decode.ts';
 import { searchRecipes } from '../src/data/search.ts';
 import { energyInMegajoules, powerInMegawatts } from '../scripts/synthetic.ts';
+import { defaultDataset } from '../src/dataset';
+
+const ds = defaultDataset;
 
 /**
  * Against the shipped `static.json`, so these are as much a check on the ingest as on the app: the
@@ -17,7 +20,7 @@ describe('synthetic recipes', () => {
       { resource: 'fluid:water', amount: { fixed: 60 }, probability: 1 },
     ]);
 
-    const pump = machinesFor(recipe).find(({ id }) => id === 'offshore-pump');
+    const pump = machinesFor(ds, recipe).find(({ id }) => id === 'offshore-pump');
     expect(pump?.machine.kind).toBe('offshore-pump');
     // amount × speed / duration, as any other recipe: 60 × 20 / 1
     expect((60 * pump!.machine.speed) / recipe.duration).toBe(1200);
@@ -28,7 +31,7 @@ describe('synthetic recipes', () => {
     expect(recipe.synthetic).toBe(true);
     expect(recipe.products.map((p) => p.resource)).toEqual(['item:coal']);
 
-    const drill = machinesFor(recipe).find(({ id }) => id === 'electric-mining-drill');
+    const drill = machinesFor(ds, recipe).find(({ id }) => id === 'electric-mining-drill');
     expect(drill?.machine.kind).toBe('mining-drill');
     expect(drill!.machine.speed / recipe.duration).toBe(0.5);
   });
@@ -41,8 +44,10 @@ describe('synthetic recipes', () => {
   });
 
   it('keeps a drill to the resource categories it can actually work', () => {
-    const solid = machinesFor(staticData.recipes['synthetic:mining-coal']).map((m) => m.id);
-    const fluid = machinesFor(staticData.recipes['synthetic:mining-crude-oil']).map((m) => m.id);
+    const solid = machinesFor(ds, staticData.recipes['synthetic:mining-coal']).map((m) => m.id);
+    const fluid = machinesFor(ds, staticData.recipes['synthetic:mining-crude-oil']).map(
+      (m) => m.id,
+    );
     expect(solid).toContain('electric-mining-drill');
     expect(solid).not.toContain('pumpjack');
     expect(fluid).toContain('pumpjack');
@@ -57,7 +62,7 @@ describe('synthetic recipes', () => {
     ]);
     expect(recipe.duration).toBe(2000);
 
-    const reactors = machinesFor(recipe);
+    const reactors = machinesFor(ds, recipe);
     expect(reactors.map(({ id }) => id)).toEqual(['nuclear-reactor', 'angels-burner-reactor']);
     expect(reactors.every(({ machine }) => machine.kind === 'reactor')).toBe(true);
     expect(recipe.duration / reactors[0]!.machine.speed).toBeCloseTo(2000 / 54);
@@ -68,7 +73,7 @@ describe('synthetic recipes', () => {
 
   it('keeps reactor fuel categories separate and omits fuels with no spent result', () => {
     const thorium = staticData.recipes['synthetic:burning-angels-thorium-fuel-cell'];
-    expect(machinesFor(thorium).map(({ id }) => id)).toEqual(['bob-nuclear-reactor-2']);
+    expect(machinesFor(ds, thorium).map(({ id }) => id)).toEqual(['bob-nuclear-reactor-2']);
     expect(staticData.recipes['synthetic:burning-coal']).toBeUndefined();
   });
 
@@ -94,7 +99,7 @@ describe('synthetic recipes', () => {
       expect(recipe.products.length, `${id} makes something`).toBeGreaterThan(0);
       expect(recipe.duration, `${id} takes time`).toBeGreaterThan(0);
       expect(recipe.human, `${id} is named`).toBeTruthy();
-      expect(machinesFor(recipe).length, `${id} has a machine`).toBeGreaterThan(0);
+      expect(machinesFor(ds, recipe).length, `${id} has a machine`).toBeGreaterThan(0);
     }
   });
 });

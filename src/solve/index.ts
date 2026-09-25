@@ -7,6 +7,7 @@ import type { ResourceId, StaticData } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
 import { matrixSolver } from './matrix.ts';
 import { boundarySuggestions, type BoundarySuggestion } from './boundary-suggestions.ts';
+import { type Dataset, defaultDataset } from '../dataset';
 
 /** How many machines of each recipe a cell needs, worked out from the ones the user pinned. */
 export interface Solution {
@@ -71,7 +72,7 @@ export function solveCell(
   chosen: Chosen = NO_CHOICE,
   solver: Solver = defaultSolver,
 ): Solution {
-  const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen, data));
+  const rows = cell.entries.map((entry) => rowOf(entry, progress, chosen, defaultDataset));
   const exports = new Set(cell.exports);
   const imports = new Set(cell.imports);
   const external = new Set([...exports, ...imports]);
@@ -128,13 +129,13 @@ export function boundarySuggestionText(suggestion: BoundarySuggestion, data: Sta
   );
 }
 
-function rowOf(entry: CellEntry, progress: number, chosen: Chosen, data: StaticData): SolveRow {
-  const recipe = entryRecipe(data, entry);
+function rowOf(entry: CellEntry, progress: number, chosen: Chosen, ds: Dataset): SolveRow {
+  const recipe = entryRecipe(ds.data, entry);
   /* A recipe the data no longer has: no rates, so it strands, which is the truth about it. */
   if (!recipe) return { rates: new Map(), count: entry.count };
   const machine = entryMachine(entry, recipe, progress);
-  const speed = speedOf(machinesFor(recipe), machine);
-  const effects = entryEffects(data, entry, recipe, machine, chosen);
+  const speed = speedOf(machinesFor(ds, recipe), machine);
+  const effects = entryEffects(ds.data, entry, recipe, machine, chosen);
   return {
     rates: netRates(recipe, speed, effects),
     ...directionalRates(recipe, speed, effects),

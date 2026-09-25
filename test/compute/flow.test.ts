@@ -9,6 +9,7 @@ import {
 import { NO_EFFECTS } from '../../src/data/module-effects.ts';
 import { machinesFor } from '../../src/data/machines.ts';
 import { staticData } from '../../src/data/decode.ts';
+import { defaultDataset } from '../../src/dataset';
 
 const gears = staticData.recipes['iron-gear-wheel'];
 /** Three results, the rarest of them 0.0055% of a craft: the reason for the third decimal. */
@@ -16,8 +17,10 @@ const uranium = staticData.recipes['uranium-processing'];
 /** A `0–3` result rolled half the time, and the same recipe carries a fluid with a temperature. */
 const mud = staticData.recipes['angels-water-heavy-mud'];
 
+const ds = defaultDataset;
+
 describe('speedOf', () => {
-  const machines = machinesFor(gears);
+  const machines = machinesFor(ds, gears);
 
   it('is the machine speed, and 1× for no machine', () => {
     expect(speedOf(machines, undefined)).toBe(1);

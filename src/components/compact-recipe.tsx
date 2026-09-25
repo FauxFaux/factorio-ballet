@@ -6,6 +6,7 @@ import type { RecipeMatch } from '../data/search.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
 import { AddToCell } from './recipe.tsx';
+import { useDataset } from '../dataset/context.tsx';
 
 /** A folded recipe summary, optionally with the usual control to add it to the current cell. */
 export function CompactRecipe({
@@ -22,7 +23,8 @@ export function CompactRecipe({
   /** Whether that cell already runs it. */
   inCell?: boolean;
 }) {
-  const machines = machinesFor(recipe);
+  const ds = useDataset();
+  const machines = machinesFor(ds, recipe);
   const machine = defaultMachine(machines, progress)?.id;
   const speed = speedOf(machines, machine);
   const { ins, outs } = recipeFlows(recipe, machines, speed);

@@ -21,6 +21,9 @@ import {
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { complexityOf } from '../src/data/index.ts';
 import { staticData } from '../src/data/decode.ts';
+import { defaultDataset } from '../src/dataset';
+
+const ds = defaultDataset;
 
 /** Ore crushed -> plate -> gear: two recipes which chain, so the middle one goes internal. */
 const chain: Cell = { entries: [{ recipe: 'iron-plate' }, { recipe: 'iron-gear-wheel' }] };
@@ -234,7 +237,7 @@ describe('entryEffects', () => {
 });
 
 describe('defaultMachine', () => {
-  const machines = machinesFor(staticData.recipes['iron-gear-wheel']);
+  const machines = machinesFor(ds, staticData.recipes['iron-gear-wheel']);
 
   it('walks up the assemblers as the game goes on', () => {
     // hand crafting at the crash site, and this pack's top tier by the end

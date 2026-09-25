@@ -8,6 +8,9 @@ import { staticData } from '../src/data/decode.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { CompactRecipe } from '../src/components/compact-recipe.tsx';
 import { RecipeCard } from '../src/components/recipe.tsx';
+import { defaultDataset } from '../src/dataset';
+
+const ds = defaultDataset;
 
 afterEach(cleanup);
 
@@ -89,7 +92,7 @@ describe('RecipeCard', () => {
 
   it('previews a machine while it is hovered and restores auto selection afterwards', () => {
     const recipe = staticData.recipes['iron-gear-wheel'];
-    const machine = machinesFor(recipe)[0]!;
+    const machine = machinesFor(ds, recipe)[0]!;
     const { container } = render(
       <RecipeCard
         match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
@@ -110,7 +113,7 @@ describe('RecipeCard', () => {
   it('adds a recipe in the machine selected from its machine list', async () => {
     const user = userEvent.setup();
     const recipe = staticData.recipes['iron-gear-wheel'];
-    const machine = machinesFor(recipe)[0]!;
+    const machine = machinesFor(ds, recipe)[0]!;
     const onAdd = vi.fn();
 
     render(
@@ -131,7 +134,7 @@ describe('RecipeCard', () => {
   it('returns to automatic machine choice when the selected machine is clicked again', async () => {
     const user = userEvent.setup();
     const recipe = staticData.recipes['iron-gear-wheel'];
-    const machine = machinesFor(recipe)[0]!;
+    const machine = machinesFor(ds, recipe)[0]!;
     const onAdd = vi.fn();
 
     render(
@@ -154,7 +157,7 @@ describe('RecipeCard', () => {
   it('previews additive beacons against the default assembler', async () => {
     const user = userEvent.setup();
     const recipe = staticData.recipes['iron-gear-wheel'];
-    const machines = machinesFor(recipe);
+    const machines = machinesFor(ds, recipe);
     const defaultMatch = defaultMachine(machines, 0.5)!;
     const { container } = render(
       <RecipeCard

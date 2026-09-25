@@ -15,6 +15,7 @@ import { WarnIcon } from './notes.tsx';
 import { RecipeConnections } from './connections.tsx';
 import { recipeConnections } from './connection-calc.ts';
 import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 
 /**
  * One recipe of a cell: what it is, the machine chosen to run it, what is in that machine, and how
@@ -263,9 +264,10 @@ function CellMachines({
   progress: number;
   onChange: (entry: CellEntry) => void;
 }) {
+  const ds = useDataset();
   return (
     <MachinePicker
-      machines={machinesFor(recipe)}
+      machines={machinesFor(ds, recipe)}
       chosen={entryMachine(entry, recipe, progress)}
       pinned={entry.machine !== undefined}
       onChoose={(machine) => onChange({ ...entry, machine })}

@@ -14,6 +14,7 @@ import type { SearchScope } from './data/search.ts';
 import { newFactoryDesign, type FactoryDesign } from './compute/design.ts';
 import { newCellLayout, type CellLayout } from './compute/layout.ts';
 import type { MachineId, ModuleId, Recipe, ResourceId, StaticData } from './types.ts';
+import { defaultDataset } from './dataset';
 
 /**
  * A unit of work in a factory: a handful of recipes, run in machines, whose inputs and outputs are
@@ -123,7 +124,7 @@ export function entryMachine(
   recipe: Recipe,
   progress: number,
 ): MachineId | undefined {
-  return entry.machine ?? defaultMachine(machinesFor(recipe), progress)?.id;
+  return entry.machine ?? defaultMachine(machinesFor(defaultDataset, recipe), progress)?.id;
 }
 
 /**
