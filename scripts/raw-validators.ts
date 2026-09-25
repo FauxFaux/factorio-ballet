@@ -29,8 +29,9 @@ export const RIngredient = z.strictObject({
   minimum_temperature: z.optional(z.number()),
   maximum_temperature: z.optional(z.number()),
 
-  ignored_by_stats: z.optional(z.unknown()),
+  ignored_by_stats: z.optional(z.number()),
   fluidbox_index: z.optional(z.number().check(z.int(), z.nonnegative())),
+  fluidbox_multiplier: z.optional(z.number()),
 });
 
 export type RIngredient = z.infer<typeof RIngredient>;
@@ -43,10 +44,15 @@ export const RProduct = z.strictObject({
   amount_max: z.optional(z.number().check(z.nonnegative())),
 
   probability: z.optional(z.number()),
+  independent_probability: z.optional(z.number()),
+  shared_probability: z.optional(z.strictObject({ min: z.number(), max: z.number() })),
+  extra_count_fraction: z.optional(z.number()),
+  reset_freshness_on_craft: z.optional(z.boolean()),
+  percent_spoiled: z.optional(z.number()),
   temperature: z.optional(z.number()),
   ignored_by_productivity: z.optional(z.number()),
 
-  ignored_by_stats: z.optional(z.unknown()),
+  ignored_by_stats: z.optional(z.number()),
   fluidbox_index: z.optional(z.number().check(z.int(), z.nonnegative())),
   show_details_in_recipe_tooltip: z.optional(z.unknown()),
 });
@@ -61,7 +67,11 @@ export type RProduct = z.infer<typeof RProduct>;
  * clarifier is honestly a recipe with no products — a sink. Zero *amounts* are not used this way.
  */
 export function isProduced(p: RProduct): boolean {
-  return p.probability !== 0;
+  return (
+    (p.probability ?? p.independent_probability ?? 1) !== 0 &&
+    (p.shared_probability === undefined || p.shared_probability.max > p.shared_probability.min) &&
+    (p.amount ?? p.amount_max ?? 0) + (p.extra_count_fraction ?? 0) > 0
+  );
 }
 
 export const RLocale = z.strictObject({

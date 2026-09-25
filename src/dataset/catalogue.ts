@@ -1,5 +1,6 @@
 import type { DatasetId } from './index.ts';
 import { bobAngs } from './catalogue/bobang.ts';
+import { spaceAge } from './catalogue/space-age.ts';
 import type { DatasetInput } from './types.ts';
 
 interface DatasetCatalogueEntry {
@@ -12,6 +13,10 @@ export const datasetCatalogue = {
   'bobang-r4q': {
     label: "Bob's and Angel's",
     load: async () => bobAngs(),
+  },
+  'space-age-2.1.19': {
+    label: 'Space Age',
+    load: async () => spaceAge(),
   },
 } satisfies Record<DatasetId, DatasetCatalogueEntry>;
 

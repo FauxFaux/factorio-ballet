@@ -166,8 +166,15 @@ async function main() {
   };
   const packed = packStaticData(staticData);
   const { recipes: packedRecipes, ...withoutRecipes } = packed;
-  await fs.writeFile('static.json', JSON.stringify(withoutRecipes));
-  await fs.writeFile('static-recipes.json', JSON.stringify({ recipes: packedRecipes }));
+  // A named dataset writes directly to its own asset directory. Keep the historical cwd output
+  // names for existing regeneration commands.
+  const outputDir = process.env.OUTPUT_DIR;
+  if (outputDir) await fs.mkdir(outputDir, { recursive: true });
+  await fs.writeFile(resolve(outputDir ?? '.', 'static.json'), JSON.stringify(withoutRecipes));
+  await fs.writeFile(
+    resolve(outputDir ?? '.', outputDir ? 'recipes.json' : 'static-recipes.json'),
+    JSON.stringify({ recipes: packedRecipes }),
+  );
 }
 
 /**
@@ -274,7 +281,7 @@ function addSynthetic(
       // trimmed: a couple of Angel's names carry a trailing space ("Infinite rubyte ")
       human: `${s.name.verb} ${sourceName}`.trim(),
       ingredients: s.ingredients.map(toIng),
-      products: s.products.map(toProd),
+      products: s.products.map((product) => toProd(product, false)),
       duration: s.duration,
       categories: [s.category],
       synthetic: true,
@@ -305,6 +312,7 @@ function addSynthetic(
 }
 
 function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
+  const usesModernProducts = Object.values(v).some((recipe) => 'categories' in recipe);
   const unnamed: string[] = [];
   let skipped = 0;
   let productive = 0;
@@ -315,7 +323,12 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
       .filter(([, r]) => {
         // `hidden` is how mods disable a recipe without deleting it; `parameter` marks the
         // blueprint-parameter placeholders, which have no ingredients or results at all.
-        if (!r.hidden && !r.parameter) return true;
+        if (
+          (!r.hidden ||
+            (r as typeof r & { categories?: string[] }).categories?.includes('recycling')) &&
+          !r.parameter
+        )
+          return true;
         skipped++;
         return false;
       })
@@ -332,10 +345,14 @@ function handleRecipes(v: RawData['recipe'], locales: Record<string, RLocale>) {
             voided++;
             return false;
           })
-          .map(toProd);
+          .map((product) => toProd(product, usesModernProducts));
         const duration = r.energy_required ?? 0.5;
         // `crafting` is the game's default for a recipe which names no category.
-        const categories = [r.category ?? 'crafting', ...(r.additional_categories ?? [])];
+        // Factorio 2.1 writes the full list in `categories`; earlier dumps use `category`.
+        const categories = (r as typeof r & { categories?: string[] }).categories ?? [
+          r.category ?? 'crafting',
+          ...(r.additional_categories ?? []),
+        ];
         // Off by default in the game, and set explicitly false by 17 live recipes here, so the
         // absent case and the false case mean the same thing; emit the flag only when it is on.
         const allowProductivity = r.allow_productivity ? (true as const) : undefined;
@@ -634,12 +651,10 @@ function checkModules(
  * pack shows, made it explicit: the same two recipes now state 25 and 40. That is a convention of
  * the recipes, not a guarantee of the format, so it is checked rather than assumed.
  *
- * The check is the one case which would silently overstate throughput: a product which is also an
- * ingredient, on a recipe which allows productivity, either not stating a catalyst share or
- * stating one which is not `min(in, out)`. Anything reported here means `productAmount` is paying a
- * bonus the game does not, and the fix is to derive the share in {@link toProd} — this is the
- * evidence that would justify it. Pairs on recipes which disallow productivity are counted only:
- * nothing pays a bonus there, so what the field says cannot matter.
+ * Compare product-also-ingredient pairs against the old catalyst convention. Factorio 2.1 can
+ * deliberately pay productivity on the returned product, as bacteria cultivation does, so a
+ * mismatch is a review prompt rather than evidence that the ingested value should be changed.
+ * Pairs on recipes which disallow productivity are counted only.
  */
 function checkCatalysts(recipes: Record<string, Recipe>) {
   const suspect: string[] = [];
@@ -672,8 +687,7 @@ function checkCatalysts(recipes: Record<string, Recipe>) {
   );
   if (suspect.length > 0) {
     console.log(
-      'A catalyst share the recipe does not state: productivity is being overpaid on these,' +
-        ' and `toProd` should be deriving it. See `checkCatalysts`.',
+      'Product-also-ingredient pairs without the old catalyst share:',
       suspect.slice(0, 20),
     );
   }
@@ -713,15 +727,23 @@ function toTemp(game: RIngredient): IngredientTemperature | undefined {
   return undefined;
 }
 
-function toProd(game: RProduct): Product {
+function toProd(game: RProduct, usesModernProducts: boolean): Product {
+  const probability =
+    (game.probability ?? game.independent_probability ?? 1) *
+    (game.shared_probability ? game.shared_probability.max - game.shared_probability.min : 1);
   return {
     resource: `${game.type}:${game.name}`,
-    // TODO: bad !
-    amount: game.amount ? { fixed: game.amount } : { min: game.amount_min!, max: game.amount_max! },
-    probability: game.probability ?? 1,
+    amount:
+      game.amount !== undefined
+        ? { fixed: game.amount + (game.extra_count_fraction ?? 0) }
+        : { min: game.amount_min!, max: game.amount_max! },
+    probability,
     fluidboxIndex: game.fluidbox_index || undefined,
     // the catalyst share, which zero is not: see `Product.ignoredByProductivity`
-    ignoredByProductivity: game.ignored_by_productivity || undefined,
+    ignoredByProductivity:
+      game.ignored_by_productivity ??
+      (usesModernProducts ? game.ignored_by_stats : undefined) ??
+      undefined,
   };
 }
 

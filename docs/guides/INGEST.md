@@ -10,12 +10,21 @@ extending it.
 machine; they are not interchangeable, and the checked-in `src/assets/dataset/bobang/static.json`
 comes from one specific pack:
 
-| `APP=`                     | modpack                    | raw recipes | note                       |
-| -------------------------- | -------------------------- | ----------- | -------------------------- |
-| `~/ins/factorio-2-73-ab`   | Bob's + Angel's (+reskins) | 2621        | **the checked-in dataset** |
-| `~/.factorio`              | Space Age, no other mods   | 659         | vanilla reference          |
-| `~/ins/factorio-2-0-72`    | pyanodons                  | 11612       | stress test for scale      |
-| `~/ins/factorio-2-0-72-py` | pyanodons                  | 11612       | same pack                  |
+| `APP=`                     | modpack                    | raw recipes | note                            |
+| -------------------------- | -------------------------- | ----------- | ------------------------------- |
+| `~/ins/factorio-2-73-ab`   | Bob's + Angel's (+reskins) | 2621        | **the checked-in dataset**      |
+| `~/.factorio`              | Space Age, no other mods   | 659         | vanilla reference               |
+| `~/ins/factorio-2-0-72`    | pyanodons                  | 11612       | stress test for scale           |
+| `~/ins/factorio-2-0-72-py` | pyanodons                  | 11612       | same pack                       |
+| `~/ins/factorio/2.1.19`    | Space Age 2.1.19           | 662         | `src/assets/dataset/space-age/` |
+
+To regenerate the Space Age dataset, run
+`APP=~/ins/factorio/2.1.19 OUTPUT_DIR=src/assets/dataset/space-age node scripts/ingest-data.ts`.
+This writes `static.json` and the separate `recipes.json`. Copy that export's `icons.json` to the
+same directory and encode its existing `icons.png` as `icons.avif` with
+`avifenc -s 0 -q 50 --qalpha 20`; Space Age uses one sheet. Factorio 2.1 writes recipe `categories`
+and product `independent_probability`, `shared_probability`, and `extra_count_fraction`. The hidden
+generated recycling recipes are executable and must be kept.
 
 `~/code/factorio-raw-types/raw-110/` and `raw-script-output/` are that package's own small samples
 (212 and 681 recipes); useful for a quick shape check, not for regenerating.

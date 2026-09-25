@@ -266,7 +266,13 @@ function collectRecipes(raw: RawData): Map<string, Rec> {
   const out = new Map<string, Rec>();
 
   for (const [id, r] of Object.entries(raw.recipe)) {
-    if (r.hidden || r.parameter) continue; // mods disable content by hiding it, not deleting it
+    // Space Age's generated recycler recipes are hidden from the crafting menu but executable.
+    if (
+      (r.hidden &&
+        !(r as typeof r & { categories?: string[] }).categories?.includes('recycling')) ||
+      r.parameter
+    )
+      continue;
     out.set(id, {
       free: r.enabled !== false,
       ingredients: arr(r.ingredients ?? []).map((i) =>
