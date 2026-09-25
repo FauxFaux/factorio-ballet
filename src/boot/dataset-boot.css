@@ -1,0 +1,24 @@
+.dataset-boot {
+  width: min(32rem, calc(100% - 2rem));
+  margin: 4rem auto;
+}
+
+.dataset-boot ul {
+  list-style: none;
+  padding: 0;
+}
+
+.dataset-boot button {
+  padding: 0.6rem 1rem;
+  font: inherit;
+  color: var(--text-h);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 0.35rem;
+  cursor: pointer;
+}
+
+.dataset-boot pre {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}

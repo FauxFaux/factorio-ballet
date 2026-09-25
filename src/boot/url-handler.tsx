@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'preact/hooks';
-import { debounce } from '../ts.ts';
-import { deflateSync, inflateSync, strFromU8, strToU8 } from 'fflate';
 import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
 import type { StaticData } from '../types.ts';
+import { legacyDatasetId } from '../dataset/catalogue.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelMachineChoice } from '../compute/kernel-problems.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { createIdTables, packCells, unpackCells, type IdTables, type PackedCell } from './pack.ts';
-import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
+import { packEnvelope, parseEnvelope, type PackedState } from './url-envelope.ts';
+export { HASH_VERSION } from './url-envelope.ts';
 
 export interface KernelCustomState {
   building: 'assembler' | 'air-filter' | KernelMachineChoice;
@@ -73,25 +73,7 @@ export interface UrlState {
 const defaultUs: UrlState = { v: 1, cs: '', gp: 0, cl: [], ci: 0, mo: {} };
 
 /** {@link UrlState} as it is written to the hash: see {@link PackedCell} for what changes. */
-type PackedState = Omit<UrlState, 'cl'> & { cl: PackedCell[] };
-
-/**
- * The letter every hash starts with, so that a hash written by an older build is refused rather
- * than misread. This is deliberately independent of ordinary `UrlState` evolution: reserve a new
- * letter for a rebuilt compression dictionary, a significant static-data compatibility break, or
- * a major application version. Prefer optional, defaulted state fields for compatible changes. If
- * that is impossible, bump `UrlState.v` and make a reasonable attempt to migrate older schemas in
- * `unpackUs`.
- *
- * The rest is `pack.ts`'s fingerprint, which does the same job for the dataset: cells are packed
- * as indices into `static.json`'s prototype lists, so regenerating it renumbers every saved plan.
- * Keep it in sync with the dataset using `scripts/check-hash-version.ts`, run by `npm run lint`.
- */
-export const HASH_VERSION = `yr4q`;
-
-const setHash = debounce((v: UrlState, idTables: IdTables) => {
-  window.location.hash = packUs(v, idTables);
-}, 50);
+type PackedUrlState = Omit<UrlState, 'cl'> & { cl: PackedCell[]; dataset?: string };
 
 type ParseResult =
   | { kind: 'ok'; us: UrlState }
@@ -99,10 +81,11 @@ type ParseResult =
   | { kind: 'unpack-error'; hash: string; message: string };
 
 function parseHash(hash: string, idTables: IdTables): ParseResult {
-  if (hash.length <= 1) return { kind: 'ok', us: defaultUs };
-  if (!hash.slice(1).startsWith(HASH_VERSION)) return { kind: 'version-error' };
+  const envelope = parseEnvelope(hash);
+  if (envelope.kind === 'empty') return { kind: 'ok', us: defaultUs };
+  if (envelope.kind !== 'ok') return envelope;
   try {
-    return { kind: 'ok', us: unpackUs(hash, idTables) };
+    return { kind: 'ok', us: unpackUs(envelope.packed, idTables) };
   } catch (e) {
     return {
       kind: 'unpack-error',
@@ -112,7 +95,7 @@ function parseHash(hash: string, idTables: IdTables): ParseResult {
   }
 }
 
-export function UrlHandler({ data }: { data: StaticData }) {
+export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: string }) {
   const idTables = useMemo(() => createIdTables(data), [data]);
   const [initResult] = useState(() => parseHash(window.location.hash, idTables));
   const [unpackError, setUnpackError] = useState<{ hash: string; message: string } | undefined>(
@@ -121,7 +104,11 @@ export function UrlHandler({ data }: { data: StaticData }) {
   const [us, setUs] = useState<UrlState>(initResult.kind === 'ok' ? initResult.us : defaultUs);
 
   useEffect(() => {
-    window.onhashchange = () => {
+    const onHashChange = () => {
+      const envelope = parseEnvelope(window.location.hash);
+      if (envelope.kind === 'ok' && (envelope.packed.dataset ?? legacyDatasetId) !== datasetId) {
+        return;
+      }
       const result = parseHash(window.location.hash, idTables);
       if (result.kind === 'ok') {
         setUnpackError(undefined);
@@ -130,9 +117,16 @@ export function UrlHandler({ data }: { data: StaticData }) {
         setUnpackError(result);
       }
     };
-  }, [idTables]);
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, [idTables, datasetId]);
 
-  useEffect(() => setHash(us, idTables), [us, idTables]);
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      window.location.hash = packUs(us, idTables, datasetId);
+    }, 50);
+    return () => clearTimeout(timeout);
+  }, [us, idTables, datasetId]);
 
   if (initResult.kind === 'version-error') {
     return (
@@ -166,37 +160,25 @@ export function UrlHandler({ data }: { data: StaticData }) {
   );
 }
 
-const urlDictionary = strToU8(COMMON_IDS + JSON.stringify(shallowSortKeys(REFERENCE_STATE)));
-function packUs(us: UrlState, idTables: IdTables): string {
-  const packed: PackedState = { ...us, cl: packCells(us.cl, idTables) };
-  const json = JSON.stringify(shallowSortKeys(packed));
-  const data = deflateSync(strToU8(json), {
-    level: 9,
-    dictionary: urlDictionary,
-  });
-  // @ts-expect-error (toBase64 is missing from Uint8Array typings)
-  return HASH_VERSION + data.toBase64({ alphabet: 'base64url' });
+function packUs(us: UrlState, idTables: IdTables, datasetId: string): string {
+  const packed: PackedUrlState = { ...us, dataset: datasetId, cl: packCells(us.cl, idTables) };
+  return packEnvelope(packed as PackedState);
 }
 
-function unpackUs(hash: string, idTables: IdTables): UrlState {
-  const encoded = hash.slice(1 + HASH_VERSION.length);
-  // @ts-expect-error (fromBase64 is missing from Uint8Array typings)
-  const data = Uint8Array.fromBase64(encoded, { alphabet: 'base64url' });
-  const str = strFromU8(inflateSync(data, { dictionary: urlDictionary }));
+function unpackUs(packedState: PackedState, idTables: IdTables): UrlState {
   // `rs` was the pre-merged resource search. Carry it into the unified search when an old link
   // has no recipe search, but do not keep writing the retired field back into new links.
-  const { rs: legacyResourceSearch, ...stored } = JSON.parse(str) as Partial<PackedState> & {
+  const {
+    rs: legacyResourceSearch,
+    dataset: _dataset,
+    ...stored
+  } = packedState as Partial<PackedUrlState> & {
     rs?: unknown;
   };
   const packed = {
     ...defaultUs,
     ...stored,
     cs: stored.cs || (typeof legacyResourceSearch === 'string' ? legacyResourceSearch : ''),
-  } as PackedState;
+  } as PackedUrlState;
   return { ...packed, cl: unpackCells(packed.cl ?? [], idTables) };
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function shallowSortKeys<T extends Record<string, any>>(obj: T): T {
-  return Object.fromEntries(Object.entries(obj).sort(([ka], [kb]) => ka.localeCompare(kb))) as T;
 }

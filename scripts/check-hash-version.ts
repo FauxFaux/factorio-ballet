@@ -19,13 +19,14 @@ function fingerprint(...idTables: Record<string, unknown>[]): string {
 }
 
 async function main() {
-  const [urlHandler, staticData, staticRecipes] = await Promise.all([
-    fs.readFile('src/boot/url-handler.tsx', 'utf8'),
+  const [urlEnvelope, catalogue, staticData, staticRecipes] = await Promise.all([
+    fs.readFile('src/boot/url-envelope.ts', 'utf8'),
+    fs.readFile('src/dataset/catalogue.ts', 'utf8'),
     fs.readFile('src/assets/dataset/bobang/static.json', 'utf8'),
     fs.readFile('src/assets/dataset/bobang/static-recipes.json', 'utf8'),
   ]);
-  const hashVersion = HASH_VERSION.exec(urlHandler)?.[1];
-  if (!hashVersion) throw new Error('Could not find HASH_VERSION in src/boot/url-handler.tsx');
+  const hashVersion = HASH_VERSION.exec(urlEnvelope)?.[1];
+  if (!hashVersion) throw new Error('Could not find HASH_VERSION in src/boot/url-envelope.ts');
 
   const data = JSON.parse(staticData) as {
     machines: Record<string, unknown>;
@@ -33,10 +34,11 @@ async function main() {
   };
   const recipes = JSON.parse(staticRecipes) as { recipes: Record<string, unknown> };
   const expectedFingerprint = fingerprint(recipes.recipes, data.machines, data.modules);
-  if (!hashVersion.endsWith(expectedFingerprint)) {
-    throw new Error(
-      `HASH_VERSION ${hashVersion} does not end with the dataset fingerprint ${expectedFingerprint}`,
-    );
+  if (
+    !hashVersion.endsWith(expectedFingerprint) ||
+    !catalogue.includes(`bobang-${expectedFingerprint}`)
+  ) {
+    throw new Error(`Legacy hash marker and dataset ID must end with ${expectedFingerprint}`);
   }
 }
 
