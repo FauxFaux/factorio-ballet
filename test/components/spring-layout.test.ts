@@ -166,4 +166,67 @@ describe('spring layout', () => {
     expect(next[1]!.x).toBeGreaterThan(placed[1]!.x);
     expect(next[1]!.x - next[0]!.x).toBeGreaterThanOrEqual(9);
   });
+
+  it('keeps free modules out of the track margin and larger corner reservations', () => {
+    const placed = initialSpringPlacements([module('A'), module('B'), module('C')]);
+    placed[0]!.x = 1;
+    placed[0]!.y = 40;
+    placed[1]!.x = 80;
+    placed[1]!.y = 119;
+    placed[2]!.x = 5;
+    placed[2]!.y = 5;
+    const next = stepSpringLayout(placed, emptyLinks);
+    expect(next[0]!.x).toBeGreaterThanOrEqual(5);
+    expect(next[1]!.y + 12).toBeLessThanOrEqual(123);
+    expect(next[2]!.x >= 15 || next[2]!.y >= 15).toBe(true);
+    expect(next[2]!.x).toBeGreaterThanOrEqual(5);
+    expect(next[2]!.y).toBeGreaterThanOrEqual(5);
+  });
+
+  it('moves modules clear of input and output station footprints', () => {
+    const placed = initialSpringPlacements([module('A'), module('B')]);
+    placed[0]!.x = 27;
+    placed[0]!.y = 35;
+    placed[1]!.x = 158;
+    placed[1]!.y = 58;
+    const next = stepSpringLayout(placed, {
+      ...emptyLinks,
+      inputStationStops: [{ x: 25, y: 50 }],
+      outputStationStops: [{ x: 165, y: 50 }],
+    });
+    expect(
+      next[0]!.x >= 33 || next[0]!.x + 4 <= 21 || next[0]!.y >= 55 || next[0]!.y + 12 <= 29.5,
+    ).toBe(true);
+    expect(
+      next[1]!.x >= 162 || next[1]!.x + 4 <= 157 || next[1]!.y >= 70.5 || next[1]!.y + 12 <= 52,
+    ).toBe(true);
+  });
+
+  it('reserves the space between stations as part of each station fan', () => {
+    const placed = initialSpringPlacements([module('A'), module('B')]);
+    placed[0]!.x = 34;
+    placed[0]!.y = 36;
+    placed[1]!.x = 150;
+    placed[1]!.y = 58;
+    const next = stepSpringLayout(placed, {
+      ...emptyLinks,
+      inputStationStops: [
+        { x: 25, y: 50 },
+        { x: 45, y: 42 },
+      ],
+      outputStationStops: [
+        { x: 165, y: 50 },
+        { x: 145, y: 58 },
+      ],
+    });
+    expect(next[0]!.y).toBeGreaterThanOrEqual(55);
+    expect(next[1]!.y + 12).toBeLessThanOrEqual(52);
+  });
+
+  it('leaves a pinned module where it was dragged, including a reserved area', () => {
+    const placed = initialSpringPlacements([module('A')]);
+    placed[0]!.x = 1;
+    placed[0]!.y = 1;
+    expect(stepSpringLayout(placed, emptyLinks, 'A')[0]).toMatchObject({ x: 1, y: 1 });
+  });
 });

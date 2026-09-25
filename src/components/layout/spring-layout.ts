@@ -5,6 +5,7 @@ import type {
   AttachedStationConnection,
   ModulePortReference,
 } from '../../compute/module-port-connections.ts';
+import { INPUT_STATION_BOUNDS, OUTPUT_STATION_BOUNDS } from './station-footprint.tsx';
 
 export interface SpringPlacement {
   module: FactoryModule;
@@ -26,6 +27,116 @@ const GAP = 5;
 const DAMPING = 0.78;
 const ALIGNMENT = 3;
 const STATION_STRENGTH = 0.2;
+const BRICK_WIDTH = 192;
+const BRICK_HEIGHT = 128;
+const TRACK_MARGIN = 5;
+const CORNER_SIZE = 15;
+
+interface Obstacle {
+  top: number;
+  bottom: number;
+  leftTop: number;
+  leftBottom: number;
+  rightTop: number;
+  rightBottom: number;
+}
+
+function rectangle(left: number, top: number, right: number, bottom: number): Obstacle {
+  return { top, bottom, leftTop: left, leftBottom: left, rightTop: right, rightBottom: right };
+}
+
+function stationArea(stops: readonly Position[], side: 'input' | 'output'): Obstacle | null {
+  if (stops.length === 0) return null;
+  // Reserve the entire fan, including the gaps between stations. A small slope on the inner
+  // edge gives the approaching rails room while keeping all drawn footprints inside.
+  const bounds = side === 'input' ? INPUT_STATION_BOUNDS : OUTPUT_STATION_BOUNDS;
+  const top = Math.min(...stops.map((stop) => stop.y + bounds.top));
+  const bottom = Math.max(...stops.map((stop) => stop.y + bounds.bottom));
+  if (side === 'input') {
+    const right = Math.max(...stops.map((stop) => stop.x + bounds.right));
+    return {
+      top,
+      bottom,
+      leftTop: TRACK_MARGIN,
+      leftBottom: TRACK_MARGIN,
+      rightTop: right + 8,
+      rightBottom: right + 2,
+    };
+  }
+  const left = Math.min(...stops.map((stop) => stop.x + bounds.left));
+  return {
+    top,
+    bottom,
+    leftTop: left - 2,
+    leftBottom: left - 8,
+    rightTop: BRICK_WIDTH - TRACK_MARGIN,
+    rightBottom: BRICK_WIDTH - TRACK_MARGIN,
+  };
+}
+
+function reservedAreas(links: SpringLinks): Obstacle[] {
+  const corners = [
+    rectangle(0, 0, CORNER_SIZE, CORNER_SIZE),
+    rectangle(BRICK_WIDTH - CORNER_SIZE, 0, BRICK_WIDTH, CORNER_SIZE),
+    rectangle(0, BRICK_HEIGHT - CORNER_SIZE, CORNER_SIZE, BRICK_HEIGHT),
+    rectangle(BRICK_WIDTH - CORNER_SIZE, BRICK_HEIGHT - CORNER_SIZE, BRICK_WIDTH, BRICK_HEIGHT),
+  ];
+  const stations = [
+    stationArea(links.inputStationStops, 'input'),
+    stationArea(links.outputStationStops, 'output'),
+  ].filter((area): area is Obstacle => area !== null);
+  return [...corners, ...stations];
+}
+
+function avoidReservedAreas(placement: SpringPlacement, obstacles: readonly Obstacle[]): void {
+  const width = placement.module.size.width;
+  const height = placement.module.size.height;
+  const x = Math.max(TRACK_MARGIN, Math.min(BRICK_WIDTH - TRACK_MARGIN - width, placement.x));
+  const y = Math.max(TRACK_MARGIN, Math.min(BRICK_HEIGHT - TRACK_MARGIN - height, placement.y));
+  if (x !== placement.x) placement.vx = 0;
+  if (y !== placement.y) placement.vy = 0;
+  placement.x = x;
+  placement.y = y;
+
+  for (const obstacle of obstacles) {
+    const overlapTop = Math.max(placement.y, obstacle.top);
+    const overlapBottom = Math.min(placement.y + height, obstacle.bottom);
+    if (overlapTop >= overlapBottom) continue;
+    const atY = (top: number, bottom: number, y: number) =>
+      top + ((bottom - top) * (y - obstacle.top)) / (obstacle.bottom - obstacle.top);
+    const left = Math.min(
+      atY(obstacle.leftTop, obstacle.leftBottom, overlapTop),
+      atY(obstacle.leftTop, obstacle.leftBottom, overlapBottom),
+    );
+    const right = Math.max(
+      atY(obstacle.rightTop, obstacle.rightBottom, overlapTop),
+      atY(obstacle.rightTop, obstacle.rightBottom, overlapBottom),
+    );
+    if (placement.x >= right || placement.x + width <= left) continue;
+    const moves = [
+      { axis: 'x', distance: left - placement.x - width },
+      { axis: 'x', distance: right - placement.x },
+      { axis: 'y', distance: obstacle.top - placement.y - height },
+      { axis: 'y', distance: obstacle.bottom - placement.y },
+    ] as const;
+    const validMoves = moves.filter((move) =>
+      move.axis === 'x'
+        ? placement.x + move.distance >= TRACK_MARGIN &&
+          placement.x + move.distance + width <= BRICK_WIDTH - TRACK_MARGIN
+        : placement.y + move.distance >= TRACK_MARGIN &&
+          placement.y + move.distance + height <= BRICK_HEIGHT - TRACK_MARGIN,
+    );
+    const move = validMoves.sort((a, b) => Math.abs(a.distance) - Math.abs(b.distance))[0];
+    if (!move) continue;
+    if (move.axis === 'x') {
+      placement.x += move.distance;
+      placement.vx = 0;
+    } else {
+      placement.y += move.distance;
+      placement.vy = 0;
+    }
+  }
+}
 
 /** The endpoint used by both the visible link and its alignment force. */
 export function portPoint(
@@ -173,6 +284,10 @@ export function stepSpringLayout(
         first.vy = second.vy = 0;
       }
     }
+  }
+  const obstacles = reservedAreas(links);
+  for (const placement of next) {
+    if (placement.module.id !== pinnedModuleId) avoidReservedAreas(placement, obstacles);
   }
   return next;
 }
