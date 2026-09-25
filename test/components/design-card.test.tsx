@@ -11,6 +11,19 @@ const throughput = {
 };
 
 describe('DesignCard', () => {
+  it('rounds flow rates to at most one decimal place', () => {
+    const problem = assemblerProblem({
+      solidInputs: [16.7999999999999],
+      solidOutputs: [2.04],
+    });
+    const { container } = render(
+      <DesignCard index={0} problem={problem} throughput={throughput} />,
+    );
+
+    expect(within(container as HTMLElement).getByLabelText('16.8 item:1')).toBeTruthy();
+    expect(within(container as HTMLElement).getByLabelText('2 item:2')).toBeTruthy();
+  });
+
   it('shows the assembler and tile designs in separate rows', () => {
     const { container } = render(
       <DesignCard

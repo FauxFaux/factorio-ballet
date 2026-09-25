@@ -2,7 +2,11 @@ import './kernel-debug.css';
 import type { Chosen } from '../data/index.ts';
 import { generateAssemblerDesign, isAssemblerDesignFailure } from '../compute/assembler-design.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
-import { allKernelProblems, kernelMachineChoices } from '../compute/kernel-problems.ts';
+import {
+  allKernelProblems,
+  kernelMachineChoices,
+  type KernelProblem,
+} from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
 import { DesignCard } from './design/design-card.tsx';
 import { KernelCustomProblem } from './kernel-custom-problem.tsx';
@@ -39,22 +43,7 @@ export function KernelDebug({
     [throughput],
   );
   const useProblem = (problem: (typeof allKernelProblems)[number]) => {
-    const assembler = problem.assemblers[0];
-    if (!assembler) return;
-    const machine = kernelMachineChoices.find(({ label }) => label === assembler.name);
-    const building = assembler.name.startsWith('Air filter')
-      ? 'air-filter'
-      : (machine?.value ?? (assembler.name.startsWith('Assembler') ? 'assembler' : undefined));
-    custom[1]((current) => ({
-      building: building ?? current?.building ?? 'assembler',
-      flows: {
-        solidInputs: Object.values(problem.inputs.solids),
-        fluidInputs: Object.values(problem.inputs.fluids),
-        solidOutputs: Object.values(problem.outputs.solids),
-        fluidOutputs: Object.values(problem.outputs.fluids),
-      },
-      ...(current?.rates ? { rates: current.rates } : {}),
-    }));
+    custom[1]((current) => kernelCustomStateFor(problem, current));
   };
 
   return (
@@ -90,4 +79,25 @@ export function KernelDebug({
       </section>
     </section>
   );
+}
+
+export function kernelCustomStateFor(
+  problem: KernelProblem,
+  current: KernelCustomState | undefined,
+): KernelCustomState {
+  const assembler = problem.assemblers[0];
+  const machine = assembler && kernelMachineChoices.find(({ label }) => label === assembler.name);
+  const building = assembler?.name.startsWith('Air filter')
+    ? 'air-filter'
+    : (machine?.value ?? (assembler?.name.startsWith('Assembler') ? 'assembler' : undefined));
+  return {
+    building: building ?? current?.building ?? 'assembler',
+    flows: {
+      solidInputs: Object.values(problem.inputs.solids),
+      fluidInputs: Object.values(problem.inputs.fluids),
+      solidOutputs: Object.values(problem.outputs.solids),
+      fluidOutputs: Object.values(problem.outputs.fluids),
+    },
+    ...(current?.rates ? { rates: current.rates } : {}),
+  };
 }

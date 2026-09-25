@@ -6,6 +6,7 @@ import { machinesFor } from '../../data/machines.ts';
 import { isProblem, noteText, type Solution, type SolveNote } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
 import type { Recipe, ResourceId } from '../../types.ts';
+import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { recipeIconStyle } from '../icon.tsx';
 import { MachinePicker } from '../machine.tsx';
 import type { RowDrag } from './drag.ts';
@@ -36,6 +37,7 @@ export function CellRow({
   onRemove,
   onSelectResource,
   onToggleExpand,
+  onDebugProblem,
 }: {
   entry: CellEntry;
   entryIndex: number;
@@ -58,6 +60,7 @@ export function CellRow({
   onRemove: () => void;
   onSelectResource: (resource: ResourceId) => void;
   onToggleExpand: () => void;
+  onDebugProblem: (problem: KernelProblem) => void;
 }) {
   const recipe = entryRecipe(entry);
   const connections = useMemo(
@@ -141,6 +144,7 @@ export function CellRow({
             machineCount={count}
             progress={progress}
             onSelectResource={onSelectResource}
+            onDebugProblem={onDebugProblem}
           />
         </div>
       ) : expanded ? (
@@ -155,6 +159,7 @@ export function CellRow({
           machineCount={count}
           progress={progress}
           onSelectResource={onSelectResource}
+          onDebugProblem={onDebugProblem}
         />
       ) : null}
     </div>

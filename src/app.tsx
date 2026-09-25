@@ -4,6 +4,7 @@ import { cellInterface, hasRecipe, newCell, scopeOf, withRecipe } from './cell.t
 import { resolveChosen } from './data/index.ts';
 import { field, type State } from './ts.ts';
 import type { MachineId, ResourceId } from './types.ts';
+import type { KernelProblem } from './compute/kernel-problems.ts';
 import type { UrlState } from './boot/url-handler.tsx';
 import { CellList } from './components/cell-list.tsx';
 import { DebugButton } from './components/debug-button.tsx';
@@ -18,7 +19,7 @@ import { RecipeSuggestions } from './components/recipe-suggestions/recipe-sugges
 import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
 import { RailBlueprints } from './components/rail-blueprints.tsx';
 import { KernelDebugButton } from './components/kernel-debug-button.tsx';
-import { KernelDebug } from './components/kernel-debug.tsx';
+import { KernelDebug, kernelCustomStateFor } from './components/kernel-debug.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
 
 export function App({ uss }: { uss: State<UrlState> }) {
@@ -36,6 +37,12 @@ export function App({ uss }: { uss: State<UrlState> }) {
     () => resolveChosen(us.mo, us.be, us.bt, progress),
     [us.mo, us.be, us.bt, progress],
   );
+  const debugProblem = (problem: KernelProblem) =>
+    setUs((prev) => ({
+      ...prev,
+      kd: {},
+      kp: kernelCustomStateFor(problem, prev.kp),
+    }));
 
   /* The cell being worked on, if any: what a recipe added from the search joins, and what the
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */
@@ -103,6 +110,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
             progress={progress}
             chosen={chosen}
             setSearch={recipeSearch[1]}
+            onDebugProblem={debugProblem}
           />
           <div class="columns">
             <RecipeList

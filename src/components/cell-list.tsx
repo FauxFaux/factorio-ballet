@@ -2,6 +2,7 @@ import './cell-list.css';
 import { activeAfterRemoval, newCell, withoutCell, type Cell } from '../cell.ts';
 import { atIndex, type State } from '../ts.ts';
 import type { Chosen } from '../data/index.ts';
+import type { KernelProblem } from '../compute/kernel-problems.ts';
 import { CellBox } from './cell/box.tsx';
 
 /**
@@ -14,6 +15,7 @@ export function CellList({
   progress,
   chosen,
   setSearch,
+  onDebugProblem = () => {},
 }: {
   cells: State<Cell[]>;
   active: State<number>;
@@ -22,6 +24,7 @@ export function CellList({
   /** What the header says a row has to spend: modules and a beacon; see `Chosen`. */
   chosen: Chosen;
   setSearch: (search: string) => void;
+  onDebugProblem?: (problem: KernelProblem) => void;
 }) {
   const [list, setList] = cells;
   const [current, setCurrent] = active;
@@ -59,6 +62,7 @@ export function CellList({
           active={i === current}
           progress={progress}
           chosen={chosen}
+          onDebugProblem={onDebugProblem}
           onActivate={() => setCurrent(i)}
           onRemove={() => remove(i)}
           /* Searching from a cell means working on it: the `@in`/`@out` queries read the cell being

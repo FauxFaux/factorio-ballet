@@ -16,6 +16,7 @@ import type { Chosen } from '../../data/index.ts';
 import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
+import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { useRowDrag } from './drag.ts';
 import { InPlayRow } from './in-play.tsx';
 import { SolveNotes, SolverFallbackNotice } from './notes.tsx';
@@ -45,6 +46,7 @@ export function CellBox({
   onActivate,
   onRemove,
   onSearch,
+  onDebugProblem = () => {},
 }: {
   cell: State<Cell>;
   active: boolean;
@@ -54,6 +56,7 @@ export function CellBox({
   onActivate: () => void;
   onRemove: () => void;
   onSearch: (search: string) => void;
+  onDebugProblem?: (problem: KernelProblem) => void;
 }) {
   const iface = useMemo(() => cellInterface(cell), [cell]);
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
@@ -204,6 +207,7 @@ export function CellBox({
                   onChange={(next) => setCell((prev) => withEntry(prev, i, next))}
                   onRemove={() => setCell((prev) => withoutEntry(prev, i))}
                   onSelectResource={selectResource}
+                  onDebugProblem={onDebugProblem}
                   onToggleExpand={() => toggleRecipeExpansion(entry.recipe)}
                 />
               ))}

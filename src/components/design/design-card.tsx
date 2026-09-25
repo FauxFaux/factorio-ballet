@@ -165,14 +165,22 @@ function RateSummary({
   return (
     <span class="design-card-rate-summary">
       {entries.map(([resource, rate], index) => (
-        <span class="design-card-rate" key={resource} aria-label={`${rate} ${resource}`}>
+        <span
+          class="design-card-rate"
+          key={resource}
+          aria-label={`${displayRate(rate)} ${resource}`}
+        >
           {index > 0 && <span class="design-card-rate-plus">+</span>}
-          <span>{rate}</span>
+          <span>{displayRate(rate)}</span>
           <ResourceIcon resource={resource} color={resourceColours[resource]} />
         </span>
       ))}
     </span>
   );
+}
+
+function displayRate(rate: number): string {
+  return rate.toFixed(1).replace(/\.0$/, '');
 }
 
 function ResourceIcon({ resource, color }: { resource: string; color: string }) {

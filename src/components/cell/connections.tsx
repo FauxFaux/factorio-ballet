@@ -27,6 +27,7 @@ export function RecipeConnections({
   machineCount,
   progress,
   onSelectResource,
+  onDebugProblem = () => {},
 }: {
   connections: RecipeConnections;
   solved: boolean;
@@ -39,6 +40,7 @@ export function RecipeConnections({
   machineCount: number | undefined;
   progress: number;
   onSelectResource: (resource: ResourceId) => void;
+  onDebugProblem?: (problem: KernelProblem) => void;
 }) {
   if (!solved) {
     return (
@@ -71,6 +73,7 @@ export function RecipeConnections({
         recipe={recipe}
         machine={machine}
         progress={progress}
+        onDebugProblem={onDebugProblem}
       />
     </div>
   );
@@ -84,6 +87,7 @@ function AssemblerDesignSummary({
   recipe,
   machine,
   progress,
+  onDebugProblem,
 }: {
   inputRates: Map<ResourceId, number> | undefined;
   outputRates: Map<ResourceId, number> | undefined;
@@ -92,6 +96,7 @@ function AssemblerDesignSummary({
   recipe: string;
   machine: MachineId | undefined;
   progress: number;
+  onDebugProblem: (problem: KernelProblem) => void;
 }) {
   // Solution input and output rates already describe one machine.
   const inputs = splitRates(inputRates);
@@ -124,37 +129,69 @@ function AssemblerDesignSummary({
   };
   const result = solveKernelTileDesign(problem, throughput);
   if ('success' in result) {
-    return <p class="cell-tile-design">Tile design: {result.message}</p>;
+    return (
+      <div class="cell-tile-design">
+        <p>Tile design: {result.message}</p>
+        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
+      </div>
+    );
   }
   if (result.status !== 'found') {
-    return <p class="cell-tile-design">Tile design: {result.reason}</p>;
+    return (
+      <div class="cell-tile-design">
+        <p>Tile design: {result.reason}</p>
+        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
+      </div>
+    );
   }
 
   const column = result.candidate.column;
   const bounds = designBounds(column.entities)!;
   const maxHeight = result.validation.supportedCopies;
   if (maxHeight < 1 || machineCount === undefined) {
-    return <p class="cell-tile-design">Tile design: no solution</p>;
+    return (
+      <div class="cell-tile-design">
+        <p>Tile design: no solution</p>
+        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
+      </div>
+    );
   }
   const moduleCount = Math.max(1, Math.ceil(machineCount / maxHeight));
 
   return (
-    <dl class="cell-tile-design" aria-label="Tile design">
-      <div>
-        <dt>Kernel size</dt>
-        <dd>
-          {bounds.maxX - bounds.minX}×{bounds.maxY - bounds.minY} tiles
-        </dd>
-      </div>
-      <div>
-        <dt>Max column height</dt>
-        <dd>×{maxHeight}</dd>
-      </div>
-      <div>
-        <dt>Columns/modules needed</dt>
-        <dd>×{moduleCount}</dd>
-      </div>
-    </dl>
+    <div class="cell-tile-design">
+      <dl aria-label="Tile design">
+        <div>
+          <dt>Kernel size</dt>
+          <dd>
+            {bounds.maxX - bounds.minX}×{bounds.maxY - bounds.minY} tiles
+          </dd>
+        </div>
+        <div>
+          <dt>Max column height</dt>
+          <dd>×{maxHeight}</dd>
+        </div>
+        <div>
+          <dt>Columns/modules needed</dt>
+          <dd>×{moduleCount}</dd>
+        </div>
+      </dl>
+      <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
+    </div>
+  );
+}
+
+function DebugDesignButton({
+  problem,
+  onDebugProblem,
+}: {
+  problem: KernelProblem;
+  onDebugProblem: (problem: KernelProblem) => void;
+}) {
+  return (
+    <button type="button" class="cell-debug-design" onClick={() => onDebugProblem(problem)}>
+      Debug design
+    </button>
   );
 }
 

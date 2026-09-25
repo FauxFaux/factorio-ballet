@@ -126,16 +126,31 @@
 .cell-tile-design {
   grid-column: 1 / -1;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   gap: 4px 24px;
   margin: 0;
   padding-top: 6px;
   border-top: 1px solid var(--border);
 }
 
-.cell-tile-design > div {
+.cell-tile-design dl {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 24px;
+  margin: 0;
+}
+
+.cell-tile-design dl > div {
   display: flex;
   gap: 0.5em;
+}
+
+.cell-tile-design p {
+  margin: 0 auto 0 0;
+}
+
+.cell-debug-design {
+  margin-left: auto;
 }
 
 .cell-tile-design dt {
