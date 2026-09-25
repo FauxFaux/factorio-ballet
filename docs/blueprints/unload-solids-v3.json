@@ -1,0 +1,1437 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "transport-belt"
+        },
+        "index": 1
+      },
+      {
+        "signal": {
+          "name": "rail"
+        },
+        "index": 2
+      },
+      {
+        "signal": {
+          "name": "angels-silo"
+        },
+        "index": 3
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -665
+        }
+      },
+      {
+        "entity_number": 2,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 127.5,
+          "y": -663.5
+        }
+      },
+      {
+        "entity_number": 3,
+        "name": "rail-signal",
+        "position": {
+          "x": 129.5,
+          "y": -663.5
+        }
+      },
+      {
+        "entity_number": 4,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -663
+        }
+      },
+      {
+        "entity_number": 5,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 134.5,
+          "y": -663.5
+        }
+      },
+      {
+        "entity_number": 6,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -661.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 7,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -660.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 8,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -661
+        }
+      },
+      {
+        "entity_number": 9,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -660.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 10,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -661.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 11,
+        "name": "angels-silo",
+        "position": {
+          "x": 127,
+          "y": -660
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -659.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 13,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -658.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 14,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -659
+        }
+      },
+      {
+        "entity_number": 15,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -659.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 16,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -658.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 17,
+        "name": "angels-silo",
+        "position": {
+          "x": 135,
+          "y": -660
+        }
+      },
+      {
+        "entity_number": 18,
+        "name": "inserter",
+        "position": {
+          "x": 125.5,
+          "y": -657.5
+        },
+        "drop_position": [-0.203125, 1.203125]
+      },
+      {
+        "entity_number": 19,
+        "name": "underground-belt",
+        "position": {
+          "x": 125.5,
+          "y": -656.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 20,
+        "name": "underground-belt",
+        "position": {
+          "x": 126.5,
+          "y": -656.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 21,
+        "name": "inserter",
+        "position": {
+          "x": 126.5,
+          "y": -657.5
+        },
+        "drop_position": [-0.203125, 1.203125]
+      },
+      {
+        "entity_number": 22,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 127.5,
+          "y": -656.5
+        }
+      },
+      {
+        "entity_number": 23,
+        "name": "rail-signal",
+        "position": {
+          "x": 129.5,
+          "y": -656.5
+        }
+      },
+      {
+        "entity_number": 24,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -657
+        }
+      },
+      {
+        "entity_number": 25,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 134.5,
+          "y": -656.5
+        }
+      },
+      {
+        "entity_number": 26,
+        "name": "inserter",
+        "position": {
+          "x": 135.5,
+          "y": -657.5
+        },
+        "drop_position": [0.19921875, 1.203125]
+      },
+      {
+        "entity_number": 27,
+        "name": "underground-belt",
+        "position": {
+          "x": 135.5,
+          "y": -656.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 28,
+        "name": "underground-belt",
+        "position": {
+          "x": 136.5,
+          "y": -656.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 29,
+        "name": "inserter",
+        "position": {
+          "x": 136.5,
+          "y": -657.5
+        },
+        "drop_position": [0.19921875, 1.203125]
+      },
+      {
+        "entity_number": 30,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -654.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 31,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -655
+        }
+      },
+      {
+        "entity_number": 32,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -654.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 33,
+        "name": "angels-silo",
+        "position": {
+          "x": 127,
+          "y": -653
+        }
+      },
+      {
+        "entity_number": 34,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -653.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 35,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -652.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 36,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -653
+        }
+      },
+      {
+        "entity_number": 37,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -652.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 38,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -653.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 39,
+        "name": "angels-silo",
+        "position": {
+          "x": 135,
+          "y": -653
+        }
+      },
+      {
+        "entity_number": 40,
+        "name": "inserter",
+        "position": {
+          "x": 125.5,
+          "y": -650.5
+        },
+        "drop_position": [0.19921875, 1.203125]
+      },
+      {
+        "entity_number": 41,
+        "name": "inserter",
+        "position": {
+          "x": 126.5,
+          "y": -650.5
+        },
+        "drop_position": [0.19921875, 1.203125]
+      },
+      {
+        "entity_number": 42,
+        "name": "inserter",
+        "position": {
+          "x": 129.5,
+          "y": -651.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 43,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -651
+        }
+      },
+      {
+        "entity_number": 44,
+        "name": "inserter",
+        "position": {
+          "x": 132.5,
+          "y": -651.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "circuit_set_filters": true
+        },
+        "filters": [
+          {
+            "index": 1,
+            "name": "parameter-0",
+            "quality": "normal",
+            "comparator": "="
+          }
+        ],
+        "use_filters": true
+      },
+      {
+        "entity_number": 45,
+        "name": "inserter",
+        "position": {
+          "x": 135.5,
+          "y": -650.5
+        },
+        "drop_position": [-0.203125, 1.203125]
+      },
+      {
+        "entity_number": 46,
+        "name": "inserter",
+        "position": {
+          "x": 136.5,
+          "y": -650.5
+        },
+        "drop_position": [-0.203125, 1.203125]
+      },
+      {
+        "entity_number": 47,
+        "name": "transport-belt",
+        "position": {
+          "x": 125.5,
+          "y": -648.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 48,
+        "name": "underground-belt",
+        "position": {
+          "x": 125.5,
+          "y": -649.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 49,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 127.5,
+          "y": -649.5
+        }
+      },
+      {
+        "entity_number": 50,
+        "name": "underground-belt",
+        "position": {
+          "x": 126.5,
+          "y": -649.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 51,
+        "name": "transport-belt",
+        "position": {
+          "x": 126.5,
+          "y": -648.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 52,
+        "name": "constant-combinator",
+        "position": {
+          "x": 129.5,
+          "y": -648.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "sections": {
+            "sections": [
+              {
+                "index": 1,
+                "filters": [
+                  {
+                    "index": 1,
+                    "type": "virtual",
+                    "name": "signal-M",
+                    "quality": "normal",
+                    "comparator": "=",
+                    "count": -400
+                  }
+                ]
+              },
+              {
+                "index": 2,
+                "filters": [
+                  {
+                    "index": 1,
+                    "type": "virtual",
+                    "name": "signal-M",
+                    "quality": "normal",
+                    "comparator": "=",
+                    "count": 400
+                  },
+                  {
+                    "index": 2,
+                    "type": "virtual",
+                    "name": "signal-W",
+                    "quality": "normal",
+                    "comparator": "=",
+                    "count": 80
+                  }
+                ],
+                "group": "Number of slots in chest solid"
+              },
+              {
+                "index": 3,
+                "filters": [
+                  {
+                    "index": 1,
+                    "type": "virtual",
+                    "name": "signal-T",
+                    "quality": "normal",
+                    "comparator": "=",
+                    "count": 1
+                  }
+                ],
+                "group": "Request Item"
+              }
+            ]
+          }
+        },
+        "player_description": "[M]aximum stack count allowed in the station\nNumber of slots the train [W]agons can contain\n\nUnassigned group [M] disables the station when constructing.\nAdjust unassigned [M] to adjust request amount"
+      },
+      {
+        "entity_number": 53,
+        "name": "rail-signal",
+        "position": {
+          "x": 129.5,
+          "y": -649.5
+        }
+      },
+      {
+        "entity_number": 54,
+        "name": "selector-combinator",
+        "position": {
+          "x": 128.5,
+          "y": -649
+        },
+        "direction": 8,
+        "control_behavior": {
+          "operation": "stack-size"
+        }
+      },
+      {
+        "entity_number": 55,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -649
+        }
+      },
+      {
+        "entity_number": 56,
+        "name": "underground-belt",
+        "position": {
+          "x": 135.5,
+          "y": -649.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 57,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 134.5,
+          "y": -649.5
+        }
+      },
+      {
+        "entity_number": 58,
+        "name": "transport-belt",
+        "position": {
+          "x": 135.5,
+          "y": -648.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 59,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -648.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 60,
+        "name": "underground-belt",
+        "position": {
+          "x": 136.5,
+          "y": -649.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 61,
+        "name": "transport-belt",
+        "position": {
+          "x": 125.5,
+          "y": -646.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 62,
+        "name": "transport-belt",
+        "position": {
+          "x": 125.5,
+          "y": -647.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 63,
+        "name": "underground-belt",
+        "position": {
+          "x": 127.5,
+          "y": -647.5
+        },
+        "direction": 4,
+        "type": "input"
+      },
+      {
+        "entity_number": 64,
+        "name": "transport-belt",
+        "position": {
+          "x": 126.5,
+          "y": -647.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 65,
+        "name": "underground-belt",
+        "position": {
+          "x": 127.5,
+          "y": -646.5
+        },
+        "direction": 4,
+        "type": "input"
+      },
+      {
+        "entity_number": 66,
+        "name": "transport-belt",
+        "position": {
+          "x": 126.5,
+          "y": -646.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 67,
+        "name": "arithmetic-combinator",
+        "position": {
+          "x": 129,
+          "y": -646.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "arithmetic_conditions": {
+            "first_signal": {
+              "name": "parameter-0"
+            },
+            "second_signal": {
+              "name": "parameter-0"
+            },
+            "operation": "/",
+            "output_signal": {
+              "type": "virtual",
+              "name": "signal-S"
+            },
+            "first_signal_networks": {
+              "red": false,
+              "green": true
+            },
+            "second_signal_networks": {
+              "red": true,
+              "green": false
+            }
+          }
+        },
+        "player_description": "Calculate the number of [S]tacks in the station chests.\n\nGreen wire contains the total item count in all chests.\nRed wire contains the stack size of the requested type."
+      },
+      {
+        "entity_number": 68,
+        "name": "arithmetic-combinator",
+        "position": {
+          "x": 129,
+          "y": -647.5
+        },
+        "direction": 4,
+        "control_behavior": {
+          "arithmetic_conditions": {
+            "first_signal": {
+              "type": "virtual",
+              "name": "signal-T"
+            },
+            "second_constant": 1,
+            "operation": "*",
+            "output_signal": {
+              "name": "parameter-0"
+            }
+          }
+        },
+        "player_description": "Convert [T] into the type requested (Blueprint variable)\n\nRed output sets the filter on the wagon unloading inserters"
+      },
+      {
+        "entity_number": 69,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -647
+        }
+      },
+      {
+        "entity_number": 70,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -647.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 71,
+        "name": "underground-belt",
+        "position": {
+          "x": 132.5,
+          "y": -646.5
+        },
+        "direction": 4,
+        "type": "output"
+      },
+      {
+        "entity_number": 72,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -646.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 73,
+        "name": "underground-belt",
+        "position": {
+          "x": 132.5,
+          "y": -647.5
+        },
+        "direction": 4,
+        "type": "output"
+      },
+      {
+        "entity_number": 74,
+        "name": "transport-belt",
+        "position": {
+          "x": 135.5,
+          "y": -646.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 75,
+        "name": "transport-belt",
+        "position": {
+          "x": 134.5,
+          "y": -646.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 76,
+        "name": "transport-belt",
+        "position": {
+          "x": 135.5,
+          "y": -647.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 77,
+        "name": "transport-belt",
+        "position": {
+          "x": 134.5,
+          "y": -647.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 78,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -646.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 79,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -647.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 80,
+        "name": "arithmetic-combinator",
+        "position": {
+          "x": 129,
+          "y": -644.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "arithmetic_conditions": {
+            "first_signal": {
+              "type": "virtual",
+              "name": "signal-R"
+            },
+            "second_signal": {
+              "type": "virtual",
+              "name": "signal-W"
+            },
+            "operation": "/",
+            "output_signal": {
+              "type": "virtual",
+              "name": "signal-L"
+            }
+          }
+        },
+        "player_description": "Set the train [L]imit based on the [R]equested stacks and number of stacks the train [W]agons can carry"
+      },
+      {
+        "entity_number": 81,
+        "name": "arithmetic-combinator",
+        "position": {
+          "x": 129,
+          "y": -645.5
+        },
+        "direction": 12,
+        "control_behavior": {
+          "arithmetic_conditions": {
+            "first_signal": {
+              "type": "virtual",
+              "name": "signal-M"
+            },
+            "second_signal": {
+              "type": "virtual",
+              "name": "signal-S"
+            },
+            "operation": "-",
+            "output_signal": {
+              "type": "virtual",
+              "name": "signal-R"
+            },
+            "second_signal_networks": {
+              "red": false,
+              "green": true
+            }
+          }
+        },
+        "player_description": "Calculate the [R]equested number of stacks"
+      },
+      {
+        "entity_number": 82,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -645
+        }
+      },
+      {
+        "entity_number": 83,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -644.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 84,
+        "name": "splitter",
+        "position": {
+          "x": 134,
+          "y": -645.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 85,
+        "name": "splitter",
+        "position": {
+          "x": 135,
+          "y": -644.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 86,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -644.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 87,
+        "name": "splitter",
+        "position": {
+          "x": 136,
+          "y": -645.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 88,
+        "name": "medium-electric-pole",
+        "position": {
+          "x": 127.5,
+          "y": -642.5
+        }
+      },
+      {
+        "entity_number": 89,
+        "name": "train-stop",
+        "position": {
+          "x": 129,
+          "y": -643
+        },
+        "direction": 8,
+        "control_behavior": {
+          "send_to_train": false,
+          "train_stopped_signal": {
+            "type": "virtual",
+            "name": "signal-T"
+          },
+          "set_trains_limit": true,
+          "trains_limit_signal": {
+            "type": "virtual",
+            "name": "signal-L"
+          }
+        },
+        "station": "[item=parameter-0] Request"
+      },
+      {
+        "entity_number": 90,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -643
+        }
+      },
+      {
+        "entity_number": 91,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -643.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 92,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -642.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 93,
+        "name": "transport-belt",
+        "position": {
+          "x": 135.5,
+          "y": -642.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 94,
+        "name": "underground-belt",
+        "position": {
+          "x": 135.5,
+          "y": -643.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 95,
+        "name": "transport-belt",
+        "position": {
+          "x": 134.5,
+          "y": -642.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 96,
+        "name": "underground-belt",
+        "position": {
+          "x": 134.5,
+          "y": -643.5
+        },
+        "direction": 8,
+        "type": "input"
+      },
+      {
+        "entity_number": 97,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -642.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 98,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -643.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 99,
+        "name": "rail-signal",
+        "position": {
+          "x": 129.5,
+          "y": -641.5
+        }
+      },
+      {
+        "entity_number": 100,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -641
+        }
+      },
+      {
+        "entity_number": 101,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -640.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 102,
+        "name": "transport-belt",
+        "position": {
+          "x": 135.5,
+          "y": -640.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 103,
+        "name": "transport-belt",
+        "position": {
+          "x": 134.5,
+          "y": -640.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 104,
+        "name": "splitter",
+        "position": {
+          "x": 135,
+          "y": -641.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 105,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -640.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 106,
+        "name": "big-electric-pole",
+        "position": {
+          "x": 129,
+          "y": -640
+        }
+      },
+      {
+        "entity_number": 107,
+        "name": "straight-rail",
+        "position": {
+          "x": 131,
+          "y": -639
+        }
+      },
+      {
+        "entity_number": 108,
+        "name": "transport-belt",
+        "position": {
+          "x": 133.5,
+          "y": -639.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 109,
+        "name": "underground-belt",
+        "position": {
+          "x": 135.5,
+          "y": -639.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 110,
+        "name": "underground-belt",
+        "position": {
+          "x": 134.5,
+          "y": -639.5
+        },
+        "direction": 8,
+        "type": "output"
+      },
+      {
+        "entity_number": 111,
+        "name": "splitter",
+        "position": {
+          "x": 134,
+          "y": -638.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 112,
+        "name": "transport-belt",
+        "position": {
+          "x": 136.5,
+          "y": -639.5
+        },
+        "direction": 8
+      },
+      {
+        "entity_number": 113,
+        "name": "splitter",
+        "position": {
+          "x": 136,
+          "y": -638.5
+        },
+        "direction": 8
+      }
+    ],
+    "wires": [
+      [2, 1, 22, 1],
+      [2, 1, 6, 1],
+      [2, 2, 22, 2],
+      [2, 2, 11, 2],
+      [2, 5, 22, 5],
+      [2, 5, 5, 5],
+      [5, 1, 25, 1],
+      [5, 1, 10, 1],
+      [5, 2, 25, 2],
+      [5, 2, 17, 2],
+      [5, 5, 25, 5],
+      [6, 1, 7, 1],
+      [9, 1, 10, 1],
+      [12, 1, 13, 1],
+      [13, 1, 22, 1],
+      [15, 1, 16, 1],
+      [16, 1, 25, 1],
+      [22, 1, 49, 1],
+      [22, 1, 30, 1],
+      [22, 2, 49, 2],
+      [22, 5, 49, 5],
+      [22, 5, 25, 5],
+      [25, 1, 57, 1],
+      [25, 1, 32, 1],
+      [25, 2, 57, 2],
+      [25, 5, 57, 5],
+      [30, 1, 34, 1],
+      [32, 1, 38, 1],
+      [33, 2, 49, 2],
+      [35, 1, 42, 1],
+      [37, 1, 44, 1],
+      [39, 2, 57, 2],
+      [42, 1, 49, 1],
+      [44, 1, 57, 1],
+      [49, 1, 57, 1],
+      [49, 1, 68, 3],
+      [49, 2, 57, 2],
+      [49, 2, 67, 2],
+      [49, 5, 88, 5],
+      [49, 5, 57, 5],
+      [52, 1, 68, 1],
+      [52, 2, 67, 4],
+      [54, 1, 68, 3],
+      [54, 3, 67, 1],
+      [67, 4, 81, 2],
+      [80, 2, 81, 2],
+      [80, 2, 81, 4],
+      [80, 3, 89, 1],
+      [88, 5, 106, 5]
+    ],
+    "parameters": [
+      {
+        "type": "id",
+        "name": "Type to unload",
+        "id": "parameter-0"
+      },
+      {
+        "type": "number",
+        "number": "-400",
+        "name": "Per-station request stack count manipulation"
+      }
+    ],
+    "item": "blueprint",
+    "label": "Unload Solids v3",
+    "version": 562949958205441
+  }
+}

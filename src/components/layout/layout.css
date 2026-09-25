@@ -72,6 +72,10 @@
   pointer-events: none;
 }
 
+.cell-layout-modules [data-layout-module] {
+  pointer-events: visiblePainted;
+}
+
 .cell-layout-module {
   fill: #a78bfa88;
   stroke: #e9d5ff;
@@ -90,6 +94,11 @@
 
 .cell-layout-module-connection.is-station {
   stroke-dasharray: 1 0.6;
+}
+
+.cell-layout-module-connection.is-highlighted {
+  stroke-width: 1.2;
+  filter: drop-shadow(0 0 1px white);
 }
 
 .cell-layout-module-label {

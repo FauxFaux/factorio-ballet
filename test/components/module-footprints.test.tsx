@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
 import { render } from '@testing-library/preact';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
 import { ModuleFootprints } from '../../src/components/layout/module-footprints.tsx';
 import type { FactoryModule } from '../../src/compute/modules.ts';
@@ -88,5 +89,58 @@ describe('ModuleFootprints', () => {
     expect(
       container.querySelector('[data-layout-station-connection="output"]')?.getAttribute('d'),
     ).toBe('M 9.75 26 L 162 44');
+  });
+
+  it('highlights connections attached to the hovered module', async () => {
+    const user = userEvent.setup();
+    const port = { edge: 'top' as const, x: 0, transport: 'belt' as const, lane: 'left' as const };
+    const { container } = render(
+      <ModuleFootprints
+        modules={[module('A'), module('B'), module('C')]}
+        connections={[
+          {
+            producerId: 'A',
+            consumerId: 'B',
+            resource: 'item:one',
+            rate: 1,
+            producerPort: port,
+            consumerPort: port,
+          },
+          {
+            producerId: 'B',
+            consumerId: 'C',
+            resource: 'item:two',
+            rate: 1,
+            producerPort: port,
+            consumerPort: port,
+          },
+        ]}
+        inputStationStops={[{ x: 2, y: 50 }]}
+        stationConnections={[
+          {
+            stationId: 'station:A',
+            stationIndex: 0,
+            moduleId: 'A',
+            resource: 'item:three',
+            rate: 1,
+            side: 'input',
+            modulePort: port,
+          },
+        ]}
+      />,
+    );
+    const highlighted = () =>
+      [...container.querySelectorAll('.cell-layout-module-connection.is-highlighted')].map((path) =>
+        path.getAttribute('data-layout-resource'),
+      );
+
+    await user.hover(container.querySelector('[data-layout-module="B"]')!);
+    expect(highlighted()).toEqual(['item:one', 'item:two']);
+
+    await user.hover(container.querySelector('[data-layout-module="A"]')!);
+    expect(highlighted()).toEqual(['item:three', 'item:one']);
+
+    await user.unhover(container.querySelector('[data-layout-module="A"]')!);
+    expect(highlighted()).toEqual([]);
   });
 });

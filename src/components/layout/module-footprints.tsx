@@ -1,3 +1,4 @@
+import { useState } from 'preact/hooks';
 import type { FactoryModule } from '../../compute/modules.ts';
 import type {
   AttachedModuleConnection,
@@ -35,6 +36,7 @@ export function ModuleFootprints({
   inputStationStops?: Position[];
   outputStationStops?: Position[];
 }) {
+  const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   let nextX = 8;
   const placed = modules.map((module) => {
     const x = nextX;
@@ -67,7 +69,7 @@ export function ModuleFootprints({
         return (
           <path
             key={`${connection.stationId}|${connection.moduleId}|${index}`}
-            class={`cell-layout-module-connection is-station${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}`}
+            class={`cell-layout-module-connection is-station${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}${hoveredModuleId === connection.moduleId ? ' is-highlighted' : ''}`}
             d={`M ${start[0]} ${start[1]} L ${end[0]} ${end[1]}`}
             data-layout-station-connection={connection.side}
             data-layout-station-id={connection.stationId}
@@ -93,7 +95,7 @@ export function ModuleFootprints({
         return (
           <path
             key={`${pair}|${connection.resource}|${connectionIndex}`}
-            class={`cell-layout-module-connection${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}`}
+            class={`cell-layout-module-connection${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}${hoveredModuleId === connection.producerId || hoveredModuleId === connection.consumerId ? ' is-highlighted' : ''}`}
             d={`M ${start.x} ${start.y} Q ${middleX} ${(start.y + end.y) / 2 + bend} ${end.x} ${end.y}`}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
@@ -113,7 +115,12 @@ export function ModuleFootprints({
         );
         const countLabel = `${module.machineCount}×`;
         return (
-          <g key={module.id} data-layout-module={module.id}>
+          <g
+            key={module.id}
+            data-layout-module={module.id}
+            onMouseEnter={() => setHoveredModuleId(module.id)}
+            onMouseLeave={() => setHoveredModuleId(null)}
+          >
             <title>{`${module.recipe}: ${module.machineCount} machines, ${module.size.width}×${module.size.height} tiles`}</title>
             <rect
               class="cell-layout-module"
