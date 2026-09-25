@@ -1,14 +1,12 @@
 import './dataset-boot.css';
 import { useEffect, useState } from 'preact/hooks';
-import type { ComponentType } from 'preact';
-import type { StaticData } from '../types.ts';
 import { createDataset, type Dataset } from '../dataset/index.ts';
 import { DatasetProvider } from '../dataset/context.tsx';
 import { datasetCatalogue, isDatasetId, legacyDatasetId } from '../dataset/catalogue.ts';
 import { parseEnvelope, type EnvelopeResult } from './url-envelope.ts';
+import { UrlHandler } from './url-handler.tsx';
 
-type UrlHandlerComponent = ComponentType<{ data: StaticData; datasetId: string }>;
-type Loaded = { id: string; dataset: Dataset; UrlHandler: UrlHandlerComponent };
+type Loaded = { id: string; dataset: Dataset };
 
 function targetFor(envelope: EnvelopeResult): string | undefined {
   return envelope.kind === 'ok' ? (envelope.packed.dataset ?? legacyDatasetId) : undefined;
@@ -34,10 +32,11 @@ export function DatasetBoot() {
   useEffect(() => {
     if (!id || !isDatasetId(id)) return;
     let cancelled = false;
-    Promise.all([datasetCatalogue[id].load(), import('./url-handler.tsx')])
-      .then(([data, module]) => {
+    datasetCatalogue[id]
+      .load()
+      .then((data) => {
         if (!cancelled) {
-          setLoaded({ id, dataset: createDataset(id, data), UrlHandler: module.UrlHandler });
+          setLoaded({ id, dataset: createDataset(id, data) });
           setLoadError(undefined);
         }
       })
@@ -91,7 +90,7 @@ export function DatasetBoot() {
       </main>
     );
 
-  const { dataset, UrlHandler } = loaded;
+  const { dataset } = loaded;
   return (
     <DatasetProvider key={dataset.id} value={dataset}>
       <UrlHandler data={dataset.data} datasetId={dataset.id} />

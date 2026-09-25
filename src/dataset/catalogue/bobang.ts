@@ -9,16 +9,11 @@ import { type IconMap, iconsFromSheet, preloadImage } from '../../data/icon-map.
 import type { DatasetInput } from '../types.ts';
 
 export async function bobAngs(): Promise<DatasetInput> {
-  const [dataJson, recipesJson, iconsUiJson, icons0Json, icons1Json, icons2Json, icons3Json] =
-    await Promise.all([
-      import('../../assets/dataset/bobang/static.json'),
-      import('../../assets/dataset/bobang/static-recipes.json'),
-      import('../../assets/dataset/bobang/icons-ui.json'),
-      import('../../assets/dataset/bobang/icons-0.json'),
-      import('../../assets/dataset/bobang/icons-1.json'),
-      import('../../assets/dataset/bobang/icons-2.json'),
-      import('../../assets/dataset/bobang/icons-3.json'),
-    ]);
+  const [dataJson, recipesJson, icons] = await Promise.all([
+    import('../../assets/dataset/bobang/static.json'),
+    import('../../assets/dataset/bobang/static-recipes.json'),
+    import('./bobang-icons.ts'),
+  ]);
 
   const packed = {
     ...(dataJson.default as unknown as Omit<StaticDataPacked, 'recipes'>),
@@ -28,11 +23,11 @@ export async function bobAngs(): Promise<DatasetInput> {
   const staticData = decodeStaticData(packed);
 
   const iconMap: IconMap = {
-    ...iconsFromSheet(icons0Url, icons0Json.default, 864),
-    ...iconsFromSheet(icons1Url, icons1Json.default, 864),
-    ...iconsFromSheet(icons2Url, icons2Json.default, 864),
-    ...iconsFromSheet(icons3Url, icons3Json.default, 864),
-    ...iconsFromSheet(iconsUiUrl, iconsUiJson.default, 480),
+    ...iconsFromSheet(icons0Url, icons.icons0Json, 864),
+    ...iconsFromSheet(icons1Url, icons.icons1Json, 864),
+    ...iconsFromSheet(icons2Url, icons.icons2Json, 864),
+    ...iconsFromSheet(icons3Url, icons.icons3Json, 864),
+    ...iconsFromSheet(iconsUiUrl, icons.iconsUiJson, 480),
   };
 
   setTimeout(preloadImages, 0);
