@@ -4,6 +4,7 @@ import { useMenu } from './menu.ts';
 import { fmt } from '../ts.ts';
 import type { Machine, MachineId } from '../types.ts';
 import { machineIconStyle } from './icon.tsx';
+import { staticData } from '../data/decode.ts';
 
 /**
  * A machine as an icon and its crafting speed: the multiplier to apply to a recipe quoted at 1×.
@@ -36,7 +37,7 @@ export function MachineChip({
   const classes = ['machine', active ? 'is-active' : '', speedBelow ? 'is-speed-below' : '']
     .filter(Boolean)
     .join(' ');
-  const label = title ?? `${machineName(id)} (${id}) at ${speed}`;
+  const label = title ?? `${machineName(staticData, id)} (${id}) at ${speed}`;
   const inner = (
     <>
       <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
@@ -99,7 +100,7 @@ export function MachinePicker({
 
   const current = machines.find(({ id }) => id === chosen);
   const label = current
-    ? `${machineName(current.id)} at ${fmt(current.machine.speed)}×` +
+    ? `${machineName(staticData, current.id)} at ${fmt(current.machine.speed)}×` +
       (pinned ? '' : ', by default for this progress')
     : 'No machine can run this';
 
@@ -163,7 +164,7 @@ export function MachinePicker({
             >
               <span class="machine-icon" style={machineIconStyle(id, machine)} aria-hidden="true" />
               <span class="machine-option-speed">{fmt(machine.speed)}×</span>
-              <span class="machine-option-name">{machineName(id)}</span>
+              <span class="machine-option-name">{machineName(staticData, id)}</span>
             </button>
           ))}
         </div>

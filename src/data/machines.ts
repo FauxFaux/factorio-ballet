@@ -1,4 +1,4 @@
-import type { Machine, MachineId, Recipe } from '../types.ts';
+import type { Machine, MachineId, Recipe, StaticData } from '../types.ts';
 import { staticData } from './decode.ts';
 
 function complexityOf(of: { complexity?: number }): number {
@@ -10,8 +10,8 @@ function relevanceOf(of: { complexity?: number }, progress: number): number {
 }
 
 /** The display name for a machine, falling back to its id. */
-export function machineName(id: MachineId): string {
-  return staticData.machines[id]?.human ?? id;
+export function machineName(data: StaticData, id: MachineId): string {
+  return data.machines[id]?.human ?? id;
 }
 
 export interface MachineMatch {
@@ -21,23 +21,23 @@ export interface MachineMatch {
   complexity?: number;
 }
 
-function machineComplexity(machine: Machine): number | undefined {
+function machineComplexity(data: StaticData, machine: Machine): number | undefined {
   if (machine.item === undefined) return machine.kind === 'character' ? 0 : undefined;
-  return staticData.resources[`item:${machine.item}`]?.complexity;
+  return data.resources[`item:${machine.item}`]?.complexity;
 }
 
 /** Machines by the categories they can craft, built once. */
-const byCategory = ((): Map<string, MachineMatch[]> => {
+const byCategory = ((data: StaticData): Map<string, MachineMatch[]> => {
   const index = new Map<string, MachineMatch[]>();
-  for (const [id, machine] of Object.entries(staticData.machines)) {
+  for (const [id, machine] of Object.entries(data.machines)) {
     for (const category of machine.categories) {
       let list = index.get(category);
       if (!list) index.set(category, (list = []));
-      list.push({ id, machine, complexity: machineComplexity(machine) });
+      list.push({ id, machine, complexity: machineComplexity(data, machine) });
     }
   }
   return index;
-})();
+})(staticData);
 
 /**
  * The machines which can run a recipe: anything handling any of its categories, slowest first, so
