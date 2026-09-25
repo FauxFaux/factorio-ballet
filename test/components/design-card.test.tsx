@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
-import { render, within } from '@testing-library/preact';
+import { within } from '@testing-library/preact';
+import { render } from '../render-with-dataset.tsx';
 import { describe, expect, it } from 'vitest';
 import { assemblerProblem } from '../../src/compute/kernel-problems.ts';
 import { DesignCard } from '../../src/components/design/design-card.tsx';

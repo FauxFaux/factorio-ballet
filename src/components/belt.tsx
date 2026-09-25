@@ -1,8 +1,8 @@
 import { beltName, beltTiers, defaultBelt, type BeltChoice } from '../data/index.ts';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
-import type { Belt, BeltId } from '../types.ts';
+import type { Belt, BeltId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 
 /**
@@ -16,6 +16,7 @@ export function BeltPicker({
   belt: State<BeltChoice>;
   progress: number;
 }) {
+  const { data } = useDataset();
   const { open, setOpen, box } = useMenu();
 
   if (beltTiers.length === 0) return null;
@@ -39,7 +40,7 @@ export function BeltPicker({
         title={`${label} — click to change`}
         onClick={() => setOpen(!open)}
       >
-        <span class="module-icon" style={beltIconStyle(current.id)} aria-hidden="true" />
+        <span class="module-icon" style={beltIconStyle(current.id, data)} aria-hidden="true" />
         <span class="module-effect">{rate(current.belt)}</span>
         <span class="module-caret" aria-hidden="true">
           ▾
@@ -75,7 +76,7 @@ export function BeltPicker({
               title={`${id}: ${rateSummary(belt)}`}
               onClick={() => choose(id)}
             >
-              <span class="module-icon" style={beltIconStyle(id)} aria-hidden="true" />
+              <span class="module-icon" style={beltIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{rate(belt)}</span>
               <span class="module-option-name">{beltName(id)}</span>
             </button>
@@ -92,6 +93,6 @@ function rateSummary(belt: Belt): string {
   return `${fmt(belt.itemsPerSecond)} items per second, both lanes fully compressed`;
 }
 
-function beltIconStyle(id: BeltId): string {
-  return resourceIconStyle(`item:${staticData.belts[id]?.item ?? id}`);
+function beltIconStyle(id: BeltId, data: StaticData): string {
+  return resourceIconStyle(`item:${data.belts[id]?.item ?? id}`);
 }

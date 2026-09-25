@@ -1,4 +1,4 @@
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import { iconSprite } from '../icon.tsx';
 import { assemblerColumnLayout } from './radar-assembler-layout.ts';
 
@@ -196,7 +196,8 @@ function RecipeIcon({
   recipe: string;
   name: string;
 }) {
-  const recipeData = staticData.recipes[recipe];
+  const { data } = useDataset();
+  const recipeData = data.recipes[recipe];
   const product = recipeData?.products[0]?.resource;
   const [url, spriteX, spriteY, sheetSize] = iconSprite(
     `recipe:${recipe}`,

@@ -1,7 +1,7 @@
 import { ArrowRightIcon, ChevronRightIcon } from '@primer/octicons-react';
 import type { JSX } from 'preact';
 import { recipeName, resourceName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import type {
   DesignAssembler,
   DesignBelt,
@@ -326,7 +326,8 @@ export function Assembler({
   onPointerEnter: JSX.PointerEventHandler<HTMLDivElement>;
   onPointerLeave: JSX.PointerEventHandler<HTMLDivElement>;
 }) {
-  const recipe = staticData.recipes[assembler.recipe];
+  const { data } = useDataset();
+  const recipe = data.recipes[assembler.recipe];
   const name = recipeName(assembler.recipe);
   const { x, y } = assembler.position;
   const { width, height } = assembler.size;

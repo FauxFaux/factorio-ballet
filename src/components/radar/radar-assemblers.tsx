@@ -1,6 +1,6 @@
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { resourceName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import { itemRateTotal, recipeConnections } from '../cell/connection-calc.ts';
@@ -36,6 +36,7 @@ export function RadarAssemblers({
   startX: number;
   stackedStations: boolean;
 }) {
+  const { data } = useDataset();
   let x = startX;
   const districts = entries
     .map((entry, index) => ({ entry, count: solution.counts[index], index }))
@@ -44,7 +45,7 @@ export function RadarAssemblers({
       const recipe = entryRecipe(entry);
       if (!recipe) return [];
       const machineId = entryMachine(entry, recipe, progress);
-      const machine = machineId ? staticData.machines[machineId] : undefined;
+      const machine = machineId ? data.machines[machineId] : undefined;
       if (!machine) return [];
       const connections = recipeConnections(index, solution);
       const inputFluids = connections.inputs

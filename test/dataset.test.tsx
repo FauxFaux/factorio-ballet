@@ -29,3 +29,20 @@ describe('useDataset', () => {
     );
   });
 });
+
+describe('createDataset', () => {
+  it('builds the sole-producer index from each dataset’s recipes', () => {
+    const recipe = defaultDataset.data.recipes['iron-plate'];
+    const first = createDataset('first', {
+      ...defaultDataset.data,
+      recipes: { first: recipe },
+    });
+    const second = createDataset('second', {
+      ...defaultDataset.data,
+      recipes: { second: recipe },
+    });
+
+    expect(first.soleProducerByResource.get('item:iron-plate')).toBe('first');
+    expect(second.soleProducerByResource.get('item:iron-plate')).toBe('second');
+  });
+});

@@ -1,5 +1,5 @@
 import { useMemo } from 'preact/hooks';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 import type { Chosen } from '../data/index.ts';
 import { flipDirection, searchMatches, type SearchScope } from '../data/search.ts';
 import type { State } from '../ts.ts';
@@ -9,24 +9,6 @@ import { ResourceButton } from './resource.tsx';
 import { SearchBox } from './search-box.tsx';
 
 const LIMIT = 20;
-
-/** Resources that have one, and only one, recipe that produces them. */
-const soleProducer = (() => {
-  const producers = new Map<ResourceId, string>();
-  const ambiguous = new Set<ResourceId>();
-  for (const [id, recipe] of Object.entries(staticData.recipes)) {
-    for (const resource of new Set(recipe.products.map((product) => product.resource))) {
-      if (ambiguous.has(resource)) continue;
-      if (producers.has(resource)) {
-        producers.delete(resource);
-        ambiguous.add(resource);
-      } else {
-        producers.set(resource, id);
-      }
-    }
-  }
-  return producers;
-})();
 
 /**
  * Recipes matching a search: `makes:<resource>`, `uses:<resource>`, or free text against
@@ -54,6 +36,7 @@ export function RecipeList({
   /** The header's resolved module and beacon choices, shared by every search result. */
   chosen: Chosen;
 }) {
+  const { soleProducerByResource } = useDataset();
   const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
   const ordered = useMemo(() => {
     const barrelRecipes = found.filter(
@@ -78,7 +61,7 @@ export function RecipeList({
           .map((result) => result.match.id),
       );
       changed = false;
-      for (const [resource, recipe] of soleProducer) {
+      for (const [resource, recipe] of soleProducerByResource) {
         if (visibleRecipes.has(recipe) && !hidden.has(resource)) {
           hidden.add(resource);
           changed = true;
@@ -86,7 +69,7 @@ export function RecipeList({
       }
     }
     return ordered.filter((result) => result.kind === 'recipe' || !hidden.has(result.match.id));
-  }, [ordered]);
+  }, [ordered, soleProducerByResource]);
   const onPick = (id: ResourceId) => setSearch(`makes:${id}`);
   const flipped = flipDirection(search);
 

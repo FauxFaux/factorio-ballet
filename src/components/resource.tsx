@@ -1,11 +1,12 @@
 import './resource.css';
 import type { ComponentChildren } from 'preact';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 import type { ResourceId } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 
 export function ResourceWithIcon({ id }: { id: ResourceId }) {
-  const resource = staticData.resources[id];
+  const { data } = useDataset();
+  const resource = data.resources[id];
   return (
     <span class="resource" title={`${id} (${resource.stackSize ?? 'fluid'})`}>
       <ResourceIcon id={id} />

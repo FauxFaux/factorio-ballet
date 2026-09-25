@@ -5,10 +5,10 @@ import {
   defaultBeacon,
   type BeaconChoice,
 } from '../data/index.ts';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 import { useMenu } from './menu.ts';
 import { fmt, type State } from '../ts.ts';
-import type { Beacon, BeaconId } from '../types.ts';
+import type { Beacon, BeaconId, StaticData } from '../types.ts';
 import { resourceIconStyle } from './icon.tsx';
 
 /**
@@ -33,6 +33,7 @@ export function BeaconPicker({
   beacon: State<BeaconChoice>;
   progress: number;
 }) {
+  const { data } = useDataset();
   const { open, setOpen, box } = useMenu();
 
   if (beaconTiers.length === 0) return null;
@@ -62,7 +63,11 @@ export function BeaconPicker({
       >
         {current ? (
           <>
-            <span class="module-icon" style={beaconIconStyle(current.id)} aria-hidden="true" />
+            <span
+              class="module-icon"
+              style={beaconIconStyle(current.id, data)}
+              aria-hidden="true"
+            />
             <span class="module-effect">{worth(current.beacon)}</span>
           </>
         ) : (
@@ -130,7 +135,7 @@ export function BeaconPicker({
               title={`${id}: ${slotSummary(beacon)}`}
               onClick={() => choose(id)}
             >
-              <span class="module-icon" style={beaconIconStyle(id)} aria-hidden="true" />
+              <span class="module-icon" style={beaconIconStyle(id, data)} aria-hidden="true" />
               <span class="module-option-effect">{worth(beacon)}</span>
               <span class="module-option-name">{beaconName(id)}</span>
             </button>
@@ -161,8 +166,8 @@ function slotSummary(beacon: Beacon): string {
 }
 
 /** A beacon is placed by an item, and the spritesheet is keyed by item; as `machineIconStyle`. */
-function beaconIconStyle(id: BeaconId): string {
-  return resourceIconStyle(`item:${staticData.beacons[id]?.item ?? id}`);
+function beaconIconStyle(id: BeaconId, data: StaticData): string {
+  return resourceIconStyle(`item:${data.beacons[id]?.item ?? id}`);
 }
 
 /**
@@ -171,11 +176,12 @@ function beaconIconStyle(id: BeaconId): string {
  * with a hole in it where the control still is.
  */
 function UnlitBeacon({ class: box }: { class: string }) {
+  const { data } = useDataset();
   const cheapest = beaconTiers[0];
   return (
     <span
       class={`${box} is-unlit`}
-      style={cheapest ? beaconIconStyle(cheapest.id) : undefined}
+      style={cheapest ? beaconIconStyle(cheapest.id, data) : undefined}
       aria-hidden="true"
     />
   );

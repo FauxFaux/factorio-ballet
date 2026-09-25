@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { cleanup, render, screen } from '@testing-library/preact';
+import { cleanup, screen } from '@testing-library/preact';
+import { render } from '../../render-with-dataset.tsx';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   designBounds,

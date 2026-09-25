@@ -1,5 +1,5 @@
 import { recipeName, resourceName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import { recipeIconStyle } from '../icon.tsx';
@@ -49,7 +49,8 @@ export function InPlayConnectionsView({
   onInterfaceHover: (resource: ResourceId | undefined) => void;
   showActions?: boolean;
 }) {
-  const resource = staticData.resources[id];
+  const { data } = useDataset();
+  const resource = data.resources[id];
   const details = (
     <ResourceDetails
       id={id}
@@ -326,6 +327,7 @@ function ConnectionRecipeFlow({
   onInterfaceHover: (resource: ResourceId | undefined) => void;
   resource: ResourceId;
 }) {
+  const { data } = useDataset();
   if (!flow) return <span class="cell-in-play-connection-recipe">—</span>;
   if (!flow.recipe) {
     return (
@@ -338,7 +340,7 @@ function ConnectionRecipeFlow({
       </span>
     );
   }
-  const data = staticData.recipes[flow.recipe];
+  const recipe = data.recipes[flow.recipe];
   return (
     <button
       type="button"
@@ -351,7 +353,7 @@ function ConnectionRecipeFlow({
     >
       <span
         class="recipe-icon"
-        style={data ? recipeIconStyle(flow.recipe, data) : undefined}
+        style={recipe ? recipeIconStyle(flow.recipe, recipe) : undefined}
         aria-hidden="true"
       />
       <span>{recipeName(flow.recipe)}</span>

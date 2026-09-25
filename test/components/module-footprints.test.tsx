@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
-import { act, fireEvent, render } from '@testing-library/preact';
+import { act, fireEvent } from '@testing-library/preact';
+import { render } from '../render-with-dataset.tsx';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { ModuleFootprints } from '../../src/components/layout/module-footprints.tsx';

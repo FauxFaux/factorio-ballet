@@ -1,7 +1,8 @@
 import './rail-blueprint-preview.css';
 import type { Blueprint, Entity, Position } from '../bp/decode.ts';
 import { isRailEntity, toRailPiece, type RailPiece } from '../bp/rail.ts';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
+import type { StaticData } from '../types.ts';
 
 const brickWidth = 192;
 const brickHeight = 120;
@@ -19,8 +20,8 @@ interface EntityRectangle {
   color?: string;
 }
 
-function entityRectangle(entity: Entity): EntityRectangle {
-  const known = staticData.entities[entity.name];
+function entityRectangle(entity: Entity, data: StaticData): EntityRectangle {
+  const known = data.entities[entity.name];
   const sourceSize = known?.size ?? { width: 1, height: 1 };
   const rotated = (entity.direction ?? 0) % 4 === 2;
   const width = rotated ? sourceSize.height : sourceSize.width;
@@ -141,13 +142,16 @@ function centreBlueprintOffset(
 }
 
 /** The translation used by an embedded rail preview, exposed for aligned layout overlays. */
-export function embeddedBlueprintOffset(blueprint: Blueprint): Position | undefined {
+export function embeddedBlueprintOffset(
+  blueprint: Blueprint,
+  data: StaticData,
+): Position | undefined {
   const entities = blueprint.entities ?? [];
   return centreBlueprintOffset(
     entities.filter(isRailEntity).map(toRailPiece),
     entities
       .filter((entity) => !isRailEntity(entity) && !isSignalEntity(entity))
-      .map(entityRectangle),
+      .map((entity) => entityRectangle(entity, data)),
     entities.filter(isSignalEntity),
   );
 }
@@ -161,12 +165,13 @@ export function RailBlueprintPreview({
   /** Omits the standalone figure chrome so the rendering can sit over another tile surface. */
   embedded?: boolean;
 }) {
+  const { data } = useDataset();
   const entities = blueprint.entities ?? [];
   const pieces = entities.filter(isRailEntity).map(toRailPiece);
   const signals = entities.filter(isSignalEntity);
   const rectangles = entities
     .filter((entity) => !isRailEntity(entity) && !isSignalEntity(entity))
-    .map(entityRectangle);
+    .map((entity) => entityRectangle(entity, data));
   const transform = embedded
     ? centreBlueprint(pieces, rectangles, signals)
     : fitBlueprint(pieces, rectangles, signals);

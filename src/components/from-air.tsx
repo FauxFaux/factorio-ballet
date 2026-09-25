@@ -1,7 +1,7 @@
 import './from-air.css';
 import { useMemo } from 'preact/hooks';
 import { complexityOf, recipeName, resourceName } from '../data/index.ts';
-import { staticData } from '../data/decode.ts';
+import { useDataset } from '../dataset/context.tsx';
 import { productAmount } from '../compute/flow.ts';
 import type { State } from '../ts.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';
@@ -221,10 +221,11 @@ export function FromAir({
   mode: State<UrlState['fa']>;
   progress: number;
 }) {
+  const { data } = useDataset();
   const infiniteMining = mode === 'infinite-mining';
   const stages = useMemo(
-    () => fromAirStages(staticData, infiniteMining, progress),
-    [infiniteMining, progress],
+    () => fromAirStages(data, infiniteMining, progress),
+    [data, infiniteMining, progress],
   );
 
   return (

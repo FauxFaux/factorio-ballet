@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
-import { cleanup, render } from '@testing-library/preact';
+import { cleanup } from '@testing-library/preact';
+import { render } from '../../render-with-dataset.tsx';
 import { afterEach, describe, expect, it } from 'vitest';
 import { RadarAssemblers } from '../../../src/components/radar/radar-assemblers.tsx';
 import type { Solution } from '../../../src/solve/index.ts';

@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { cleanup, fireEvent, render, screen } from '@testing-library/preact';
+import { cleanup, fireEvent, screen } from '@testing-library/preact';
+import { render } from '../../render-with-dataset.tsx';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DesignColumn } from '../../../src/components/design/design-column.tsx';
 import { beltLoopEntityIndexes } from '../../../src/components/design/design-belts.ts';

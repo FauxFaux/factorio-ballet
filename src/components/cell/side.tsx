@@ -1,5 +1,5 @@
 import './side.css';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import type { Solution } from '../../solve/index.ts';
 import type { Belt, ResourceId } from '../../types.ts';
 import { ResourceButton } from '../resource.tsx';
@@ -54,6 +54,7 @@ export function CellSide({
   exports?: ResourceId[];
   imports?: ResourceId[];
 }) {
+  const { data } = useDataset();
   const side = SIDES[dir];
   const forced = dir === 'in' ? imports : exports;
   const rates = ids.map((id) =>
@@ -125,9 +126,7 @@ export function CellSide({
               belt={belt}
               isFluid={id.startsWith('fluid:')}
               stackSize={
-                id.startsWith('fluid:')
-                  ? FLUID_TRAIN_STACK_SIZE
-                  : staticData.resources[id]?.stackSize
+                id.startsWith('fluid:') ? FLUID_TRAIN_STACK_SIZE : data.resources[id]?.stackSize
               }
             />
           </div>

@@ -1,5 +1,5 @@
 import type { Blueprint, Position } from '../../bp/decode.ts';
-import type { ResourceId } from '../../types.ts';
+import type { ResourceId, StaticData } from '../../types.ts';
 import { iconSprite } from '../icon.tsx';
 import { embeddedBlueprintOffset } from '../rail-blueprint-preview.tsx';
 import { stationStop } from '../radar/radar-rail.tsx';
@@ -143,8 +143,9 @@ export function inputStationFootprintStops(
   blueprint: Blueprint,
   count: number,
   stacked: boolean,
+  data: StaticData,
 ): Position[] {
-  const offset = embeddedBlueprintOffset(blueprint);
+  const offset = embeddedBlueprintOffset(blueprint, data);
   if (!stacked && offset) {
     return Array.from({ length: count }, (_, index) => {
       const railX = 27 + index * 12;
@@ -165,8 +166,12 @@ export function inputStationFootprintStops(
 }
 
 /** Locate output stops at the upper end of their rendered vertical station rails. */
-export function outputStationFootprintStops(blueprint: Blueprint, count: number): Position[] {
-  const offset = embeddedBlueprintOffset(blueprint);
+export function outputStationFootprintStops(
+  blueprint: Blueprint,
+  count: number,
+  data: StaticData,
+): Position[] {
+  const offset = embeddedBlueprintOffset(blueprint, data);
   if (!offset) return [];
   return Array.from({ length: count }, (_, index) => {
     const railX = 197 - index * 12;

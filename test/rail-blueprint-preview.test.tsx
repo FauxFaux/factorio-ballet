@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { render, screen } from '@testing-library/preact';
+import { screen } from '@testing-library/preact';
+import { render } from './render-with-dataset.tsx';
 import { describe, expect, it } from 'vitest';
 import type { Blueprint } from '../src/bp/decode.ts';
 import type { RailPiece } from '../src/bp/rail.ts';

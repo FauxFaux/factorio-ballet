@@ -15,6 +15,7 @@ import type {
   AttachedStationConnection,
 } from '../../compute/module-port-connections.ts';
 import type { ResourceId } from '../../types.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import { stackedRailStations } from '../cell/rail-mode.ts';
 import { ModuleFootprints } from './module-footprints.tsx';
 
@@ -39,18 +40,19 @@ export function CellLayoutSurface({
   stackedStations?: boolean;
   zeroInputRegionRecipes?: ReadonlySet<string>;
 }) {
+  const { data } = useDataset();
   const blueprint = useMemo(
     () => buildRailBrick(stackedStations ? -inputs.length : inputs.length, outputs.length),
     [inputs.length, outputs.length, stackedStations],
   );
   if (!('blueprint' in blueprint)) throw new Error('rail brick builder returned a book');
   const stationStops = useMemo(
-    () => inputStationFootprintStops(blueprint.blueprint, inputs.length, stackedStations),
-    [blueprint, inputs.length, stackedStations],
+    () => inputStationFootprintStops(blueprint.blueprint, inputs.length, stackedStations, data),
+    [blueprint, inputs.length, stackedStations, data],
   );
   const outputStationStops = useMemo(
-    () => outputStationFootprintStops(blueprint.blueprint, outputs.length),
-    [blueprint, outputs.length],
+    () => outputStationFootprintStops(blueprint.blueprint, outputs.length, data),
+    [blueprint, outputs.length, data],
   );
 
   return (

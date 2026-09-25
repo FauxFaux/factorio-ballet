@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { render, screen, within } from '@testing-library/preact';
+import { screen, within } from '@testing-library/preact';
+import { render } from '../render-with-dataset.tsx';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { App } from '../../src/app.tsx';

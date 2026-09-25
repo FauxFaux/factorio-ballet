@@ -3,7 +3,7 @@ import { ArrowRightIcon, ChevronRightIcon, TrashIcon } from '@primer/octicons-re
 import { useLayoutEffect, useRef, useState } from 'preact/hooks';
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import type { DesignColumn as DesignColumnData } from '../../compute/design.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import { TILE_SIZE, type ViewportPoint } from './design-entities.tsx';
 import { type CursorMode, useDesignInteractions } from './design-interactions.ts';
 import { DesignScene } from './design-scene.tsx';
@@ -25,6 +25,7 @@ export function DesignColumn({
   progress: number;
   onChange: (update: (column: DesignColumnData) => DesignColumnData) => void;
 }) {
+  const { data } = useDataset();
   const viewport = useRef<HTMLDivElement>(null);
   const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
   const [pan, setPan] = useState<ViewportPoint>({ x: 0, y: 0 });
@@ -63,13 +64,13 @@ export function DesignColumn({
     entries.flatMap((entry) => {
       const recipe = entryRecipe(entry);
       const machine = recipe ? entryMachine(entry, recipe, progress) : undefined;
-      return machine ? ([[entry.recipe, staticData.machines[machine]]] as const) : [];
+      return machine ? ([[entry.recipe, data.machines[machine]]] as const) : [];
     }),
   );
   const recipes = Object.fromEntries(
     column.entities.flatMap((entity) => {
       if (entity.kind !== 'assembler') return [];
-      const recipe = staticData.recipes[entity.recipe];
+      const recipe = data.recipes[entity.recipe];
       return recipe ? ([[entity.recipe, recipe]] as const) : [];
     }),
   );

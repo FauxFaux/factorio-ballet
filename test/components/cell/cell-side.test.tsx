@@ -1,5 +1,6 @@
 // @vitest-environment happy-dom
-import { cleanup, render, screen } from '@testing-library/preact';
+import { cleanup, screen } from '@testing-library/preact';
+import { render } from '../../render-with-dataset.tsx';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CellSide } from '../../../src/components/cell/side.tsx';
 import { staticData } from '../../../src/data/decode.ts';

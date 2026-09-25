@@ -1,6 +1,7 @@
 // @vitest-environment happy-dom
 
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/preact';
+import { fireEvent, screen, waitFor, within } from '@testing-library/preact';
+import { render } from './render-with-dataset.tsx';
 import { useState } from 'preact/hooks';
 import { describe, expect, it, vi } from 'vitest';
 import { decodeDocument } from '../src/bp/decode.ts';

@@ -1,5 +1,6 @@
 import { staticData } from '../data/decode.ts';
-import type { StaticData } from '../types.ts';
+import type { ResourceId, StaticData } from '../types.ts';
+import { buildSoleProducerIndex } from './precompute.ts';
 
 /** Identifies one exact generated data artifact and its prototype ordering. */
 export type DatasetId = string;
@@ -8,10 +9,11 @@ export type DatasetId = string;
 export interface Dataset {
   readonly id: DatasetId;
   readonly data: StaticData;
+  readonly soleProducerByResource: ReadonlyMap<ResourceId, string>;
 }
 
 export function createDataset(id: DatasetId, data: StaticData): Dataset {
-  return { id, data };
+  return { id, data, soleProducerByResource: buildSoleProducerIndex(data) };
 }
 
 /** Compatibility fixture until dataset assets and derived indexes move here. */

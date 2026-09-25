@@ -1,6 +1,6 @@
 import { entryMachine, entryRecipe, type CellEntry } from '../../cell.ts';
 import { recipeName } from '../../data/index.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import type {
   DesignAssembler,
   DesignColumn,
@@ -23,9 +23,10 @@ export function RecipeButton({
   progress: number;
   onChange: (update: (column: DesignColumn) => DesignColumn) => void;
 }) {
+  const { data } = useDataset();
   const recipe = entryRecipe(entry);
   const machineId = recipe ? entryMachine(entry, recipe, progress) : undefined;
-  const machine = machineId ? staticData.machines[machineId] : undefined;
+  const machine = machineId ? data.machines[machineId] : undefined;
   const target =
     count !== undefined && Number.isFinite(count) && count >= 0 ? Math.ceil(count) : undefined;
   const current = column.entities.filter(

@@ -5,7 +5,7 @@ import type {
   AttachedStationConnection,
 } from '../../compute/module-port-connections.ts';
 import type { Position } from '../../bp/decode.ts';
-import { staticData } from '../../data/decode.ts';
+import { useDataset } from '../../dataset/context.tsx';
 import { iconSprite } from '../icon.tsx';
 import { portPoint, stepSpringLayout } from './spring-layout.ts';
 import { preLayoutModules } from './pre-layout.ts';
@@ -34,6 +34,7 @@ export function ModuleFootprints({
   outputStationStops?: Position[];
   zeroInputRegionRecipes?: ReadonlySet<string>;
 }) {
+  const { data } = useDataset();
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{
@@ -195,7 +196,7 @@ export function ModuleFootprints({
         );
       })}
       {placed.map(({ module, x, y }) => {
-        const product = staticData.recipes[module.recipe]?.products[0]?.resource;
+        const product = data.recipes[module.recipe]?.products[0]?.resource;
         const [url, spriteX, spriteY, sheetSize] = iconSprite(
           `recipe:${module.recipe}`,
           ...(product ? [product] : []),
