@@ -18,6 +18,7 @@ const recipe = staticData.recipes[recipeId];
 
 function problem(output: number | null = 2, solidInputs: number[] = []) {
   const result = machineProblem(
+    staticData,
     'casting-machine',
     { fluidInputs: [200, 200], solidInputs, solidOutputs: output === null ? [] : [output] },
     recipeId,

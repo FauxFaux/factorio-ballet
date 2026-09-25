@@ -1,5 +1,5 @@
 import { newFactoryDesign, type FactoryDesign } from './design.ts';
-import { staticData } from '../data/decode.ts';
+import type { StaticData } from '../types.ts';
 import type { FluidBoxResource } from './fluid-box-resources.ts';
 import type { MachineFluidBox, MachineSize } from '../types.ts';
 import type { ResourceId } from '../types.ts';
@@ -113,12 +113,13 @@ export type KernelMachineChoice = (typeof kernelMachineChoices)[number]['value']
 
 /** Give a synthetic flow problem the footprint and fluid ports of a real machine. */
 export function machineProblem(
+  data: StaticData,
   building: KernelMachineChoice,
   options: Omit<AssemblerProblemOptions, 'assemblerName' | 'size' | 'fluidBoxes'>,
   name?: string,
 ): KernelProblem {
   const choice = kernelMachineChoices.find(({ value }) => value === building)!;
-  const machine = staticData.machines[choice.machineId];
+  const machine = data.machines[choice.machineId];
   return assemblerProblem({
     ...options,
     assemblerName: name ?? choice.label,
@@ -180,76 +181,92 @@ export function airFilterProblem(size: MachineSize) {
 }
 
 /** Examples shown in the standalone kernel workspace, grouped by their fluid boundary shape. */
-export const kernelProblems = {
-  solid: [
-    assemblerProblem({ solidInputs: [5], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [8], solidOutputs: [3] }),
-    assemblerProblem({ solidInputs: [25], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [5, 5], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
-    assemblerProblem({ solidInputs: [30, 5], solidOutputs: [3] }),
-    machineProblem('powderiser', { solidInputs: [15], solidOutputs: [15] }, 'Silicon powder'),
-    machineProblem('powderiser', { solidInputs: [1, 1], solidOutputs: [1, 1] }, '2×2 solid flows'),
-  ],
-  fluidInput: [
-    assemblerProblem({ fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [5], fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
-    assemblerProblem({ solidInputs: [5, 8], fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
-    assemblerProblem({
-      solidInputs: [5, 5],
-      fluidInputs: [FLUID_RATE],
-      solidOutputs: [2, 2],
-    }),
-    machineProblem('flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
-    machineProblem(
-      'casting-machine',
-      { fluidInputs: [FLUID_RATE, FLUID_RATE], solidOutputs: [2] },
-      'Mono-silicon',
-    ),
-  ],
-  fluidOutput: [
-    assemblerProblem({ solidInputs: [5], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({ solidInputs: [8], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({ solidInputs: [25], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({ solidInputs: [5, 5], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({ solidInputs: [5, 5, 8], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({
-      solidInputs: [5, 5, 5],
-      solidOutputs: [2],
-      fluidOutputs: [FLUID_RATE],
-    }),
-    assemblerProblem({ fluidOutputs: [FLUID_RATE] }),
-  ],
-  fluidInputAndOutput: [
-    assemblerProblem({ fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE] }),
-    assemblerProblem({
-      solidInputs: [5],
-      fluidInputs: [FLUID_RATE],
-      fluidOutputs: [FLUID_RATE],
-    }),
-    assemblerProblem({
-      solidInputs: [5, 8],
-      fluidInputs: [FLUID_RATE],
-      fluidOutputs: [FLUID_RATE],
-    }),
-    assemblerProblem({
-      solidInputs: [5, 5],
-      fluidInputs: [FLUID_RATE],
-      solidOutputs: [2],
-      fluidOutputs: [FLUID_RATE],
-    }),
-    machineProblem(
-      'chemical-plant',
-      { fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE, FLUID_RATE] },
-      'Air separation',
-    ),
-  ],
-  airFilter: [
-    airFilterProblem({ width: 3, height: 5 }),
-    airFilterProblem({ width: 5, height: 3 }),
-    airFilterProblem({ width: 5, height: 5 }),
-  ],
-};
+export function kernelProblems(data: StaticData) {
+  return {
+    solid: [
+      assemblerProblem({ solidInputs: [5], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [8], solidOutputs: [3] }),
+      assemblerProblem({ solidInputs: [25], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [5, 5], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
+      assemblerProblem({ solidInputs: [30, 5], solidOutputs: [3] }),
+      machineProblem(
+        data,
+        'powderiser',
+        { solidInputs: [15], solidOutputs: [15] },
+        'Silicon powder',
+      ),
+      machineProblem(
+        data,
+        'powderiser',
+        { solidInputs: [1, 1], solidOutputs: [1, 1] },
+        '2×2 solid flows',
+      ),
+    ],
+    fluidInput: [
+      assemblerProblem({ fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [5], fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
+      assemblerProblem({ solidInputs: [5, 8], fluidInputs: [FLUID_RATE], solidOutputs: [2] }),
+      assemblerProblem({
+        solidInputs: [5, 5],
+        fluidInputs: [FLUID_RATE],
+        solidOutputs: [2, 2],
+      }),
+      machineProblem(data, 'flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
+      machineProblem(
+        data,
+        'casting-machine',
+        { fluidInputs: [FLUID_RATE, FLUID_RATE], solidOutputs: [2] },
+        'Mono-silicon',
+      ),
+    ],
+    fluidOutput: [
+      assemblerProblem({ solidInputs: [5], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({ solidInputs: [8], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({ solidInputs: [25], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({ solidInputs: [5, 5], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({ solidInputs: [5, 5, 8], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({
+        solidInputs: [5, 5, 5],
+        solidOutputs: [2],
+        fluidOutputs: [FLUID_RATE],
+      }),
+      assemblerProblem({ fluidOutputs: [FLUID_RATE] }),
+    ],
+    fluidInputAndOutput: [
+      assemblerProblem({ fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE] }),
+      assemblerProblem({
+        solidInputs: [5],
+        fluidInputs: [FLUID_RATE],
+        fluidOutputs: [FLUID_RATE],
+      }),
+      assemblerProblem({
+        solidInputs: [5, 8],
+        fluidInputs: [FLUID_RATE],
+        fluidOutputs: [FLUID_RATE],
+      }),
+      assemblerProblem({
+        solidInputs: [5, 5],
+        fluidInputs: [FLUID_RATE],
+        solidOutputs: [2],
+        fluidOutputs: [FLUID_RATE],
+      }),
+      machineProblem(
+        data,
+        'chemical-plant',
+        { fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE, FLUID_RATE] },
+        'Air separation',
+      ),
+    ],
+    airFilter: [
+      airFilterProblem({ width: 3, height: 5 }),
+      airFilterProblem({ width: 5, height: 3 }),
+      airFilterProblem({ width: 5, height: 5 }),
+    ],
+  };
+}
 
-export const allKernelProblems = Object.values(kernelProblems).flat();
+export function allKernelProblems(data: StaticData) {
+  return Object.values(kernelProblems(data)).flat();
+}

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { staticData } from '../../../src/data/decode.ts';
 import {
   solveTileDesign,
   type TileDesignSearchResult,
@@ -83,7 +84,7 @@ function codes(input: TileDesignInput, candidate: ReturnType<typeof found>['cand
 }
 
 it('adapts the mono-silicon south port into a four-row tile', () => {
-  const monoSilicon = kernelProblems.fluidInput.find(
+  const monoSilicon = kernelProblems(staticData).fluidInput.find(
     ({ assemblers }) => assemblers[0].name === 'Mono-silicon',
   )!;
   const normalized = normalizeTileDesignInput(monoSilicon, {

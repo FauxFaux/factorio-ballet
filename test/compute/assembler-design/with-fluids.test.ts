@@ -217,7 +217,7 @@ describe('generateAssemblerDesign', () => {
   });
 
   it('connects a fluid output when the recipe consumes no resources', () => {
-    const design = generateAssemblerDesign(kernelProblems.fluidOutput[6]!, throughput);
+    const design = generateAssemblerDesign(kernelProblems(staticData).fluidOutput[6]!, throughput);
     const entities = design.columns?.[0].entities ?? [];
 
     expect(entities).toEqual([

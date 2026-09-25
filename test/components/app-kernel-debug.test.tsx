@@ -18,7 +18,11 @@ import {
   type KernelProblem,
 } from '../../src/compute/kernel-problems.ts';
 import { fmt } from '../../src/ts.ts';
+import { defaultDataset } from '../../src/dataset/index.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
+
+const problems = kernelProblems(defaultDataset.data);
+const allProblems = allKernelProblems(defaultDataset.data);
 
 const kernelDesignState: UrlState = {
   v: 1,
@@ -59,12 +63,12 @@ describe('App', () => {
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(progress, chosen.belt, 2),
     };
-    const sortedProblems = allKernelProblems.toSorted(
+    const sortedProblems = allProblems.toSorted(
       (left, right) =>
         Number(isAssemblerDesignFailure(generateAssemblerDesign(left, throughput))) -
         Number(isAssemblerDesignFailure(generateAssemblerDesign(right, throughput))),
     );
-    const solutionCount = allKernelProblems.filter(
+    const solutionCount = allProblems.filter(
       (problem) => !isAssemblerDesignFailure(generateAssemblerDesign(problem, throughput)),
     ).length;
 
@@ -85,9 +89,16 @@ describe('App', () => {
     ).toBeTruthy();
     const builtInResults = screen.getByLabelText('Kernel problems');
     const articles = within(builtInResults).getAllByRole('article');
-    const articleForProblem = (problem: KernelProblem) =>
-      articles[sortedProblems.indexOf(problem)]!;
-    expect(articles).toHaveLength(allKernelProblems.length);
+    const articleForProblem = (problem: KernelProblem) => {
+      const index = allProblems.findIndex(
+        ({ assemblers, inputs, outputs }) =>
+          assemblers.map(({ name }) => name).join(', ') ===
+            problem.assemblers.map(({ name }) => name).join(', ') &&
+          JSON.stringify([inputs, outputs]) === JSON.stringify([problem.inputs, problem.outputs]),
+      );
+      return articles[sortedProblems.indexOf(allProblems[index]!)]!;
+    };
+    expect(articles).toHaveLength(allProblems.length);
     expect(
       within(builtInResults).queryAllByRole('region', { name: / assembler design preview$/ }),
     ).toHaveLength(solutionCount);
@@ -97,10 +108,10 @@ describe('App', () => {
           within(article).getByRole('region', { name: 'Assembler design result' }),
         ).queryAllByRole('note'),
       ),
-    ).toHaveLength(allKernelProblems.length - solutionCount);
+    ).toHaveLength(allProblems.length - solutionCount);
     expect(
       within(builtInResults).getAllByRole('region', { name: 'Tile design result' }),
-    ).toHaveLength(allKernelProblems.length);
+    ).toHaveLength(allProblems.length);
     const cardTitles = articles.map(
       (article) => within(article).getByRole('heading', { level: 3 }).textContent,
     );
@@ -118,7 +129,7 @@ describe('App', () => {
         ),
     ).toBe(true);
     expect(screen.queryByText('[no solution]')).toBeNull();
-    const firstSolidProblem = kernelProblems.solid[0]!;
+    const firstSolidProblem = problems.solid[0]!;
     expect(
       within(articleForProblem(firstSolidProblem)).getByRole('region', {
         name: 'Assembler 1 assembler design preview',
@@ -129,7 +140,7 @@ describe('App', () => {
         name: 'Assembler 1 tile design preview',
       }),
     ).toBeTruthy();
-    const airFilterArticle = articleForProblem(kernelProblems.airFilter[0]!);
+    const airFilterArticle = articleForProblem(problems.airFilter[0]!);
     for (const name of ['Assembler design result', 'Tile design result']) {
       const preview = within(airFilterArticle).getByRole('region', { name });
       const fluidboxArrows = [...preview.querySelectorAll('.cell-design-fluidbox-arrow')];
@@ -148,12 +159,10 @@ describe('App', () => {
       within(articleForProblem(firstSolidProblem)).getByLabelText('Max column height').textContent,
     ).toContain('×6');
     expect(
-      within(articleForProblem(kernelProblems.solid[3]!)).getByLabelText('Max column height')
-        .textContent,
+      within(articleForProblem(problems.solid[3]!)).getByLabelText('Max column height').textContent,
     ).toContain('×3');
     expect(
-      within(articleForProblem(kernelProblems.solid[4]!)).getByLabelText('Max column height')
-        .textContent,
+      within(articleForProblem(problems.solid[4]!)).getByLabelText('Max column height').textContent,
     ).toContain('×3');
     expect(
       within(articleForProblem(firstSolidProblem)).getByRole('button', {
@@ -200,7 +209,7 @@ describe('App', () => {
         ),
       ).toBe(true);
     }
-    const fifthPreview = within(articleForProblem(kernelProblems.solid[4]!)).getByRole('region', {
+    const fifthPreview = within(articleForProblem(problems.solid[4]!)).getByRole('region', {
       name: 'Assembler 1 assembler design preview',
     });
     const mixedInputBelts = within(fifthPreview).getAllByRole('img', {
@@ -227,11 +236,12 @@ describe('App', () => {
       expect(belt.getAttribute('title')).toContain('left side: item:3, 8/s');
       expect(belt.getAttribute('title')).toContain('right side: item:3, 8/s');
     }
-    const fluidOnlyInputPreview = within(
-      articleForProblem(kernelProblems.fluidInput[0]!),
-    ).getByRole('region', {
-      name: 'Assembler 2 assembler design preview',
-    });
+    const fluidOnlyInputPreview = within(articleForProblem(problems.fluidInput[0]!)).getByRole(
+      'region',
+      {
+        name: 'Assembler 2 assembler design preview',
+      },
+    );
     expect(
       within(fluidOnlyInputPreview).getAllByRole('img', { name: /Pipe at 0, [0-2]/ }),
     ).toHaveLength(3);
@@ -244,7 +254,7 @@ describe('App', () => {
       ['west', 'input'],
       ['east', 'output'],
     ]);
-    for (const problem of kernelProblems.fluidOutput.slice(0, 4)) {
+    for (const problem of problems.fluidOutput.slice(0, 4)) {
       const preview = within(articleForProblem(problem)).getByRole('region', {
         name: 'Assembler 2 assembler design preview',
       });
@@ -259,9 +269,10 @@ describe('App', () => {
         ['west', 'output'],
       ]);
     }
-    const dualFluidPreview = within(
-      articleForProblem(kernelProblems.fluidInputAndOutput[0]!),
-    ).getByRole('region', { name: 'Assembler 2 assembler design preview' });
+    const dualFluidPreview = within(articleForProblem(problems.fluidInputAndOutput[0]!)).getByRole(
+      'region',
+      { name: 'Assembler 2 assembler design preview' },
+    );
     expect(
       [...dualFluidPreview.querySelectorAll('.cell-design-fluidbox-arrow')].map((arrow) => [
         arrow.getAttribute('data-direction'),
@@ -272,7 +283,7 @@ describe('App', () => {
       ['east', 'output'],
     ]);
     const fiveInputFluidOutputPreview = within(
-      articleForProblem(kernelProblems.fluidOutput[4]!),
+      articleForProblem(problems.fluidOutput[4]!),
     ).getByRole('region', {
       name: 'Assembler 2 assembler design preview',
     });
@@ -282,7 +293,7 @@ describe('App', () => {
       }),
     ).toHaveLength(3);
     const solidAndFluidOutputPreview = within(
-      articleForProblem(kernelProblems.fluidOutput[5]!),
+      articleForProblem(problems.fluidOutput[5]!),
     ).getByRole('region', {
       name: 'Assembler 2 assembler design preview',
     });

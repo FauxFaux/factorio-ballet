@@ -13,6 +13,7 @@ import { KernelCustomProblem } from './kernel-custom-problem.tsx';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
 import { useMemo } from 'preact/hooks';
+import { useDataset } from '../dataset/context.tsx';
 
 export function KernelDebug({
   progress,
@@ -23,6 +24,8 @@ export function KernelDebug({
   chosen: Chosen;
   custom: State<KernelCustomState | undefined>;
 }) {
+  const { data } = useDataset();
+  const problems = useMemo(() => allKernelProblems(data), [data]);
   const throughput = useMemo(
     () => ({
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
@@ -33,16 +36,16 @@ export function KernelDebug({
   );
   const sortedProblems = useMemo(
     () =>
-      allKernelProblems
+      problems
         .map((problem, index) => ({
           problem,
           index,
           failed: isAssemblerDesignFailure(generateAssemblerDesign(problem, throughput)),
         }))
         .toSorted((left, right) => Number(left.failed) - Number(right.failed)),
-    [throughput],
+    [throughput, problems],
   );
-  const useProblem = (problem: (typeof allKernelProblems)[number]) => {
+  const useProblem = (problem: (typeof problems)[number]) => {
     custom[1]((current) => kernelCustomStateFor(problem, current));
   };
 

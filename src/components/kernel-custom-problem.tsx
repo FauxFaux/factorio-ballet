@@ -18,6 +18,7 @@ import {
 import { fmt, type State } from '../ts.ts';
 import { DesignCard, resourceColoursFor } from './design/design-card.tsx';
 import { GenericFluidIcon, GenericSolidIcon, resourceIconStyle } from './icon.tsx';
+import { useDataset } from '../dataset/context.tsx';
 
 type FlowKind = 'solidInputs' | 'fluidInputs' | 'solidOutputs' | 'fluidOutputs';
 type Flows = KernelCustomState['flows'];
@@ -73,6 +74,7 @@ export function KernelCustomProblem({
   throughput: AssemblerDesignThroughput;
   custom: State<KernelCustomState | undefined>;
 }) {
+  const { data } = useDataset();
   const [stored, setStored] = custom;
   const { building, flows } = stored ?? defaultCustomState();
   const rates = stored?.rates ?? {
@@ -97,7 +99,7 @@ export function KernelCustomProblem({
             size: filter.size,
             fluidBoxes: filter.fluidBoxes,
           })
-        : machineProblem(building, values);
+        : machineProblem(data, building, values);
   const problem = problemForFlows(flows);
   const design = generateAssemblerDesign(problem, rates);
   const [copied, setCopied] = useState(false);

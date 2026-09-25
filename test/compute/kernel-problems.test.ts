@@ -8,6 +8,9 @@ import {
   machineProblem,
 } from '../../src/compute/kernel-problems.ts';
 import { staticData } from '../../src/data/decode.ts';
+
+const problems = kernelProblems(staticData);
+const allProblems = allKernelProblems(staticData);
 import { normalizeTileDesignInput } from '../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../src/compute/tile-design/types.ts';
 
@@ -88,7 +91,7 @@ describe('assemblerProblem', () => {
   });
 
   it('assigns multiple synthetic fluids to the machine ports for tile design', () => {
-    const problem = machineProblem('chemical-plant', {
+    const problem = machineProblem(staticData, 'chemical-plant', {
       fluidInputs: [200, 200],
       fluidOutputs: [200],
     });
@@ -123,7 +126,7 @@ describe('kernelProblems', () => {
       'Powderiser',
     ]);
     for (const { value, label, machineId } of kernelMachineChoices) {
-      const assembler = machineProblem(value, { solidInputs: [1], solidOutputs: [1] })
+      const assembler = machineProblem(staticData, value, { solidInputs: [1], solidOutputs: [1] })
         .assemblers[0];
       expect(assembler).toMatchObject({ name: label, size: staticData.machines[machineId].size });
       expect(assembler?.fluidBoxes).toEqual(staticData.machines[machineId].fluidBoxes);
@@ -131,34 +134,34 @@ describe('kernelProblems', () => {
   });
 
   it('groups examples by fluid boundary shape', () => {
-    expect(Object.keys(kernelProblems)).toEqual([
+    expect(Object.keys(problems)).toEqual([
       'solid',
       'fluidInput',
       'fluidOutput',
       'fluidInputAndOutput',
       'airFilter',
     ]);
-    expect(kernelProblems.solid).toHaveLength(9);
-    expect(kernelProblems.fluidInput).toHaveLength(6);
-    expect(kernelProblems.fluidOutput).toHaveLength(7);
-    expect(kernelProblems.fluidInputAndOutput).toHaveLength(5);
-    expect(kernelProblems.airFilter).toHaveLength(3);
-    expect(allKernelProblems).toHaveLength(30);
+    expect(problems.solid).toHaveLength(9);
+    expect(problems.fluidInput).toHaveLength(6);
+    expect(problems.fluidOutput).toHaveLength(7);
+    expect(problems.fluidInputAndOutput).toHaveLength(5);
+    expect(problems.airFilter).toHaveLength(3);
+    expect(allProblems).toHaveLength(30);
   });
 
   it('includes the mixed belt, 2×2, flare, and air-separation cases', () => {
-    expect(kernelProblems.solid[6]?.inputs.solids).toEqual({ 'item:1': 30, 'item:2': 5 });
-    expect(kernelProblems.solid[7]?.assemblers[0]?.size).toEqual({ width: 2, height: 2 });
-    expect(kernelProblems.solid[8]?.outputs.solids).toEqual({ 'item:3': 1, 'item:4': 1 });
-    expect(kernelProblems.fluidInput[4]?.outputs).toEqual({ solids: {}, fluids: {} });
-    expect(kernelProblems.fluidInputAndOutput[4]?.outputs.fluids).toEqual({
+    expect(problems.solid[6]?.inputs.solids).toEqual({ 'item:1': 30, 'item:2': 5 });
+    expect(problems.solid[7]?.assemblers[0]?.size).toEqual({ width: 2, height: 2 });
+    expect(problems.solid[8]?.outputs.solids).toEqual({ 'item:3': 1, 'item:4': 1 });
+    expect(problems.fluidInput[4]?.outputs).toEqual({ solids: {}, fluids: {} });
+    expect(problems.fluidInputAndOutput[4]?.outputs.fluids).toEqual({
       'fluid:2': 200,
       'fluid:3': 200,
     });
   });
 
   it('includes a fluid-producing recipe with no input resources', () => {
-    const problem = kernelProblems.fluidOutput[6]!;
+    const problem = problems.fluidOutput[6]!;
 
     expect(problem.inputs).toEqual({ solids: {}, fluids: {} });
     expect(problem.outputs).toEqual({ solids: {}, fluids: { 'fluid:1': 200 } });
@@ -203,7 +206,7 @@ describe('kernelProblems', () => {
   });
 
   it('uses 200 per second for generic example fluids', () => {
-    for (const problem of allKernelProblems.filter(
+    for (const problem of allProblems.filter(
       (problem) => problem.assemblers[0]?.name !== 'Oxygen flare',
     )) {
       expect(Object.values(problem.inputs.fluids).every((rate) => rate === 200)).toBe(true);
@@ -212,7 +215,7 @@ describe('kernelProblems', () => {
   });
 
   it('gives each assembler its complete boundary flow', () => {
-    for (const problem of allKernelProblems) {
+    for (const problem of allProblems) {
       expect(problem.assemblers[0]?.inputPerSecond).toEqual({
         ...problem.inputs.solids,
         ...problem.inputs.fluids,
