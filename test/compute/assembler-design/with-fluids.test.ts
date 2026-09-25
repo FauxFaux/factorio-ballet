@@ -11,7 +11,7 @@ import {
   assemblerProblem,
   kernelProblems,
 } from '../../../src/compute/kernel-problems.ts';
-import { defaultDataset } from '../../../src/dataset';
+import { defaultDataset } from '../../with-bobang.ts';
 
 const throughput = {
   beltItemsPerSecond: 30,

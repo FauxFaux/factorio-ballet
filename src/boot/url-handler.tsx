@@ -5,7 +5,6 @@ import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
-// eslint-disable-next-line no-restricted-syntax -- URL hashes currently use the global dataset.
 import { staticData } from '../data/decode.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelMachineChoice } from '../compute/kernel-problems.ts';

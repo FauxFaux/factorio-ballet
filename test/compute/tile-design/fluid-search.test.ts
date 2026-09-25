@@ -13,7 +13,7 @@ import type {
   TileDesignInput,
   TileMachineOrientation,
 } from '../../../src/compute/tile-design/types.ts';
-import { defaultDataset } from '../../../src/dataset';
+import { defaultDataset } from '../../with-bobang.ts';
 
 function access(
   resource: `fluid:${string}`,

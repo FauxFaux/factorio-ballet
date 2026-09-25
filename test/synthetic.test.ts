@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { machinesFor } from '../src/data/machines.ts';
 import { searchRecipes } from '../src/data/search.ts';
 import { energyInMegajoules, powerInMegawatts } from '../scripts/synthetic.ts';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const ds = defaultDataset;
 

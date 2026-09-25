@@ -20,7 +20,7 @@ import {
 } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { complexityOf, noChoice } from '../src/data/index.ts';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const ds = defaultDataset;
 

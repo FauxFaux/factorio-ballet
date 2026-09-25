@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 describe('the ingested inserters', () => {
   it("keeps each live prototype's motion, reach and base hand capacity", () => {

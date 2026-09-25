@@ -12,8 +12,8 @@ import {
 } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import type { ResourceId } from '../src/types.ts';
-import { defaultDataset } from '../src/dataset';
 import { noChoice } from '../src/data';
+import { defaultDataset } from './with-bobang.ts';
 
 const ds = defaultDataset;
 

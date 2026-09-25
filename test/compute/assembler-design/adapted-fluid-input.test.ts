@@ -5,7 +5,7 @@ import { entityPositionStatuses } from '../../../src/components/design/design-en
 import { designBounds } from '../../../src/components/design/design-preview.tsx';
 import { designFluidTraces } from '../../../src/components/design/design-fluid-traces.ts';
 import { fluidBoxResources } from '../../../src/compute/fluid-box-resources.ts';
-import { defaultDataset } from '../../../src/dataset';
+import { defaultDataset } from '../../with-bobang.ts';
 
 const throughput = {
   beltItemsPerSecond: 30,

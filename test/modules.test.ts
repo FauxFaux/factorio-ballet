@@ -9,7 +9,7 @@ import {
   modulesIn,
 } from '../src/data/modules.ts';
 import { fillSlots, moduleEffects } from '../src/data/module-effects.ts';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 /** Allows productivity; runs in an assembler. */
 const gears = defaultDataset.data.recipes['iron-gear-wheel'];

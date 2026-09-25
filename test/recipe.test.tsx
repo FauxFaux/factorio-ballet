@@ -7,7 +7,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { CompactRecipe } from '../src/components/compact-recipe.tsx';
 import { RecipeCard } from '../src/components/recipe.tsx';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const ds = defaultDataset;
 

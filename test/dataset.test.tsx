@@ -1,13 +1,14 @@
 // @vitest-environment happy-dom
 
-import { render, screen, cleanup } from '@testing-library/preact';
+import { cleanup, render, screen } from '@testing-library/preact';
 import { afterEach, describe, expect, it } from 'vitest';
 import { DatasetProvider, useDataset } from '../src/dataset/context.tsx';
-import { createDataset, defaultDataset } from '../src/dataset/index.ts';
+import { createDataset } from '../src/dataset/index.ts';
 import { machinesFor } from '../src/data/machines.ts';
 import { categoryEffect, chosenModules, modulesIn } from '../src/data/modules.ts';
 import { chosenBeacon, chosenBelt, defaultBeacon, defaultBelt } from '../src/data/index.ts';
 import { FlowSummary } from '../src/components/recipe-flow-summary.tsx';
+import { defaultDataset } from './with-bobang.ts';
 
 afterEach(cleanup);
 

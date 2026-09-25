@@ -6,7 +6,7 @@ import { modulesForTile, recipeKernelProblem } from '../../src/compute/modules.t
 import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
 import { portPoint } from '../../src/components/layout/spring-layout.ts';
 import type { ResourceId } from '../../src/types.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 function module(id: string, input: number, output: number, ports: ModulePort[]): FactoryModule {
   return {

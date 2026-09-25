@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../../src/cell.ts';
 import { createIdTables, packCells, unpackCells } from '../../src/boot/pack.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const recipe = Object.keys(defaultDataset.data.recipes)[0];
 const machine = Object.keys(defaultDataset.data.machines)[0];

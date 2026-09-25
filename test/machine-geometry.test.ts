@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fluidBoxResources } from '../src/components/design/design-scene.tsx';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 describe('the ingested machine geometry', () => {
   it('keeps tile footprints for all production machines', () => {

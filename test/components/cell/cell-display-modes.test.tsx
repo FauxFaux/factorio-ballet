@@ -8,7 +8,7 @@ import type { Cell } from '../../../src/cell.ts';
 import { resolveChosen, resourceName } from '../../../src/data';
 import { CellBox } from '../../../src/components/cell/box.tsx';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
-import { defaultDataset } from '../../../src/dataset';
+import { defaultDataset } from '../../with-bobang.ts';
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen(defaultDataset, {}, undefined, undefined, state.gp);

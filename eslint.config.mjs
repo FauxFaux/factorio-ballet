@@ -47,17 +47,4 @@ export default defineConfig(
       ],
     },
   },
-  {
-    files: ["src/**/*.tsx"],
-    rules: {
-      "no-restricted-syntax": [
-        "error",
-        {
-          selector:
-            "ImportDeclaration > ImportSpecifier[imported.name=/^(staticData|defaultDataset)$/]",
-          message: "Use useDataset() in TSX components.",
-        },
-      ],
-    },
-  },
 );

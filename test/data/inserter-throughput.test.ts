@@ -5,7 +5,7 @@ import {
   inserterItemsPerSecondForBeltAtProgress,
 } from '../../src/data/inserter-throughput.ts';
 import type { Belt, Inserter, InserterCapacityBonus } from '../../src/types.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const fastInserter: Inserter = {
   rotationSpeed: 0.04,

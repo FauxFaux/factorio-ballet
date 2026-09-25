@@ -9,7 +9,7 @@ import {
 } from '../../src/compute/kernel-problems.ts';
 import { normalizeTileDesignInput } from '../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../src/compute/tile-design/types.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);

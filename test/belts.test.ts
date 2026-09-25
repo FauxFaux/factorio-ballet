@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { chosenBelt, defaultBelt } from '../src/data/index.ts';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const { beltTiers } = defaultDataset;
 

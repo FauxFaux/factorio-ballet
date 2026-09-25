@@ -3,7 +3,7 @@ import type { CellEntry } from '../../src/cell.ts';
 import type { Solution } from '../../src/solve/index.ts';
 import { proposedSplits } from '../../src/compute/split.ts';
 import type { ResourceId } from '../../src/types.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const recipeRows = [
   {

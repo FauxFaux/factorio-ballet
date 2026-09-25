@@ -10,7 +10,6 @@ import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-s
 import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
 import { DatasetProvider } from '../src/dataset/context.tsx';
-import { defaultDataset } from '../src/dataset/index.ts';
 import { buildSuggestionPlanIndex } from '../src/dataset/precompute.ts';
 import {
   scoreRecipeSuggestion,
@@ -26,6 +25,7 @@ import {
   suggestedSoleProducerInputs,
   suggestedVoidResources,
 } from '../src/components/recipe-suggestions/suggestion-plans.ts';
+import { defaultDataset } from './with-bobang.ts';
 
 const waste = 'fluid:angels-water-yellow-waste' as const;
 

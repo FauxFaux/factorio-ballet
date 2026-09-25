@@ -5,7 +5,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { CellSide } from '../../../src/components/cell/side.tsx';
 import type { Solution } from '../../../src/solve';
 import type { Belt, ResourceId } from '../../../src/types.ts';
-import { defaultDataset } from '../../../src/dataset';
+import { defaultDataset } from '../../with-bobang.ts';
 
 afterEach(cleanup);
 

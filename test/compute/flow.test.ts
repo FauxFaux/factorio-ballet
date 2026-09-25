@@ -8,7 +8,7 @@ import {
 } from '../../src/compute/flow.ts';
 import { NO_EFFECTS } from '../../src/data/module-effects.ts';
 import { machinesFor } from '../../src/data/machines.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const gears = defaultDataset.data.recipes['iron-gear-wheel'];
 /** Three results, the rarest of them 0.0055% of a craft: the reason for the third decimal. */

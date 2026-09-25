@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 import cpuCell from '../../../docs/cells/cpu.json';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
 import { DatasetProvider } from '../../../src/dataset/context.tsx';
-import { defaultDataset } from '../../../src/dataset/index.ts';
+import { defaultDataset } from '../../with-bobang.ts';
 
 describe('RecipeConnections', () => {
   it('uses tile design for the summary and opens debug with its computed problem', async () => {

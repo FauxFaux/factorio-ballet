@@ -5,7 +5,7 @@ import {
   voidPlanFinder,
   voidPlans,
 } from '../../src/compute/void-path.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const recipe = (ingredients: ResourceId[], products: ResourceId[]): Recipe => ({
   ingredients: ingredients.map((resource) => ({ resource, amount: 1 })),

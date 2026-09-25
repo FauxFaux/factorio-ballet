@@ -18,8 +18,8 @@ import {
   kernelProblems,
 } from '../../src/compute/kernel-problems.ts';
 import { fmt } from '../../src/ts.ts';
-import { defaultDataset } from '../../src/dataset/index.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
+import { defaultDataset } from '../with-bobang.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);

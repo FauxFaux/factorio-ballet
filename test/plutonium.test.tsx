@@ -12,7 +12,7 @@ import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const cell: Cell = state.cl[0];
 const chosen = resolveChosen(defaultDataset, state.mo, undefined, undefined, state.gp);

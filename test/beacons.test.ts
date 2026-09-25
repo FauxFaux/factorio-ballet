@@ -11,7 +11,7 @@ import { chosenModule, type ChosenModules, SPEED_CATEGORY } from '../src/data/mo
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
 import { solveCell } from '../src/solve/index.ts';
 import type { Machine } from '../src/types.ts';
-import { defaultDataset } from '../src/dataset';
+import { defaultDataset } from './with-bobang.ts';
 
 const { beaconTiers } = defaultDataset;
 

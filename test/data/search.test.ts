@@ -8,7 +8,7 @@ import {
   type SearchScope,
 } from '../../src/data/search.ts';
 import { relevanceOf } from '../../src/data/index.ts';
-import { defaultDataset } from '../../src/dataset';
+import { defaultDataset } from '../with-bobang.ts';
 
 const { packLandmarks } = defaultDataset;
 
