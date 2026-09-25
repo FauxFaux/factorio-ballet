@@ -36,8 +36,11 @@ export function RecipeList({
   /** The header's resolved module and beacon choices, shared by every search result. */
   chosen: Chosen;
 }) {
-  const { soleProducerByResource } = useDataset();
-  const found = useMemo(() => searchMatches(search, progress, scope), [search, progress, scope]);
+  const { data, soleProducerByResource } = useDataset();
+  const found = useMemo(
+    () => searchMatches(data, search, progress, scope),
+    [search, progress, scope],
+  );
   const ordered = useMemo(() => {
     const barrelRecipes = found.filter(
       (result) => result.kind === 'recipe' && result.match.id.endsWith('-barrel'),

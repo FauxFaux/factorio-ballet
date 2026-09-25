@@ -16,7 +16,7 @@ export function isResourceChain(plan: ResourceChain | VoidPlan): plan is Resourc
 }
 
 export function usedSearchResources(data: StaticData, search: string, cell?: Cell) {
-  return parseSearch(search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap(
+  return parseSearch(data, search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap(
     (term) => (term.kind === 'uses' ? [...term.resources] : []),
   );
 }

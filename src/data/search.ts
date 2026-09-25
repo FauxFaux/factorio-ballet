@@ -1,6 +1,5 @@
 import { relevanceOf, resourceName } from './index.ts';
-import { staticData } from './decode.ts';
-import type { Recipe, Resource, ResourceId } from '../types.ts';
+import type { Recipe, Resource, ResourceId, StaticData } from '../types.ts';
 
 export interface RecipeMatch {
   id: string;
@@ -64,7 +63,11 @@ export function bareName(id: ResourceId): string {
  * anything else, exact ids win outright, then exact names (internal or human), then anything
  * containing the query.
  */
-export function resolveResources(query: string, scope?: SearchScope): Set<ResourceId> {
+export function resolveResources(
+  data: StaticData,
+  query: string,
+  scope?: SearchScope,
+): Set<ResourceId> {
   const q = query.toLowerCase();
   if (!q) return new Set();
 
@@ -74,16 +77,16 @@ export function resolveResources(query: string, scope?: SearchScope): Set<Resour
     return new Set(of && scope ? of(scope) : []);
   }
 
-  const ids = Object.keys(staticData.resources) as ResourceId[];
+  const ids = Object.keys(data.resources) as ResourceId[];
 
-  if (isResourceId(q) && staticData.resources[q as ResourceId]) return new Set([q as ResourceId]);
+  if (isResourceId(q) && data.resources[q as ResourceId]) return new Set([q as ResourceId]);
 
   const exact = ids.filter(
-    (id) => bareName(id).toLowerCase() === q || staticData.resources[id].human?.toLowerCase() === q,
+    (id) => bareName(id).toLowerCase() === q || data.resources[id].human?.toLowerCase() === q,
   );
   if (exact.length) return new Set(exact);
 
-  return new Set(ids.filter((id) => smatch(id, q) || smatch(resourceName(staticData, id), q)));
+  return new Set(ids.filter((id) => smatch(id, q) || smatch(resourceName(data, id), q)));
 }
 
 /**
@@ -107,7 +110,7 @@ export function flipDirection(search: string): string | null {
 }
 
 /** Split a search string into terms; whitespace separates, and all terms must match. */
-export function parseSearch(search: string, scope?: SearchScope): Term[] {
+export function parseSearch(data: StaticData, search: string, scope?: SearchScope): Term[] {
   return search
     .split(/\s+/)
     .filter((word) => word)
@@ -116,7 +119,7 @@ export function parseSearch(search: string, scope?: SearchScope): Term[] {
       const kind = colon === -1 ? '' : word.slice(0, colon).toLowerCase();
       if (kind === 'makes' || kind === 'uses') {
         const query = word.slice(colon + 1);
-        return { kind, query, resources: resolveResources(query, scope) };
+        return { kind, query, resources: resolveResources(data, query, scope) };
       }
       return { kind: 'text', text: word.toLowerCase() };
     });
@@ -139,15 +142,16 @@ function matches(term: Term, id: string, recipe: Recipe, name: string): boolean 
  * search is being run from, if any, which `@`-queries resolve against.
  */
 export function searchRecipes(
+  data: StaticData,
   search: string,
   progress: number,
   scope?: SearchScope,
 ): RecipeMatch[] {
-  const terms = parseSearch(search, scope);
+  const terms = parseSearch(data, search, scope);
   if (!terms.length) return [];
 
   const found: RecipeMatch[] = [];
-  for (const [id, recipe] of Object.entries(staticData.recipes)) {
+  for (const [id, recipe] of Object.entries(data.recipes)) {
     const name = recipe.human ?? id;
     if (terms.every((term) => matches(term, id, recipe, name))) found.push({ id, recipe, name });
   }
@@ -163,15 +167,19 @@ export function searchRecipes(
  * Resources matching a free-text search, in the same relevance order as recipes. Directed searches
  * deliberately have no resource results: `makes:` and `uses:` describe recipe flows, not items.
  */
-export function searchResources(search: string, progress: number): ResourceMatch[] {
-  const terms = parseSearch(search);
+export function searchResources(
+  data: StaticData,
+  search: string,
+  progress: number,
+): ResourceMatch[] {
+  const terms = parseSearch(data, search);
   if (!terms.length || terms.some((term) => term.kind !== 'text')) return [];
   const textTerms = terms.filter(
     (term): term is Extract<Term, { kind: 'text' }> => term.kind === 'text',
   );
 
-  return (Object.entries(staticData.resources) as [ResourceId, Resource][])
-    .map(([id, resource]) => ({ id, resource, name: resourceName(staticData, id) }))
+  return (Object.entries(data.resources) as [ResourceId, Resource][])
+    .map(([id, resource]) => ({ id, resource, name: resourceName(data, id) }))
     .filter(({ id, name }) =>
       textTerms.every((term) => smatch(id, term.text) || smatch(name, term.text)),
     )
@@ -185,16 +193,20 @@ export function searchResources(search: string, progress: number): ResourceMatch
 
 /** Combine ordinary resource and recipe searches into one relevance-ranked result stream. */
 export function searchMatches(
+  data: StaticData,
   search: string,
   progress: number,
   scope?: SearchScope,
 ): SearchMatch[] {
   return [
-    ...searchRecipes(search, progress, scope).map((match): SearchMatch => ({
+    ...searchRecipes(data, search, progress, scope).map((match): SearchMatch => ({
       kind: 'recipe',
       match,
     })),
-    ...searchResources(search, progress).map((match): SearchMatch => ({ kind: 'resource', match })),
+    ...searchResources(data, search, progress).map((match): SearchMatch => ({
+      kind: 'resource',
+      match,
+    })),
   ].sort(
     (a, b) =>
       relevanceOf(a.kind === 'recipe' ? a.match.recipe : a.match.resource, progress) -
