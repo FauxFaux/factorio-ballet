@@ -12,7 +12,7 @@ import { solveCell } from '../src/solve/index.ts';
 import { dumbSolver } from '../src/solve/dumb.ts';
 import { matrixSolver } from '../src/solve/matrix.ts';
 import { CellBox } from '../src/components/cell/box.tsx';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
 
 const cell: Cell = state.cl[0];
@@ -22,7 +22,7 @@ afterEach(cleanup);
 
 describe('plutonium boundary diagnosis', () => {
   it('reproduces the misleading balanced U-238 in the saved dumb answer', () => {
-    const answer = solveCell(defaultDataset, staticData, cell, state.gp, chosen, dumbSolver);
+    const answer = solveCell(defaultDataset, staticDs.data, cell, state.gp, chosen, dumbSolver);
     expect(answer.counts).toEqual(snapshot.recipes.map((recipe) => recipe.count));
     expect(answer.balance.get(u238)).toBe(0);
     expect(Math.abs(answer.balance.get('item:uranium-235')!)).toBeGreaterThan(0.1);
@@ -30,7 +30,7 @@ describe('plutonium boundary diagnosis', () => {
   });
 
   it.each([matrixSolver, dumbSolver])('suggests a verified U-238 export for $id', (solver) => {
-    const answer = solveCell(defaultDataset, staticData, cell, state.gp, chosen, solver);
+    const answer = solveCell(defaultDataset, staticDs.data, cell, state.gp, chosen, solver);
     const suggestion = answer.boundarySuggestions?.find((note) => note.resource === u238);
     expect(suggestion).toMatchObject({
       direction: 'export',
@@ -40,14 +40,21 @@ describe('plutonium boundary diagnosis', () => {
       1,
     );
     const exported: Cell = { ...cell, exports: [u238] };
-    const fixed = solveCell(defaultDataset, staticData, exported, state.gp, chosen, matrixSolver);
+    const fixed = solveCell(
+      defaultDataset,
+      staticDs.data,
+      exported,
+      state.gp,
+      chosen,
+      matrixSolver,
+    );
     expect(fixed.complete).toBe(true);
     expect(fixed.notes).toEqual([]);
     expect(fixed.boundarySuggestions).toEqual([]);
     expect(fixed.counts[0]).toBe(7);
     expect(fixed.balance.get(u238)).toBeCloseTo(suggestion!.rate, 9);
     expect(fixed.balance.get(u238)).toBeGreaterThan(0);
-    const iface = cellInterface(staticData, exported);
+    const iface = cellInterface(staticDs.data, exported);
     for (const resource of iface.inPlay.filter(
       (id) => !iface.inputs.includes(id) && !iface.outputs.includes(id),
     )) {
@@ -57,8 +64,15 @@ describe('plutonium boundary diagnosis', () => {
 
   it('warns that exporting alone does not repair the dumb solver on this cycle', () => {
     const fixedBoundary: Cell = { ...cell, exports: [u238] };
-    const dumb = solveCell(defaultDataset, staticData, fixedBoundary, state.gp, chosen, dumbSolver);
-    const iface = cellInterface(staticData, fixedBoundary);
+    const dumb = solveCell(
+      defaultDataset,
+      staticDs.data,
+      fixedBoundary,
+      state.gp,
+      chosen,
+      dumbSolver,
+    );
+    const iface = cellInterface(staticDs.data, fixedBoundary);
     expect(
       iface.inPlay.some(
         (id) =>
@@ -86,20 +100,20 @@ describe('plutonium boundary diagnosis', () => {
     const user = userEvent.setup();
     render(<Example />);
     const chip = screen.getByRole('button', {
-      name: `Show recipes for ${resourceName(staticData, u238)}`,
+      name: `Show recipes for ${resourceName(staticDs.data, u238)}`,
     });
     expect(
-      within(chip).getByLabelText(`Review export for ${resourceName(staticData, u238)}`),
+      within(chip).getByLabelText(`Review export for ${resourceName(staticDs.data, u238)}`),
     ).toBeTruthy();
     await user.click(
-      screen.getByRole('button', { name: `export ${resourceName(staticData, u238)}` }),
+      screen.getByRole('button', { name: `export ${resourceName(staticDs.data, u238)}` }),
     );
     expect(
       screen.queryByText(/recalculating with this boundary balances all other internal resources/),
     ).toBeNull();
     expect(screen.queryByText(/These internal balances cannot all close together/)).toBeNull();
     expect(
-      screen.queryByLabelText(`Review export for ${resourceName(staticData, u238)}`),
+      screen.queryByLabelText(`Review export for ${resourceName(staticDs.data, u238)}`),
     ).toBeNull();
     expect(screen.getByRole('button', { name: 'clear explicit export' })).toBeTruthy();
   });

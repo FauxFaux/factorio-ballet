@@ -9,7 +9,7 @@ import { cellInterface, newCell, type Cell } from '../src/cell.ts';
 import { RecipeSuggestions } from '../src/components/recipe-suggestions/recipe-suggestions.tsx';
 import { resourceName } from '../src/data/index.ts';
 import { isBarrelling, isUnbarrelling } from '../src/compute/recipes.ts';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { DatasetProvider } from '../src/dataset/context.tsx';
 import { defaultDataset } from '../src/dataset/index.ts';
 import { buildSuggestionPlanIndex } from '../src/dataset/precompute.ts';
@@ -59,12 +59,12 @@ function SuggestionsExample({ initialCell }: { initialCell: Cell }) {
 
 describe('suggestedVoidResources', () => {
   it('includes the resource targeted by a uses search', () => {
-    expect(suggestedVoidResources(staticData, `uses:${waste}`)).toEqual([waste]);
+    expect(suggestedVoidResources(staticDs.data, `uses:${waste}`)).toEqual([waste]);
   });
 
   it('includes cell outputs, including those named by uses:@out only once', () => {
     const cell = newCell('empty-angels-water-yellow-waste-barrel');
-    const suggestions = suggestedVoidResources(staticData, 'uses:@out', cell);
+    const suggestions = suggestedVoidResources(staticDs.data, 'uses:@out', cell);
 
     expect(suggestions).toContain(waste);
     expect(suggestions.filter((resource) => resource === waste)).toHaveLength(1);
@@ -78,7 +78,7 @@ describe('suggestedResourceChains', () => {
     };
 
     const chains =
-      suggestedResourceChains(staticData, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
+      suggestedResourceChains(staticDs.data, defaultDataset.suggestionPlans, cell).get(waste) ?? [];
 
     expect(chains).toContainEqual({
       target: 'fluid:angels-liquid-sulfuric-acid',
@@ -95,9 +95,9 @@ describe('suggestedResourceChains', () => {
 
 describe('suggestion plan indexes', () => {
   it('counts producers from the supplied static data', () => {
-    const recipe = staticData.recipes['iron-plate'];
-    const withProducer = { ...staticData, recipes: { only: recipe } };
-    const withoutProducer = { ...staticData, recipes: {} };
+    const recipe = staticDs.data.recipes['iron-plate'];
+    const withProducer = { ...staticDs.data, recipes: { only: recipe } };
+    const withoutProducer = { ...staticDs.data, recipes: {} };
 
     const first = buildSuggestionPlanIndex(withProducer);
     const second = buildSuggestionPlanIndex(withoutProducer);
@@ -137,7 +137,7 @@ describe('single-recipe interface suggestions', () => {
     );
 
     expect(
-      cellInterface(staticData, { entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs,
+      cellInterface(staticDs.data, { entries: [{ recipe: 'bob-silicon-nitride' }] }).inputs,
     ).toContain(nitrogen);
     expect(suggestions).toContainEqual(
       expect.objectContaining({ target: nitrogen, recipes: ['angels-air-separation'] }),
@@ -515,7 +515,7 @@ describe('suggestedRecipePaths', () => {
       paths
         .flatMap((path) => path.plan.recipes)
         .some((id) => {
-          const recipe = staticData.recipes[id]!;
+          const recipe = staticDs.data.recipes[id]!;
           return isBarrelling(recipe) || isUnbarrelling(recipe);
         }),
     ).toBe(false);
@@ -528,7 +528,7 @@ describe('RecipeSuggestions', () => {
     render(h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'speed-module-3' }] } }));
 
     const card = screen
-      .getByRole('heading', { name: `Make ${resourceName(staticData, 'item:speed-module-2')}` })
+      .getByRole('heading', { name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}` })
       .closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
@@ -536,7 +536,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       screen.queryByRole('heading', {
-        name: `Make ${resourceName(staticData, 'item:speed-module-2')}`,
+        name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}`,
       }),
     ).toBeNull();
   });
@@ -551,7 +551,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       screen.queryByRole('heading', {
-        name: `Use ${resourceName(staticData, 'item:bob-speed-processor')}`,
+        name: `Use ${resourceName(staticDs.data, 'item:bob-speed-processor')}`,
       }),
     ).toBeNull();
   });
@@ -564,7 +564,9 @@ describe('RecipeSuggestions', () => {
     const { queryByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
 
     expect(
-      queryByRole('heading', { name: `Make ${resourceName(staticData, 'item:speed-module-2')}` }),
+      queryByRole('heading', {
+        name: `Make ${resourceName(staticDs.data, 'item:speed-module-2')}`,
+      }),
     ).toBeNull();
   });
 
@@ -577,7 +579,7 @@ describe('RecipeSuggestions', () => {
 
     expect(
       queryByRole('heading', {
-        name: `Use ${resourceName(staticData, 'item:bob-speed-processor')}`,
+        name: `Use ${resourceName(staticDs.data, 'item:bob-speed-processor')}`,
       }),
     ).toBeNull();
   });
@@ -595,7 +597,7 @@ describe('RecipeSuggestions', () => {
 
     const { getByRole } = render(h(RecipeSuggestions, { search: '', cell, progress: 0 }));
     const card = getByRole('heading', {
-      name: `Use ${resourceName(staticData, suggestion.resource)}`,
+      name: `Use ${resourceName(staticDs.data, suggestion.resource)}`,
     }).closest('article');
     expect(card).not.toBeNull();
     if (!card) return;
@@ -603,12 +605,12 @@ describe('RecipeSuggestions', () => {
     const { plan } = suggestion;
     expect(
       within(card).getByLabelText(
-        `Needs: ${[plan.target, ...plan.inputs].map((v) => resourceName(staticData, v)).join(', ')}`,
+        `Needs: ${[plan.target, ...plan.inputs].map((v) => resourceName(staticDs.data, v)).join(', ')}`,
       ),
     ).toBeTruthy();
     expect(
       within(card).getByLabelText(
-        `Makes: ${plan.outputs.map((v) => resourceName(staticData, v)).join(', ')}`,
+        `Makes: ${plan.outputs.map((v) => resourceName(staticDs.data, v)).join(', ')}`,
       ),
     ).toBeTruthy();
   });

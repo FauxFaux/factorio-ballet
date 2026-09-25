@@ -4,7 +4,7 @@ import { cleanup, fireEvent, screen } from '@testing-library/preact';
 import { render } from './render-with-dataset.tsx';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { CompactRecipe } from '../src/components/compact-recipe.tsx';
 import { RecipeCard } from '../src/components/recipe.tsx';
@@ -16,7 +16,7 @@ afterEach(cleanup);
 
 describe('CompactRecipe', () => {
   it('can render a compact, read-only folded summary', () => {
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const { container } = render(
       <CompactRecipe
         match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
@@ -36,7 +36,7 @@ describe('CompactRecipe', () => {
 
   it('adds its recipe when an add action is available', async () => {
     const user = userEvent.setup();
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const onAdd = vi.fn();
     render(
       <CompactRecipe
@@ -55,7 +55,7 @@ describe('CompactRecipe', () => {
 describe('RecipeCard', () => {
   it('shows expanded flow rates to two decimal places per second', async () => {
     const user = userEvent.setup();
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const { container } = render(
       <RecipeCard
         match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
@@ -71,7 +71,7 @@ describe('RecipeCard', () => {
   });
 
   it('uses compact fractions for quarter-based machine speeds', () => {
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const { container } = render(
       <RecipeCard
         match={{ id: 'iron-gear-wheel', recipe, name: recipe.human ?? 'Iron gear wheel' }}
@@ -91,7 +91,7 @@ describe('RecipeCard', () => {
   });
 
   it('previews a machine while it is hovered and restores auto selection afterwards', () => {
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const machine = machinesFor(ds, recipe)[0]!;
     const { container } = render(
       <RecipeCard
@@ -112,7 +112,7 @@ describe('RecipeCard', () => {
 
   it('adds a recipe in the machine selected from its machine list', async () => {
     const user = userEvent.setup();
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const machine = machinesFor(ds, recipe)[0]!;
     const onAdd = vi.fn();
 
@@ -133,7 +133,7 @@ describe('RecipeCard', () => {
 
   it('returns to automatic machine choice when the selected machine is clicked again', async () => {
     const user = userEvent.setup();
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const machine = machinesFor(ds, recipe)[0]!;
     const onAdd = vi.fn();
 
@@ -156,7 +156,7 @@ describe('RecipeCard', () => {
 
   it('previews additive beacons against the default assembler', async () => {
     const user = userEvent.setup();
-    const recipe = staticData.recipes['iron-gear-wheel'];
+    const recipe = staticDs.data.recipes['iron-gear-wheel'];
     const machines = machinesFor(ds, recipe);
     const defaultMatch = defaultMachine(machines, 0.5)!;
     const { container } = render(
@@ -166,8 +166,8 @@ describe('RecipeCard', () => {
         progress={0.5}
         chosen={{
           modules: { speed: 'speed-module' },
-          beacon: staticData.beacons['beacon'],
-          belt: staticData.belts['transport-belt'],
+          beacon: staticDs.data.beacons['beacon'],
+          belt: staticDs.data.belts['transport-belt'],
         }}
       />,
     );

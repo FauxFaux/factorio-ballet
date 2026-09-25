@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 
 describe('the ingested inserters', () => {
   it("keeps each live prototype's motion, reach and base hand capacity", () => {
-    expect(Object.keys(staticData.inserters)).toEqual([
+    expect(Object.keys(staticDs.data.inserters)).toEqual([
       'inserter',
       'fast-inserter',
       'burner-inserter',
@@ -16,7 +16,7 @@ describe('the ingested inserters', () => {
       'bob-turbo-inserter',
       'bob-turbo-bulk-inserter',
     ]);
-    expect(staticData.inserters['inserter']).toEqual({
+    expect(staticDs.data.inserters['inserter']).toEqual({
       human: 'Inserter',
       item: 'inserter',
       rotationSpeed: 0.02,
@@ -25,26 +25,26 @@ describe('the ingested inserters', () => {
       insertPosition: { x: 0, y: 1.2 },
       baseStackSize: 1,
     });
-    expect(staticData.inserters['bulk-inserter']).toMatchObject({
+    expect(staticDs.data.inserters['bulk-inserter']).toMatchObject({
       rotationSpeed: 0.06,
       extensionSpeed: 0.15,
       baseStackSize: 2,
       bulk: true,
     });
-    expect(staticData.inserters['burner-inserter']?.rotationSpeed).toBe(0.013);
-    expect(staticData.inserters['bob-red-inserter']).toMatchObject({
+    expect(staticDs.data.inserters['burner-inserter']?.rotationSpeed).toBe(0.013);
+    expect(staticDs.data.inserters['bob-red-inserter']).toMatchObject({
       startingDistance: 0.7,
     });
   });
 
   it('can join every inserter to the item which places it', () => {
-    for (const [id, inserter] of Object.entries(staticData.inserters)) {
-      expect(staticData.resources[`item:${inserter.item}`]?.human, id).toBeTruthy();
+    for (const [id, inserter] of Object.entries(staticDs.data.inserters)) {
+      expect(staticDs.data.resources[`item:${inserter.item}`]?.human, id).toBeTruthy();
     }
   });
 
   it('puts finite hand-capacity research on the same game-progress scale as everything else', () => {
-    expect(staticData.inserterCapacityBonuses).toEqual([
+    expect(staticDs.data.inserterCapacityBonuses).toEqual([
       [0.2711, 1, 0],
       [0.3125, 1, 1],
       [0.3277, 1, 2],

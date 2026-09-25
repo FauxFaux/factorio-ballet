@@ -7,7 +7,7 @@ import {
   defaultBelt,
   noChoice,
 } from '../src/data/index.ts';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { chosenModule, SPEED_CATEGORY, type ChosenModules } from '../src/data/modules.ts';
 import { laidOutEffects, moduleBoost, moduleLayout } from '../src/data/module-effects.ts';
 import { solveCell } from '../src/solve/index.ts';
@@ -16,19 +16,19 @@ import { defaultDataset } from '../src/dataset';
 
 const { beaconTiers } = defaultDataset;
 
-const gears = staticData.recipes['iron-gear-wheel'];
+const gears = staticDs.data.recipes['iron-gear-wheel'];
 /** Does not allow productivity, which is the ordinary case; see `test/modules.test.ts`. */
-const circuits = staticData.recipes['electronic-circuit'];
+const circuits = staticDs.data.recipes['electronic-circuit'];
 /** Two module slots, which is the machine the worked example in `docs/beacons.wiki` terms uses. */
-const two = staticData.machines['assembling-machine-2'];
-const three = staticData.machines['assembling-machine-3'];
-const character = staticData.machines['character'];
+const two = staticDs.data.machines['assembling-machine-2'];
+const three = staticDs.data.machines['assembling-machine-3'];
+const character = staticDs.data.machines['character'];
 
 /** +40% each, and the tier the whole file quotes. */
 const SPEED_3 = 'speed-module-3';
 
 /** The two-slot vanilla beacon, which is what `docs/beacons.wiki`'s worked example is tiled with. */
-const VANILLA = staticData.beacons['beacon'];
+const VANILLA = staticDs.data.beacons['beacon'];
 
 /** What the header comes to: modules of each family, and the beacon they overflow into. */
 const kit = (modules: ChosenModules): Chosen => ({
@@ -46,8 +46,8 @@ const boost = (
 
 describe('the ingested beacons', () => {
   it('is the three the pack has, with their slots and their transmission', () => {
-    expect(Object.keys(staticData.beacons)).toEqual(['beacon', 'bob-beacon-2', 'bob-beacon-3']);
-    expect(staticData.beacons['beacon']).toEqual({
+    expect(Object.keys(staticDs.data.beacons)).toEqual(['beacon', 'bob-beacon-2', 'bob-beacon-3']);
+    expect(staticDs.data.beacons['beacon']).toEqual({
       human: 'Beacon',
       item: 'beacon',
       moduleSlots: 2,
@@ -55,13 +55,13 @@ describe('the ingested beacons', () => {
       // the game's own way of saying productivity modules do not go in a beacon
       allowedEffects: ['consumption', 'speed', 'pollution'],
     });
-    expect(staticData.beacons['bob-beacon-3'].moduleSlots).toBe(6);
+    expect(staticDs.data.beacons['bob-beacon-3'].moduleSlots).toBe(6);
   });
 
   it('are cheapest first, with an item in the data to draw each of them with', () => {
     expect(beaconTiers.map(({ id }) => id)).toEqual(['beacon', 'bob-beacon-2', 'bob-beacon-3']);
     for (const { id, beacon, complexity } of beaconTiers) {
-      expect(staticData.resources[`item:${beacon.item}`]?.human, id).toBeTruthy();
+      expect(staticDs.data.resources[`item:${beacon.item}`]?.human, id).toBeTruthy();
       expect(complexity, id).toBeGreaterThan(0);
     }
   });
@@ -90,7 +90,7 @@ describe('the chosen beacon', () => {
 
   it('follows the slider where the header picked nothing', () => {
     expect(chosenBeacon(defaultDataset, undefined, 0)).toBeUndefined();
-    expect(chosenBeacon(defaultDataset, undefined, 1)).toBe(staticData.beacons['bob-beacon-3']);
+    expect(chosenBeacon(defaultDataset, undefined, 1)).toBe(staticDs.data.beacons['bob-beacon-3']);
   });
 });
 
@@ -227,7 +227,7 @@ describe('a cell row with beacons', () => {
 
   it("is the row's own count of the header's beacon", () => {
     expect(
-      entryRun(defaultDataset, staticData, entry, gears, entry.machine, kit({ speed: SPEED_3 }))
+      entryRun(defaultDataset, staticDs.data, entry, gears, entry.machine, kit({ speed: SPEED_3 }))
         .layout.speed,
     ).toMatchObject({
       module: SPEED_3,
@@ -238,7 +238,7 @@ describe('a cell row with beacons', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         entry,
         gears,
         entry.machine,
@@ -253,7 +253,7 @@ describe('a cell row with beacons', () => {
   it('fills the machine when the row asks for nothing', () => {
     const auto = { ...entry, beacons: undefined };
     expect(
-      entryRun(defaultDataset, staticData, auto, gears, auto.machine, kit({ speed: SPEED_3 }))
+      entryRun(defaultDataset, staticDs.data, auto, gears, auto.machine, kit({ speed: SPEED_3 }))
         .effects.speed,
     ).toBeCloseTo(1.8);
   });
@@ -263,15 +263,15 @@ describe('a cell row with beacons', () => {
       entries: [{ ...entry, beacons, count: 1 }, { recipe: 'iron-plate' }],
     });
     const plates = (c: Cell) =>
-      solveCell(defaultDataset, staticData, c, 0, kit({ speed: SPEED_3 })).counts[1]!;
+      solveCell(defaultDataset, staticDs.data, c, 0, kit({ speed: SPEED_3 })).counts[1]!;
     // a machine going 2.16× as fast eats its ingredients 2.16× as fast, and the row feeding it
     // has to be that much bigger: 3.8785 / 1.8, the beaconed row against the auto one
     expect(plates(cell(3)) / plates(cell(undefined))).toBeCloseTo(2.1547);
     // with no speed module chosen at all, the count is the unmodded one
     expect(
-      solveCell(defaultDataset, staticData, cell(3), 0, noChoice(defaultDataset)).counts[1],
+      solveCell(defaultDataset, staticDs.data, cell(3), 0, noChoice(defaultDataset)).counts[1],
     ).toBeCloseTo(
-      solveCell(defaultDataset, staticData, cell(0), 0, noChoice(defaultDataset)).counts[1]!,
+      solveCell(defaultDataset, staticDs.data, cell(0), 0, noChoice(defaultDataset)).counts[1]!,
     );
   });
 });
@@ -312,7 +312,7 @@ describe('moduleLayout', () => {
 
   it('fills the slots with productivity where the recipe pays for it', () => {
     // two slots of productivity module 3: +12% output each, at −15% speed each
-    const auto = entryRun(defaultDataset, staticData, row, gears, row.machine, kit(both));
+    const auto = entryRun(defaultDataset, staticDs.data, row, gears, row.machine, kit(both));
     expect(auto.layout.productivity).toMatchObject({ module: prod3, wanted: 2, inMachine: 2 });
     expect(auto.layout.speed).toMatchObject({ wanted: 0, inMachine: 0, beacons: 0 });
     expect(auto.effects.productivity).toBeCloseTo(1.24);
@@ -323,7 +323,7 @@ describe('moduleLayout', () => {
     // a productivity module here would be nothing but its speed malus, so auto is none of them
     const auto = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       {
         ...row,
         recipe: 'electronic-circuit',
@@ -349,7 +349,7 @@ describe('moduleLayout', () => {
   it('gives speed whatever slots the productivity modules left', () => {
     const one = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       { ...row, productivityModules: 1 },
       gears,
       row.machine,
@@ -367,7 +367,7 @@ describe('moduleLayout', () => {
     // eight speed modules over two-slot beacons is four of them at 1.5/sqrt(4) = 75% each
     const eight = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       { ...row, beacons: 4 },
       gears,
       row.machine,
@@ -384,7 +384,7 @@ describe('moduleLayout', () => {
   it('uses the row beacon count, filling every beacon with speed modules', () => {
     const four = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       { ...row, beacons: 4 },
       gears,
       row.machine,
@@ -398,7 +398,7 @@ describe('moduleLayout', () => {
   it('caps productivity at the slots there are, having nowhere else to put it', () => {
     const asked = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       { ...row, productivityModules: 8 },
       gears,
       row.machine,
@@ -412,10 +412,10 @@ describe('moduleLayout', () => {
     // the case this was got wrong on: Arumbiphila in a desert farm, which takes both families and
     // wants the bio-yield one — two slots of pure +50% yield, and no speed malus to show for it
     const farm = { recipe: 'angels-desert-5', machine: 'angels-desert-farm' };
-    const grown = staticData.recipes['angels-desert-5'];
+    const grown = staticDs.data.recipes['angels-desert-5'];
     const run = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       farm,
       grown,
       farm.machine,
@@ -434,11 +434,11 @@ describe('moduleLayout', () => {
 
   it('says what could reach the machine at all, which is what a row draws a box for', () => {
     // a pump has no slots, so nothing reaches it — not a module, and not a beacon either
-    const pump = staticData.recipes['synthetic:pumping-water'];
+    const pump = staticDs.data.recipes['synthetic:pumping-water'];
     expect(
       entryRun(
         defaultDataset,
-        staticData,
+        staticDs.data,
         { recipe: 'synthetic:pumping-water' },
         pump,
         'offshore-pump',
@@ -449,7 +449,7 @@ describe('moduleLayout', () => {
     expect(
       entryRun(
         defaultDataset,
-        staticData,
+        staticDs.data,
         { ...row, recipe: 'electronic-circuit' },
         circuits,
         row.machine,
@@ -457,7 +457,7 @@ describe('moduleLayout', () => {
       ).layout.reaches,
     ).toEqual({ speed: true, productivity: false });
     expect(
-      entryRun(defaultDataset, staticData, row, gears, row.machine, kit(both)).layout.reaches,
+      entryRun(defaultDataset, staticDs.data, row, gears, row.machine, kit(both)).layout.reaches,
     ).toEqual({
       speed: true,
       productivity: true,
@@ -467,7 +467,7 @@ describe('moduleLayout', () => {
   it('is nothing at all where the header has picked no module of that family', () => {
     const speedOnly = entryRun(
       defaultDataset,
-      staticData,
+      staticDs.data,
       row,
       gears,
       row.machine,
@@ -476,7 +476,9 @@ describe('moduleLayout', () => {
     // no productivity module to fill the slots with, so the speed request has them instead
     expect(speedOnly.layout.productivity.module).toBeUndefined();
     expect(speedOnly.effects).toEqual({ speed: 1.8, productivity: 1 });
-    expect(entryRun(defaultDataset, staticData, row, gears, row.machine, kit({})).effects).toEqual({
+    expect(
+      entryRun(defaultDataset, staticDs.data, row, gears, row.machine, kit({})).effects,
+    ).toEqual({
       speed: 1,
       productivity: 1,
     });

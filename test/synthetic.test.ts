@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { machinesFor } from '../src/data/machines.ts';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { searchRecipes } from '../src/data/search.ts';
 import { energyInMegajoules, powerInMegawatts } from '../scripts/synthetic.ts';
 import { defaultDataset } from '../src/dataset';
@@ -13,7 +13,7 @@ const ds = defaultDataset;
  */
 describe('synthetic recipes', () => {
   it('pumps water out of nothing, at 1200/s in a vanilla offshore pump', () => {
-    const recipe = staticData.recipes['synthetic:pumping-water'];
+    const recipe = staticDs.data.recipes['synthetic:pumping-water'];
     expect(recipe.synthetic).toBe(true);
     expect(recipe.ingredients).toEqual([]);
     expect(recipe.products).toEqual([
@@ -27,7 +27,7 @@ describe('synthetic recipes', () => {
   });
 
   it('mines an ore patch, at 0.5/s in an electric mining drill', () => {
-    const recipe = staticData.recipes['synthetic:mining-coal'];
+    const recipe = staticDs.data.recipes['synthetic:mining-coal'];
     expect(recipe.synthetic).toBe(true);
     expect(recipe.products.map((p) => p.resource)).toEqual(['item:coal']);
 
@@ -37,15 +37,15 @@ describe('synthetic recipes', () => {
   });
 
   it('charges the infinite ores their acid, a tenth of the prototype figure', () => {
-    const recipe = staticData.recipes['synthetic:mining-infinite-angels-ore1'];
+    const recipe = staticDs.data.recipes['synthetic:mining-infinite-angels-ore1'];
     expect(recipe.ingredients).toEqual([
       { resource: 'fluid:angels-liquid-sulfuric-acid', amount: 1 },
     ]);
   });
 
   it('keeps a drill to the resource categories it can actually work', () => {
-    const solid = machinesFor(ds, staticData.recipes['synthetic:mining-coal']).map((m) => m.id);
-    const fluid = machinesFor(ds, staticData.recipes['synthetic:mining-crude-oil']).map(
+    const solid = machinesFor(ds, staticDs.data.recipes['synthetic:mining-coal']).map((m) => m.id);
+    const fluid = machinesFor(ds, staticDs.data.recipes['synthetic:mining-crude-oil']).map(
       (m) => m.id,
     );
     expect(solid).toContain('electric-mining-drill');
@@ -55,7 +55,7 @@ describe('synthetic recipes', () => {
   });
 
   it('burns a fuel cell at each compatible reactor input rate', () => {
-    const recipe = staticData.recipes['synthetic:burning-uranium-fuel-cell'];
+    const recipe = staticDs.data.recipes['synthetic:burning-uranium-fuel-cell'];
     expect(recipe.ingredients).toEqual([{ resource: 'item:uranium-fuel-cell', amount: 1 }]);
     expect(recipe.products).toEqual([
       { resource: 'item:depleted-uranium-fuel-cell', amount: { fixed: 1 }, probability: 1 },
@@ -72,9 +72,9 @@ describe('synthetic recipes', () => {
   });
 
   it('keeps reactor fuel categories separate and omits fuels with no spent result', () => {
-    const thorium = staticData.recipes['synthetic:burning-angels-thorium-fuel-cell'];
+    const thorium = staticDs.data.recipes['synthetic:burning-angels-thorium-fuel-cell'];
     expect(machinesFor(ds, thorium).map(({ id }) => id)).toEqual(['bob-nuclear-reactor-2']);
-    expect(staticData.recipes['synthetic:burning-coal']).toBeUndefined();
+    expect(staticDs.data.recipes['synthetic:burning-coal']).toBeUndefined();
   });
 
   it('normalises Factorio energy strings to mega-units', () => {
@@ -86,13 +86,13 @@ describe('synthetic recipes', () => {
   });
 
   it('turns up in a search for what it makes', () => {
-    expect(searchRecipes(staticData, 'makes:fluid:water', 0).map((m) => m.id)).toContain(
+    expect(searchRecipes(staticDs.data, 'makes:fluid:water', 0).map((m) => m.id)).toContain(
       'synthetic:pumping-water',
     );
   });
 
   it('gives every synthetic recipe a machine, a product and a name', () => {
-    const all = Object.entries(staticData.recipes).filter(([, r]) => r.synthetic);
+    const all = Object.entries(staticDs.data.recipes).filter(([, r]) => r.synthetic);
     expect(all.length).toBeGreaterThan(0);
     for (const [id, recipe] of all) {
       expect(id, `${id} is namespaced`).toMatch(/^synthetic:/);

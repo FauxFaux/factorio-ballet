@@ -20,7 +20,7 @@ import {
 } from '../src/cell.ts';
 import { defaultMachine, machinesFor } from '../src/data/machines.ts';
 import { complexityOf, noChoice } from '../src/data/index.ts';
-import { staticData } from '../src/data/decode.ts';
+import { staticDs } from '../src/data/decode.ts';
 import { defaultDataset } from '../src/dataset';
 
 const ds = defaultDataset;
@@ -30,11 +30,15 @@ const chain: Cell = { entries: [{ recipe: 'iron-plate' }, { recipe: 'iron-gear-w
 
 describe('cellInterface', () => {
   it('has nothing to say about an empty cell', () => {
-    expect(cellInterface(staticData, newCell())).toEqual({ inputs: [], outputs: [], inPlay: [] });
+    expect(cellInterface(staticDs.data, newCell())).toEqual({
+      inputs: [],
+      outputs: [],
+      inPlay: [],
+    });
   });
 
   it('reads a lone recipe straight off', () => {
-    expect(cellInterface(staticData, newCell('iron-plate'))).toEqual({
+    expect(cellInterface(staticDs.data, newCell('iron-plate'))).toEqual({
       inputs: ['item:angels-ore1-crushed'],
       outputs: ['item:iron-plate'],
       inPlay: ['item:angels-ore1-crushed', 'item:iron-plate'],
@@ -45,7 +49,7 @@ describe('cellInterface', () => {
    * dropped by the ingest, so there is no fake output on the cell's right-hand side. */
   it('reads a sink as an input with nothing handed on', () => {
     expect(
-      cellInterface(staticData, newCell('angels-water-void-angels-water-yellow-waste')),
+      cellInterface(staticDs.data, newCell('angels-water-void-angels-water-yellow-waste')),
     ).toEqual({
       inputs: ['fluid:angels-water-yellow-waste'],
       outputs: [],
@@ -54,13 +58,13 @@ describe('cellInterface', () => {
   });
 
   it('treats the expected loss of a returned saw blade as a necessary input', () => {
-    expect(cellInterface(staticData, newCell('angels-wood-sawing-1'))).toEqual({
+    expect(cellInterface(staticDs.data, newCell('angels-wood-sawing-1'))).toEqual({
       inputs: ['item:angels-solid-saw', 'item:angels-solid-tree'],
       outputs: ['item:wood'],
       inPlay: ['item:angels-solid-saw', 'item:angels-solid-tree', 'item:wood'],
     });
 
-    const withSaws = cellInterface(staticData, {
+    const withSaws = cellInterface(staticDs.data, {
       entries: [{ recipe: 'angels-solid-saw' }, { recipe: 'angels-wood-sawing-1' }],
     });
     expect(withSaws.inputs).not.toContain('item:angels-solid-saw');
@@ -68,7 +72,7 @@ describe('cellInterface', () => {
   });
 
   it('keeps the open edges while including every resource in play', () => {
-    expect(cellInterface(staticData, chain)).toEqual({
+    expect(cellInterface(staticDs.data, chain)).toEqual({
       inputs: ['item:angels-ore1-crushed'],
       outputs: ['item:iron-gear-wheel'],
       inPlay: ['item:angels-ore1-crushed', 'item:iron-plate', 'item:iron-gear-wheel'],
@@ -77,16 +81,16 @@ describe('cellInterface', () => {
 
   it('ignores an entry the data no longer has', () => {
     const stale = { entries: [{ recipe: 'no-such-recipe' }, { recipe: 'iron-gear-wheel' }] };
-    expect(cellInterface(staticData, stale)).toEqual(
-      cellInterface(staticData, newCell('iron-gear-wheel')),
+    expect(cellInterface(staticDs.data, stale)).toEqual(
+      cellInterface(staticDs.data, newCell('iron-gear-wheel')),
     );
   });
 
   it('sorts each side simplest first', () => {
-    const { inputs } = cellInterface(staticData, {
+    const { inputs } = cellInterface(staticDs.data, {
       entries: [{ recipe: 'iron-gear-wheel' }, { recipe: 'car' }],
     });
-    const complexity = inputs.map((id) => staticData.resources[id].complexity ?? Infinity);
+    const complexity = inputs.map((id) => staticDs.data.resources[id].complexity ?? Infinity);
     expect(inputs.length).toBeGreaterThan(1);
     expect(complexity).toEqual([...complexity].sort((a, b) => a - b));
   });
@@ -94,7 +98,7 @@ describe('cellInterface', () => {
 
 describe('scopeOf', () => {
   it('is the two open edges, as the search reads them', () => {
-    expect(scopeOf(cellInterface(staticData, chain))).toEqual({
+    expect(scopeOf(cellInterface(staticDs.data, chain))).toEqual({
       in: new Set(['item:angels-ore1-crushed']),
       out: new Set(['item:iron-gear-wheel']),
     });
@@ -156,7 +160,7 @@ describe('entries', () => {
 });
 
 describe('entryMachine', () => {
-  const recipe = staticData.recipes['iron-gear-wheel'];
+  const recipe = staticDs.data.recipes['iron-gear-wheel'];
 
   it('is the machine the entry names, wherever the player is', () => {
     const entry = { recipe: 'iron-gear-wheel', machine: 'character' };
@@ -198,13 +202,13 @@ describe('withModule', () => {
 });
 
 describe('entryEffects', () => {
-  const recipe = staticData.recipes['iron-gear-wheel'];
+  const recipe = staticDs.data.recipes['iron-gear-wheel'];
   const entry = { recipe: 'iron-gear-wheel', modules: { 'productivity-module-3': 3 } };
 
   it('is what the modules do in the machine the row is in', () => {
     const effects = entryEffects(
       defaultDataset,
-      staticData,
+      staticDs.data,
       entry,
       recipe,
       'assembling-machine-3',
@@ -219,7 +223,7 @@ describe('entryEffects', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         entry,
         recipe,
         'assembling-machine-2',
@@ -230,7 +234,7 @@ describe('entryEffects', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         entry,
         recipe,
         'assembling-machine-1',
@@ -243,7 +247,7 @@ describe('entryEffects', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         entry,
         recipe,
         'character',
@@ -260,7 +264,7 @@ describe('entryEffects', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         bare,
         recipe,
         'assembling-machine-3',
@@ -273,7 +277,7 @@ describe('entryEffects', () => {
     expect(
       entryEffects(
         defaultDataset,
-        staticData,
+        staticDs.data,
         entry,
         recipe,
         'no-such-machine',
@@ -284,7 +288,14 @@ describe('entryEffects', () => {
       productivity: 1,
     });
     expect(
-      entryEffects(defaultDataset, staticData, entry, recipe, undefined, noChoice(defaultDataset)),
+      entryEffects(
+        defaultDataset,
+        staticDs.data,
+        entry,
+        recipe,
+        undefined,
+        noChoice(defaultDataset),
+      ),
     ).toEqual({
       speed: 1,
       productivity: 1,
@@ -293,7 +304,7 @@ describe('entryEffects', () => {
 });
 
 describe('defaultMachine', () => {
-  const machines = machinesFor(ds, staticData.recipes['iron-gear-wheel']);
+  const machines = machinesFor(ds, staticDs.data.recipes['iron-gear-wheel']);
 
   it('walks up the assemblers as the game goes on', () => {
     // hand crafting at the crash site, and this pack's top tier by the end
@@ -335,9 +346,9 @@ describe('defaultMachine', () => {
 
 describe('cellTitle', () => {
   it('names a cell after its first recipe until the user names it', () => {
-    expect(cellTitle(staticData, newCell())).toBe('Empty cell');
-    expect(cellTitle(staticData, chain)).toBe('Iron plate');
-    expect(cellTitle(staticData, { ...chain, name: 'Gears' })).toBe('Gears');
+    expect(cellTitle(staticDs.data, newCell())).toBe('Empty cell');
+    expect(cellTitle(staticDs.data, chain)).toBe('Iron plate');
+    expect(cellTitle(staticDs.data, { ...chain, name: 'Gears' })).toBe('Gears');
   });
 });
 
@@ -345,7 +356,7 @@ describe('cell list', () => {
   const three = [newCell('iron-plate'), newCell('iron-gear-wheel'), newCell('car')];
 
   it('removes a cell without touching the original list', () => {
-    expect(withoutCell(three, 1).map((c) => cellTitle(staticData, c))).toEqual([
+    expect(withoutCell(three, 1).map((c) => cellTitle(staticDs.data, c))).toEqual([
       'Iron plate',
       'Car',
     ]);
