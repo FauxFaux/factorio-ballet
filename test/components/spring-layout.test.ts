@@ -74,6 +74,59 @@ describe('spring layout', () => {
     expect(fluid[1]!.x).toBeCloseTo(item[1]!.x);
   });
 
+  it('aligns horizontal links at their ports rather than their module centers', () => {
+    const placed = initialSpringPlacements([module('A'), module('B')]);
+    placed[1]!.x = 80;
+    placed[1]!.y = 35;
+    const before = placed[1]!.y + 12 - placed[0]!.y;
+    const next = stepSpringLayout(placed, {
+      ...emptyLinks,
+      connections: [
+        {
+          ...link('item:iron', 15),
+          consumerPort: { edge: 'bottom', x: 0, transport: 'belt' },
+        },
+      ],
+    });
+    expect(Math.abs(next[1]!.y + 12 - next[0]!.y)).toBeLessThan(Math.abs(before));
+  });
+
+  it('aligns vertical links at their ports', () => {
+    const placed = initialSpringPlacements([module('A'), module('B')]);
+    placed[1]!.x = 12;
+    placed[1]!.y = 80;
+    const next = stepSpringLayout(placed, {
+      ...emptyLinks,
+      connections: [link('item:iron', 15)],
+    });
+    expect(Math.abs(next[1]!.x - next[0]!.x)).toBeLessThan(4);
+  });
+
+  it('lets station links guide both axes gently', () => {
+    const placed = initialSpringPlacements([module('A')]);
+    placed[0]!.x = 80;
+    const withoutStation = stepSpringLayout(placed, emptyLinks)[0]!;
+    const withStation = stepSpringLayout(placed, {
+      ...emptyLinks,
+      inputStationStops: [{ x: 2, y: 50 }],
+      stationConnections: [
+        {
+          stationId: 'input',
+          stationIndex: 0,
+          moduleId: 'A',
+          resource: 'item:iron',
+          rate: 15,
+          side: 'input',
+          modulePort: { edge: 'top', x: 0, transport: 'belt' },
+        },
+      ],
+    })[0]!;
+    expect(withStation.x).toBeLessThan(withoutStation.x);
+    expect(withStation.y).toBeGreaterThan(withoutStation.y);
+    expect(withoutStation.x - withStation.x).toBeLessThan(0.25);
+    expect(withStation.y - withoutStation.y).toBeLessThan(0.25);
+  });
+
   it('pulls a module toward a connected fixed station and separates overlapping modules', () => {
     const placed = initialSpringPlacements([module('A'), module('B')]);
     placed[0]!.x = 80;

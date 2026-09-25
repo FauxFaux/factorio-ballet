@@ -3,6 +3,7 @@ import type { FactoryModule } from '../../compute/modules.ts';
 import type {
   AttachedModuleConnection,
   AttachedStationConnection,
+  ModulePortReference,
 } from '../../compute/module-port-connections.ts';
 
 export interface SpringPlacement {
@@ -23,6 +24,22 @@ export interface SpringLinks {
 const FLUID_RATE = 15;
 const GAP = 5;
 const DAMPING = 0.78;
+const ALIGNMENT = 3;
+const STATION_STRENGTH = 0.2;
+
+/** The endpoint used by both the visible link and its alignment force. */
+export function portPoint(
+  placement: { module: FactoryModule; x: number; y: number },
+  port: ModulePortReference,
+): Position {
+  const leftOffset = port.direction === 'south' ? 0.75 : 0.25;
+  const laneOffset =
+    port.lane === 'left' ? leftOffset : port.lane === 'right' ? 1 - leftOffset : 0.5;
+  return {
+    x: placement.x + port.x + laneOffset,
+    y: placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
+  };
+}
 
 /** Seed new modules in a readable row; retain positions and momentum for existing IDs. */
 export function initialSpringPlacements(
@@ -56,13 +73,6 @@ export function stepSpringLayout(
     x: placement.x + placement.module.size.width / 2,
     y: placement.y + placement.module.size.height / 2,
   });
-  const pull = (index: number, dx: number, dy: number, rest: number, k: number) => {
-    const distance = Math.hypot(dx, dy) || 1;
-    const force = (k * (distance - rest)) / distance;
-    forces[index]!.x += dx * force;
-    forces[index]!.y += dy * force;
-  };
-
   for (const link of links.connections) {
     const from = indexById.get(link.producerId);
     const to = indexById.get(link.consumerId);
@@ -73,10 +83,25 @@ export function stepSpringLayout(
     const bc = center(b);
     const dx = bc.x - ac.x;
     const dy = bc.y - ac.y;
-    const rest = (a.module.size.width + b.module.size.width) / 2 + GAP + 4;
+    const portA = portPoint(a, link.producerPort);
+    const portB = portPoint(b, link.consumerPort);
+    const portDx = portB.x - portA.x;
+    const portDy = portB.y - portA.y;
+    const restX = (a.module.size.width + b.module.size.width) / 2 + GAP + 4;
+    const restY = (a.module.size.height + b.module.size.height) / 2 + GAP + 4;
+    // Each link can run horizontally or vertically. Penalize sideways port offset so the
+    // chosen spring makes its visible line straight without snapping either module to a grid.
+    const horizontalCost = (Math.abs(dx) - restX) ** 2 + ALIGNMENT * portDy ** 2;
+    const verticalCost = (Math.abs(dy) - restY) ** 2 + ALIGNMENT * portDx ** 2;
     const k = strength(link.resource, link.rate);
-    pull(from, dx, dy, rest, k);
-    pull(to, -dx, -dy, rest, k);
+    const fx =
+      k * (horizontalCost <= verticalCost ? dx - Math.sign(dx || 1) * restX : ALIGNMENT * portDx);
+    const fy =
+      k * (horizontalCost <= verticalCost ? ALIGNMENT * portDy : dy - Math.sign(dy || 1) * restY);
+    forces[from]!.x += fx;
+    forces[from]!.y += fy;
+    forces[to]!.x -= fx;
+    forces[to]!.y -= fy;
   }
 
   for (const link of links.stationConnections) {
@@ -87,17 +112,13 @@ export function stepSpringLayout(
     if (index === undefined || !stop) continue;
     const module = placements[index]!;
     const point = center(module);
-    const anchor = {
-      x: stop.x + (link.side === 'input' ? 8 : -8),
-      y: stop.y + 4,
-    };
-    pull(
-      index,
-      anchor.x - point.x,
-      anchor.y - point.y,
-      module.module.size.width / 2 + 12,
-      strength(link.resource, link.rate),
-    );
+    const anchorX = stop.x + (link.side === 'input' ? 8 : module.x < stop.x ? -8 : -4);
+    const anchorY = stop.y + (link.side === 'input' ? 4.5 : 4);
+    const port = portPoint(module, link.modulePort);
+    const restX = module.module.size.width / 2 + 12;
+    const k = strength(link.resource, link.rate) * STATION_STRENGTH;
+    forces[index]!.x += k * (anchorX + (link.side === 'input' ? restX : -restX) - point.x);
+    forces[index]!.y += k * ALIGNMENT * (anchorY - port.y);
   }
 
   const next = placements.map((placement, index) => {

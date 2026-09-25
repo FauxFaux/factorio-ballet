@@ -3,29 +3,15 @@ import type { FactoryModule } from '../../compute/modules.ts';
 import type {
   AttachedModuleConnection,
   AttachedStationConnection,
-  ModulePortReference,
 } from '../../compute/module-port-connections.ts';
 import type { Position } from '../../bp/decode.ts';
 import { staticData } from '../../data/decode.ts';
 import { iconSprite } from '../icon.tsx';
-import { initialSpringPlacements, stepSpringLayout } from './spring-layout.ts';
+import { initialSpringPlacements, portPoint, stepSpringLayout } from './spring-layout.ts';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
 const NO_STOPS: Position[] = [];
-
-function portPoint(
-  placement: { module: FactoryModule; x: number; y: number },
-  port: ModulePortReference,
-): Position {
-  const leftOffset = port.direction === 'south' ? 0.75 : 0.25;
-  const laneOffset =
-    port.lane === 'left' ? leftOffset : port.lane === 'right' ? 1 - leftOffset : 0.5;
-  return {
-    x: placement.x + port.x + laneOffset,
-    y: placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
-  };
-}
 
 /** Animated module positions and the resource links attached to them. */
 export function ModuleFootprints({
