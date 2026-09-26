@@ -3,7 +3,8 @@ import { validateTileDesign } from '../design-validation/validate.ts';
 import type { SolidAccessOption } from './access.ts';
 import { allocateSolidRates, RATE_EPSILON, requiredUnits } from './capacity.ts';
 import { emitTile } from './emit.ts';
-import { mirroredFluidPair, stackMirroredTiles } from './mirrored-pair.ts';
+import { mirroredFluidPair } from './mirrored-pair.ts';
+import { stackMirroredTiles } from './stack-mirrored-tiles.ts';
 import { routeFrames } from './routes.ts';
 import {
   reachesLane,
