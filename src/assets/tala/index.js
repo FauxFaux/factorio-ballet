@@ -1,11 +1,10 @@
 // Vite recognizes these relative asset and worker URLs and serves the WASM
 // separately from the JavaScript application bundle.
-const workerURL = new URL("./worker.js", import.meta.url);
 const wasmURL = new URL("./tala.wasm", import.meta.url);
 
 export class TALA {
   constructor() {
-    this.worker = new Worker(workerURL, { type: "module" });
+    this.worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
     this.pending = new Map();
     this.nextId = 0;
     this.disposed = false;

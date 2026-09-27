@@ -1,3 +1,11 @@
+.cell-layout-panel {
+  flex: 1 1 1400px;
+  min-width: 0;
+  width: min(100%, 1400px);
+  margin-right: auto;
+  margin-left: auto;
+}
+
 .cell-layout {
   --cell-layout-grid: cornflowerblue;
   --cell-layout-grid-major: lightsteelblue;
@@ -39,6 +47,18 @@
     0.5208333333% 0.78125%;
   border: 1px solid #60a5fa;
   border-radius: 4px;
+}
+
+.cell-layout-tala-output {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  min-height: 10rem;
+  margin-top: 8px;
+  padding: 8px;
+  resize: vertical;
+  font-family: monospace;
+  font-size: 0.8rem;
 }
 
 /* The rail renderer uses the same 192 by 128 game-unit coordinate space as the grid. It is
@@ -152,7 +172,7 @@
 /* In the two-column range, a full-width canvas can become too tall for a typical laptop viewport.
  * 112.5vh is three quarters of the viewport height at the 192:128 canvas ratio. */
 @media (min-width: 801px) and (max-width: 1400px) {
-  .cell-layout {
+  .cell-layout-panel {
     width: min(100%, 112.5vh);
     margin-right: auto;
     margin-left: auto;
@@ -162,7 +182,7 @@
 /* Keep the canvas usable as one continuous surface on smaller screens. Once the cell has room,
  * preserve a stable 1400px working area and centre it. */
 @media (min-width: 1401px) {
-  .cell-layout {
+  .cell-layout-panel {
     width: 1400px;
     max-width: 100%;
     margin-right: auto;

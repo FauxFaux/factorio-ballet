@@ -157,7 +157,7 @@
   margin-left: auto;
 }
 
-.cell-layout-row > .cell-layout {
+.cell-layout-row > .cell-layout-panel {
   flex: 1 1 1400px;
   min-width: 0;
   width: auto;
@@ -166,7 +166,7 @@
   margin-left: 0;
 }
 
-.cell-layout-row > .cell-layout:only-child {
+.cell-layout-row > .cell-layout-panel:only-child {
   margin-right: auto;
   margin-left: auto;
 }
@@ -201,7 +201,7 @@
     border-top: 1px solid var(--border);
   }
 
-  .cell-layout-row > .cell-layout {
+  .cell-layout-row > .cell-layout-panel {
     flex-basis: min(1400px, 112.5vh);
     max-width: 112.5vh;
   }
@@ -228,7 +228,7 @@
     display: block;
   }
 
-  .cell-layout-row > .cell-layout {
+  .cell-layout-row > .cell-layout-panel {
     width: 100%;
     max-width: 100%;
     margin-right: auto;

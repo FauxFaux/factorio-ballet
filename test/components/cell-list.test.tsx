@@ -93,8 +93,8 @@ describe('CellList', () => {
 
     const layout = screen.getByRole('region', { name: 'Layout' });
     const proposals = screen.getByRole('region', { name: 'Proposed splits' });
-    expect(layout.parentElement).toBe(proposals.parentElement);
-    expect(layout.parentElement?.classList.contains('cell-layout-row')).toBe(true);
+    expect(layout.parentElement?.parentElement).toBe(proposals.parentElement);
+    expect(layout.parentElement?.parentElement?.classList.contains('cell-layout-row')).toBe(true);
   });
 
   it('does not display split proposals without a layout', () => {

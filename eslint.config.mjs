@@ -8,7 +8,7 @@ export default defineConfig(
   js.configs.recommended,
   tseslint.configs.recommended,
   {
-    ignores: ["dist", "dat"],
+    ignores: ["dist", "dat", "src/assets/tala/**"],
   },
   {
     rules: {
