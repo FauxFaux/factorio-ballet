@@ -1,0 +1,20 @@
+diff --git a/d2js/tala/main.go b/d2js/tala/main.go
+--- a/d2js/tala/main.go
++++ b/d2js/tala/main.go
+@@ -7,5 +7,7 @@ import (
+ 	"encoding/json"
+ 	"fmt"
++	"math"
+ 	"runtime/debug"
++	"strconv"
+ 	"strings"
+ 	"syscall/js"
+@@ -126,4 +128,8 @@ func layout(raw string) (any, error) {
+ 			Box: geo.NewBox(geo.NewPoint(0, 0), input.Width, input.Height),
+ 			Children: make(map[string]*d2graph.Object),
+ 		}
++		// Explicit dimensions prevent TALA from expanding dense nodes to fit edge spacing.
++		// The D2 attributes are integer-valued; the box retains fractional input sizes.
++		object.WidthAttr = &d2graph.Scalar{Value: strconv.Itoa(int(math.Ceil(input.Width)))}
++		object.HeightAttr = &d2graph.Scalar{Value: strconv.Itoa(int(math.Ceil(input.Height)))}
+ 		object.Shape.Value = input.Shape

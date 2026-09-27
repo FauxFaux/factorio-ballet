@@ -14,7 +14,15 @@ import { talaGraph } from '../../src/components/layout/tala-graph.ts';
 const { layout } = vi.hoisted(() => ({
   layout: vi.fn(async () => ({
     nodes: [{ id: 'module_0', x: 10, y: 20, width: 8, height: 12 }],
-    edges: [],
+    edges: [
+      {
+        id: 'edge_0',
+        points: [
+          { x: 18, y: 26 },
+          { x: 36, y: 26 },
+        ],
+      },
+    ],
   })),
 }));
 
@@ -95,7 +103,7 @@ describe('TALA layout bridge', () => {
     });
   });
 
-  it('sends the graph to TALA and shows its result below the layout', async () => {
+  it('sends the graph to TALA and draws its nodes and edge routes below the layout', async () => {
     render(<CellLayoutSurface layout={{}} inputs={[]} outputs={[]} modules={[module]} />);
 
     await waitFor(() => expect(layout).toHaveBeenCalledOnce());
@@ -104,9 +112,24 @@ describe('TALA layout bridge', () => {
       nodes: [{ id: 'module_0', width: 8, height: 12 }],
       edges: [],
     });
-    const output = screen.getByRole('textbox', {
-      name: 'TALA layout output',
-    }) as HTMLTextAreaElement;
-    await waitFor(() => expect(JSON.parse(output.value).nodes[0].x).toBe(10));
+    const output = await screen.findByRole('img', { name: 'TALA layout' });
+    const [left, top, width, height] = output.getAttribute('viewBox')!.split(' ').map(Number);
+    expect(left).toBeLessThan(10);
+    expect(top).toBeLessThan(20);
+    expect(left! + width!).toBeGreaterThan(36);
+    expect(top! + height!).toBeGreaterThan(32);
+    expect(output.querySelector('[data-tala-node="module_0"] rect')?.getAttribute('x')).toBe('10');
+    expect(output.querySelector('[data-tala-node="module_0"] rect')?.getAttribute('height')).toBe(
+      '12',
+    );
+    expect(output.querySelector('[data-tala-edge="edge_0"]')?.getAttribute('points')).toBe(
+      '18,26 36,26',
+    );
+    expect(output.querySelector('[data-tala-node="module_0"] text')?.textContent).toBe(
+      'Copper wire',
+    );
+    expect(output.querySelector('[data-tala-node="module_0"] title')?.textContent).toContain(
+      '8×12 tiles',
+    );
   });
 });

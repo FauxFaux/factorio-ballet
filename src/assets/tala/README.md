@@ -6,6 +6,11 @@ From the D2 repository root, run:
 ./d2js/tala/build.sh
 ```
 
+For the bundled copy in this app, apply `preserve-node-sizes.patch` to the D2
+checkout first, then rebuild `tala.wasm` with `GOOS=js GOARCH=wasm go build`
+using the same flags as `build.sh`. Copy Go's matching `wasm_exec.js` if the Go
+toolchain changes. Keep this app's `index.js`: it has the Vite worker URL.
+
 The script requires the Go toolchain specified by `go.mod`. It writes a local
 package to `d2js/tala/dist` by default. Pass an absolute output directory as
 the first argument to put the package elsewhere. The package contains an ES
@@ -43,6 +48,9 @@ deterministic layout attempts; omitting it uses TALA defaults.
 
 The result contains final node boxes and edge route points. Container boxes may
 grow during layout. Label placement fields are returned when TALA sets them.
+The patch marks requested dimensions as explicit D2 dimensions,
+so TALA's edge-spacing pass does not enlarge dense factory modules. The request
+still uses the precomputed `FactoryModule.size` in game tiles.
 Input node IDs cannot contain dots because D2 uses dots to identify nested
 objects. Input array order determines stable object and edge ordering; each edge
 must also have a unique ID. Calls run in a worker, keeping layout computation

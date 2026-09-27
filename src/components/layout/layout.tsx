@@ -1,7 +1,9 @@
 import './layout.css';
 import { useEffect, useMemo, useState } from 'preact/hooks';
 import { TALA } from '../../assets/tala/index.js';
+import type { LayoutResult } from '../../assets/tala/index.js';
 import { buildRailBrick } from '../../bp/rail-blueprint.ts';
+import { recipeName, resourceName } from '../../data/index.ts';
 import { RailBlueprintPreview } from '../rail-blueprint-preview.tsx';
 import {
   InputStationFootprints,
@@ -39,6 +41,31 @@ function tala(): Promise<TALA> {
       throw error;
     });
   return talaInstance;
+}
+
+function talaViewBox(result: LayoutResult, nodeNames: ReadonlyMap<string, string>): string {
+  const xs = result.nodes.flatMap(({ x, width }) => [x, x + width]);
+  const ys = result.nodes.flatMap(({ y, height }) => [y, y + height]);
+  for (const node of result.nodes) {
+    const labelWidth = (nodeNames.get(node.id) ?? node.id).length * 7;
+    xs.push(node.x + node.width / 2 - labelWidth / 2);
+    xs.push(node.x + node.width / 2 + labelWidth / 2);
+    ys.push(node.y - 16);
+  }
+  for (const edge of result.edges) {
+    for (const point of edge.points) {
+      xs.push(point.x);
+      ys.push(point.y);
+    }
+  }
+  const padding = 20;
+  const minX = xs.length ? Math.min(...xs) : 0;
+  const minY = ys.length ? Math.min(...ys) : 0;
+  const left = minX - padding;
+  const top = minY - padding;
+  const width = Math.max(1, Math.max(...xs) - minX) + padding * 2;
+  const height = Math.max(1, Math.max(...ys) - minY) + padding * 2;
+  return `${left} ${top} ${width} ${height}`;
 }
 
 /** The initial, intentionally empty surface for a cell's factory layout. */
@@ -80,21 +107,50 @@ export function CellLayoutSurface({
     () => talaGraph(modules, connections, stationConnections, stationStops, outputStationStops),
     [modules, connections, stationConnections, stationStops, outputStationStops],
   );
-  const [talaOutput, setTalaOutput] = useState('');
+  const nodeNames = new Map<string, string>();
+  const nodeDescriptions = new Map<string, string>();
+  modules.forEach((module, index) => {
+    const products = Object.entries(module.outputs)
+      .filter(([, rate]) => rate > 0)
+      .map(([resource]) => resourceName(data, resource as ResourceId));
+    const firstProduct = data.recipes[module.recipe]?.products[0]?.resource;
+    const name =
+      products[0] ??
+      (firstProduct ? resourceName(data, firstProduct) : recipeName(data, module.recipe));
+    const id = `module_${index}`;
+    nodeNames.set(id, name);
+    nodeDescriptions.set(
+      id,
+      `${recipeName(data, module.recipe)}: ${products.join(', ') || name}; ${module.size.width}×${module.size.height} tiles`,
+    );
+  });
+  inputs.forEach((resource, index) =>
+    nodeNames.set(`input_${index}`, `Input: ${resourceName(data, resource)}`),
+  );
+  outputs.forEach((resource, index) =>
+    nodeNames.set(`output_${index}`, `Output: ${resourceName(data, resource)}`),
+  );
+  const [talaOutput, setTalaOutput] = useState<LayoutResult | null>(null);
+  const [talaStatus, setTalaStatus] = useState('');
   useEffect(() => {
     if (!modules.length) {
-      setTalaOutput('');
+      setTalaOutput(null);
+      setTalaStatus('');
       return;
     }
     let current = true;
-    setTalaOutput('Running TALA…');
+    setTalaOutput(null);
+    setTalaStatus('Running TALA…');
     void tala()
       .then((instance) => instance.layout(graph))
       .then((result) => {
-        if (current) setTalaOutput(JSON.stringify(result, null, 2));
+        if (current) {
+          setTalaOutput(result);
+          setTalaStatus('');
+        }
       })
       .catch((error: unknown) => {
-        if (current) setTalaOutput(`TALA layout failed: ${String(error)}`);
+        if (current) setTalaStatus(`TALA layout failed: ${String(error)}`);
       });
     return () => {
       current = false;
@@ -116,12 +172,46 @@ export function CellLayoutSurface({
         <InputStationFootprints stops={stationStops} resources={inputs} />
         <OutputStationFootprints stops={outputStationStops} resources={outputs} />
       </section>
-      <textarea
-        class="cell-layout-tala-output"
-        aria-label="TALA layout output"
-        readOnly
-        value={talaOutput}
-      />
+      {talaStatus && <p class="cell-layout-tala-status">{talaStatus}</p>}
+      {talaOutput && (
+        <svg
+          class="cell-layout-tala-output"
+          role="img"
+          aria-label="TALA layout"
+          viewBox={talaViewBox(talaOutput, nodeNames)}
+        >
+          {talaOutput.edges.map((edge) => (
+            <polyline
+              key={edge.id}
+              class="cell-layout-tala-edge"
+              data-tala-edge={edge.id}
+              points={edge.points.map(({ x, y }) => `${x},${y}`).join(' ')}
+            >
+              <title>{edge.id}</title>
+            </polyline>
+          ))}
+          {talaOutput.nodes.map((node) => (
+            <g key={node.id} data-tala-node={node.id}>
+              <title>{nodeDescriptions.get(node.id) ?? nodeNames.get(node.id) ?? node.id}</title>
+              <rect
+                class={`cell-layout-tala-node${node.id.startsWith('input_') ? ' is-input' : ''}${node.id.startsWith('output_') ? ' is-output' : ''}`}
+                x={node.x}
+                y={node.y}
+                width={node.width}
+                height={node.height}
+              />
+              <text
+                class="cell-layout-tala-label"
+                x={node.x + node.width / 2}
+                y={node.y - 4}
+                text-anchor="middle"
+              >
+                {nodeNames.get(node.id) ?? node.id}
+              </text>
+            </g>
+          ))}
+        </svg>
+      )}
     </div>
   );
 }
