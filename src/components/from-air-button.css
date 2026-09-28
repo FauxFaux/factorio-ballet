@@ -13,3 +13,19 @@
 .from-air-button:hover {
   background: var(--accent-bg);
 }
+
+.from-air-button-icon {
+  display: inline-block;
+  width: 0.8889rem;
+  height: 0.8889rem;
+  overflow: hidden;
+  vertical-align: -0.1em;
+}
+
+.from-air-button-icon > span {
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
+  transform: scale(0.5);
+  transform-origin: top left;
+}

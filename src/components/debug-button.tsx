@@ -1,4 +1,5 @@
 import './debug-button.css';
+import { TerminalIcon } from '@primer/octicons-react';
 import { useMenu } from './menu.ts';
 import type { State } from '../ts.ts';
 import type { UrlState } from '../boot/url-handler.tsx';
@@ -21,7 +22,7 @@ export function DebugButton({ uss }: { uss: State<UrlState> }) {
         title="Show UrlState JSON"
         onClick={() => setOpen(!open)}
       >
-        🚧
+        <TerminalIcon aria-hidden="true" />
       </button>
       {open ? (
         <div class="debug-menu" role="dialog" aria-label="UrlState JSON">
