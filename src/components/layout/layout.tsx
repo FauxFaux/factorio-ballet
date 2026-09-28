@@ -216,7 +216,7 @@ export function CellLayoutSurface({
       </section>
       {modules.length > 0 && (
         <label class="cell-layout-algorithm">
-          <span>TALA</span>
+          <span class={algorithm === 'tala' ? 'is-selected' : undefined}>TALA</span>
           <input
             type="checkbox"
             role="switch"
@@ -224,7 +224,7 @@ export function CellLayoutSurface({
             checked={algorithm === 'elk'}
             onChange={(event) => setAlgorithm(event.currentTarget.checked ? 'elk' : 'tala')}
           />
-          <span>ELK</span>
+          <span class={algorithm === 'elk' ? 'is-selected' : undefined}>ELK</span>
         </label>
       )}
       {modules.length > 0 && !output && !status && (
