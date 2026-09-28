@@ -46,10 +46,12 @@ function usefulProducts(
   entries: RecipeEntry[],
   allowed: Set<ResourceId>,
   inputRecipeIds: Map<ResourceId, Set<string>>,
+  eligibleProducts?: Set<ResourceId>,
 ): ResourceId[] {
   const products = new Set<ResourceId>();
   for (const [id, recipe] of entries) {
     for (const { resource } of recipe.products) {
+      if (eligibleProducts && !eligibleProducts.has(resource)) continue;
       const consumers = inputRecipeIds.get(resource);
       if ([...(consumers ?? [])].some((consumerId) => consumerId !== id) && !allowed.has(resource))
         products.add(resource);
@@ -90,21 +92,21 @@ function productiveCycle(
   component: RecipeEntry[],
   allowed: Set<ResourceId>,
 ): FromAirRecipe | undefined {
-  const products = new Map<ResourceId, number>();
+  const balance = new Map<ResourceId, number>();
   const ingredients = new Map<ResourceId, number>();
   for (const [, recipe] of component) {
-    for (const ingredient of recipe.ingredients)
+    for (const ingredient of recipe.ingredients) {
       addAmount(ingredients, ingredient.resource, ingredient.amount);
+      addAmount(balance, ingredient.resource, -ingredient.amount);
+    }
     for (const product of recipe.products)
-      addAmount(products, product.resource, productAmount(product, 1));
+      addAmount(balance, product.resource, productAmount(product, 1));
   }
   const internalResources = [...ingredients.keys()].filter((resource) => !allowed.has(resource));
   if (
     internalResources.length === 0 ||
-    internalResources.some(
-      (resource) => (products.get(resource) ?? 0) < ingredients.get(resource)!,
-    ) ||
-    !internalResources.some((resource) => products.get(resource)! > ingredients.get(resource)!)
+    internalResources.some((resource) => (balance.get(resource) ?? 0) < 0) ||
+    !internalResources.some((resource) => (balance.get(resource) ?? 0) > 0)
   )
     return undefined;
 
@@ -127,21 +129,21 @@ function productiveCycle(
       return pending.length === 0;
     })
     .sort(
-      (a, b) =>
-        (products.get(a)! - ingredients.get(a)!) / ingredients.get(a)! -
-        (products.get(b)! - ingredients.get(b)!) / ingredients.get(b)!,
+      (a, b) => balance.get(a)! / ingredients.get(a)! - balance.get(b)! / ingredients.get(b)!,
     )[0];
   if (!assumedInput) return undefined;
 
   const ids = component.map(([id]) => id);
-  const aggregateIngredients = [...ingredients]
-    .filter(([resource]) => resource !== assumedInput)
-    .map(([resource, amount]) => ({ resource, amount }));
-  const aggregateProducts = [...products].map(([resource, amount]) => ({
-    resource,
-    amount: { fixed: amount } as const,
-    probability: 1,
-  }));
+  const aggregateIngredients = [...balance]
+    .filter(([resource, amount]) => resource !== assumedInput && amount < 0)
+    .map(([resource, amount]) => ({ resource, amount: -amount }));
+  const aggregateProducts = [...balance]
+    .filter(([, amount]) => amount > 0)
+    .map(([resource, amount]) => ({
+      resource,
+      amount: { fixed: amount } as const,
+      probability: 1,
+    }));
   return {
     id: `from-air:cycle:${ids.join('+')}`,
     recipe: {
@@ -194,7 +196,17 @@ export function fromAirStages(
       ? recipeComponents(remaining, allowed)
           .map((component) => {
             const cycle = productiveCycle(component, allowed);
-            return cycle && { ...cycle, adds: usefulProducts(component, allowed, inputRecipeIds) };
+            return (
+              cycle && {
+                ...cycle,
+                adds: usefulProducts(
+                  component,
+                  allowed,
+                  inputRecipeIds,
+                  new Set(cycle.recipe.products.map(({ resource }) => resource)),
+                ),
+              }
+            );
           })
           .filter((cycle): cycle is FromAirRecipe => cycle !== undefined)
           .filter(({ adds }) => adds.length > 0)

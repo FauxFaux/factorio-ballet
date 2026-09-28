@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { fromAirStages } from '../../src/components/from-air.tsx';
 import { fromAirSuggestionStages } from '../../src/compute/from-air.ts';
+import { createDataset } from '../../src/dataset/index.ts';
+import { spaceAge } from '../../src/dataset/catalogue/space-age.ts';
 import type { Recipe, ResourceId } from '../../src/types.ts';
 import { defaultDataset } from '../with-bobang.ts';
 
@@ -169,11 +171,65 @@ describe('fromAirStages', () => {
     const cycle = stages[1][0];
     expect(cycle.recipes).toEqual(['grow', 'extract']);
     expect(cycle.assumedInputs).toEqual([seed]);
-    expect(cycle.recipe.ingredients).toEqual([
-      { resource: water, amount: 10 },
-      { resource: plant, amount: 5 },
+    expect(cycle.recipe.ingredients).toEqual([{ resource: water, amount: 10 }]);
+    expect(cycle.recipe.products).toEqual([
+      { resource: seed, amount: { fixed: 0.5 }, probability: 1 },
+      { resource: plant, amount: { fixed: 40 }, probability: 1 },
     ]);
     expect(cycle.adds).toEqual([plant, seed]);
+  });
+
+  it('nets every resource before reporting what a productive cycle adds', () => {
+    const circuit = 'item:advanced-circuit';
+    const seed = 'item:seed';
+    const box = 'item:box';
+    const stages = fromAirStages({
+      recipes: {
+        source: recipe([], [circuit]),
+        useCircuit: recipe([circuit], ['item:circuit-product']),
+        make: {
+          ...recipe([circuit, seed], [box]),
+          ingredients: [
+            { resource: circuit, amount: 5 },
+            { resource: seed, amount: 1 },
+          ],
+        },
+        recover: {
+          ...recipe([box], [circuit, seed]),
+          products: [
+            { resource: circuit, amount: { fixed: 1.25 }, probability: 1 },
+            { resource: seed, amount: { fixed: 2 }, probability: 1 },
+          ],
+        },
+      },
+    });
+
+    const cycle = stages[1].find(({ recipes }) => recipes?.includes('make'));
+    expect(cycle?.recipe.ingredients).toEqual([{ resource: circuit, amount: 3.75 }]);
+    expect(cycle?.recipe.products).toEqual([
+      { resource: seed, amount: { fixed: 1 }, probability: 1 },
+    ]);
+    expect(cycle?.adds).toEqual([seed]);
+  });
+
+  it('does not suggest making and recycling an item at a loss', () => {
+    const circuit = 'item:advanced-circuit';
+    const box = 'item:box';
+    const stages = fromAirStages({
+      recipes: {
+        source: recipe([], [circuit]),
+        make: {
+          ...recipe([circuit], [box]),
+          ingredients: [{ resource: circuit, amount: 5 }],
+        },
+        recover: {
+          ...recipe([box], [circuit]),
+          products: [{ resource: circuit, amount: { fixed: 1.25 }, probability: 1 }],
+        },
+      },
+    });
+
+    expect(stages.flat().filter(({ recipes }) => recipes !== undefined)).toEqual([]);
   });
 
   it('does not bootstrap a cycle which consumes its circulating resources', () => {
@@ -191,6 +247,23 @@ describe('fromAirStages', () => {
       .map(({ recipes }) => recipes);
     for (const tier of [1, 2, 3]) {
       expect(cycles).toContainEqual([`angels-swamp-${tier}`, `angels-swamp-${tier}-seed`]);
+    }
+  });
+
+  it('does not report net-consuming recycling outputs as newly available in space age', async () => {
+    const dataset = createDataset('space-age', await spaceAge());
+    const cycles = fromAirStages(dataset.data)
+      .flat()
+      .filter(({ recipes }) => recipes !== undefined);
+    expect(cycles.map(({ recipes }) => recipes)).toEqual([
+      ['pentapod-egg'],
+      ['pentapod-egg', 'pentapod-egg-recycling'],
+      ['fish-breeding'],
+      ['fish-breeding', 'raw-fish-recycling'],
+    ]);
+    for (const cycle of cycles) {
+      const outputs = new Set(cycle.recipe.products.map(({ resource }) => resource));
+      expect(cycle.adds.every((resource) => outputs.has(resource))).toBe(true);
     }
   });
 });
