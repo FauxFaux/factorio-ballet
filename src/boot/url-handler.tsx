@@ -22,6 +22,8 @@ export interface KernelCustomState {
   };
   /** Absent follows overall game progress until a throughput slider is adjusted. */
   rates?: AssemblerDesignThroughput;
+  /** Minimum copies that the tile design's transport must support in one column. */
+  repeatCount?: number;
 }
 
 export interface UrlState {

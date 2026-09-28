@@ -7,6 +7,7 @@ import {
   type AssemblerDesignThroughput,
 } from '../compute/assembler-design.ts';
 import { solveKernelTileDesign } from '../compute/tile-design/kernel-result.ts';
+import { MAX_MODULE_HEIGHT } from '../compute/modules.ts';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
   airFilterProblem,
@@ -77,6 +78,7 @@ export function KernelCustomProblem({
   const { data } = useDataset();
   const [stored, setStored] = custom;
   const { building, flows } = stored ?? defaultCustomState();
+  const repeatCount = stored?.repeatCount ?? 1;
   const rates = stored?.rates ?? {
     beltItemsPerSecond: withinRange(throughput.beltItemsPerSecond, 7.5, 75),
     inserterItemsPerSecond: withinRange(throughput.inserterItemsPerSecond, 0.5, 40),
@@ -107,7 +109,10 @@ export function KernelCustomProblem({
   const resourceNames = resourceNamesFor(problem);
 
   const copyProblem = async () => {
-    const tileResult = solveKernelTileDesign(problem, rates);
+    const tileResult = solveKernelTileDesign(problem, rates, {
+      repeatCount,
+      ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
+    });
     const json = {
       source: 'your-problem-export',
       building,
@@ -115,6 +120,7 @@ export function KernelCustomProblem({
       outputs: problem.outputs,
       assemblers: problem.assemblers,
       throughput: rates,
+      repeatCount,
       ...(isAssemblerDesignFailure(design)
         ? { assemblerDesignFailure: design.failure.join(' ') }
         : {}),
@@ -186,6 +192,21 @@ export function KernelCustomProblem({
                 </option>
               ))}
             </select>
+          </label>
+          <label class="kernel-custom-building">
+            Minimum column copies
+            <input
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              value={repeatCount}
+              onChange={(event) => {
+                const value = Number(event.currentTarget.value);
+                if (!Number.isSafeInteger(value) || value < 1 || value > 100) return;
+                updateCustom((current) => ({ ...current, repeatCount: value }));
+              }}
+            />
           </label>
           <div class="kernel-custom-flows">
             <fieldset
@@ -308,7 +329,7 @@ export function KernelCustomProblem({
           </div>
         </div>
         <div class="kernel-custom-result" aria-label="Your problem result">
-          <DesignCard index={-1} problem={problem} throughput={rates} />
+          <DesignCard index={-1} problem={problem} throughput={rates} repeatCount={repeatCount} />
         </div>
       </div>
     </section>

@@ -15,17 +15,20 @@ import type { DesignSceneItems, DesignSceneRecipes } from './design-scene.tsx';
 import type { ResourceId } from '../../types.ts';
 import { beltStackLimitDetails } from './design-stack-limit.ts';
 import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
+import { MAX_MODULE_HEIGHT } from '../../compute/modules.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
   index,
   problem,
   throughput,
+  repeatCount = 1,
   onUseProblem,
 }: {
   index: number;
   problem: KernelProblem;
   throughput: AssemblerDesignThroughput;
+  repeatCount?: number;
   onUseProblem?: () => void;
 }) {
   const title = problem.assemblers.map(({ name }) => name).join(', ');
@@ -40,12 +43,17 @@ export function DesignCard({
     ],
   );
   const tileResult = useMemo(
-    () => solveKernelTileDesign(problem, throughput),
+    () =>
+      solveKernelTileDesign(problem, throughput, {
+        repeatCount,
+        ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
+      }),
     [
       problem,
       throughput.beltItemsPerSecond,
       throughput.inserterItemsPerSecond,
       throughput.longInserterItemsPerSecond,
+      repeatCount,
     ],
   );
   const { recipes, items } = designSceneFlows(problem, resourceColours);
@@ -55,11 +63,16 @@ export function DesignCard({
       [assembler.id ?? `machine-${index + 1}`, assembler],
     ]),
   );
-  const stackColumn = !isAssemblerDesignFailure(design)
-    ? design.columns[0]
-    : 'success' in tileResult || tileResult.status !== 'found'
+  const tileColumn =
+    'success' in tileResult || tileResult.status !== 'found'
       ? undefined
       : tileResult.candidate.column;
+  const stackColumn =
+    repeatCount > 1
+      ? tileColumn
+      : !isAssemblerDesignFailure(design)
+        ? design.columns[0]
+        : tileColumn;
   const stackLimit = stackColumn
     ? beltStackLimitDetails(stackColumn, recipes, problem, throughput.beltItemsPerSecond)
     : undefined;

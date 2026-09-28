@@ -152,10 +152,45 @@ function AssemblerDesignSummary({
     result.candidate,
     maxHeight,
   ).length;
+  const retryCopies = maxHeight * 2;
+  const higherCapacityResult =
+    maxHeight <= 2 && moduleCount >= 10
+      ? solveKernelTileDesign(problem, throughput, {
+          repeatCount: retryCopies,
+          moduleHeight: MAX_MODULE_HEIGHT,
+        })
+      : undefined;
+  const higherCapacity =
+    higherCapacityResult &&
+    'status' in higherCapacityResult &&
+    higherCapacityResult.status === 'found'
+      ? higherCapacityResult
+      : undefined;
+  const higherCapacityBounds =
+    higherCapacity && designBounds(higherCapacity.candidate.column.entities)!;
+  const higherCapacityMaxHeight = higherCapacity
+    ? Math.min(
+        higherCapacity.validation.supportedCopies,
+        Math.floor(MAX_MODULE_HEIGHT / higherCapacity.candidate.pitch),
+      )
+    : 0;
+  const higherCapacityModuleCount = higherCapacity
+    ? modulesForTile(
+        recipe,
+        machineCount,
+        problem,
+        higherCapacity.candidate,
+        higherCapacityMaxHeight,
+      ).length
+    : 0;
 
   return (
     <div class="cell-tile-design">
       <dl aria-label="Tile design">
+        <div>
+          <dt>Initial result</dt>
+          <dd>{result.optimal ? 'Found (optimal)' : `Found (${result.stopReason})`}</dd>
+        </div>
         <div>
           <dt>Kernel size</dt>
           <dd>
@@ -170,6 +205,41 @@ function AssemblerDesignSummary({
           <dt>Columns/modules needed</dt>
           <dd>×{moduleCount}</dd>
         </div>
+        {higherCapacityResult && (
+          <>
+            <div style="flex-wrap: wrap; min-width: 0">
+              <dt>Retry requiring ×{retryCopies} copies</dt>
+              <dd>
+                {'success' in higherCapacityResult
+                  ? higherCapacityResult.message
+                  : higherCapacityResult.status === 'found'
+                    ? higherCapacityResult.optimal
+                      ? 'Found (optimal)'
+                      : `Found (${higherCapacityResult.stopReason})`
+                    : `${higherCapacityResult.status}: ${higherCapacityResult.reason}`}
+              </dd>
+            </div>
+            {higherCapacity && higherCapacityBounds && (
+              <>
+                <div>
+                  <dt>Higher capacity kernel size</dt>
+                  <dd>
+                    {higherCapacityBounds.maxX - higherCapacityBounds.minX}×
+                    {higherCapacityBounds.maxY - higherCapacityBounds.minY} tiles
+                  </dd>
+                </div>
+                <div>
+                  <dt>Higher capacity max column height</dt>
+                  <dd>×{higherCapacityMaxHeight}</dd>
+                </div>
+                <div>
+                  <dt>Higher capacity columns/modules needed</dt>
+                  <dd>×{higherCapacityModuleCount}</dd>
+                </div>
+              </>
+            )}
+          </>
+        )}
       </dl>
       <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
     </div>

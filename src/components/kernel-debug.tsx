@@ -107,5 +107,6 @@ export function kernelCustomStateFor(
       fluidOutputs: Object.values(problem.outputs.fluids),
     },
     ...(current?.rates ? { rates: current.rates } : {}),
+    ...(current?.repeatCount ? { repeatCount: current.repeatCount } : {}),
   };
 }

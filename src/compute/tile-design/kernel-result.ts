@@ -2,11 +2,13 @@ import type { AssemblerDesignThroughput } from '../assembler-design.ts';
 import type { KernelProblem } from '../kernel-problems.ts';
 import { normalizeTileDesignInput } from './problem.ts';
 import { solveTileDesign } from './search.ts';
+import type { TileDesignOptions } from './types.ts';
 
 /** Use the same tile search settings for the preview and its JSON export. */
 export function solveKernelTileDesign(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
+  options: Pick<TileDesignOptions, 'repeatCount' | 'moduleHeight'> = {},
 ) {
   const normalized = normalizeTileDesignInput(problem, {
     transport: {
@@ -25,6 +27,7 @@ export function solveKernelTileDesign(
       primitives: ['surface', 'underground', 'branch'],
       maxStates: 10_000,
     },
+    ...options,
   });
   return normalized.success ? solveTileDesign(normalized.input) : normalized;
 }
