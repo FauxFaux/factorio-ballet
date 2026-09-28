@@ -1,6 +1,6 @@
 import type { CellEntry } from '../cell.ts';
-import { recipeName, resourceName } from '../data';
-import type { Solution } from '../solve';
+import { recipeName, resourceName } from '../data/index.ts';
+import type { Solution } from '../solve/index.ts';
 import { isFluid, type Belt, type ResourceId, type StaticData } from '../types.ts';
 
 const EPSILON = 1e-7;

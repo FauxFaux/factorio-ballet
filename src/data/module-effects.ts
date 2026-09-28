@@ -9,7 +9,7 @@ import {
   type ChosenModules,
 } from './modules.ts';
 import type { Beacon, Machine, ModuleId, Recipe, StaticData } from '../types.ts';
-import { type Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 
 export interface Effects {
   speed: number;
@@ -51,11 +51,14 @@ function slotEffects(data: StaticData, machine: Machine, fill: ModuleFill): Slot
 
 function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: Boost[]): Effects {
   let speed = slots.speed + boosts.reduce((total, boost) => total + boost.speed, 0);
-  let productivity =
+  let moduleProductivity =
     slots.productivity + boosts.reduce((total, boost) => total + boost.productivity, 0);
   if (!allowsEffect(machine, 'speed')) speed = 0;
-  if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) productivity = 0;
-  return { speed: Math.max(MIN_SPEED, 1 + speed), productivity: 1 + productivity };
+  if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) moduleProductivity = 0;
+  return {
+    speed: Math.max(MIN_SPEED, 1 + speed),
+    productivity: 1 + (machine.baseProductivity ?? 0) + moduleProductivity,
+  };
 }
 
 export function moduleEffects(

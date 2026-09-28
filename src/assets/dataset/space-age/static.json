@@ -464,7 +464,8 @@
         { "p": "output", "c": [{ "p": [-1, 1], "d": "south", "f": "output" }] }
       ],
       "n": 4,
-      "e": ["consumption", "speed", "productivity", "pollution", "quality"]
+      "e": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "y": 0.5
     },
     "crusher": {
       "h": "Crusher",
@@ -490,7 +491,8 @@
         { "p": "output", "c": [{ "p": [1, -2], "d": "north", "f": "output" }] }
       ],
       "n": 4,
-      "e": ["consumption", "speed", "productivity", "pollution", "quality"]
+      "e": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "y": 0.5
     },
     "captive-biter-spawner": {
       "h": "Captive biter spawner",
@@ -516,7 +518,8 @@
         { "p": "output", "c": [{ "p": [-0.5, -1.5], "d": "north", "f": "input-output" }] }
       ],
       "n": 5,
-      "e": ["consumption", "speed", "productivity", "pollution", "quality"]
+      "e": ["consumption", "speed", "productivity", "pollution", "quality"],
+      "y": 0.5
     },
     "cryogenic-plant": {
       "h": "Cryogenic plant",

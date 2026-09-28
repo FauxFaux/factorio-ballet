@@ -1,6 +1,6 @@
 import type { Belt, Inserter, InserterCapacityBonus, StaticData } from '../types.ts';
 import { defaultBelt } from './index.ts';
-import type { Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 
 type ThroughputGrid = ReadonlyArray<{
   rotationSpeed: number;

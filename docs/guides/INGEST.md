@@ -169,9 +169,12 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 - **Machines** carry `moduleSlots`, and now `allowedEffects` / `allowedModuleCategories`. Both are
   **absent for "no restriction"**, and the second one is why: no machine's whitelist names
   `angels-bio-yield`, and the twelve Angel's farms which name no whitelist are the only place those
-  five modules can go. Miss that and a quarter of the modules we keep are dead. Still un-ingested:
-  `effect_receiver` (5 machines, a per-machine base effect rather than a module thing — and the four
-  setting `uses_module_effects: false` have no module slots to ignore anyway).
+  five modules can go. Miss that and a quarter of the modules we keep are dead.
+  `effect_receiver.base_effect.productivity` is ingested as `Machine.baseProductivity`, separate
+  from module effects. The Bob's/Angel's pack has no nonzero machine base productivity; Space Age
+  2.1.19 has exactly three machines at +50%: biochamber, foundry, and electromagnetic plant. Their
+  built-in bonus applies even when a recipe disallows productivity modules. Other receiver fields,
+  including `uses_module_effects` (false on four slotless Bob's/Angel's machines), are not ingested.
 - The two restrictions do not work the same way. `allowed_module_categories` refuses the module;
   `allowed_effects` **ignores the effects not in it** and takes the module regardless. That has to
   be so: 143 machines allow productivity but not quality, and speed modules — which carry a quality

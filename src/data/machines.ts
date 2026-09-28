@@ -1,5 +1,5 @@
 import type { Machine, MachineId, Recipe, StaticData } from '../types.ts';
-import type { Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 
 function complexityOf(of: { complexity?: number }): number {
   return of.complexity ?? Infinity;

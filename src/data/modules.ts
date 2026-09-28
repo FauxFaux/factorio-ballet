@@ -1,5 +1,5 @@
 import type { Beacon, Effect, Machine, Module, ModuleId, Recipe, StaticData } from '../types.ts';
-import { type Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 import { cheapestModule } from '../dataset/precompute.ts';
 
 /** Whether a machine applies one of the module effects. */

@@ -75,6 +75,7 @@ export function packStaticData(data: StaticData): StaticDataPacked {
             })),
           })),
           n: machine.moduleSlots,
+          y: machine.baseProductivity,
           e: machine.allowedEffects,
           a: machine.allowedModuleCategories,
           b: machine.burner && {

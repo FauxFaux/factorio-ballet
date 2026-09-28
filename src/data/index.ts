@@ -1,5 +1,5 @@
 import type { Beacon, BeaconId, Belt, BeltId, ResourceId, StaticData } from '../types.ts';
-import { type Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
 

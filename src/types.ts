@@ -90,6 +90,7 @@ export type StaticDataPacked = {
       z: MachineSize;
       f?: PackedMachineFluidBox[];
       n?: number;
+      y?: number;
       e?: Effect[];
       a?: string[];
       b?: { p: number; e: number; c: string[] };
@@ -339,6 +340,8 @@ export interface Machine {
   /** Ordered recipe-fluid slots and their physical pipe connections. */
   fluidBoxes?: MachineFluidBox[];
   moduleSlots?: number;
+  /** Built-in productivity bonus from `effect_receiver.base_effect.productivity`. */
+  baseProductivity?: number;
   /** Burner fuel use while crafting. Power is in MW; categories are prototype IDs. */
   burner?: { power: number; effectivity: number; fuelCategories: string[] };
 

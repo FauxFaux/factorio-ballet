@@ -434,6 +434,8 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         size: machineSize(m.collision_box, id),
         fluidBoxes: 'fluid_boxes' in m ? machineFluidBoxes(m.fluid_boxes) : undefined,
         moduleSlots: 'module_slots' in m ? m.module_slots : undefined,
+        baseProductivity:
+          'effect_receiver' in m ? m.effect_receiver?.base_effect?.productivity : undefined,
         // both absent-means-everything; see `Machine.allowedEffects`
         allowedEffects: 'allowed_effects' in m ? effectLimits(m.allowed_effects) : undefined,
         allowedModuleCategories:

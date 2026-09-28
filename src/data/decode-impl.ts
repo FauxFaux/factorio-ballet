@@ -86,6 +86,7 @@ export function decodeStaticData(data: StaticDataPacked): StaticData {
             })),
           })),
           moduleSlots: machine.n,
+          baseProductivity: machine.y,
           allowedEffects: machine.e,
           allowedModuleCategories: machine.a,
           burner: machine.b && {

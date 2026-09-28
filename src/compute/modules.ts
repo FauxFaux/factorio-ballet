@@ -7,7 +7,7 @@ import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
 import { solveKernelTileDesign } from './tile-design/kernel-result.ts';
-import { type Dataset } from '../dataset';
+import type { Dataset } from '../dataset/index.ts';
 
 export const MAX_MODULE_HEIGHT = 100;
 

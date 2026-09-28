@@ -1,8 +1,35 @@
 import { describe, expect, it } from 'vitest';
 import { isDeferredRecycling, searchMatches, searchRecipes } from '../src/data/search.ts';
 import { spaceAge } from '../src/dataset/catalogue/space-age.ts';
+import { moduleEffects } from '../src/data/module-effects.ts';
 
 describe('Space Age dataset', () => {
+  it('retains and applies built-in productivity on the three specialized machines', async () => {
+    const { staticData } = await spaceAge();
+    const productive = ['biochamber', 'foundry', 'electromagnetic-plant'];
+    for (const id of productive) {
+      expect(staticData.machines[id].baseProductivity).toBe(0.5);
+    }
+    expect(
+      Object.entries(staticData.machines)
+        .filter(([, machine]) => machine.baseProductivity !== undefined)
+        .map(([id]) => id),
+    ).toEqual(productive);
+
+    const plant = staticData.machines['electromagnetic-plant'];
+    const circuit = staticData.recipes['electronic-circuit'];
+    const module = staticData.recipes['speed-module'];
+    expect(circuit.allowProductivity).toBe(true);
+    expect(module.allowProductivity).toBeUndefined();
+    expect(moduleEffects(staticData, plant, {}, module).productivity).toBe(1.5);
+    expect(
+      moduleEffects(staticData, plant, { 'productivity-module-3': 1 }, circuit).productivity,
+    ).toBeCloseTo(1.6);
+    expect(
+      moduleEffects(staticData, plant, { 'productivity-module-3': 1 }, module).productivity,
+    ).toBe(1.5);
+  });
+
   it('loads the 2.1 recipes and one icon sheet', async () => {
     const { staticData, iconMap } = await spaceAge();
     const scrap = staticData.recipes['scrap-recycling'];
