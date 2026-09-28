@@ -22,12 +22,17 @@ import { useDataset } from '../../dataset/context.tsx';
 import { stackedRailStations } from '../cell/rail-mode.ts';
 import { ModuleFootprints } from './module-footprints.tsx';
 import { talaGraph } from './tala-graph.ts';
+import { elkLayout } from './elk-layout.ts';
 
 const NO_MODULES: FactoryModule[] = [];
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
 
 let talaInstance: Promise<TALA> | undefined;
+type LayoutAlgorithm = 'tala' | 'elk';
+type CachedLayout = { promise: Promise<LayoutResult>; result?: LayoutResult };
+const layoutCache = new Map<string, CachedLayout>();
+const MAX_CACHED_LAYOUTS = 32;
 
 function tala(): Promise<TALA> {
   talaInstance ??= Promise.resolve()
@@ -41,6 +46,35 @@ function tala(): Promise<TALA> {
       throw error;
     });
   return talaInstance;
+}
+
+function cachedLayout(
+  algorithm: LayoutAlgorithm,
+  graph: ReturnType<typeof talaGraph>,
+): CachedLayout {
+  const key = `${algorithm}:${JSON.stringify(graph)}`;
+  const cached = layoutCache.get(key);
+  if (cached) {
+    layoutCache.delete(key);
+    layoutCache.set(key, cached);
+    return cached;
+  }
+  const entry: CachedLayout = {
+    promise: Promise.resolve().then(() =>
+      algorithm === 'tala' ? tala().then((instance) => instance.layout(graph)) : elkLayout(graph),
+    ),
+  };
+  layoutCache.set(key, entry);
+  void entry.promise.then(
+    (result) => {
+      entry.result = result;
+    },
+    () => {
+      if (layoutCache.get(key) === entry) layoutCache.delete(key);
+    },
+  );
+  if (layoutCache.size > MAX_CACHED_LAYOUTS) layoutCache.delete(layoutCache.keys().next().value!);
+  return entry;
 }
 
 function talaViewBox(result: LayoutResult, nodeNames: ReadonlyMap<string, string>): string {
@@ -130,32 +164,40 @@ export function CellLayoutSurface({
   outputs.forEach((resource, index) =>
     nodeNames.set(`output_${index}`, `Output: ${resourceName(data, resource)}`),
   );
-  const [talaOutput, setTalaOutput] = useState<LayoutResult | null>(null);
-  const [talaStatus, setTalaStatus] = useState('');
+  const [algorithm, setAlgorithm] = useState<LayoutAlgorithm>('tala');
+  const [layoutState, setLayoutState] = useState<{
+    key: string;
+    result?: LayoutResult;
+    error?: string;
+  } | null>(null);
+  const layoutKey = `${algorithm}:${JSON.stringify(graph)}`;
+  const cachedResult = layoutCache.get(layoutKey)?.result;
+  const output = cachedResult ?? (layoutState?.key === layoutKey ? layoutState.result : undefined);
+  const status = layoutState?.key === layoutKey ? layoutState.error : undefined;
   useEffect(() => {
     if (!modules.length) {
-      setTalaOutput(null);
-      setTalaStatus('');
+      setLayoutState(null);
       return;
     }
     let current = true;
-    setTalaOutput(null);
-    setTalaStatus('Running TALA…');
-    void tala()
-      .then((instance) => instance.layout(graph))
+    const entry = cachedLayout(algorithm, graph);
+    if (entry.result) setLayoutState({ key: layoutKey, result: entry.result });
+    else setLayoutState({ key: layoutKey });
+    void entry.promise
       .then((result) => {
-        if (current) {
-          setTalaOutput(result);
-          setTalaStatus('');
-        }
+        if (current) setLayoutState({ key: layoutKey, result });
       })
       .catch((error: unknown) => {
-        if (current) setTalaStatus(`TALA layout failed: ${String(error)}`);
+        if (current)
+          setLayoutState({
+            key: layoutKey,
+            error: `${algorithm.toUpperCase()} layout failed: ${String(error)}`,
+          });
       });
     return () => {
       current = false;
     };
-  }, [graph, modules.length]);
+  }, [algorithm, graph, layoutKey, modules.length]);
 
   return (
     <div class="cell-layout-panel">
@@ -172,15 +214,31 @@ export function CellLayoutSurface({
         <InputStationFootprints stops={stationStops} resources={inputs} />
         <OutputStationFootprints stops={outputStationStops} resources={outputs} />
       </section>
-      {talaStatus && <p class="cell-layout-tala-status">{talaStatus}</p>}
-      {talaOutput && (
+      {modules.length > 0 && (
+        <label class="cell-layout-algorithm">
+          <span>TALA</span>
+          <input
+            type="checkbox"
+            role="switch"
+            aria-label="Use ELK layout"
+            checked={algorithm === 'elk'}
+            onChange={(event) => setAlgorithm(event.currentTarget.checked ? 'elk' : 'tala')}
+          />
+          <span>ELK</span>
+        </label>
+      )}
+      {modules.length > 0 && !output && !status && (
+        <p class="cell-layout-tala-status">Running {algorithm.toUpperCase()}…</p>
+      )}
+      {status && <p class="cell-layout-tala-status">{status}</p>}
+      {output && (
         <svg
           class="cell-layout-tala-output"
           role="img"
-          aria-label="TALA layout"
-          viewBox={talaViewBox(talaOutput, nodeNames)}
+          aria-label={`${algorithm.toUpperCase()} layout`}
+          viewBox={talaViewBox(output, nodeNames)}
         >
-          {talaOutput.edges.map((edge) => (
+          {output.edges.map((edge) => (
             <polyline
               key={edge.id}
               class="cell-layout-tala-edge"
@@ -190,7 +248,7 @@ export function CellLayoutSurface({
               <title>{edge.id}</title>
             </polyline>
           ))}
-          {talaOutput.nodes.map((node) => (
+          {output.nodes.map((node) => (
             <g key={node.id} data-tala-node={node.id}>
               <title>{nodeDescriptions.get(node.id) ?? nodeNames.get(node.id) ?? node.id}</title>
               <rect

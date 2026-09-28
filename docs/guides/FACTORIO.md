@@ -31,6 +31,10 @@ Complexities:
   does say is per result — `ignored_by_productivity`, ingested as `Product.ignoredByProductivity` —
   and it covers the within-one-recipe case, which is what `productAmount` pays the bonus around. A
   catalyst which goes round a cycle of two recipes is not stated anywhere and is still open.
+- burner assemblers. Some buildings require fuel to run, which is not represented in the recipe
+  data. Fuel consumption is affected by modules' "energy" usage. Fuel can have a burnt result (e.g.
+  "coal" burns to "ash").
+- built-in productivity: some buildings can have productivity bonuses, before modules.
 
 ## Cells
 

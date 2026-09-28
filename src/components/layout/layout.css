@@ -59,6 +59,19 @@
   border-radius: 4px;
 }
 
+.cell-layout-algorithm {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: fit-content;
+  margin-top: 0.5rem;
+  cursor: pointer;
+}
+
+.cell-layout-algorithm input {
+  cursor: pointer;
+}
+
 .cell-layout-tala-status {
   margin: 8px 0 0;
 }
