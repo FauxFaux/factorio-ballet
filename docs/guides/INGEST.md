@@ -31,7 +31,7 @@ generated recycling recipes are executable and must be kept.
 
 Identify a pack from `$APP/mods/mod-list.json`. Confirm you regenerated from the right one by the
 counts the script prints — the checked-in file is `Recipes: 2330`, `Machines: 161`,
-`Resources: 1761`, `Modules: 15`.
+`Resources: 1761`, `Modules: 20`.
 
 ## What a `script-output/` holds
 
@@ -150,11 +150,11 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 
 - **`data.raw.module`** — 30 prototypes, none hidden. Carries `category` (a `module-category` id),
   `tier`, and `effect` as a record of `speed` / `productivity` / `consumption` / `pollution` /
-  `quality` multipliers (e.g. speed module 3 is `{speed: 0.4, consumption: 0.7, quality: -0.3}`). 15
-  of them change speed or productivity and are kept as `StaticData.modules` with those two numbers;
-  the other 15 are the efficiency and pollution families, which this app has no power or pollution
-  model to spend on. The effect values arrive with the mods' float noise (`0.30000000000000004`) and
-  are rounded to 4dp like everything else.
+  `quality` multipliers (e.g. speed module 3 is `{speed: 0.4, consumption: 0.7, quality: -0.3}`). 20
+  change speed, productivity, or energy consumption and are kept as `StaticData.modules`. The five
+  efficiency modules are retained for fuel accounting but are not offered by the throughput-only
+  module picker. Ten pollution-only modules are dropped. The effect values arrive with the mods'
+  float noise (`0.30000000000000004`) and are rounded to 4dp like everything else.
 - `limitation` / `limitation_blacklist` — the per-recipe whitelist, and how 1.1 kept productivity
   modules on intermediates — are unused in this pack, and 2.0 moved that decision to the recipe as
   `allow_productivity`. `factorio-raw-types` does not declare them either, so they are not ingested;
@@ -169,7 +169,7 @@ Modules and beacons are both ingested. Measured against the Bob's/Angel's pack:
 - **Machines** carry `moduleSlots`, and now `allowedEffects` / `allowedModuleCategories`. Both are
   **absent for "no restriction"**, and the second one is why: no machine's whitelist names
   `angels-bio-yield`, and the twelve Angel's farms which name no whitelist are the only place those
-  five modules can go. Miss that and a third of the modules we keep are dead. Still un-ingested:
+  five modules can go. Miss that and a quarter of the modules we keep are dead. Still un-ingested:
   `effect_receiver` (5 machines, a per-machine base effect rather than a module thing — and the four
   setting `uses_module_effects: false` have no module slots to ignore anyway).
 - The two restrictions do not work the same way. `allowed_module_categories` refuses the module;
@@ -394,6 +394,18 @@ increase.
 arithmetic over this data is `moduleEffects` and `productAmount` in `../../src/compute/flow.ts`.
 
 ## Notes for reactors and fuel cells
+
+The item fuel fields are also ingested for burner crafting machines. `Resource.fuelValue` is in MJ,
+`fuelCategory` is the raw category id (such as `chemical`), and `burntResult` is an `item:` resource
+id when present. `Machine.burner` holds crafting `energy_usage` in MW, burner `effectivity`, and the
+accepted `fuel_categories` as strings. The game's defaults are 100% effectivity and `["chemical"]`.
+In this pack, nine live crafting machines have burner sources, all at 100% effectivity; 17 live item
+fuels belong to `chemical`. `angels-blast-furnace-3` uses 0.25 MW and `angels-solid-carbon` provides
+3 MJ, so one carbon lasts 12 seconds while crafting before module energy effects. The ingest checks
+every spent result has an item and every burner fuel category has a live item fuel.
+
+The module ingest also keeps `effect.consumption` as a fraction. The current throughput calculation
+still uses only speed and productivity; it does not yet add fuel to recipe or cell flows.
 
 - **`data.raw.reactor`** — 8 live prototypes in this pack. Their continuous input power is
   `consumption` (`"54MW"` on `nuclear-reactor`), the fraction of that input emitted as heat is

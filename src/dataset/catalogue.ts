@@ -10,7 +10,7 @@ interface DatasetCatalogueEntry {
 
 /** Keep this module free of dataset assets so the chooser can render before they load. */
 export const datasetCatalogue = {
-  'bobang-r4q': {
+  'bobang-ju7': {
     label: "Bob's and Angel's",
     load: async () => bobAngs(),
   },
@@ -20,7 +20,7 @@ export const datasetCatalogue = {
   },
 } satisfies Record<DatasetId, DatasetCatalogueEntry>;
 
-export const legacyDatasetId = 'bobang-r4q';
+export const legacyDatasetId = 'bobang-ju7';
 
 export function isDatasetId(id: string): id is keyof typeof datasetCatalogue {
   return Object.hasOwn(datasetCatalogue, id);

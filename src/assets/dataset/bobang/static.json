@@ -123,8 +123,8 @@
     "item:bob-sniper-rifle": { "h": "Sniper rifle", "z": 5, "x": 0.4851 },
     "item:bob-laser-rifle": { "h": "Laser rifle", "z": 5, "x": 0.3893 },
     "item:stone-brick": { "h": "Stone brick", "z": 200, "x": 0 },
-    "item:wood": { "h": "Wood", "z": 200, "x": 0 },
-    "item:coal": { "h": "Coal", "z": 200, "x": 0 },
+    "item:wood": { "h": "Wood", "z": 200, "x": 0, "v": 2, "c": "chemical" },
+    "item:coal": { "h": "Coal", "z": 200, "x": 0, "v": 4, "c": "chemical" },
     "item:stone": { "h": "Stone", "z": 200, "x": 0 },
     "item:iron-ore": { "h": "Iron ore", "z": 200, "x": 0.114 },
     "item:copper-ore": { "h": "Copper ore", "z": 200, "x": 0.114 },
@@ -160,8 +160,8 @@
     "item:steel-plate": { "h": "Steel plate", "z": 200, "x": 0.1505 },
     "item:engine-unit": { "h": "Engine unit", "z": 50, "x": 0.2889 },
     "item:electric-furnace": { "h": "Electric furnace", "z": 50, "x": 0.508 },
-    "item:solid-fuel": { "h": "Solid fuel", "z": 50, "x": 0.3477 },
-    "item:rocket-fuel": { "h": "Rocket fuel", "z": 20, "x": 0.7385 },
+    "item:solid-fuel": { "h": "Solid fuel", "z": 50, "x": 0.3477, "v": 12, "c": "chemical" },
+    "item:rocket-fuel": { "h": "Rocket fuel", "z": 20, "x": 0.7385, "v": 100, "c": "chemical" },
     "item:iron-chest": { "h": "Iron chest", "z": 50, "x": 0 },
     "item:big-electric-pole": { "h": "Big electric pole", "z": 50, "x": 0.2889 },
     "item:medium-electric-pole": { "h": "Medium electric pole", "z": 50, "x": 0.2889 },
@@ -217,14 +217,21 @@
     "item:battery": { "h": "Battery", "z": 200, "x": 0.3338 },
     "item:flying-robot-frame": { "h": "Flying robot frame", "z": 50, "x": 0.358 },
     "item:low-density-structure": { "h": "Low density structure", "z": 50, "x": 0.542 },
-    "item:nuclear-fuel": { "h": "Nuclear fuel", "z": 2, "x": 0.7437 },
+    "item:nuclear-fuel": { "h": "Nuclear fuel", "z": 2, "x": 0.7437, "v": 1210, "c": "chemical" },
     "item:rocket-part": { "h": "Rocket part", "z": 5, "x": 0.7923 },
     "item:satellite": { "h": "Satellite", "z": 1, "x": 0.7923 },
     "item:nuclear-reactor": { "h": "Uranium reactor", "z": 10, "x": 0.5471 },
     "item:uranium-235": { "h": "Uranium-235", "z": 100, "x": 0.511 },
     "item:uranium-238": { "h": "Uranium-238", "z": 100, "x": 0.511 },
     "item:centrifuge": { "h": "Centrifuge", "z": 50, "x": 0.511 },
-    "item:uranium-fuel-cell": { "h": "Uranium-235 fuel cell", "z": 50, "x": 0.5471 },
+    "item:uranium-fuel-cell": {
+      "h": "Uranium-235 fuel cell",
+      "z": 50,
+      "x": 0.5471,
+      "v": 2000,
+      "c": "nuclear",
+      "b": "item:depleted-uranium-fuel-cell"
+    },
     "item:depleted-uranium-fuel-cell": { "h": "Depleted uranium fuel cell", "z": 50, "x": 0.5471 },
     "item:heat-exchanger": { "h": "Heat exchanger", "z": 50, "x": 0.2993 },
     "item:steam-turbine": { "h": "Steam turbine", "z": 10, "x": 0.5482 },
@@ -408,7 +415,13 @@
     "item:bob-polishing-compound": { "h": "Polishing compound", "z": 100, "x": 0.3556 },
     "item:bob-gas-canister": { "h": "Empty bottle", "z": 10, "x": 0.349 },
     "item:bob-empty-canister": { "h": "Empty canister", "z": 10, "x": 0.3525 },
-    "item:bob-enriched-fuel": { "h": "Enriched fuel block", "z": 20, "x": 0.3477 },
+    "item:bob-enriched-fuel": {
+      "h": "Enriched fuel block",
+      "z": 20,
+      "x": 0.3477,
+      "v": 50,
+      "c": "chemical"
+    },
     "item:bob-tin-plate": { "h": "Tin plate", "z": 200, "x": 0.1412 },
     "item:bob-silver-plate": { "h": "Silver plate", "z": 200, "x": 0.347 },
     "item:bob-lead-plate": { "h": "Lead plate", "z": 200, "x": 0.1412 },
@@ -1492,10 +1505,22 @@
     "item:angels-catalyst-metal-yellow": { "h": "Yellow metal catalyst", "z": 200, "x": 0.7311 },
     "item:angels-electrode": { "h": "Electrolyser electrode", "z": 200, "x": 0.3114 },
     "item:angels-electrode-used": { "h": "Used electrolyser electrode", "z": 200, "x": 0.3114 },
-    "item:angels-coal-crushed": { "h": "Crushed coal", "z": 200, "x": 0.1222 },
-    "item:angels-solid-coke": { "h": "Coke", "z": 200, "x": 0.1222 },
-    "item:angels-pellet-coke": { "h": "Coke pellet", "z": 200, "x": 0.324 },
-    "item:angels-solid-carbon": { "h": "Carbon", "z": 200, "x": 0.14 },
+    "item:angels-coal-crushed": {
+      "h": "Crushed coal",
+      "z": 200,
+      "x": 0.1222,
+      "v": 2,
+      "c": "chemical"
+    },
+    "item:angels-solid-coke": { "h": "Coke", "z": 200, "x": 0.1222, "v": 2.5, "c": "chemical" },
+    "item:angels-pellet-coke": {
+      "h": "Coke pellet",
+      "z": 200,
+      "x": 0.324,
+      "v": 15,
+      "c": "chemical"
+    },
+    "item:angels-solid-carbon": { "h": "Carbon", "z": 200, "x": 0.14, "v": 3, "c": "chemical" },
     "item:angels-solid-ammonium-nitrate": { "h": "Ammonium nitrate", "z": 200, "x": 0.3417 },
     "item:angels-solid-ammonium-perchlorate": {
       "h": "Ammonium perchlorate",
@@ -1508,7 +1533,13 @@
       "z": 200,
       "x": 0.7385
     },
-    "item:angels-rocket-booster": { "h": "Rocket booster", "z": 200, "x": 0.3417 },
+    "item:angels-rocket-booster": {
+      "h": "Rocket booster",
+      "z": 200,
+      "x": 0.3417,
+      "v": 10,
+      "c": "chemical"
+    },
     "item:angels-solid-calcium-sulfate": { "h": "Calcium sulfate", "z": 200, "x": 0.3362 },
     "item:angels-solid-sodium-sulfate": { "h": "Sodium sulfate", "z": 200, "x": 0.4667 },
     "item:angels-filter-lime": { "h": "Porous lime filter", "z": 200, "x": 0.4667 },
@@ -1518,22 +1549,62 @@
     "item:angels-americium-241": { "h": "Americium-241", "z": 100, "x": 0.7025 },
     "item:angels-curium-245": { "h": "Curium-245", "z": 100, "x": 0.7025 },
     "item:angels-muon-fusion-catalyst": { "h": "Muon fusion catalyst", "z": 1, "x": 0.8015 },
-    "item:angels-nuclear-fuel": { "h": "Plutonium nuclear fuel", "z": 2, "x": 0.7437 },
-    "item:angels-nuclear-fuel-2": { "h": "Fusion nuclear fuel", "z": 2, "x": 0.7754 },
-    "item:angels-uranium-fuel-cell": { "h": "Uranium-234 fuel cell", "z": 50, "x": 0.5471 },
-    "item:angels-mixed-oxide-cell": { "h": "Mixed-oxide (MOX) fuel cell", "z": 50, "x": 0.7025 },
+    "item:angels-nuclear-fuel": {
+      "h": "Plutonium nuclear fuel",
+      "z": 2,
+      "x": 0.7437,
+      "v": 1464.1,
+      "c": "chemical"
+    },
+    "item:angels-nuclear-fuel-2": {
+      "h": "Fusion nuclear fuel",
+      "z": 2,
+      "x": 0.7754,
+      "v": 2196.2000000000003,
+      "c": "chemical"
+    },
+    "item:angels-uranium-fuel-cell": {
+      "h": "Uranium-234 fuel cell",
+      "z": 50,
+      "x": 0.5471,
+      "v": 1500,
+      "c": "nuclear",
+      "b": "item:depleted-uranium-fuel-cell"
+    },
+    "item:angels-mixed-oxide-cell": {
+      "h": "Mixed-oxide (MOX) fuel cell",
+      "z": 50,
+      "x": 0.7025,
+      "v": 8000,
+      "c": "nuclear",
+      "b": "item:angels-depleted-mixed-oxide-cell"
+    },
     "item:angels-depleted-mixed-oxide-cell": {
       "h": "Depleted mixed-oxide (MOX) fuel cell",
       "z": 50,
       "x": 0.7025
     },
-    "item:angels-thorium-fuel-cell": { "h": "Thorium fuel cell", "z": 50, "x": 0.7754 },
+    "item:angels-thorium-fuel-cell": {
+      "h": "Thorium fuel cell",
+      "z": 50,
+      "x": 0.7754,
+      "v": 15000,
+      "c": "bob-thorium",
+      "b": "item:angels-depleted-thorium-fuel-cell"
+    },
     "item:angels-depleted-thorium-fuel-cell": {
       "h": "Depleted thorium fuel cell",
       "z": 50,
       "x": 0.7754
     },
-    "item:angels-deuterium-fuel-cell": { "h": "Deuterium fuel cell", "z": 50, "x": 0.8015 },
+    "item:angels-deuterium-fuel-cell": {
+      "h": "Deuterium fuel cell",
+      "z": 50,
+      "x": 0.8015,
+      "v": 80000,
+      "c": "bob-deuterium",
+      "b": "item:angels-depleted-deuterium-fuel-cell"
+    },
     "item:angels-depleted-deuterium-fuel-cell": {
       "h": "Depleted deuterium fuel cell",
       "z": 50,
@@ -1793,10 +1864,28 @@
     "item:angels-algae-red": { "h": "Red algae", "z": 200, "x": 0.3427 },
     "item:angels-red-cellulose-fiber": { "h": "Red cellulose fiber", "z": 200, "x": 0.3427 },
     "item:angels-solid-calcium-carbonate": { "h": "Calcium carbonate", "z": 200, "x": 0.3427 },
-    "item:angels-cellulose-fiber": { "h": "Cellulose fiber", "z": 200, "x": 0.079 },
-    "item:angels-wood-pellets": { "h": "Wood pellets", "z": 200, "x": 0.1106 },
-    "item:angels-wood-charcoal": { "h": "Charcoal", "z": 200, "x": 0.14 },
-    "item:angels-wood-bricks": { "h": "Wood bricks", "z": 200, "x": 0.1106 },
+    "item:angels-cellulose-fiber": {
+      "h": "Cellulose fiber",
+      "z": 200,
+      "x": 0.079,
+      "v": 1,
+      "c": "chemical"
+    },
+    "item:angels-wood-pellets": {
+      "h": "Wood pellets",
+      "z": 200,
+      "x": 0.1106,
+      "v": 8,
+      "c": "chemical"
+    },
+    "item:angels-wood-charcoal": { "h": "Charcoal", "z": 200, "x": 0.14, "v": 6, "c": "chemical" },
+    "item:angels-wood-bricks": {
+      "h": "Wood bricks",
+      "z": 200,
+      "x": 0.1106,
+      "v": 20,
+      "c": "chemical"
+    },
     "item:angels-solid-wood-pulp": { "h": "Cellulose pulp", "z": 200, "x": 0.2711 },
     "item:angels-solid-paper": { "h": "Paper", "z": 200, "x": 0.2711 },
     "item:angels-bio-resin": { "h": "Raw bio-resin", "z": 200, "x": 0.4074 },
@@ -2862,7 +2951,8 @@
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 1,
       "z": { "width": 2, "height": 2 },
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.09, "e": 1, "c": ["chemical"] }
     },
     "bob-steel-mixing-furnace": {
       "h": "Steel filtering furnace",
@@ -2871,7 +2961,8 @@
       "c": ["smelting", "bob-mixing-furnace"],
       "s": 2,
       "z": { "width": 2, "height": 2 },
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.09, "e": 1, "c": ["chemical"] }
     },
     "bob-electric-mixing-furnace": {
       "h": "Electric filtering furnace 1",
@@ -3035,7 +3126,8 @@
       "c": ["angels-ore-refining-t1"],
       "s": 1,
       "z": { "width": 3, "height": 3 },
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.1, "e": 1, "c": ["chemical"] }
     },
     "angels-ore-crusher": {
       "h": "Ore crusher 1",
@@ -4259,7 +4351,8 @@
       ],
       "n": 0,
       "e": ["consumption", "speed", "productivity", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.15, "e": 1, "c": ["chemical"] }
     },
     "angels-blast-furnace-2": {
       "h": "Blast furnace 2",
@@ -4274,7 +4367,8 @@
       ],
       "n": 1,
       "e": ["consumption", "speed", "productivity", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.2, "e": 1, "c": ["chemical"] }
     },
     "angels-blast-furnace-3": {
       "h": "Blast furnace 3",
@@ -4289,7 +4383,8 @@
       ],
       "n": 2,
       "e": ["consumption", "speed", "productivity", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.25, "e": 1, "c": ["chemical"] }
     },
     "angels-blast-furnace-4": {
       "h": "Blast furnace 4",
@@ -4309,7 +4404,8 @@
       ],
       "n": 3,
       "e": ["consumption", "speed", "productivity", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.3, "e": 1, "c": ["chemical"] }
     },
     "angels-chemical-furnace": {
       "h": "Chemical furnace 1",
@@ -4986,7 +5082,8 @@
       "s": 1,
       "z": { "width": 2, "height": 2 },
       "e": ["speed", "consumption", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.09, "e": 1, "c": ["chemical"] }
     },
     "electric-furnace": {
       "h": "Electric furnace",
@@ -5007,7 +5104,8 @@
       "s": 2,
       "z": { "width": 2, "height": 2 },
       "e": ["speed", "consumption", "pollution"],
-      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"]
+      "a": ["productivity", "speed", "efficiency", "pollution-clean", "pollution-create", "god"],
+      "b": { "p": 0.09, "e": 1, "c": ["chemical"] }
     },
     "bob-electric-furnace-2": {
       "h": "Electric furnace 2",
@@ -5354,16 +5452,21 @@
     }
   },
   "modules": {
-    "speed-module": { "c": "speed", "t": 1, "s": 0.2 },
-    "speed-module-2": { "c": "speed", "t": 2, "s": 0.3 },
-    "speed-module-3": { "c": "speed", "t": 3, "s": 0.4 },
-    "productivity-module": { "c": "productivity", "t": 1, "s": -0.05, "p": 0.04 },
-    "productivity-module-2": { "c": "productivity", "t": 2, "s": -0.1, "p": 0.08 },
-    "productivity-module-3": { "c": "productivity", "t": 3, "s": -0.15, "p": 0.12 },
-    "bob-speed-module-4": { "c": "speed", "t": 4, "s": 0.5 },
-    "bob-speed-module-5": { "c": "speed", "t": 5, "s": 0.6 },
-    "bob-productivity-module-4": { "c": "productivity", "t": 4, "s": -0.2, "p": 0.16 },
-    "bob-productivity-module-5": { "c": "productivity", "t": 5, "s": -0.25, "p": 0.2 },
+    "speed-module": { "c": "speed", "t": 1, "s": 0.2, "e": 0.5 },
+    "speed-module-2": { "c": "speed", "t": 2, "s": 0.3, "e": 0.6 },
+    "speed-module-3": { "c": "speed", "t": 3, "s": 0.4, "e": 0.7 },
+    "efficiency-module": { "c": "efficiency", "t": 1, "e": -0.4 },
+    "efficiency-module-2": { "c": "efficiency", "t": 2, "e": -0.5 },
+    "efficiency-module-3": { "c": "efficiency", "t": 3, "e": -0.6 },
+    "productivity-module": { "c": "productivity", "t": 1, "s": -0.05, "p": 0.04, "e": 0.4 },
+    "productivity-module-2": { "c": "productivity", "t": 2, "s": -0.1, "p": 0.08, "e": 0.6 },
+    "productivity-module-3": { "c": "productivity", "t": 3, "s": -0.15, "p": 0.12, "e": 0.8 },
+    "bob-speed-module-4": { "c": "speed", "t": 4, "s": 0.5, "e": 0.8 },
+    "bob-speed-module-5": { "c": "speed", "t": 5, "s": 0.6, "e": 0.9 },
+    "bob-efficiency-module-4": { "c": "efficiency", "t": 4, "e": -0.7 },
+    "bob-efficiency-module-5": { "c": "efficiency", "t": 5, "e": -0.8 },
+    "bob-productivity-module-4": { "c": "productivity", "t": 4, "s": -0.2, "p": 0.16, "e": 1 },
+    "bob-productivity-module-5": { "c": "productivity", "t": 5, "s": -0.25, "p": 0.2, "e": 1.2 },
     "angels-bio-yield-module": { "c": "angels-bio-yield", "t": 1, "p": 0.1 },
     "angels-bio-yield-module-2": { "c": "angels-bio-yield", "t": 2, "p": 0.2 },
     "angels-bio-yield-module-3": { "c": "angels-bio-yield", "t": 3, "p": 0.3 },

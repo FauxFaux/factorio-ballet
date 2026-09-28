@@ -46,6 +46,9 @@ export interface ModuleIndex {
 export function buildModuleIndex(data: StaticData): ModuleIndex {
   const byCategory = new Map<string, ModuleMatch[]>();
   for (const [id, module] of Object.entries(data.modules)) {
+    // The planner's module picker only offers throughput effects. Keep energy-only modules in
+    // StaticData for fuel calculations without presenting them as speed or productivity modules.
+    if (!module.speed && !module.productivity) continue;
     let list = byCategory.get(module.category);
     if (!list) byCategory.set(module.category, (list = []));
     list.push({ id, module, complexity: data.resources[`item:${id}`]?.complexity });

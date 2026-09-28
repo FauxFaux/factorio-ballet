@@ -9,7 +9,12 @@ import { resolveLocale } from './locale.ts';
 import { entriesOf } from '../src/ts.ts';
 import { analyse } from './complexity.ts';
 import { packStaticData } from './pack-static-data.ts';
-import { placingItems, syntheticRecipes } from './synthetic.ts';
+import {
+  energyInMegajoules,
+  placingItems,
+  powerInMegawatts,
+  syntheticRecipes,
+} from './synthetic.ts';
 import { checkBelts, handleBelts } from './ingest/belts.ts';
 import { checkInserters, handleInserters, inserterCapacityBonuses } from './ingest/inserters.ts';
 import { fromAirSuggestionStages } from '../src/compute/from-air.ts';
@@ -95,6 +100,9 @@ async function main() {
       resources[id] = {
         human: resolveLocale(itemId, locales, 'item'),
         stackSize: item.stack_size,
+        fuelValue: item.fuel_value ? energyInMegajoules(item.fuel_value) : undefined,
+        fuelCategory: item.fuel_value ? (item.fuel_category ?? 'chemical') : undefined,
+        burntResult: item.burnt_result ? `item:${item.burnt_result}` : undefined,
       };
     }
   }
@@ -118,6 +126,29 @@ async function main() {
   }
   if (dangling.size > 0) {
     console.log(`Dangling resource refs: ${dangling.size}`, [...dangling].slice(0, 20));
+  }
+
+  const missingSpentFuel = Object.entries(resources).filter(
+    ([, resource]) => resource.burntResult && !(resource.burntResult in resources),
+  );
+  if (missingSpentFuel.length > 0) {
+    console.log(
+      `Fuel burnt results with no item: ${missingSpentFuel.length}`,
+      missingSpentFuel.slice(0, 20).map(([id, resource]) => `${id} -> ${resource.burntResult}`),
+    );
+  }
+  const fuelCategories = new Set(
+    Object.values(resources).flatMap((resource) =>
+      resource.fuelCategory ? [resource.fuelCategory] : [],
+    ),
+  );
+  const burnerCategoriesWithoutFuel = new Set(
+    Object.values(machines)
+      .flatMap((machine) => machine.burner?.fuelCategories ?? [])
+      .filter((category) => !fuelCategories.has(category)),
+  );
+  if (burnerCategoriesWithoutFuel.size > 0) {
+    console.log('Burner categories with no live item fuel:', [...burnerCategoriesWithoutFuel]);
   }
 
   // Every category a live recipe names should be craftable somewhere; anything left over means we
@@ -407,6 +438,14 @@ function handleMachines(v: RawData, locales: Record<string, RLocale>) {
         allowedEffects: 'allowed_effects' in m ? effectLimits(m.allowed_effects) : undefined,
         allowedModuleCategories:
           'allowed_module_categories' in m ? m.allowed_module_categories : undefined,
+        burner:
+          'energy_source' in m && m.energy_source?.type === 'burner' && 'energy_usage' in m
+            ? {
+                power: powerInMegawatts(m.energy_usage),
+                effectivity: m.energy_source.effectivity ?? 1,
+                fuelCategories: m.energy_source.fuel_categories ?? ['chemical'],
+              }
+            : undefined,
       };
     }
   }
@@ -534,7 +573,8 @@ function handleModules(v: RawData): Record<string, Module> {
     }
     const speed = m.effect?.speed;
     const productivity = m.effect?.productivity;
-    if (!speed && !productivity) {
+    const consumption = m.effect?.consumption;
+    if (!speed && !productivity && !consumption) {
       skipped++;
       continue;
     }
@@ -543,12 +583,13 @@ function handleModules(v: RawData): Record<string, Module> {
       tier: m.tier,
       speed: speed === undefined ? undefined : round(speed),
       productivity: productivity === undefined ? undefined : round(productivity),
+      consumption: consumption === undefined ? undefined : round(consumption),
     };
   }
 
   console.log(
     `Modules: ${Object.keys(modules).length}` +
-      ` (dropped ${skipped} with no speed or productivity effect)`,
+      ` (dropped ${skipped} with no speed, productivity or consumption effect)`,
   );
   return modules;
 }

@@ -109,16 +109,16 @@ rates per second at a given machine's speed, and the decimal precision, decided 
 every machine it could run in so the numbers do not change width as the pointer moves along the
 machine list. No scaling of one recipe against another — that is the solver's, and it is not here.
 
-**Modules** are the 15 of the pack's 30 which change speed or productivity; efficiency and pollution
-modules are not ingested, because there is no power or pollution model for them to pay into.
-`StaticData.modules` is keyed by bare prototype id — a module is an item, so its name, icon, stack
-size and complexity are already on the `item:<id>` resource, and `Module` carries only `category`,
-`tier` and the two effects. Effects are the fraction added _per module_ and are linear in the number
-of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³. `moduleEffects`
-(`../../src/compute/flow.ts`) does that sum and returns the two multipliers, one on the machine's
-speed and one on everything the recipe produces; `fillSlots` is the "and what if I fill all three
-slots with these" case. `modulesFor` (`src/data/modules.ts`) is which modules a machine will take on
-a recipe, and is where the three ways of overstating throughput live:
+**Modules** are the 20 of the pack's 30 which change speed, productivity, or energy consumption;
+pollution-only modules are not ingested. The throughput picker still offers only speed and
+productivity modules. `StaticData.modules` is keyed by bare prototype id — a module is an item, so
+its name, icon, stack size and complexity are already on the `item:<id>` resource, and `Module`
+carries only `category`, `tier` and those effects. Effects are the fraction added _per module_ and
+are linear in the number of them: three `speed-module-3` at `speed: 0.4` is 2.2×, not 1.4³.
+`moduleEffects` (`../../src/compute/flow.ts`) does that sum and returns the two multipliers, one on
+the machine's speed and one on everything the recipe produces; `fillSlots` is the "and what if I
+fill all three slots with these" case. `modulesFor` (`src/data/modules.ts`) is which modules a
+machine will take on a recipe, and is where the three ways of overstating throughput live:
 `Machine.allowedModuleCategories` refuses a module outright (absent means all — that absence is the
 only home Angel's bio-yield modules have), `Machine.allowedEffects` ignores the effects it omits
 rather than refusing the module (which is why speed modules work in an oil refinery, whose list has

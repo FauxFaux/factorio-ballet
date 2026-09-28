@@ -4,9 +4,8 @@ export interface StaticData {
   machines: Record<MachineId, Machine>;
 
   /**
-   * The modules worth modelling: every one which changes how fast a machine runs or how much comes
-   * out of it. Efficiency and pollution modules are dropped, because nothing here costs power or
-   * makes smoke yet. Keyed by bare prototype id, which is also the id of the item you craft — a
+   * Modules which change speed, productivity, or energy consumption. Pollution-only modules are
+   * dropped because nothing here models emissions yet. Keyed by bare prototype id, which is also the id of the item you craft — a
    * module is an item, so its name, stack size and complexity are already in `resources`.
    */
   modules: Record<ModuleId, Module>;
@@ -76,7 +75,10 @@ export type StaticDataPacked = {
       x?: number;
     }
   >;
-  resources: Record<string, { h?: string; z?: number; x?: number }>;
+  resources: Record<
+    string,
+    { h?: string; z?: number; x?: number; v?: number; c?: string; b?: ResourceId }
+  >;
   machines: Record<
     string,
     {
@@ -90,9 +92,10 @@ export type StaticDataPacked = {
       n?: number;
       e?: Effect[];
       a?: string[];
+      b?: { p: number; e: number; c: string[] };
     }
   >;
-  modules: Record<string, { c: string; t: number; s?: number; p?: number }>;
+  modules: Record<string, { c: string; t: number; s?: number; p?: number; e?: number }>;
   beacons: Record<
     string,
     {
@@ -304,6 +307,12 @@ export interface Resource {
   stackSize?: number;
   /** As `Recipe.complexity`, over the cheapest recipe which produces this; 0 for an ore. */
   complexity?: number;
+  /** Item fuel energy in megajoules. Absent for non-fuels, including fluids. */
+  fuelValue?: number;
+  /** The item's fuel-category prototype id, such as `chemical`. */
+  fuelCategory?: string;
+  /** Item left after burning this fuel, if any. */
+  burntResult?: ResourceId;
 }
 
 /**
@@ -330,6 +339,8 @@ export interface Machine {
   /** Ordered recipe-fluid slots and their physical pipe connections. */
   fluidBoxes?: MachineFluidBox[];
   moduleSlots?: number;
+  /** Burner fuel use while crafting. Power is in MW; categories are prototype IDs. */
+  burner?: { power: number; effectivity: number; fuelCategories: string[] };
 
   /**
    * Which module effects this machine actually applies, from the game's `allowed_effects`. **Absent
@@ -393,6 +404,8 @@ export interface Module {
   speed?: number;
   /** Added to everything the recipe produces, and only where `Recipe.allowProductivity` says so. */
   productivity?: number;
+  /** Added to energy consumption as a fraction; negative values save fuel. */
+  consumption?: number;
 }
 
 /**

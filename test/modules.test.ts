@@ -28,11 +28,12 @@ const drill = defaultDataset.data.machines['bob-mining-drill-4'];
  * Against the shipped `static.json`, so as much a check on the ingest as on the app.
  */
 describe('the ingested modules', () => {
-  it('keeps what changes throughput and nothing else', () => {
+  it('keeps throughput and energy effects', () => {
     expect(defaultDataset.data.modules['speed-module-3']).toEqual({
       category: 'speed',
       tier: 3,
       speed: 0.4,
+      consumption: 0.7,
     });
     // the trade productivity makes: more out, slower
     expect(defaultDataset.data.modules['productivity-module-3']).toEqual({
@@ -40,9 +41,13 @@ describe('the ingested modules', () => {
       tier: 3,
       speed: -0.15,
       productivity: 0.12,
+      consumption: 0.8,
     });
-    // efficiency and pollution modules do neither, so they are not here at all
-    expect(defaultDataset.data.modules['efficiency-module-3']).toBeUndefined();
+    expect(defaultDataset.data.modules['efficiency-module-3']).toEqual({
+      category: 'efficiency',
+      tier: 3,
+      consumption: -0.6,
+    });
     expect(defaultDataset.data.modules['bob-pollution-clean-module-1']).toBeUndefined();
   });
 
@@ -133,7 +138,7 @@ describe('moduleEffects', () => {
     });
   });
 
-  it('mixes modules, and ignores one we did not ingest', () => {
+  it('mixes throughput modules while an energy-only module uses a slot', () => {
     const effects = moduleEffects(
       defaultDataset.data,
       assembler,

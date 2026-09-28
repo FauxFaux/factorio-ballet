@@ -35,7 +35,7 @@ export interface Dataset {
 ```
 
 `DatasetId` identifies an exact generated artifact, not just a family which can silently change. For
-example, `bobang-r4q` can name the current Bob's and Angel's data and ID ordering. A separately
+example, `bobang-ju7` can name the current Bob's and Angel's data and ID ordering. A separately
 displayed label supplies the human-readable pack name.
 
 Use readonly collections at the public boundary. Construction may use mutable maps internally, but
@@ -75,9 +75,9 @@ without a custom loader or filename convention:
 
 ```ts
 export const datasetCatalogue = {
-  "bobang-r4q": {
+  "bobang-ju7": {
     label: "Bob's and Angel's",
-    load: () => import("./bobang-r4q.ts"),
+    load: () => import("./bobang-ju7.ts"),
   },
   "space-age-...": {
     label: "Space Age",

@@ -3,7 +3,7 @@ import { COMMON_IDS, REFERENCE_STATE } from './common-ids.ts';
 import type { PackedCell } from './pack.ts';
 
 /** The legacy prefix remains readable; its fingerprint belongs to the legacy dataset. */
-export const HASH_VERSION = `yr4q`;
+export const HASH_VERSION = `yju7`;
 
 export interface PackedState {
   dataset?: string;
