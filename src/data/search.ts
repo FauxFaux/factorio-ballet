@@ -136,10 +136,32 @@ function matches(term: Term, id: string, recipe: Recipe, name: string): boolean 
   }
 }
 
+/** Scrap is a source of materials; other recycling recipes recover ingredients from crafted items. */
+export function isDeferredRecycling(recipe: Recipe): boolean {
+  return (
+    recipe.categories.includes('recycling') &&
+    !recipe.ingredients.some(({ resource }) => resource === 'item:scrap')
+  );
+}
+
+function recipePriority(recipe: Recipe, terms: Term[]): number {
+  if (isDeferredRecycling(recipe)) return 2;
+  if (
+    recipe.products.length > 0 &&
+    terms.some(
+      (term) =>
+        term.kind === 'makes' &&
+        recipe.products.every(({ resource }) => term.resources.has(resource)),
+    )
+  )
+    return 0;
+  return 1;
+}
+
 /**
- * Every recipe matching all the terms of `search`, nearest the player's `progress` through the tech
- * tree first; see `relevanceOf`. A `progress` of 0 is plain simplest-first. `scope` is the cell the
- * search is being run from, if any, which `@`-queries resolve against.
+ * Every recipe matching all the terms of `search`. For `makes:` queries, recipes producing only a
+ * requested resource come first; recycling crafted items comes last. Within each group, recipes
+ * nearest the player's `progress` through the tech tree come first; see `relevanceOf`.
  */
 export function searchRecipes(
   data: StaticData,
@@ -157,6 +179,7 @@ export function searchRecipes(
   }
   return found.sort(
     (a, b) =>
+      recipePriority(a.recipe, terms) - recipePriority(b.recipe, terms) ||
       relevanceOf(a.recipe, progress) - relevanceOf(b.recipe, progress) ||
       a.name.localeCompare(b.name) ||
       a.id.localeCompare(b.id),
@@ -191,13 +214,14 @@ export function searchResources(
     );
 }
 
-/** Combine ordinary resource and recipe searches into one relevance-ranked result stream. */
+/** Combine ordinary resource and recipe searches into one result stream. */
 export function searchMatches(
   data: StaticData,
   search: string,
   progress: number,
   scope?: SearchScope,
 ): SearchMatch[] {
+  const terms = parseSearch(data, search, scope);
   return [
     ...searchRecipes(data, search, progress, scope).map((match): SearchMatch => ({
       kind: 'recipe',
@@ -209,6 +233,8 @@ export function searchMatches(
     })),
   ].sort(
     (a, b) =>
+      (a.kind === 'recipe' ? recipePriority(a.match.recipe, terms) : 1) -
+        (b.kind === 'recipe' ? recipePriority(b.match.recipe, terms) : 1) ||
       relevanceOf(a.kind === 'recipe' ? a.match.recipe : a.match.resource, progress) -
         relevanceOf(b.kind === 'recipe' ? b.match.recipe : b.match.resource, progress) ||
       a.match.name.localeCompare(b.match.name) ||

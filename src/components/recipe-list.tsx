@@ -1,7 +1,12 @@
 import { useMemo } from 'preact/hooks';
 import { useDataset } from '../dataset/context.tsx';
 import type { Chosen } from '../data/index.ts';
-import { flipDirection, searchMatches, type SearchScope } from '../data/search.ts';
+import {
+  flipDirection,
+  isDeferredRecycling,
+  searchMatches,
+  type SearchScope,
+} from '../data/search.ts';
 import type { State } from '../ts.ts';
 import type { MachineId, ResourceId } from '../types.ts';
 import { RecipeCard } from './recipe.tsx';
@@ -13,8 +18,8 @@ const LIMIT = 20;
 /**
  * Recipes matching a search: `makes:<resource>`, `uses:<resource>`, or free text against
  * the recipe's name and id. Multiple, space separated terms must all match. `progress` is where the
- * player is in the tech tree, 0 to 1, which orders the matches; see `relevanceOf`. `scope` is the
- * cell being worked on, which the `@in`/`@out` queries ask about.
+ * player is in the tech tree, 0 to 1, which orders matches within each priority group; see
+ * `relevanceOf`. `scope` is the cell being worked on, which the `@in`/`@out` queries ask about.
  */
 export function RecipeList({
   search: [search, setSearch],
@@ -42,13 +47,18 @@ export function RecipeList({
     [search, progress, scope],
   );
   const ordered = useMemo(() => {
+    const recyclingRecipes = found.filter(
+      (result) => result.kind === 'recipe' && isDeferredRecycling(result.match.recipe),
+    );
     const barrelRecipes = found.filter(
       (result) => result.kind === 'recipe' && result.match.id.endsWith('-barrel'),
     );
     const otherResults = found.filter(
-      (result) => result.kind !== 'recipe' || !result.match.id.endsWith('-barrel'),
+      (result) =>
+        result.kind !== 'recipe' ||
+        (!result.match.id.endsWith('-barrel') && !isDeferredRecycling(result.match.recipe)),
     );
-    return [...otherResults, ...barrelRecipes];
+    return [...otherResults, ...barrelRecipes, ...recyclingRecipes];
   }, [found]);
   const displayed = useMemo(() => {
     /* Removing a resource can bring another recipe into the visible limit. Repeat until every
