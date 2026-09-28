@@ -1,4 +1,5 @@
 import { isVoid } from './recipes.ts';
+import { productAmount } from './flow.ts';
 import type { Recipe, ResourceId, StaticData } from '../types.ts';
 
 export interface VoidPlan {
@@ -12,6 +13,8 @@ export interface ResourceChain extends VoidPlan {
   inputs: ResourceId[];
   /** Byproducts left after its target and recipe hand-offs are removed. */
   outputs: ResourceId[];
+  /** Signed net items per craft of the first recipe, with later crafts scaled to each hand-off. */
+  amounts?: Partial<Record<ResourceId, number>>;
 }
 
 interface SearchState extends VoidPlan {
@@ -29,12 +32,14 @@ interface ChainState {
   resource: ResourceId;
   seen: Set<ResourceId>;
   complexity: number;
+  balance: Map<ResourceId, number>;
 }
 
 const MAX_STEPS = 9;
 const MAX_RESULTS = 8;
 const MAX_VISITED = 50_000;
 const MAX_CHAIN_STEPS = 6;
+const AMOUNT_EPSILON = 1e-9;
 const unique = <T>(values: T[]): T[] => [...new Set(values)];
 
 function terminal(recipe: Recipe): boolean {
@@ -87,24 +92,31 @@ function indexRecipes(recipes: Record<string, Recipe>): RecipeIndex {
   return { consumers, producers };
 }
 
-/** The boundary flows left by a chain once its source, target, and internal hand-offs are hidden. */
-function chainEffects(
-  recipes: string[],
-  source: ResourceId,
-  target: ResourceId,
-  data: Pick<StaticData, 'recipes'>,
-) {
-  const used = new Set<ResourceId>();
-  const made = new Set<ResourceId>();
-  for (const id of recipes) {
-    const recipe = data.recipes[id]!;
-    for (const { resource } of recipe.ingredients) used.add(resource);
-    for (const { resource } of recipe.products) made.add(resource);
-  }
+function recipeBalance(recipe: Recipe): Map<ResourceId, number> {
+  const balance = new Map<ResourceId, number>();
+  for (const { resource, amount } of recipe.ingredients) addAmount(balance, resource, -amount);
+  for (const product of recipe.products)
+    addAmount(balance, product.resource, productAmount(product, 1));
+  return balance;
+}
+
+function addAmount(balance: Map<ResourceId, number>, resource: ResourceId, amount: number) {
+  balance.set(resource, (balance.get(resource) ?? 0) + amount);
+}
+
+/** The net boundary flows left after the recipe hand-offs are balanced. */
+function chainEffects(balance: Map<ResourceId, number>, source: ResourceId, target: ResourceId) {
   const isExtra = (resource: ResourceId) => resource !== source && resource !== target;
   return {
-    inputs: [...used].filter((resource) => isExtra(resource) && !made.has(resource)),
-    outputs: [...made].filter((resource) => isExtra(resource) && !used.has(resource)),
+    inputs: [...balance]
+      .filter(([resource, amount]) => isExtra(resource) && amount < -AMOUNT_EPSILON)
+      .map(([resource]) => resource),
+    outputs: [...balance]
+      .filter(([resource, amount]) => isExtra(resource) && amount > AMOUNT_EPSILON)
+      .map(([resource]) => resource),
+    amounts: Object.fromEntries(
+      [...balance].filter(([, amount]) => Math.abs(amount) > AMOUNT_EPSILON),
+    ),
   };
 }
 
@@ -209,6 +221,9 @@ export function resourceChainFinder(
   data: Pick<StaticData, 'recipes'> & Partial<Pick<StaticData, 'resources'>>,
 ) {
   const index = indexRecipes(data.recipes);
+  const balances = new Map(
+    Object.entries(data.recipes).map(([id, recipe]) => [id, recipeBalance(recipe)]),
+  );
   const cached = new Map<string, ResourceChain[]>();
 
   return (source: ResourceId, targets: Iterable<ResourceId>, maxResults = MAX_RESULTS) => {
@@ -221,7 +236,7 @@ export function resourceChainFinder(
     if (previous) return previous;
 
     const queue: ChainState[] = [
-      { recipes: [], resource: source, seen: new Set([source]), complexity: 0 },
+      { recipes: [], resource: source, seen: new Set([source]), complexity: 0, balance: new Map() },
     ];
     const results: ResourceChain[] = [];
     let queueIndex = 0;
@@ -234,9 +249,22 @@ export function resourceChainFinder(
         .filter((id) => !state.recipes.includes(id))
         .flatMap((id) => {
           const recipe = data.recipes[id]!;
+          const recipeNet = balances.get(id)!;
+          const consumption = -(recipeNet.get(state.resource) ?? 0);
+          if (consumption <= AMOUNT_EPSILON) return [];
+          const available = state.recipes.length
+            ? (state.balance.get(state.resource) ?? 0)
+            : consumption;
+          if (available <= AMOUNT_EPSILON) return [];
+          const crafts = available / consumption;
           return recipe.products
-            .filter(({ resource }) => !state.seen.has(resource))
+            .filter(
+              ({ resource }) =>
+                !state.seen.has(resource) && (recipeNet.get(resource) ?? 0) > AMOUNT_EPSILON,
+            )
             .map(({ resource }) => {
+              const balance = new Map(state.balance);
+              for (const [id, amount] of recipeNet) addAmount(balance, id, amount * crafts);
               const sideFlows = [
                 ...recipe.ingredients.filter(({ resource: id }) => id !== state.resource),
                 ...recipe.products.filter(({ resource: id }) => id !== resource),
@@ -244,6 +272,7 @@ export function resourceChainFinder(
               return {
                 id,
                 resource,
+                balance,
                 complexity:
                   state.complexity +
                   sideFlows.reduce(
@@ -258,10 +287,15 @@ export function resourceChainFinder(
       for (const candidate of next) {
         const recipes = [...state.recipes, candidate.id];
         if (wanted.has(candidate.resource)) {
+          if (
+            (candidate.balance.get(candidate.resource) ?? 0) <= AMOUNT_EPSILON ||
+            (candidate.balance.get(source) ?? 0) >= -AMOUNT_EPSILON
+          )
+            continue;
           results.push({
             recipes,
             target: candidate.resource,
-            ...chainEffects(recipes, source, candidate.resource, data),
+            ...chainEffects(candidate.balance, source, candidate.resource),
           });
           if (results.length >= maxResults) break;
         } else {
@@ -270,6 +304,7 @@ export function resourceChainFinder(
             resource: candidate.resource,
             seen: new Set([...state.seen, candidate.resource]),
             complexity: candidate.complexity,
+            balance: candidate.balance,
           });
         }
       }

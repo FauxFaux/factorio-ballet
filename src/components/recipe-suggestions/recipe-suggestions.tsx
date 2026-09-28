@@ -94,15 +94,27 @@ export function RecipeSuggestions({
                 </div>
                 {(kind === 'chain' || kind === 'input') && isResourceChain(plan) && (
                   <p class="recipe-suggestions-flow-summary">
-                    <ResourceList resources={plan.inputs} label="Needs" />
+                    <ResourceList
+                      resources={plan.inputs}
+                      label="Needs"
+                      amounts={kind === 'chain' ? plan.amounts : undefined}
+                    />
                     <span class="recipe-suggestions-flow-arrow" aria-label="makes">
                       ➔
                     </span>
-                    <ResourceList resources={[plan.target]} label="Makes" />
+                    <ResourceList
+                      resources={[plan.target]}
+                      label="Makes"
+                      amounts={kind === 'chain' ? plan.amounts : undefined}
+                    />
                     {plan.outputs.length > 0 && (
                       <>
                         <span class="recipe-suggestions-also">also</span>
-                        <ResourceList resources={plan.outputs} label="Also makes" />
+                        <ResourceList
+                          resources={plan.outputs}
+                          label="Also makes"
+                          amounts={kind === 'chain' ? plan.amounts : undefined}
+                        />
                       </>
                     )}
                   </p>
@@ -170,17 +182,32 @@ function formatScoreFactor(score: number) {
   return `${score >= 0 ? '+' : ''}${score.toFixed(1)}`;
 }
 
-function ResourceList({ resources, label }: { resources: ResourceId[]; label: string }) {
+function ResourceList({
+  resources,
+  label,
+  amounts,
+}: {
+  resources: ResourceId[];
+  label: string;
+  amounts?: Partial<Record<ResourceId, number>>;
+}) {
   const { data } = useDataset();
+  const describe = (id: ResourceId) =>
+    `${amounts?.[id] === undefined ? '' : `${Number(Math.abs(amounts[id]).toPrecision(6))} `}${resourceName(data, id)}`;
   return (
     <span
       class="recipe-suggestions-resource-list"
-      aria-label={`${label}: ${resources.map((v) => resourceName(data, v)).join(', ')}`}
+      aria-label={`${label}: ${resources.map(describe).join(', ')}`}
     >
       {resources.map((id, index) => (
         <Fragment key={id}>
           {index === 0 ? null : <span class="recipe-suggestions-resource-separator">+</span>}
-          <span class="recipe-suggestions-resource" title={resourceName(data, id)}>
+          <span class="recipe-suggestions-resource" title={describe(id)}>
+            {amounts?.[id] === undefined ? null : (
+              <span class="recipe-suggestions-resource-amount">
+                {Number(Math.abs(amounts[id]).toPrecision(6))}
+              </span>
+            )}
             <ResourceIcon id={id} />
           </span>
         </Fragment>

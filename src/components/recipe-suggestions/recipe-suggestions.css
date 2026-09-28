@@ -80,7 +80,13 @@
 }
 .recipe-suggestions-resource {
   display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
   cursor: help;
+}
+.recipe-suggestions-resource-amount {
+  font-size: 0.8em;
+  font-variant-numeric: tabular-nums;
 }
 .recipe-suggestions-resource .resource-icon {
   margin: -8px;

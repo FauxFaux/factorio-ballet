@@ -81,16 +81,20 @@ describe('suggestedResourceChains', () => {
         waste,
       ) ?? [];
 
-    expect(chains).toContainEqual({
-      target: 'fluid:angels-liquid-sulfuric-acid',
-      recipes: [
-        'angels-yellow-waste-water-purification',
-        'angels-gas-sulfur-dioxide',
-        'angels-liquid-sulfuric-acid',
-      ],
-      inputs: ['fluid:angels-gas-oxygen'],
-      outputs: ['fluid:angels-water-mineralized'],
-    });
+    expect(chains).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          target: 'fluid:angels-liquid-sulfuric-acid',
+          recipes: [
+            'angels-yellow-waste-water-purification',
+            'angels-gas-sulfur-dioxide',
+            'angels-liquid-sulfuric-acid',
+          ],
+          inputs: ['fluid:angels-gas-oxygen'],
+          outputs: ['fluid:angels-water-mineralized', 'fluid:angels-water-purified'],
+        }),
+      ]),
+    );
   });
 });
 
@@ -524,6 +528,19 @@ describe('suggestedRecipePaths', () => {
 });
 
 describe('RecipeSuggestions', () => {
+  it('shows net quantities on a cycle suggestion', () => {
+    const cell = {
+      entries: [{ recipe: 'angels-ore1-chunk' }, { recipe: 'angels-ore1-crystal' }],
+    };
+    render(h(RecipeSuggestions, { search: `uses:${waste}`, cell, progress: 0 }));
+
+    expect(
+      screen.getByLabelText(
+        `Needs: 60 ${resourceName(defaultDataset.data, 'fluid:angels-gas-oxygen')}`,
+      ),
+    ).toBeTruthy();
+  });
+
   it('marks a make suggestion as an explicit import and hides it', async () => {
     const user = userEvent.setup();
     render(h(SuggestionsExample, { initialCell: { entries: [{ recipe: 'speed-module-3' }] } }));
