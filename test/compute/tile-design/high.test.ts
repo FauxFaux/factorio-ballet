@@ -66,6 +66,86 @@ function fluid(
 }
 
 describe('solveHighTileDesign', () => {
+  it('uses the third middle belt for the 33.3/s inputs and 3.7/s output example', () => {
+    const result = solveKernelTileDesign(
+      assemblerProblem({ solidInputs: [33.3, 33.3], solidOutputs: [3.7] }),
+      { beltItemsPerSecond: 75, inserterItemsPerSecond: 37.5, longInserterItemsPerSecond: 18.8 },
+      { mode: 'high', undergroundBeltReach: 22 },
+    );
+    if (!('status' in result)) throw new Error(result.message);
+    const tile = found(result);
+    expect(tile.candidate).toMatchObject({ width: 3, pitch: 10 });
+    expect(tile.diagnostics.bestScore?.area).toBe(15);
+    expect(tile.candidate.column.entities.filter((entity) => entity.kind === 'belt')).toHaveLength(
+      0,
+    );
+    expect(
+      tile.candidate.column.entities.filter((entity) => entity.kind === 'underground-belt'),
+    ).toHaveLength(6);
+    const output = tile.candidate.boundary.find(({ lanes }) =>
+      Object.values(lanes ?? {}).includes('item:3'),
+    )!;
+    expect(output.laneFlows).toEqual({
+      left: { side: 'output', rate: 3.7 },
+      right: { side: 'output', rate: 3.7 },
+    });
+    const outputTransfers = tile.candidate.transfers.filter(({ side }) => side === 'output');
+    expect(outputTransfers.map(({ beltLane, rate }) => [beltLane, rate])).toEqual([
+      ['right', 3.7],
+      ['left', 3.7],
+    ]);
+    const corrupted = structuredClone(tile.candidate);
+    corrupted.transfers.find(({ side }) => side === 'output')!.beltLane = 'left';
+    const input = problem([33.3, 33.3], [3.7]);
+    input.transport.beltLaneCapacity = 37.5;
+    input.transport.inserters[0].capacity = 37.5;
+    input.machines[0].orientations = [
+      { rotation: 'east', mirrored: false },
+      { rotation: 'north', mirrored: false },
+    ];
+    expect(validateTileDesign(input, corrupted).issues.map(({ code }) => code)).toContain(
+      'transfer-lane',
+    );
+  });
+
+  it('uses both middle output lanes in a single when one lane or one inserter is insufficient', () => {
+    const input = problem([], [20]);
+    input.transport.inserters[0].capacity = 12;
+    const result = found(solveHighTileDesign(input, { pattern: 'single' }));
+    expect(result.candidate).toMatchObject({ width: 3, pitch: 7 });
+    expect(result.candidate.boundary[0].laneFlows).toEqual({
+      left: { side: 'output', rate: 10 },
+      right: { side: 'output', rate: 10 },
+    });
+    expect(result.candidate.transfers.map(({ beltLane, rate }) => [beltLane, rate])).toEqual([
+      ['right', 10],
+      ['left', 10],
+    ]);
+    expect(result.validation.supportedCopies).toBe(1);
+    expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+    input.machines[0].outputs.items[0].rate = 31;
+    input.boundary.outputs.items[0].rate = 31;
+    expect(solveHighTileDesign(input).status).toBe('envelope-exhausted');
+  });
+
+  it('counts each end output lane separately across paired repeats', () => {
+    const input = problem([], [8]);
+    input.repeat = { count: 1, moduleHeight: 100 };
+    const result = found(solveHighTileDesign(input, { pattern: 'pair' }));
+    expect(result.candidate.width).toBe(3);
+    expect(result.candidate.boundary[0].laneFlows).toEqual({
+      left: { side: 'output', rate: 8 },
+      right: { side: 'output', rate: 8 },
+    });
+    expect(result.validation.supportedCopies).toBe(1);
+    input.transport.beltLaneCapacity = 16;
+    input.repeat.count = 2;
+    expect(found(solveHighTileDesign(input, { pattern: 'pair' })).validation.supportedCopies).toBe(
+      2,
+    );
+    input.repeat.count = 3;
+    expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+  });
   it.each([
     { pattern: 'single' as const, pitch: 7, copies: 1 },
     { pattern: 'pair' as const, pitch: 10, copies: 2 },
@@ -216,12 +296,12 @@ describe('solveHighTileDesign', () => {
   });
 
   it('shares the edge budget between near and far belts and filters multiple products', () => {
-    const input = problem([2, 2, 2], [5, 5, 5, 5]);
+    const input = problem([9, 9, 9], [5, 5, 5, 5]);
     input.transport.inserters = [
-      { id: 'ordinary', reach: 1, capacity: 6 },
+      { id: 'ordinary', reach: 1, capacity: 5 },
       { id: 'long', reach: 2, capacity: 3 },
     ];
-    // Each edge needs one ordinary output site plus two long output sites.
+    // Inputs require both end sites, leaving all four outputs on the shared side edges.
     const tile = found(solveHighTileDesign(input, { pattern: 'single' })).candidate;
     expect(
       tile.transfers

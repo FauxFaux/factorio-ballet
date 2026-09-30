@@ -7,6 +7,8 @@ export interface HighAssignment {
   demand: SolidDemand;
   track: HighTrack;
   lanes: ('left' | 'right')[];
+  /** End outputs on opposite machine ends target opposite lanes of the same belt. */
+  copyLaneRates: Partial<Record<'left' | 'right', number>>[];
   sites: number;
   reach: 1 | 2;
   capacity: number;
@@ -20,7 +22,7 @@ interface Allocation {
 /** Assign each gross item flow to one whole belt. A memoized matching problem over
  * seven belt bits and two edge budgets replaces lane subsets and fractional flow.
  * Both input lanes may carry the same item, supplied as a balanced split upstream.
- * Outputs use one far lane; end belts are inputs only in this family. */
+ * Side outputs use one far lane; end outputs use the lane targeted by each site. */
 export function allocateHighBelts(
   input: TileDesignInput,
   frame: HighFrame,
@@ -55,30 +57,54 @@ export function allocateHighBelts(
   const domains = demands.map((demand) =>
     frame.tracks.flatMap((track, index) => {
       if (
-        (track.access === 'end' && demand.side === 'output') ||
         track.tunnels?.some(
           ({ top, bottom }) => bottom - top - 1 > input.transport.undergroundBeltReach,
         ) ||
         (track.tunnels?.length && !input.envelope.primitives.includes('underground'))
       )
         return [];
-      const count = requiredUnits(demand.rate, laneCapacity);
-      if (count > (demand.side === 'input' ? 2 : 1)) return [];
       const reach = track.access.endsWith('far') ? 2 : 1;
       const capacity = capacities.get(reach)!;
       if (capacity <= 0) return [];
-      const sites = requiredUnits(demand.rate, capacity);
+      const endOutput = track.access === 'end' && demand.side === 'output';
+      // A pair drops north and south onto different lanes. Each lane carries only
+      // one machine's production per tile, unlike a shared side-output lane.
+      const endSiteCapacity = Math.min(capacity, laneCapacity * frame.copies);
+      const sites = requiredUnits(demand.rate, endOutput ? endSiteCapacity : capacity);
       if (track.access === 'end' && sites > (frame.copies === 1 ? 2 : 1)) return [];
-      const lanes: HighAssignment['lanes'] =
-        demand.side === 'output'
-          ? [track.access.startsWith('east') ? 'right' : 'left']
-          : count === 2
-            ? ['left', 'right']
-            : ['left'];
+      const count = requiredUnits(demand.rate, laneCapacity);
+      if (!endOutput && count > (demand.side === 'input' ? 2 : 1)) return [];
+      let copyLanes: HighAssignment['lanes'][];
+      if (endOutput) {
+        copyLanes =
+          frame.copies === 2
+            ? [['right'], ['left']]
+            : [sites === 2 ? ['right', 'left'] : ['right']];
+      } else {
+        const lanes: HighAssignment['lanes'] =
+          demand.side === 'output'
+            ? [track.access.startsWith('east') ? 'right' : 'left']
+            : count === 2
+              ? ['left', 'right']
+              : ['left'];
+        copyLanes = Array.from({ length: frame.copies }, () => lanes);
+      }
+      const lanes = [...new Set(copyLanes.flat())].sort();
+      const copyLaneRates = copyLanes.map((lanes) =>
+        Object.fromEntries(lanes.map((lane) => [lane, demand.rate / lanes.length])),
+      );
       return [
         {
           index,
-          assignment: { demand, track, lanes, sites, reach, capacity } satisfies HighAssignment,
+          assignment: {
+            demand,
+            track,
+            lanes,
+            copyLaneRates,
+            sites,
+            reach,
+            capacity,
+          } satisfies HighAssignment,
         },
       ];
     }),

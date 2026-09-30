@@ -112,8 +112,11 @@ emitted. The central three belts tunnel underneath the whole repeat unit and hav
 sites per machine in a single, or one in a pair. The four side belts divide the available edge cells
 between ordinary near-belt and long far-belt inserters. Inputs may occupy either one lane or both
 lanes of their single belt. When both lanes are used, the certificate advertises equal rates and
-requires the module router to supply that split. Outputs use one far lane on a dedicated side belt,
-with filters for multiple products. End belts serve inputs only.
+requires the module router to supply that split. Side outputs use one far lane on a dedicated belt.
+End belts can also carry outputs: the north end targets the right lane, and the south end targets
+the left lane of the northbound belt. A touching pair puts each machine's production on its own
+lane; a single can use both end sites when rate requires two lanes or inserters. Each lane's
+boundary rate reflects its actual producing sites. Multiple products have matching output filters.
 
 Each required fluid chooses an interior east/west port, one fluid trunk per side. A horizontal pipe
 pair connects the machine to a trunk beyond the far belt. The near belt passes over that tunnel; the
@@ -160,20 +163,26 @@ and Copy JSON includes the HIGH candidate and diagnostics. These previews use th
 actual underground reach. Existing factory-module consumers already count the placed assemblers and
 consume `laneFlows`, so HIGH candidates use the same module conversion.
 
-A local Node 24 microbenchmark, warmed up then averaged over twenty solves, illustrates the
-tradeoff. With a 30 items/s belt, ordinary inserter capacity 8, long capacity 4, and underground
-reach 8, six inputs at 2/s and one output at 2/s took about 1 ms for HIGH versus 24 ms for the
-general search. The HIGH pair occupies 45 tiles per machine; the general search found a compact
-27-tile single while exhausting its 10,000-state budget. Adding one 200/s fluid input and allowing
-all orientations took about 1.7 ms for HIGH, which found a 10×10 pair; the general search used its
-10,000 states in about 24 ms without finding a candidate. These are examples, not a throughput
-guarantee or a full recipe survey. HIGH favors predictable geometry and readable belt ownership; the
-general search remains useful for denser layouts and more flexible lane allocation.
+A local Node 24 microbenchmark, warmed up then averaged over twenty solves, illustrates the tradeoff
+of the initial side-output implementation. With a 30 items/s belt, ordinary inserter capacity 8,
+long capacity 4, and underground reach 8, six inputs at 2/s and one output at 2/s took about 1 ms
+for HIGH versus 24 ms for the general search. The HIGH pair occupies 45 tiles per machine; the
+general search found a compact 27-tile single while exhausting its 10,000-state budget. Adding one
+200/s fluid input and allowing all orientations took about 1.7 ms for HIGH, which found a 10×10
+pair; the general search used its 10,000 states in about 24 ms without finding a candidate. These
+are examples, not a throughput guarantee or a full recipe survey. HIGH favors predictable geometry
+and readable belt ownership; the general search remains useful for denser layouts and more flexible
+lane allocation.
 
-On the thirty existing Bob/Angel kernel examples with the same capabilities, HIGH found twenty
-designs in about 17 ms total, versus all thirty in about 1.24 s for the general search in one local
-run. HIGH used 7,286 states versus 157,094. The ten remaining examples need a fallback, reinforcing
-the case for a separate policy rather than replacing the existing search.
+On the thirty existing Bob/Angel kernel examples with the same capabilities, the initial HIGH policy
+found twenty designs in about 17 ms total, versus all thirty in about 1.24 s for the general search
+in one local run. HIGH used 7,286 states versus 157,094. The ten remaining examples needed a
+fallback, reinforcing the case for a separate policy rather than replacing the existing search.
+
+End outputs also allow narrower subsets. Two inputs at 33.3/s and one output at 3.7/s, with a 75
+items/s belt and ordinary inserter capacity 37.5, fit a 3×10 pair. All three belts pass beneath the
+machines; each output lane carries 3.7/s from one assembler. The initial side-output policy required
+a 5×10 pair for this case.
 
 ## Search and capacity
 

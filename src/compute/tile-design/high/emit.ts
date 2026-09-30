@@ -60,7 +60,7 @@ export function emitHighTile(
       boundary.lanes![lane] = demand.resource;
       boundary.laneFlows![lane] = {
         side: demand.side,
-        rate: (demand.rate * frame.copies) / lanes.length,
+        rate: assignment.copyLaneRates.reduce((sum, rates) => sum + (rates[lane] ?? 0), 0),
       };
     }
     candidate.boundary.push(boundary);
@@ -85,9 +85,10 @@ export function emitHighTile(
   function inserters(
     assignment: HighAssignment,
     sites: { base: DesignPosition; face: DesignDirection }[],
+    copy: number,
   ) {
-    // Equal lane loads make the promised upstream split explicit in the certificate.
-    const rates = assignment.lanes.map(() => assignment.demand.rate / assignment.lanes.length);
+    // Consume the copy's lane allocation within each site's shared capacity.
+    const rates = { ...assignment.copyLaneRates[copy] };
     for (const { base, face } of sites.slice(0, assignment.sites)) {
       const inserterIndex = entities.length;
       entities.push({
@@ -100,8 +101,12 @@ export function emitHighTile(
           : {}),
       });
       let remaining = assignment.capacity;
-      for (const [index, lane] of assignment.lanes.entries()) {
-        const rate = Math.min(rates[index], remaining);
+      const targetLanes =
+        assignment.track.access === 'end' && assignment.demand.side === 'output'
+          ? [face === 'north' ? ('right' as const) : ('left' as const)]
+          : assignment.lanes;
+      for (const lane of targetLanes) {
+        const rate = Math.min(rates[lane] ?? 0, remaining);
         if (rate <= 0) continue;
         candidate.transfers.push({
           inserterIndex,
@@ -111,7 +116,7 @@ export function emitHighTile(
           beltLane: lane,
           rate,
         });
-        rates[index] -= rate;
+        rates[lane] = (rates[lane] ?? 0) - rate;
         remaining -= rate;
       }
     }
@@ -134,15 +139,15 @@ export function emitHighTile(
           base: { x: side === 'west' ? -1 : 3, y: y + offset },
           face: side,
         }));
-      if (near) inserters(near, sites(nearRows));
-      if (far) inserters(far, sites(farRows));
+      if (near) inserters(near, sites(nearRows), copy);
+      if (far) inserters(far, sites(farRows), copy);
     }
     for (const assignment of assignments.filter(({ track }) => track.access === 'end')) {
       const sites: { base: DesignPosition; face: DesignDirection }[] = [];
       if (copy === 0) sites.push({ base: { x: assignment.track.x, y: 1 }, face: 'north' });
       if (copy === frame.copies - 1)
         sites.push({ base: { x: assignment.track.x, y: frame.pitch - 2 }, face: 'south' });
-      inserters(assignment, sites);
+      inserters(assignment, sites, copy);
     }
   }
   return candidate;

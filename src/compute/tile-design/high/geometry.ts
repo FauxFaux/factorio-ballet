@@ -10,7 +10,7 @@ export interface HighPort {
   row: number;
 }
 export interface HighTrack extends SolidTrack {
-  /** End belts serve inputs only. Side belts share the edge's free inserter cells. */
+  /** End belts have one site on each outer end. Side belts share the edge's free cells. */
   access: 'west-near' | 'west-far' | 'end' | 'east-near' | 'east-far';
 }
 export interface HighFrame {
