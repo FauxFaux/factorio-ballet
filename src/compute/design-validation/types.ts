@@ -41,6 +41,8 @@ export interface TileDesignCandidate {
   width: number;
   pitch: number;
   machineIds: Record<number, string>;
+  /** Explicit homogeneous multiplicity. Input rates remain per machine; lane flows are per tile. */
+  machineCopies?: Record<string, number>;
   lanes: TileLaneAssignment[];
   transfers: TileTransfer[];
   fluids: TileFluidAssignment[];

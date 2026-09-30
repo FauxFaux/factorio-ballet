@@ -16,6 +16,7 @@ import type { ResourceId } from '../../types.ts';
 import { beltStackLimitDetails } from './design-stack-limit.ts';
 import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
 import { MAX_MODULE_HEIGHT } from '../../compute/modules.ts';
+import type { HighDesignOptions } from '../../compute/tile-design/high/solve.ts';
 
 /** A read-only summary of one kernel problem and its proposed factory design. */
 export function DesignCard({
@@ -23,12 +24,16 @@ export function DesignCard({
   problem,
   throughput,
   repeatCount = 1,
+  undergroundBeltReach = 4,
+  highPattern = 'auto',
   onUseProblem,
 }: {
   index: number;
   problem: KernelProblem;
   throughput: AssemblerDesignThroughput;
   repeatCount?: number;
+  undergroundBeltReach?: number;
+  highPattern?: HighDesignOptions['pattern'];
   onUseProblem?: () => void;
 }) {
   const title = problem.assemblers.map(({ name }) => name).join(', ');
@@ -46,6 +51,7 @@ export function DesignCard({
     () =>
       solveKernelTileDesign(problem, throughput, {
         repeatCount,
+        undergroundBeltReach,
         ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
       }),
     [
@@ -54,6 +60,26 @@ export function DesignCard({
       throughput.inserterItemsPerSecond,
       throughput.longInserterItemsPerSecond,
       repeatCount,
+      undergroundBeltReach,
+    ],
+  );
+  const highResult = useMemo(
+    () =>
+      solveKernelTileDesign(problem, throughput, {
+        mode: 'high',
+        pattern: highPattern,
+        repeatCount,
+        undergroundBeltReach,
+        ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
+      }),
+    [
+      problem,
+      throughput.beltItemsPerSecond,
+      throughput.inserterItemsPerSecond,
+      throughput.longInserterItemsPerSecond,
+      repeatCount,
+      undergroundBeltReach,
+      highPattern,
     ],
   );
   const { recipes, items } = designSceneFlows(problem, resourceColours);
@@ -167,6 +193,27 @@ export function DesignCard({
           ) : (
             <span class="design-card-no-solution" role="note">
               {tileResult.reason}
+            </span>
+          )}
+        </section>
+        <section class="design-card-result" aria-label="HIGH design result">
+          <h4>HIGH</h4>
+          {'success' in highResult ? (
+            <span class="design-card-no-solution" role="note">
+              {highResult.message}
+            </span>
+          ) : highResult.status === 'found' ? (
+            <DesignPreview
+              column={highResult.candidate.column}
+              lanes={highResult.candidate.lanes}
+              label={`${title} HIGH design preview`}
+              recipes={recipes}
+              machinesByRecipe={machinesByRecipe}
+              items={items}
+            />
+          ) : (
+            <span class="design-card-no-solution" role="note">
+              {highResult.reason}
             </span>
           )}
         </section>

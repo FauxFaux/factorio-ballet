@@ -68,6 +68,29 @@ describe('DesignCard', () => {
       within(tile).getByRole('region', { name: 'Assembler 2 tile design preview' }),
     ).toBeTruthy();
   });
+  it('shows the HIGH pair alongside the existing results', () => {
+    const { container } = render(
+      <DesignCard
+        index={3}
+        problem={assemblerProblem({ solidInputs: [2, 2, 2, 2, 2, 2], solidOutputs: [2] })}
+        throughput={{
+          beltItemsPerSecond: 30,
+          inserterItemsPerSecond: 8,
+          longInserterItemsPerSecond: 4,
+        }}
+        undergroundBeltReach={8}
+        highPattern="pair"
+      />,
+    );
+    const high = within(container as HTMLElement).getByRole('region', {
+      name: 'HIGH design result',
+    });
+    expect(within(high).getByRole('heading', { name: 'HIGH' })).toBeTruthy();
+    expect(
+      within(high).getByRole('region', { name: 'Assembler 1 HIGH design preview' }),
+    ).toBeTruthy();
+    expect(within(high).queryByRole('note')).toBeNull();
+  });
   it('shows the tile solver reason for unsupported machine groups', () => {
     const problem = assemblerProblem({ solidInputs: [1], solidOutputs: [2] });
     problem.assemblers.push({ ...problem.assemblers[0], inputPerSecond: {}, outputPerSecond: {} });

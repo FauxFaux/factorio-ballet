@@ -57,7 +57,11 @@ export function KernelDebug({
   return (
     <section class="kernel-design" aria-labelledby="kernel-design-title">
       <h2 id="kernel-design-title">Kernel design</h2>
-      <KernelCustomProblem throughput={throughput} custom={custom} />
+      <KernelCustomProblem
+        throughput={throughput}
+        custom={custom}
+        undergroundBeltReach={chosen.belt.undergroundLength - 1}
+      />
       <section class="kernel-design-examples" aria-labelledby="kernel-design-examples-title">
         <h3 id="kernel-design-examples-title">Built in solver's results for various situations</h3>
         <dl class="kernel-design-throughput" aria-label="Transport throughput">
@@ -80,6 +84,7 @@ export function KernelDebug({
               index={index}
               problem={problem}
               throughput={throughput}
+              undergroundBeltReach={chosen.belt.undergroundLength - 1}
               onUseProblem={() => useProblem(problem)}
             />
           ))}

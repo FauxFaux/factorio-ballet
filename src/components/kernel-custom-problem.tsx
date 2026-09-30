@@ -7,6 +7,7 @@ import {
   type AssemblerDesignThroughput,
 } from '../compute/assembler-design.ts';
 import { solveKernelTileDesign } from '../compute/tile-design/kernel-result.ts';
+import type { HighDesignOptions } from '../compute/tile-design/high/solve.ts';
 import { MAX_MODULE_HEIGHT } from '../compute/modules.ts';
 import type { KernelCustomState } from '../boot/url-handler.tsx';
 import {
@@ -71,9 +72,11 @@ function defaultCustomState(): KernelCustomState {
 export function KernelCustomProblem({
   throughput,
   custom,
+  undergroundBeltReach = 4,
 }: {
   throughput: AssemblerDesignThroughput;
   custom: State<KernelCustomState | undefined>;
+  undergroundBeltReach?: number;
 }) {
   const { data } = useDataset();
   const [stored, setStored] = custom;
@@ -105,12 +108,14 @@ export function KernelCustomProblem({
   const problem = problemForFlows(flows);
   const design = generateAssemblerDesign(problem, rates);
   const [copied, setCopied] = useState(false);
+  const [highPattern, setHighPattern] = useState<NonNullable<HighDesignOptions['pattern']>>('auto');
   const colours = resourceColoursFor(problem);
   const resourceNames = resourceNamesFor(problem);
 
   const copyProblem = async () => {
     const tileResult = solveKernelTileDesign(problem, rates, {
       repeatCount,
+      undergroundBeltReach,
       ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
     });
     const json = {
@@ -121,6 +126,14 @@ export function KernelCustomProblem({
       assemblers: problem.assemblers,
       throughput: rates,
       repeatCount,
+      undergroundBeltReach,
+      highDesign: solveKernelTileDesign(problem, rates, {
+        mode: 'high',
+        pattern: highPattern,
+        repeatCount,
+        undergroundBeltReach,
+        ...(repeatCount > 1 ? { moduleHeight: MAX_MODULE_HEIGHT } : {}),
+      }),
       ...(isAssemblerDesignFailure(design)
         ? { assemblerDesignFailure: design.failure.join(' ') }
         : {}),
@@ -207,6 +220,21 @@ export function KernelCustomProblem({
                 updateCustom((current) => ({ ...current, repeatCount: value }));
               }}
             />
+          </label>
+          <label class="kernel-custom-building">
+            HIGH arrangement
+            <select
+              value={highPattern}
+              onChange={(event) =>
+                setHighPattern(
+                  event.currentTarget.value as NonNullable<HighDesignOptions['pattern']>,
+                )
+              }
+            >
+              <option value="auto">Auto</option>
+              <option value="single">Single machine (pitch 7 for 3×3)</option>
+              <option value="pair">Touching pair (pitch 10 for 3×3)</option>
+            </select>
           </label>
           <div class="kernel-custom-flows">
             <fieldset
@@ -329,7 +357,14 @@ export function KernelCustomProblem({
           </div>
         </div>
         <div class="kernel-custom-result" aria-label="Your problem result">
-          <DesignCard index={-1} problem={problem} throughput={rates} repeatCount={repeatCount} />
+          <DesignCard
+            index={-1}
+            problem={problem}
+            throughput={rates}
+            repeatCount={repeatCount}
+            undergroundBeltReach={undergroundBeltReach}
+            highPattern={highPattern}
+          />
         </div>
       </div>
     </section>

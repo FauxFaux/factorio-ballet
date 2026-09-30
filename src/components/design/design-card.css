@@ -136,7 +136,7 @@
 
 .design-card-grid {
   display: grid;
-  grid-template-rows: repeat(2, 9rem);
+  grid-template-rows: repeat(3, 9rem);
   min-width: 0;
 }
 

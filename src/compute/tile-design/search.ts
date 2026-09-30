@@ -1,4 +1,4 @@
-import type { TileDesignCandidate, TileValidationResult } from '../design-validation/types.ts';
+import type { TileDesignSearchResult, TileSearchDiagnostics } from './result.ts';
 import { validateTileDesign } from '../design-validation/validate.ts';
 import type { SolidAccessOption } from './access.ts';
 import { allocateSolidRates, RATE_EPSILON, requiredUnits } from './capacity.ts';
@@ -16,35 +16,9 @@ import {
   type SolidLane,
 } from './tracks.ts';
 import type { TileDesignInput } from './types.ts';
-import { validateSearchInput } from './validation.ts';
+import { externalFlowFailure, validateSearchInput } from './validation.ts';
 
-export interface TileSearchDiagnostics {
-  exploredStates: number;
-  capacityRejections: number;
-  validationRejections: number;
-  /** The actually searched family, even when the caller permits additional primitives. */
-  scope:
-    | 'one-machine/external-items/straight-surface-trunks'
-    | 'one-machine/external-items-and-fluids/horizontal-branches/south-port-adaptor/in-tile-belt-tunnels'
-    | 'mirrored-fluid-pair/horizontal-branches';
-  bestScore?: { area: number; transportEntities: number };
-}
-
-export type TileDesignSearchResult =
-  | {
-      status: 'found';
-      candidate: TileDesignCandidate;
-      validation: TileValidationResult;
-      /** A valid incumbent; optimal is true only when the reported scope was fully searched. */
-      optimal: boolean;
-      stopReason: 'complete' | 'budget-exhausted' | 'first-valid';
-      diagnostics: TileSearchDiagnostics;
-    }
-  | {
-      status: 'unsupported' | 'invalid-input' | 'envelope-exhausted' | 'budget-exhausted';
-      reason: string;
-      diagnostics: TileSearchDiagnostics;
-    };
+export type { TileSearchDiagnostics, TileDesignSearchResult } from './result.ts';
 
 /** Bounded geometry and rate allocation with independent emission validation. Most frames use
  * machine-height pitch; a south-port adaptor adds a row, and a mirrored pair doubles the height.
@@ -63,8 +37,8 @@ export function solveTileDesign(input: TileDesignInput, allowPair = true): TileD
   const invalid = validateSearchInput(input);
   if (invalid) return failure('invalid-input', invalid);
   const machine = input.machines[0];
-  if (input.machines.length !== 1)
-    return failure('unsupported', 'Only one machine with external flows is supported.');
+  const unsupported = externalFlowFailure(input);
+  if (unsupported) return failure('unsupported', unsupported);
   const hasFluids = machine.inputs.fluids.length + machine.outputs.fluids.length > 0;
   if (hasFluids)
     diagnostics.scope =
@@ -73,31 +47,6 @@ export function solveTileDesign(input: TileDesignInput, allowPair = true): TileD
     return failure('unsupported', 'Surface trunks are required.');
   if (input.transport.inserters.some(({ reach }) => reach !== 1 && reach !== 2))
     return failure('unsupported', 'Only one- and two-tile inserter reach is supported.');
-  for (const side of ['inputs', 'outputs'] as const) {
-    const fluids = new Set(machine[side].fluids.map(({ resource }) => resource));
-    if (
-      fluids.size !== input.boundary[side].fluids.length ||
-      input.boundary[side].fluids.some((fluid) => !fluids.has(fluid))
-    )
-      return failure('unsupported', 'Gross fluid transfers must be supplied/exported externally.');
-    const flows = machine[side].items;
-    const boundary = input.boundary[side].items;
-    if (
-      flows.length !== boundary.length ||
-      flows.some(
-        (flow) =>
-          !boundary.some(
-            ({ resource, rate }) =>
-              resource === flow.resource &&
-              Math.abs(rate - flow.rate) <= RATE_EPSILON * Math.max(1, rate, flow.rate),
-          ),
-      )
-    )
-      return failure(
-        'unsupported',
-        'Gross machine transfers must be supplied/exported externally; internal recirculation is not supported.',
-      );
-  }
   if (
     allowPair &&
     (['inputs', 'outputs'] as const).some(

@@ -107,6 +107,22 @@ export function validateTileDesign(
     if (!seenMachines.has(machine.id))
       issue('missing-machine', `Machine ${machine.id} is missing.`);
   for (const [id, placed] of seenMachines) {
+    const copies = candidate.machineCopies?.[id];
+    if (copies !== undefined) {
+      if (
+        input.machines.length !== 1 ||
+        !Number.isSafeInteger(copies) ||
+        copies < 1 ||
+        copies !== placed.length ||
+        placed.some(
+          (entity) =>
+            entity.direction !== placed[0].direction ||
+            Boolean(entity.mirrored) !== Boolean(placed[0].mirrored),
+        )
+      )
+        issue('machine-identity', `Machine ${id} has an invalid homogeneous copy declaration.`);
+      continue;
+    }
     if (placed.length === 1) continue;
     if (
       input.machines.length !== 1 ||
@@ -161,10 +177,11 @@ export function validateTileDesign(
       x: offset.x * reach * (transfer.side === 'input' ? 1 : -1),
       y: offset.y * reach * (transfer.side === 'input' ? 1 : -1),
     });
-    const machine = [...assemblers.values()].find(
-      ({ entity: assembler, machine }) =>
+    const placedMachine = [...assemblers].find(
+      ([_index, { entity: assembler, machine }]) =>
         machine.id === transfer.machineId && contains(assembler, point),
     );
+    const machine = placedMachine?.[1];
     const flows =
       transfer.side === 'input' ? machine?.machine.inputs.items : machine?.machine.outputs.items;
     if (!flows?.some(({ resource }) => resource === transfer.resource))
@@ -231,7 +248,7 @@ export function validateTileDesign(
         transfer.inserterIndex,
         transfer.resource,
       );
-    const demandKey = `${transfer.machineId}:${transfer.side}:${transfer.resource}`;
+    const demandKey = `${placedMachine?.[0]}:${transfer.side}:${transfer.resource}`;
     transferRates.set(demandKey, (transferRates.get(demandKey) ?? 0) + transfer.rate);
     inserterRates.set(
       transfer.inserterIndex,
@@ -250,21 +267,18 @@ export function validateTileDesign(
     if (rate > capacity + 1e-8)
       issue('inserter-capacity', `Inserter ${index} carries ${rate}, above ${capacity}.`, index);
   }
-  for (const machine of input.machines)
+  for (const [assemblerIndex, { machine }] of assemblers)
     for (const side of ['input', 'output'] as const) {
       for (const { resource, rate } of (side === 'input' ? machine.inputs : machine.outputs)
         .items) {
         if (
-          Math.abs(
-            (transferRates.get(`${machine.id}:${side}:${resource}`) ?? 0) -
-              rate * (seenMachines.get(machine.id)?.length ?? 1),
-          ) >
-          1e-8 * Math.max(1, rate * (seenMachines.get(machine.id)?.length ?? 1))
+          Math.abs((transferRates.get(`${assemblerIndex}:${side}:${resource}`) ?? 0) - rate) >
+          1e-8 * Math.max(1, rate)
         )
           issue(
             'machine-rate',
             `Machine ${machine.id} ${side} ${resource} rate is not met.`,
-            undefined,
+            assemblerIndex,
             resource,
           );
       }

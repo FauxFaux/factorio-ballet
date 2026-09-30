@@ -45,6 +45,27 @@ function CustomProblemExample({
 describe('KernelCustomProblem', () => {
   afterEach(cleanup);
 
+  it('exports the selected HIGH arrangement with its candidate and reach', async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    render(
+      <CustomProblemExample
+        initial={{
+          building: 'assembler',
+          flows: { solidInputs: [1], fluidInputs: [], solidOutputs: [1], fluidOutputs: [] },
+        }}
+      />,
+    );
+    await user.selectOptions(screen.getByRole('combobox', { name: 'HIGH arrangement' }), 'pair');
+    await user.click(screen.getByRole('button', { name: 'Copy JSON' }));
+    const exported = JSON.parse(writeText.mock.calls[0]![0]);
+    expect(exported.undergroundBeltReach).toBe(4);
+    expect(exported.highDesign.status).toBe('found');
+    expect(exported.highDesign.candidate.pitch).toBe(10);
+    expect(Object.values(exported.highDesign.candidate.machineCopies)).toEqual([2]);
+  });
+
   it('offers a chemical plant, flare stack, and powderiser as building choices', async () => {
     const user = userEvent.setup();
     render(<CustomProblemExample />);

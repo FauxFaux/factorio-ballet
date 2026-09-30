@@ -188,3 +188,31 @@ export function validateSearchInput(input: TileDesignInput): string | undefined 
     if (Math.abs(rate) > RATE_EPSILON * scale.get(resource)!)
       return `${resource} does not balance external and machine item flows.`;
 }
+
+/** Both layout policies consume one machine's gross external flows, including catalysts. */
+export function externalFlowFailure(input: TileDesignInput): string | undefined {
+  if (input.machines.length !== 1) return 'Only one machine with external flows is supported.';
+  const machine = input.machines[0];
+  for (const side of ['inputs', 'outputs'] as const) {
+    const fluids = new Set(machine[side].fluids.map(({ resource }) => resource));
+    if (
+      fluids.size !== input.boundary[side].fluids.length ||
+      input.boundary[side].fluids.some((fluid) => !fluids.has(fluid))
+    )
+      return 'Gross fluid transfers must be supplied/exported externally.';
+    const flows = machine[side].items;
+    const boundary = input.boundary[side].items;
+    if (
+      flows.length !== boundary.length ||
+      flows.some(
+        (flow) =>
+          !boundary.some(
+            ({ resource, rate }) =>
+              resource === flow.resource &&
+              Math.abs(rate - flow.rate) <= RATE_EPSILON * Math.max(1, rate, flow.rate),
+          ),
+      )
+    )
+      return 'Gross machine transfers must be supplied/exported externally; internal recirculation is not supported.';
+  }
+}

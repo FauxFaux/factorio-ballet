@@ -97,6 +97,84 @@ primitives and boundary phases; the item rate allocation contract need not chang
 cards display the selected geometry; integration with editable designs and module export remains
 separate.
 
+## HIGH design policy
+
+`solveHighTileDesign` in `src/compute/tile-design/high/solve.ts` is an additional solver over the
+same `TileDesignInput` and `TileDesignCandidate` contracts. It implements subsets of the two
+patterns in [ASSEMBLERS-HIGH.md](../blueprints/ASSEMBLERS-HIGH.md), with horizontal underground
+fluid branches replacing east/west inserter sites. It dedicates one belt to each gross item flow,
+with at most seven flows including outputs. This deliberately uses fewer distinct resources than the
+fixtures' thirteen input lanes. A catalyst needs separate input and output belts.
+
+The pattern is generalized to an allowed three-tile-wide orientation of a `3×h` machine. A single
+has pitch `h + 4`; a touching pair has pitch `2h + 4`. Only used belts and required inserters are
+emitted. The central three belts tunnel underneath the whole repeat unit and have two ordinary input
+sites per machine in a single, or one in a pair. The four side belts divide the available edge cells
+between ordinary near-belt and long far-belt inserters. Inputs may occupy either one lane or both
+lanes of their single belt. When both lanes are used, the certificate advertises equal rates and
+requires the module router to supply that split. Outputs use one far lane on a dedicated side belt,
+with filters for multiple products. End belts serve inputs only.
+
+Each required fluid chooses an interior east/west port, one fluid trunk per side. A horizontal pipe
+pair connects the machine to a trunk beyond the far belt. The near belt passes over that tunnel; the
+far belt uses a two-cell endpoint distance to pass under the outer pipe endpoint. Distinct fluids
+have isolated trunks. North/south fluid branches, ports at side corners, multiple fluid trunks on
+the same side, shared belts for different items, and splitting an item across different belts remain
+outside this policy.
+
+Code responsibilities are intentionally small:
+
+| File               | Responsibility                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| `high/geometry.ts` | Single/pair placements, seven track profiles, allowed orientations and fluid branches |
+| `high/allocate.ts` | Memoized belt matching with two shared edge-site budgets and rate/reach checks        |
+| `high/emit.ts`     | Inserter row placement, used transport entities, per-lane rates and copy multiplicity |
+| `high/solve.ts`    | State budget, candidate selection and independent validation                          |
+| `solver.ts`        | Explicit `search`, `high`, or `auto` policy selection                                 |
+| `result.ts`        | Shared result/diagnostic types, re-exported by `search.ts` for existing callers       |
+
+Matching assigns one flow to one of seven belt bits. State includes occupied belt bits and the
+number of inserter cells consumed on each side. Local capacity determines the required number of
+sites before matching. This avoids enumerating resource lane subsets, fractional max-flow graphs,
+and discrete inserter configurations. Near and far belts share one edge budget, so neither can claim
+cells needed by the other. Emission assigns the near belt its required rows first and the far belt
+the remaining rows, reversing the row preference in the lower half of a pair.
+
+`pattern: 'single' | 'pair' | 'auto'` chooses which HIGH arrangements to try. Selection minimizes
+rectangle area per machine, then transport entities per machine. Comparing per machine allows the
+pair's density improvement to count. `optimal` applies only within this restricted family and its
+selected pattern, including its equal input-lane split. `repeat.count` counts complete repeat units,
+so a pair's lane load includes `2 × repeat.count` machines. `machineCopies` explicitly declares
+homogeneous multiplicity; validation checks each assembler's item rates separately as well as
+cumulative lane loads, fluid obligations, entity geometry and seams.
+
+`solveKernelTileDesign` accepts `mode: 'search' | 'high' | 'auto'`, plus `pattern` and
+`undergroundBeltReach`. Its default remains `search` for existing consumers. `auto` prefers a valid
+HIGH result and spends any remaining state budget on the general search if HIGH fails. This is a
+readability preference, with no cross-family area optimum. Pass the selected belt's
+`undergroundLength - 1` as the hidden-cell reach; a 3×3 single needs five hidden cells and a pair
+needs eight when central belts are used. Side-only subsets can succeed with shorter reaches.
+
+The kernel workspace shows a third HIGH preview. Its custom problem has a single/pair/auto selector,
+and Copy JSON includes the HIGH candidate and diagnostics. These previews use the selected belt's
+actual underground reach. Existing factory-module consumers already count the placed assemblers and
+consume `laneFlows`, so HIGH candidates use the same module conversion.
+
+A local Node 24 microbenchmark, warmed up then averaged over twenty solves, illustrates the
+tradeoff. With a 30 items/s belt, ordinary inserter capacity 8, long capacity 4, and underground
+reach 8, six inputs at 2/s and one output at 2/s took about 1 ms for HIGH versus 24 ms for the
+general search. The HIGH pair occupies 45 tiles per machine; the general search found a compact
+27-tile single while exhausting its 10,000-state budget. Adding one 200/s fluid input and allowing
+all orientations took about 1.7 ms for HIGH, which found a 10×10 pair; the general search used its
+10,000 states in about 24 ms without finding a candidate. These are examples, not a throughput
+guarantee or a full recipe survey. HIGH favors predictable geometry and readable belt ownership; the
+general search remains useful for denser layouts and more flexible lane allocation.
+
+On the thirty existing Bob/Angel kernel examples with the same capabilities, HIGH found twenty
+designs in about 17 ms total, versus all thirty in about 1.24 s for the general search in one local
+run. HIGH used 7,286 states versus 157,094. The ten remaining examples need a fallback, reinforcing
+the case for a separate policy rather than replacing the existing search.
+
 ## Search and capacity
 
 Base belt frames are ordered by rectangle area and belt entity count, then expanded into fluid route
@@ -144,3 +222,8 @@ mirrors, rectangular half-cell geometry, multiple isolated networks, alternative
 obligations, four-inserter outputs around a blocked row, repeat/budget limits, and corrupted pipe or
 belt certificates. It also covers the mono-silicon south-port adaptor, checks periodic fluid mixing,
 and rejects disconnected labelled stubs.
+
+`test/compute/tile-design/high.test.ts` compares emitted belt profiles with both HIGH JSON fixtures
+and covers fluid branches, repeat seams, tunnel reach, per-copy demands, shared edge capacity, two
+lanes on one input belt, rectangular machines, deterministic ordering, budget incumbents, mode
+fallback and existing factory-module conversion.
