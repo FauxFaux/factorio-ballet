@@ -8,3 +8,7 @@
   - use long-inserters to reach over the inner pipe
   - shorten the outside pipe trunk's connection to one tile to give more inserter spaces
   - why does it only work for outputs?
+- bobs inserters mode
+  - long inserters are silly
+  - low angle inserters are very silly
+  - non-bobs long inserters are shit
