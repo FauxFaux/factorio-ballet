@@ -22,16 +22,17 @@
 }
 .recipe-suggestions-card-head {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 0.5rem;
 }
 .recipe-suggestions-card-actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-items: end;
   align-items: center;
-  justify-content: flex-end;
-  flex-wrap: wrap;
   gap: 0.35rem;
+  flex: 0 0 auto;
 }
 .recipe-suggestions-for {
   display: flex;
@@ -43,6 +44,8 @@
   font-size: inherit;
 }
 .recipe-suggestions-score {
+  grid-column: 1 / -1;
+  grid-row: 2;
   margin: 0;
   color: var(--muted);
   font-size: 0.85rem;
