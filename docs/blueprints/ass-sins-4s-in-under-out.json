@@ -1,0 +1,373 @@
+{
+  "blueprint": {
+    "icons": [
+      {
+        "signal": {
+          "name": "express-transport-belt"
+        },
+        "index": 1
+      },
+      {
+        "signal": {
+          "name": "bob-assembling-machine-6"
+        },
+        "index": 2
+      }
+    ],
+    "entities": [
+      {
+        "entity_number": 1,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 368.5,
+          "y": -652.5
+        },
+        "type": "output"
+      },
+      {
+        "entity_number": 2,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 369.5,
+          "y": -652.5
+        },
+        "type": "output"
+      },
+      {
+        "entity_number": 3,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 369.5,
+          "y": -653.5
+        }
+      },
+      {
+        "entity_number": 4,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 368.5,
+          "y": -653.5
+        }
+      },
+      {
+        "entity_number": 5,
+        "name": "bob-red-bulk-inserter",
+        "position": {
+          "x": 370.5,
+          "y": -652.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 6,
+        "name": "bob-red-bulk-inserter",
+        "position": {
+          "x": 370.5,
+          "y": -653.5
+        },
+        "direction": 12,
+        "drop_position": [2.19921875, 0],
+        "pickup_position": [-2, 0]
+      },
+      {
+        "entity_number": 7,
+        "name": "bob-assembling-machine-6",
+        "position": {
+          "x": 372.5,
+          "y": -652.5
+        },
+        "recipe": "chemical-science-pack",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 8,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -653.5
+        },
+        "direction": 4,
+        "drop_position": [-2.203125, 0],
+        "pickup_position": [2, 0]
+      },
+      {
+        "entity_number": 9,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -652.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 10,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -653.5
+        }
+      },
+      {
+        "entity_number": 11,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -652.5
+        }
+      },
+      {
+        "entity_number": 12,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -652.5
+        }
+      },
+      {
+        "entity_number": 13,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -653.5
+        }
+      },
+      {
+        "entity_number": 14,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -651.5
+        },
+        "drop_position": [0.19921875, 1.203125],
+        "pickup_position": [-1, 0]
+      },
+      {
+        "entity_number": 15,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 374.5,
+          "y": -650.5
+        },
+        "type": "input"
+      },
+      {
+        "entity_number": 16,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -651.5
+        }
+      },
+      {
+        "entity_number": 17,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -650.5
+        }
+      },
+      {
+        "entity_number": 18,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -651.5
+        }
+      },
+      {
+        "entity_number": 19,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -650.5
+        }
+      },
+      {
+        "entity_number": 20,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 368.5,
+          "y": -648.5
+        },
+        "type": "input"
+      },
+      {
+        "entity_number": 21,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 369.5,
+          "y": -648.5
+        },
+        "type": "input"
+      },
+      {
+        "entity_number": 22,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -648.5
+        },
+        "direction": 8,
+        "drop_position": [-0.203125, -1.19921875],
+        "pickup_position": [-1, 0]
+      },
+      {
+        "entity_number": 23,
+        "name": "express-underground-belt",
+        "position": {
+          "x": 374.5,
+          "y": -649.5
+        },
+        "type": "output"
+      },
+      {
+        "entity_number": 24,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -649.5
+        }
+      },
+      {
+        "entity_number": 25,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -648.5
+        }
+      },
+      {
+        "entity_number": 26,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -649.5
+        }
+      },
+      {
+        "entity_number": 27,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -648.5
+        }
+      },
+      {
+        "entity_number": 28,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 369.5,
+          "y": -647.5
+        }
+      },
+      {
+        "entity_number": 29,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 369.5,
+          "y": -646.5
+        }
+      },
+      {
+        "entity_number": 30,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 368.5,
+          "y": -646.5
+        }
+      },
+      {
+        "entity_number": 31,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 368.5,
+          "y": -647.5
+        }
+      },
+      {
+        "entity_number": 32,
+        "name": "bob-red-bulk-inserter",
+        "position": {
+          "x": 370.5,
+          "y": -646.5
+        },
+        "direction": 12,
+        "drop_position": [2.19921875, 0],
+        "pickup_position": [-2, 0]
+      },
+      {
+        "entity_number": 33,
+        "name": "bob-red-bulk-inserter",
+        "position": {
+          "x": 370.5,
+          "y": -647.5
+        },
+        "direction": 12
+      },
+      {
+        "entity_number": 34,
+        "name": "bob-assembling-machine-6",
+        "position": {
+          "x": 372.5,
+          "y": -647.5
+        },
+        "recipe": "chemical-science-pack",
+        "recipe_quality": "normal"
+      },
+      {
+        "entity_number": 35,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -647.5
+        },
+        "direction": 4
+      },
+      {
+        "entity_number": 36,
+        "name": "bulk-inserter",
+        "position": {
+          "x": 374.5,
+          "y": -646.5
+        },
+        "direction": 4,
+        "drop_position": [-2.203125, 0],
+        "pickup_position": [2, 0]
+      },
+      {
+        "entity_number": 37,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -646.5
+        }
+      },
+      {
+        "entity_number": 38,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 375.5,
+          "y": -647.5
+        }
+      },
+      {
+        "entity_number": 39,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -647.5
+        }
+      },
+      {
+        "entity_number": 40,
+        "name": "express-transport-belt",
+        "position": {
+          "x": 376.5,
+          "y": -646.5
+        }
+      }
+    ],
+    "item": "blueprint",
+    "version": 562949958205441
+  }
+}
