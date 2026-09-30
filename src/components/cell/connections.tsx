@@ -154,7 +154,7 @@ function AssemblerDesignSummary({
   ).length;
   const retryCopies = maxHeight * 2;
   const higherCapacityResult =
-    maxHeight <= 2 && moduleCount >= 10
+    maxHeight <= 3 && moduleCount >= 2
       ? solveKernelTileDesign(problem, throughput, {
           repeatCount: retryCopies,
           moduleHeight: MAX_MODULE_HEIGHT,
