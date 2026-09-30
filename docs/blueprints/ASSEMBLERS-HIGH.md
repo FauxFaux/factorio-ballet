@@ -114,3 +114,93 @@ prototype's reach, and that no translated footprints overlap. Resolve the red in
 explicit offsets, verify the shared far-west belt's filter and output lane, and check cumulative
 lane rates separately from local inserter rates. The fixture includes no power poles, modules, or
 fluid plumbing; adding a fluid connection requires revisiting the occupied edge sites.
+
+## Seven belts at an average five-tile pitch: `ass-13l-pitch-5`
+
+[`ass-13l-pitch-5.json`](ass-13l-pitch-5.json) packs two touching assembling-machine-2s into one
+9x10 tile, repeating by `(0,10)`. This is a **two-assembler repeat unit**, whereas the pitch-seven
+fixture shows two copies of a one-assembler tile. The `pitch-5` name describes the average five rows
+per assembler: machine centres are three tiles apart within the pair and seven tiles apart across
+the tile seam. Translating by `(0,5)` would not reproduce the arrangement.
+
+Both assemblers retain access to seven belts and thirteen input lanes when one of the fourteen lanes
+is reserved for output. Each has **nine inserter positions**: three on each side and three on its
+outward-facing end. Underground belts provide access to the middle three lines at those ends, adding
+three sites per machine beyond the six side positions of a straight, surface-only vertical belt
+arrangement.
+
+### Geometry and transfers
+
+Normalize blueprint position `(447.5,-711.5)` to the centre of cell `(0,0)`. The upper assembler
+occupies `(3,2)` through `(5,4)`, and the lower assembler occupies `(3,5)` through `(5,7)`. Their
+edges touch between rows 4 and 5, leaving no room for inserters between them. Using the same symbols
+as the pitch-seven diagram:
+
+```text
+        x=0  1   2    3   4   5    6   7  8
+y=0       B  B   .   Uo  Uo  Uo    .   B  B
+y=1       B  B   .   iv  iv  iv    .   B  B
+y=2       B  B  L->  [A   A   A]  <-L  B  B
+y=3       B  B  <-O  [A   A   A]  <-L  B  B
+y=4       B  B  i->  [A   A   A]  <-i  B  B
+y=5       B  B  i->  [A   A   A]  <-i  B  B
+y=6       B  B  <-O  [A   A   A]  <-L  B  B
+y=7       B  B  L->  [A   A   A]  <-L  B  B
+y=8       B  B   .   i^  i^  i^    .   B  B
+y=9       B  B   .   Ui  Ui  Ui    .   B  B
+```
+
+The tile contains 66 entities, including eighteen inserters: ten `bob-express-bulk-inserter` and
+eight `bob-red-inserter`. Each assembler has five short-reach and four red inserters, with eight
+inputs and one output. The lower assembler reverses the row order of the upper one's side transfers,
+while its three end inserters face south instead of north.
+
+| Belt          | Column | Upper assembler inserter bases | Lower assembler inserter bases |
+| ------------- | ------ | ------------------------------ | ------------------------------ |
+| far west      | `x=0`  | `(2,2)` input; `(2,3)` output  | `(2,7)` input; `(2,6)` output  |
+| near west     | `x=1`  | `(2,4)` input                  | `(2,5)` input                  |
+| middle west   | `x=3`  | `(3,1)` input                  | `(3,8)` input                  |
+| middle centre | `x=4`  | `(4,1)` input                  | `(4,8)` input                  |
+| middle east   | `x=5`  | `(5,1)` input                  | `(5,8)` input                  |
+| near east     | `x=7`  | `(6,4)` input                  | `(6,5)` input                  |
+| far east      | `x=8`  | `(6,2)` and `(6,3)` input      | `(6,7)` and `(6,6)` input      |
+
+Both west output inserters use the same explicit pickup and drop offsets and approach the same
+northbound belt from its east side, so they populate the same output lane. The other lane remains
+available for an ingredient, with the same input-filter requirement as the pitch-seven pattern.
+
+### One underground span beneath the pair
+
+For each middle column `x=3,4,5`, the northbound input endpoint at `(x,9)` pairs with the output at
+`(x,0)`. The tunnel passes beneath six machine rows and two inserter rows. Its endpoints are nine
+tiles apart, a ten-cell inclusive span with eight intervening cells. The upper machine reads the
+output endpoint through `(x,1)`; the lower reads the input endpoint through `(x,8)`. Each machine
+therefore gets one pickup site on each middle belt.
+
+In the next tile, the output at row 10 feeds directly into the input at row 9. Together with the
+four uninterrupted side belts, this connects all seven lines across the ten-row seam. The
+underground pairs belong entirely to their own tiles.
+
+The fixture uses fast underground belts with Bob's inserters. The repository's Bob/Angel dataset
+gives that belt tier an `undergroundLength` of eleven, enough for the required nine-tile endpoint
+distance. Validate against the actual dataset's reach when adapting this pattern; the Space Age
+dataset's fast tier has an `undergroundLength` of seven and cannot span the pair as drawn.
+
+### Density and throughput tradeoff
+
+Compared with two pitch-seven tiles, the pair reduces the height from fourteen to ten rows and the
+inserter count from twenty-four to eighteen. It retains the same lane access and side transfers,
+while reducing each middle belt from two input inserters per assembler to one. This increases
+machine density by 40%, but reduces the local transfer capacity available on the middle belts. Nine
+inserters per machine still provide substantially more transfer sites than the compact surface-only
+patterns.
+
+For `n` repeated tiles, calculate cumulative lane demand and output for `2n` assemblers. The two
+machines still share one output lane, with capacity `B / 2`, and every input lane has the same
+capacity. Check each middle input's demand against its single inserter's transfer rate. Additional
+machines and inserters increase the work served by the belts without increasing belt capacity.
+
+Validate the full pair with copies translated by `(0,-10)` and `(0,10)`: confirm independent belt
+lines, correct underground pairing and reach, collision-free seams, explicit red-inserter offsets,
+and the shared output lane. As with the pitch-seven fixture, recipes, filters, power, modules, and
+fluid connections need to be supplied for a complete factory.
