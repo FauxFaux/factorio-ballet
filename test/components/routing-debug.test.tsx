@@ -371,6 +371,82 @@ describe('RoutingDebug', () => {
     },
   );
 
+  it('shows rectangle dimensions while placing and focusing reserved space', async () => {
+    const user = userEvent.setup();
+    render(<Example />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    await user.click(screen.getByRole('button', { name: 'Reserve space' }));
+    fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: 115, clientY: 215 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 155, clientY: 235 });
+    expect(screen.getByText('5x3')).toBeTruthy();
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toBeUndefined();
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 155, clientY: 235 });
+    fireEvent.click(grid, { clientX: 155, clientY: 235 });
+    expect(screen.getByText('5x3')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Normal' }));
+    fireEvent.click(grid, { clientX: 105, clientY: 205 });
+    expect(screen.queryByText('5x3')).toBeNull();
+    const rectangle = screen.getByRole('img', { name: /Reserved space at/ });
+    fireEvent.focus(rectangle);
+    expect(screen.getByText('5x3')).toBeTruthy();
+    expect(screen.queryByRole('combobox', { name: /item/ })).toBeNull();
+    fireEvent.blur(rectangle);
+    expect(screen.queryByText('5x3')).toBeNull();
+    await user.hover(rectangle);
+    expect(screen.getByText('5x3')).toBeTruthy();
+  });
+
+  it('moves rectangles by their grab offset and keeps their dimensions and entities unchanged', () => {
+    const entities: RoutingDebugEntity[] = [
+      { kind: 'source', x: 8, y: 5, item: 'iron', rate: 5, direction: 'east' },
+    ];
+    const rectangle = { x: 4, y: 4, width: 5, height: 3 };
+    render(<Example initial={{ entities, rectangles: [rectangle] }} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    const reserved = screen.getByRole('img', { name: /Reserved space at/ });
+    fireEvent.pointerDown(reserved, { pointerId: 1, button: 0, clientX: 165, clientY: 255 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 185, clientY: 285 });
+    expect(reserved.getAttribute('x')).toBe('6');
+    expect(reserved.getAttribute('y')).toBe('7');
+    expect(screen.getByText('5x3')).toBeTruthy();
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toEqual([rectangle]);
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 185, clientY: 285 });
+    fireEvent.click(grid, { clientX: 185, clientY: 285 });
+    const rd = JSON.parse(screen.getByRole('status').textContent!);
+    expect(rd).toEqual({ entities, rectangles: [{ ...rectangle, x: 6, y: 7 }] });
+    expect(screen.getByText('5x3')).toBeTruthy();
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd };
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+  });
+
+  it('rejects rectangle moves that cover connection tiles or cross grid edges, and cancels cleanly', () => {
+    const initial: RoutingDebugState = {
+      entities: [{ kind: 'source', x: 1, y: 2, item: 'iron', rate: 5, direction: 'east' }],
+      rectangles: [{ x: 4, y: 4, width: 5, height: 3 }],
+    };
+    render(<Example initial={initial} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    const rectangle = screen.getByRole('img', { name: /Reserved space at/ });
+    for (const [clientX, clientY] of [
+      [125, 225],
+      [105, 205],
+      [1055, 835],
+    ]) {
+      fireEvent.pointerDown(rectangle, { pointerId: 1, button: 0, clientX: 165, clientY: 255 });
+      fireEvent.pointerUp(grid, { pointerId: 1, clientX, clientY });
+      expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+    }
+    fireEvent.pointerDown(rectangle, { pointerId: 1, button: 0, clientX: 165, clientY: 255 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 185, clientY: 285 });
+    fireEvent.pointerCancel(grid, { pointerId: 1 });
+    expect(rectangle.getAttribute('x')).toBe('4');
+    expect(rectangle.getAttribute('y')).toBe('4');
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+  });
+
   it('deletes clicked rectangles in Delete mode, preserving underlying rectangles and enclosed entities', async () => {
     const user = userEvent.setup();
     const entity: RoutingDebugEntity = {

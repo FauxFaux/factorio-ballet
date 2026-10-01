@@ -288,7 +288,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         </div>
         <p class="routing-debug-hint">
           {mode === 'normal'
-            ? 'Click a source or sink to edit it, or drag it to move.'
+            ? 'Click a source or sink to edit it. Drag sources, sinks, or reserved space to move.'
             : mode === 'delete'
               ? 'Click a source, sink, or reserved rectangle to delete it.'
               : mode === 'rectangle'
@@ -307,6 +307,21 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         mode={mode}
         onClickTile={clickTile}
         onDeleteRectangle={deleteRectangle}
+        onFocusRectangle={() => setSelection(undefined)}
+        onMoveRectangle={(index, rectangle) => {
+          setSettings((previous) => {
+            if (
+              previous?.entities?.some((entity) => containsTile(rectangle, connectionTile(entity)))
+            )
+              return previous;
+            return {
+              ...previous,
+              rectangles: previous?.rectangles?.map((current, rectangleIndex) =>
+                rectangleIndex === index ? rectangle : current,
+              ),
+            };
+          });
+        }}
         onMoveEntity={(origin, destination) => {
           const entity = entities.find((entity) => entity.x === origin.x && entity.y === origin.y);
           if (

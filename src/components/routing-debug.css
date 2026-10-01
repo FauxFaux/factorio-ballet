@@ -165,11 +165,13 @@
   cursor: crosshair;
 }
 
-.routing-debug-grid[data-mode="normal"] .routing-debug-entity {
+.routing-debug-grid[data-mode="normal"] .routing-debug-entity,
+.routing-debug-grid[data-mode="normal"] .routing-debug-reserved-space {
   cursor: grab;
 }
 
-.routing-debug-grid[data-mode="normal"] .routing-debug-entity:active {
+.routing-debug-grid[data-mode="normal"] .routing-debug-entity:active,
+.routing-debug-grid[data-mode="normal"] .routing-debug-reserved-space:active {
   cursor: grabbing;
 }
 
@@ -177,6 +179,25 @@
   fill: #6b7280;
   stroke: #9ca3af;
   stroke-width: 0.05;
+}
+
+/* Native SVG focus outlines scale with tile coordinates; use our thin strokes instead. */
+.routing-debug-entity:focus,
+.routing-debug-reserved-space:focus {
+  outline: none;
+}
+
+.routing-debug-reserved-space:focus-visible {
+  stroke: white;
+  stroke-width: 0.08;
+}
+
+.routing-debug-rectangle-dimensions {
+  fill: white;
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: #374151;
+  stroke-width: 0.08;
 }
 
 .routing-debug-drag-preview {

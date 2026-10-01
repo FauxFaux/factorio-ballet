@@ -1,4 +1,4 @@
-import { useId } from 'preact/hooks';
+import { useId, useState } from 'preact/hooks';
 import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
 import { CARBON_LIGHT } from '../compute/colours.ts';
 import {
@@ -42,6 +42,8 @@ export function RoutingDebugGrid({
   onDeleteRectangle,
   onMoveEntity,
   onAddRectangle,
+  onMoveRectangle,
+  onFocusRectangle,
 }: {
   width: number;
   height: number;
@@ -53,8 +55,12 @@ export function RoutingDebugGrid({
   onDeleteRectangle: (index: number) => void;
   onMoveEntity: (origin: RoutingDebugPosition, destination: RoutingDebugPosition) => void;
   onAddRectangle: (rectangle: RoutingDebugRectangle) => void;
+  onMoveRectangle: (index: number, rectangle: RoutingDebugRectangle) => void;
+  onFocusRectangle: () => void;
 }) {
   const gridId = useId();
+  const [focusedRectangle, setFocusedRectangle] = useState<number>();
+  const [hoveredRectangle, setHoveredRectangle] = useState<number>();
   const { preview, clickTile, ...interactions } = useRoutingDebugInteractions({
     width,
     height,
@@ -63,7 +69,14 @@ export function RoutingDebugGrid({
     rectangles,
     onClickTile,
     onMoveEntity,
-    onAddRectangle,
+    onAddRectangle: (rectangle) => {
+      setFocusedRectangle(rectangles.length);
+      onAddRectangle(rectangle);
+    },
+    onMoveRectangle: (index, rectangle) => {
+      setFocusedRectangle(index);
+      onMoveRectangle(index, rectangle);
+    },
   });
   return (
     <svg
@@ -76,7 +89,7 @@ export function RoutingDebugGrid({
       {...interactions}
       onClick={(event) => {
         const tile = pointerTile(event.currentTarget, event.clientX, event.clientY, width, height);
-        if (tile) clickTile(tile.x, tile.y);
+        if (tile && clickTile(tile.x, tile.y)) setFocusedRectangle(undefined);
       }}
     >
       <defs>
@@ -99,27 +112,54 @@ export function RoutingDebugGrid({
         <rect width={width} height={height} fill={`url(#${gridId}-tile)`} />
         <rect width={width} height={height} fill={`url(#${gridId}-major)`} />
       </g>
-      {rectangles.map((rectangle, index) => (
-        <rect
-          key={index}
-          class="routing-debug-reserved-space"
-          role={mode === 'delete' ? 'button' : 'img'}
-          tabIndex={mode === 'delete' ? 0 : undefined}
-          aria-label={`Reserved space at (${rectangle.x}, ${rectangle.y}), ${rectangle.width} by ${rectangle.height} tiles`}
-          {...rectangle}
-          pointer-events={mode === 'delete' ? 'auto' : 'none'}
-          onClick={(event) => {
-            if (mode !== 'delete') return;
-            event.stopPropagation();
-            onDeleteRectangle(index);
-          }}
-          onKeyDown={(event) => {
-            if (mode !== 'delete' || (event.key !== 'Enter' && event.key !== ' ')) return;
-            event.preventDefault();
-            onDeleteRectangle(index);
-          }}
-        />
-      ))}
+      {rectangles.map((rectangle, index) => {
+        const moving = preview?.kind === 'rectangle-move' && preview.rectangleIndex === index;
+        const displayed = moving ? preview.rectangle : rectangle;
+        return (
+          <g
+            key={index}
+            class="routing-debug-reservation"
+            onMouseEnter={() => setHoveredRectangle(index)}
+            onMouseLeave={() => setHoveredRectangle(undefined)}
+          >
+            <rect
+              class="routing-debug-reserved-space"
+              role={mode === 'delete' ? 'button' : 'img'}
+              tabIndex={mode === 'normal' || mode === 'delete' ? 0 : undefined}
+              aria-label={`Reserved space at (${rectangle.x}, ${rectangle.y}), ${rectangle.width} by ${rectangle.height} tiles`}
+              {...displayed}
+              pointer-events={mode === 'normal' || mode === 'delete' ? 'auto' : 'none'}
+              onFocus={() => {
+                setFocusedRectangle(index);
+                if (mode === 'normal') onFocusRectangle();
+              }}
+              onBlur={() => setFocusedRectangle(undefined)}
+              onClick={(event) => {
+                if (mode !== 'delete' && mode !== 'normal') return;
+                event.stopPropagation();
+                if (mode === 'delete') {
+                  setFocusedRectangle(undefined);
+                  setHoveredRectangle(undefined);
+                  onDeleteRectangle(index);
+                } else {
+                  setFocusedRectangle(index);
+                  onFocusRectangle();
+                }
+              }}
+              onKeyDown={(event) => {
+                if (mode !== 'delete' || (event.key !== 'Enter' && event.key !== ' ')) return;
+                event.preventDefault();
+                setFocusedRectangle(undefined);
+                setHoveredRectangle(undefined);
+                onDeleteRectangle(index);
+              }}
+            />
+            {(moving || focusedRectangle === index || hoveredRectangle === index) && (
+              <RectangleDimensions rectangle={displayed} />
+            )}
+          </g>
+        );
+      })}
       {entities.map((entity) => {
         const label = `${entity.kind === 'source' ? 'Source' : 'Sink'} at (${entity.x}, ${entity.y}), ${entity.item}, ${entity.rate} items/s, ${entity.direction}`;
         const position =
@@ -164,18 +204,50 @@ export function RoutingDebugGrid({
               transform={`rotate(${directionAngle[entity.direction]} 0.5 0.5) scale(${1 / 12})`}
               pointer-events="none"
             />
+            {entity.kind === 'sink' && (
+              <rect
+                class="routing-debug-entity-arrow"
+                x="9"
+                y="1.5"
+                width="2"
+                height="9"
+                fill={itemColour(entity.item)}
+                transform={`rotate(${directionAngle[entity.direction]} 0.5 0.5) scale(${1 / 12})`}
+                pointer-events="none"
+              />
+            )}
           </g>
         );
       })}
       {preview && (
-        <rect
-          class="routing-debug-drag-preview"
-          data-valid={preview.valid}
-          {...preview.rectangle}
-          aria-hidden="true"
-          pointer-events="none"
-        />
+        <g aria-hidden="true" pointer-events="none">
+          <rect
+            class="routing-debug-drag-preview"
+            data-valid={preview.valid}
+            {...preview.rectangle}
+            aria-hidden="true"
+            pointer-events="none"
+          />
+          {preview.kind === 'rectangle' && <RectangleDimensions rectangle={preview.rectangle} />}
+        </g>
       )}
     </svg>
+  );
+}
+
+function RectangleDimensions({ rectangle }: { rectangle: RoutingDebugRectangle }) {
+  const label = `${rectangle.width}x${rectangle.height}`;
+  return (
+    <text
+      class="routing-debug-rectangle-dimensions"
+      x={rectangle.x + rectangle.width / 2}
+      y={rectangle.y + rectangle.height / 2}
+      font-size={Math.min(1.2, rectangle.height * 0.4, rectangle.width / label.length)}
+      text-anchor="middle"
+      dominant-baseline="central"
+      pointer-events="none"
+    >
+      {label}
+    </text>
   );
 }

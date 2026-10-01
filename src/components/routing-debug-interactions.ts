@@ -16,7 +16,9 @@ type Drag = {
   clientX: number;
   clientY: number;
   moved: boolean;
-  kind: 'entity' | 'rectangle';
+  kind: 'entity' | 'rectangle' | 'rectangle-move';
+  rectangleIndex?: number;
+  rectangle?: RoutingDebugRectangle;
   width: number;
   height: number;
 };
@@ -94,6 +96,7 @@ export function useRoutingDebugInteractions({
   onClickTile,
   onMoveEntity,
   onAddRectangle,
+  onMoveRectangle,
 }: {
   width: number;
   height: number;
@@ -103,6 +106,7 @@ export function useRoutingDebugInteractions({
   onClickTile: (x: number, y: number) => void;
   onMoveEntity: (origin: RoutingDebugPosition, destination: RoutingDebugPosition) => void;
   onAddRectangle: (rectangle: RoutingDebugRectangle) => void;
+  onMoveRectangle: (index: number, rectangle: RoutingDebugRectangle) => void;
 }) {
   const drag = useRef<Drag>();
   const suppressClick = useRef(false);
@@ -111,6 +115,7 @@ export function useRoutingDebugInteractions({
     rectangle: RoutingDebugRectangle;
     origin: RoutingDebugPosition;
     valid: boolean;
+    rectangleIndex?: number;
   }>();
 
   const endDrag = () => {
@@ -124,9 +129,11 @@ export function useRoutingDebugInteractions({
 
   useEffect(() => {
     const current = drag.current;
-    const kind = mode === 'normal' ? 'entity' : mode === 'rectangle' ? 'rectangle' : undefined;
-    if (current && (current.kind !== kind || current.width !== width || current.height !== height))
-      endDrag();
+    const sameMode =
+      mode === 'normal'
+        ? current?.kind === 'entity' || current?.kind === 'rectangle-move'
+        : mode === 'rectangle' && current?.kind === 'rectangle';
+    if (current && (!sameMode || current.width !== width || current.height !== height)) endDrag();
   }, [mode, width, height]);
 
   useEffect(() => endDrag, []);
@@ -142,12 +149,18 @@ export function useRoutingDebugInteractions({
     const rectangle =
       current.kind === 'entity'
         ? { ...tile, width: 1, height: 1 }
-        : {
-            x: Math.min(current.origin.x, tile.x),
-            y: Math.min(current.origin.y, tile.y),
-            width: Math.abs(current.origin.x - tile.x) + 1,
-            height: Math.abs(current.origin.y - tile.y) + 1,
-          };
+        : current.kind === 'rectangle-move' && current.rectangle
+          ? {
+              ...current.rectangle,
+              x: current.rectangle.x + tile.x - current.origin.x,
+              y: current.rectangle.y + tile.y - current.origin.y,
+            }
+          : {
+              x: Math.min(current.origin.x, tile.x),
+              y: Math.min(current.origin.y, tile.y),
+              width: Math.abs(current.origin.x - tile.x) + 1,
+              height: Math.abs(current.origin.y - tile.y) + 1,
+            };
     const entity = entities.find(
       (entity) => entity.x === current.origin.x && entity.y === current.origin.y,
     );
@@ -155,11 +168,16 @@ export function useRoutingDebugInteractions({
       kind: current.kind,
       origin: current.origin,
       rectangle,
+      rectangleIndex: current.rectangleIndex,
       valid:
         current.kind === 'entity'
           ? entity !== undefined &&
             availableEntity({ ...entity, ...tile }, entities, rectangles, current.origin)
-          : !entities.some((entity) => containsTile(rectangle, connectionTile(entity))),
+          : rectangle.x >= 0 &&
+            rectangle.y >= 0 &&
+            rectangle.x + rectangle.width <= width &&
+            rectangle.y + rectangle.height <= height &&
+            !entities.some((entity) => containsTile(rectangle, connectionTile(entity))),
     };
   };
 
@@ -168,9 +186,10 @@ export function useRoutingDebugInteractions({
     clickTile: (x: number, y: number) => {
       if (suppressClick.current) {
         suppressClick.current = false;
-        return;
+        return false;
       }
       onClickTile(x, y);
+      return true;
     },
     onPointerDown: (event: PointerEvent) => {
       if (event.button !== 0 || drag.current) return;
@@ -178,7 +197,8 @@ export function useRoutingDebugInteractions({
       const tile = pointerTile(event.currentTarget, event.clientX, event.clientY, width, height);
       if (!tile) return;
       const entity = entities.find((entity) => entity.x === tile.x && entity.y === tile.y);
-      if (mode !== 'rectangle' && (mode !== 'normal' || !entity)) return;
+      const rectangleIndex = rectangles.findLastIndex((rectangle) => containsTile(rectangle, tile));
+      if (mode !== 'rectangle' && (mode !== 'normal' || (!entity && rectangleIndex === -1))) return;
       drag.current = {
         pointerId: event.pointerId,
         grid: event.currentTarget,
@@ -186,7 +206,9 @@ export function useRoutingDebugInteractions({
         clientX: event.clientX,
         clientY: event.clientY,
         moved: false,
-        kind: mode === 'rectangle' ? 'rectangle' : 'entity',
+        kind: mode === 'rectangle' ? 'rectangle' : entity ? 'entity' : 'rectangle-move',
+        rectangleIndex: entity ? undefined : rectangleIndex,
+        rectangle: entity ? undefined : rectangles[rectangleIndex],
         width,
         height,
       };
@@ -206,6 +228,8 @@ export function useRoutingDebugInteractions({
       if (!result?.valid) return;
       if (result.kind === 'entity')
         onMoveEntity(result.origin, { x: result.rectangle.x, y: result.rectangle.y });
+      else if (result.kind === 'rectangle-move' && result.rectangleIndex !== undefined)
+        onMoveRectangle(result.rectangleIndex, result.rectangle);
       else onAddRectangle(result.rectangle);
     },
     onPointerCancel: (event: PointerEvent) => {
