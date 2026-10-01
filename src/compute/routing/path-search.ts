@@ -74,7 +74,9 @@ export function normalizeRoutingDebugState(
   const height = state.height ?? 64;
   const invalid = (message: string): PathSearchNormalization => ({ kind: 'invalid', message });
   if (!validSize(width, height))
-    return invalid(`Grid dimensions must be positive integers with at most ${MAX_PATH_SEARCH_CELLS} cells.`);
+    return invalid(
+      `Grid dimensions must be positive integers with at most ${MAX_PATH_SEARCH_CELLS} cells.`,
+    );
   if (!inside(start, width, height) || !inside(goal, width, height))
     return invalid('Endpoints must be integer cells inside the grid.');
   const rectangles = state.rectangles ?? [];
@@ -93,7 +95,9 @@ export function normalizeRoutingDebugState(
       rectangle.width > width - rectangle.x ||
       rectangle.height > height - rectangle.y
     )
-      return invalid('Reserved rectangles must have positive integer sizes and lie inside the grid.');
+      return invalid(
+        'Reserved rectangles must have positive integer sizes and lie inside the grid.',
+      );
     for (let y = rectangle.y; y < rectangle.y + rectangle.height; y++)
       blocked.fill(1, y * width + rectangle.x, y * width + rectangle.x + rectangle.width);
   }
@@ -111,7 +115,9 @@ export function normalizeRoutingDebugState(
       !Number.isFinite(entity.rate) ||
       entity.rate <= 0
     )
-      return invalid('Entities must have valid cells, kinds, directions, items, and positive rates.');
+      return invalid(
+        'Entities must have valid cells, kinds, directions, items, and positive rates.',
+      );
     const cell = entity.y * width + entity.x;
     if (occupied.has(cell) || blocked[cell])
       return invalid('Entities must not overlap each other or reserved space.');
@@ -149,8 +155,7 @@ function precedes(a: Entry, b: Entry): boolean {
     a.estimate < b.estimate ||
     (a.estimate === b.estimate &&
       (a.turns < b.turns ||
-        (a.turns === b.turns &&
-          (a.steps > b.steps || (a.steps === b.steps && a.state < b.state)))))
+        (a.turns === b.turns && (a.steps > b.steps || (a.steps === b.steps && a.state < b.state)))))
   );
 }
 
@@ -209,8 +214,7 @@ export function findPath(input: PathSearchInput): PathSearchResult {
   const startCell = start.y * width + start.x;
   const goalCell = goal.y * width + goal.x;
   if (blocked[startCell] || blocked[goalCell]) return { kind: 'no-path' };
-  if (startCell === goalCell)
-    return { kind: 'found', cells: [{ ...start }], steps: 0, turns: 0 };
+  if (startCell === goalCell) return { kind: 'found', cells: [{ ...start }], steps: 0, turns: 0 };
 
   const initial = width * height * 4;
   const steps = new Int32Array(initial + 1).fill(-1);
@@ -242,17 +246,26 @@ export function findPath(input: PathSearchInput): PathSearchResult {
       if (nextX < 0 || nextX >= width || nextY < 0 || nextY >= height) continue;
       const nextCell = nextY * width + nextX;
       if (blocked[nextCell] || nextCell === startCell) continue;
-      if (nextCell === goalCell && goalDirection && directions[direction] !== goalDirection) continue;
+      if (nextCell === goalCell && goalDirection && directions[direction] !== goalDirection)
+        continue;
       const state = nextCell * 4 + direction;
       const nextSteps = current.steps + 1;
-      const nextTurns = current.turns + Number(current.state !== initial && current.state % 4 !== direction);
-      if (steps[state] !== -1 &&
-        (steps[state] < nextSteps || (steps[state] === nextSteps && turns[state] <= nextTurns)))
+      const nextTurns =
+        current.turns + Number(current.state !== initial && current.state % 4 !== direction);
+      if (
+        steps[state] !== -1 &&
+        (steps[state] < nextSteps || (steps[state] === nextSteps && turns[state] <= nextTurns))
+      )
         continue;
       steps[state] = nextSteps;
       turns[state] = nextTurns;
       parents[state] = current.state;
-      frontier.push({ state, steps: nextSteps, turns: nextTurns, estimate: nextSteps + distance(nextX, nextY) });
+      frontier.push({
+        state,
+        steps: nextSteps,
+        turns: nextTurns,
+        estimate: nextSteps + distance(nextX, nextY),
+      });
     }
   }
   return { kind: 'no-path' };

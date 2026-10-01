@@ -33,19 +33,36 @@ export function containsTile(
   );
 }
 
-export function availableTile(
-  tile: RoutingDebugPosition,
+export function connectionTile(
+  entity: Pick<RoutingDebugEntity, 'x' | 'y' | 'kind' | 'direction'>,
+): RoutingDebugPosition {
+  const offsets = { north: [0, -1], east: [1, 0], south: [0, 1], west: [-1, 0] } as const;
+  const [dx, dy] = offsets[entity.direction];
+  const sign = entity.kind === 'source' ? 1 : -1;
+  return { x: entity.x + dx * sign, y: entity.y + dy * sign };
+}
+
+export function connectionIsClear(
+  entity: RoutingDebugEntity,
+  rectangles: RoutingDebugRectangle[],
+): boolean {
+  const connection = connectionTile(entity);
+  return !rectangles.some((rectangle) => containsTile(rectangle, connection));
+}
+
+export function availableEntity(
+  entity: RoutingDebugEntity,
   entities: RoutingDebugEntity[],
   rectangles: RoutingDebugRectangle[],
   origin?: RoutingDebugPosition,
 ): boolean {
   return (
-    !rectangles.some((rectangle) => containsTile(rectangle, tile)) &&
+    connectionIsClear(entity, rectangles) &&
     !entities.some(
-      (entity) =>
-        entity.x === tile.x &&
-        entity.y === tile.y &&
-        (entity.x !== origin?.x || entity.y !== origin.y),
+      (other) =>
+        other.x === entity.x &&
+        other.y === entity.y &&
+        (other.x !== origin?.x || other.y !== origin.y),
     )
   );
 }
@@ -131,14 +148,18 @@ export function useRoutingDebugInteractions({
             width: Math.abs(current.origin.x - tile.x) + 1,
             height: Math.abs(current.origin.y - tile.y) + 1,
           };
+    const entity = entities.find(
+      (entity) => entity.x === current.origin.x && entity.y === current.origin.y,
+    );
     return {
       kind: current.kind,
       origin: current.origin,
       rectangle,
       valid:
         current.kind === 'entity'
-          ? availableTile(tile, entities, rectangles, current.origin)
-          : !entities.some((entity) => containsTile(rectangle, entity)),
+          ? entity !== undefined &&
+            availableEntity({ ...entity, ...tile }, entities, rectangles, current.origin)
+          : !entities.some((entity) => containsTile(rectangle, connectionTile(entity))),
     };
   };
 

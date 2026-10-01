@@ -39,6 +39,7 @@ export function RoutingDebugGrid({
   selection,
   mode,
   onClickTile,
+  onDeleteRectangle,
   onMoveEntity,
   onAddRectangle,
 }: {
@@ -49,6 +50,7 @@ export function RoutingDebugGrid({
   selection: { x: number; y: number } | undefined;
   mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
+  onDeleteRectangle: (index: number) => void;
   onMoveEntity: (origin: RoutingDebugPosition, destination: RoutingDebugPosition) => void;
   onAddRectangle: (rectangle: RoutingDebugRectangle) => void;
 }) {
@@ -101,10 +103,21 @@ export function RoutingDebugGrid({
         <rect
           key={index}
           class="routing-debug-reserved-space"
-          role="img"
+          role={mode === 'delete' ? 'button' : 'img'}
+          tabIndex={mode === 'delete' ? 0 : undefined}
           aria-label={`Reserved space at (${rectangle.x}, ${rectangle.y}), ${rectangle.width} by ${rectangle.height} tiles`}
           {...rectangle}
-          pointer-events="none"
+          pointer-events={mode === 'delete' ? 'auto' : 'none'}
+          onClick={(event) => {
+            if (mode !== 'delete') return;
+            event.stopPropagation();
+            onDeleteRectangle(index);
+          }}
+          onKeyDown={(event) => {
+            if (mode !== 'delete' || (event.key !== 'Enter' && event.key !== ' ')) return;
+            event.preventDefault();
+            onDeleteRectangle(index);
+          }}
         />
       ))}
       {entities.map((entity) => {

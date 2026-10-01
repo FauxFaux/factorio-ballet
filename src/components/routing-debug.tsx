@@ -11,7 +11,9 @@ import type { RoutingDebugEntity, RoutingDebugState } from '../boot/url-handler.
 import type { State } from '../ts.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
 import {
-  availableTile,
+  availableEntity,
+  connectionIsClear,
+  connectionTile,
   containsTile,
   type RoutingDebugMode,
 } from './routing-debug-interactions.ts';
@@ -58,12 +60,23 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
     properties: Partial<Pick<RoutingDebugEntity, 'item' | 'rate' | 'direction'>>,
   ) => {
     if (!selected) return;
+    if (properties.direction && !connectionIsClear({ ...selected, ...properties }, rectangles))
+      return;
     setSettings((previous) => ({
       ...previous,
       entities: previous?.entities?.map((entity) =>
         entity.x === selected.x && entity.y === selected.y ? { ...entity, ...properties } : entity,
       ),
     }));
+  };
+
+  const deleteRectangle = (index: number) => {
+    setSettings((previous) => ({
+      ...previous,
+      rectangles: previous?.rectangles?.filter((_, rectangleIndex) => rectangleIndex !== index),
+    }));
+    setSelection(undefined);
+    setSizeError('');
   };
 
   const clickTile = (x: number, y: number) => {
@@ -76,7 +89,11 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         setDraftDirection(entity.direction);
       }
     } else if (mode === 'delete') {
-      if (!entity) return;
+      if (!entity) {
+        const index = rectangles.findLastIndex((rectangle) => containsTile(rectangle, { x, y }));
+        if (index !== -1) deleteRectangle(index);
+        return;
+      }
       setSettings((previous) => ({
         ...previous,
         entities: previous?.entities?.filter((entity) => entity.x !== x || entity.y !== y),
@@ -85,12 +102,14 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
       setSizeError('');
     } else if (mode === 'source' || mode === 'sink') {
       const properties = entityProperties();
-      if (!availableTile({ x, y }, entities, rectangles) || !properties) return;
+      if (!properties) return;
       const kind = mode;
+      const candidate = { kind, x, y, ...properties };
+      if (!availableEntity(candidate, entities, rectangles)) return;
       setSettings((previous) => {
         const current = previous?.entities ?? [];
-        if (!availableTile({ x, y }, current, previous?.rectangles ?? [])) return previous;
-        return { ...previous, entities: [...current, { kind, x, y, ...properties }] };
+        if (!availableEntity(candidate, current, previous?.rectangles ?? [])) return previous;
+        return { ...previous, entities: [...current, candidate] };
       });
     }
   };
@@ -225,14 +244,26 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
                   value={draftDirection}
                   onChange={(event) => {
                     const direction = event.currentTarget.value as RoutingDebugEntity['direction'];
+                    if (selected && !connectionIsClear({ ...selected, direction }, rectangles)) {
+                      event.currentTarget.value = draftDirection;
+                      return;
+                    }
                     setDraftDirection(direction);
                     updateSelected({ direction });
                   }}
                 >
-                  <option value="north">North ↑</option>
-                  <option value="east">East →</option>
-                  <option value="south">South ↓</option>
-                  <option value="west">West ←</option>
+                  {(['north', 'east', 'south', 'west'] as const).map((direction, index) => (
+                    <option
+                      key={direction}
+                      value={direction}
+                      disabled={
+                        selected !== undefined &&
+                        !connectionIsClear({ ...selected, direction }, rectangles)
+                      }
+                    >
+                      {['North ↑', 'East →', 'South ↓', 'West ←'][index]}
+                    </option>
+                  ))}
                 </select>
               </label>
             </fieldset>
@@ -259,7 +290,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
           {mode === 'normal'
             ? 'Click a source or sink to edit it, or drag it to move.'
             : mode === 'delete'
-              ? 'Click a source or sink to delete it.'
+              ? 'Click a source, sink, or reserved rectangle to delete it.'
               : mode === 'rectangle'
                 ? 'Drag from one corner to another to reserve space.'
                 : entityProperties()
@@ -275,8 +306,14 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         selection={selection}
         mode={mode}
         onClickTile={clickTile}
+        onDeleteRectangle={deleteRectangle}
         onMoveEntity={(origin, destination) => {
-          if (!availableTile(destination, entities, rectangles, origin)) return;
+          const entity = entities.find((entity) => entity.x === origin.x && entity.y === origin.y);
+          if (
+            !entity ||
+            !availableEntity({ ...entity, ...destination }, entities, rectangles, origin)
+          )
+            return;
           setSettings((previous) => ({
             ...previous,
             entities: previous?.entities?.map((entity) =>
@@ -289,7 +326,9 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         }}
         onAddRectangle={(rectangle) => {
           setSettings((previous) => {
-            if (previous?.entities?.some((entity) => containsTile(rectangle, entity)))
+            if (
+              previous?.entities?.some((entity) => containsTile(rectangle, connectionTile(entity)))
+            )
               return previous;
             return { ...previous, rectangles: [...(previous?.rectangles ?? []), rectangle] };
           });

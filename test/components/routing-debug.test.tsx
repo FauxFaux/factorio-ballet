@@ -204,7 +204,7 @@ describe('RoutingDebug', () => {
     ]);
   });
 
-  it('preserves clicks and rejects cancelled, occupied, reserved, and out-of-bounds drops', async () => {
+  it('preserves clicks and rejects cancelled, occupied, blocked-connection, and out-of-bounds drops', async () => {
     const user = userEvent.setup();
     const initial: RoutingDebugState = {
       entities: [
@@ -273,7 +273,7 @@ describe('RoutingDebug', () => {
     expect(screen.getByRole('button', { name: /Source at \(9, 9\)/ })).toBeTruthy();
   });
 
-  it('does not reserve over entities, commit clicks or cancelled drags, or crop saved reserved space', async () => {
+  it('does not reserve over connections, commit clicks or cancelled drags, or crop saved reserved space', async () => {
     const user = userEvent.setup();
     const initial: RoutingDebugState = {
       width: 10,
@@ -299,5 +299,148 @@ describe('RoutingDebug', () => {
     await user.click(screen.getByRole('button', { name: 'Resize grid' }));
     expect(screen.getByRole('alert').textContent).toContain('Reserved space');
     expect(grid.getAttribute('viewBox')).toBe('0 0 10 10');
+  });
+
+  it.each([
+    { kind: 'source', direction: 'north', x: 5, y: 4, blockedDirection: 'south' },
+    { kind: 'source', direction: 'east', x: 6, y: 5, blockedDirection: 'west' },
+    { kind: 'source', direction: 'south', x: 5, y: 6, blockedDirection: 'north' },
+    { kind: 'source', direction: 'west', x: 4, y: 5, blockedDirection: 'east' },
+    { kind: 'sink', direction: 'north', x: 5, y: 6, blockedDirection: 'south' },
+    { kind: 'sink', direction: 'east', x: 4, y: 5, blockedDirection: 'west' },
+    { kind: 'sink', direction: 'south', x: 5, y: 4, blockedDirection: 'north' },
+    { kind: 'sink', direction: 'west', x: 6, y: 5, blockedDirection: 'east' },
+  ] as const)(
+    'allows a $direction-facing $kind inside reserved space when its connection is outside',
+    async ({ kind, direction, x, y, blockedDirection }) => {
+      const user = userEvent.setup();
+      render(<Example initial={{ rectangles: [{ x: 4, y: 4, width: 3, height: 3 }] }} />);
+      const grid = screen.getByRole('group', { name: /Routing grid/ });
+      vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+      await user.click(
+        screen.getByRole('button', { name: kind === 'source' ? 'Add source' : 'Add sink' }),
+      );
+      await user.selectOptions(screen.getByRole('combobox', { name: 'Direction' }), direction);
+      // Deep inside the block, every adjacent connection is reserved.
+      fireEvent.click(grid, { clientX: 155, clientY: 255 });
+      expect(JSON.parse(screen.getByRole('status').textContent!).entities).toBeUndefined();
+      fireEvent.click(grid, { clientX: 105 + x * 10, clientY: 205 + y * 10 });
+      const entity = { kind, direction, x, y, item: 'item-1', rate: 5 };
+      expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual([entity]);
+      await user.click(screen.getByRole('button', { name: 'Normal' }));
+      const port = screen.getByRole('button', {
+        name: kind === 'source' ? /Source at/ : /Sink at/,
+      });
+      await user.click(port);
+      const blocked = screen
+        .getAllByRole('option')
+        .find(
+          (option) => (option as HTMLOptionElement).value === blockedDirection,
+        ) as HTMLOptionElement;
+      expect(blocked.disabled).toBe(true);
+      await user.selectOptions(
+        screen.getByRole('combobox', { name: 'Direction' }),
+        blockedDirection,
+      );
+      expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual([entity]);
+      // Moving inward must also keep the old position when the new connection would be blocked.
+      fireEvent.pointerDown(port, {
+        pointerId: 1,
+        button: 0,
+        clientX: 105 + x * 10,
+        clientY: 205 + y * 10,
+      });
+      fireEvent.pointerUp(grid, { pointerId: 1, clientX: 155, clientY: 255 });
+      expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual([entity]);
+      // Sliding along the block's edge leaves the connection free and is allowed.
+      const destination = x === 5 ? { x: 4, y } : { x, y: 4 };
+      fireEvent.pointerDown(port, {
+        pointerId: 1,
+        button: 0,
+        clientX: 105 + x * 10,
+        clientY: 205 + y * 10,
+      });
+      fireEvent.pointerUp(grid, {
+        pointerId: 1,
+        clientX: 105 + destination.x * 10,
+        clientY: 205 + destination.y * 10,
+      });
+      expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual([
+        { ...entity, ...destination },
+      ]);
+    },
+  );
+
+  it('deletes clicked rectangles in Delete mode, preserving underlying rectangles and enclosed entities', async () => {
+    const user = userEvent.setup();
+    const entity: RoutingDebugEntity = {
+      kind: 'source',
+      x: 6,
+      y: 5,
+      item: 'iron',
+      rate: 5,
+      direction: 'east',
+    };
+    const rectangles = [
+      { x: 4, y: 4, width: 3, height: 3 },
+      { x: 5, y: 4, width: 2, height: 2 },
+      { x: 1, y: 1, width: 2, height: 2 },
+    ];
+    render(<Example initial={{ entities: [entity], rectangles }} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    fireEvent.click(grid, { clientX: 155, clientY: 245 });
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toEqual(rectangles);
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(
+      screen.getByRole('button', { name: 'Reserved space at (5, 4), 2 by 2 tiles' }),
+    );
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual({
+      entities: [entity],
+      rectangles: [rectangles[0], rectangles[2]],
+    });
+    // Clicking a port inside a reservation deletes only the port.
+    await user.click(screen.getByRole('button', { name: /Source at/ }));
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toEqual([
+      rectangles[0],
+      rectangles[2],
+    ]);
+    // Empty grid clicks do nothing; tile clicks within a reservation delete the whole rectangle.
+    fireEvent.click(grid, { clientX: 195, clientY: 295 });
+    expect(screen.getAllByRole('button', { name: /Reserved space at/ })).toHaveLength(2);
+    fireEvent.click(grid, { clientX: 155, clientY: 245 });
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toEqual([rectangles[2]]);
+    screen.getByRole('button', { name: /Reserved space at/ }).focus();
+    await user.keyboard('{Enter}');
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual({
+      entities: [],
+      rectangles: [],
+    });
+  });
+
+  it('reserves over source and sink bodies but rejects rectangles over their connection tiles', async () => {
+    const user = userEvent.setup();
+    const entities: RoutingDebugEntity[] = [
+      { kind: 'source', x: 6, y: 5, item: 'iron', rate: 5, direction: 'east' },
+      { kind: 'sink', x: 4, y: 4, item: 'iron', rate: 5, direction: 'east' },
+    ];
+    render(<Example initial={{ entities }} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    await user.click(screen.getByRole('button', { name: 'Reserve space' }));
+    fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: 165, clientY: 265 });
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 145, clientY: 245 });
+    expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toEqual([
+      { x: 4, y: 4, width: 3, height: 3 },
+    ]);
+    for (const [clientX, clientY] of [
+      [175, 255],
+      [135, 245],
+    ]) {
+      fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX, clientY });
+      fireEvent.pointerUp(grid, { pointerId: 1, clientX: clientX + 10, clientY: clientY + 10 });
+      expect(JSON.parse(screen.getByRole('status').textContent!).rectangles).toHaveLength(1);
+    }
+    expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual(entities);
   });
 });
