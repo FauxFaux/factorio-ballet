@@ -1,5 +1,5 @@
 import './routing-debug.css';
-import { useEffect, useId, useState } from 'preact/hooks';
+import { useEffect, useId, useMemo, useState } from 'preact/hooks';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -9,6 +9,7 @@ import {
 } from '@primer/octicons-react';
 import type { RoutingDebugEntity, RoutingDebugState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
+import { solveRoutingDebugPath } from '../compute/routing/path-search.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
 import {
   availableEntity,
@@ -43,8 +44,28 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const [draftDirection, setDraftDirection] = useState<RoutingDebugEntity['direction']>('east');
   const [sizeError, setSizeError] = useState('');
   const itemListId = useId();
-  const entities = settings?.entities ?? [];
-  const rectangles = settings?.rectangles ?? [];
+  const entities = useMemo(() => settings?.entities ?? [], [settings?.entities]);
+  const rectangles = useMemo(() => settings?.rectangles ?? [], [settings?.rectangles]);
+  const paths = useMemo(() => {
+    const byItem = new Map<string, { source: RoutingDebugEntity[]; sink: RoutingDebugEntity[] }>();
+    for (const entity of entities) {
+      let endpoints = byItem.get(entity.item);
+      if (!endpoints) {
+        endpoints = { source: [], sink: [] };
+        byItem.set(entity.item, endpoints);
+      }
+      endpoints[entity.kind].push(entity);
+    }
+    return [...byItem].flatMap(([item, { source, sink }]) => {
+      if (source.length !== 1 || sink.length !== 1) return [];
+      const result = solveRoutingDebugPath(
+        { width, height, entities, rectangles },
+        source[0],
+        sink[0],
+      );
+      return result.kind === 'found' ? [{ item, cells: result.cells }] : [];
+    });
+  }, [width, height, entities, rectangles]);
   const selected = entities.find((entity) => entity.x === selection?.x && entity.y === selection.y);
   const showEditor = mode === 'source' || mode === 'sink' || selected !== undefined;
 
@@ -303,6 +324,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         height={height}
         entities={entities}
         rectangles={rectangles}
+        paths={paths}
         selection={selection}
         mode={mode}
         onClickTile={clickTile}

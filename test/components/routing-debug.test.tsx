@@ -24,6 +24,160 @@ describe('RoutingDebug', () => {
     vi.restoreAllMocks();
   });
 
+  it('draws a dark yellow path around reserved space and other entities, respecting endpoint arrows', () => {
+    const initial: RoutingDebugState = {
+      width: 6,
+      height: 5,
+      entities: [
+        { kind: 'source', x: 0, y: 1, direction: 'east', item: 'iron', rate: 5 },
+        { kind: 'sink', x: 5, y: 1, direction: 'east', item: 'iron', rate: 3 },
+        { kind: 'source', x: 3, y: 3, direction: 'south', item: 'copper', rate: 1 },
+      ],
+      rectangles: [{ x: 2, y: 0, width: 2, height: 3 }],
+    };
+    render(<Example initial={initial} />);
+    const path = screen.getByRole('img', { name: 'Computed path for iron' });
+    expect(path.getAttribute('stroke')).toBe('#b28600');
+    expect(path.getAttribute('pointer-events')).toBe('none');
+    const cells = path
+      .getAttribute('points')!
+      .split(' ')
+      .map((point) => point.split(',').map(Number));
+    expect(cells[0]).toEqual([1.5, 1.5]);
+    expect(cells.at(-1)).toEqual([4.5, 1.5]);
+    expect(cells.some(([, y]) => y >= 3.5)).toBe(true);
+    for (const [x, y] of cells) {
+      expect(x >= 2 && x < 4 && y < 3).toBe(false);
+      expect(x === 3.5 && y === 3.5).toBe(false);
+    }
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+  });
+
+  it('draws paths outside buildings between the tiles supplied by a source and feeding a sink', () => {
+    render(
+      <Example
+        initial={{
+          width: 10,
+          height: 6,
+          entities: [
+            { kind: 'source', x: 4, y: 3, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 8, y: 3, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'source', x: 2, y: 4, direction: 'south', item: 'copper', rate: 5 },
+          ],
+          rectangles: [
+            { x: 2, y: 2, width: 3, height: 3 },
+            { x: 8, y: 2, width: 2, height: 3 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
+      '5.5,3.5 6.5,3.5 7.5,3.5',
+    );
+  });
+
+  it('draws a shared connection tile when source and sink face the same intervening tile', () => {
+    render(
+      <Example
+        initial={{
+          entities: [
+            { kind: 'source', x: 2, y: 3, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 4, y: 3, direction: 'east', item: 'iron', rate: 5 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
+      '3.5,3.5 3.5,3.5',
+    );
+  });
+
+  it('routes each item only when it has exactly one source and one sink', () => {
+    const entity = (
+      kind: RoutingDebugEntity['kind'],
+      item: string,
+      x: number,
+      y: number,
+    ): RoutingDebugEntity => ({ kind, item, x, y, direction: 'east', rate: 5 });
+    render(
+      <Example
+        initial={{
+          width: 5,
+          height: 6,
+          entities: [
+            entity('source', 'iron', 0, 0),
+            entity('sink', 'iron', 4, 0),
+            entity('source', 'copper', 0, 1),
+            entity('sink', 'copper', 4, 1),
+            entity('source', 'tin', 0, 2),
+            entity('source', 'tin', 1, 2),
+            entity('sink', 'tin', 4, 2),
+            entity('source', 'lead', 0, 3),
+            entity('sink', 'lead', 3, 3),
+            entity('sink', 'lead', 4, 3),
+            entity('source', 'gold', 0, 4),
+            entity('sink', 'coal', 4, 5),
+          ],
+        }}
+      />,
+    );
+    expect(screen.getAllByRole('img', { name: /Computed path/ })).toHaveLength(2);
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'Computed path for copper' })).toBeTruthy();
+  });
+
+  it.each([
+    { width: 5, height: 3, rectangles: [{ x: 2, y: 0, width: 1, height: 3 }] },
+    { width: 262_145, height: 3 },
+  ])('omits paths when the search cannot route the grid %#', (geometry) => {
+    render(
+      <Example
+        initial={{
+          ...geometry,
+          entities: [
+            { kind: 'source', x: 0, y: 1, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 4, y: 1, direction: 'east', item: 'iron', rate: 5 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+  });
+
+  it('recomputes paths when endpoint directions and items change and removes them after deletion', async () => {
+    const user = userEvent.setup();
+    render(
+      <Example
+        initial={{
+          width: 5,
+          height: 4,
+          entities: [
+            { kind: 'source', x: 0, y: 1, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 4, y: 1, direction: 'east', item: 'iron', rate: 5 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
+      '1.5,1.5 2.5,1.5 3.5,1.5',
+    );
+    await user.click(screen.getByRole('button', { name: /Source at/ }));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Direction' }), 'south');
+    expect(
+      screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points'),
+    ).toMatch(/^0\.5,2\.5 /);
+    const item = screen.getByRole('combobox', { name: 'Provided item' });
+    await user.clear(item);
+    await user.type(item, 'copper');
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    await user.clear(item);
+    await user.type(item, 'iron');
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Delete' }));
+    await user.click(screen.getByRole('button', { name: /Sink at/ }));
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+  });
+
   it('starts at 96 by 64 tiles and saves resized dimensions in URL state', async () => {
     const user = userEvent.setup();
     render(<Example />);

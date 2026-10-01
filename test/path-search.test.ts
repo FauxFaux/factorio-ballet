@@ -153,21 +153,62 @@ const start = { x: 0, y: 1 };
 const goal = { x: 5, y: 1 };
 
 describe('normalizeRoutingDebugState', () => {
-  it('rasterizes rectangles and other entities while leaving endpoints available', () => {
+  it('rasterizes buildings and entity tiles while routing between adjacent connection tiles', () => {
     const normalized = normalizeRoutingDebugState(state, start, goal);
     expect(normalized.kind).toBe('ok');
     if (normalized.kind !== 'ok') return;
     const { input } = normalized;
-    expect(input.blocked[6]).toBe(0);
-    expect(input.blocked[11]).toBe(0);
+    expect(input.blocked[6]).toBe(1);
+    expect(input.blocked[11]).toBe(1);
     expect(input.blocked[1]).toBe(1);
     for (const y of [0, 1, 2]) for (const x of [2, 3]) expect(input.blocked[y * 6 + x]).toBe(1);
-    expect(input.startDirection).toBe('east');
-    expect(input.goalDirection).toBe('east');
+    expect(input.start).toEqual({ x: 1, y: 1 });
+    expect(input.goal).toEqual({ x: 4, y: 1 });
+    expect(input.startDirection).toBeUndefined();
+    expect(input.goalDirection).toBeUndefined();
     const result = solveRoutingDebugPath(state, start, goal);
     expect(result).toMatchObject({ kind: 'found' });
     if (result.kind === 'found') expectValidPath(input, result.cells);
     expect(state.entities?.[0]).toMatchObject({ x: 0, y: 1 });
+  });
+
+  it.each([
+    ['east', 1, 0],
+    ['south', 0, 1],
+    ['west', -1, 0],
+    ['north', 0, -1],
+  ] as const)('routes between %s-facing ports inside buildings', (direction, dx, dy) => {
+    const source = { kind: 'source' as const, x: 4, y: 4, direction, item: 'iron', rate: 5 };
+    const sink = { ...source, kind: 'sink' as const, x: 4 + 4 * dx, y: 4 + 4 * dy };
+    const other = { ...source, x: 1, y: 5, item: 'copper' };
+    const geometry: RoutingDebugState = {
+      width: 9,
+      height: 9,
+      entities: [source, sink, other],
+      rectangles: [source, sink, other].map(({ x, y }) => ({ x, y, width: 1, height: 1 })),
+    };
+    const result = solveRoutingDebugPath(geometry, source, sink);
+    expect(result).toEqual({
+      kind: 'found',
+      steps: 2,
+      turns: 0,
+      cells: [1, 2, 3].map((distance) => ({ x: 4 + distance * dx, y: 4 + distance * dy })),
+    });
+  });
+
+  it('supports a shared connection tile and rejects connections outside the grid', () => {
+    const source = state.entities![0];
+    const sink = { ...state.entities![1], x: 2 };
+    expect(solveRoutingDebugPath({ entities: [source, sink] }, source, sink)).toEqual({
+      kind: 'found',
+      cells: [{ x: 1, y: 1 }],
+      steps: 0,
+      turns: 0,
+    });
+    const outward = { ...source, x: 0, y: 0, direction: 'north' as const };
+    expect(solveRoutingDebugPath({ entities: [outward, sink] }, outward, sink)).toMatchObject({
+      kind: 'invalid',
+    });
   });
 
   it('supports empty state defaults and overlapping reserved rectangles', () => {
@@ -193,7 +234,7 @@ describe('normalizeRoutingDebugState', () => {
       { height: Infinity },
       { rectangles: [{ x: 2, y: 2, width: 0, height: 1 }] },
       { rectangles: [{ x: 5, y: 2, width: 2, height: 1 }] },
-      { rectangles: [{ x: 0, y: 1, width: 1, height: 1 }] },
+      { rectangles: [{ x: 1, y: 1, width: 1, height: 1 }] },
       { entities: [state.entities![0], state.entities![0]] },
       { entities: [{ ...state.entities![0], rate: 0 }] },
       { entities: [{ ...state.entities![0], x: 0.5 }] },

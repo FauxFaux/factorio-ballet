@@ -1,6 +1,7 @@
 import { useId, useState } from 'preact/hooks';
 import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
 import { CARBON_LIGHT } from '../compute/colours.ts';
+import type { PathCell } from '../compute/routing/path-search.ts';
 import {
   pointerTile,
   useRoutingDebugInteractions,
@@ -36,6 +37,7 @@ export function RoutingDebugGrid({
   height,
   entities,
   rectangles,
+  paths,
   selection,
   mode,
   onClickTile,
@@ -49,6 +51,7 @@ export function RoutingDebugGrid({
   height: number;
   entities: RoutingDebugEntity[];
   rectangles: RoutingDebugRectangle[];
+  paths: { item: string; cells: PathCell[] }[];
   selection: { x: number; y: number } | undefined;
   mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
@@ -160,6 +163,19 @@ export function RoutingDebugGrid({
           </g>
         );
       })}
+      {paths.map(({ item, cells }) => (
+        <polyline
+          key={item}
+          class="routing-debug-path"
+          role="img"
+          aria-label={`Computed path for ${item}`}
+          points={(cells.length === 1 ? [cells[0], cells[0]] : cells)
+            .map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
+            .join(' ')}
+          stroke={CARBON_LIGHT.Yellow50}
+          pointer-events="none"
+        />
+      ))}
       {entities.map((entity) => {
         const label = `${entity.kind === 'source' ? 'Source' : 'Sink'} at (${entity.x}, ${entity.y}), ${entity.item}, ${entity.rate} items/s, ${entity.direction}`;
         const position =

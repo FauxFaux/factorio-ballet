@@ -1,4 +1,4 @@
-import type { RoutingDebugState } from '../../boot/url-handler.tsx';
+import type { RoutingDebugEntity, RoutingDebugState } from '../../boot/url-handler.tsx';
 
 export interface PathCell {
   x: number;
@@ -39,6 +39,15 @@ const offsets = [
   { x: 0, y: -1 },
 ];
 
+/** The external tile supplied by a source or feeding a sink. */
+export function connectionTile(
+  entity: Pick<RoutingDebugEntity, 'x' | 'y' | 'kind' | 'direction'>,
+): PathCell {
+  const offset = offsets[directions.indexOf(entity.direction)];
+  const sign = entity.kind === 'source' ? 1 : -1;
+  return { x: entity.x + offset.x * sign, y: entity.y + offset.y * sign };
+}
+
 function validSize(width: number, height: number): boolean {
   return (
     Number.isSafeInteger(width) &&
@@ -62,7 +71,9 @@ function inside(cell: PathCell, width: number, height: number): boolean {
 
 /**
  * Convert debug geometry once into occupancy. Explicit endpoints may be free cells or a source
- * and sink respectively; all other entities block routing. Endpoint arrows constrain travel.
+ * and sink respectively. Entity endpoints resolve to their adjacent connection tiles; their
+ * arrows select those tiles rather than constraining the next search step. Entities may be inside
+ * reserved buildings, but routing stays outside them. All entity tiles block routing.
  * This is one geometric route, without rate allocation, undergrounds, or multi-route reservation.
  */
 export function normalizeRoutingDebugState(
@@ -119,8 +130,7 @@ export function normalizeRoutingDebugState(
         'Entities must have valid cells, kinds, directions, items, and positive rates.',
       );
     const cell = entity.y * width + entity.x;
-    if (occupied.has(cell) || blocked[cell])
-      return invalid('Entities must not overlap each other or reserved space.');
+    if (occupied.has(cell)) return invalid('Entities must not overlap each other.');
     occupied.add(cell);
     if (entity.x === start.x && entity.y === start.y) {
       if (entity.kind !== 'source') return invalid('The start entity must be a source.');
@@ -128,22 +138,25 @@ export function normalizeRoutingDebugState(
     } else if (entity.x === goal.x && entity.y === goal.y) {
       if (entity.kind !== 'sink') return invalid('The goal entity must be a sink.');
       sink = entity;
-    } else blocked[cell] = 1;
+    }
+    blocked[cell] = 1;
   }
   if (source && sink && source.item !== sink.item)
     return invalid('Source and sink must carry the same item.');
-  if (blocked[start.y * width + start.x] || blocked[goal.y * width + goal.x])
-    return invalid('Endpoints must not occupy reserved space.');
+  const pathStart = source ? connectionTile(source) : start;
+  const pathGoal = sink ? connectionTile(sink) : goal;
+  if (!inside(pathStart, width, height) || !inside(pathGoal, width, height))
+    return invalid('Connection tiles must be inside the grid.');
+  if (blocked[pathStart.y * width + pathStart.x] || blocked[pathGoal.y * width + pathGoal.x])
+    return invalid('Endpoint connection tiles must not occupy reserved space or entities.');
   return {
     kind: 'ok',
     input: {
       width,
       height,
       blocked,
-      start: { ...start },
-      goal: { ...goal },
-      startDirection: source?.direction,
-      goalDirection: sink?.direction,
+      start: { ...pathStart },
+      goal: { ...pathGoal },
     },
   };
 }

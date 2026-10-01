@@ -1,6 +1,9 @@
 import type { JSX } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
+import { connectionTile } from '../compute/routing/path-search.ts';
+
+export { connectionTile } from '../compute/routing/path-search.ts';
 
 export type RoutingDebugMode = 'normal' | 'source' | 'sink' | 'delete' | 'rectangle';
 export interface RoutingDebugPosition {
@@ -33,15 +36,6 @@ export function containsTile(
     tile.y >= rectangle.y &&
     tile.y < rectangle.y + rectangle.height
   );
-}
-
-export function connectionTile(
-  entity: Pick<RoutingDebugEntity, 'x' | 'y' | 'kind' | 'direction'>,
-): RoutingDebugPosition {
-  const offsets = { north: [0, -1], east: [1, 0], south: [0, 1], west: [-1, 0] } as const;
-  const [dx, dy] = offsets[entity.direction];
-  const sign = entity.kind === 'source' ? 1 : -1;
-  return { x: entity.x + dx * sign, y: entity.y + dy * sign };
 }
 
 export function connectionIsClear(
