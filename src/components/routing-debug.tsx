@@ -1,16 +1,26 @@
 import './routing-debug.css';
 import { useEffect, useId, useState } from 'preact/hooks';
-import { ArrowLeftIcon, ArrowRightIcon, GrabberIcon, TrashIcon } from '@primer/octicons-react';
+import {
+  ArrowLeftIcon,
+  ArrowRightIcon,
+  GrabberIcon,
+  SquareIcon,
+  TrashIcon,
+} from '@primer/octicons-react';
 import type { RoutingDebugEntity, RoutingDebugState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
-
-type CursorMode = 'normal' | 'source' | 'sink' | 'delete';
+import {
+  availableTile,
+  containsTile,
+  type RoutingDebugMode,
+} from './routing-debug-interactions.ts';
 
 const tools = [
   { mode: 'normal', label: 'Normal', Icon: GrabberIcon },
   { mode: 'source', label: 'Add source', Icon: ArrowRightIcon },
   { mode: 'sink', label: 'Add sink', Icon: ArrowLeftIcon },
+  { mode: 'rectangle', label: 'Reserve space', Icon: SquareIcon },
   { mode: 'delete', label: 'Delete', Icon: TrashIcon },
 ] as const;
 
@@ -24,7 +34,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const height = gridDimension(settings?.height, 64);
   const [draftWidth, setDraftWidth] = useState(String(width));
   const [draftHeight, setDraftHeight] = useState(String(height));
-  const [mode, setMode] = useState<CursorMode>('normal');
+  const [mode, setMode] = useState<RoutingDebugMode>('normal');
   const [selection, setSelection] = useState<{ x: number; y: number }>();
   const [draftItem, setDraftItem] = useState('item-1');
   const [draftRate, setDraftRate] = useState('5');
@@ -32,6 +42,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const [sizeError, setSizeError] = useState('');
   const itemListId = useId();
   const entities = settings?.entities ?? [];
+  const rectangles = settings?.rectangles ?? [];
   const selected = entities.find((entity) => entity.x === selection?.x && entity.y === selection.y);
   const showEditor = mode === 'source' || mode === 'sink' || selected !== undefined;
 
@@ -72,13 +83,13 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
       }));
       setSelection(undefined);
       setSizeError('');
-    } else {
+    } else if (mode === 'source' || mode === 'sink') {
       const properties = entityProperties();
-      if (entity || !properties) return;
+      if (!availableTile({ x, y }, entities, rectangles) || !properties) return;
       const kind = mode;
       setSettings((previous) => {
         const current = previous?.entities ?? [];
-        if (current.some((entity) => entity.x === x && entity.y === y)) return previous;
+        if (!availableTile({ x, y }, current, previous?.rectangles ?? [])) return previous;
         return { ...previous, entities: [...current, { kind, x, y, ...properties }] };
       });
     }
@@ -110,6 +121,16 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
                 setSizeError(
                   'Delete sources and sinks outside the new size before shrinking the grid.',
                 );
+                return;
+              }
+              if (
+                rectangles.some(
+                  (rectangle) =>
+                    rectangle.x + rectangle.width > nextWidth ||
+                    rectangle.y + rectangle.height > nextHeight,
+                )
+              ) {
+                setSizeError('Reserved space extends outside the new size.');
                 return;
               }
               setSizeError('');
@@ -236,21 +257,43 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         </div>
         <p class="routing-debug-hint">
           {mode === 'normal'
-            ? 'Click a source or sink to edit it.'
+            ? 'Click a source or sink to edit it, or drag it to move.'
             : mode === 'delete'
               ? 'Click a source or sink to delete it.'
-              : entityProperties()
-                ? `Click an empty tile to add a ${mode}. Arrows show the direction items travel.`
-                : 'Enter an item name and a rate greater than zero before placing.'}
+              : mode === 'rectangle'
+                ? 'Drag from one corner to another to reserve space.'
+                : entityProperties()
+                  ? `Click an empty tile to add a ${mode}. Arrows show the direction items travel.`
+                  : 'Enter an item name and a rate greater than zero before placing.'}
         </p>
       </div>
       <RoutingDebugGrid
         width={width}
         height={height}
         entities={entities}
+        rectangles={rectangles}
         selection={selection}
         mode={mode}
         onClickTile={clickTile}
+        onMoveEntity={(origin, destination) => {
+          if (!availableTile(destination, entities, rectangles, origin)) return;
+          setSettings((previous) => ({
+            ...previous,
+            entities: previous?.entities?.map((entity) =>
+              entity.x === origin.x && entity.y === origin.y
+                ? { ...entity, ...destination }
+                : entity,
+            ),
+          }));
+          setSelection(destination);
+        }}
+        onAddRectangle={(rectangle) => {
+          setSettings((previous) => {
+            if (previous?.entities?.some((entity) => containsTile(rectangle, entity)))
+              return previous;
+            return { ...previous, rectangles: [...(previous?.rectangles ?? []), rectangle] };
+          });
+        }}
       />
     </section>
   );

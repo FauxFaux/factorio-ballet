@@ -172,4 +172,132 @@ describe('RoutingDebug', () => {
     await user.click(screen.getByRole('button', { name: 'Resize grid' }));
     expect(grid.getAttribute('viewBox')).toBe('0 0 9 10');
   });
+
+  it('drags sources and sinks to empty tiles, retains selection and autosaving, and ignores the drag click', async () => {
+    const user = userEvent.setup();
+    const entities: RoutingDebugEntity[] = [
+      { kind: 'source', x: 2, y: 3, item: 'iron', rate: 5, direction: 'east' },
+      { kind: 'sink', x: 8, y: 9, item: 'iron', rate: 5, direction: 'west' },
+    ];
+    render(<Example initial={{ entities }} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    const source = screen.getByRole('button', { name: /Source at/ });
+    fireEvent.pointerDown(source, { pointerId: 1, button: 0, clientX: 125, clientY: 235 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 155, clientY: 265 });
+    expect(source.getAttribute('transform')).toBe('translate(5 6)');
+    expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual(entities);
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 155, clientY: 265 });
+    fireEvent.click(grid, { clientX: 155, clientY: 265 });
+    expect(
+      screen.getByRole('button', { name: /Source at \(5, 6\)/ }).getAttribute('aria-pressed'),
+    ).toBe('true');
+    expect(screen.getByRole('group', { name: 'Source at (5, 6)' })).toBeTruthy();
+    await user.clear(screen.getByRole('spinbutton', { name: 'Rate (items/s)' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Rate (items/s)' }), '7');
+    const sink = screen.getByRole('button', { name: /Sink at/ });
+    fireEvent.pointerDown(sink, { pointerId: 2, button: 0, clientX: 185, clientY: 295 });
+    fireEvent.pointerUp(grid, { pointerId: 2, clientX: 1055, clientY: 835 });
+    expect(JSON.parse(screen.getByRole('status').textContent!).entities).toEqual([
+      { ...entities[0], x: 5, y: 6, rate: 7 },
+      { ...entities[1], x: 95, y: 63 },
+    ]);
+  });
+
+  it('preserves clicks and rejects cancelled, occupied, reserved, and out-of-bounds drops', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      entities: [
+        { kind: 'source', x: 2, y: 3, item: 'iron', rate: 5, direction: 'east' },
+        { kind: 'sink', x: 8, y: 9, item: 'iron', rate: 5, direction: 'west' },
+      ],
+      rectangles: [{ x: 10, y: 10, width: 5, height: 5 }],
+    };
+    render(<Example initial={initial} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 960, 640));
+    const source = screen.getByRole('button', { name: /Source at/ });
+    fireEvent.pointerDown(source, { pointerId: 1, button: 0, clientX: 125, clientY: 235 });
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 126, clientY: 236 });
+    await user.click(source);
+    expect(screen.getByRole('combobox', { name: 'Provided item' })).toBeTruthy();
+    for (const [clientX, clientY] of [
+      [185, 295],
+      [215, 315],
+      [1065, 845],
+    ]) {
+      fireEvent.pointerDown(source, { pointerId: 1, button: 0, clientX: 125, clientY: 235 });
+      fireEvent.pointerMove(grid, { pointerId: 1, clientX, clientY });
+      fireEvent.pointerUp(grid, { pointerId: 1, clientX, clientY });
+      expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+    }
+    fireEvent.pointerDown(source, { pointerId: 1, button: 0, clientX: 125, clientY: 235 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 155, clientY: 265 });
+    fireEvent.pointerCancel(grid, { pointerId: 1 });
+    expect(source.getAttribute('transform')).toBe('translate(2 3)');
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+  });
+
+  it('draws one reserved rectangle in either drag direction and persists it without adding an editor', async () => {
+    const user = userEvent.setup();
+    render(<Example initial={{ width: 10, height: 10 }} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 200, 100));
+    await user.click(screen.getByRole('button', { name: 'Reserve space' }));
+    expect(screen.queryByRole('combobox', { name: /item/ })).toBeNull();
+    for (const [startX, startY, endX, endY] of [
+      [225, 275, 175, 225],
+      [155, 205, 165, 215],
+    ]) {
+      fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: startX, clientY: startY });
+      fireEvent.pointerMove(grid, { pointerId: 1, clientX: endX, clientY: endY });
+      fireEvent.pointerUp(grid, { pointerId: 1, clientX: endX, clientY: endY });
+      fireEvent.click(grid, { clientX: endX, clientY: endY });
+    }
+    const rectangle = screen.getByRole('img', { name: 'Reserved space at (2, 2), 6 by 6 tiles' });
+    expect(rectangle.tagName.toLowerCase()).toBe('rect');
+    expect(rectangle.getAttribute('width')).toBe('6');
+    expect(rectangle.getAttribute('height')).toBe('6');
+    expect(screen.getAllByRole('img')).toHaveLength(2);
+    const rd = JSON.parse(screen.getByRole('status').textContent!);
+    expect(rd.rectangles).toEqual([
+      { x: 2, y: 2, width: 6, height: 6 },
+      { x: 0, y: 0, width: 2, height: 2 },
+    ]);
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd };
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+    await user.click(screen.getByRole('button', { name: 'Add source' }));
+    fireEvent.click(grid, { clientX: 175, clientY: 225 });
+    expect(screen.queryByRole('button', { name: /Source at/ })).toBeNull();
+    fireEvent.click(grid, { clientX: 245, clientY: 295 });
+    expect(screen.getByRole('button', { name: /Source at \(9, 9\)/ })).toBeTruthy();
+  });
+
+  it('does not reserve over entities, commit clicks or cancelled drags, or crop saved reserved space', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      width: 10,
+      height: 10,
+      entities: [{ kind: 'source', x: 3, y: 3, item: 'iron', rate: 5, direction: 'east' }],
+      rectangles: [{ x: 7, y: 7, width: 3, height: 3 }],
+    };
+    render(<Example initial={initial} />);
+    const grid = screen.getByRole('group', { name: /Routing grid/ });
+    vi.spyOn(grid, 'getBoundingClientRect').mockReturnValue(new DOMRect(100, 200, 100, 100));
+    await user.click(screen.getByRole('button', { name: 'Reserve space' }));
+    fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: 125, clientY: 225 });
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 126, clientY: 226 });
+    fireEvent.click(grid, { clientX: 126, clientY: 226 });
+    fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: 125, clientY: 225 });
+    fireEvent.pointerUp(grid, { pointerId: 1, clientX: 155, clientY: 255 });
+    fireEvent.pointerDown(grid, { pointerId: 1, button: 0, clientX: 105, clientY: 205 });
+    fireEvent.pointerMove(grid, { pointerId: 1, clientX: 115, clientY: 215 });
+    fireEvent.pointerCancel(grid, { pointerId: 1 });
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+    await user.clear(screen.getByRole('spinbutton', { name: 'Width' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Width' }), '9');
+    await user.click(screen.getByRole('button', { name: 'Resize grid' }));
+    expect(screen.getByRole('alert').textContent).toContain('Reserved space');
+    expect(grid.getAttribute('viewBox')).toBe('0 0 10 10');
+  });
 });

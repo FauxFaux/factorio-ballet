@@ -39,11 +39,19 @@ export interface RoutingDebugEntity {
   rate: number;
 }
 
+export interface RoutingDebugRectangle {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface RoutingDebugState {
   /** Grid dimensions in tiles; absent dimensions default to 96 by 64. */
   width?: number;
   height?: number;
   entities?: RoutingDebugEntity[];
+  rectangles?: RoutingDebugRectangle[];
 }
 
 export interface UrlState {

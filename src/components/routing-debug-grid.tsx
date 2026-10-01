@@ -1,6 +1,12 @@
 import { useId } from 'preact/hooks';
-import type { RoutingDebugEntity } from '../boot/url-handler.tsx';
+import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
 import { CARBON_LIGHT } from '../compute/colours.ts';
+import {
+  pointerTile,
+  useRoutingDebugInteractions,
+  type RoutingDebugMode,
+  type RoutingDebugPosition,
+} from './routing-debug-interactions.ts';
 
 const palette = [
   CARBON_LIGHT.Cyan50,
@@ -29,18 +35,34 @@ export function RoutingDebugGrid({
   width,
   height,
   entities,
+  rectangles,
   selection,
   mode,
   onClickTile,
+  onMoveEntity,
+  onAddRectangle,
 }: {
   width: number;
   height: number;
   entities: RoutingDebugEntity[];
+  rectangles: RoutingDebugRectangle[];
   selection: { x: number; y: number } | undefined;
-  mode: 'normal' | 'source' | 'sink' | 'delete';
+  mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
+  onMoveEntity: (origin: RoutingDebugPosition, destination: RoutingDebugPosition) => void;
+  onAddRectangle: (rectangle: RoutingDebugRectangle) => void;
 }) {
   const gridId = useId();
+  const { preview, clickTile, ...interactions } = useRoutingDebugInteractions({
+    width,
+    height,
+    mode,
+    entities,
+    rectangles,
+    onClickTile,
+    onMoveEntity,
+    onAddRectangle,
+  });
   return (
     <svg
       class="routing-debug-grid"
@@ -49,16 +71,10 @@ export function RoutingDebugGrid({
       data-mode={mode}
       viewBox={`0 0 ${width} ${height}`}
       style={{ aspectRatio: `${width} / ${height}` }}
+      {...interactions}
       onClick={(event) => {
-        const bounds = event.currentTarget.getBoundingClientRect();
-        // SVG's default preserveAspectRatio centers the grid if the box has a different ratio.
-        const scale = Math.min(bounds.width / width, bounds.height / height);
-        if (scale <= 0) return;
-        const left = bounds.left + (bounds.width - width * scale) / 2;
-        const top = bounds.top + (bounds.height - height * scale) / 2;
-        const x = Math.floor((event.clientX - left) / scale);
-        const y = Math.floor((event.clientY - top) / scale);
-        if (x >= 0 && x < width && y >= 0 && y < height) onClickTile(x, y);
+        const tile = pointerTile(event.currentTarget, event.clientX, event.clientY, width, height);
+        if (tile) clickTile(tile.x, tile.y);
       }}
     >
       <defs>
@@ -81,8 +97,24 @@ export function RoutingDebugGrid({
         <rect width={width} height={height} fill={`url(#${gridId}-tile)`} />
         <rect width={width} height={height} fill={`url(#${gridId}-major)`} />
       </g>
+      {rectangles.map((rectangle, index) => (
+        <rect
+          key={index}
+          class="routing-debug-reserved-space"
+          role="img"
+          aria-label={`Reserved space at (${rectangle.x}, ${rectangle.y}), ${rectangle.width} by ${rectangle.height} tiles`}
+          {...rectangle}
+          pointer-events="none"
+        />
+      ))}
       {entities.map((entity) => {
         const label = `${entity.kind === 'source' ? 'Source' : 'Sink'} at (${entity.x}, ${entity.y}), ${entity.item}, ${entity.rate} items/s, ${entity.direction}`;
+        const position =
+          preview?.kind === 'entity' &&
+          preview.origin.x === entity.x &&
+          preview.origin.y === entity.y
+            ? preview.rectangle
+            : entity;
         return (
           <g
             key={`${entity.x},${entity.y}`}
@@ -92,10 +124,10 @@ export function RoutingDebugGrid({
             aria-label={label}
             aria-pressed={selection?.x === entity.x && selection.y === entity.y}
             data-kind={entity.kind}
-            transform={`translate(${entity.x} ${entity.y})`}
+            transform={`translate(${position.x} ${position.y})`}
             onClick={(event) => {
               event.stopPropagation();
-              onClickTile(entity.x, entity.y);
+              clickTile(entity.x, entity.y);
             }}
             onKeyDown={(event) => {
               if (event.key !== 'Enter' && event.key !== ' ') return;
@@ -122,6 +154,15 @@ export function RoutingDebugGrid({
           </g>
         );
       })}
+      {preview && (
+        <rect
+          class="routing-debug-drag-preview"
+          data-valid={preview.valid}
+          {...preview.rectangle}
+          aria-hidden="true"
+          pointer-events="none"
+        />
+      )}
     </svg>
   );
 }

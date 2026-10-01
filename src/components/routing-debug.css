@@ -154,16 +154,40 @@
   background: midnightblue;
   outline: 1px solid #60a5fa;
   outline-offset: -1px;
+  touch-action: none;
+  user-select: none;
 }
 
 .routing-debug-grid[data-mode="source"],
 .routing-debug-grid[data-mode="sink"],
+.routing-debug-grid[data-mode="rectangle"],
 .routing-debug-grid[data-mode="delete"] {
   cursor: crosshair;
 }
 
 .routing-debug-grid[data-mode="normal"] .routing-debug-entity {
-  cursor: pointer;
+  cursor: grab;
+}
+
+.routing-debug-grid[data-mode="normal"] .routing-debug-entity:active {
+  cursor: grabbing;
+}
+
+.routing-debug-reserved-space {
+  fill: #6b7280;
+  stroke: #9ca3af;
+  stroke-width: 0.05;
+}
+
+.routing-debug-drag-preview {
+  fill: rgb(107 114 128 / 35%);
+  stroke: white;
+  stroke-width: 0.08;
+  stroke-dasharray: 0.25 0.15;
+}
+
+.routing-debug-drag-preview[data-valid="false"] {
+  stroke: #fa4d56;
 }
 
 .routing-debug-entity-square {
