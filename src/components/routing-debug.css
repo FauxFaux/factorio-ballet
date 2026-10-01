@@ -6,11 +6,62 @@
 }
 
 .routing-debug-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
-.routing-debug-size {
-  display: flex;
+.routing-debug-control-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  align-items: start;
+  gap: 0.75rem;
+}
+
+.routing-debug-control-columns form {
+  min-width: 0;
+}
+
+/* Keep the editor in the layout when no entity is selected, so the grid stays still. */
+.routing-debug-entity-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.routing-debug-entity-controls legend {
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.routing-debug-controls .routing-debug-entity-controls label {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.routing-debug-controls .routing-debug-entity-controls input,
+.routing-debug-controls .routing-debug-entity-controls select {
+  width: 100%;
+}
+
+@media (max-width: 800px) {
+  .routing-debug-control-columns {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (min-width: 1401px) {
+  .routing-debug-control-columns .routing-debug-entity-controls {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+  }
+}
+
+.routing-debug-size,
+.routing-debug-entity-controls {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
@@ -21,14 +72,19 @@
   border-radius: 4px;
 }
 
-.routing-debug-size label {
+.routing-debug-size {
+  display: flex;
+}
+
+.routing-debug-controls label {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
 }
 
-.routing-debug-size input {
+.routing-debug-controls input,
+.routing-debug-controls select {
   box-sizing: border-box;
   width: 6rem;
   max-width: 100%;
@@ -41,7 +97,15 @@
   border-radius: 4px;
 }
 
-.routing-debug-size button {
+.routing-debug-entity-controls input[type="text"] {
+  width: 12rem;
+}
+
+.routing-debug-controls select {
+  width: auto;
+}
+
+.routing-debug-controls button {
   padding: 0.25rem 0.5rem;
   font: inherit;
   color: inherit;
@@ -51,8 +115,36 @@
   cursor: pointer;
 }
 
-.routing-debug-size button:hover {
+.routing-debug-controls button:hover:not(:disabled),
+.routing-debug-toolbar button[aria-pressed="true"] {
   background: var(--accent-bg);
+  border-color: var(--text);
+}
+
+.routing-debug-controls button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.routing-debug-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.routing-debug-toolbar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.routing-debug-toolbar svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.routing-debug-hint {
+  margin: 0;
 }
 
 .routing-debug-grid {
@@ -62,6 +154,36 @@
   background: midnightblue;
   outline: 1px solid #60a5fa;
   outline-offset: -1px;
+}
+
+.routing-debug-grid[data-mode="source"],
+.routing-debug-grid[data-mode="sink"],
+.routing-debug-grid[data-mode="delete"] {
+  cursor: crosshair;
+}
+
+.routing-debug-grid[data-mode="normal"] .routing-debug-entity {
+  cursor: pointer;
+}
+
+.routing-debug-entity-square {
+  fill: #6b7280;
+  stroke: #9ca3af;
+  stroke-width: 0.05;
+}
+
+.routing-debug-entity[data-kind="sink"] .routing-debug-entity-square {
+  fill: #4b5563;
+}
+
+.routing-debug-entity[aria-pressed="true"] .routing-debug-entity-square,
+.routing-debug-entity:focus-visible .routing-debug-entity-square {
+  stroke: white;
+  stroke-width: 0.08;
+}
+
+.routing-debug-entity-arrow {
+  filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 85%));
 }
 
 .routing-debug-grid-minor,

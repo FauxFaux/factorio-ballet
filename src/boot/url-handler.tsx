@@ -26,10 +26,24 @@ export interface KernelCustomState {
   repeatCount?: number;
 }
 
+export interface RoutingDebugEntity {
+  kind: 'source' | 'sink';
+  /** The top-left corner of the entity's single tile. */
+  x: number;
+  y: number;
+  /** The direction in which items travel, for both sources and sinks. */
+  direction: 'north' | 'east' | 'south' | 'west';
+  /** Abstract item name, shared by sources and sinks carrying the same item. */
+  item: string;
+  /** Items provided or consumed per second. */
+  rate: number;
+}
+
 export interface RoutingDebugState {
   /** Grid dimensions in tiles; absent dimensions default to 96 by 64. */
   width?: number;
   height?: number;
+  entities?: RoutingDebugEntity[];
 }
 
 export interface UrlState {
