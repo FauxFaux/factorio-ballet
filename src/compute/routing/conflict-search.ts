@@ -9,8 +9,8 @@ import type {
 } from './types.ts';
 
 export const DEFAULT_ROUTING_OPTIONS = {
-  maxPathStates: 200_000,
-  maxNodes: 256,
+  maxPathStates: 2_000_000,
+  maxNodes: 4_096,
   costSlack: 0.2,
 } as const;
 

@@ -20,10 +20,14 @@ it does not prove optimality or promise a suboptimality bound, including when `c
 Identical per-route constraint sets reuse cached paths or exhaustive failures. Nodes share unchanged
 paths and constraints, and conflict detection reuses stamped occupancy arrays.
 
-Defaults allow 200,000 total A* expansions and 256 conflicting collection expansions. Budget stops
-return `budget-exhausted`, never `no-solution`. Only exhaustive failures produce `no-solution`, and
-only `found` results contain paths. Diagnostics retain the best provisional conflict count and an
-example conflict when available. The UI displays only a complete valid collection.
+Defaults allow 2,000,000 total A* expansions and 4,096 conflicting collection expansions. Budget
+stops return `budget-exhausted`, never `no-solution`. Only exhaustive failures produce
+`no-solution`, and only `found` results contain paths. Diagnostics retain the best provisional
+conflict count and an example conflict when available. The UI displays only a complete valid
+collection. When the budget is exhausted, it explains that routing may still be possible, shows the
+best attempt's remaining overlaps and an example pair and cell, and suggests moving endpoints or
+reserved space. A translucent red X marks the reported conflict cell for either an exhausted search
+or a proven failure, without intercepting grid interactions.
 
 Requests are sorted by stable identities using code-point comparisons. Constraints, directions,
 queue tie-breaks, and budgets are deterministic; there is no randomness, wall-clock deadline, or

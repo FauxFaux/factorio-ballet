@@ -2,6 +2,7 @@ import { useId, useState } from 'preact/hooks';
 import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
 import { CARBON_LIGHT } from '../compute/colours.ts';
 import type { PathCell } from '../compute/routing/path-search.ts';
+import type { RoutingConflict } from '../compute/routing/types.ts';
 import {
   pointerTile,
   useRoutingDebugInteractions,
@@ -38,6 +39,7 @@ export function RoutingDebugGrid({
   entities,
   rectangles,
   paths,
+  conflict,
   selection,
   mode,
   onClickTile,
@@ -57,6 +59,7 @@ export function RoutingDebugGrid({
     source: RoutingDebugPosition;
     sink: RoutingDebugPosition;
   }[];
+  conflict?: RoutingConflict;
   selection: { x: number; y: number } | undefined;
   mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
@@ -262,6 +265,16 @@ export function RoutingDebugGrid({
           />
           {preview.kind === 'rectangle' && <RectangleDimensions rectangle={preview.rectangle} />}
         </g>
+      )}
+      {conflict && (
+        <path
+          class="routing-debug-conflict"
+          role="img"
+          aria-label={`Routing conflict between ${conflict.first} and ${conflict.second} at (${conflict.cell.x}, ${conflict.cell.y})`}
+          d="M 0.15 0.15 L 0.85 0.85 M 0.85 0.15 L 0.15 0.85"
+          transform={`translate(${conflict.cell.x} ${conflict.cell.y})`}
+          pointer-events="none"
+        />
       )}
     </svg>
   );

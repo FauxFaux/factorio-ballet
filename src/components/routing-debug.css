@@ -228,6 +228,13 @@
   stroke-width: 2px;
 }
 
+.routing-debug-conflict {
+  fill: none;
+  stroke: rgb(250 77 86 / 65%);
+  stroke-width: 0.16;
+  stroke-linecap: round;
+}
+
 .routing-debug-entity[data-kind="sink"] .routing-debug-entity-square {
   fill: #4b5563;
 }

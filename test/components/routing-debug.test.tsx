@@ -41,6 +41,7 @@ describe('RoutingDebug', () => {
     expect(paths).toHaveLength(2);
     const cells = paths.flatMap((path) => path.getAttribute('points')!.split(' '));
     expect(new Set(cells).size).toBe(cells.length);
+    expect(screen.queryByRole('img', { name: /Routing conflict/ })).toBeNull();
     expect(screen.getByLabelText('Routing result').textContent).toMatch(
       /^2 routes, \d+ path tiles\.$/,
     );
@@ -72,6 +73,7 @@ describe('RoutingDebug', () => {
     expect(screen.getByLabelText('Routing result').textContent).toMatch(
       /No layout can connect all paired items/,
     );
+    expect(screen.getByRole('img', { name: /Routing conflict.*at \(2, 2\)/ })).toBeTruthy();
   });
 
   it('describes a search limit without claiming that no layout exists', () => {
@@ -82,9 +84,40 @@ describe('RoutingDebug', () => {
     render(<Example />);
     expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
     expect(screen.getByLabelText('Routing result').textContent).toBe(
-      'Search limit reached before finding a layout. A valid layout may still exist.',
+      'Routing search limit reached before finding non-overlapping paths. A valid layout may still exist. Try moving sources, sinks, or reserved space to give the routes more room.',
     );
   });
+
+  it.each([1, 3])(
+    'explains the %i remaining overlaps and identifies an example competing pair',
+    (remainingConflicts) => {
+      vi.spyOn(routingSolver, 'solveRoutingDebug').mockReturnValue({
+        kind: 'budget-exhausted',
+        diagnostics: {
+          pathSearches: 10,
+          pathStates: 100,
+          expandedNodes: 5,
+          generatedNodes: 11,
+          remainingConflicts,
+          conflict: { first: 'iron', second: 'copper', cell: { x: 16, y: 13 } },
+        },
+      });
+      render(<Example />);
+      const message = screen.getByLabelText('Routing result').textContent!;
+      expect(message).toContain('A valid layout may still exist.');
+      expect(message).toContain(
+        `The best attempt still has ${remainingConflicts} overlapping path ${remainingConflicts === 1 ? 'tile.' : 'tiles.'}`,
+      );
+      expect(message).toContain('“iron” and “copper” overlap at (16, 13).');
+      expect(message).toContain('Try moving their sources or sinks, or nearby reserved space');
+      expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+      const marker = screen.getByRole('img', {
+        name: 'Routing conflict between iron and copper at (16, 13)',
+      });
+      expect(marker.getAttribute('transform')).toBe('translate(16 13)');
+      expect(marker.getAttribute('pointer-events')).toBe('none');
+    },
+  );
 
   it('draws a dark yellow path around reserved space and other entities, respecting endpoint arrows', () => {
     const initial: RoutingDebugState = {

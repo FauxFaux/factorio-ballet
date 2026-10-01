@@ -10,6 +10,7 @@ import {
 import type { RoutingDebugEntity, RoutingDebugState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
 import { solveRoutingDebug } from '../compute/routing/debug.ts';
+import type { RoutingDiagnostics } from '../compute/routing/types.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
 import {
   availableEntity,
@@ -29,6 +30,22 @@ const tools = [
 
 function gridDimension(value: number | undefined, fallback: number): number {
   return value !== undefined && Number.isSafeInteger(value) && value > 0 ? value : fallback;
+}
+
+function routingLimitMessage({ remainingConflicts, conflict }: RoutingDiagnostics): string {
+  const explanation =
+    'Routing search limit reached before finding non-overlapping paths. A valid layout may still exist.';
+  const overlaps =
+    remainingConflicts === undefined
+      ? ''
+      : ` The best attempt still has ${remainingConflicts} overlapping path ${remainingConflicts === 1 ? 'tile' : 'tiles'}.`;
+  const example = conflict
+    ? ` “${conflict.first}” and “${conflict.second}” overlap at (${conflict.cell.x}, ${conflict.cell.y}).`
+    : '';
+  const suggestion = conflict
+    ? ' Try moving their sources or sinks, or nearby reserved space, to give these routes more room.'
+    : ' Try moving sources, sinks, or reserved space to give the routes more room.';
+  return explanation + overlaps + example + suggestion;
 }
 
 export function RoutingDebug({ state }: { state: State<RoutingDebugState | undefined> }) {
@@ -65,7 +82,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
       : routing.kind === 'no-solution'
         ? 'No layout can connect all paired items without overlapping paths.'
         : routing.kind === 'budget-exhausted'
-          ? 'Search limit reached before finding a layout. A valid layout may still exist.'
+          ? routingLimitMessage(routing.diagnostics)
           : paths.length === 0
             ? 'Add one source and one sink for an item to route it.'
             : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${routing.steps + paths.length} path tiles.`;
@@ -331,6 +348,11 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         entities={entities}
         rectangles={rectangles}
         paths={paths}
+        conflict={
+          routing.kind === 'budget-exhausted' || routing.kind === 'no-solution'
+            ? routing.diagnostics.conflict
+            : undefined
+        }
         selection={selection}
         mode={mode}
         onClickTile={clickTile}

@@ -87,6 +87,26 @@ function feasible(input: RoutingInput): boolean {
 }
 
 describe('solveConflictRouting', () => {
+  it('routes four pairs in free space that exceeded the former default search budget', () => {
+    const input: RoutingInput = {
+      width: 32,
+      height: 24,
+      blocked: new Uint8Array(32 * 24),
+      routes: [
+        { id: 'r0', start: { x: 19, y: 13 }, goal: { x: 17, y: 3 } },
+        { id: 'r1', start: { x: 13, y: 13 }, goal: { x: 28, y: 8 } },
+        { id: 'r2', start: { x: 23, y: 7 }, goal: { x: 27, y: 20 } },
+        { id: 'r3', start: { x: 14, y: 10 }, goal: { x: 11, y: 2 } },
+      ],
+    };
+    expect(solveConflictRouting(input, { maxPathStates: 200_000, maxNodes: 256 }).kind).toBe(
+      'budget-exhausted',
+    );
+    const result = solveConflictRouting(input);
+    expectValid(input, result);
+    if (result.kind === 'found') expect(result.diagnostics.expandedNodes).toBeGreaterThan(256);
+  });
+
   it('reroutes intersecting independent shortest paths into a complete disjoint layout', () => {
     const input = crossing();
     const result = solveConflictRouting(input);
