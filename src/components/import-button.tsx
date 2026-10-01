@@ -5,9 +5,9 @@ import {
   cellFromConfiguration,
   decodeImportUrl,
   type DehydratedGraphConfiguration,
-  type FactorioLabHashes,
   type ImportedConfiguration,
 } from '../compute/import.ts';
+import type { FactorioLabHashes } from '../compute/factoriolab-import.ts';
 import type { Cell } from '../cell.ts';
 import procRsLogo from '../assets/logo-vue.svg';
 
