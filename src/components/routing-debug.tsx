@@ -87,15 +87,17 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         }))
       : [];
   const routingMessage =
-    routing.kind === 'invalid'
-      ? `Cannot route: ${routing.message}`
-      : routing.kind === 'no-solution'
-        ? 'No layout can connect all paired items without overlapping paths.'
-        : routing.kind === 'budget-exhausted'
-          ? routingLimitMessage(routing.diagnostics)
-          : paths.length === 0
-            ? 'Add one source and one sink for an item to route it.'
-            : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${paths.reduce((total, path) => total + path.cells.length, 0)} path tiles.`;
+    routing.kind === 'contention'
+      ? `Contention over ${routing.generations.length} completed ${routing.generations.length === 1 ? 'pass' : 'passes'}. Tile numbers show the maximum number of competing paths (2 or more).${routing.status === 'budget-exhausted' ? ' A* search budget exhausted; showing completed passes only.' : ''}`
+      : routing.kind === 'invalid'
+        ? `Cannot route: ${routing.message}`
+        : routing.kind === 'no-solution'
+          ? 'No layout can connect all paired items without overlapping paths.'
+          : routing.kind === 'budget-exhausted'
+            ? routingLimitMessage(routing.diagnostics)
+            : paths.length === 0
+              ? 'Add one source and one sink for an item to route it.'
+              : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${paths.reduce((total, path) => total + path.cells.length, 0)} path tiles.`;
   const selected = entities.find((entity) => entity.x === selection?.x && entity.y === selection.y);
   const showEditor = mode === 'source' || mode === 'sink' || selected !== undefined;
 
@@ -397,6 +399,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         entities={entities}
         rectangles={rectangles}
         paths={paths}
+        contention={routing.kind === 'contention' ? routing.maximum : undefined}
         conflict={
           routing.kind === 'budget-exhausted' || routing.kind === 'no-solution'
             ? routing.diagnostics.conflict

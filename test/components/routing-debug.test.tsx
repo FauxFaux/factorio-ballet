@@ -25,6 +25,42 @@ describe('RoutingDebug', () => {
     vi.restoreAllMocks();
   });
 
+  it('applies the contention strategy, draws maximum counts, and switches back to routes', async () => {
+    const user = userEvent.setup();
+    render(
+      <Example
+        initial={{
+          width: 9,
+          height: 9,
+          entities: [
+            { kind: 'source', x: 1, y: 4, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 7, y: 4, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'source', x: 4, y: 1, direction: 'south', item: 'copper', rate: 5 },
+            { kind: 'sink', x: 4, y: 7, direction: 'south', item: 'copper', rate: 5 },
+          ],
+        }}
+      />,
+    );
+    const strategy = screen.getByRole('combobox', { name: 'Routing strategy' });
+    await user.selectOptions(strategy, 'contention');
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(screen.getByRole('group', { name: 'Maximum routing contention' })).toBeTruthy();
+    expect(screen.getByRole('img', { name: '2 competing paths at (4, 4)' })).toBeTruthy();
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    expect(screen.getByLabelText('Routing result').textContent).toContain('3 completed passes');
+    const rd = JSON.parse(screen.getByRole('status').textContent!);
+    expect(rd.routingOptions.strategy).toBe('contention');
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd };
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+    await user.selectOptions(strategy, 'conflict-only');
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(screen.queryByRole('group', { name: 'Maximum routing contention' })).toBeNull();
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    expect(
+      JSON.parse(screen.getByRole('status').textContent!).routingOptions.strategy,
+    ).toBeUndefined();
+  });
+
   it('applies strategy and all search budgets together, persists them, and resets the defaults', async () => {
     const user = userEvent.setup();
     const initial: RoutingDebugState = {

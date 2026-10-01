@@ -255,6 +255,12 @@
   stroke-linecap: round;
 }
 
+.routing-debug-contention-count {
+  fill: #171717;
+  font-size: 0.55px;
+  font-weight: 700;
+}
+
 .routing-debug-entity[data-kind="sink"] .routing-debug-entity-square {
   fill: #4b5563;
 }

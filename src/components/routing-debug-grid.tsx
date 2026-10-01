@@ -71,6 +71,7 @@ export function RoutingDebugGrid({
   rectangles,
   paths,
   conflict,
+  contention,
   selection,
   mode,
   onClickTile,
@@ -92,6 +93,7 @@ export function RoutingDebugGrid({
     sink: RoutingDebugPosition;
   }[];
   conflict?: RoutingConflict;
+  contention?: Uint32Array;
   selection: { x: number; y: number } | undefined;
   mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
@@ -243,6 +245,37 @@ export function RoutingDebugGrid({
           </g>
         );
       })}
+      {contention && (
+        <g role="group" aria-label="Maximum routing contention" pointer-events="none">
+          {Array.from(contention, (count, index) =>
+            count < 2 ? null : (
+              <g
+                key={index}
+                role="img"
+                aria-label={`${count} competing paths at (${index % width}, ${Math.floor(index / width)})`}
+              >
+                <rect
+                  x={(index % width) + 0.025}
+                  y={Math.floor(index / width) + 0.025}
+                  width="0.95"
+                  height="0.95"
+                  fill={`hsl(${Math.max(0, 60 - (count - 2) * 15)} 95% 55%)`}
+                  fill-opacity="0.8"
+                />
+                <text
+                  class="routing-debug-contention-count"
+                  x={(index % width) + 0.5}
+                  y={Math.floor(index / width) + 0.5}
+                  text-anchor="middle"
+                  dominant-baseline="central"
+                >
+                  {count}
+                </text>
+              </g>
+            ),
+          )}
+        </g>
+      )}
       {entities.map((entity) => {
         const label = `${entity.kind === 'source' ? 'Source' : 'Sink'} at (${entity.x}, ${entity.y}), ${entity.item}, ${entity.rate} items/s, ${entity.direction}`;
         const position =

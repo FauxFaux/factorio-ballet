@@ -12,6 +12,8 @@ export interface RoutingInput extends PathSearchGrid {
 }
 
 export interface RoutingOptions {
+  /** Debug heat map strategy; absent uses the reservation/conflict solver. */
+  strategy?: 'contention';
   /** Maximum hidden tiles between underground belt endpoints; absent disables tunnels. */
   undergroundBeltReach?: number;
   /** Try deterministic whole-path reservation before conflict search; enabled by default. */
@@ -48,6 +50,14 @@ export type RoutedPath = Extract<PathSearchResult, { kind: 'found' }> & { id: st
 
 /** Only found results contain paths: provisional overlapping collections are never solutions. */
 export type RoutingResult =
+  | {
+      kind: 'contention';
+      /** Row-major contested path counts (zero for cells used by fewer than two paths). */
+      generations: Uint32Array[];
+      maximum: Uint32Array;
+      status: 'complete' | 'budget-exhausted';
+      diagnostics: RoutingDiagnostics;
+    }
   | {
       kind: 'found';
       routes: RoutedPath[];

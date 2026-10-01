@@ -10,6 +10,9 @@ const budgets = [
 
 function draftOptions(options?: RoutingOptions) {
   return {
+    strategy:
+      options?.strategy ??
+      (options?.reservationFirst === false ? 'conflict-only' : 'reservation-first'),
     undergroundEnabled: options?.undergroundBeltReach !== undefined,
     undergroundBeltReach: String(options?.undergroundBeltReach ?? 4),
     reservationFirst: options?.reservationFirst ?? DEFAULT_ROUTING_OPTIONS.reservationFirst,
@@ -40,7 +43,11 @@ export function RoutingDebugSettings({
     <form
       onSubmit={(event) => {
         event.preventDefault();
-        const { undergroundBeltReach: _oldReach, ...otherOptions } = options ?? {};
+        const {
+          undergroundBeltReach: _oldReach,
+          strategy: _oldStrategy,
+          ...otherOptions
+        } = options ?? {};
         const reach = Number(draft.undergroundBeltReach);
         if (
           draft.undergroundEnabled &&
@@ -55,8 +62,12 @@ export function RoutingDebugSettings({
         }
         const next = {
           ...otherOptions,
+          ...(draft.strategy === 'contention' ? { strategy: 'contention' as const } : {}),
           ...(draft.undergroundEnabled ? { undergroundBeltReach: reach } : {}),
-          reservationFirst: draft.reservationFirst,
+          reservationFirst:
+            draft.strategy === 'contention'
+              ? draft.reservationFirst
+              : draft.strategy === 'reservation-first',
           maxPathStates: Number(draft.maxPathStates),
           maxNodes: Number(draft.maxNodes),
           maxReservationStates: Number(draft.maxReservationStates),
@@ -80,16 +91,17 @@ export function RoutingDebugSettings({
         <label>
           Routing strategy
           <select
-            value={draft.reservationFirst ? 'reservation-first' : 'conflict-only'}
+            value={draft.strategy}
             onChange={(event) =>
               setDraft({
                 ...draft,
-                reservationFirst: event.currentTarget.value === 'reservation-first',
+                strategy: event.currentTarget.value,
               })
             }
           >
             <option value="reservation-first">Reservations, then conflict search</option>
             <option value="conflict-only">Conflict search only</option>
+            <option value="contention">Contention overlay (3 passes)</option>
           </select>
         </label>
         <label>

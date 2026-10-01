@@ -1,5 +1,6 @@
 import type { RoutingDebugEntity, RoutingDebugState } from '../../boot/url-handler.tsx';
 import { solveConflictRouting } from './conflict-search.ts';
+import { computeRoutingContention } from './contention.ts';
 import { normalizeRoutingDebugEndpoints, normalizeRoutingDebugGrid } from './path-search.ts';
 import type { RoutingOptions, RoutingRequest, RoutingResult, RoutingSolver } from './types.ts';
 
@@ -11,7 +12,9 @@ import type { RoutingOptions, RoutingRequest, RoutingResult, RoutingSolver } fro
 export function solveRoutingDebug(
   state: RoutingDebugState,
   options: RoutingOptions = state.routingOptions ?? {},
-  solver: RoutingSolver = solveConflictRouting,
+  solver: RoutingSolver = options.strategy === 'contention'
+    ? computeRoutingContention
+    : solveConflictRouting,
 ): RoutingResult {
   const normalized = normalizeRoutingDebugGrid(state);
   if (normalized.kind !== 'ok') return normalized;
