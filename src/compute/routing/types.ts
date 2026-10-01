@@ -16,6 +16,8 @@ export interface RoutingOptions {
   maxPathStates?: number;
   /** Maximum conflicting collections expanded by the global search. */
   maxNodes?: number;
+  /** Work allowance for whole-path reservation passes before CBS; zero disables them. */
+  maxReservationStates?: number;
   /** Prefer fewer overlaps among collections within this fraction of the cheapest cost. */
   costSlack?: number;
 }
@@ -31,6 +33,8 @@ export interface RoutingDiagnostics {
   pathStates: number;
   expandedNodes: number;
   generatedNodes: number;
+  /** Deterministic priority orders attempted before the conflict search, if supported. */
+  reservationPasses?: number;
   /** Overlapping cell uses in the best provisional collection, when one was computed. */
   remainingConflicts?: number;
   conflict?: RoutingConflict;

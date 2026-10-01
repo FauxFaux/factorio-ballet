@@ -3,6 +3,35 @@ import { solveConflictRouting } from '../../../src/compute/routing/conflict-sear
 import { findPath } from '../../../src/compute/routing/path-search.ts';
 import type { RoutingInput, RoutingResult } from '../../../src/compute/routing/types.ts';
 
+function obstacleDetours(sourceX = 23, transpose = false): RoutingInput {
+  const width = 64;
+  const height = 32;
+  const blocked = new Uint8Array(width * height);
+  for (let y = 0; y < 19; y++) for (let x = 28; x < 32; x++) blocked[y * width + x] = 1;
+  const routes = [10, 15, 5].map((y, index) => {
+    blocked[y * width + sourceX] = blocked[y * width + 36] = 1;
+    return {
+      id: String(index + 1),
+      start: { x: sourceX + 1, y },
+      goal: { x: 35, y },
+    };
+  });
+  if (!transpose) return { width, height, blocked, routes };
+  const rotated = new Uint8Array(blocked.length);
+  for (let y = 0; y < height; y++)
+    for (let x = 0; x < width; x++) rotated[x * height + y] = blocked[y * width + x];
+  return {
+    width: height,
+    height: width,
+    blocked: rotated,
+    routes: routes.map(({ id, start, goal }) => ({
+      id,
+      start: { x: start.y, y: start.x },
+      goal: { x: goal.y, y: goal.x },
+    })),
+  };
+}
+
 function crossing(): RoutingInput {
   return {
     width: 7,
@@ -87,6 +116,54 @@ function feasible(input: RoutingInput): boolean {
 }
 
 describe('solveConflictRouting', () => {
+  it('routes nested detours around an obstacle without exploring cell-by-cell conflicts', () => {
+    const input = obstacleDetours();
+    const result = solveConflictRouting(input);
+    expectValid(input, result);
+    if (result.kind === 'found') {
+      expect(result.steps).toBe(101);
+      expect(result.diagnostics.expandedNodes).toBe(0);
+      expect(result.diagnostics.pathStates).toBeLessThan(25_000);
+      expect(result.diagnostics.reservationPasses).toBeGreaterThan(0);
+    }
+    // Moving the sources in free space and transposing the layout should remain inexpensive.
+    for (const sourceX of [20, 23, 25])
+      for (const transpose of [false, true]) {
+        const variant = obstacleDetours(sourceX, transpose);
+        const solved = solveConflictRouting(variant);
+        expectValid(variant, solved);
+        if (solved.kind === 'found') expect(solved.diagnostics.pathStates).toBeLessThan(50_000);
+        expect(solveConflictRouting({ ...variant, routes: [...variant.routes].reverse() })).toEqual(
+          solved,
+        );
+      }
+  });
+
+  it('keeps a valid reservation layout when a later priority order runs out of work', () => {
+    const input = obstacleDetours();
+    const result = solveConflictRouting(input, {
+      maxReservationStates: 3_000,
+      maxPathStates: 20_000,
+    });
+    expectValid(input, result);
+    if (result.kind === 'found') {
+      expect(result.diagnostics.reservationPasses).toBeGreaterThan(1);
+      expect(result.diagnostics.expandedNodes).toBe(0);
+      expect(result.diagnostics.pathStates).toBeLessThan(5_000);
+    }
+  });
+
+  it('leaves work for conflict search when the reservation allowance is exhausted', () => {
+    const input = crossing();
+    const result = solveConflictRouting(input, { maxReservationStates: 1, maxPathStates: 1_000 });
+    expectValid(input, result);
+    if (result.kind === 'found') {
+      expect(result.diagnostics.reservationPasses).toBe(1);
+      expect(result.diagnostics.expandedNodes).toBeGreaterThan(0);
+      expect(result.diagnostics.pathStates).toBeLessThanOrEqual(1_000);
+    }
+  });
+
   it('routes four pairs in free space that exceeded the former default search budget', () => {
     const input: RoutingInput = {
       width: 32,
@@ -99,12 +176,19 @@ describe('solveConflictRouting', () => {
         { id: 'r3', start: { x: 14, y: 10 }, goal: { x: 11, y: 2 } },
       ],
     };
-    expect(solveConflictRouting(input, { maxPathStates: 200_000, maxNodes: 256 }).kind).toBe(
-      'budget-exhausted',
-    );
+    expect(
+      solveConflictRouting(input, {
+        maxPathStates: 200_000,
+        maxNodes: 256,
+        maxReservationStates: 0,
+      }).kind,
+    ).toBe('budget-exhausted');
     const result = solveConflictRouting(input);
     expectValid(input, result);
-    if (result.kind === 'found') expect(result.diagnostics.expandedNodes).toBeGreaterThan(256);
+    if (result.kind === 'found') {
+      expect(result.diagnostics.expandedNodes).toBe(0);
+      expect(result.diagnostics.pathStates).toBeLessThan(200_000);
+    }
   });
 
   it('reroutes intersecting independent shortest paths into a complete disjoint layout', () => {
@@ -113,7 +197,7 @@ describe('solveConflictRouting', () => {
     expectValid(input, result);
     if (result.kind === 'found') {
       expect(result.steps).toBe(14);
-      expect(result.diagnostics.expandedNodes).toBeGreaterThan(0);
+      expect(result.diagnostics.reservationPasses).toBeGreaterThan(0);
     }
   });
 
@@ -148,7 +232,12 @@ describe('solveConflictRouting', () => {
       for (const point of initial.cells) blocked[point.y * input.width + point.x] = 1;
       expect(findPath({ ...input, blocked, ...input.routes[second] }).kind).toBe('no-path');
     }
-    expectValid(input, solveConflictRouting(input));
+    const result = solveConflictRouting(input);
+    expectValid(input, result);
+    if (result.kind === 'found') {
+      expect(result.diagnostics.reservationPasses).toBeGreaterThan(0);
+      expect(result.diagnostics.expandedNodes).toBeGreaterThan(0);
+    }
   });
 
   it('matches exhaustive feasibility for every four-terminal layout on a 3 by 3 grid', () => {
@@ -331,6 +420,8 @@ describe('solveConflictRouting', () => {
     for (const options of [
       { maxNodes: -1 },
       { maxPathStates: 1.5 },
+      { maxReservationStates: -1 },
+      { maxReservationStates: 1.5 },
       { costSlack: Infinity },
       { costSlack: -1 },
     ])

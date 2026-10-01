@@ -17,6 +17,45 @@ const state: RoutingDebugState = {
 };
 
 describe('solveRoutingDebug', () => {
+  it('routes three pairs around a shared obstacle and reproduces their detours from the URL', () => {
+    const detours: RoutingDebugState = {
+      width: 64,
+      height: 32,
+      entities: [10, 15, 5].flatMap((y, index) => [
+        {
+          kind: 'source' as const,
+          x: 23,
+          y,
+          direction: 'east' as const,
+          item: String(index + 1),
+          rate: 5,
+        },
+        {
+          kind: 'sink' as const,
+          x: 36,
+          y,
+          direction: 'east' as const,
+          item: String(index + 1),
+          rate: 5,
+        },
+      ]),
+      rectangles: [{ x: 28, y: 0, width: 4, height: 19 }],
+    };
+    const result = solveRoutingDebug(detours);
+    expect(result.kind).toBe('found');
+    if (result.kind !== 'found') return;
+    expect(result.routes).toHaveLength(3);
+    expect(result.steps).toBe(101);
+    expect(result.diagnostics.pathStates).toBeLessThan(25_000);
+    expect(solveRoutingDebug({ ...detours, entities: [...detours.entities!].reverse() })).toEqual(
+      result,
+    );
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd: detours };
+    const parsed = parseEnvelope(`#${packEnvelope(packed)}`);
+    expect(parsed.kind).toBe('ok');
+    if (parsed.kind === 'ok') expect(solveRoutingDebug(parsed.packed.rd!)).toEqual(result);
+  });
+
   it('routes adjacent connection tiles globally and reproduces the layout after URL packing', () => {
     const result = solveRoutingDebug(state);
     expect(result.kind).toBe('found');

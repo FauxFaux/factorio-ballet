@@ -1,4 +1,10 @@
-import { findPath, validPathGrid, type PathSearchResult } from './path-search.ts';
+import {
+  findPath,
+  validPathGrid,
+  type PathSearchBudget,
+  type PathSearchResult,
+} from './path-search.ts';
+import { findReservationRoutes } from './reservation-search.ts';
 import type {
   RoutedPath,
   RoutingConflict,
@@ -11,6 +17,7 @@ import type {
 export const DEFAULT_ROUTING_OPTIONS = {
   maxPathStates: 2_000_000,
   maxNodes: 4_096,
+  maxReservationStates: 50_000,
   costSlack: 0.2,
 } as const;
 
@@ -40,7 +47,8 @@ function fewerConflicts(a: Node, b: Node): boolean {
 }
 
 /**
- * Static conflict-based routing with deterministic focal selection. Branch on one shared cell,
+ * Try whole-path reservation in a few deterministic orders before static conflict-based routing.
+ * For the fallback, use deterministic focal selection and branch on one shared cell,
  * forbidding it for either route, and replan only that route. Other paths remain provisional.
  * This stops at the first valid layout; costSlack favors feasibility over proving optimality.
  * All budgets count work, never time, and all tie-breaks depend only on canonical input order.
@@ -56,6 +64,8 @@ export function solveConflictRouting(
   const { width, height } = input;
   const maxPathStates = options.maxPathStates ?? DEFAULT_ROUTING_OPTIONS.maxPathStates;
   const maxNodes = options.maxNodes ?? DEFAULT_ROUTING_OPTIONS.maxNodes;
+  const maxReservationStates =
+    options.maxReservationStates ?? DEFAULT_ROUTING_OPTIONS.maxReservationStates;
   const costSlack = options.costSlack ?? DEFAULT_ROUTING_OPTIONS.costSlack;
   if (
     !validPathGrid(input) ||
@@ -65,6 +75,8 @@ export function solveConflictRouting(
     maxPathStates < 0 ||
     !Number.isSafeInteger(maxNodes) ||
     maxNodes < 0 ||
+    !Number.isSafeInteger(maxReservationStates) ||
+    maxReservationStates < 0 ||
     !Number.isFinite(costSlack) ||
     costSlack < 0 ||
     costSlack > 1
@@ -100,6 +112,7 @@ export function solveConflictRouting(
     pathStates: 0,
     expandedNodes: 0,
     generatedNodes: 0,
+    reservationPasses: 0,
   };
   const finish = (kind: 'no-solution' | 'budget-exhausted'): RoutingResult => ({
     kind,
@@ -127,7 +140,11 @@ export function solveConflictRouting(
   }
   const blocked = base.slice();
   const caches = requests.map(() => new Map<string, PathSearchResult>());
-  const search = (index: number, constraints: number[]): PathSearchResult => {
+  const search = (
+    index: number,
+    constraints: number[],
+    allowance: PathSearchBudget = budget,
+  ): PathSearchResult => {
     const key = constraints.join(',');
     const cached = caches[index].get(key);
     if (cached) return cached;
@@ -139,7 +156,7 @@ export function solveConflictRouting(
     diagnostics.pathSearches++;
     const result = findPath(
       { ...input, blocked, start: request.start, goal: request.goal },
-      budget,
+      allowance,
     );
     for (const cell of constraints) blocked[cell] = base[cell];
     blocked[start] = blocked[goal] = 1;
@@ -207,6 +224,25 @@ export function solveConflictRouting(
   );
   if (!Number.isFinite(root.cost))
     return { kind: 'invalid', message: 'Routing costs exceed the numeric range.' };
+  if (!root.conflict) return found(root);
+
+  // Reservation failures are heuristic, so leave most of the shared work budget for CBS.
+  // Separate counters let a reservation pass stop without exhausting the overall solve.
+  const reservationAllowance =
+    maxNodes === 0 ? 0 : Math.min(maxReservationStates, Math.floor(budget.remaining / 4));
+  if (reservationAllowance > 0) {
+    const reservationBudget = { remaining: reservationAllowance };
+    const reservation = findReservationRoutes(rootPaths, width, search, reservationBudget);
+    budget.remaining -= reservationAllowance - reservationBudget.remaining;
+    diagnostics.reservationPasses = reservation.passes;
+    if (reservation.kind === 'invalid') return { kind: 'invalid', message: reservation.message };
+    if (reservation.kind === 'found') {
+      const candidate = inspect(reservation.routes, root.constraints);
+      if (!Number.isFinite(candidate.cost))
+        return { kind: 'invalid', message: 'Routing costs exceed the numeric range.' };
+      if (!candidate.conflict) return found(candidate);
+    }
+  }
   const frontier = [root];
   const seen = new Set<string>([JSON.stringify(root.constraints)]);
   let best = root;

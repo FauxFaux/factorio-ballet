@@ -60,6 +60,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const [draftRate, setDraftRate] = useState('5');
   const [draftDirection, setDraftDirection] = useState<RoutingDebugEntity['direction']>('east');
   const [sizeError, setSizeError] = useState('');
+  const [copyStatus, setCopyStatus] = useState('');
   const itemListId = useId();
   const entities = useMemo(() => settings?.entities ?? [], [settings?.entities]);
   const rectangles = useMemo(() => settings?.rectangles ?? [], [settings?.rectangles]);
@@ -326,7 +327,36 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
               {label}
             </button>
           ))}
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                await navigator.clipboard.writeText(
+                  JSON.stringify(
+                    {
+                      width,
+                      height,
+                      entities,
+                      rectangles,
+                      routing,
+                      routingMessage,
+                      mode,
+                      selection,
+                    },
+                    null,
+                    2,
+                  ),
+                );
+                setCopyStatus('Copied!');
+              } catch {
+                setCopyStatus('Could not copy JSON. Please try again.');
+              }
+            }}
+          >
+            Copy as JSON
+          </button>
         </div>
+        {copyStatus && <p role="status">{copyStatus}</p>}
         <p class="routing-debug-hint">
           {mode === 'normal'
             ? 'Click a source or sink to edit it. Drag sources, sinks, or reserved space to move.'
