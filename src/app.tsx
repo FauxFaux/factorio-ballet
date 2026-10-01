@@ -20,6 +20,8 @@ import { RailBlueprintButton } from './components/rail-blueprint-button.tsx';
 import { RailBlueprints } from './components/rail-blueprints.tsx';
 import { KernelDebugButton } from './components/kernel-debug-button.tsx';
 import { KernelDebug, kernelCustomStateFor } from './components/kernel-debug.tsx';
+import { RoutingDebug } from './components/routing-debug.tsx';
+import { RoutingDebugButton } from './components/routing-debug-button.tsx';
 import { SwitchVersion } from './components/switch-version.tsx';
 import { useDataset } from './dataset/context.tsx';
 
@@ -44,6 +46,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
     setUs((prev) => ({
       ...prev,
       kd: {},
+      rd: undefined,
       kp: kernelCustomStateFor(problem, prev.kp),
     }));
 
@@ -96,6 +99,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
             <FromAirButton uss={uss} />
             <RailBlueprintButton uss={uss} />
             <KernelDebugButton uss={uss} />
+            <RoutingDebugButton uss={uss} />
           </div>
         </div>
       </header>
@@ -104,6 +108,8 @@ export function App({ uss }: { uss: State<UrlState> }) {
           size={us.rb}
           onSizeChange={(update) => setUs((prev) => ({ ...prev, rb: prev.rb && update(prev.rb) }))}
         />
+      ) : us.rd ? (
+        <RoutingDebug state={field(uss, 'rd')} />
       ) : us.kd ? (
         <KernelDebug progress={progress} chosen={chosen} custom={field(uss, 'kp')} />
       ) : us.fa ? (

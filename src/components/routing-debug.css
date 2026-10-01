@@ -1,0 +1,79 @@
+.routing-debug {
+  width: 100%;
+  max-width: 92rem;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.routing-debug-controls {
+  margin-bottom: 1rem;
+}
+
+.routing-debug-size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.routing-debug-size label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.routing-debug-size input {
+  box-sizing: border-box;
+  width: 6rem;
+  max-width: 100%;
+  min-width: 0;
+  padding: 0.25rem;
+  font: inherit;
+  color: var(--text);
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.routing-debug-size button {
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.routing-debug-size button:hover {
+  background: var(--accent-bg);
+}
+
+.routing-debug-grid {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: midnightblue;
+  outline: 1px solid #60a5fa;
+  outline-offset: -1px;
+}
+
+.routing-debug-grid-minor,
+.routing-debug-grid-major {
+  fill: none;
+  stroke-width: 1;
+}
+
+.routing-debug-grid-minor {
+  stroke: #6495ed4d;
+}
+
+.routing-debug-grid-major {
+  stroke: #b0c4de80;
+}

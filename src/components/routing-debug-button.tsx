@@ -1,31 +1,32 @@
-import './rail-blueprint-button.css';
+import './routing-debug-button.css';
 import { useDataset } from '../dataset/context.tsx';
 import { iconStyle } from './icon.tsx';
 import type { State } from '../ts.ts';
 import type { UrlState } from '../boot/url-handler.tsx';
 
-/** Toggles the standalone preview of the standard three-in, two-out rail blueprint. */
-export function RailBlueprintButton({ uss }: { uss: State<UrlState> }) {
+/** Toggles the standalone routing debugger. */
+export function RoutingDebugButton({ uss }: { uss: State<UrlState> }) {
   const [, setUs] = uss;
   const { iconMap } = useDataset();
 
   return (
     <button
-      class="rail-blueprint-button"
+      class="routing-debug-button"
       type="button"
-      title="Show rail blueprint"
+      aria-label="Debug routing"
+      title="Debug routing"
       onClick={() =>
         setUs((prev) => ({
           ...prev,
           fa: undefined,
-          rd: undefined,
+          rb: undefined,
           kd: undefined,
-          rb: prev.rb ? undefined : [3, 2],
+          rd: prev.rd ? undefined : {},
         }))
       }
     >
-      <span class="rail-blueprint-button-icon" aria-hidden="true">
-        <span style={iconStyle(iconMap, 'item:rail')} />
+      <span class="routing-debug-button-icon" aria-hidden="true">
+        <span style={iconStyle(iconMap, 'item:underground-belt')} />
       </span>
     </button>
   );

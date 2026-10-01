@@ -26,6 +26,12 @@ export interface KernelCustomState {
   repeatCount?: number;
 }
 
+export interface RoutingDebugState {
+  /** Grid dimensions in tiles; absent dimensions default to 96 by 64. */
+  width?: number;
+  height?: number;
+}
+
 export interface UrlState {
   /**
    * Version of the JSON state schema. Prefer backward-compatible additions; bump this only when a
@@ -68,6 +74,8 @@ export interface UrlState {
   /** Show the standalone kernel-design workspace rather than a planner page. */
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type -- persisted as an empty object
   kd?: {};
+  /** Show the standalone routing debugger rather than a planner page. */
+  rd?: RoutingDebugState;
   /** The editable kernel problem, retained when the workspace is hidden. */
   kp?: KernelCustomState;
 }

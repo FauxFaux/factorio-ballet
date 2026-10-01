@@ -17,6 +17,7 @@ export function KernelDebugButton({ uss }: { uss: State<UrlState> }) {
         setUs((prev) => ({
           ...prev,
           fa: undefined,
+          rd: undefined,
           rb: undefined,
           kd: prev.kd ? undefined : {},
         }))

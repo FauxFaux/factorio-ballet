@@ -1,0 +1,31 @@
+.routing-debug-button {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.routing-debug-button:hover {
+  background: var(--accent-bg);
+}
+
+.routing-debug-button-icon {
+  display: inline-block;
+  width: 0.8889rem;
+  height: 0.8889rem;
+  overflow: hidden;
+  vertical-align: -0.1em;
+}
+
+.routing-debug-button-icon > span {
+  display: block;
+  width: 1.7778rem;
+  height: 1.7778rem;
+  transform: scale(0.5);
+  transform-origin: top left;
+}

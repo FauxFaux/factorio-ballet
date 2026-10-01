@@ -14,7 +14,9 @@ export function FromAirButton({ uss }: { uss: State<UrlState> }) {
       class="from-air-button"
       type="button"
       title="Plan from air"
-      onClick={() => setUs((prev) => ({ ...prev, fa: true, kd: undefined, rb: undefined }))}
+      onClick={() =>
+        setUs((prev) => ({ ...prev, fa: true, rd: undefined, kd: undefined, rb: undefined }))
+      }
     >
       <span class="from-air-button-icon" aria-hidden="true">
         <span style={iconStyle(iconMap, 'fluid:angels-gas-compressed-air', 'fluid:water')} />
