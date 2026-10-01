@@ -69,6 +69,7 @@ interface Label extends Entry {
   parent: number;
   /** Surface cells added by the incoming move, in travel order. */
   surface: number[];
+  /** Empty in the relaxed search; sorted surface reservations in the exact fallback. */
   occupied: number[];
   belts: UndergroundBeltSpan[];
   key: string;
@@ -77,17 +78,17 @@ interface Label extends Entry {
 /**
  * A tunnel move consumes alignment -> entry -> exit -> next decision atomically. Only entry,
  * exit and the decision cell reserve surface space; all travel counts towards distance.
- * Unlike surface-only A*, labels retain placement history: different visits to the same cell
- * and heading can have different feasible futures. The caller's expansion budget still applies.
+ * Most routes use a relaxed search keyed only by cell and heading, as surface A* does. A found
+ * route is checked for surface reuse and parallel tunnel overlap; only a self-conflicting route
+ * needs the full placement-history search. Both searches consume the same expansion budget.
  */
 export function findUndergroundPath(
   input: PathSearchInput,
   budget?: PathSearchBudget,
 ): PathSearchResult {
-  const { width, height, start, goal, penalties, undergroundBeltReach: reach } = input;
+  const { width, start, goal, undergroundBeltReach: reach } = input;
   const existing = input.undergroundBelts ?? [];
   const blocked = input.blocked.slice();
-  const point = (cell: number) => ({ x: cell % width, y: Math.floor(cell / width) });
   for (const belt of existing)
     for (const endpoint of [belt.entry, belt.exit]) blocked[endpoint.y * width + endpoint.x] = 1;
   if (reach === undefined)
@@ -105,6 +106,24 @@ export function findUndergroundPath(
       turns: 0,
     };
 
+  return searchUndergroundPath({ ...input, blocked, undergroundBeltReach: reach }, budget, false);
+}
+
+/**
+ * Ignoring self-collisions makes cell/heading a sufficient state: remaining moves and costs depend
+ * only on the static grid and heading. If that relaxed optimum has valid placements, it is also
+ * optimal in the constrained graph. Otherwise restart with full history and the remaining budget.
+ */
+function searchUndergroundPath(
+  input: PathSearchInput & { undergroundBeltReach: number },
+  budget: PathSearchBudget | undefined,
+  trackHistory: boolean,
+): PathSearchResult {
+  const { width, height, start, goal, blocked, penalties, undergroundBeltReach: reach } = input;
+  const existing = input.undergroundBelts ?? [];
+  const point = (cell: number) => ({ x: cell % width, y: Math.floor(cell / width) });
+  const startCell = start.y * width + start.x;
+  const goalCell = goal.y * width + goal.x;
   const distance = (cell: number) => {
     const { x, y } = point(cell);
     return Math.abs(goal.x - x) + Math.abs(goal.y - y);
@@ -118,7 +137,7 @@ export function findUndergroundPath(
     direction: -1,
     parent: -1,
     surface: [startCell],
-    occupied: [startCell],
+    occupied: trackHistory ? [startCell] : [],
     belts: [],
     key: '',
     cost: 0,
@@ -144,9 +163,18 @@ export function findUndergroundPath(
         moves.push(label.surface);
         if (label.parent === -1) break;
       }
+      const surface = moves.reverse().flat();
+      if (
+        !trackHistory &&
+        (new Set(surface).size !== surface.length ||
+          current.belts.some((belt, index) =>
+            current.belts.slice(index + 1).some((other) => undergroundBeltsCollide(belt, other)),
+          ))
+      )
+        return searchUndergroundPath(input, budget, true);
       return {
         kind: 'found',
-        cells: moves.reverse().flat().map(point),
+        cells: surface.map(point),
         undergroundBelts: current.belts,
         cost: current.cost,
         steps: current.steps,
@@ -192,12 +220,18 @@ export function findUndergroundPath(
               );
             }) ||
             existing.some((other) => undergroundBeltsCollide(candidate, other)) ||
-            current.belts.some((other) => undergroundBeltsCollide(candidate, other))
+            (trackHistory &&
+              current.belts.some((other) => undergroundBeltsCollide(candidate, other)))
           )
             continue;
           belt = candidate;
         }
-        if (surface.some((cell) => blocked[cell] || current.occupied.includes(cell))) continue;
+        if (
+          surface.some(
+            (cell) => blocked[cell] || cell === startCell || current.occupied.includes(cell),
+          )
+        )
+          continue;
         if (
           decision === goalCell &&
           input.goalDirection &&
@@ -211,21 +245,32 @@ export function findUndergroundPath(
           return { kind: 'invalid', message: 'Path costs exceed the numeric range.' };
         const turns =
           current.turns + Number(current.direction !== -1 && current.direction !== direction);
-        const occupied = [...current.occupied, ...surface].sort((a, b) => a - b);
+        const occupied = trackHistory
+          ? [...current.occupied, ...surface].sort((a, b) => a - b)
+          : [];
         const belts = belt ? [...current.belts, belt] : current.belts;
-        const tunnels = belts
-          .map(({ entry, exit }) =>
-            [entry.y * width + entry.x, exit.y * width + exit.x].sort((a, b) => a - b).join(':'),
-          )
-          .sort()
-          .join(';');
-        const key = `${decision}/${direction}/${occupied.join(',')}/${tunnels}`;
+        const tunnels = trackHistory
+          ? belts
+              .map(({ entry, exit }) =>
+                [entry.y * width + entry.x, exit.y * width + exit.x]
+                  .sort((a, b) => a - b)
+                  .join(':'),
+              )
+              .sort()
+              .join(';')
+          : '';
+        const key = trackHistory
+          ? `${decision}/${direction}/${occupied.join(',')}/${tunnels}`
+          : `${decision}/${direction}`;
         const previous = best.get(key);
         if (
           previous &&
           (previous.cost < cost ||
             (previous.cost === cost &&
-              (previous.steps < steps || (previous.steps === steps && previous.turns <= turns))))
+              (previous.steps < steps ||
+                (previous.steps === steps &&
+                  (previous.turns < turns ||
+                    (previous.turns === turns && previous.belts.length <= belts.length))))))
         )
           continue;
         const label: Label = {
@@ -240,6 +285,7 @@ export function findUndergroundPath(
           cost,
           steps,
           turns,
+          undergrounds: belts.length,
           estimate: cost + distance(decision),
           estimatedSteps: steps + distance(decision),
         };

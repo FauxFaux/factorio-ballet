@@ -17,6 +17,36 @@ const state: RoutingDebugState = {
 };
 
 describe('solveRoutingDebug', () => {
+  it('keeps underground routing cheap when the obstacle is too wide to tunnel beneath', () => {
+    const geometry: RoutingDebugState = {
+      width: 64,
+      height: 32,
+      entities: [
+        { kind: 'source', x: 23, y: 2, item: '1', rate: 5, direction: 'east' },
+        { kind: 'sink', x: 33, y: 2, item: '1', rate: 5, direction: 'east' },
+      ],
+      rectangles: [{ x: 25, y: 0, width: 5, height: 11 }],
+    };
+    const options = {
+      reservationFirst: false,
+      maxPathStates: 1_000,
+      maxNodes: 4_096,
+      maxReservationStates: 50_000,
+    };
+    const surface = solveRoutingDebug(geometry, options);
+    const result = solveRoutingDebug({
+      ...geometry,
+      routingOptions: { ...options, undergroundBeltReach: 4 },
+    });
+    expect(surface).toMatchObject({ kind: 'found', cost: 26, steps: 26, turns: 2 });
+    expect(result).toMatchObject({ kind: 'found', cost: 26, steps: 26, turns: 2 });
+    if (result.kind !== 'found' || surface.kind !== 'found') return;
+    expect(result.routes[0].undergroundBelts).toEqual([]);
+    expect(result.routes[0].cells).toEqual(surface.routes[0].cells);
+    expect(result.diagnostics.pathStates).toBeLessThan(500);
+    expect(result.diagnostics.pathStates).toBeLessThan(surface.diagnostics.pathStates * 2);
+  });
+
   it('loads persisted strategy and budgets while allowing an explicit solver override', () => {
     const saved: RoutingDebugState = {
       ...state,

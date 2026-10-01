@@ -308,17 +308,26 @@ describe('findPath underground belts', () => {
     });
   });
 
-  it('permits zero hidden tiles but still requires four surface cells', () => {
+  it('prefers surface belts over unnecessary zero-hidden-tile pairs', () => {
     const input = { ...grid(4, 1, { x: 0, y: 0 }, { x: 3, y: 0 }), undergroundBeltReach: 0 };
     const result = findPath(input);
     expect(result).toMatchObject({
       kind: 'found',
-      undergroundBelts: [{ entry: { x: 1, y: 0 }, exit: { x: 2, y: 0 } }],
+      undergroundBelts: [],
     });
     if (result.kind === 'found') expectValidUndergroundPath(input, result);
     expect(
       findPath({ ...grid(3, 1, { x: 0, y: 0 }, { x: 2, y: 0 }), undergroundBeltReach: 0 }),
     ).toMatchObject({ kind: 'found', undergroundBelts: [] });
+  });
+
+  it('accepts existing zero-hidden-tile pairs without making them an obstacle underground', () => {
+    const input = {
+      ...grid(4, 2, { x: 0, y: 1 }, { x: 3, y: 1 }),
+      undergroundBeltReach: 0,
+      undergroundBelts: [{ entry: { x: 1, y: 0 }, exit: { x: 2, y: 0 } }],
+    };
+    expect(findPath(input)).toMatchObject({ kind: 'found', steps: 3, undergroundBelts: [] });
   });
 
   it('requires clear entry, exit, and a straight step beyond the exit', () => {
@@ -460,6 +469,26 @@ describe('findPath underground belts', () => {
     expect(
       findPath({ ...input, penalties: new Float64Array(7).fill(Number.MAX_VALUE) }),
     ).toMatchObject({ kind: 'invalid' });
+  });
+
+  it('falls back to placement history when the relaxed route collides with itself', () => {
+    const input = {
+      ...grid(9, 6, { x: 2, y: 3 }, { x: 0, y: 3 }),
+      undergroundBeltReach: 5,
+      startDirection: 'east' as const,
+      goalDirection: 'west' as const,
+    };
+    input.blocked.fill(1);
+    // A ten-step route reversing through overlapping tunnels has only one turn. The valid
+    // alternative takes ten steps and four turns around the top corridor instead.
+    for (const cell of [
+      27, 28, 29, 30, 32, 33, 34, 35, 42, 44, 51, 52, 53, 21, 12, 3, 2, 1, 10, 19,
+    ])
+      input.blocked[cell] = 0;
+    const result = findPath(input, { remaining: 5_000 });
+    expect(result).toMatchObject({ kind: 'found', steps: 10, turns: 4, undergroundBelts: [] });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+    expect(findPath(input, { remaining: 1 })).toEqual({ kind: 'budget-exhausted' });
   });
 
   it('rejects a route whose second tunnel overlaps its own first tunnel', () => {

@@ -128,14 +128,17 @@ describe('solveConflictRouting', () => {
     };
     for (let index = 0; index < 7; index++)
       input.blocked[index * 7 + 3] = input.blocked[21 + index] = 0;
+    input.blocked[3 * 7 + 3] = 1;
     const result = solveConflictRouting(input, { undergroundBeltReach: 3 });
     expect(result).toMatchObject({ kind: 'found', steps: 12 });
     if (result.kind === 'found')
       expect(result.routes.every((route) => route.undergroundBelts?.length)).toBe(true);
     const mixed = {
       ...input,
+      blocked: input.blocked.slice(),
       routes: [input.routes[0], { ...input.routes[1], goal: { x: 3, y: 3 } }],
     };
+    mixed.blocked[3 * 7 + 3] = 0;
     expect(solveConflictRouting(mixed, { undergroundBeltReach: 3 })).toMatchObject({
       kind: 'found',
       steps: 9,

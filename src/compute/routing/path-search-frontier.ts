@@ -3,6 +3,8 @@ export type Entry = {
   cost: number;
   steps: number;
   turns: number;
+  /** Prefer fewer underground pairs only after equal cost, steps, and turns. */
+  undergrounds?: number;
   estimate: number;
   estimatedSteps: number;
 };
@@ -15,7 +17,9 @@ function precedes(a: Entry, b: Entry): boolean {
         (a.estimatedSteps === b.estimatedSteps &&
           (a.turns < b.turns ||
             (a.turns === b.turns &&
-              (a.steps > b.steps || (a.steps === b.steps && a.state < b.state)))))))
+              ((a.undergrounds ?? 0) < (b.undergrounds ?? 0) ||
+                ((a.undergrounds ?? 0) === (b.undergrounds ?? 0) &&
+                  (a.steps > b.steps || (a.steps === b.steps && a.state < b.state)))))))))
   );
 }
 

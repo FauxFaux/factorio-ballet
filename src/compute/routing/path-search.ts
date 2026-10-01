@@ -225,11 +225,12 @@ export function normalizeRoutingDebugState(
 }
 
 /**
- * Four-neighbor A*: minimize cost, then steps, then turns. Manhattan distance
+ * Four-neighbor A*: minimize cost, then steps, then turns, then underground pairs. Manhattan distance
  * lower-bounds remaining cost and steps; zero lower-bounds remaining turns. Incoming heading is part of
  * each search state, since two visits to one cell can have different future turn costs.
- * Optional underground routing uses atomic straight spans and retains placement history to avoid
- * surface reuse and parallel tunnel overlap. Supply a budget to bound that larger search space.
+ * Optional underground routing uses atomic straight spans and checks the relaxed route for
+ * self-collisions. Only a self-conflicting result needs a placement-history search; both searches
+ * share the caller's expansion budget.
  * Returns ordered surface path cells, including both endpoints, and any placed underground pairs.
  */
 export function findPath(input: PathSearchInput, budget?: PathSearchBudget): PathSearchResult {
