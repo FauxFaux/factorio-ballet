@@ -12,6 +12,8 @@ export interface RoutingInput extends PathSearchGrid {
 }
 
 export interface RoutingOptions {
+  /** Try deterministic whole-path reservation before conflict search; enabled by default. */
+  reservationFirst?: boolean;
   /** Shared A* expansion budget, independent of wall-clock time. */
   maxPathStates?: number;
   /** Maximum conflicting collections expanded by the global search. */

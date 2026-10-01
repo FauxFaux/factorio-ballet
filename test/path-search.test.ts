@@ -6,6 +6,7 @@ import {
   solveRoutingDebugPath,
   type PathCell,
   type PathSearchInput,
+  type UndergroundBeltSpan,
 } from '../src/compute/routing/path-search.ts';
 import type { RoutingDebugState } from '../src/boot/url-handler.tsx';
 
@@ -204,6 +205,198 @@ describe('findPath', () => {
       { penalties: new Float64Array(4).fill(NaN) },
     ])
       expect(findPath({ ...input, ...patch })).toMatchObject({ kind: 'invalid' });
+  });
+});
+
+function expectValidUndergroundPath(
+  input: PathSearchInput,
+  result: Extract<ReturnType<typeof findPath>, { kind: 'found' }>,
+): void {
+  expect(result.cells[0]).toEqual(input.start);
+  expect(result.cells.at(-1)).toEqual(input.goal);
+  expect(new Set(result.cells.map(({ x, y }) => y * input.width + x)).size).toBe(result.cells.length);
+  const spans = result.undergroundBelts ?? [];
+  let steps = 0;
+  for (const [index, cell] of result.cells.entries()) {
+    expect(input.blocked[cell.y * input.width + cell.x]).toBe(0);
+    expect(cell.x).toBeGreaterThanOrEqual(0);
+    expect(cell.x).toBeLessThan(input.width);
+    expect(cell.y).toBeGreaterThanOrEqual(0);
+    expect(cell.y).toBeLessThan(input.height);
+    if (!index) continue;
+    const previous = result.cells[index - 1];
+    steps += Math.abs(cell.x - previous.x) + Math.abs(cell.y - previous.y);
+    if (Math.abs(cell.x - previous.x) + Math.abs(cell.y - previous.y) > 1)
+      expect(spans).toContainEqual({ entry: previous, exit: cell });
+  }
+  for (const span of spans) {
+    const entry = result.cells.findIndex((cell) => cell.x === span.entry.x && cell.y === span.entry.y);
+    expect(result.cells[entry + 1]).toEqual(span.exit);
+    const alignment = result.cells[entry - 1];
+    const decision = result.cells[entry + 2];
+    const dx = Math.sign(span.exit.x - span.entry.x);
+    const dy = Math.sign(span.exit.y - span.entry.y);
+    expect(Math.abs(dx) + Math.abs(dy)).toBe(1);
+    expect(span.entry).toEqual({ x: alignment.x + dx, y: alignment.y + dy });
+    expect(decision).toEqual({ x: span.exit.x + dx, y: span.exit.y + dy });
+    expect(Math.abs(span.exit.x - span.entry.x) + Math.abs(span.exit.y - span.entry.y) - 1)
+      .toBeLessThanOrEqual(input.undergroundBeltReach!);
+  }
+  const all = [...(input.undergroundBelts ?? []), ...spans];
+  for (let first = 0; first < all.length; first++) {
+    const a = all[first];
+    for (const b of all.slice(first + 1)) {
+      for (const endpoint of [a.entry, a.exit])
+        expect([b.entry, b.exit]).not.toContainEqual(endpoint);
+      if (a.entry.y === a.exit.y && b.entry.y === b.exit.y && a.entry.y === b.entry.y)
+        expect(Math.max(Math.min(a.entry.x, a.exit.x), Math.min(b.entry.x, b.exit.x)))
+          .toBeGreaterThan(Math.min(Math.max(a.entry.x, a.exit.x), Math.max(b.entry.x, b.exit.x)));
+      if (a.entry.x === a.exit.x && b.entry.x === b.exit.x && a.entry.x === b.entry.x)
+        expect(Math.max(Math.min(a.entry.y, a.exit.y), Math.min(b.entry.y, b.exit.y)))
+          .toBeGreaterThan(Math.min(Math.max(a.entry.y, a.exit.y), Math.max(b.entry.y, b.exit.y)));
+    }
+  }
+  expect(result.steps).toBe(steps);
+  expect(result.cost).toBe(steps + result.cells.slice(1).reduce((cost, { x, y }) =>
+    cost + (input.penalties?.[y * input.width + x] ?? 0), 0));
+}
+
+describe('findPath underground belts', () => {
+  it.each([
+    ['east', { x: 0, y: 0 }, { x: 6, y: 0 }, 7, 1],
+    ['west', { x: 6, y: 0 }, { x: 0, y: 0 }, 7, 1],
+    ['south', { x: 0, y: 0 }, { x: 0, y: 6 }, 1, 7],
+    ['north', { x: 0, y: 6 }, { x: 0, y: 0 }, 1, 7],
+  ] as const)('tunnels beneath obstacles travelling %s', (direction, start, goal, width, height) => {
+    const input = { ...grid(width, height, start, goal), undergroundBeltReach: 3,
+      startDirection: direction, goalDirection: direction };
+    input.blocked[3] = input.blocked[4] = 1;
+    expect(findPath({ ...input, undergroundBeltReach: undefined })).toEqual({ kind: 'no-path' });
+    const result = findPath(input);
+    expect(result).toMatchObject({ kind: 'found', cost: 6, steps: 6, turns: 0 });
+    if (result.kind !== 'found') return;
+    expect(result.undergroundBelts).toHaveLength(1);
+    expectValidUndergroundPath(input, result);
+    expect(findPath(input)).toEqual(result);
+  });
+
+  it('counts only hidden cells against the configurable reach', () => {
+    const input = { ...grid(7, 1, { x: 0, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 2 };
+    input.blocked[3] = input.blocked[4] = 1;
+    expect(findPath({ ...input, undergroundBeltReach: 1 })).toEqual({ kind: 'no-path' });
+    expect(findPath(input)).toMatchObject({ kind: 'found', undergroundBelts: [
+      { entry: { x: 2, y: 0 }, exit: { x: 5, y: 0 } },
+    ] });
+  });
+
+  it('permits zero hidden tiles but still requires four surface cells', () => {
+    const input = { ...grid(4, 1, { x: 0, y: 0 }, { x: 3, y: 0 }), undergroundBeltReach: 0 };
+    const result = findPath(input);
+    expect(result).toMatchObject({ kind: 'found', undergroundBelts: [
+      { entry: { x: 1, y: 0 }, exit: { x: 2, y: 0 } },
+    ] });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+    expect(findPath({ ...grid(3, 1, { x: 0, y: 0 }, { x: 2, y: 0 }), undergroundBeltReach: 0 }))
+      .toMatchObject({ kind: 'found', undergroundBelts: [] });
+  });
+
+  it('requires clear entry, exit, and a straight step beyond the exit', () => {
+    const input = { ...grid(7, 1, { x: 0, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 12 };
+    for (const obstacles of [[1], [5], [4, 5]]) {
+      input.blocked.fill(0);
+      for (const cell of obstacles) input.blocked[cell] = 1;
+      expect(findPath(input)).toEqual({ kind: 'no-path' });
+    }
+    const short = { ...grid(5, 1, { x: 0, y: 0 }, { x: 4, y: 0 }), undergroundBeltReach: 12 };
+    short.blocked[2] = short.blocked[3] = 1;
+    expect(findPath(short)).toEqual({ kind: 'no-path' });
+  });
+
+  it('turns on alignment and decision cells while keeping the tunnel straight', () => {
+    const input = { ...grid(3, 5, { x: 0, y: 0 }, { x: 2, y: 4 }), undergroundBeltReach: 2 };
+    input.blocked.fill(1);
+    for (const cell of [0, 1, 4, 10, 13, 14]) input.blocked[cell] = 0;
+    const result = findPath(input);
+    expect(result).toMatchObject({ kind: 'found', steps: 6, turns: 2, undergroundBelts: [
+      { entry: { x: 1, y: 1 }, exit: { x: 1, y: 3 } },
+    ] });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+    input.blocked[13] = 1;
+    expect(findPath(input)).toEqual({ kind: 'no-path' });
+  });
+
+  it('respects departure and arrival directions for tunnel moves', () => {
+    const input = { ...grid(7, 1, { x: 0, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 3 };
+    input.blocked[3] = input.blocked[4] = 1;
+    expect(findPath({ ...input, startDirection: 'west' })).toEqual({ kind: 'no-path' });
+    expect(findPath({ ...input, goalDirection: 'west' })).toEqual({ kind: 'no-path' });
+  });
+
+  it('charges distance and surface penalties, ignoring underground obstacle penalties', () => {
+    const input = { ...grid(7, 1, { x: 0, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 3,
+      penalties: Float64Array.from([0, 2, 100, 100, 100, 3, 4]) };
+    input.blocked[3] = input.blocked[4] = 1;
+    const result = findPath(input);
+    expect(result).toMatchObject({ kind: 'found', cost: 15, steps: 6, turns: 0 });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+  });
+
+  it('allows perpendicular underground crossings and surface travel over hidden spans', () => {
+    const input = { ...grid(7, 5, { x: 0, y: 2 }, { x: 6, y: 2 }), undergroundBeltReach: 3,
+      undergroundBelts: [{ entry: { x: 3, y: 0 }, exit: { x: 3, y: 4 } }] };
+    input.blocked.fill(1);
+    input.blocked.fill(0, 14, 21);
+    const surface = findPath({ ...input, undergroundBeltReach: undefined });
+    expect(surface).toMatchObject({ kind: 'found', steps: 6 });
+    input.blocked[17] = input.blocked[18] = 1;
+    const result = findPath(input);
+    expect(result).toMatchObject({ kind: 'found', steps: 6 });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+    expect(input.blocked[3]).toBe(1);
+  });
+
+  it.each([
+    [{ x: 3, y: 0 }, { x: 7, y: 0 }], // interleaved
+    [{ x: 3, y: 0 }, { x: 4, y: 0 }], // nested
+    [{ x: 4, y: 0 }, { x: 3, y: 0 }], // opposite direction
+    [{ x: 0, y: 0 }, { x: 7, y: 0 }], // containing
+  ])('rejects parallel overlap with a reserved pair %j -> %j', (entry, exit) => {
+    const input = { ...grid(8, 1, { x: 1, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 12,
+      undergroundBelts: [{ entry, exit }] };
+    input.blocked[3] = input.blocked[4] = 1;
+    expect(findPath(input)).toEqual({ kind: 'no-path' });
+  });
+
+  it('reserves existing endpoints without changing the supplied occupancy', () => {
+    const input = { ...grid(4, 1, { x: 0, y: 0 }, { x: 3, y: 0 }),
+      undergroundBelts: [{ entry: { x: 1, y: 0 }, exit: { x: 2, y: 0 } }] };
+    expect(findPath(input)).toEqual({ kind: 'no-path' });
+    expect([...input.blocked]).toEqual([0, 0, 0, 0]);
+    expect(findPath({ ...input, start: { x: 1, y: 0 } })).toEqual({ kind: 'no-path' });
+  });
+
+  it('supports identical endpoints, budgets, and overflowing costs', () => {
+    const input = { ...grid(7, 1, { x: 0, y: 0 }, { x: 6, y: 0 }), undergroundBeltReach: 3 };
+    const budget = { remaining: 1 };
+    expect(findPath(input, budget)).toEqual({ kind: 'budget-exhausted' });
+    expect(budget.remaining).toBe(0);
+    expect(findPath({ ...input, goal: input.start }, budget)).toMatchObject({
+      kind: 'found', cells: [input.start], undergroundBelts: [], steps: 0,
+    });
+    expect(findPath({ ...input, penalties: new Float64Array(7).fill(Number.MAX_VALUE) }))
+      .toMatchObject({ kind: 'invalid' });
+  });
+
+  it('validates reach and reserved tunnel geometry', () => {
+    const input = grid(8, 8, { x: 0, y: 0 }, { x: 7, y: 7 });
+    for (const undergroundBeltReach of [-1, 1.5, Infinity, NaN])
+      expect(findPath({ ...input, undergroundBeltReach })).toMatchObject({ kind: 'invalid' });
+    const span = (a: number, b: number): UndergroundBeltSpan => ({ entry: { x: a, y: 1 }, exit: { x: b, y: 1 } });
+    for (const undergroundBelts of [
+      [{ entry: { x: 1, y: 1 }, exit: { x: 2, y: 2 } }],
+      [span(1, 1)], [span(-1, 2)], [span(1, 8)], [span(1.5, 2)],
+      [span(1, 4), span(3, 6)], [span(1, 6), span(3, 4)], [span(1, 3), span(3, 6)],
+    ]) expect(findPath({ ...input, undergroundBelts })).toMatchObject({ kind: 'invalid' });
   });
 });
 

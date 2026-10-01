@@ -1,8 +1,16 @@
+import { Frontier } from './path-search-frontier.ts';
+import { findUndergroundPath, validUndergroundInput } from './underground-path-search.ts';
 import type { RoutingDebugEntity, RoutingDebugState } from '../../boot/url-handler.tsx';
 
 export interface PathCell {
   x: number;
   y: number;
+}
+
+/** Ordered endpoints of a straight underground belt; hidden tiles have no surface occupancy. */
+export interface UndergroundBeltSpan {
+  entry: PathCell;
+  exit: PathCell;
 }
 
 export type PathDirection = 'east' | 'south' | 'west' | 'north';
@@ -19,10 +27,25 @@ export interface PathSearchInput {
   /** Optional travel directions on departure from start and arrival at goal. */
   startDirection?: PathDirection;
   goalDirection?: PathDirection;
+  /** Maximum hidden tiles between underground endpoints. Absent disables underground moves. */
+  undergroundBeltReach?: number;
+  /** Existing pairs: their endpoints block the surface and collinear spans cannot overlap. */
+  undergroundBelts?: readonly UndergroundBeltSpan[];
 }
 
 export type PathSearchResult =
-  | { kind: 'found'; cells: PathCell[]; cost: number; steps: number; turns: number }
+  | {
+      kind: 'found';
+      /** Ordered surface cells, including endpoints; underground interiors are omitted. */
+      cells: PathCell[];
+      /** Pairs placed by this path, in travel order. Present when underground routing is enabled. */
+      undergroundBelts?: UndergroundBeltSpan[];
+      /** Distance travelled plus penalties on newly occupied surface cells only. */
+      cost: number;
+      /** Distance travelled, including underground interiors. */
+      steps: number;
+      turns: number;
+    }
   | { kind: 'no-path' }
   | { kind: 'budget-exhausted' }
   | { kind: 'invalid'; message: string };
@@ -199,61 +222,6 @@ export function normalizeRoutingDebugState(
     : normalized;
 }
 
-type Entry = {
-  state: number;
-  cost: number;
-  steps: number;
-  turns: number;
-  estimate: number;
-  estimatedSteps: number;
-};
-
-function precedes(a: Entry, b: Entry): boolean {
-  return (
-    a.estimate < b.estimate ||
-    (a.estimate === b.estimate &&
-      (a.estimatedSteps < b.estimatedSteps ||
-        (a.estimatedSteps === b.estimatedSteps &&
-          (a.turns < b.turns ||
-            (a.turns === b.turns &&
-              (a.steps > b.steps || (a.steps === b.steps && a.state < b.state)))))))
-  );
-}
-
-/** Binary min-heap; obsolete entries are discarded when popped. */
-class Frontier {
-  private entries: Entry[] = [];
-
-  push(entry: Entry): void {
-    let index = this.entries.length;
-    this.entries.push(entry);
-    while (index > 0) {
-      const parent = (index - 1) >> 1;
-      if (!precedes(entry, this.entries[parent])) break;
-      this.entries[index] = this.entries[parent];
-      index = parent;
-    }
-    this.entries[index] = entry;
-  }
-
-  pop(): Entry | undefined {
-    const first = this.entries[0];
-    const last = this.entries.pop();
-    if (!last || !this.entries.length) return first;
-    let index = 0;
-    while (index * 2 + 1 < this.entries.length) {
-      let child = index * 2 + 1;
-      if (child + 1 < this.entries.length && precedes(this.entries[child + 1], this.entries[child]))
-        child++;
-      if (!precedes(this.entries[child], last)) break;
-      this.entries[index] = this.entries[child];
-      index = child;
-    }
-    this.entries[index] = last;
-    return first;
-  }
-}
-
 /**
  * Four-neighbor A*: minimize cost, then steps, then turns. Manhattan distance
  * lower-bounds remaining cost and steps; zero lower-bounds remaining turns. Incoming heading is part of
@@ -264,13 +232,16 @@ export function findPath(input: PathSearchInput, budget?: PathSearchBudget): Pat
   const { width, height, blocked, penalties, start, goal, startDirection, goalDirection } = input;
   if (
     !validPathGrid(input) ||
+    !validUndergroundInput(input) ||
     !inside(start, width, height) ||
     !inside(goal, width, height) ||
     (startDirection !== undefined && !directions.includes(startDirection)) ||
     (goalDirection !== undefined && !directions.includes(goalDirection)) ||
     (budget !== undefined && (!Number.isSafeInteger(budget.remaining) || budget.remaining < 0))
   )
-    return { kind: 'invalid', message: 'Invalid path search grid, endpoints, or directions.' };
+    return { kind: 'invalid', message: 'Invalid path search grid, endpoints, directions, or underground belts.' };
+  if (input.undergroundBeltReach !== undefined || input.undergroundBelts?.length)
+    return findUndergroundPath(input, budget);
   const startCell = start.y * width + start.x;
   const goalCell = goal.y * width + goal.x;
   if (blocked[startCell] || blocked[goalCell]) return { kind: 'no-path' };

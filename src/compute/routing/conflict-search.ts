@@ -15,6 +15,7 @@ import type {
 } from './types.ts';
 
 export const DEFAULT_ROUTING_OPTIONS = {
+  reservationFirst: true,
   maxPathStates: 2_000_000,
   maxNodes: 4_096,
   maxReservationStates: 50_000,
@@ -62,6 +63,7 @@ export function solveConflictRouting(
   options: RoutingOptions = {},
 ): RoutingResult {
   const { width, height } = input;
+  const reservationFirst = options.reservationFirst ?? DEFAULT_ROUTING_OPTIONS.reservationFirst;
   const maxPathStates = options.maxPathStates ?? DEFAULT_ROUTING_OPTIONS.maxPathStates;
   const maxNodes = options.maxNodes ?? DEFAULT_ROUTING_OPTIONS.maxNodes;
   const maxReservationStates =
@@ -70,6 +72,7 @@ export function solveConflictRouting(
   if (
     !validPathGrid(input) ||
     !Array.isArray(input.routes) ||
+    typeof reservationFirst !== 'boolean' ||
     input.routes.length > width * height ||
     !Number.isSafeInteger(maxPathStates) ||
     maxPathStates < 0 ||
@@ -81,7 +84,7 @@ export function solveConflictRouting(
     costSlack < 0 ||
     costSlack > 1
   )
-    return { kind: 'invalid', message: 'Invalid routing grid, requests, or search budgets.' };
+    return { kind: 'invalid', message: 'Invalid routing grid, requests, or search options.' };
 
   const ids = new Set<string>();
   for (const route of input.routes) {
@@ -229,7 +232,9 @@ export function solveConflictRouting(
   // Reservation failures are heuristic, so leave most of the shared work budget for CBS.
   // Separate counters let a reservation pass stop without exhausting the overall solve.
   const reservationAllowance =
-    maxNodes === 0 ? 0 : Math.min(maxReservationStates, Math.floor(budget.remaining / 4));
+    !reservationFirst || maxNodes === 0
+      ? 0
+      : Math.min(maxReservationStates, Math.floor(budget.remaining / 4));
   if (reservationAllowance > 0) {
     const reservationBudget = { remaining: reservationAllowance };
     const reservation = findReservationRoutes(rootPaths, width, search, reservationBudget);

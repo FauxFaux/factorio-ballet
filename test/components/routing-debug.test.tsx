@@ -25,6 +25,91 @@ describe('RoutingDebug', () => {
     vi.restoreAllMocks();
   });
 
+  it('applies strategy and all search budgets together, persists them, and resets the defaults', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      width: 9,
+      height: 9,
+      entities: [
+        { kind: 'source', x: 1, y: 4, direction: 'east', item: 'iron', rate: 5 },
+        { kind: 'sink', x: 7, y: 4, direction: 'east', item: 'iron', rate: 3 },
+      ],
+    };
+    const solver = vi.spyOn(routingSolver, 'solveRoutingDebug');
+    render(<Example initial={initial} />);
+    const strategy = screen.getByRole('combobox', { name: 'Routing strategy' });
+    const total = screen.getByRole('spinbutton', { name: 'Total A* states' });
+    const conflicts = screen.getByRole('spinbutton', { name: 'Conflict search nodes' });
+    const reservations = screen.getByRole('spinbutton', { name: 'Reservation A* states' });
+    expect((strategy as HTMLSelectElement).value).toBe('reservation-first');
+    expect((total as HTMLInputElement).value).toBe('2000000');
+    expect((conflicts as HTMLInputElement).value).toBe('4096');
+    expect((reservations as HTMLInputElement).value).toBe('50000');
+    const calls = solver.mock.calls.length;
+    await user.selectOptions(strategy, 'conflict-only');
+    for (const [field, value] of [
+      [total, '0'],
+      [conflicts, '100'],
+      [reservations, '1000'],
+    ] as const) {
+      await user.clear(field);
+      await user.type(field, value);
+    }
+    expect(solver.mock.calls).toHaveLength(calls);
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    expect(screen.getByLabelText('Routing result').textContent).toContain(
+      'Routing search limit reached',
+    );
+    const rd = JSON.parse(screen.getByRole('status').textContent!);
+    expect(rd).toEqual({
+      ...initial,
+      routingOptions: {
+        reservationFirst: false,
+        maxPathStates: 0,
+        maxNodes: 100,
+        maxReservationStates: 1000,
+      },
+    });
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd };
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+    await user.click(screen.getByRole('button', { name: 'Reset routing defaults' }));
+    expect((strategy as HTMLSelectElement).value).toBe('reservation-first');
+    expect((total as HTMLInputElement).value).toBe('2000000');
+    expect((conflicts as HTMLInputElement).value).toBe('4096');
+    expect((reservations as HTMLInputElement).value).toBe('50000');
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+  });
+
+  it('loads saved routing settings and rejects invalid budgets without running the solver', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      routingOptions: {
+        reservationFirst: false,
+        maxPathStates: 10_000,
+        maxNodes: 10,
+        maxReservationStates: 50,
+      },
+    };
+    const solver = vi.spyOn(routingSolver, 'solveRoutingDebug');
+    render(<Example initial={initial} />);
+    expect(
+      (screen.getByRole('combobox', { name: 'Routing strategy' }) as HTMLSelectElement).value,
+    ).toBe('conflict-only');
+    const input = screen.getByRole('spinbutton', { name: 'Reservation A* states' });
+    expect((input as HTMLInputElement).value).toBe('50');
+    const calls = solver.mock.calls.length;
+    for (const value of ['', '-1', '1.5', '9007199254740992']) {
+      await user.clear(input);
+      if (value) await user.type(input, value);
+      await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+      expect(solver.mock.calls).toHaveLength(calls);
+      expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+    }
+  });
+
   it('draws all paired paths without shared cells and leaves derived routes out of URL state', () => {
     const initial: RoutingDebugState = {
       width: 9,

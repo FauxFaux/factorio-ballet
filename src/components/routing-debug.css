@@ -61,7 +61,8 @@
 }
 
 .routing-debug-size,
-.routing-debug-entity-controls {
+.routing-debug-entity-controls,
+.routing-debug-search {
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
@@ -74,6 +75,25 @@
 
 .routing-debug-size {
   display: flex;
+}
+
+.routing-debug-search {
+  display: flex;
+  align-items: end;
+}
+
+.routing-debug-controls .routing-debug-search label {
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 0;
+}
+
+.routing-debug-controls .routing-debug-search input {
+  width: 10rem;
+}
+
+.routing-debug-search .routing-debug-hint {
+  flex-basis: 100%;
 }
 
 .routing-debug-controls label {

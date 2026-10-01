@@ -116,6 +116,19 @@ function feasible(input: RoutingInput): boolean {
 }
 
 describe('solveConflictRouting', () => {
+  it('can skip reservation passes without changing their configured budget', () => {
+    const input = crossing();
+    const result = solveConflictRouting(input, {
+      reservationFirst: false,
+      maxReservationStates: 50_000,
+    });
+    expectValid(input, result);
+    if (result.kind === 'found') {
+      expect(result.diagnostics.reservationPasses).toBe(0);
+      expect(result.diagnostics.expandedNodes).toBeGreaterThan(0);
+    }
+  });
+
   it('routes nested detours around an obstacle without exploring cell-by-cell conflicts', () => {
     const input = obstacleDetours();
     const result = solveConflictRouting(input);

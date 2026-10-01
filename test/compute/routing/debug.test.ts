@@ -17,6 +17,28 @@ const state: RoutingDebugState = {
 };
 
 describe('solveRoutingDebug', () => {
+  it('loads persisted strategy and budgets while allowing an explicit solver override', () => {
+    const saved: RoutingDebugState = {
+      ...state,
+      routingOptions: {
+        reservationFirst: false,
+        maxPathStates: 0,
+        maxNodes: 12,
+        maxReservationStates: 30,
+      },
+    };
+    expect(solveRoutingDebug(saved)).toMatchObject({
+      kind: 'budget-exhausted',
+      diagnostics: { pathStates: 0, reservationPasses: 0 },
+    });
+    expect(solveRoutingDebug(saved, {})).toEqual(solveRoutingDebug(state));
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd: saved };
+    const parsed = parseEnvelope(`#${packEnvelope(packed)}`);
+    expect(parsed.kind).toBe('ok');
+    if (parsed.kind === 'ok')
+      expect(solveRoutingDebug(parsed.packed.rd!)).toEqual(solveRoutingDebug(saved));
+  });
+
   it('routes three pairs around a shared obstacle and reproduces their detours from the URL', () => {
     const detours: RoutingDebugState = {
       width: 64,

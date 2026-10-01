@@ -10,7 +10,7 @@ import type { RoutingOptions, RoutingRequest, RoutingResult, RoutingSolver } fro
  */
 export function solveRoutingDebug(
   state: RoutingDebugState,
-  options?: RoutingOptions,
+  options: RoutingOptions = state.routingOptions ?? {},
   solver: RoutingSolver = solveConflictRouting,
 ): RoutingResult {
   const normalized = normalizeRoutingDebugGrid(state);

@@ -7,6 +7,7 @@ import type { StaticData } from '../types.ts';
 import { legacyDatasetId } from '../dataset/catalogue.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
 import type { KernelMachineChoice } from '../compute/kernel-problems.ts';
+import type { RoutingOptions } from '../compute/routing/types.ts';
 import { CrashHandler } from './crash-handler.tsx';
 import { createIdTables, packCells, unpackCells, type IdTables, type PackedCell } from './pack.ts';
 import { packEnvelope, parseEnvelope, type PackedState } from './url-envelope.ts';
@@ -52,6 +53,8 @@ export interface RoutingDebugState {
   height?: number;
   entities?: RoutingDebugEntity[];
   rectangles?: RoutingDebugRectangle[];
+  /** Routing strategy and work budgets; absent options follow the solver defaults. */
+  routingOptions?: RoutingOptions;
 }
 
 export interface UrlState {

@@ -61,6 +61,9 @@ querying implementation classes or calling handlers directly. After any changes,
 `npm run format` before `npm run lint`. Run the focused test while developing, then `npm test`
 before handing off.
 
+Do not attempt to use the dev vite server, or a browser, unless explicitly asked; the sandbox setup
+makes it unreliable and slow compared to asking the user to validate a result.
+
 ## Commit & Pull Request Guidelines
 
 History uses Conventional Commits: `feat: add belt choice`, `fix(ui): preserve selection`, or

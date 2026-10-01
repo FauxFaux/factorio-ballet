@@ -12,6 +12,7 @@ import type { State } from '../ts.ts';
 import { solveRoutingDebug } from '../compute/routing/debug.ts';
 import type { RoutingDiagnostics } from '../compute/routing/types.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
+import { RoutingDebugSettings } from './routing-debug-settings.tsx';
 import {
   availableEntity,
   connectionIsClear,
@@ -65,8 +66,15 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const entities = useMemo(() => settings?.entities ?? [], [settings?.entities]);
   const rectangles = useMemo(() => settings?.rectangles ?? [], [settings?.rectangles]);
   const routing = useMemo(
-    () => solveRoutingDebug({ width, height, entities, rectangles }),
-    [width, height, entities, rectangles],
+    () =>
+      solveRoutingDebug({
+        width,
+        height,
+        entities,
+        rectangles,
+        routingOptions: settings?.routingOptions,
+      }),
+    [width, height, entities, rectangles, settings?.routingOptions],
   );
   const paths =
     routing.kind === 'found'
@@ -311,6 +319,15 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
             </fieldset>
           </form>
         </div>
+        <RoutingDebugSettings
+          options={settings?.routingOptions}
+          onApply={(routingOptions) => {
+            setSettings((previous) => {
+              const { routingOptions: _oldOptions, ...geometry } = previous ?? {};
+              return routingOptions ? { ...geometry, routingOptions } : geometry;
+            });
+          }}
+        />
         <div class="routing-debug-toolbar" role="toolbar" aria-label="Routing tools">
           {tools.map(({ mode: toolMode, label, Icon }) => (
             <button
@@ -338,6 +355,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
                       height,
                       entities,
                       rectangles,
+                      routingOptions: settings?.routingOptions,
                       routing,
                       routingMessage,
                       mode,

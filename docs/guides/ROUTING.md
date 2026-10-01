@@ -42,10 +42,18 @@ overlaps and an example pair and cell, and suggests moving endpoints or reserved
 translucent red X marks the reported conflict cell for either an exhausted search or a proven
 failure, without intercepting grid interactions.
 
+The page's Routing search settings select reservations followed by conflict search (the default) or
+conflict search alone, and configure all three budgets. `reservationFirst: false` skips the priority
+passes while retaining their configured allowance for later use. Applying settings reroutes the
+current geometry; editing drafts does not run the solver. Reset removes the overrides and restores
+the defaults. Budgets accept nonnegative safe integers, including zero.
+
 Requests are sorted by stable identities using code-point comparisons. Constraints, directions,
 queue tie-breaks, and budgets are deterministic; there is no randomness, wall-clock deadline, or
-dependency on previous solutions. Only user geometry is persisted in the URL, and unpacking it
-reproduces the derived layout for the same implementation and options.
+dependency on previous solutions. User geometry and applied `routingOptions` are persisted in the
+URL, without derived paths or diagnostics. `solveRoutingDebug` uses these stored options unless its
+caller supplies an explicit options argument. Old links without options retain the defaults, and
+unpacking a link reproduces the derived layout for the same implementation.
 
 `findPath` accepts optional nonnegative `Float64Array` cell penalties. Each move costs one plus the
 penalty at the entered cell; the start cell is not charged. It minimizes cost, then steps, then
