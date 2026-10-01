@@ -9,7 +9,7 @@ import {
 } from '@primer/octicons-react';
 import type { RoutingDebugEntity, RoutingDebugState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
-import { solveRoutingDebugPath } from '../compute/routing/path-search.ts';
+import { solveRoutingDebug } from '../compute/routing/debug.ts';
 import { RoutingDebugGrid } from './routing-debug-grid.tsx';
 import {
   availableEntity,
@@ -46,26 +46,29 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   const itemListId = useId();
   const entities = useMemo(() => settings?.entities ?? [], [settings?.entities]);
   const rectangles = useMemo(() => settings?.rectangles ?? [], [settings?.rectangles]);
-  const paths = useMemo(() => {
-    const byItem = new Map<string, { source: RoutingDebugEntity[]; sink: RoutingDebugEntity[] }>();
-    for (const entity of entities) {
-      let endpoints = byItem.get(entity.item);
-      if (!endpoints) {
-        endpoints = { source: [], sink: [] };
-        byItem.set(entity.item, endpoints);
-      }
-      endpoints[entity.kind].push(entity);
-    }
-    return [...byItem].flatMap(([item, { source, sink }]) => {
-      if (source.length !== 1 || sink.length !== 1) return [];
-      const result = solveRoutingDebugPath(
-        { width, height, entities, rectangles },
-        source[0],
-        sink[0],
-      );
-      return result.kind === 'found' ? [{ item, cells: result.cells }] : [];
-    });
-  }, [width, height, entities, rectangles]);
+  const routing = useMemo(
+    () => solveRoutingDebug({ width, height, entities, rectangles }),
+    [width, height, entities, rectangles],
+  );
+  const paths =
+    routing.kind === 'found'
+      ? routing.routes.map(({ id: item, cells }) => ({
+          item,
+          cells,
+          source: entities.find((entity) => entity.item === item && entity.kind === 'source')!,
+          sink: entities.find((entity) => entity.item === item && entity.kind === 'sink')!,
+        }))
+      : [];
+  const routingMessage =
+    routing.kind === 'invalid'
+      ? `Cannot route: ${routing.message}`
+      : routing.kind === 'no-solution'
+        ? 'No layout can connect all paired items without overlapping paths.'
+        : routing.kind === 'budget-exhausted'
+          ? 'Search limit reached before finding a layout. A valid layout may still exist.'
+          : paths.length === 0
+            ? 'Add one source and one sink for an item to route it.'
+            : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${routing.steps + paths.length} path tiles.`;
   const selected = entities.find((entity) => entity.x === selection?.x && entity.y === selection.y);
   const showEditor = mode === 'source' || mode === 'sink' || selected !== undefined;
 
@@ -319,6 +322,9 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
                   : 'Enter an item name and a rate greater than zero before placing.'}
         </p>
       </div>
+      <p class="routing-debug-hint" aria-label="Routing result" aria-live="polite">
+        {routingMessage}
+      </p>
       <RoutingDebugGrid
         width={width}
         height={height}

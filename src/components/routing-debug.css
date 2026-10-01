@@ -224,6 +224,10 @@
   stroke-linejoin: round;
 }
 
+.routing-debug-path-item {
+  stroke-width: 2px;
+}
+
 .routing-debug-entity[data-kind="sink"] .routing-debug-entity-square {
   fill: #4b5563;
 }

@@ -1,0 +1,56 @@
+import type { PathCell, PathSearchGrid, PathSearchResult } from './path-search.ts';
+
+export interface RoutingRequest {
+  /** Stable, unique identity used for canonical ordering and result lookup. */
+  id: string;
+  start: PathCell;
+  goal: PathCell;
+}
+
+export interface RoutingInput extends PathSearchGrid {
+  routes: RoutingRequest[];
+}
+
+export interface RoutingOptions {
+  /** Shared A* expansion budget, independent of wall-clock time. */
+  maxPathStates?: number;
+  /** Maximum conflicting collections expanded by the global search. */
+  maxNodes?: number;
+  /** Prefer fewer overlaps among collections within this fraction of the cheapest cost. */
+  costSlack?: number;
+}
+
+export interface RoutingConflict {
+  first: string;
+  second: string;
+  cell: PathCell;
+}
+
+export interface RoutingDiagnostics {
+  pathSearches: number;
+  pathStates: number;
+  expandedNodes: number;
+  generatedNodes: number;
+  /** Overlapping cell uses in the best provisional collection, when one was computed. */
+  remainingConflicts?: number;
+  conflict?: RoutingConflict;
+}
+
+export type RoutedPath = Extract<PathSearchResult, { kind: 'found' }> & { id: string };
+
+/** Only found results contain paths: provisional overlapping collections are never solutions. */
+export type RoutingResult =
+  | {
+      kind: 'found';
+      routes: RoutedPath[];
+      cost: number;
+      steps: number;
+      turns: number;
+      diagnostics: RoutingDiagnostics;
+    }
+  | { kind: 'no-solution'; diagnostics: RoutingDiagnostics }
+  | { kind: 'budget-exhausted'; diagnostics: RoutingDiagnostics }
+  | { kind: 'invalid'; message: string };
+
+/** Geometry/UI adapters depend on this contract, not a particular routing algorithm. */
+export type RoutingSolver = (input: RoutingInput, options?: RoutingOptions) => RoutingResult;

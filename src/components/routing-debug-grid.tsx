@@ -51,7 +51,12 @@ export function RoutingDebugGrid({
   height: number;
   entities: RoutingDebugEntity[];
   rectangles: RoutingDebugRectangle[];
-  paths: { item: string; cells: PathCell[] }[];
+  paths: {
+    item: string;
+    cells: PathCell[];
+    source: RoutingDebugPosition;
+    sink: RoutingDebugPosition;
+  }[];
   selection: { x: number; y: number } | undefined;
   mode: RoutingDebugMode;
   onClickTile: (x: number, y: number) => void;
@@ -163,19 +168,30 @@ export function RoutingDebugGrid({
           </g>
         );
       })}
-      {paths.map(({ item, cells }) => (
-        <polyline
-          key={item}
-          class="routing-debug-path"
-          role="img"
-          aria-label={`Computed path for ${item}`}
-          points={(cells.length === 1 ? [cells[0], cells[0]] : cells)
-            .map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
-            .join(' ')}
-          stroke={CARBON_LIGHT.Yellow50}
-          pointer-events="none"
-        />
-      ))}
+      {paths.map(({ item, cells, source, sink }) => {
+        const points = [source, ...cells, sink]
+          .map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
+          .join(' ');
+        return (
+          <g key={item} pointer-events="none">
+            <polyline
+              class="routing-debug-path"
+              role="img"
+              aria-label={`Computed path for ${item}`}
+              points={points}
+              stroke={CARBON_LIGHT.Yellow50}
+              pointer-events="none"
+            />
+            <polyline
+              class="routing-debug-path routing-debug-path-item"
+              points={points}
+              stroke={itemColour(item)}
+              vector-effect="non-scaling-stroke"
+              aria-hidden="true"
+            />
+          </g>
+        );
+      })}
       {entities.map((entity) => {
         const label = `${entity.kind === 'source' ? 'Source' : 'Sink'} at (${entity.x}, ${entity.y}), ${entity.item}, ${entity.rate} items/s, ${entity.direction}`;
         const position =

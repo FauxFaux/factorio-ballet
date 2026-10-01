@@ -13,11 +13,18 @@ function grid(width: number, height: number, start: PathCell, goal: PathCell): P
   return { width, height, start, goal, blocked: new Uint8Array(width * height) };
 }
 
-// Independent exhaustive simple-path oracle for small grids, ordered by length then bends.
-function enumerate(input: PathSearchInput): [number, number] | undefined {
-  let best: [number, number] | undefined;
+// Independent exhaustive simple-path oracle, ordered by cost, length, then bends.
+function enumerate(input: PathSearchInput): [number, number, number] | undefined {
+  let best: [number, number, number] | undefined;
   const visited = new Set<number>();
-  const walk = (x: number, y: number, steps: number, turns: number, heading: number) => {
+  const walk = (
+    x: number,
+    y: number,
+    cost: number,
+    steps: number,
+    turns: number,
+    heading: number,
+  ) => {
     const cell = y * input.width + x;
     if (
       x < 0 ||
@@ -28,9 +35,14 @@ function enumerate(input: PathSearchInput): [number, number] | undefined {
       visited.has(cell)
     )
       return;
-    if (best && steps > best[0]) return;
+    if (best && cost > best[0]) return;
     if (x === input.goal.x && y === input.goal.y) {
-      if (!best || steps < best[0] || (steps === best[0] && turns < best[1])) best = [steps, turns];
+      if (
+        !best ||
+        cost < best[0] ||
+        (cost === best[0] && (steps < best[1] || (steps === best[1] && turns < best[2])))
+      )
+        best = [cost, steps, turns];
       return;
     }
     visited.add(cell);
@@ -43,6 +55,7 @@ function enumerate(input: PathSearchInput): [number, number] | undefined {
       walk(
         x + dx,
         y + dy,
+        cost + 1 + (input.penalties?.[(y + dy) * input.width + x + dx] ?? 0),
         steps + 1,
         turns + Number(heading !== -1 && heading !== direction),
         direction,
@@ -50,7 +63,7 @@ function enumerate(input: PathSearchInput): [number, number] | undefined {
     );
     visited.delete(cell);
   };
-  walk(input.start.x, input.start.y, 0, 0, -1);
+  walk(input.start.x, input.start.y, 0, 0, 0, -1);
   return best;
 }
 
@@ -86,10 +99,55 @@ describe('findPath', () => {
       const actual = findPath(input);
       if (!expected) expect(actual).toEqual({ kind: 'no-path' });
       else {
-        expect(actual).toMatchObject({ kind: 'found', steps: expected[0], turns: expected[1] });
+        expect(actual).toMatchObject({
+          kind: 'found',
+          cost: expected[0],
+          steps: expected[1],
+          turns: expected[2],
+        });
         if (actual.kind === 'found') expectValidPath(input, actual.cells);
       }
     }
+  });
+
+  it('minimizes weighted cost, then length and turns, against exhaustive small-grid paths', () => {
+    for (let mask = 0; mask < 128; mask++) {
+      const input = {
+        ...grid(3, 3, { x: 0, y: 0 }, { x: 2, y: 2 }),
+        penalties: Float64Array.from({ length: 9 }, (_, index) => ((index * 5 + mask) % 7) / 2),
+      };
+      for (let cell = 1; cell < 8; cell++) input.blocked[cell] = (mask >> (cell - 1)) & 1;
+      const expected = enumerate(input);
+      const actual = findPath(input);
+      if (!expected) expect(actual).toEqual({ kind: 'no-path' });
+      else {
+        expect(actual).toMatchObject({
+          kind: 'found',
+          cost: expected[0],
+          steps: expected[1],
+          turns: expected[2],
+        });
+        if (actual.kind === 'found') expectValidPath(input, actual.cells);
+      }
+    }
+  });
+
+  it('shares a deterministic expansion budget and distinguishes exhaustion from no path', () => {
+    const input = grid(5, 5, { x: 0, y: 0 }, { x: 4, y: 4 });
+    const budget = { remaining: 1 };
+    expect(findPath(input, budget)).toEqual({ kind: 'budget-exhausted' });
+    expect(budget.remaining).toBe(0);
+    expect(findPath(input, budget)).toEqual({ kind: 'budget-exhausted' });
+    input.blocked[1] = input.blocked[5] = 1;
+    expect(findPath(input, { remaining: 1 })).toEqual({ kind: 'no-path' });
+  });
+
+  it('rejects overflowing path costs rather than returning an infinite score', () => {
+    const input = {
+      ...grid(3, 1, { x: 0, y: 0 }, { x: 2, y: 0 }),
+      penalties: new Float64Array(3).fill(Number.MAX_VALUE),
+    };
+    expect(findPath(input)).toMatchObject({ kind: 'invalid' });
   });
 
   it('takes detours around walls', () => {
@@ -120,7 +178,13 @@ describe('findPath', () => {
 
   it('returns one cell for identical endpoints and no path for blocked endpoints', () => {
     const input = grid(1, 1, { x: 0, y: 0 }, { x: 0, y: 0 });
-    expect(findPath(input)).toEqual({ kind: 'found', cells: [{ x: 0, y: 0 }], steps: 0, turns: 0 });
+    expect(findPath(input)).toEqual({
+      kind: 'found',
+      cells: [{ x: 0, y: 0 }],
+      cost: 0,
+      steps: 0,
+      turns: 0,
+    });
     input.blocked[0] = 1;
     expect(findPath(input)).toEqual({ kind: 'no-path' });
   });
@@ -134,6 +198,10 @@ describe('findPath', () => {
       { blocked: new Uint8Array(3) },
       { start: { x: -1, y: 0 } },
       { goal: { x: 1, y: NaN } },
+      { penalties: new Float64Array(3) },
+      { penalties: new Float64Array(4).fill(-1) },
+      { penalties: new Float64Array(4).fill(Infinity) },
+      { penalties: new Float64Array(4).fill(NaN) },
     ])
       expect(findPath({ ...input, ...patch })).toMatchObject({ kind: 'invalid' });
   });
@@ -190,6 +258,7 @@ describe('normalizeRoutingDebugState', () => {
     const result = solveRoutingDebugPath(geometry, source, sink);
     expect(result).toEqual({
       kind: 'found',
+      cost: 2,
       steps: 2,
       turns: 0,
       cells: [1, 2, 3].map((distance) => ({ x: 4 + distance * dx, y: 4 + distance * dy })),
@@ -202,6 +271,7 @@ describe('normalizeRoutingDebugState', () => {
     expect(solveRoutingDebugPath({ entities: [source, sink] }, source, sink)).toEqual({
       kind: 'found',
       cells: [{ x: 1, y: 1 }],
+      cost: 0,
       steps: 0,
       turns: 0,
     });

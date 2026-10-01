@@ -5,6 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { RoutingDebug } from '../../src/components/routing-debug.tsx';
+import * as routingSolver from '../../src/compute/routing/debug.ts';
 import type { RoutingDebugEntity, RoutingDebugState } from '../../src/boot/url-handler.tsx';
 import { packEnvelope, parseEnvelope } from '../../src/boot/url-envelope.ts';
 
@@ -22,6 +23,67 @@ describe('RoutingDebug', () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
+  });
+
+  it('draws all paired paths without shared cells and leaves derived routes out of URL state', () => {
+    const initial: RoutingDebugState = {
+      width: 9,
+      height: 9,
+      entities: [
+        { kind: 'source', x: 1, y: 4, direction: 'east', item: 'iron', rate: 5 },
+        { kind: 'sink', x: 7, y: 4, direction: 'east', item: 'iron', rate: 3 },
+        { kind: 'source', x: 4, y: 1, direction: 'south', item: 'copper', rate: 5 },
+        { kind: 'sink', x: 4, y: 7, direction: 'south', item: 'copper', rate: 3 },
+      ],
+    };
+    render(<Example initial={initial} />);
+    const paths = screen.getAllByRole('img', { name: /Computed path/ });
+    expect(paths).toHaveLength(2);
+    const cells = paths.flatMap((path) => path.getAttribute('points')!.split(' '));
+    expect(new Set(cells).size).toBe(cells.length);
+    expect(screen.getByLabelText('Routing result').textContent).toMatch(
+      /^2 routes, \d+ path tiles\.$/,
+    );
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+  });
+
+  it('explains an impossible global layout and omits its overlapping provisional paths', () => {
+    render(
+      <Example
+        initial={{
+          width: 5,
+          height: 5,
+          entities: [
+            { kind: 'source', x: 0, y: 2, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 4, y: 2, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'source', x: 2, y: 0, direction: 'south', item: 'copper', rate: 5 },
+            { kind: 'sink', x: 2, y: 4, direction: 'south', item: 'copper', rate: 5 },
+          ],
+          rectangles: [
+            { x: 0, y: 0, width: 2, height: 2 },
+            { x: 3, y: 0, width: 2, height: 2 },
+            { x: 0, y: 3, width: 2, height: 2 },
+            { x: 3, y: 3, width: 2, height: 2 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    expect(screen.getByLabelText('Routing result').textContent).toMatch(
+      /No layout can connect all paired items/,
+    );
+  });
+
+  it('describes a search limit without claiming that no layout exists', () => {
+    vi.spyOn(routingSolver, 'solveRoutingDebug').mockReturnValue({
+      kind: 'budget-exhausted',
+      diagnostics: { pathSearches: 1, pathStates: 1, expandedNodes: 0, generatedNodes: 0 },
+    });
+    render(<Example />);
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    expect(screen.getByLabelText('Routing result').textContent).toBe(
+      'Search limit reached before finding a layout. A valid layout may still exist.',
+    );
   });
 
   it('draws a dark yellow path around reserved space and other entities, respecting endpoint arrows', () => {
@@ -43,8 +105,10 @@ describe('RoutingDebug', () => {
       .getAttribute('points')!
       .split(' ')
       .map((point) => point.split(',').map(Number));
-    expect(cells[0]).toEqual([1.5, 1.5]);
-    expect(cells.at(-1)).toEqual([4.5, 1.5]);
+    expect(cells[0]).toEqual([0.5, 1.5]);
+    expect(cells[1]).toEqual([1.5, 1.5]);
+    expect(cells.at(-2)).toEqual([4.5, 1.5]);
+    expect(cells.at(-1)).toEqual([5.5, 1.5]);
     expect(cells.some(([, y]) => y >= 3.5)).toBe(true);
     for (const [x, y] of cells) {
       expect(x >= 2 && x < 4 && y < 3).toBe(false);
@@ -53,7 +117,7 @@ describe('RoutingDebug', () => {
     expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
   });
 
-  it('draws paths outside buildings between the tiles supplied by a source and feeding a sink', () => {
+  it('extends paths outside buildings to the source and sink centres', () => {
     render(
       <Example
         initial={{
@@ -72,7 +136,7 @@ describe('RoutingDebug', () => {
       />,
     );
     expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
-      '5.5,3.5 6.5,3.5 7.5,3.5',
+      '4.5,3.5 5.5,3.5 6.5,3.5 7.5,3.5 8.5,3.5',
     );
   });
 
@@ -88,7 +152,7 @@ describe('RoutingDebug', () => {
       />,
     );
     expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
-      '3.5,3.5 3.5,3.5',
+      '2.5,3.5 3.5,3.5 4.5,3.5',
     );
   });
 
@@ -159,13 +223,13 @@ describe('RoutingDebug', () => {
       />,
     );
     expect(screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points')).toBe(
-      '1.5,1.5 2.5,1.5 3.5,1.5',
+      '0.5,1.5 1.5,1.5 2.5,1.5 3.5,1.5 4.5,1.5',
     );
     await user.click(screen.getByRole('button', { name: /Source at/ }));
     await user.selectOptions(screen.getByRole('combobox', { name: 'Direction' }), 'south');
     expect(
       screen.getByRole('img', { name: 'Computed path for iron' }).getAttribute('points'),
-    ).toMatch(/^0\.5,2\.5 /);
+    ).toMatch(/^0\.5,1\.5 0\.5,2\.5 /);
     const item = screen.getByRole('combobox', { name: 'Provided item' });
     await user.clear(item);
     await user.type(item, 'copper');
