@@ -12,6 +12,8 @@ export interface RoutingInput extends PathSearchGrid {
 }
 
 export interface RoutingOptions {
+  /** Maximum hidden tiles between underground belt endpoints; absent disables tunnels. */
+  undergroundBeltReach?: number;
   /** Try deterministic whole-path reservation before conflict search; enabled by default. */
   reservationFirst?: boolean;
   /** Shared A* expansion budget, independent of wall-clock time. */

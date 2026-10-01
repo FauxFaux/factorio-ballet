@@ -16,7 +16,7 @@ const offsets = [
 ];
 
 /** Closed collinear spans conflict, including nested or oppositely directed pairs. */
-function collide(a: UndergroundBeltSpan, b: UndergroundBeltSpan): boolean {
+export function undergroundBeltsCollide(a: UndergroundBeltSpan, b: UndergroundBeltSpan): boolean {
   const horizontal = a.entry.y === a.exit.y;
   if (horizontal !== (b.entry.y === b.exit.y)) return false;
   const axis = horizontal ? 'x' : 'y';
@@ -31,24 +31,34 @@ function collide(a: UndergroundBeltSpan, b: UndergroundBeltSpan): boolean {
 export function validUndergroundInput(input: PathSearchInput): boolean {
   const { undergroundBeltReach: reach, undergroundBelts: belts, width, height } = input;
   if (reach !== undefined && (!Number.isSafeInteger(reach) || reach < 0)) return false;
-  if (belts === undefined) return true;
-  if (!Array.isArray(belts) || belts.length * 2 > width * height) return false;
-  const endpoints = new Set<number>();
-  for (const [index, belt] of belts.entries()) {
-    for (const point of [belt?.entry, belt?.exit]) {
-      if (
-        !point ||
-        !Number.isSafeInteger(point.x) ||
-        !Number.isSafeInteger(point.y) ||
-        point.x < 0 || point.x >= width || point.y < 0 || point.y >= height
-      ) return false;
-      const cell = point.y * width + point.x;
-      if (endpoints.has(cell)) return false;
-      endpoints.add(cell);
+  for (const [pairs, reserved] of [
+    [belts, true],
+    [input.forbiddenUndergroundBelts, false],
+  ] as const) {
+    if (pairs === undefined) continue;
+    if (!Array.isArray(pairs) || (reserved && pairs.length * 2 > width * height)) return false;
+    const endpoints = new Set<number>();
+    for (const [index, belt] of pairs.entries()) {
+      for (const point of [belt?.entry, belt?.exit]) {
+        if (
+          !point ||
+          !Number.isSafeInteger(point.x) ||
+          !Number.isSafeInteger(point.y) ||
+          point.x < 0 ||
+          point.x >= width ||
+          point.y < 0 ||
+          point.y >= height
+        )
+          return false;
+        const cell = point.y * width + point.x;
+        if (reserved && endpoints.has(cell)) return false;
+        endpoints.add(cell);
+      }
+      if ((belt.entry.x === belt.exit.x) === (belt.entry.y === belt.exit.y)) return false;
+      if (reserved)
+        for (let previous = 0; previous < index; previous++)
+          if (undergroundBeltsCollide(belt, pairs[previous])) return false;
     }
-    if ((belt.entry.x === belt.exit.x) === (belt.entry.y === belt.exit.y)) return false;
-    for (let previous = 0; previous < index; previous++)
-      if (collide(belt, belts[previous])) return false;
   }
   return true;
 }
@@ -86,7 +96,14 @@ export function findUndergroundPath(
   const goalCell = goal.y * width + goal.x;
   if (blocked[startCell] || blocked[goalCell]) return { kind: 'no-path' };
   if (startCell === goalCell)
-    return { kind: 'found', cells: [{ ...start }], undergroundBelts: [], cost: 0, steps: 0, turns: 0 };
+    return {
+      kind: 'found',
+      cells: [{ ...start }],
+      undergroundBelts: [],
+      cost: 0,
+      steps: 0,
+      turns: 0,
+    };
 
   const distance = (cell: number) => {
     const { x, y } = point(cell);
@@ -96,9 +113,19 @@ export function findUndergroundPath(
   const best = new Map<string, Label>();
   const frontier = new Frontier();
   const initial: Label = {
-    state: 0, cell: startCell, direction: -1, parent: -1, surface: [startCell],
-    occupied: [startCell], belts: [], key: '', cost: 0, steps: 0, turns: 0,
-    estimate: distance(startCell), estimatedSteps: distance(startCell),
+    state: 0,
+    cell: startCell,
+    direction: -1,
+    parent: -1,
+    surface: [startCell],
+    occupied: [startCell],
+    belts: [],
+    key: '',
+    cost: 0,
+    steps: 0,
+    turns: 0,
+    estimate: distance(startCell),
+    estimatedSteps: distance(startCell),
   };
   labels.push(initial);
   best.set(initial.key, initial);
@@ -118,19 +145,28 @@ export function findUndergroundPath(
         if (label.parent === -1) break;
       }
       return {
-        kind: 'found', cells: moves.reverse().flat().map(point),
-        undergroundBelts: current.belts, cost: current.cost, steps: current.steps, turns: current.turns,
+        kind: 'found',
+        cells: moves.reverse().flat().map(point),
+        undergroundBelts: current.belts,
+        cost: current.cost,
+        steps: current.steps,
+        turns: current.turns,
       };
     }
     const { x, y } = point(current.cell);
     for (const [direction, offset] of offsets.entries()) {
-      if (current.parent === -1 && input.startDirection && directions[direction] !== input.startDirection)
+      if (
+        current.parent === -1 &&
+        input.startDirection &&
+        directions[direction] !== input.startDirection
+      )
         continue;
       const cellAt = (length: number): number | undefined => {
         const nextX = x + offset.x * length;
         const nextY = y + offset.y * length;
         return nextX < 0 || nextX >= width || nextY < 0 || nextY >= height
-          ? undefined : nextY * width + nextX;
+          ? undefined
+          : nextY * width + nextX;
       };
       const next = cellAt(1);
       if (next === undefined || blocked[next] || current.occupied.includes(next)) continue;
@@ -145,29 +181,67 @@ export function findUndergroundPath(
           const exit = cellAt(length - 1)!;
           surface = [next, exit, decision];
           if (next === goalCell || exit === goalCell) continue;
-          belt = { entry: point(next), exit: point(exit) };
-          if (existing.some((other) => collide(belt!, other)) || current.belts.some((other) => collide(belt!, other)))
+          const candidate = { entry: point(next), exit: point(exit) };
+          if (
+            input.forbiddenUndergroundBelts?.some((other) => {
+              const otherEntry = other.entry.y * width + other.entry.x;
+              const otherExit = other.exit.y * width + other.exit.x;
+              return (
+                (next === otherEntry && exit === otherExit) ||
+                (next === otherExit && exit === otherEntry)
+              );
+            }) ||
+            existing.some((other) => undergroundBeltsCollide(candidate, other)) ||
+            current.belts.some((other) => undergroundBeltsCollide(candidate, other))
+          )
             continue;
+          belt = candidate;
         }
         if (surface.some((cell) => blocked[cell] || current.occupied.includes(cell))) continue;
-        if (decision === goalCell && input.goalDirection && directions[direction] !== input.goalDirection)
+        if (
+          decision === goalCell &&
+          input.goalDirection &&
+          directions[direction] !== input.goalDirection
+        )
           continue;
         const steps = current.steps + length;
-        const cost = current.cost + length + surface.reduce((sum, cell) => sum + (penalties?.[cell] ?? 0), 0);
+        const cost =
+          current.cost + length + surface.reduce((sum, cell) => sum + (penalties?.[cell] ?? 0), 0);
         if (!Number.isFinite(cost))
           return { kind: 'invalid', message: 'Path costs exceed the numeric range.' };
-        const turns = current.turns + Number(current.direction !== -1 && current.direction !== direction);
+        const turns =
+          current.turns + Number(current.direction !== -1 && current.direction !== direction);
         const occupied = [...current.occupied, ...surface].sort((a, b) => a - b);
         const belts = belt ? [...current.belts, belt] : current.belts;
-        const tunnels = belts.map(({ entry, exit }) => [entry.y * width + entry.x, exit.y * width + exit.x].sort((a, b) => a - b).join(':')).sort().join(';');
+        const tunnels = belts
+          .map(({ entry, exit }) =>
+            [entry.y * width + entry.x, exit.y * width + exit.x].sort((a, b) => a - b).join(':'),
+          )
+          .sort()
+          .join(';');
         const key = `${decision}/${direction}/${occupied.join(',')}/${tunnels}`;
         const previous = best.get(key);
-        if (previous && (previous.cost < cost || (previous.cost === cost && (previous.steps < steps || (previous.steps === steps && previous.turns <= turns)))))
+        if (
+          previous &&
+          (previous.cost < cost ||
+            (previous.cost === cost &&
+              (previous.steps < steps || (previous.steps === steps && previous.turns <= turns))))
+        )
           continue;
         const label: Label = {
-          state: labels.length, cell: decision, direction, parent: current.state, surface,
-          occupied, belts, key, cost, steps, turns,
-          estimate: cost + distance(decision), estimatedSteps: steps + distance(decision),
+          state: labels.length,
+          cell: decision,
+          direction,
+          parent: current.state,
+          surface,
+          occupied,
+          belts,
+          key,
+          cost,
+          steps,
+          turns,
+          estimate: cost + distance(decision),
+          estimatedSteps: steps + distance(decision),
         };
         labels.push(label);
         best.set(key, label);

@@ -3,7 +3,9 @@ import {
   validPathGrid,
   type PathSearchBudget,
   type PathSearchResult,
+  type UndergroundBeltSpan,
 } from './path-search.ts';
+import { undergroundBeltsCollide } from './underground-path-search.ts';
 import { findReservationRoutes } from './reservation-search.ts';
 import type {
   RoutedPath,
@@ -25,12 +27,18 @@ export const DEFAULT_ROUTING_OPTIONS = {
 interface Node {
   serial: number;
   constraints: number[][];
+  tunnelConstraints: UndergroundBeltSpan[][];
   routes: RoutedPath[];
   cost: number;
   steps: number;
   turns: number;
   overlaps: number;
-  conflict?: { first: number; second: number; cell: number };
+  conflict?: {
+    first: number;
+    second: number;
+    cell: number;
+    tunnels?: [UndergroundBeltSpan, UndergroundBeltSpan];
+  };
 }
 
 function cheaper(a: Node, b: Node): boolean {
@@ -50,7 +58,9 @@ function fewerConflicts(a: Node, b: Node): boolean {
 /**
  * Try whole-path reservation in a few deterministic orders before static conflict-based routing.
  * For the fallback, use deterministic focal selection and branch on one shared cell,
- * forbidding it for either route, and replan only that route. Other paths remain provisional.
+ * forbidding it for either route, and replan only that route. Parallel tunnel conflicts branch
+ * on excluding either offending endpoint pair. Reservations include both surface cells and tunnels.
+ * Other paths remain provisional.
  * This stops at the first valid layout; costSlack favors feasibility over proving optimality.
  * All budgets count work, never time, and all tie-breaks depend only on canonical input order.
  *
@@ -63,6 +73,7 @@ export function solveConflictRouting(
   options: RoutingOptions = {},
 ): RoutingResult {
   const { width, height } = input;
+  const { undergroundBeltReach } = options;
   const reservationFirst = options.reservationFirst ?? DEFAULT_ROUTING_OPTIONS.reservationFirst;
   const maxPathStates = options.maxPathStates ?? DEFAULT_ROUTING_OPTIONS.maxPathStates;
   const maxNodes = options.maxNodes ?? DEFAULT_ROUTING_OPTIONS.maxNodes;
@@ -71,6 +82,8 @@ export function solveConflictRouting(
   const costSlack = options.costSlack ?? DEFAULT_ROUTING_OPTIONS.costSlack;
   if (
     !validPathGrid(input) ||
+    (undergroundBeltReach !== undefined &&
+      (!Number.isSafeInteger(undergroundBeltReach) || undergroundBeltReach < 0)) ||
     !Array.isArray(input.routes) ||
     typeof reservationFirst !== 'boolean' ||
     input.routes.length > width * height ||
@@ -147,8 +160,10 @@ export function solveConflictRouting(
     index: number,
     constraints: number[],
     allowance: PathSearchBudget = budget,
+    undergroundBelts: UndergroundBeltSpan[] = [],
+    forbiddenUndergroundBelts: UndergroundBeltSpan[] = [],
   ): PathSearchResult => {
-    const key = constraints.join(',');
+    const key = JSON.stringify([constraints, undergroundBelts, forbiddenUndergroundBelts]);
     const cached = caches[index].get(key);
     if (cached) return cached;
     const request = requests[index];
@@ -158,7 +173,15 @@ export function solveConflictRouting(
     for (const cell of constraints) blocked[cell] = 1;
     diagnostics.pathSearches++;
     const result = findPath(
-      { ...input, blocked, start: request.start, goal: request.goal },
+      {
+        ...input,
+        blocked,
+        start: request.start,
+        goal: request.goal,
+        undergroundBeltReach,
+        undergroundBelts,
+        forbiddenUndergroundBelts,
+      },
       allowance,
     );
     for (const cell of constraints) blocked[cell] = base[cell];
@@ -178,9 +201,22 @@ export function solveConflictRouting(
 
   const owners = new Int32Array(width * height);
   const stamps = new Uint32Array(width * height);
-  const inspect = (routes: RoutedPath[], constraints: number[][]): Node => {
+  const inspect = (
+    routes: RoutedPath[],
+    constraints: number[][],
+    tunnelConstraints: UndergroundBeltSpan[][],
+  ): Node => {
     const serial = ++diagnostics.generatedNodes;
-    const node: Node = { serial, routes, constraints, cost: 0, steps: 0, turns: 0, overlaps: 0 };
+    const node: Node = {
+      serial,
+      routes,
+      constraints,
+      tunnelConstraints,
+      cost: 0,
+      steps: 0,
+      turns: 0,
+      overlaps: 0,
+    };
     for (const [index, route] of routes.entries()) {
       node.cost += route.cost;
       node.steps += route.steps;
@@ -193,6 +229,28 @@ export function solveConflictRouting(
         } else if (owners[cell] !== index) {
           node.overlaps++;
           node.conflict ??= { first: owners[cell], second: index, cell };
+        }
+      }
+    }
+    const tunnelRoutes = routes.flatMap((route, index) =>
+      route.undergroundBelts?.length ? [{ index, spans: route.undergroundBelts }] : [],
+    );
+    for (let left = 0; left < tunnelRoutes.length; left++) {
+      const { index: first, spans: firstSpans } = tunnelRoutes[left];
+      for (const { index: second, spans: secondSpans } of tunnelRoutes.slice(left + 1)) {
+        for (const a of firstSpans) {
+          for (const b of secondSpans) {
+            if (!undergroundBeltsCollide(a, b)) continue;
+            const horizontal = a.entry.y === a.exit.y;
+            const coordinate = horizontal
+              ? Math.max(Math.min(a.entry.x, a.exit.x), Math.min(b.entry.x, b.exit.x))
+              : Math.max(Math.min(a.entry.y, a.exit.y), Math.min(b.entry.y, b.exit.y));
+            const cell = horizontal
+              ? a.entry.y * width + coordinate
+              : coordinate * width + a.entry.x;
+            node.overlaps++;
+            node.conflict ??= { first, second, cell, tunnels: [a, b] };
+          }
         }
       }
     }
@@ -224,6 +282,7 @@ export function solveConflictRouting(
   const root = inspect(
     rootPaths,
     requests.map(() => []),
+    requests.map(() => []),
   );
   if (!Number.isFinite(root.cost))
     return { kind: 'invalid', message: 'Routing costs exceed the numeric range.' };
@@ -242,14 +301,14 @@ export function solveConflictRouting(
     diagnostics.reservationPasses = reservation.passes;
     if (reservation.kind === 'invalid') return { kind: 'invalid', message: reservation.message };
     if (reservation.kind === 'found') {
-      const candidate = inspect(reservation.routes, root.constraints);
+      const candidate = inspect(reservation.routes, root.constraints, root.tunnelConstraints);
       if (!Number.isFinite(candidate.cost))
         return { kind: 'invalid', message: 'Routing costs exceed the numeric range.' };
       if (!candidate.conflict) return found(candidate);
     }
   }
   const frontier = [root];
-  const seen = new Set<string>([JSON.stringify(root.constraints)]);
+  const seen = new Set<string>([JSON.stringify([root.constraints, root.tunnelConstraints])]);
   let best = root;
   diagnostics.remainingConflicts = root.overlaps;
   diagnostics.conflict = describeConflict(root);
@@ -266,20 +325,23 @@ export function solveConflictRouting(
     if (!node.conflict) return found(node);
     if (diagnostics.expandedNodes === maxNodes) return finish('budget-exhausted');
     diagnostics.expandedNodes++;
-    const { first, second, cell } = node.conflict;
+    const { first, second, cell, tunnels } = node.conflict;
     for (const index of [first, second]) {
       const constraints = [...node.constraints];
-      constraints[index] = [...constraints[index], cell].sort((a, b) => a - b);
-      const key = JSON.stringify(constraints);
+      const tunnelConstraints = [...node.tunnelConstraints];
+      if (tunnels)
+        tunnelConstraints[index] = [...tunnelConstraints[index], tunnels[index === first ? 0 : 1]];
+      else constraints[index] = [...constraints[index], cell].sort((a, b) => a - b);
+      const key = JSON.stringify([constraints, tunnelConstraints]);
       if (seen.has(key)) continue;
       seen.add(key);
-      const result = search(index, constraints[index]);
+      const result = search(index, constraints[index], budget, [], tunnelConstraints[index]);
       if (result.kind === 'invalid') return result;
       if (result.kind === 'budget-exhausted') return finish('budget-exhausted');
       if (result.kind === 'no-path') continue;
       const routes = [...node.routes];
       routes[index] = { ...result, id: requests[index].id };
-      const child = inspect(routes, constraints);
+      const child = inspect(routes, constraints, tunnelConstraints);
       if (!Number.isFinite(child.cost))
         return { kind: 'invalid', message: 'Routing costs exceed the numeric range.' };
       if (fewerConflicts(child, best)) {

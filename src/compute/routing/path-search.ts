@@ -31,6 +31,8 @@ export interface PathSearchInput {
   undergroundBeltReach?: number;
   /** Existing pairs: their endpoints block the surface and collinear spans cannot overlap. */
   undergroundBelts?: readonly UndergroundBeltSpan[];
+  /** Specific endpoint pairs excluded by conflict search, in either travel direction. */
+  forbiddenUndergroundBelts?: readonly UndergroundBeltSpan[];
 }
 
 export type PathSearchResult =
@@ -73,7 +75,7 @@ export type PathSearchNormalization =
   | { kind: 'ok'; input: PathSearchInput }
   | { kind: 'invalid'; message: string };
 
-/** Bound allocations and synchronous search work for user-controlled URL state. */
+/** Bound grid allocations for user-controlled URL state; placement histories use expansion budgets. */
 export const MAX_PATH_SEARCH_CELLS = 262_144;
 
 const directions: PathDirection[] = ['east', 'south', 'west', 'north'];
@@ -226,7 +228,9 @@ export function normalizeRoutingDebugState(
  * Four-neighbor A*: minimize cost, then steps, then turns. Manhattan distance
  * lower-bounds remaining cost and steps; zero lower-bounds remaining turns. Incoming heading is part of
  * each search state, since two visits to one cell can have different future turn costs.
- * Returns ordered path cells, including both endpoints, rather than the search's explored cells.
+ * Optional underground routing uses atomic straight spans and retains placement history to avoid
+ * surface reuse and parallel tunnel overlap. Supply a budget to bound that larger search space.
+ * Returns ordered surface path cells, including both endpoints, and any placed underground pairs.
  */
 export function findPath(input: PathSearchInput, budget?: PathSearchBudget): PathSearchResult {
   const { width, height, blocked, penalties, start, goal, startDirection, goalDirection } = input;
@@ -239,7 +243,10 @@ export function findPath(input: PathSearchInput, budget?: PathSearchBudget): Pat
     (goalDirection !== undefined && !directions.includes(goalDirection)) ||
     (budget !== undefined && (!Number.isSafeInteger(budget.remaining) || budget.remaining < 0))
   )
-    return { kind: 'invalid', message: 'Invalid path search grid, endpoints, directions, or underground belts.' };
+    return {
+      kind: 'invalid',
+      message: 'Invalid path search grid, endpoints, directions, or underground belts.',
+    };
   if (input.undergroundBeltReach !== undefined || input.undergroundBelts?.length)
     return findUndergroundPath(input, budget);
   const startCell = start.y * width + start.x;

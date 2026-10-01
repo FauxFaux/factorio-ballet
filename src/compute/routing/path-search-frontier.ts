@@ -52,4 +52,3 @@ export class Frontier {
     return first;
   }
 }
-

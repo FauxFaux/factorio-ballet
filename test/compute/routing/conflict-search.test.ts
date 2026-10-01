@@ -116,6 +116,116 @@ function feasible(input: RoutingInput): boolean {
 }
 
 describe('solveConflictRouting', () => {
+  it('allows perpendicular tunnels and tunnels beneath another route’s surface cells', () => {
+    const input: RoutingInput = {
+      width: 7,
+      height: 7,
+      blocked: new Uint8Array(49).fill(1),
+      routes: [
+        { id: 'a', start: { x: 0, y: 3 }, goal: { x: 6, y: 3 } },
+        { id: 'b', start: { x: 3, y: 0 }, goal: { x: 3, y: 6 } },
+      ],
+    };
+    for (let index = 0; index < 7; index++)
+      input.blocked[index * 7 + 3] = input.blocked[21 + index] = 0;
+    const result = solveConflictRouting(input, { undergroundBeltReach: 3 });
+    expect(result).toMatchObject({ kind: 'found', steps: 12 });
+    if (result.kind === 'found')
+      expect(result.routes.every((route) => route.undergroundBelts?.length)).toBe(true);
+    const mixed = {
+      ...input,
+      routes: [input.routes[0], { ...input.routes[1], goal: { x: 3, y: 3 } }],
+    };
+    expect(solveConflictRouting(mixed, { undergroundBeltReach: 3 })).toMatchObject({
+      kind: 'found',
+      steps: 9,
+    });
+  });
+
+  it.each([true, false])(
+    'rejects parallel tunnels sharing hidden cells with reservationFirst=%s',
+    (reservationFirst) => {
+      const input: RoutingInput = {
+        width: 11,
+        height: 1,
+        blocked: new Uint8Array(11),
+        routes: [
+          { id: 'a', start: { x: 0, y: 0 }, goal: { x: 8, y: 0 } },
+          { id: 'b', start: { x: 2, y: 0 }, goal: { x: 10, y: 0 } },
+        ],
+      };
+      const result = solveConflictRouting(input, {
+        undergroundBeltReach: 6,
+        reservationFirst,
+        maxPathStates: 20_000,
+      });
+      expect(result.kind).toBe('no-solution');
+      expect(result).toMatchObject({ diagnostics: { remainingConflicts: 1 } });
+    },
+  );
+
+  it.each([true, false])(
+    'reroutes a parallel tunnel conflict with reservationFirst=%s',
+    (reservationFirst) => {
+      const input: RoutingInput = {
+        width: 11,
+        height: 3,
+        blocked: new Uint8Array(33),
+        routes: [
+          { id: 'a', start: { x: 0, y: 1 }, goal: { x: 8, y: 1 } },
+          { id: 'b', start: { x: 2, y: 1 }, goal: { x: 10, y: 1 } },
+        ],
+      };
+      const result = solveConflictRouting(input, {
+        undergroundBeltReach: 6,
+        reservationFirst,
+        maxPathStates: 20_000,
+      });
+      expect(result.kind).toBe('found');
+      if (result.kind !== 'found') return;
+      expect(result.diagnostics.remainingConflicts).toBe(0);
+      if (reservationFirst) expect(result.diagnostics.reservationPasses).toBeGreaterThan(0);
+      else expect(result.diagnostics.expandedNodes).toBeGreaterThan(0);
+      const used = result.routes.flatMap((route) => route.cells.map(({ x, y }) => `${x},${y}`));
+      expect(new Set(used).size).toBe(used.length);
+      const a = result.routes[0].undergroundBelts ?? [];
+      const b = result.routes[1].undergroundBelts ?? [];
+      for (const first of a)
+        for (const second of b) {
+          const horizontal = first.entry.y === first.exit.y;
+          if (horizontal !== (second.entry.y === second.exit.y)) continue;
+          const axis = horizontal ? 'x' : 'y';
+          const line = horizontal ? 'y' : 'x';
+          if (first.entry[line] !== second.entry[line]) continue;
+          expect(
+            Math.max(
+              Math.min(first.entry[axis], first.exit[axis]),
+              Math.min(second.entry[axis], second.exit[axis]),
+            ),
+          ).toBeGreaterThan(
+            Math.min(
+              Math.max(first.entry[axis], first.exit[axis]),
+              Math.max(second.entry[axis], second.exit[axis]),
+            ),
+          );
+        }
+      expect(
+        solveConflictRouting(
+          { ...input, routes: [...input.routes].reverse() },
+          { undergroundBeltReach: 6, reservationFirst, maxPathStates: 20_000 },
+        ),
+      ).toEqual(result);
+    },
+  );
+
+  it('validates underground reach even without route requests', () => {
+    const input: RoutingInput = { width: 1, height: 1, blocked: new Uint8Array(1), routes: [] };
+    for (const undergroundBeltReach of [-1, 1.5, Infinity, NaN])
+      expect(solveConflictRouting(input, { undergroundBeltReach })).toMatchObject({
+        kind: 'invalid',
+      });
+  });
+
   it('can skip reservation passes without changing their configured budget', () => {
     const input = crossing();
     const result = solveConflictRouting(input, {

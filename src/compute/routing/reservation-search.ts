@@ -1,4 +1,4 @@
-import type { PathSearchBudget, PathSearchResult } from './path-search.ts';
+import type { PathSearchBudget, PathSearchResult, UndergroundBeltSpan } from './path-search.ts';
 import type { RoutedPath } from './types.ts';
 
 type ReservationResult =
@@ -15,7 +15,12 @@ type ReservationResult =
 export function findReservationRoutes(
   independent: RoutedPath[],
   width: number,
-  search: (index: number, constraints: number[], budget: PathSearchBudget) => PathSearchResult,
+  search: (
+    index: number,
+    constraints: number[],
+    budget: PathSearchBudget,
+    undergroundBelts: UndergroundBeltSpan[],
+  ) => PathSearchResult,
   budget: PathSearchBudget,
 ): ReservationResult {
   const canonical = independent.map((_, index) => index);
@@ -34,19 +39,21 @@ export function findReservationRoutes(
     seen.add(key);
     passes++;
     const occupied = new Set<number>();
+    const undergroundBelts: UndergroundBeltSpan[] = [];
     const routes: RoutedPath[] = [];
     let cost = 0;
     let steps = 0;
     let turns = 0;
     for (const index of order) {
       const constraints = [...occupied].sort((a, b) => a - b);
-      const result = search(index, constraints, budget);
+      const result = search(index, constraints, budget, undergroundBelts);
       if (result.kind === 'invalid') return { ...result, passes };
       if (result.kind !== 'found') break;
       routes[index] = { ...result, id: independent[index].id };
       cost += result.cost;
       steps += result.steps;
       turns += result.turns;
+      undergroundBelts.push(...(result.undergroundBelts ?? []));
       for (const { x, y } of result.cells) occupied.add(y * width + x);
     }
     if (

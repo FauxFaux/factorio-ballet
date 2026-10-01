@@ -78,9 +78,10 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
   );
   const paths =
     routing.kind === 'found'
-      ? routing.routes.map(({ id: item, cells }) => ({
+      ? routing.routes.map(({ id: item, cells, undergroundBelts }) => ({
           item,
           cells,
+          undergroundBelts,
           source: entities.find((entity) => entity.item === item && entity.kind === 'source')!,
           sink: entities.find((entity) => entity.item === item && entity.kind === 'sink')!,
         }))
@@ -94,7 +95,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
           ? routingLimitMessage(routing.diagnostics)
           : paths.length === 0
             ? 'Add one source and one sink for an item to route it.'
-            : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${routing.steps + paths.length} path tiles.`;
+            : `${paths.length} ${paths.length === 1 ? 'route' : 'routes'}, ${paths.reduce((total, path) => total + path.cells.length, 0)} path tiles.`;
   const selected = entities.find((entity) => entity.x === selection?.x && entity.y === selection.y);
   const showEditor = mode === 'source' || mode === 'sink' || selected !== undefined;
 

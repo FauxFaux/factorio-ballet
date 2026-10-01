@@ -1,7 +1,7 @@
 import { useId, useState } from 'preact/hooks';
 import type { RoutingDebugEntity, RoutingDebugRectangle } from '../boot/url-handler.tsx';
 import { CARBON_LIGHT } from '../compute/colours.ts';
-import type { PathCell } from '../compute/routing/path-search.ts';
+import type { PathCell, UndergroundBeltSpan } from '../compute/routing/path-search.ts';
 import type { RoutingConflict } from '../compute/routing/types.ts';
 import {
   pointerTile,
@@ -32,6 +32,37 @@ function itemColour(item: string): string {
   return palette[hash % palette.length]!;
 }
 
+function darkerColour(colour: string): string {
+  return (
+    '#' +
+    [1, 3, 5]
+      .map((offset) =>
+        Math.floor(Number.parseInt(colour.slice(offset, offset + 2), 16) / 2)
+          .toString(16)
+          .padStart(2, '0'),
+      )
+      .join('')
+  );
+}
+
+function pathSegments(cells: PathCell[], belts: UndergroundBeltSpan[]) {
+  const key = ({ x, y }: PathCell) => `${x},${y}`;
+  const tunnels = new Set(belts.map(({ entry, exit }) => `${key(entry)}/${key(exit)}`));
+  const segments: { cells: PathCell[]; underground: boolean }[] = [];
+  let surface = [cells[0]];
+  for (let index = 1; index < cells.length; index++) {
+    const previous = cells[index - 1];
+    const current = cells[index];
+    if (tunnels.has(`${key(previous)}/${key(current)}`)) {
+      if (surface.length > 1) segments.push({ cells: surface, underground: false });
+      segments.push({ cells: [previous, current], underground: true });
+      surface = [current];
+    } else surface.push(current);
+  }
+  if (surface.length > 1) segments.push({ cells: surface, underground: false });
+  return segments;
+}
+
 /** One SVG unit is one tile, with (0, 0) at the top-left corner. */
 export function RoutingDebugGrid({
   width,
@@ -56,6 +87,7 @@ export function RoutingDebugGrid({
   paths: {
     item: string;
     cells: PathCell[];
+    undergroundBelts?: UndergroundBeltSpan[];
     source: RoutingDebugPosition;
     sink: RoutingDebugPosition;
   }[];
@@ -171,27 +203,43 @@ export function RoutingDebugGrid({
           </g>
         );
       })}
-      {paths.map(({ item, cells, source, sink }) => {
-        const points = [source, ...cells, sink]
-          .map(({ x, y }) => `${x + 0.5},${y + 0.5}`)
-          .join(' ');
+      {paths.map(({ item, cells, source, sink, undergroundBelts = [] }) => {
+        const hasTunnels = undergroundBelts.length > 0;
         return (
-          <g key={item} pointer-events="none">
-            <polyline
-              class="routing-debug-path"
-              role="img"
-              aria-label={`Computed path for ${item}`}
-              points={points}
-              stroke={CARBON_LIGHT.Yellow50}
-              pointer-events="none"
-            />
-            <polyline
-              class="routing-debug-path routing-debug-path-item"
-              points={points}
-              stroke={itemColour(item)}
-              vector-effect="non-scaling-stroke"
-              aria-hidden="true"
-            />
+          <g
+            key={item}
+            pointer-events="none"
+            role={hasTunnels ? 'img' : undefined}
+            aria-label={hasTunnels ? `Computed path for ${item}` : undefined}
+          >
+            {pathSegments([source, ...cells, sink], undergroundBelts).map((segment, index) => {
+              const points = segment.cells.map(({ x, y }) => `${x + 0.5},${y + 0.5}`).join(' ');
+              const colour = (value: string) => (segment.underground ? darkerColour(value) : value);
+              const label = segment.underground
+                ? `Underground path for ${item} from (${segment.cells[0].x}, ${segment.cells[0].y}) to (${segment.cells[1].x}, ${segment.cells[1].y})`
+                : hasTunnels
+                  ? `Surface path for ${item} from (${segment.cells[0].x}, ${segment.cells[0].y}) to (${segment.cells.at(-1)!.x}, ${segment.cells.at(-1)!.y})`
+                  : `Computed path for ${item}`;
+              return (
+                <g key={index}>
+                  <polyline
+                    class="routing-debug-path"
+                    role={!hasTunnels ? 'img' : undefined}
+                    aria-label={label}
+                    points={points}
+                    stroke={colour(CARBON_LIGHT.Yellow50)}
+                    pointer-events="none"
+                  />
+                  <polyline
+                    class="routing-debug-path routing-debug-path-item"
+                    points={points}
+                    stroke={colour(itemColour(item))}
+                    vector-effect="non-scaling-stroke"
+                    aria-hidden="true"
+                  />
+                </g>
+              );
+            })}
           </g>
         );
       })}

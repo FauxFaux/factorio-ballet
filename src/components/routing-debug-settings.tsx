@@ -10,6 +10,8 @@ const budgets = [
 
 function draftOptions(options?: RoutingOptions) {
   return {
+    undergroundEnabled: options?.undergroundBeltReach !== undefined,
+    undergroundBeltReach: String(options?.undergroundBeltReach ?? 4),
     reservationFirst: options?.reservationFirst ?? DEFAULT_ROUTING_OPTIONS.reservationFirst,
     maxPathStates: String(options?.maxPathStates ?? DEFAULT_ROUTING_OPTIONS.maxPathStates),
     maxNodes: String(options?.maxNodes ?? DEFAULT_ROUTING_OPTIONS.maxNodes),
@@ -38,8 +40,22 @@ export function RoutingDebugSettings({
     <form
       onSubmit={(event) => {
         event.preventDefault();
+        const { undergroundBeltReach: _oldReach, ...otherOptions } = options ?? {};
+        const reach = Number(draft.undergroundBeltReach);
+        if (
+          draft.undergroundEnabled &&
+          (!draft.undergroundBeltReach.trim() || !Number.isSafeInteger(reach) || reach < 0)
+        ) {
+          setError(
+            'Belt reach must be a whole number of hidden tiles from zero to ' +
+              Number.MAX_SAFE_INTEGER +
+              '.',
+          );
+          return;
+        }
         const next = {
-          ...options,
+          ...otherOptions,
+          ...(draft.undergroundEnabled ? { undergroundBeltReach: reach } : {}),
           reservationFirst: draft.reservationFirst,
           maxPathStates: Number(draft.maxPathStates),
           maxNodes: Number(draft.maxNodes),
@@ -76,6 +92,33 @@ export function RoutingDebugSettings({
             <option value="conflict-only">Conflict search only</option>
           </select>
         </label>
+        <label>
+          Underground belts
+          <select
+            value={draft.undergroundEnabled ? 'enabled' : 'disabled'}
+            onChange={(event) =>
+              setDraft({ ...draft, undergroundEnabled: event.currentTarget.value === 'enabled' })
+            }
+          >
+            <option value="disabled">Disabled</option>
+            <option value="enabled">Enabled</option>
+          </select>
+        </label>
+        <label>
+          Belt reach (hidden tiles)
+          <input
+            type="number"
+            min="0"
+            max={Number.MAX_SAFE_INTEGER}
+            step="1"
+            required
+            disabled={!draft.undergroundEnabled}
+            value={draft.undergroundBeltReach}
+            onInput={(event) =>
+              setDraft({ ...draft, undergroundBeltReach: event.currentTarget.value })
+            }
+          />
+        </label>
         {budgets.map(({ key, label }) => (
           <label key={key}>
             {label}
@@ -101,6 +144,9 @@ export function RoutingDebugSettings({
         >
           Reset routing defaults
         </button>
+        <p class="routing-debug-hint">
+          Belt reach counts hidden tiles between the underground entry and exit.
+        </p>
         <p class="routing-debug-hint">
           Reservation states count toward the total A* budget and use at most a quarter of its
           remaining states.

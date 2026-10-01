@@ -83,6 +83,139 @@ describe('RoutingDebug', () => {
     expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
   });
 
+  it('enables underground belts, applies their reach, and persists and disables the setting', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      width: 9,
+      height: 1,
+      entities: [
+        { kind: 'source', x: 0, y: 0, direction: 'east', item: 'iron', rate: 5 },
+        { kind: 'sink', x: 8, y: 0, direction: 'east', item: 'iron', rate: 5 },
+      ],
+      rectangles: [{ x: 4, y: 0, width: 2, height: 1 }],
+    };
+    const solver = vi.spyOn(routingSolver, 'solveRoutingDebug');
+    render(<Example initial={initial} />);
+    const toggle = screen.getByRole('combobox', { name: 'Underground belts' });
+    const reach = screen.getByRole('spinbutton', {
+      name: 'Belt reach (hidden tiles)',
+    }) as HTMLInputElement;
+    expect((toggle as HTMLSelectElement).value).toBe('disabled');
+    expect(reach.disabled).toBe(true);
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    const calls = solver.mock.calls.length;
+    await user.selectOptions(toggle, 'enabled');
+    expect(reach.disabled).toBe(false);
+    await user.clear(reach);
+    await user.type(reach, '3');
+    expect(solver.mock.calls).toHaveLength(calls);
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(screen.getByRole('img', { name: 'Computed path for iron' })).toBeTruthy();
+    expect(screen.getByLabelText('Routing result').textContent).toBe('1 route, 4 path tiles.');
+    const rd = JSON.parse(screen.getByRole('status').textContent!);
+    expect(rd.routingOptions.undergroundBeltReach).toBe(3);
+    expect(rd.rectangles).toEqual(initial.rectangles);
+    const packed = { v: 1 as const, cs: '', gp: 0, cl: [], ci: 0, mo: {}, rd };
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+    await user.selectOptions(toggle, 'disabled');
+    expect(reach.disabled).toBe(true);
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
+    expect(
+      JSON.parse(screen.getByRole('status').textContent!).routingOptions.undergroundBeltReach,
+    ).toBeUndefined();
+  });
+
+  it('darkens only underground spans, including pairs with no hidden tiles', () => {
+    const cell = (x: number) => ({ x, y: 0 });
+    vi.spyOn(routingSolver, 'solveRoutingDebug').mockReturnValue({
+      kind: 'found',
+      routes: [
+        {
+          id: 'iron',
+          kind: 'found',
+          cells: [1, 2, 3, 4, 5, 9, 10].map(cell),
+          undergroundBelts: [
+            { entry: cell(2), exit: cell(3) },
+            { entry: cell(5), exit: cell(9) },
+          ],
+          steps: 9,
+          cost: 9,
+          turns: 0,
+        },
+      ],
+      steps: 9,
+      cost: 9,
+      turns: 0,
+      diagnostics: { pathSearches: 1, pathStates: 1, expandedNodes: 0, generatedNodes: 1 },
+    });
+    render(
+      <Example
+        initial={{
+          width: 12,
+          height: 1,
+          entities: [
+            { kind: 'source', x: 0, y: 0, direction: 'east', item: 'iron', rate: 5 },
+            { kind: 'sink', x: 11, y: 0, direction: 'east', item: 'iron', rate: 5 },
+          ],
+        }}
+      />,
+    );
+    expect(screen.getAllByRole('img', { name: /Computed path/ })).toHaveLength(1);
+    for (const [entry, exit] of [
+      [2, 3],
+      [5, 9],
+    ]) {
+      const tunnel = screen.getByLabelText(
+        `Underground path for iron from (${entry}, 0) to (${exit}, 0)`,
+      );
+      expect(tunnel.getAttribute('points')).toBe(`${entry + 0.5},0.5 ${exit + 0.5},0.5`);
+      expect(tunnel.getAttribute('stroke')).toBe('#594300');
+    }
+    for (const [start, end, points] of [
+      [0, 2, '0.5,0.5 1.5,0.5 2.5,0.5'],
+      [3, 5, '3.5,0.5 4.5,0.5 5.5,0.5'],
+      [9, 11, '9.5,0.5 10.5,0.5 11.5,0.5'],
+    ] as const) {
+      const surface = screen.getByLabelText(
+        `Surface path for iron from (${start}, 0) to (${end}, 0)`,
+      );
+      expect(surface.getAttribute('points')).toBe(points);
+      expect(surface.getAttribute('stroke')).toBe('#b28600');
+    }
+  });
+
+  it('loads saved reach, rejects invalid reach, allows zero, and resets underground routing', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = { routingOptions: { undergroundBeltReach: 12 } };
+    const solver = vi.spyOn(routingSolver, 'solveRoutingDebug');
+    render(<Example initial={initial} />);
+    const toggle = screen.getByRole('combobox', { name: 'Underground belts' }) as HTMLSelectElement;
+    const reach = screen.getByRole('spinbutton', {
+      name: 'Belt reach (hidden tiles)',
+    }) as HTMLInputElement;
+    expect(toggle.value).toBe('enabled');
+    expect(reach.value).toBe('12');
+    const calls = solver.mock.calls.length;
+    for (const value of ['', '-1', '1.5', '9007199254740992']) {
+      await user.clear(reach);
+      if (value) await user.type(reach, value);
+      await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+      expect(solver.mock.calls).toHaveLength(calls);
+      expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual(initial);
+    }
+    await user.clear(reach);
+    await user.type(reach, '0');
+    await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
+    expect(
+      JSON.parse(screen.getByRole('status').textContent!).routingOptions.undergroundBeltReach,
+    ).toBe(0);
+    await user.click(screen.getByRole('button', { name: 'Reset routing defaults' }));
+    expect(toggle.value).toBe('disabled');
+    expect(reach.disabled).toBe(true);
+    expect(JSON.parse(screen.getByRole('status').textContent!).routingOptions).toBeUndefined();
+  });
+
   it('loads saved routing settings and rejects invalid budgets without running the solver', async () => {
     const user = userEvent.setup();
     const initial: RoutingDebugState = {

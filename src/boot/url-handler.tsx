@@ -53,7 +53,7 @@ export interface RoutingDebugState {
   height?: number;
   entities?: RoutingDebugEntity[];
   rectangles?: RoutingDebugRectangle[];
-  /** Routing strategy and work budgets; absent options follow the solver defaults. */
+  /** Routing strategy, underground reach, and work budgets; absent options follow solver defaults. */
   routingOptions?: RoutingOptions;
 }
 
