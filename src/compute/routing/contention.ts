@@ -83,13 +83,11 @@ export function computeRoutingContention(
     }
     let contested = false;
     for (let index = 0; index < counts.length; index++) {
-      if (counts[index] < 2) {
-        counts[index] = 0;
-        continue;
-      }
-      contested = true;
       maximum[index] = Math.max(maximum[index], counts[index]);
-      blocked[index] = 1;
+      if (counts[index] >= 2) {
+        contested = true;
+        blocked[index] = 1;
+      }
     }
     generations.push(counts);
     if (!contested) break;

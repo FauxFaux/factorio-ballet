@@ -8,6 +8,10 @@ import { RoutingDebug } from '../../src/components/routing-debug.tsx';
 import * as routingSolver from '../../src/compute/routing/debug.ts';
 import type { RoutingDebugEntity, RoutingDebugState } from '../../src/boot/url-handler.tsx';
 import { packEnvelope, parseEnvelope } from '../../src/boot/url-envelope.ts';
+import {
+  availableEntity,
+  connectionTile,
+} from '../../src/components/routing-debug-interactions.ts';
 
 function Example({ initial = {} }: { initial?: RoutingDebugState }) {
   const state = useState<RoutingDebugState | undefined>(initial);
@@ -23,6 +27,49 @@ describe('RoutingDebug', () => {
   afterEach(() => {
     cleanup();
     vi.restoreAllMocks();
+  });
+
+  it('adds random legal pairs with the smallest unused positive integer item', async () => {
+    const user = userEvent.setup();
+    const initial: RoutingDebugState = {
+      width: 5,
+      height: 5,
+      entities: [{ kind: 'source', x: 0, y: 0, direction: 'east', item: '1', rate: 5 }],
+      rectangles: [{ x: 2, y: 2, width: 2, height: 2 }],
+    };
+    render(<Example initial={initial} />);
+    const button = screen.getByRole('button', { name: 'Add random source and sink' });
+    for (const item of ['2', '3']) {
+      await user.click(button);
+      const state: RoutingDebugState = JSON.parse(screen.getByRole('status').textContent!);
+      const entities = state.entities!;
+      const pair = entities.slice(-2);
+      expect(pair.map((entity) => entity.kind)).toEqual(['source', 'sink']);
+      expect(pair.map((entity) => entity.item)).toEqual([item, item]);
+      for (const entity of pair) {
+        expect(
+          availableEntity(
+            entity,
+            entities.filter((other) => other !== entity),
+            initial.rectangles!,
+          ),
+        ).toBe(true);
+        const connection = connectionTile(entity);
+        for (const tile of [entity, connection]) {
+          expect(tile.x).toBeGreaterThanOrEqual(0);
+          expect(tile.x).toBeLessThan(5);
+          expect(tile.y).toBeGreaterThanOrEqual(0);
+          expect(tile.y).toBeLessThan(5);
+        }
+      }
+    }
+  });
+
+  it('leaves the grid unchanged when there is no room for a legal pair', async () => {
+    const user = userEvent.setup();
+    render(<Example initial={{ width: 1, height: 1 }} />);
+    await user.click(screen.getByRole('button', { name: 'Add random source and sink' }));
+    expect(JSON.parse(screen.getByRole('status').textContent!)).toEqual({ width: 1, height: 1 });
   });
 
   it('applies the contention strategy, draws maximum counts, and switches back to routes', async () => {
@@ -46,6 +93,7 @@ describe('RoutingDebug', () => {
     await user.click(screen.getByRole('button', { name: 'Apply routing settings' }));
     expect(screen.getByRole('group', { name: 'Maximum routing contention' })).toBeTruthy();
     expect(screen.getByRole('img', { name: '2 competing paths at (4, 4)' })).toBeTruthy();
+    expect(screen.getByRole('img', { name: '1 visiting path at (2, 4)' })).toBeTruthy();
     expect(screen.queryByRole('img', { name: /Computed path/ })).toBeNull();
     expect(screen.getByLabelText('Routing result').textContent).toContain('3 completed passes');
     const rd = JSON.parse(screen.getByRole('status').textContent!);

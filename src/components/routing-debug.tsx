@@ -3,6 +3,7 @@ import { useEffect, useId, useMemo, useState } from 'preact/hooks';
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
+  DiceIcon,
   GrabberIcon,
   SquareIcon,
   TrashIcon,
@@ -88,7 +89,7 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
       : [];
   const routingMessage =
     routing.kind === 'contention'
-      ? `Contention over ${routing.generations.length} completed ${routing.generations.length === 1 ? 'pass' : 'passes'}. Tile numbers show the maximum number of competing paths (2 or more).${routing.status === 'budget-exhausted' ? ' A* search budget exhausted; showing completed passes only.' : ''}`
+      ? `Contention over ${routing.generations.length} completed ${routing.generations.length === 1 ? 'pass' : 'passes'}. Tile numbers show the maximum number of visiting paths. Cyan marks one path; yellow to red marks competing paths (2 or more).${routing.status === 'budget-exhausted' ? ' A* search budget exhausted; showing completed passes only.' : ''}`
       : routing.kind === 'invalid'
         ? `Cannot route: ${routing.message}`
         : routing.kind === 'no-solution'
@@ -165,6 +166,56 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
         return { ...previous, entities: [...current, candidate] };
       });
     }
+  };
+
+  const addRandomPair = () => {
+    setSettings((previous) => {
+      const current = previous?.entities ?? [];
+      const reserved = previous?.rectangles ?? [];
+      const usedItems = new Set(current.map((entity) => entity.item));
+      let number = 1;
+      while (usedItems.has(String(number))) number++;
+      const candidates: RoutingDebugEntity[] = [];
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          for (const direction of ['north', 'east', 'south', 'west'] as const) {
+            const candidate: RoutingDebugEntity = {
+              kind: 'source',
+              x,
+              y,
+              direction,
+              item: String(number),
+              rate: 5,
+            };
+            const connection = connectionTile(candidate);
+            if (
+              connection.x >= 0 &&
+              connection.x < width &&
+              connection.y >= 0 &&
+              connection.y < height &&
+              availableEntity(candidate, current, reserved)
+            )
+              candidates.push(candidate);
+          }
+        }
+      }
+      if (candidates.length === 0) return previous;
+      const source = candidates[Math.floor(Math.random() * candidates.length)];
+      const sinks = candidates.filter(
+        (candidate) => candidate.x !== source.x || candidate.y !== source.y,
+      );
+      if (sinks.length === 0) return previous;
+      const sink = sinks[Math.floor(Math.random() * sinks.length)];
+      const opposite = { north: 'south', east: 'west', south: 'north', west: 'east' } as const;
+      return {
+        ...previous,
+        entities: [
+          ...current,
+          source,
+          { ...sink, kind: 'sink', direction: opposite[sink.direction] },
+        ],
+      };
+    });
   };
 
   useEffect(() => {
@@ -347,6 +398,10 @@ export function RoutingDebug({ state }: { state: State<RoutingDebugState | undef
               {label}
             </button>
           ))}
+          <button type="button" title="Add random source and sink" onClick={addRandomPair}>
+            <DiceIcon aria-hidden="true" />
+            Add random source and sink
+          </button>
           <button
             type="button"
             onClick={async () => {

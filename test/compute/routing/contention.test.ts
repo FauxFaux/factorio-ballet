@@ -27,7 +27,7 @@ describe('computeRoutingContention', () => {
     expect(result.generations[1].some((count) => count === 2)).toBe(true);
     for (let index = 0; index < 49; index++) {
       expect(result.maximum[index]).toBe(Math.max(...result.generations.map((map) => map[index])));
-      if (result.generations[0][index] || result.generations[1][index])
+      if (result.generations[0][index] >= 2 || result.generations[1][index] >= 2)
         expect(result.generations[2][index]).toBe(0);
     }
     expect(input.blocked.every((cell) => cell === 0)).toBe(true);
@@ -66,14 +66,18 @@ describe('computeRoutingContention', () => {
     });
   });
 
-  it('ignores unreachable pairs and singly occupied cells', () => {
+  it('retains singly visited cells without blocking them and ignores unreachable pairs', () => {
     const input = crossing();
     input.blocked.fill(1, 7, 14);
     const result = computeRoutingContention(input);
     expect(result.kind).toBe('contention');
     if (result.kind !== 'contention') return;
     expect(result.generations).toHaveLength(1);
-    expect(result.maximum.every((count) => count === 0)).toBe(true);
+    expect(Array.from(result.maximum.slice(21, 28))).toEqual([1, 1, 1, 1, 1, 1, 1]);
+    expect(result.maximum.reduce((sum, count) => sum + count, 0)).toBe(7);
+    const repeated = computeRoutingContention(crossing());
+    if (repeated.kind !== 'contention') throw new Error('Expected contention');
+    expect(repeated.generations.map((map) => map[21])).toEqual([1, 1, 1]);
   });
 
   it('rejects invalid requests and work limits', () => {

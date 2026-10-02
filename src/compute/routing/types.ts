@@ -52,7 +52,7 @@ export type RoutedPath = Extract<PathSearchResult, { kind: 'found' }> & { id: st
 export type RoutingResult =
   | {
       kind: 'contention';
-      /** Row-major contested path counts (zero for cells used by fewer than two paths). */
+      /** Row-major path visit counts; cells used by two or more paths are contested. */
       generations: Uint32Array[];
       maximum: Uint32Array;
       status: 'complete' | 'budget-exhausted';

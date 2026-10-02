@@ -248,19 +248,21 @@ export function RoutingDebugGrid({
       {contention && (
         <g role="group" aria-label="Maximum routing contention" pointer-events="none">
           {Array.from(contention, (count, index) =>
-            count < 2 ? null : (
+            count === 0 ? null : (
               <g
                 key={index}
                 role="img"
-                aria-label={`${count} competing paths at (${index % width}, ${Math.floor(index / width)})`}
+                aria-label={`${count === 1 ? '1 visiting path' : `${count} competing paths`} at (${index % width}, ${Math.floor(index / width)})`}
               >
                 <rect
                   x={(index % width) + 0.025}
                   y={Math.floor(index / width) + 0.025}
                   width="0.95"
                   height="0.95"
-                  fill={`hsl(${Math.max(0, 60 - (count - 2) * 15)} 95% 55%)`}
-                  fill-opacity="0.8"
+                  fill={
+                    count === 1 ? '#67e8f9' : `hsl(${Math.max(0, 60 - (count - 2) * 15)} 95% 55%)`
+                  }
+                  fill-opacity={count === 1 ? 0.35 : 0.8}
                 />
                 <text
                   class="routing-debug-contention-count"
