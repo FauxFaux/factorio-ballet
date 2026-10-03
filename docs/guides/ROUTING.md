@@ -5,7 +5,8 @@
 item form a pair; incomplete or ambiguous items remain obstacles without acquiring paths. The
 geometry is rasterized once. Entity arrows select their adjacent connection tiles, without
 constraining the path's heading. Rates are retained in state but do not influence this geometric
-search. There are no undergrounds, shared belts, or rate allocation.
+search. Optional underground belts support straight tunnels; there are no shared belts or rate
+allocation.
 
 `solveConflictRouting` first computes independent A* paths. If these overlap, it tries whole-path
 reservation in up to four distinct deterministic orders: cheapest independent path first, most
@@ -61,6 +62,29 @@ bends. The global search uses the same summed objective. With absent penalties, 
 and the original shortest-path behavior is retained. The penalty array provides a future seam for
 discouraged regions without a callback in the inner search loop; no hint UI or URL schema is added
 yet. Required waypoints will need an extended low-level state and valid route geometry.
+
+Underground moves consume alignment, entry, exit, and a straight step beyond the exit atomically.
+Only entry, exit, and that final decision cell add surface occupancy. Immediate reversals are
+impossible: the previous surface cell (or tunnel exit) is always occupied. Wider detours remain
+legal, including three left turns followed by a tunnel beneath an earlier surface segment.
+Zero-hidden-tile pairs are dominated by three surface steps with identical occupancy, cost, and
+turns, and fewer pairs. Other clear tunnels remain available because they may cross the route's own
+surface geometry or avoid penalties.
+
+The underground A* state is cell and incoming heading. Its relaxed optimum is checked for repeated
+surface cells and collinear tunnel overlap. A self-conflict creates two branches excluding either
+offending atomic move, identified by alignment cell, direction, and length. Every valid path must
+omit one of those moves, so this split preserves completeness. Replan each branch with cell/heading
+A*, and visit branches in cost, steps, turns, and pair-count order to preserve optimality. All
+replans share the expansion budget; exhaustion remains distinct from infeasibility. This replaces
+the placement-history fallback, which enumerated whole occupied-cell and tunnel sets at every state.
+Conflict branching can still be exponential on difficult geometry.
+
+Run `node scripts/benchmark-routing.ts` for 1,000 seeded 16×12 obstacle grids, underground reach 5,
+and a 20,000-expansion budget per route. The original history fallback used 300,339 expansions and
+exhausted ten cases; reversal pruning and move-conflict branching used 38,410 expansions with no
+exhaustions. Six additional cases found routes and four additional cases proved infeasibility.
+Timing depends on the host; the deterministic expansion counts are the regression measure.
 
 To try another global algorithm, implement `RoutingSolver` and supply it to `solveRoutingDebug`.
 Normalization, UI results, and serialized state stay independent of that implementation. The seam is

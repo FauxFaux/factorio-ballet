@@ -5,6 +5,7 @@ import {
   normalizeRoutingDebugState,
   solveRoutingDebugPath,
   type PathCell,
+  type PathDirection,
   type PathSearchInput,
   type UndergroundBeltSpan,
 } from '../src/compute/routing/path-search.ts';
@@ -471,7 +472,7 @@ describe('findPath underground belts', () => {
     ).toMatchObject({ kind: 'invalid' });
   });
 
-  it('falls back to placement history when the relaxed route collides with itself', () => {
+  it('avoids reversing through its own tunnels while retaining the valid detour', () => {
     const input = {
       ...grid(9, 6, { x: 2, y: 3 }, { x: 0, y: 3 }),
       undergroundBeltReach: 5,
@@ -505,11 +506,75 @@ describe('findPath underground belts', () => {
     expect(findPath(input)).toEqual({ kind: 'no-path' });
   });
 
+  it('replans overlapping tunnels to find a longer collision-free optimum', () => {
+    const input = {
+      ...grid(9, 11, { x: 2, y: 8 }, { x: 0, y: 8 }),
+      undergroundBeltReach: 5,
+      startDirection: 'east' as const,
+      goalDirection: 'west' as const,
+    };
+    input.blocked.fill(1);
+    for (const cell of [72, 73, 74, 75, 77, 78, 79, 80, 87, 89, 96, 97, 98, 1, 2, 3])
+      input.blocked[cell] = 0;
+    for (let y = 1; y < 8; y++) input.blocked[y * 9 + 1] = input.blocked[y * 9 + 3] = 0;
+    // The relaxed 18-step path loops below the first tunnel, then overlaps it travelling west.
+    // The valid optimum takes the 20-step top corridor. It has the same four turns and no pairs.
+    const result = findPath(input, { remaining: 1_000 });
+    expect(result).toMatchObject({ kind: 'found', steps: 20, turns: 4, undergroundBelts: [] });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+  });
+
+  it('turns left, forward, left, left to tunnel under its earlier surface path', () => {
+    const input = {
+      ...grid(4, 5, { x: 2, y: 2 }, { x: 3, y: 4 }),
+      undergroundBeltReach: 1,
+      startDirection: 'east' as const,
+      goalDirection: 'east' as const,
+    };
+    input.blocked.fill(1);
+    for (const cell of [10, 11, 7, 3, 2, 6, 14, 18, 19]) input.blocked[cell] = 0;
+    const result = findPath(input);
+    expect(result).toMatchObject({
+      kind: 'found',
+      steps: 9,
+      turns: 4,
+      undergroundBelts: [{ entry: { x: 2, y: 1 }, exit: { x: 2, y: 3 } }],
+    });
+    if (result.kind === 'found') expectValidUndergroundPath(input, result);
+  });
+
+  it('proves a self-conflicting dead end without enumerating placement histories', () => {
+    const input = {
+      ...grid(16, 12, { x: 12, y: 0 }, { x: 0, y: 5 }),
+      undergroundBeltReach: 5,
+    };
+    input.blocked = Uint8Array.from(
+      [
+        '0110011010010001',
+        '0010011110101000',
+        '1011101000000001',
+        '0100100010100100',
+        '0100100011100100',
+        '0100001100001001',
+        '1100010100000000',
+        '0000001100101001',
+        '0001000000000000',
+        '1010110000100000',
+        '1011100001000001',
+        '0001100001110010',
+      ].join(''),
+      Number,
+    );
+    // The history fallback exhausted 20,000 states on this grid. Count work, not wall time.
+    expect(findPath(input, { remaining: 500 })).toEqual({ kind: 'no-path' });
+    expect(findPath(input, { remaining: 100 })).toEqual({ kind: 'budget-exhausted' });
+  });
+
   it('matches exhaustive placement search on small weighted obstacle grids', () => {
     // Independent simple-placement oracle: reserve surfaced cells and rasterize each tunnel axis.
-    const oracle = (input: PathSearchInput): [number, number, number] | undefined => {
-      let best: [number, number, number] | undefined;
-      const visited = new Set<number>([0]);
+    const oracle = (input: PathSearchInput): [number, number, number, number] | undefined => {
+      let best: [number, number, number, number] | undefined;
+      const visited = new Set<number>([input.start.y * input.width + input.start.x]);
       const tunnels: { axis: number; cells: Set<number> }[] = [];
       const walk = (
         x: number,
@@ -521,11 +586,14 @@ describe('findPath underground belts', () => {
       ) => {
         if (best && cost > best[0]) return;
         if (x === input.goal.x && y === input.goal.y) {
-          const score: [number, number, number] = [cost, steps, turns];
+          const score: [number, number, number, number] = [cost, steps, turns, tunnels.length];
           if (
             !best ||
             cost < best[0] ||
-            (cost === best[0] && (steps < best[1] || (steps === best[1] && turns < best[2])))
+            (cost === best[0] &&
+              (steps < best[1] ||
+                (steps === best[1] &&
+                  (turns < best[2] || (turns === best[2] && tunnels.length < best[3])))))
           )
             best = score;
           return;
@@ -536,7 +604,10 @@ describe('findPath underground belts', () => {
           [-1, 0],
           [0, -1],
         ].entries()) {
-          for (const hidden of [-1, 0, 1]) {
+          const directions: PathDirection[] = ['east', 'south', 'west', 'north'];
+          if (steps === 0 && input.startDirection && directions[direction] !== input.startDirection)
+            continue;
+          for (let hidden = -1; hidden <= input.undergroundBeltReach!; hidden++) {
             const length = hidden === -1 ? 1 : hidden + 3;
             const points = hidden === -1 ? [1] : [1, length - 1, length];
             const positions = points.map((distance) => ({
@@ -553,6 +624,14 @@ describe('findPath underground belts', () => {
             const cells = positions.map((point) => point.y * input.width + point.x);
             if (cells.some((cell) => visited.has(cell) || input.blocked[cell])) continue;
             if (cells.slice(0, -1).includes(input.goal.y * input.width + input.goal.x)) continue;
+            const last = positions.at(-1)!;
+            if (
+              last.x === input.goal.x &&
+              last.y === input.goal.y &&
+              input.goalDirection &&
+              directions[direction] !== input.goalDirection
+            )
+              continue;
             const tunnel = { axis: direction % 2, cells: new Set<number>() };
             if (hidden !== -1) {
               for (let distance = 1; distance < length; distance++)
@@ -568,7 +647,6 @@ describe('findPath underground belts', () => {
               tunnels.push(tunnel);
             }
             cells.forEach((cell) => visited.add(cell));
-            const last = positions.at(-1)!;
             walk(
               last.x,
               last.y,
@@ -582,16 +660,34 @@ describe('findPath underground belts', () => {
           }
         }
       };
-      walk(0, 0, -1, 0, 0, 0);
+      walk(input.start.x, input.start.y, -1, 0, 0, 0);
       return best;
     };
-    for (let mask = 0; mask < 64; mask++) {
-      const input = {
-        ...grid(4, 2, { x: 0, y: 0 }, { x: 3, y: 1 }),
-        undergroundBeltReach: 1,
-        penalties: Float64Array.from({ length: 8 }, (_, cell) => (cell * 3 + mask) % 5),
-      };
-      for (let cell = 1; cell < 7; cell++) input.blocked[cell] = (mask >> (cell - 1)) & 1;
+    const inputs: PathSearchInput[] = [];
+    for (const [width, height, start, goal] of [
+      [4, 2, { x: 0, y: 0 }, { x: 3, y: 1 }],
+      [4, 3, { x: 1, y: 1 }, { x: 0, y: 1 }],
+      [5, 3, { x: 1, y: 1 }, { x: 3, y: 1 }],
+    ] as const) {
+      for (let mask = 0; mask < 128; mask++) {
+        const directions: PathDirection[] = ['east', 'south', 'west', 'north'];
+        const input: PathSearchInput = {
+          ...grid(width, height, start, goal),
+          undergroundBeltReach: 2,
+          penalties: Float64Array.from(
+            { length: width * height },
+            (_, cell) => (cell * 3 + mask) % 5,
+          ),
+          startDirection: mask % 3 ? undefined : directions[mask % 4],
+          goalDirection: mask % 5 ? undefined : directions[(mask >> 2) % 4],
+        };
+        for (let cell = 0; cell < width * height; cell++)
+          input.blocked[cell] = (mask >> (cell % 7)) & 1;
+        input.blocked[start.y * width + start.x] = input.blocked[goal.y * width + goal.x] = 0;
+        inputs.push(input);
+      }
+    }
+    for (const input of inputs) {
       const expected = oracle(input);
       const actual = findPath(input);
       if (!expected) expect(actual).toEqual({ kind: 'no-path' });
@@ -602,7 +698,10 @@ describe('findPath underground belts', () => {
           steps: expected[1],
           turns: expected[2],
         });
-        if (actual.kind === 'found') expectValidUndergroundPath(input, actual);
+        if (actual.kind === 'found') {
+          expect(actual.undergroundBelts).toHaveLength(expected[3]);
+          expectValidUndergroundPath(input, actual);
+        }
       }
     }
   });

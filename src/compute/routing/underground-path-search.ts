@@ -1,4 +1,5 @@
 import { Frontier, type Entry } from './path-search-frontier.ts';
+import { resolvePathSelfConflicts, type RelaxedPathResult } from './path-self-conflicts.ts';
 import {
   findPath,
   type PathSearchInput,
@@ -69,18 +70,19 @@ interface Label extends Entry {
   parent: number;
   /** Surface cells added by the incoming move, in travel order. */
   surface: number[];
-  /** Empty in the relaxed search; sorted surface reservations in the exact fallback. */
-  occupied: number[];
+  /** Identity of the incoming atomic move, independent of the incoming heading. */
+  move: number;
   belts: UndergroundBeltSpan[];
-  key: string;
+  key: number;
 }
 
 /**
  * A tunnel move consumes alignment -> entry -> exit -> next decision atomically. Only entry,
  * exit and the decision cell reserve surface space; all travel counts towards distance.
  * Most routes use a relaxed search keyed only by cell and heading, as surface A* does. A found
- * route is checked for surface reuse and parallel tunnel overlap; only a self-conflicting route
- * needs the full placement-history search. Both searches consume the same expansion budget.
+ * route is checked for surface reuse and parallel tunnel overlap. Self-conflicts branch on
+ * excluding either offending move, keeping cell/heading sufficient for every replan.
+ * All searches consume the same expansion budget.
  */
 export function findUndergroundPath(
   input: PathSearchInput,
@@ -106,21 +108,25 @@ export function findUndergroundPath(
       turns: 0,
     };
 
-  return searchUndergroundPath({ ...input, blocked, undergroundBeltReach: reach }, budget, false);
+  const normalized = { ...input, blocked, undergroundBeltReach: reach };
+  return resolvePathSelfConflicts((forbidden) =>
+    searchUndergroundPath(normalized, budget, forbidden),
+  );
 }
 
 /**
  * Ignoring self-collisions makes cell/heading a sufficient state: remaining moves and costs depend
- * only on the static grid and heading. If that relaxed optimum has valid placements, it is also
- * optimal in the constrained graph. Otherwise restart with full history and the remaining budget.
+ * only on the static grid, heading, and excluded atomic moves. Return the first placement conflict
+ * alongside the relaxed optimum; a valid path cannot contain both conflicting moves.
  */
 function searchUndergroundPath(
   input: PathSearchInput & { undergroundBeltReach: number },
   budget: PathSearchBudget | undefined,
-  trackHistory: boolean,
-): PathSearchResult {
+  forbidden: ReadonlySet<number>,
+): RelaxedPathResult {
   const { width, height, start, goal, blocked, penalties, undergroundBeltReach: reach } = input;
   const existing = input.undergroundBelts ?? [];
+  const maxLength = Math.min(reach + 3, Math.max(width, height));
   const point = (cell: number) => ({ x: cell % width, y: Math.floor(cell / width) });
   const startCell = start.y * width + start.x;
   const goalCell = goal.y * width + goal.x;
@@ -129,7 +135,7 @@ function searchUndergroundPath(
     return Math.abs(goal.x - x) + Math.abs(goal.y - y);
   };
   const labels: Label[] = [];
-  const best = new Map<string, Label>();
+  const best = new Map<number, Label>();
   const frontier = new Frontier();
   const initial: Label = {
     state: 0,
@@ -137,9 +143,9 @@ function searchUndergroundPath(
     direction: -1,
     parent: -1,
     surface: [startCell],
-    occupied: trackHistory ? [startCell] : [],
+    move: -1,
     belts: [],
-    key: '',
+    key: width * height * 4,
     cost: 0,
     steps: 0,
     turns: 0,
@@ -154,35 +160,51 @@ function searchUndergroundPath(
     const current = labels[entry.state];
     if (best.get(current.key) !== current) continue;
     if (budget) {
-      if (budget.remaining === 0) return { kind: 'budget-exhausted' };
+      if (budget.remaining === 0) return { path: { kind: 'budget-exhausted' } };
       budget.remaining--;
     }
     if (current.cell === goalCell) {
-      const moves: number[][] = [];
+      const moves: Label[] = [];
       for (let label = current; ; label = labels[label.parent]) {
-        moves.push(label.surface);
+        moves.push(label);
         if (label.parent === -1) break;
       }
-      const surface = moves.reverse().flat();
-      if (
-        !trackHistory &&
-        (new Set(surface).size !== surface.length ||
-          current.belts.some((belt, index) =>
-            current.belts.slice(index + 1).some((other) => undergroundBeltsCollide(belt, other)),
-          ))
-      )
-        return searchUndergroundPath(input, budget, true);
+      moves.reverse();
+      const surface = moves.flatMap((label) => label.surface);
+      const owners = new Map<number, number>();
+      const tunnels: { belt: UndergroundBeltSpan; move: number }[] = [];
+      let conflict: [number, number] | undefined;
+      for (const label of moves) {
+        for (const cell of label.surface) {
+          const owner = owners.get(cell);
+          if (owner !== undefined) conflict ??= [owner, label.move];
+          owners.set(cell, label.move);
+        }
+        if (label.surface.length === 3) {
+          const belt = label.belts.at(-1)!;
+          for (const other of tunnels)
+            if (undergroundBeltsCollide(belt, other.belt)) conflict ??= [other.move, label.move];
+          tunnels.push({ belt, move: label.move });
+        }
+        if (conflict) break;
+      }
       return {
-        kind: 'found',
-        cells: surface.map(point),
-        undergroundBelts: current.belts,
-        cost: current.cost,
-        steps: current.steps,
-        turns: current.turns,
+        path: {
+          kind: 'found',
+          cells: surface.map(point),
+          undergroundBelts: current.belts,
+          cost: current.cost,
+          steps: current.steps,
+          turns: current.turns,
+        },
+        conflict,
       };
     }
     const { x, y } = point(current.cell);
     for (const [direction, offset] of offsets.entries()) {
+      // Both surface and atomic tunnel moves leave a surfaced cell immediately behind us.
+      // Reversing would reuse it even when the next move starts another tunnel.
+      if (current.direction !== -1 && direction === (current.direction + 2) % 4) continue;
       if (
         current.parent === -1 &&
         input.startDirection &&
@@ -197,10 +219,13 @@ function searchUndergroundPath(
           : nextY * width + nextX;
       };
       const next = cellAt(1);
-      if (next === undefined || blocked[next] || current.occupied.includes(next)) continue;
-      // A normal step, followed by all legal straight underground alternatives (including zero hidden tiles).
-      for (let length = 1; length <= Math.min(reach + 3, Math.max(width, height)); length++) {
-        if (length === 2) continue;
+      if (next === undefined || blocked[next]) continue;
+      // A zero-hidden-tile pair reserves the same cells and costs as three surface steps,
+      // with the same heading and turns but an extra pair. It cannot improve a valid route.
+      for (let length = 1; length <= maxLength; length++) {
+        if (length === 2 || length === 3) continue;
+        const move = (current.cell * 4 + direction) * (maxLength + 1) + length;
+        if (forbidden.has(move)) continue;
         const decision = cellAt(length);
         if (decision === undefined) break;
         let surface = [next];
@@ -219,19 +244,12 @@ function searchUndergroundPath(
                 (next === otherExit && exit === otherEntry)
               );
             }) ||
-            existing.some((other) => undergroundBeltsCollide(candidate, other)) ||
-            (trackHistory &&
-              current.belts.some((other) => undergroundBeltsCollide(candidate, other)))
+            existing.some((other) => undergroundBeltsCollide(candidate, other))
           )
             continue;
           belt = candidate;
         }
-        if (
-          surface.some(
-            (cell) => blocked[cell] || cell === startCell || current.occupied.includes(cell),
-          )
-        )
-          continue;
+        if (surface.some((cell) => blocked[cell] || cell === startCell)) continue;
         if (
           decision === goalCell &&
           input.goalDirection &&
@@ -242,26 +260,11 @@ function searchUndergroundPath(
         const cost =
           current.cost + length + surface.reduce((sum, cell) => sum + (penalties?.[cell] ?? 0), 0);
         if (!Number.isFinite(cost))
-          return { kind: 'invalid', message: 'Path costs exceed the numeric range.' };
+          return { path: { kind: 'invalid', message: 'Path costs exceed the numeric range.' } };
         const turns =
           current.turns + Number(current.direction !== -1 && current.direction !== direction);
-        const occupied = trackHistory
-          ? [...current.occupied, ...surface].sort((a, b) => a - b)
-          : [];
         const belts = belt ? [...current.belts, belt] : current.belts;
-        const tunnels = trackHistory
-          ? belts
-              .map(({ entry, exit }) =>
-                [entry.y * width + entry.x, exit.y * width + exit.x]
-                  .sort((a, b) => a - b)
-                  .join(':'),
-              )
-              .sort()
-              .join(';')
-          : '';
-        const key = trackHistory
-          ? `${decision}/${direction}/${occupied.join(',')}/${tunnels}`
-          : `${decision}/${direction}`;
+        const key = decision * 4 + direction;
         const previous = best.get(key);
         if (
           previous &&
@@ -279,7 +282,7 @@ function searchUndergroundPath(
           direction,
           parent: current.state,
           surface,
-          occupied,
+          move,
           belts,
           key,
           cost,
@@ -295,5 +298,5 @@ function searchUndergroundPath(
       }
     }
   }
-  return { kind: 'no-path' };
+  return { path: { kind: 'no-path' } };
 }
