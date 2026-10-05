@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it } from 'vitest';
 import state from '../../assets/uranium.state.json';
 import type { Cell } from '../../../src/cell.ts';
-import { resolveChosen, resourceName } from '../../../src/data';
+import { resolveChosen, resourceName, noChoice } from '../../../src/data';
 import { CellBox } from '../../../src/components/cell/box.tsx';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
 import { defaultDataset } from '../../with-bobang.ts';
@@ -30,6 +30,26 @@ function renderCell() {
 }
 
 describe('cell display modes', () => {
+  it('marks the furnace fuel in expanded recipe connections', async () => {
+    const [id] = Object.entries(defaultDataset.data.recipes).find(([, recipe]) =>
+      recipe.categories.includes('angels-blast-smelting'),
+    )!;
+    render(
+      <CellBox
+        cell={[{ entries: [{ recipe: id, machine: 'angels-blast-furnace', count: 1 }] }, () => {}]}
+        active
+        progress={0}
+        chosen={noChoice(defaultDataset)}
+        onActivate={() => {}}
+        onRemove={() => {}}
+        onSearch={() => {}}
+      />,
+    );
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Show recipe connections' }));
+    const flame = screen.getByRole('img', { name: 'Burner fuel' });
+    expect(flame.closest('button')?.getAttribute('aria-label')).toBe('Show recipes for Coke');
+  });
+
   it('uses per-machine rates for the silicon-powder 2×2 kernel', () => {
     render(
       <RecipeConnections

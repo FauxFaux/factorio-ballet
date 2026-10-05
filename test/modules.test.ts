@@ -102,6 +102,7 @@ describe('moduleEffects', () => {
     expect(moduleEffects(defaultDataset.data, assembler, {}, gears)).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
   });
 
@@ -177,11 +178,13 @@ describe('moduleEffects', () => {
     expect(moduleEffects(defaultDataset.data, assembler, fill, gears)).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
     // the same two modules in the machine which is their only home
     expect(moduleEffects(defaultDataset.data, farm, fill, garden)).toEqual({
       speed: 1,
       productivity: 2,
+      consumption: 1,
     });
   });
 

@@ -5,7 +5,10 @@ import type { RecipeMatch } from '../data/search.ts';
 import { type Chosen, noChoice } from '../data/index.ts';
 import { defaultMachine, machinesFor, type MachineMatch } from '../data/machines.ts';
 import { recipeFlows, speedOf, type Flow } from '../compute/flow.ts';
-import { laidOutEffects } from '../data/module-effects.ts';
+import { laidOutEffects, NO_EFFECTS, type Effects } from '../data/module-effects.ts';
+import { fueledRecipe } from '../compute/fuel.ts';
+import { burnerFuel } from '../data/fuels.ts';
+import { FuelIcon } from './fuel-icon.tsx';
 import { recipeIconStyle, resourceIconStyle } from './icon.tsx';
 import { MachineChip } from './machine.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
@@ -62,11 +65,14 @@ export function RecipeCard({
     ? defaultMachineId
     : (hoveredMachine ?? selectedMachine ?? defaultMachineId);
   const baseSpeed = speedOf(machines, displayedMachine);
-  const beaconSpeed = beaconCount
-    ? beaconedSpeed(ds, machines, defaultMachineId, recipe, chosen ?? noChoice(ds), beaconCount)
-    : 1;
-  const speed = baseSpeed * beaconSpeed;
-  const { ins, outs } = recipeFlows(recipe, machines, speed);
+  const effects = beaconCount
+    ? beaconedEffects(ds, machines, defaultMachineId, recipe, chosen ?? noChoice(ds), beaconCount)
+    : NO_EFFECTS;
+  const speed = baseSpeed * effects.speed;
+  const machine = machines.find(({ id }) => id === displayedMachine)?.machine;
+  const fuel = burnerFuel(machine, (chosen ?? noChoice(ds)).fuel);
+  const fueled = fueledRecipe(recipe, machine, fuel, effects);
+  const { ins, outs } = recipeFlows(fueled, machines, speed);
 
   const classes = ['recipe-card'];
   if (
@@ -105,7 +111,7 @@ export function RecipeCard({
           {open ? '▾' : '▸'}
         </button>
         {open ? (
-          <FlowTable ins={ins} outs={outs} onPick={onPick ?? (() => undefined)} />
+          <FlowTable ins={ins} outs={outs} fuel={fuel?.id} onPick={onPick ?? (() => undefined)} />
         ) : (
           <FlowSummary ins={ins} outs={outs} />
         )}
@@ -130,16 +136,16 @@ export function RecipeCard({
 }
 
 /** The speed multiplier from full selected beacons around an otherwise unmodded default machine. */
-function beaconedSpeed(
+function beaconedEffects(
   ds: Dataset,
   machines: MachineMatch[],
   machineId: MachineId | undefined,
   recipe: RecipeMatch['recipe'],
   chosen: Chosen,
   beacons: number,
-): number {
+): Effects {
   const machine = machines.find(({ id }) => id === machineId)?.machine;
-  if (!machine) return 1;
+  if (!machine) return NO_EFFECTS;
   return laidOutEffects(
     ds,
     machine,
@@ -152,17 +158,19 @@ function beaconedSpeed(
       beacons,
     },
     chosen.beacon,
-  ).effects.speed;
+  ).effects;
 }
 
 /** The unfolded form: a row per flow, with amounts per craft and rates per second. */
 function FlowTable({
   ins,
   outs,
+  fuel,
   onPick,
 }: {
   ins: Flow[];
   outs: Flow[];
+  fuel?: ResourceId;
   onPick: (id: ResourceId) => void;
 }) {
   return (
@@ -173,6 +181,7 @@ function FlowTable({
             key={`in-${flow.resource}-${i}`}
             dir={i === 0 ? 'in' : undefined}
             flow={flow}
+            fuel={flow.resource === fuel}
             onPick={onPick}
           />
         ))}
@@ -359,17 +368,21 @@ function FlowRow({
   dir,
   flow,
   onPick,
+  fuel = false,
 }: {
   dir?: 'in' | 'out';
   flow: Flow;
   onPick: (id: ResourceId) => void;
+  fuel?: boolean;
 }) {
   return (
     <tr class={dir === 'out' ? 'flow-out' : undefined}>
       <th scope="row">{dir === 'in' ? 'in' : dir === 'out' ? 'out' : ''}</th>
       <td class="flow-amount">{flow.amount} ×</td>
       <td>
-        <ResourceButton id={flow.resource} onPick={onPick} />
+        <ResourceButton id={flow.resource} onPick={onPick}>
+          {fuel ? <FuelIcon /> : null}
+        </ResourceButton>
         {flow.note ? <span class="flow-note">{flow.note}</span> : null}
       </td>
       <td class="flow-rate">

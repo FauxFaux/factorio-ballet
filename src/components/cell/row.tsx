@@ -2,6 +2,7 @@ import './row.css';
 import { useMemo, useState } from 'preact/hooks';
 import { type CellEntry, entryMachine, entryRecipe, parseCount } from '../../cell.ts';
 import type { Chosen } from '../../data/index.ts';
+import { burnerFuel } from '../../data/fuels.ts';
 import { machinesFor } from '../../data/machines.ts';
 import { isProblem, noteText, type Solution, type SolveNote } from '../../solve/index.ts';
 import { fmt } from '../../ts.ts';
@@ -66,9 +67,14 @@ export function CellRow({
   const ds = useDataset();
   const { data, iconMap } = ds;
   const recipe = entryRecipe(data, entry);
+  const machineId = recipe ? entryMachine(entry, recipe, progress, ds) : undefined;
+  const fuel = burnerFuel(
+    machineId === undefined ? undefined : data.machines[machineId],
+    chosen.fuel,
+  )?.id;
   const connections = useMemo(
-    () => recipeConnections(entryIndex, solution, recipeIds),
-    [entryIndex, recipeIds, solution],
+    () => recipeConnections(entryIndex, solution, recipeIds, fuel),
+    [entryIndex, recipeIds, solution, fuel],
   );
   /** The solver's complaint about this row, if it has one worth a mark on it. */
   const problem = note !== undefined && isProblem(note) ? note : undefined;

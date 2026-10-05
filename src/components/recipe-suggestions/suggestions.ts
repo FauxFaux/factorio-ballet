@@ -1,4 +1,4 @@
-import { cellInterface, type Cell } from '../../cell.ts';
+import { cellInterface, type Cell, type CellContext } from '../../cell.ts';
 import type { StaticData } from '../../types.ts';
 import type { SuggestionPlanIndex } from '../../dataset/precompute.ts';
 import { isBarrelling, isUnbarrelling } from '../../compute/recipes.ts';
@@ -171,11 +171,12 @@ export function suggestedRecipePaths(
   search: string,
   cell?: Cell,
   resource?: ResourceId,
+  context?: CellContext,
 ): PathSuggestion[] {
   const staticVoidPlans = voidPlanFinder(data);
   const freeOneStepProducts = new Set(data.suggestionPreload.fromAirOneStepProducts);
-  const searched = new Set(usedSearchResources(data, search, cell));
-  const { inputs = [], outputs = [] } = cell ? cellInterface(data, cell) : {};
+  const searched = new Set(usedSearchResources(data, search, cell, context));
+  const { inputs = [], outputs = [] } = cell ? cellInterface(data, cell, context) : {};
   const existingInputs = new Set([...freeOneStepProducts, ...searched, ...inputs]);
   const nonImportedInputs = new Set([
     ...freeOneStepProducts,
@@ -193,39 +194,42 @@ export function suggestedRecipePaths(
         : [];
     }) ?? []),
   ]);
-  const chains = suggestedResourceChains(data, index, cell);
-  const resourceSuggestions = suggestedVoidResources(data, search, cell, resource).flatMap((id) => {
-    const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
-    const resourceChains = chains.get(id) ?? [];
-    if (!searched.has(id) && id !== resource && !plans.length && !resourceChains.length) return [];
-    return [
-      ...plans
-        .filter((plan) => isRecommendedPlan(data, plan))
-        .map((plan) =>
-          pathSuggestion(data, id, 'void', plan, existingInputs, existingOutputs, present),
-        ),
-      ...resourceChains
-        .filter((plan) => isRecommendedPlan(data, plan))
-        .map((plan) =>
-          pathSuggestion(
-            data,
-            id,
-            'chain',
-            plan,
-            existingInputs,
-            existingOutputs,
-            present,
-            0,
-            false,
-            nonImportedInputs,
+  const chains = suggestedResourceChains(data, index, cell, CANDIDATES_PER_RESOURCE, context);
+  const resourceSuggestions = suggestedVoidResources(data, search, cell, resource, context).flatMap(
+    (id) => {
+      const plans = staticVoidPlans(id, CANDIDATES_PER_RESOURCE);
+      const resourceChains = chains.get(id) ?? [];
+      if (!searched.has(id) && id !== resource && !plans.length && !resourceChains.length)
+        return [];
+      return [
+        ...plans
+          .filter((plan) => isRecommendedPlan(data, plan))
+          .map((plan) =>
+            pathSuggestion(data, id, 'void', plan, existingInputs, existingOutputs, present),
           ),
-        ),
-    ];
-  });
-  const inputSuggestions = suggestedSoleProducerInputs(data, index, cell).map((plan) =>
+        ...resourceChains
+          .filter((plan) => isRecommendedPlan(data, plan))
+          .map((plan) =>
+            pathSuggestion(
+              data,
+              id,
+              'chain',
+              plan,
+              existingInputs,
+              existingOutputs,
+              present,
+              0,
+              false,
+              nonImportedInputs,
+            ),
+          ),
+      ];
+    },
+  );
+  const inputSuggestions = suggestedSoleProducerInputs(data, index, cell, context).map((plan) =>
     pathSuggestion(data, plan.target, 'input', plan, existingInputs, existingOutputs, present, 1),
   );
-  const freeInputSuggestions = suggestedFreeInputs(data, index, cell).map((plan) =>
+  const freeInputSuggestions = suggestedFreeInputs(data, index, cell, context).map((plan) =>
     pathSuggestion(
       data,
       plan.target,
@@ -238,10 +242,10 @@ export function suggestedRecipePaths(
       true,
     ),
   );
-  const outputSuggestions = suggestedSoleConsumerOutputs(data, index, cell).map((plan) =>
+  const outputSuggestions = suggestedSoleConsumerOutputs(data, index, cell, context).map((plan) =>
     pathSuggestion(data, plan.target, 'output', plan, existingInputs, existingOutputs, present, 1),
   );
-  const fewInputSuggestions = suggestedFewProducerInputs(data, index, cell).map((plan) =>
+  const fewInputSuggestions = suggestedFewProducerInputs(data, index, cell, context).map((plan) =>
     pathSuggestion(
       data,
       plan.target,
@@ -253,7 +257,7 @@ export function suggestedRecipePaths(
       producerCount(index, plan.target),
     ),
   );
-  const fewOutputSuggestions = suggestedFewConsumerOutputs(data, index, cell).map((plan) =>
+  const fewOutputSuggestions = suggestedFewConsumerOutputs(data, index, cell, context).map((plan) =>
     pathSuggestion(
       data,
       plan.target,

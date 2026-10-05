@@ -8,6 +8,12 @@ describe('URL envelope', () => {
     expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
   });
 
+  it('round trips a stored fuel choice while accepting old plans without one', () => {
+    const withFuel = { ...packed, fu: 'item:coal' };
+    expect(parseEnvelope(`#${packEnvelope(withFuel)}`)).toEqual({ kind: 'ok', packed: withFuel });
+    expect(parseEnvelope(`#${packEnvelope(packed)}`)).toEqual({ kind: 'ok', packed });
+  });
+
   it('reads the dataset ID before any cell hydration', () => {
     const named = { ...packed, dataset: 'another-revision', cl: [{ entries: [{ recipe: 42 }] }] };
     expect(parseEnvelope(`#${packEnvelope(named)}`)).toEqual({ kind: 'ok', packed: named });

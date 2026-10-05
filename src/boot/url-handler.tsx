@@ -3,6 +3,7 @@ import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
 import type { ModuleChoice } from '../data/modules.ts';
+import type { FuelChoice } from '../data/fuels.ts';
 import type { StaticData } from '../types.ts';
 import { legacyDatasetId } from '../dataset/catalogue.ts';
 import type { AssemblerDesignThroughput } from '../compute/assembler-design.ts';
@@ -89,6 +90,8 @@ export interface UrlState {
    * which belt a future throughput check should use. Absent follows `gp` through `defaultBelt`.
    */
   bt?: BeltChoice;
+  /** Item fuel for burner machines; absent defaults to Angel's solid coke, otherwise coal. */
+  fu?: FuelChoice;
   /**
    * Show the from-air planner rather than the usual cell planner. The infinite-mining mode also
    * admits synthetic recipes for resources whose infinite patches consume an unlocked fluid.

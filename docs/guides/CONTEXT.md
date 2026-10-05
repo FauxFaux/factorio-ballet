@@ -198,10 +198,16 @@ better transmission, so a cell quietly improves rather than jumping about. There
 _count_ on a row — how many reach a machine is a fact about a floor plan the app cannot see, and it
 stays an answer rather than a question.
 
-`Chosen` is the pair of those decisions — `{ modules, beacon }` — resolved once by `resolveChosen`
-in `App` and handed down to the cells, so a row is given modules and a beacon rather than a
-preference to re-resolve. `noChoice()` is the empty one: no modules, no beacons, which is the crash
-site and what every default argument takes.
+`Chosen` resolves modules, beacon, belt and item fuel once through `resolveChosen` in `App`, and
+hands those choices to search previews and cells. `noChoice(ds)` has no modules or beacons, the
+earliest belt and the default fuel. `UrlState.fu` stores an optional item resource ID; absent uses
+`angels-solid-coke` if present in the dataset, otherwise `coal`. There is no fuel picker yet.
+`fueledRecipe` adds a compatible burner's fuel to a copy of its recipe, leaving static data intact.
+Fuel use per second is machine power times the module consumption multiplier, divided by burner
+effectivity and item fuel value. Per-craft amounts also account for effective crafting speed. Burnt
+results are outputs which receive no productivity bonus. Runtime `cellInterface` callers pass
+`CellContext` so burner fuel participates in cell edges, search scopes and suggestions; callers
+without that context inspect the static recipe interface.
 
 `defaultModule` is deliberately **not** `defaultMachine`'s nearest-`progress` rule — it is the best
 tier you could already have built, and none until that is nothing. The difference is that none

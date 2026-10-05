@@ -2,6 +2,7 @@ import { entryEffects, entryMachine, entryRecipe, type Cell, type CellEntry } fr
 import { machinesFor } from '../data/machines.ts';
 import { recipeName, resourceName, type Chosen } from '../data/index.ts';
 import { directionalRates, netRates, speedOf } from '../compute/flow.ts';
+import { fueledRecipe } from '../compute/fuel.ts';
 import { fmt } from '../ts.ts';
 import type { ResourceId, StaticData } from '../types.ts';
 import { dumbSolver } from './dumb.ts';
@@ -137,9 +138,15 @@ function rowOf(entry: CellEntry, progress: number, chosen: Chosen, ds: Dataset):
   const machine = entryMachine(entry, recipe, progress, ds);
   const speed = speedOf(machinesFor(ds, recipe), machine);
   const effects = entryEffects(ds, ds.data, entry, recipe, machine, chosen);
+  const fueled = fueledRecipe(
+    recipe,
+    machine === undefined ? undefined : ds.data.machines[machine],
+    chosen.fuel,
+    effects,
+  );
   return {
-    rates: netRates(recipe, speed, effects),
-    ...directionalRates(recipe, speed, effects),
+    rates: netRates(fueled, speed, effects),
+    ...directionalRates(fueled, speed, effects),
     count: entry.count,
   };
 }

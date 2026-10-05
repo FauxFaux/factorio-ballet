@@ -14,9 +14,11 @@ import type { Dataset } from '../dataset/index.ts';
 export interface Effects {
   speed: number;
   productivity: number;
+  /** Energy multiplier while the machine is working. */
+  consumption: number;
 }
 
-export const NO_EFFECTS: Effects = { speed: 1, productivity: 1 };
+export const NO_EFFECTS: Effects = { speed: 1, productivity: 1, consumption: 1 };
 
 const MIN_SPEED = 0.2;
 
@@ -29,12 +31,14 @@ export function fillSlots(machine: Machine, module: ModuleId): ModuleFill {
 interface Slots {
   speed: number;
   productivity: number;
+  consumption: number;
   free: number;
 }
 
 function slotEffects(data: StaticData, machine: Machine, fill: ModuleFill): Slots {
   let speed = 0;
   let productivity = 0;
+  let consumption = 0;
   let free = machine.moduleSlots ?? 0;
   for (const [id, count] of Object.entries(fill)) {
     if (free <= 0) break;
@@ -45,8 +49,9 @@ function slotEffects(data: StaticData, machine: Machine, fill: ModuleFill): Slot
     free -= fitted;
     speed += (module.speed ?? 0) * fitted;
     productivity += (module.productivity ?? 0) * fitted;
+    consumption += (module.consumption ?? 0) * fitted;
   }
-  return { speed, productivity, free };
+  return { speed, productivity, consumption, free };
 }
 
 function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: Boost[]): Effects {
@@ -55,9 +60,13 @@ function applyBoost(machine: Machine, recipe: Recipe, slots: Slots, ...boosts: B
     slots.productivity + boosts.reduce((total, boost) => total + boost.productivity, 0);
   if (!allowsEffect(machine, 'speed')) speed = 0;
   if (!allowsEffect(machine, 'productivity') || !recipe.allowProductivity) moduleProductivity = 0;
+  const consumption = allowsEffect(machine, 'consumption')
+    ? slots.consumption + boosts.reduce((total, boost) => total + boost.consumption, 0)
+    : 0;
   return {
     speed: Math.max(MIN_SPEED, 1 + speed),
     productivity: 1 + (machine.baseProductivity ?? 0) + moduleProductivity,
+    consumption: Math.max(0.2, 1 + consumption),
   };
 }
 
@@ -79,6 +88,7 @@ export interface Boost {
   transmission: number;
   speed: number;
   productivity: number;
+  consumption: number;
 }
 
 export const NO_BOOST: Boost = {
@@ -89,6 +99,7 @@ export const NO_BOOST: Boost = {
   transmission: 0,
   speed: 0,
   productivity: 0,
+  consumption: 0,
 };
 
 export function moduleBoost(
@@ -126,6 +137,12 @@ export function moduleBoost(
     transmission,
     speed: felt * (found.speed ?? 0),
     productivity: felt * (found.productivity ?? 0),
+    consumption:
+      (inMachine +
+        ((beacon?.allowedEffects?.includes('consumption') ?? true)
+          ? inBeacons * transmission
+          : 0)) *
+      (found.consumption ?? 0),
   };
 }
 

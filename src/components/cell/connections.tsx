@@ -9,6 +9,7 @@ import { kernelBuildingFor, type KernelProblem } from '../../compute/kernel-prob
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
+import { FuelIcon } from '../fuel-icon.tsx';
 import {
   itemRateTotal,
   formatPerMachineRate,
@@ -294,7 +295,7 @@ function ConnectionTable({
 }
 
 function ConnectionRow({
-  flow: { resource, rate, connectedMachineCount, machineCount, connectedRecipes },
+  flow: { resource, rate, connectedMachineCount, machineCount, connectedRecipes, fuel },
   total,
   belt,
   recipe,
@@ -340,6 +341,7 @@ function ConnectionRow({
       >
         <ResourceIcon id={resource} />
         <span>{resourceName(data, resource)}</span>
+        {fuel ? <FuelIcon /> : null}
       </button>
       <ConnectionRate rate={rate} decimalPlaces={rateDecimalPlaces} />
       <MachineRatio

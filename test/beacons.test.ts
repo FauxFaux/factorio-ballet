@@ -258,6 +258,7 @@ describe('a cell row with beacons', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
   });
 
@@ -353,7 +354,7 @@ describe('moduleLayout', () => {
     );
     expect(auto.layout.productivity).toMatchObject({ wanted: 0, inMachine: 0 });
     expect(auto.layout.speed).toMatchObject({ module: SPEED_3, wanted: 2, inMachine: 2 });
-    expect(auto.effects).toEqual({ speed: 1.8, productivity: 1 });
+    expect(auto.effects).toEqual({ speed: 1.8, productivity: 1, consumption: 2.4 });
   });
 
   it('asks for none of it in a machine which ignores productivity either', () => {
@@ -448,7 +449,7 @@ describe('moduleLayout', () => {
       module: 'angels-bio-yield-module-5',
       inMachine: 2,
     });
-    expect(run.effects).toEqual({ speed: 1, productivity: 2 });
+    expect(run.effects).toEqual({ speed: 1, productivity: 2, consumption: 1 });
   });
 
   it('says what could reach the machine at all, which is what a row draws a box for', () => {
@@ -495,12 +496,13 @@ describe('moduleLayout', () => {
     );
     // no productivity module to fill the slots with, so the speed request has them instead
     expect(speedOnly.layout.productivity.module).toBeUndefined();
-    expect(speedOnly.effects).toEqual({ speed: 1.8, productivity: 1 });
+    expect(speedOnly.effects).toEqual({ speed: 1.8, productivity: 1, consumption: 2.4 });
     expect(
       entryRun(defaultDataset, defaultDataset.data, row, gears, row.machine, kit({})).effects,
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
   });
 });

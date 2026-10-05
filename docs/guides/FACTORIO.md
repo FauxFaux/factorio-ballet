@@ -36,6 +36,9 @@ Complexities:
   "coal" burns to "ash").
 - built-in productivity: some buildings can have productivity bonuses, before modules.
 
+There is a lua api in-game (primarily for modding), which can give computed results, or help
+understand concepts, checked out at ~/code/factorio-save-parser/docs/lua-api.
+
 ## Cells
 
 A cell is a unit of work in a factory, or a sub-factory. It's expected that a cell will generally be

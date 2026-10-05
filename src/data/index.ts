@@ -2,6 +2,7 @@ import type { Beacon, BeaconId, Belt, BeltId, ResourceId, StaticData } from '../
 import type { Dataset } from '../dataset/index.ts';
 import { chosenModules } from './modules.ts';
 import type { ChosenModules, ModuleChoice } from './modules.ts';
+import { chosenFuel, defaultFuel, type FuelChoice, type FuelMatch } from './fuels.ts';
 
 /** The display name for a resource, falling back to its id. */
 export function resourceName(data: StaticData, id: ResourceId): string {
@@ -125,7 +126,8 @@ export function chosenBelt(ds: Dataset, choice: BeltChoice, progress: number): B
 
 /**
  * What the header says a row has to spend: which module each family means, which beacon gets built
- * where a row's speed modules overflow the machine, and which belt will eventually constrain it.
+ * where a row's speed modules overflow the machine, which belt will eventually constrain it,
+ * and which item powers burner machines.
  *
  * One object because it is one decision — what you have built by now — and every row spends all of
  * it. A row states how many modules it wants for an effect and never which module, which family or
@@ -137,11 +139,13 @@ export interface Chosen {
   /** Absent is none, and the early game's honest answer: you have not built a beacon yet. */
   beacon?: Beacon;
   belt: Belt;
+  /** Resolved item fuel, shared by search previews and cells. */
+  fuel?: FuelMatch;
 }
 
 /** Nothing chosen at all: an unmodded machine with no beacons round it. */
 export function noChoice(ds: Dataset): Chosen {
-  return { modules: {}, belt: defaultBelt(ds, 0).belt };
+  return { modules: {}, belt: defaultBelt(ds, 0).belt, fuel: defaultFuel(ds.data) };
 }
 
 /** Every part of {@link Chosen} resolved against the header's choices and the progress slider. */
@@ -151,10 +155,12 @@ export function resolveChosen(
   beacon: BeaconChoice,
   belt: BeltChoice,
   progress: number,
+  fuel?: FuelChoice,
 ): Chosen {
   return {
     modules: chosenModules(ds, choice, progress),
     beacon: chosenBeacon(ds, beacon, progress),
     belt: chosenBelt(ds, belt, progress),
+    fuel: chosenFuel(ds.data, fuel),
   };
 }

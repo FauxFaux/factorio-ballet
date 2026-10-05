@@ -5,6 +5,8 @@ import type { Solution } from '../../solve/index.ts';
 export type ConnectionFlow = {
   resource: ResourceId;
   rate: number;
+  /** Some of this input is burned to power the selected machine. */
+  fuel?: true;
   /** Machines on the other end of this in-cell flow, relative to this recipe's machines. */
   connectedMachineCount?: number;
   machineCount?: number;
@@ -43,6 +45,7 @@ export function recipeConnections(
   entry: number,
   solution: Solution,
   recipes: string[] = [],
+  fuel?: ResourceId,
 ): RecipeConnections {
   const count = solution.counts[entry];
   const inputs = solution.inputRates[entry];
@@ -86,7 +89,9 @@ export function recipeConnections(
       .sort(byRate);
 
   return {
-    inputs: flows(inputs, solution.outputRates),
+    inputs: flows(inputs, solution.outputRates).map((flow) =>
+      flow.resource === fuel ? { ...flow, fuel: true } : flow,
+    ),
     outputs: flows(outputs, solution.inputRates),
   };
 }

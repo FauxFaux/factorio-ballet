@@ -2,6 +2,9 @@ import './recipe.css';
 import './compact-recipe.css';
 import { defaultMachine, machinesFor } from '../data/machines.ts';
 import { recipeFlows, speedOf } from '../compute/flow.ts';
+import { fueledRecipe } from '../compute/fuel.ts';
+import { defaultFuel } from '../data/fuels.ts';
+import type { Chosen } from '../data/index.ts';
 import type { RecipeMatch } from '../data/search.ts';
 import { recipeIconStyle } from './icon.tsx';
 import { FlowSummary } from './recipe-flow-summary.tsx';
@@ -14,6 +17,7 @@ export function CompactRecipe({
   progress,
   onAdd,
   inCell = false,
+  chosen,
 }: {
   match: RecipeMatch;
   /** Overall game progress, used to choose the machine whose rates are shown. */
@@ -22,12 +26,18 @@ export function CompactRecipe({
   onAdd?: () => void;
   /** Whether that cell already runs it. */
   inCell?: boolean;
+  chosen?: Chosen;
 }) {
   const ds = useDataset();
   const machines = machinesFor(ds, recipe);
   const machine = defaultMachine(machines, progress)?.id;
   const speed = speedOf(machines, machine);
-  const { ins, outs } = recipeFlows(recipe, machines, speed);
+  const fueled = fueledRecipe(
+    recipe,
+    machine === undefined ? undefined : ds.data.machines[machine],
+    chosen ? chosen.fuel : defaultFuel(ds.data),
+  );
+  const { ins, outs } = recipeFlows(fueled, machines, speed);
 
   return (
     <div class={`recipe-card compact-recipe${recipe.synthetic ? ' is-synthetic' : ''}`}>

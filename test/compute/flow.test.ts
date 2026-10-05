@@ -175,7 +175,7 @@ describe('netRates', () => {
 
   it('leaves ingredients alone when productivity goes up, and crafts fewer when speed goes down', () => {
     // three productivity module 3s: 1.36× out, 0.55× the crafts
-    const rates = netRates(gears, 1.25, { speed: 0.55, productivity: 1.36 });
+    const rates = netRates(gears, 1.25, { speed: 0.55, productivity: 1.36, consumption: 3.4 });
     expect(rates.get('item:iron-plate')).toBeCloseTo(-5 * 0.55);
     expect(rates.get('item:iron-gear-wheel')).toBeCloseTo(2.5 * 0.55 * 1.36);
   });
@@ -187,7 +187,7 @@ describe('netRates', () => {
     );
     // two bio-yield module 5s is +100%, and the game does not pay it on the garden handed back:
     // 2 + 1 rather than 2 × 2, so the cell gains two gardens a craft and not three
-    const modded = netRates(garden, garden.duration, { speed: 1, productivity: 2 });
+    const modded = netRates(garden, garden.duration, { speed: 1, productivity: 2, consumption: 1 });
     expect(modded.get('item:angels-temperate-garden')).toBe(2);
   });
 });

@@ -41,10 +41,11 @@ export function RecipeList({
   /** The header's resolved module and beacon choices, shared by every search result. */
   chosen: Chosen;
 }) {
-  const { data, soleProducerByResource } = useDataset();
+  const ds = useDataset();
+  const { data, soleProducerByResource } = ds;
   const found = useMemo(
-    () => searchMatches(data, search, progress, scope),
-    [search, progress, scope],
+    () => searchMatches(data, search, progress, scope, { ds, chosen }),
+    [ds, data, search, progress, scope, chosen],
   );
   const ordered = useMemo(() => {
     const recyclingRecipes = found.filter(

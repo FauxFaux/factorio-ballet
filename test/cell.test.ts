@@ -242,6 +242,7 @@ describe('entryEffects', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
     expect(
       entryEffects(
@@ -255,6 +256,7 @@ describe('entryEffects', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
   });
 
@@ -272,6 +274,7 @@ describe('entryEffects', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
     expect(
       entryEffects(
@@ -285,6 +288,7 @@ describe('entryEffects', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
     expect(
       entryEffects(
@@ -298,6 +302,7 @@ describe('entryEffects', () => {
     ).toEqual({
       speed: 1,
       productivity: 1,
+      consumption: 1,
     });
   });
 });

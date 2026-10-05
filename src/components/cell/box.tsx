@@ -65,7 +65,10 @@ export function CellBox({
 }) {
   const ds = useDataset();
   const { data } = ds;
-  const iface = useMemo(() => cellInterface(data, cell), [data, cell]);
+  const iface = useMemo(
+    () => cellInterface(data, cell, { ds, progress, chosen }),
+    [ds, data, cell, progress, chosen],
+  );
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(
     () => solveCell(ds, data, cell, progress, chosen),

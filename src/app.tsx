@@ -39,8 +39,8 @@ export function App({ uss }: { uss: State<UrlState> }) {
    * so the cells are handed the modules and beacon rather than a preference to re-resolve — and
    * memoised, because a cell's solution is memoised against this. */
   const chosen = useMemo(
-    () => resolveChosen(ds, us.mo, us.be, us.bt, progress),
-    [ds, us.mo, us.be, us.bt, progress],
+    () => resolveChosen(ds, us.mo, us.be, us.bt, progress, us.fu),
+    [ds, us.mo, us.be, us.bt, progress, us.fu],
   );
   const debugProblem = (problem: KernelProblem) =>
     setUs((prev) => {
@@ -58,8 +58,8 @@ export function App({ uss }: { uss: State<UrlState> }) {
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */
   const cell = us.cl[us.ci];
   const scope = useMemo(
-    () => (cell ? scopeOf(cellInterface(data, cell)) : undefined),
-    [data, cell],
+    () => (cell ? scopeOf(cellInterface(data, cell, { ds, progress, chosen })) : undefined),
+    [ds, data, cell, progress, chosen],
   );
 
   /* Both branches write `cl` and `ci` together, which is why this is not two `field` setters: the
@@ -139,6 +139,7 @@ export function App({ uss }: { uss: State<UrlState> }) {
               chosen={chosen}
             />
             <RecipeSuggestions
+              chosen={chosen}
               resource={selectedResource}
               search={recipeSearch[0]}
               cell={cell}

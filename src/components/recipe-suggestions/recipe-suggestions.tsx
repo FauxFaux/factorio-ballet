@@ -3,7 +3,7 @@ import { PackageDependenciesIcon, PackageDependentsIcon } from '@primer/octicons
 import { Fragment } from 'preact';
 import { useMemo } from 'preact/hooks';
 import type { Cell } from '../../cell.ts';
-import { recipeName, resourceName } from '../../data/index.ts';
+import { recipeName, resourceName, type Chosen } from '../../data/index.ts';
 import { useDataset } from '../../dataset/context.tsx';
 import type { ResourceId } from '../../types.ts';
 import { CompactRecipe } from '../compact-recipe.tsx';
@@ -17,6 +17,7 @@ export function RecipeSuggestions({
   search,
   cell,
   progress,
+  chosen,
   onAdd,
   inCell,
   onMakeExplicit,
@@ -25,21 +26,28 @@ export function RecipeSuggestions({
   search: string;
   cell?: Cell;
   progress: number;
+  chosen?: Chosen;
   onAdd?: (recipe: string) => void;
   inCell?: (recipe: string) => boolean;
   onMakeExplicit?: (resource: ResourceId, direction: 'import' | 'export') => void;
 }) {
-  const { data, suggestionPlans } = useDataset();
+  const ds = useDataset();
+  const { data, suggestionPlans } = ds;
   const suggestions = useMemo(() => {
     const imports = new Set(cell?.imports);
     const exports = new Set(cell?.exports);
-    return suggestedRecipePaths(data, suggestionPlans, search, cell, resource).filter(
-      (suggestion) => {
-        if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
-        return !exports.has(suggestion.resource);
-      },
-    );
-  }, [data, suggestionPlans, search, cell, resource]);
+    return suggestedRecipePaths(
+      data,
+      suggestionPlans,
+      search,
+      cell,
+      resource,
+      chosen ? { ds, progress, chosen } : undefined,
+    ).filter((suggestion) => {
+      if (suggestion.kind === 'input') return !imports.has(suggestion.resource);
+      return !exports.has(suggestion.resource);
+    });
+  }, [ds, data, suggestionPlans, search, cell, resource, progress, chosen]);
   return (
     <section class="recipe-suggestions" aria-label="Recipe paths">
       <h2>Top recipe paths</h2>
@@ -158,6 +166,7 @@ export function RecipeSuggestions({
                             <CompactRecipe
                               match={{ id, recipe, name: recipeName(data, id) }}
                               progress={progress}
+                              chosen={chosen}
                               onAdd={onAdd && (() => onAdd(id))}
                               inCell={inCell?.(id)}
                             />

@@ -1,6 +1,7 @@
 import { complexityOf, resourceName, type Chosen } from './data/index.ts';
 import { defaultMachine, machinesFor } from './data/machines.ts';
 import { netRates } from './compute/flow.ts';
+import { fueledRecipe } from './compute/fuel.ts';
 import {
   laidOutEffects,
   NO_EFFECTS,
@@ -298,13 +299,34 @@ export function activeAfterRemoval(active: number, removed: number, remaining: n
   return Math.min(active > removed ? active - 1 : active, Math.max(0, remaining - 1));
 }
 
-export function cellInterface(data: StaticData, cell: Cell): CellInterface {
+/** Machine and loadout context for the physical interface, including burner fuel. */
+export interface CellContext {
+  ds: Dataset;
+  progress: number;
+  chosen: Chosen;
+}
+
+export function cellInterface(data: StaticData, cell: Cell, context?: CellContext): CellInterface {
   const used = new Set<ResourceId>();
   const made = new Set<ResourceId>();
   const inPlay = new Set<ResourceId>();
   for (const entry of cell.entries) {
-    const recipe = entryRecipe(data, entry);
-    if (!recipe) continue;
+    const original = entryRecipe(data, entry);
+    if (!original) continue;
+    const machine = context
+      ? entryMachine(entry, original, context.progress, context.ds)
+      : entry.machine;
+    const effects = context
+      ? entryEffects(context.ds, data, entry, original, machine, context.chosen)
+      : NO_EFFECTS;
+    const recipe = context
+      ? fueledRecipe(
+          original,
+          machine === undefined ? undefined : data.machines[machine],
+          context.chosen.fuel,
+          effects,
+        )
+      : original;
     for (const ingredient of recipe.ingredients) inPlay.add(ingredient.resource);
     for (const product of recipe.products) inPlay.add(product.resource);
     /* Net a resource only within this recipe. A saw returned 90% of the time remains an input;
@@ -333,7 +355,7 @@ export function cellInterface(data: StaticData, cell: Cell): CellInterface {
   return {
     inputs,
     outputs,
-    inPlay: [...inputs, ...internalsBottomFirst(data, cell, internal), ...outputs],
+    inPlay: [...inputs, ...internalsBottomFirst(data, cell, internal), ...internal, ...outputs],
   };
 }
 

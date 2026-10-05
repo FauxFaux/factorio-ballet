@@ -52,6 +52,23 @@ describe('CompactRecipe', () => {
 });
 
 describe('RecipeCard', () => {
+  it('marks burner fuel in the expanded table, including an existing ingredient, and clears the mark for electricity', async () => {
+    const user = userEvent.setup();
+    const recipe = {
+      ...defaultDataset.data.recipes['iron-gear-wheel'],
+      categories: ['angels-blast-smelting', 'crafting'],
+      ingredients: [{ resource: 'item:angels-solid-coke' as const, amount: 1 }],
+    };
+    render(<RecipeCard match={{ id: 'fuel-test', recipe, name: 'Fuel test' }} progress={0} />);
+    await user.click(screen.getByRole('button', { name: '▸' }));
+    await user.click(screen.getByRole('button', { name: /\(angels-blast-furnace\)/ }));
+    const flame = screen.getByRole('img', { name: 'Burner fuel' });
+    expect(flame.closest('tr')?.textContent).toContain('Coke');
+    await user.click(screen.getByRole('button', { name: /\(assembling-machine-1\)/ }));
+    expect(screen.queryByRole('img', { name: 'Burner fuel' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'Coke' })).toBeTruthy();
+  });
+
   it('shows expanded flow rates to two decimal places per second', async () => {
     const user = userEvent.setup();
     const recipe = defaultDataset.data.recipes['iron-gear-wheel'];

@@ -1,4 +1,4 @@
-import { cellInterface, scopeOf, type Cell } from '../../cell.ts';
+import { cellInterface, scopeOf, type Cell, type CellContext } from '../../cell.ts';
 import { parseSearch } from '../../data/search.ts';
 import type { ResourceId, StaticData } from '../../types.ts';
 import type { ResourceChain, VoidPlan } from '../../compute/void-path.ts';
@@ -15,10 +15,17 @@ export function isResourceChain(plan: ResourceChain | VoidPlan): plan is Resourc
   return 'target' in plan;
 }
 
-export function usedSearchResources(data: StaticData, search: string, cell?: Cell) {
-  return parseSearch(data, search, cell ? scopeOf(cellInterface(data, cell)) : undefined).flatMap(
-    (term) => (term.kind === 'uses' ? [...term.resources] : []),
-  );
+export function usedSearchResources(
+  data: StaticData,
+  search: string,
+  cell?: Cell,
+  context?: CellContext,
+) {
+  return parseSearch(
+    data,
+    search,
+    cell ? scopeOf(cellInterface(data, cell, context)) : undefined,
+  ).flatMap((term) => (term.kind === 'uses' ? [...term.resources] : []));
 }
 
 export function suggestedVoidResources(
@@ -26,12 +33,13 @@ export function suggestedVoidResources(
   search: string,
   cell?: Cell,
   resource?: ResourceId,
+  context?: CellContext,
 ) {
   return [
     ...new Set([
-      ...usedSearchResources(data, search, cell),
+      ...usedSearchResources(data, search, cell, context),
       ...(resource ? [resource] : []),
-      ...(cell ? cellInterface(data, cell).outputs : []),
+      ...(cell ? cellInterface(data, cell, context).outputs : []),
     ]),
   ];
 }
@@ -41,9 +49,10 @@ export function suggestedResourceChains(
   index: SuggestionPlanIndex,
   cell?: Cell,
   maxResults = CANDIDATES_PER_RESOURCE,
+  context?: CellContext,
 ): Map<ResourceId, ResourceChain[]> {
   if (!cell) return new Map();
-  const { inputs, outputs } = cellInterface(data, cell);
+  const { inputs, outputs } = cellInterface(data, cell, context);
   return new Map(
     outputs
       .map((output) => [output, index.resourceChains(output, inputs, maxResults)] as const)
@@ -67,9 +76,10 @@ export function suggestedSoleProducerInputs(
   data: StaticData,
   index: SuggestionPlanIndex,
   cell?: Cell,
+  context?: CellContext,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(data, cell).inputs.flatMap((target) => {
+  return cellInterface(data, cell, context).inputs.flatMap((target) => {
     const id = index.soleProducer.get(target);
     const recipe = id && data.recipes[id];
     return id && recipe ? [directSuggestion(target, id, recipe)] : [];
@@ -85,9 +95,10 @@ export function suggestedFreeInputs(
   data: StaticData,
   index: SuggestionPlanIndex,
   cell?: Cell,
+  context?: CellContext,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(data, cell).inputs.flatMap((target) => {
+  return cellInterface(data, cell, context).inputs.flatMap((target) => {
     const plan = freeInputPlan(data, index, target);
     return plan ? [plan] : [];
   });
@@ -135,9 +146,10 @@ export function suggestedSoleConsumerOutputs(
   data: StaticData,
   index: SuggestionPlanIndex,
   cell?: Cell,
+  context?: CellContext,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(data, cell).outputs.flatMap((target) => {
+  return cellInterface(data, cell, context).outputs.flatMap((target) => {
     const id = index.soleConsumer.get(target);
     const recipe = id && data.recipes[id];
     if (!id || !recipe) return [];
@@ -159,9 +171,10 @@ function suggestedFewRecipeInterfaces(
   cell: Cell | undefined,
   direction: 'inputs' | 'outputs',
   recipesByResource: ReadonlyMap<ResourceId, readonly string[]>,
+  context?: CellContext,
 ): ResourceChain[] {
   if (!cell) return [];
-  return cellInterface(data, cell)[direction].flatMap((target) => {
+  return cellInterface(data, cell, context)[direction].flatMap((target) => {
     const recipes = recipesByResource.get(target);
     if (!recipes || recipes.length < 2 || recipes.length > 3) return [];
     return recipes.flatMap((id) => {
@@ -175,29 +188,33 @@ export function suggestedFewProducerInputs(
   data: StaticData,
   index: SuggestionPlanIndex,
   cell?: Cell,
+  context?: CellContext,
 ): ResourceChain[] {
-  return suggestedFewRecipeInterfaces(data, cell, 'inputs', index.producers).flatMap((plan) => [
-    plan,
-    ...plan.inputs.flatMap((input) => {
-      const supply = freeInputPlan(data, index, input);
-      return supply
-        ? [
-            {
-              ...recipePlan(data, plan.target, [...supply.recipes, ...plan.recipes]),
-              synthesisedFreeInputs: 1,
-            },
-          ]
-        : [];
-    }),
-  ]);
+  return suggestedFewRecipeInterfaces(data, cell, 'inputs', index.producers, context).flatMap(
+    (plan) => [
+      plan,
+      ...plan.inputs.flatMap((input) => {
+        const supply = freeInputPlan(data, index, input);
+        return supply
+          ? [
+              {
+                ...recipePlan(data, plan.target, [...supply.recipes, ...plan.recipes]),
+                synthesisedFreeInputs: 1,
+              },
+            ]
+          : [];
+      }),
+    ],
+  );
 }
 
 export function suggestedFewConsumerOutputs(
   data: StaticData,
   index: SuggestionPlanIndex,
   cell?: Cell,
+  context?: CellContext,
 ): ResourceChain[] {
-  return suggestedFewRecipeInterfaces(data, cell, 'outputs', index.consumers).map(
+  return suggestedFewRecipeInterfaces(data, cell, 'outputs', index.consumers, context).map(
     withoutTargetInput,
   );
 }

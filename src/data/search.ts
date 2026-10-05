@@ -1,4 +1,7 @@
-import { relevanceOf, resourceName } from './index.ts';
+import { relevanceOf, resourceName, type Chosen } from './index.ts';
+import type { Dataset } from '../dataset/index.ts';
+import { defaultMachine, machinesFor } from './machines.ts';
+import { fueledRecipe } from '../compute/fuel.ts';
 import type { Recipe, Resource, ResourceId, StaticData } from '../types.ts';
 
 export interface RecipeMatch {
@@ -30,6 +33,12 @@ export type Term =
 export interface SearchScope {
   in: Set<ResourceId>;
   out: Set<ResourceId>;
+}
+
+/** Runtime choices used to include the default building's fuel in directed searches. */
+export interface RecipeSearchContext {
+  ds: Dataset;
+  chosen: Chosen;
 }
 
 /**
@@ -168,6 +177,7 @@ export function searchRecipes(
   search: string,
   progress: number,
   scope?: SearchScope,
+  context?: RecipeSearchContext,
 ): RecipeMatch[] {
   const terms = parseSearch(data, search, scope);
   if (!terms.length) return [];
@@ -175,7 +185,11 @@ export function searchRecipes(
   const found: RecipeMatch[] = [];
   for (const [id, recipe] of Object.entries(data.recipes)) {
     const name = recipe.human ?? id;
-    if (terms.every((term) => matches(term, id, recipe, name))) found.push({ id, recipe, name });
+    const machine = context
+      ? defaultMachine(machinesFor(context.ds, recipe), progress)?.machine
+      : undefined;
+    const searched = context ? fueledRecipe(recipe, machine, context.chosen.fuel) : recipe;
+    if (terms.every((term) => matches(term, id, searched, name))) found.push({ id, recipe, name });
   }
   return found.sort(
     (a, b) =>
@@ -220,10 +234,11 @@ export function searchMatches(
   search: string,
   progress: number,
   scope?: SearchScope,
+  context?: RecipeSearchContext,
 ): SearchMatch[] {
   const terms = parseSearch(data, search, scope);
   return [
-    ...searchRecipes(data, search, progress, scope).map((match): SearchMatch => ({
+    ...searchRecipes(data, search, progress, scope, context).map((match): SearchMatch => ({
       kind: 'recipe',
       match,
     })),
