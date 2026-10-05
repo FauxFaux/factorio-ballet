@@ -46,7 +46,7 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Tile design')).toBeTruthy();
+    expect(screen.getByRole('table', { name: 'Found kernel layouts' })).toBeTruthy();
   });
 
   it('summarizes the 2×2 oxygen flare with no output', () => {
@@ -65,10 +65,9 @@ describe('cell display modes', () => {
       />,
     );
 
-    const summary = screen.getByLabelText('Tile design');
-    expect(
-      within(summary).getByText('Columns/modules needed').nextElementSibling?.textContent,
-    ).toBe('×1');
+    const summary = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const row = within(summary).getByRole('rowheader', { name: 'General' }).closest('tr')!;
+    expect(within(row).getAllByRole('cell')[2].textContent).toBe('1');
   });
 
   it('summarizes air separation with two fluid outputs', () => {
@@ -92,7 +91,7 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByLabelText('Tile design')).toBeTruthy();
+    expect(screen.getByRole('table', { name: 'Found kernel layouts' })).toBeTruthy();
   });
 
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
@@ -159,12 +158,11 @@ describe('cell display modes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
 
-    const summary = screen.getByLabelText('Tile design');
-    expect(within(summary).getByText('Kernel size')).toBeTruthy();
-    expect(within(summary).getByText(/\d+×\d+ tiles/)).toBeTruthy();
-    expect(within(summary).getByText('Max column height')).toBeTruthy();
-    expect(within(summary).getByText('Columns/modules needed')).toBeTruthy();
-    expect(within(summary).getAllByText(/^×\d+$/)).toHaveLength(2);
+    const summary = screen.getByRole('table', { name: 'Found kernel layouts' });
+    expect(within(summary).getByRole('columnheader', { name: 'Kernel (tiles)' })).toBeTruthy();
+    expect(within(summary).getAllByText(/\d+×\d+/).length).toBeGreaterThan(0);
+    expect(within(summary).getByRole('columnheader', { name: 'Buildings/column' })).toBeTruthy();
+    expect(within(summary).getByRole('columnheader', { name: 'Columns' })).toBeTruthy();
   });
 
   it('uses the selected machine geometry for a fluid recipe', async () => {

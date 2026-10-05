@@ -2,13 +2,12 @@ import { useDataset } from '../../dataset/context.tsx';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
-import { solveKernelTileDesign } from '../../compute/tile-design/kernel-result.ts';
-import { MAX_MODULE_HEIGHT, modulesForTile, recipeKernelProblem } from '../../compute/modules.ts';
+import { kernelLayoutOptions } from '../../compute/kernel-layout-options.ts';
+import { MAX_MODULE_HEIGHT, recipeKernelProblem } from '../../compute/modules.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
-import { designBounds } from '../design/design-preview.tsx';
 import {
   itemRateTotal,
   simplifiedMachineRatio,
@@ -113,134 +112,68 @@ function AssemblerDesignSummary({
     inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt),
     longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt, 2),
   };
-  const result = solveKernelTileDesign(problem, throughput);
-  if ('success' in result) {
-    return (
-      <div class="cell-tile-design">
-        <p>Tile design: {result.message}</p>
-        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
-      </div>
-    );
-  }
-  if (result.status !== 'found') {
-    return (
-      <div class="cell-tile-design">
-        <p>Tile design: {result.reason}</p>
-        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
-      </div>
-    );
-  }
-
-  const column = result.candidate.column;
-  const bounds = designBounds(column.entities)!;
-  const maxHeight = Math.min(
-    result.validation.supportedCopies,
-    Math.floor(MAX_MODULE_HEIGHT / result.candidate.pitch),
-  );
-  if (maxHeight < 1 || machineCount === undefined) {
-    return (
-      <div class="cell-tile-design">
-        <p>Tile design: no solution</p>
-        <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
-      </div>
-    );
-  }
-  const moduleCount = modulesForTile(
-    recipe,
-    machineCount,
+  const { options, reason } = kernelLayoutOptions(
     problem,
-    result.candidate,
-    maxHeight,
-  ).length;
-  const retryCopies = maxHeight * 2;
-  const higherCapacityResult =
-    maxHeight <= 3 && moduleCount >= 2
-      ? solveKernelTileDesign(problem, throughput, {
-          repeatCount: retryCopies,
-          moduleHeight: MAX_MODULE_HEIGHT,
-        })
-      : undefined;
-  const higherCapacity =
-    higherCapacityResult &&
-    'status' in higherCapacityResult &&
-    higherCapacityResult.status === 'found'
-      ? higherCapacityResult
-      : undefined;
-  const higherCapacityBounds =
-    higherCapacity && designBounds(higherCapacity.candidate.column.entities)!;
-  const higherCapacityMaxHeight = higherCapacity
-    ? Math.min(
-        higherCapacity.validation.supportedCopies,
-        Math.floor(MAX_MODULE_HEIGHT / higherCapacity.candidate.pitch),
-      )
-    : 0;
-  const higherCapacityModuleCount = higherCapacity
-    ? modulesForTile(
-        recipe,
-        machineCount,
-        problem,
-        higherCapacity.candidate,
-        higherCapacityMaxHeight,
-      ).length
-    : 0;
+    throughput,
+    machineCount ?? 0,
+    belt.undergroundLength - 1,
+  );
 
   return (
     <div class="cell-tile-design">
-      <dl aria-label="Tile design">
-        <div>
-          <dt>Initial result</dt>
-          <dd>{result.optimal ? 'Found (optimal)' : `Found (${result.stopReason})`}</dd>
+      {options.length === 0 ? (
+        <p>Tile design: {reason}</p>
+      ) : (
+        <div class="cell-layout-options">
+          <p>
+            {fmt(machineCount!)} buildings required · up to {MAX_MODULE_HEIGHT} tiles per column
+          </p>
+          <table aria-label="Found kernel layouts">
+            <thead>
+              <tr>
+                <th scope="col">Layout</th>
+                <th scope="col">Repeats requested</th>
+                <th scope="col">Kernel (tiles)</th>
+                <th scope="col">Columns</th>
+                <th scope="col">Buildings/column</th>
+                <th scope="col">Capacity/column</th>
+              </tr>
+            </thead>
+            <tbody>
+              {options.map((option, index) => {
+                const { candidate } = option.result;
+                const counts = option.columns.map(({ machineCount }) => machineCount);
+                const min = Math.min(...counts);
+                const max = Math.max(...counts);
+                const installed = counts.reduce((sum, count) => sum + count, 0);
+                return (
+                  <tr key={index}>
+                    <th
+                      scope="row"
+                      title={
+                        option.result.optimal
+                          ? 'Optimal within this search family'
+                          : `Found (${option.result.stopReason})`
+                      }
+                    >
+                      {option.name}
+                    </th>
+                    <td>×{option.requestedCopies}</td>
+                    <td title={`${option.buildingsPerRepeat} buildings per repeat`}>
+                      {candidate.width}×{candidate.pitch}
+                    </td>
+                    <td>{option.columns.length}</td>
+                    <td title={`${installed} buildings installed across all columns`}>
+                      {min === max ? min : `${min}–${max}`}
+                    </td>
+                    <td>{option.maxBuildingsPerColumn}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
-        <div>
-          <dt>Kernel size</dt>
-          <dd>
-            {bounds.maxX - bounds.minX}×{bounds.maxY - bounds.minY} tiles
-          </dd>
-        </div>
-        <div>
-          <dt>Max column height</dt>
-          <dd>×{maxHeight}</dd>
-        </div>
-        <div>
-          <dt>Columns/modules needed</dt>
-          <dd>×{moduleCount}</dd>
-        </div>
-        {higherCapacityResult && (
-          <>
-            <div style="flex-wrap: wrap; min-width: 0">
-              <dt>Retry requiring ×{retryCopies} copies</dt>
-              <dd>
-                {'success' in higherCapacityResult
-                  ? higherCapacityResult.message
-                  : higherCapacityResult.status === 'found'
-                    ? higherCapacityResult.optimal
-                      ? 'Found (optimal)'
-                      : `Found (${higherCapacityResult.stopReason})`
-                    : `${higherCapacityResult.status}: ${higherCapacityResult.reason}`}
-              </dd>
-            </div>
-            {higherCapacity && higherCapacityBounds && (
-              <>
-                <div>
-                  <dt>Higher capacity kernel size</dt>
-                  <dd>
-                    {higherCapacityBounds.maxX - higherCapacityBounds.minX}×
-                    {higherCapacityBounds.maxY - higherCapacityBounds.minY} tiles
-                  </dd>
-                </div>
-                <div>
-                  <dt>Higher capacity max column height</dt>
-                  <dd>×{higherCapacityMaxHeight}</dd>
-                </div>
-                <div>
-                  <dt>Higher capacity columns/modules needed</dt>
-                  <dd>×{higherCapacityModuleCount}</dd>
-                </div>
-              </>
-            )}
-          </>
-        )}
-      </dl>
+      )}
       <DebugDesignButton problem={problem} onDebugProblem={onDebugProblem} />
     </div>
   );
