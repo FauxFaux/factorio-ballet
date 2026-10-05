@@ -108,6 +108,84 @@ describe('solveHighTileDesign', () => {
     );
   });
 
+  it('removes the empty column in the exported fluid assembler problem', () => {
+    const result = solveKernelTileDesign(
+      assemblerProblem({
+        solidInputs: [16.799999999999997, 14, 2.8],
+        solidOutputs: [30.799999999999997],
+        fluidInputs: [28],
+      }),
+      { beltItemsPerSecond: 75, inserterItemsPerSecond: 37.5, longInserterItemsPerSecond: 18.8 },
+      { mode: 'high', repeatCount: 2, undergroundBeltReach: 22 },
+    );
+    if (!('status' in result)) throw new Error(result.message);
+    const tile = found(result);
+    expect(tile.candidate).toMatchObject({ width: 6, pitch: 7 });
+    expect(tile.diagnostics.bestScore).toEqual({ area: 42, transportEntities: 25 });
+    expect(tile.validation.supportedCopies).toBe(2);
+    expect(tile.optimal).toBe(true);
+    const entities = tile.candidate.column.entities;
+    expect(
+      entities
+        .filter((entity) => entity.kind === 'inserter')
+        .every((entity) => entity.reach === undefined || entity.reach === 1),
+    ).toBe(true);
+    for (let x = 0; x < tile.candidate.width; x++)
+      expect(entities.some((entity) => entity.position.x === x)).toBe(true);
+  });
+
+  it.each(['single', 'pair'] as const)(
+    'fits a compact fluid branch and an adjacent trunk in the %s pattern',
+    (pattern) => {
+      const input = problem([2, 2, 2, 2], []);
+      fluid(input, 'west', 'fluid:water');
+      fluid(input, 'east', 'fluid:steam', 'outputs');
+      input.envelope.maxWidth = 7;
+      const tile = found(solveHighTileDesign(input, { pattern }));
+      expect(tile.candidate.width).toBe(7);
+      expect(tile.optimal).toBe(true);
+      const entities = tile.candidate.column.entities;
+      expect(entities.filter((entity) => entity.kind === 'underground-pipe')).toHaveLength(
+        pattern === 'single' ? 2 : 4,
+      );
+      expect(
+        entities
+          .filter((entity) => entity.kind === 'inserter')
+          .every((entity) => entity.reach === undefined || entity.reach === 1),
+      ).toBe(true);
+      const repeated = [-tile.candidate.pitch, 0, tile.candidate.pitch].flatMap((offset) =>
+        entities.map((entity) => ({
+          ...entity,
+          position: { ...entity.position, y: entity.position.y + offset },
+        })),
+      );
+      expect(entityPositionStatuses(repeated)).toEqual(repeated.map(() => 'valid'));
+    },
+  );
+
+  it('keeps all three opposite-side inserter sites with an adjacent fluid trunk', () => {
+    const input = problem([24], [2]);
+    fluid(input, 'east', 'fluid:water');
+    input.envelope.maxWidth = 6;
+    // An adjacent surface trunk does not require a fluid branch or a pipe tunnel.
+    input.envelope.primitives = ['surface', 'underground'];
+    const tile = found(solveHighTileDesign(input, { pattern: 'single' }));
+    expect(tile.candidate.width).toBe(6);
+    expect(
+      tile.candidate.column.entities.some((entity) => entity.kind === 'underground-pipe'),
+    ).toBe(false);
+    const inputs = tile.candidate.transfers.filter(({ side }) => side === 'input');
+    const inserterIndices = [...new Set(inputs.map(({ inserterIndex }) => inserterIndex))];
+    expect(inserterIndices).toHaveLength(3);
+    expect(
+      inserterIndices.map((index) =>
+        inputs
+          .filter(({ inserterIndex }) => inserterIndex === index)
+          .reduce((sum, { rate }) => sum + rate, 0),
+      ),
+    ).toEqual([8, 8, 8]);
+  });
+
   it('uses both middle output lanes in a single when one lane or one inserter is insufficient', () => {
     const input = problem([], [20]);
     input.transport.inserters[0].capacity = 12;

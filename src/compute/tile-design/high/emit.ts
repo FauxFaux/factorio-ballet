@@ -123,10 +123,7 @@ export function emitHighTile(
   }
   for (const [copy, y] of frame.machineYs.entries()) {
     for (const side of ['west', 'east'] as const) {
-      const row = frame.ports.find((port) => port.side === side)?.row;
-      const available = Array.from({ length: frame.size.height }, (_, offset) => offset).filter(
-        (offset) => offset !== row,
-      );
+      const available = frame.sideRows[side];
       const near = assignments.find(({ track }) => track.access === `${side}-near`);
       const far = assignments.find(({ track }) => track.access === `${side}-far`);
       // Mirror the row preference in the lower half of a pair, keeping end access visible.

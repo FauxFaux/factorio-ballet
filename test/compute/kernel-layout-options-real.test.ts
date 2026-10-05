@@ -91,7 +91,7 @@ describe('processing electronics kernel options', () => {
       ({ name, requestedCopies }) => name === 'HIGH single' && requestedCopies === 2,
     );
     expect(doubled).toMatchObject({
-      result: { candidate: { width: 7, pitch: 7 }, validation: { supportedCopies: 2 } },
+      result: { candidate: { width: 6, pitch: 7 }, validation: { supportedCopies: 2 } },
       buildingsPerRepeat: 1,
       maxBuildingsPerColumn: 2,
     });

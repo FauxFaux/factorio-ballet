@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Solution } from '../src/solve/index.ts';
 import {
+  formatPerMachineRate,
   recipeConnections,
   simplifiedMachineRatio,
 } from '../src/components/cell/connection-calc.ts';
@@ -95,5 +96,27 @@ describe('simplifiedMachineRatio', () => {
   it('scales the smaller side to one and rounds the other to one decimal place', () => {
     expect(simplifiedMachineRatio(1.7, 1)).toBe('1.7:1');
     expect(simplifiedMachineRatio(1, 2.54)).toBe('1:2.5');
+  });
+});
+
+describe('formatPerMachineRate', () => {
+  it.each([
+    [0, '0'],
+    [0.2, '¼'],
+    [0.25, '¼'],
+    [0.25001, '½'],
+    [0.3, '½'],
+    [0.5, '½'],
+    [0.50001, '1'],
+    [1, '1'],
+    [1.00001, '1 ½'],
+    [1.5, '1 ½'],
+    [1.6, '2'],
+    [2, '2'],
+    [2.01, '2 ½'],
+    [2.5, '2 ½'],
+    [12.6, '13'],
+  ])('rounds %s upward to %s', (rate, expected) => {
+    expect(formatPerMachineRate(rate)).toBe(expected);
   });
 });

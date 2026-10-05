@@ -52,7 +52,18 @@ describe('RecipeConnections', () => {
     render(
       <DatasetProvider value={defaultDataset}>
         <RecipeConnections
-          connections={{ inputs: [], outputs: [] }}
+          connections={{
+            inputs: [
+              {
+                resource: 'item:bob-silicon-wafer',
+                rate:
+                  17 *
+                  defaultDataset.data.belts['bob-ultimate-transport-belt'].itemsPerSecond *
+                  0.3,
+              },
+            ],
+            outputs: [{ resource: 'fluid:angels-liquid-sulfuric-acid', rate: 5.1 }],
+          }}
           solved
           belt={defaultDataset.data.belts['bob-ultimate-transport-belt']}
           recipe="bob-processing-electronics"
@@ -73,6 +84,10 @@ describe('RecipeConnections', () => {
       </DatasetProvider>,
     );
     const table = screen.getByRole('table', { name: 'Found kernel layouts' });
+    expect(screen.getByText('½/m')).toBeTruthy();
+    expect(screen.getByTitle('0.3 belts per machine (display rounded up)')).toBeTruthy();
+    expect(screen.getAllByLabelText(/belts per machine, rounded up/)).toHaveLength(1);
+    expect(screen.queryByText('½/s/machine')).toBeNull();
     expect(within(table).getByRole('row', { name: /General ×2 / })).toBeTruthy();
     expect(within(table).getByRole('row', { name: /HIGH single ×2 / })).toBeTruthy();
   });

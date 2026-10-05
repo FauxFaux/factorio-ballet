@@ -20,15 +20,13 @@ export interface HighFrame {
   pitch: number;
   machineYs: number[];
   tracks: HighTrack[];
-  ports: HighPort[];
+  sideRows: Record<'west' | 'east', number[]>;
   pipes: { entity: Pipe; resource: FluidId }[];
   trunks: { x: number; resource: FluidId }[];
 }
 
-/** Seven fixed columns: four side belts and three tunnels under the machine(s).
- * A pair touches at its inner ends; a single has two pickup sites per end belt.
- * Fluid branches replace an interior edge site and tunnel under the near belt,
- * with the far belt tunnelling under the outer pipe endpoint. */
+/** Up to seven columns: four side belts and three tunnels under the machine(s).
+ * Fluid sides try an adjacent trunk, one ordinary-reach belt, or two side belts. */
 export function* highFrames(
   input: TileDesignInput,
   copies: 1 | 2,
@@ -71,14 +69,6 @@ export function* highFrames(
         }
       }
     }
-    if (
-      groups.size &&
-      (!input.envelope.primitives.includes('branch') ||
-        !input.envelope.primitives.includes('underground') ||
-        input.transport.undergroundPipeReach < 1 ||
-        input.transport.undergroundBeltReach < 1)
-    )
-      continue;
     if (groups.size > 2) continue;
     const domains = [...groups]
       .toSorted(([a], [b]) => a.localeCompare(b))
@@ -96,60 +86,103 @@ export function* highFrames(
       const signature = JSON.stringify([size, orientation, ports]);
       if (seen.has(signature)) return;
       seen.add(signature);
-      const machineYs = Array.from({ length: copies }, (_, copy) => 2 + copy * size.height);
-      const pipes: HighFrame['pipes'] = [];
-      const trunks: HighFrame['trunks'] = [];
-      for (const port of ports) {
-        const west = port.side === 'west';
-        const x = west ? -1 : 3;
-        const farX = west ? -3 : 5;
-        const trunkX = west ? -4 : 6;
-        trunks.push({ x: trunkX, resource: port.resource });
-        for (let y = 0; y < pitch; y++)
-          pipes.push({
-            entity: { kind: 'pipe', position: { x: trunkX, y } },
-            resource: port.resource,
-          });
-        for (const machineY of machineYs) {
-          const y = machineY + port.row;
-          pipes.push(
-            {
-              entity: {
-                kind: 'underground-pipe',
-                position: { x, y },
-                direction: oppositeDirection(port.side),
-              },
-              resource: port.resource,
-            },
-            {
-              entity: { kind: 'underground-pipe', position: { x: farX, y }, direction: port.side },
-              resource: port.resource,
-            },
-          );
-        }
-      }
-      const tracks: HighTrack[] = [
-        { x: -3, access: 'west-far', direction: 'north', profile: 'surface' },
-        { x: -2, access: 'west-near', direction: 'north', profile: 'surface' },
-        ...[0, 1, 2].map((x): HighTrack => ({
-          x,
-          access: 'end',
-          direction: 'north',
-          profile: 'underground',
-          tunnels: [{ top: 0, bottom: pitch - 1 }],
-        })),
-        { x: 4, access: 'east-near', direction: 'north', profile: 'surface' },
-        { x: 5, access: 'east-far', direction: 'north', profile: 'surface' },
-      ];
-      for (const port of ports) {
-        const track = tracks.find(({ access }) => access === `${port.side}-far`)!;
-        track.profile = 'underground';
-        track.tunnels = machineYs.map((y) => ({ top: y + port.row - 1, bottom: y + port.row + 1 }));
-      }
-      yield { size, orientation, copies, pitch, machineYs, tracks, ports, pipes, trunks };
+      yield* routeHighFrames(input, size, orientation, copies, pitch, ports, visit);
     }
     yield* choose([], 0);
   }
+}
+
+/** Each route changes actual belt access and occupied inserter cells before matching. */
+function* routeHighFrames(
+  input: TileDesignInput,
+  size: DesignSize,
+  orientation: TileMachineOrientation,
+  copies: 1 | 2,
+  pitch: number,
+  ports: HighPort[],
+  visit: () => boolean,
+): Generator<HighFrame> {
+  type Route = 'adjacent' | 'compact' | 'double';
+  function* choose(routes: Route[]): Generator<HighFrame> {
+    if (routes.length < ports.length) {
+      for (const route of ['adjacent', 'compact', 'double'] as const) {
+        if (
+          route !== 'adjacent' &&
+          (!input.envelope.primitives.includes('branch') ||
+            !input.envelope.primitives.includes('underground') ||
+            input.transport.undergroundBeltReach < 1 ||
+            input.transport.undergroundPipeReach < (route === 'double' ? 1 : 0))
+        )
+          continue;
+        yield* choose([...routes, route]);
+      }
+      return;
+    }
+    if (!visit()) return;
+    const machineYs = Array.from({ length: copies }, (_, copy) => 2 + copy * size.height);
+    const pipes: HighFrame['pipes'] = [];
+    const trunks: HighFrame['trunks'] = [];
+    const rows = Array.from({ length: size.height }, (_, row) => row);
+    const sideRows: HighFrame['sideRows'] = { west: rows, east: rows };
+    let tracks: HighTrack[] = [
+      { x: -3, access: 'west-far', direction: 'north', profile: 'surface' },
+      { x: -2, access: 'west-near', direction: 'north', profile: 'surface' },
+      ...[0, 1, 2].map((x): HighTrack => ({
+        x,
+        access: 'end',
+        direction: 'north',
+        profile: 'underground',
+        tunnels: [{ top: 0, bottom: pitch - 1 }],
+      })),
+      { x: 4, access: 'east-near', direction: 'north', profile: 'surface' },
+      { x: 5, access: 'east-far', direction: 'north', profile: 'surface' },
+    ];
+    for (const [index, port] of ports.entries()) {
+      const route = routes[index];
+      const x = port.side === 'west' ? -1 : 3;
+      const sign = port.side === 'west' ? -1 : 1;
+      const outerX = x + sign * (route === 'double' ? 2 : 1);
+      const trunkX = route === 'adjacent' ? x : outerX + sign;
+      trunks.push({ x: trunkX, resource: port.resource });
+      for (let y = 0; y < pitch; y++)
+        pipes.push({
+          entity: { kind: 'pipe', position: { x: trunkX, y } },
+          resource: port.resource,
+        });
+      if (route === 'adjacent') {
+        sideRows[port.side] = [];
+        tracks = tracks.filter(({ access }) => !access.startsWith(port.side));
+        continue;
+      }
+      sideRows[port.side] = rows.filter((row) => row !== port.row);
+      if (route === 'compact')
+        tracks = tracks.filter(({ access }) => access !== `${port.side}-far`);
+      const track = tracks.find(
+        ({ access }) => access === `${port.side}-${route === 'double' ? 'far' : 'near'}`,
+      )!;
+      track.profile = 'underground';
+      track.tunnels = machineYs.map((y) => ({ top: y + port.row - 1, bottom: y + port.row + 1 }));
+      for (const machineY of machineYs) {
+        const y = machineY + port.row;
+        pipes.push(
+          {
+            entity: {
+              kind: 'underground-pipe',
+              position: { x, y },
+              direction: oppositeDirection(port.side),
+            },
+            resource: port.resource,
+          },
+          {
+            entity: { kind: 'underground-pipe', position: { x: outerX, y }, direction: port.side },
+            resource: port.resource,
+          },
+        );
+      }
+    }
+    yield { size, orientation, copies, pitch, machineYs, tracks, sideRows, pipes, trunks };
+  }
+  yield* choose([]);
 }
 
 export function highBounds(frame: HighFrame, tracks: HighTrack[]) {

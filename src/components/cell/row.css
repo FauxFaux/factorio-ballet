@@ -208,6 +208,7 @@
 }
 
 .cell-connection-rate,
+.cell-connection-per-machine-rate,
 .cell-connection-machine-ratio,
 .cell-connection-transport {
   text-align: right;
@@ -391,4 +392,11 @@
   .cell-count {
     order: 0;
   }
+}
+
+.cell-connection-transport {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
 }

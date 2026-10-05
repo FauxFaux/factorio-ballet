@@ -94,3 +94,14 @@ export function recipeConnections(
 function byRate(a: ConnectionFlow, b: ConnectionFlow): number {
   return b.rate - a.rate || a.resource.localeCompare(b.resource);
 }
+
+/** Round upward to a quarter, a half, one, then half-unit steps. */
+export function formatPerMachineRate(rate: number): string {
+  if (rate <= 0) return '0';
+  if (rate <= 0.25) return '¼';
+  if (rate <= 0.5) return '½';
+  if (rate <= 1) return '1';
+  const rounded = Math.ceil(rate * 2) / 2;
+  const whole = Math.floor(rounded);
+  return rounded === whole ? String(whole) : `${whole} ½`;
+}

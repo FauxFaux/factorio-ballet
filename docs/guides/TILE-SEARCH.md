@@ -118,23 +118,26 @@ the left lane of the northbound belt. A touching pair puts each machine's produc
 lane; a single can use both end sites when rate requires two lanes or inserters. Each lane's
 boundary rate reflects its actual producing sites. Multiple products have matching output filters.
 
-Each required fluid chooses an interior east/west port, one fluid trunk per side. A horizontal pipe
-pair connects the machine to a trunk beyond the far belt. The near belt passes over that tunnel; the
-far belt uses a two-cell endpoint distance to pass under the outer pipe endpoint. Distinct fluids
-have isolated trunks. North/south fluid branches, ports at side corners, multiple fluid trunks on
-the same side, shared belts for different items, and splitting an item across different belts remain
-outside this policy.
+Each required fluid chooses an interior east/west port, one fluid trunk per side. The search tries a
+surface trunk immediately beside the machine, a horizontal pipe pair to a trunk beyond one
+ordinary-reach belt, and a pair to a trunk beyond both side belts. An adjacent trunk replaces all
+item access on its side, leaving the opposite edge available. A compact branch blocks one edge site
+and tunnels its belt under the outer pipe endpoint; it needs no long inserter or empty near-belt
+column. With two side belts, the near belt passes over the pipe tunnel and the far belt tunnels
+under the outer pipe endpoint. Distinct fluids have isolated trunks. North/south fluid branches,
+ports at side corners, multiple fluid trunks on the same side, shared belts for different items, and
+splitting an item across different belts remain outside this policy.
 
 Code responsibilities are intentionally small:
 
-| File               | Responsibility                                                                        |
-| ------------------ | ------------------------------------------------------------------------------------- |
-| `high/geometry.ts` | Single/pair placements, seven track profiles, allowed orientations and fluid branches |
-| `high/allocate.ts` | Memoized belt matching with two shared edge-site budgets and rate/reach checks        |
-| `high/emit.ts`     | Inserter row placement, used transport entities, per-lane rates and copy multiplicity |
-| `high/solve.ts`    | State budget, candidate selection and independent validation                          |
-| `solver.ts`        | Explicit `search`, `high`, or `auto` policy selection                                 |
-| `result.ts`        | Shared result/diagnostic types, re-exported by `search.ts` for existing callers       |
+| File               | Responsibility                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------------- |
+| `high/geometry.ts` | Single/pair placements, side route alternatives, allowed orientations and fluid branches |
+| `high/allocate.ts` | Memoized belt matching with two shared edge-site budgets and rate/reach checks           |
+| `high/emit.ts`     | Inserter row placement, used transport entities, per-lane rates and copy multiplicity    |
+| `high/solve.ts`    | State budget, candidate selection and independent validation                             |
+| `solver.ts`        | Explicit `search`, `high`, or `auto` policy selection                                    |
+| `result.ts`        | Shared result/diagnostic types, re-exported by `search.ts` for existing callers          |
 
 Matching assigns one flow to one of seven belt bits. State includes occupied belt bits and the
 number of inserter cells consumed on each side. Local capacity determines the required number of

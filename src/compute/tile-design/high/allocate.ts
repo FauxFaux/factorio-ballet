@@ -110,8 +110,7 @@ export function allocateHighBelts(
     }),
   );
   if (domains.some((domain) => !domain.length)) return;
-  const sideCapacity = (side: 'west' | 'east') =>
-    frame.size.height - Number(frame.ports.some((port) => port.side === side));
+  const sideCapacity = (side: 'west' | 'east') => frame.sideRows[side].length;
   const memo = new Map<string, Allocation | undefined>();
   function match(index: number, mask: number, west: number, east: number): Allocation | undefined {
     const key = `${index}:${mask}:${west}:${east}`;

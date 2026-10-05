@@ -10,6 +10,7 @@ import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import {
   itemRateTotal,
+  formatPerMachineRate,
   simplifiedMachineRatio,
   type ConnectionFlow,
   type RecipeConnections,
@@ -54,6 +55,7 @@ export function RecipeConnections({
       <ConnectionSection
         title="Inputs"
         flows={connections.inputs}
+        recipeMachineCount={machineCount}
         belt={belt}
         recipe={recipe}
         onSelectResource={onSelectResource}
@@ -61,6 +63,7 @@ export function RecipeConnections({
       <ConnectionSection
         title="Outputs"
         flows={connections.outputs}
+        recipeMachineCount={machineCount}
         belt={belt}
         recipe={recipe}
         onSelectResource={onSelectResource}
@@ -198,12 +201,14 @@ function ConnectionSection({
   flows,
   belt,
   recipe,
+  recipeMachineCount,
   onSelectResource,
 }: {
   title: string;
   flows: ConnectionFlow[];
   belt: Belt;
   recipe: string;
+  recipeMachineCount: number | undefined;
   onSelectResource: (resource: ResourceId) => void;
 }) {
   return (
@@ -213,6 +218,7 @@ function ConnectionSection({
         flows={flows}
         belt={belt}
         recipe={recipe}
+        recipeMachineCount={recipeMachineCount}
         onSelectResource={onSelectResource}
       />
     </section>
@@ -223,11 +229,13 @@ function ConnectionTable({
   flows,
   belt,
   recipe,
+  recipeMachineCount,
   onSelectResource,
 }: {
   flows: ConnectionFlow[];
   belt: Belt;
   recipe: string;
+  recipeMachineCount: number | undefined;
   onSelectResource: (resource: ResourceId) => void;
 }) {
   const total = itemRateTotal(flows);
@@ -260,6 +268,7 @@ function ConnectionTable({
           recipe={recipe}
           rateDecimalPlaces={rateDecimalPlaces}
           transportDecimalPlaces={transportDecimalPlaces}
+          recipeMachineCount={recipeMachineCount}
           onSelectResource={onSelectResource}
           key={flow.resource}
         />
@@ -275,6 +284,7 @@ function ConnectionRow({
   recipe,
   rateDecimalPlaces,
   transportDecimalPlaces,
+  recipeMachineCount,
   onSelectResource,
 }: {
   flow: ConnectionFlow;
@@ -283,6 +293,7 @@ function ConnectionRow({
   recipe: string;
   rateDecimalPlaces: number;
   transportDecimalPlaces: number;
+  recipeMachineCount: number | undefined;
   onSelectResource: (resource: ResourceId) => void;
 }) {
   const { data } = useDataset();
@@ -290,6 +301,10 @@ function ConnectionRow({
   const proportion = isItem && total > 0 ? Math.min(rate / total, 1) : 0;
   const share = `${fmt(proportion * 100)}% of total`;
   const fullRate = rate.toFixed(5);
+  const perMachine =
+    isItem && recipeMachineCount !== undefined && recipeMachineCount > 0
+      ? rate / recipeMachineCount / belt.itemsPerSecond
+      : undefined;
   return (
     <div class="cell-connection-row">
       {isItem ? (
@@ -297,7 +312,7 @@ function ConnectionRow({
           <span style={`height: ${proportion * 100}%`} aria-hidden="true" />
         </span>
       ) : (
-        /* The table uses a four-column grid. Keep this blank cell so fluid rows do not shift. */
+        /* Keep this blank distribution cell so fluid rows do not shift. */
         <span aria-hidden="true" />
       )}
       <button
@@ -318,6 +333,15 @@ function ConnectionRow({
         recipe={recipe}
       />
       <span class="cell-connection-transport">
+        {perMachine !== undefined && (
+          <span
+            class="cell-connection-per-machine-rate"
+            title={`${perMachine.toFixed(1)} belts per machine (display rounded up)`}
+            aria-label={`${formatPerMachineRate(perMachine)} belts per machine, rounded up`}
+          >
+            {formatPerMachineRate(perMachine)}/m
+          </span>
+        )}
         {resource.startsWith('item:') ? (
           <BeltCount rate={rate} belt={belt} decimalPlaces={transportDecimalPlaces} />
         ) : (
