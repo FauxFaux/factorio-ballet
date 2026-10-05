@@ -4,6 +4,8 @@ import {
   allKernelProblems,
   assemblerProblem,
   kernelMachineChoices,
+  kernelBuildingChoices,
+  kernelBuildingFor,
   kernelProblems,
   machineProblem,
 } from '../../src/compute/kernel-problems.ts';
@@ -122,6 +124,33 @@ describe('assemblerProblem', () => {
 });
 
 describe('kernelProblems', () => {
+  it('groups all dataset machines by footprint and physical fluid connections', () => {
+    const choices = kernelBuildingChoices(defaultDataset.data);
+    const machineIds = choices.flatMap(({ machineIds }) => machineIds);
+    expect(machineIds.toSorted()).toEqual(Object.keys(defaultDataset.data.machines).toSorted());
+    expect(new Set(choices.map(({ geometry }) => geometry)).size).toBe(choices.length);
+    const electronics = choices.find(({ machineIds }) =>
+      machineIds.includes('bob-electronics-machine-3'),
+    )!;
+    expect(electronics.machineIds).toContain('bob-electronics-machine-1');
+    expect(electronics.machineIds).toContain('bob-electronics-machine-2');
+    expect(choices.length).toBeLessThan(Object.keys(defaultDataset.data.machines).length / 2);
+  });
+
+  it('retains a dataset prototype when opening a problem and rejects missing prototypes', () => {
+    const problem = machineProblem(defaultDataset.data, 'machine:bob-electronics-machine-3', {
+      solidInputs: [16.8, 14, 2.8],
+      fluidInputs: [28],
+      solidOutputs: [30.8],
+    });
+    expect(kernelBuildingFor(problem, defaultDataset.data)).toBe(
+      'machine:bob-electronics-machine-3',
+    );
+    expect(problem.assemblers[0].size).toEqual({ width: 2, height: 2 });
+    problem.assemblers[0].machine = 'missing-machine';
+    expect(kernelBuildingFor(problem, defaultDataset.data)).toBeUndefined();
+  });
+
   it('uses the selected machine footprint and ports for custom problems', () => {
     expect(kernelMachineChoices.map(({ label }) => label)).toEqual([
       'Chemical plant',

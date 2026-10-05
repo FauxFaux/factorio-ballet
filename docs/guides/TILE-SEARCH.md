@@ -102,31 +102,34 @@ separate.
 `solveHighTileDesign` in `src/compute/tile-design/high/solve.ts` is an additional solver over the
 same `TileDesignInput` and `TileDesignCandidate` contracts. It implements subsets of the two
 patterns in [ASSEMBLERS-HIGH.md](../blueprints/ASSEMBLERS-HIGH.md), with horizontal underground
-fluid branches replacing east/west inserter sites. It dedicates one belt to each gross item flow,
-with at most seven flows including outputs. This deliberately uses fewer distinct resources than the
-fixtures' thirteen input lanes. A catalyst needs separate input and output belts.
+fluid branches replacing east/west inserter sites. It dedicates one belt to each gross item input
+and one or more belts to each output, with at most seven belts in total. This deliberately uses
+fewer distinct resources than the fixtures' thirteen input lanes. A catalyst needs separate input
+and output belts.
 
-The pattern is generalized to an allowed three-tile-wide orientation of a `3×h` machine. A single
-has pitch `h + 4`; a touching pair has pitch `2h + 4`. Only used belts and required inserters are
-emitted. The central three belts tunnel underneath the whole repeat unit and have two ordinary input
-sites per machine in a single, or one in a pair. The four side belts divide the available edge cells
-between ordinary near-belt and long far-belt inserters. Inputs may occupy either one lane or both
-lanes of their single belt. When both lanes are used, the certificate advertises equal rates and
-requires the module router to supply that split. Side outputs use one far lane on a dedicated belt.
-End belts can also carry outputs: the north end targets the right lane, and the south end targets
-the left lane of the northbound belt. A touching pair puts each machine's production on its own
-lane; a single can use both end sites when rate requires two lanes or inserters. Each lane's
+The pattern is generalized to an allowed two- or three-tile-wide orientation of a `w×h` machine. A
+single has pitch `h + 4`; a touching pair has pitch `2h + 4`. Only used belts and required inserters
+are emitted. The central `w` belts tunnel underneath the whole repeat unit and have two ordinary
+input sites per machine in a single, or one in a pair. The four side belts divide the available edge
+cells between ordinary near-belt and long far-belt inserters. Inputs may occupy either one lane or
+both lanes of their single belt. When both lanes are used, the certificate advertises equal rates
+and requires the module router to supply that split. Side outputs use one far lane on a dedicated
+belt. End belts can also carry outputs: the north end targets the right lane, and the south end
+targets the left lane of the northbound belt. A touching pair puts each machine's production on its
+own lane; a single can use both end sites when rate requires two lanes or inserters. Each lane's
 boundary rate reflects its actual producing sites. Multiple products have matching output filters.
 
-Each required fluid chooses an interior east/west port, one fluid trunk per side. The search tries a
-surface trunk immediately beside the machine, a horizontal pipe pair to a trunk beyond one
-ordinary-reach belt, and a pair to a trunk beyond both side belts. An adjacent trunk replaces all
-item access on its side, leaving the opposite edge available. A compact branch blocks one edge site
-and tunnels its belt under the outer pipe endpoint; it needs no long inserter or empty near-belt
-column. With two side belts, the near belt passes over the pipe tunnel and the far belt tunnels
-under the outer pipe endpoint. Distinct fluids have isolated trunks. North/south fluid branches,
-ports at side corners, multiple fluid trunks on the same side, shared belts for different items, and
-splitting an item across different belts remain outside this policy.
+Each required fluid chooses an east/west port, including corner rows, with one fluid trunk per side.
+The search tries a surface trunk immediately beside the machine, a horizontal pipe pair to a trunk
+beyond one ordinary-reach belt, and a pair to a trunk beyond both side belts. An adjacent trunk
+replaces all item access on its side, leaving the opposite edge available. A compact branch blocks
+one edge site and tunnels its belt under the outer pipe endpoint; it needs no long inserter or empty
+near-belt column. With two side belts, the near belt passes over the pipe tunnel and the far belt
+tunnels under the outer pipe endpoint. Touching pairs of machines at most two tiles high use
+adjacent fluid trunks because their side belt tunnels would share endpoint cells. Distinct fluids
+have isolated trunks. North/south fluid branches, multiple fluid trunks on the same side, shared
+belts for different items, and splitting an input across different belts remain outside this policy.
+Outputs may span multiple dedicated belts when lane or inserter capacity requires it.
 
 Code responsibilities are intentionally small:
 
@@ -139,12 +142,15 @@ Code responsibilities are intentionally small:
 | `solver.ts`        | Explicit `search`, `high`, or `auto` policy selection                                    |
 | `result.ts`        | Shared result/diagnostic types, re-exported by `search.ts` for existing callers          |
 
-Matching assigns one flow to one of seven belt bits. State includes occupied belt bits and the
-number of inserter cells consumed on each side. Local capacity determines the required number of
-sites before matching. This avoids enumerating resource lane subsets, fractional max-flow graphs,
-and discrete inserter configurations. Near and far belts share one edge budget, so neither can claim
-cells needed by the other. Emission assigns the near belt its required rows first and the far belt
-the remaining rows, reversing the row preference in the lower half of a pair.
+Matching assigns each input to one of seven belt bits and enumerates output capacity covers over the
+remaining belts. State includes occupied belt bits and the number of inserter cells consumed on each
+side. Output covers reserve sites within those shared budgets and split production in proportion to
+each selected belt's lane and inserter capacity. Each split then uses only the sites required for
+its actual rate. Local capacity determines the required number of sites before matching. This avoids
+enumerating resource lane subsets, fractional max-flow graphs, and discrete inserter configurations.
+Near and far belts share one edge budget, so neither can claim cells needed by the other. Emission
+assigns the near belt its required rows first and the far belt the remaining rows, reversing the row
+preference in the lower half of a pair.
 
 `pattern: 'single' | 'pair' | 'auto'` chooses which HIGH arrangements to try. Selection minimizes
 rectangle area per machine, then transport entities per machine. Comparing per machine allows the
@@ -165,6 +171,12 @@ The kernel workspace shows a third HIGH preview. Its custom problem has a single
 and Copy JSON includes the HIGH candidate and diagnostics. These previews use the selected belt's
 actual underground reach. Existing factory-module consumers already count the placed assemblers and
 consume `laneFlows`, so HIGH candidates use the same module conversion.
+
+The debugger offers dataset machines grouped by footprint and physical fluid boxes, so upgrade tiers
+with identical geometry share one building choice. Opening a recipe's Debug design retains its
+actual machine prototype and geometry; an unavailable prototype produces a visible warning instead
+of substituting a generic assembler. The connections table also tries each HIGH pattern using the
+actual footprint, including the `2×2` electronics machines.
 
 A local Node 24 microbenchmark, warmed up then averaged over twenty solves, illustrates the tradeoff
 of the initial side-output implementation. With a 30 items/s belt, ordinary inserter capacity 8,

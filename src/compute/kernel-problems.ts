@@ -20,6 +20,8 @@ export interface AssemblerSpecification {
   /** Stable identity within a kernel, independent of the machine's name. */
   id?: string;
   name: string;
+  /** Dataset prototype used for the footprint and physical fluid ports. */
+  machine?: string;
   inputPerSecond: ResourceRates;
   outputPerSecond: ResourceRates;
   /** The machine's tile footprint when a problem needs non-default geometry. */
@@ -109,7 +111,78 @@ export const kernelMachineChoices = [
   { value: 'powderiser', label: 'Powderiser', machineId: 'angels-powderizer-3' },
 ] as const;
 
-export type KernelMachineChoice = (typeof kernelMachineChoices)[number]['value'];
+export type KernelMachineChoice =
+  | (typeof kernelMachineChoices)[number]['value']
+  | `machine:${string}`;
+
+type KernelBuilding = 'assembler' | 'air-filter' | KernelMachineChoice;
+
+/** Upgrades with identical footprints and fluid ports share a debugger choice. */
+export function kernelBuildingChoices(data: StaticData) {
+  const choices: {
+    value: KernelBuilding;
+    label: string;
+    machineIds: string[];
+    geometry: string;
+  }[] = [];
+  const geometry = (machine: Pick<AssemblerSpecification, 'size' | 'fluidBoxes'>) =>
+    JSON.stringify([machine.size ?? { width: 3, height: 3 }, machine.fluidBoxes ?? []]);
+  const add = (
+    value: KernelBuilding,
+    label: string,
+    specification: Pick<AssemblerSpecification, 'size' | 'fluidBoxes'>,
+    machineId?: string,
+  ) => {
+    const key = geometry(specification);
+    const existing = choices.find((choice) => choice.geometry === key);
+    if (existing) {
+      if (machineId) existing.machineIds.push(machineId);
+    } else choices.push({ value, label, geometry: key, machineIds: machineId ? [machineId] : [] });
+  };
+  add('assembler', 'Assembler 2', assemblerProblem({ assemblerName: 'Assembler 2' }).assemblers[0]);
+  add('air-filter', '5×5 air filter', airFilterProblem({ width: 5, height: 5 }).assemblers[0]);
+  for (const { value, label, machineId } of kernelMachineChoices) {
+    if (data.machines[machineId])
+      add(value, label, machineProblem(data, value, {}).assemblers[0], machineId);
+  }
+  for (const [id, machine] of Object.entries(data.machines).toSorted(
+    ([leftId, left], [rightId, right]) =>
+      (left.human ?? leftId).localeCompare(right.human ?? rightId) || leftId.localeCompare(rightId),
+  )) {
+    if (choices.some(({ machineIds }) => machineIds.includes(id))) continue;
+    add(
+      `machine:${id}`,
+      `${machine.human ?? id} (${machine.size.width}×${machine.size.height})`,
+      {
+        size: machine.size,
+        fluidBoxes: machine.fluidBoxes,
+      },
+      id,
+    );
+  }
+  return choices;
+}
+
+/** Identify debugger geometry without silently substituting a generic assembler. */
+export function kernelBuildingFor(
+  problem: KernelProblem,
+  data: StaticData,
+): KernelBuilding | undefined {
+  if (problem.assemblers.length !== 1) return undefined;
+  const assembler = problem.assemblers[0];
+  if (assembler.machine)
+    return data.machines[assembler.machine] ? `machine:${assembler.machine}` : undefined;
+  const known = kernelMachineChoices.find(({ label }) => label === assembler.name);
+  if (known && data.machines[known.machineId]) return known.value;
+  if (
+    assembler.name.startsWith('Air filter') &&
+    assembler.size?.width === 5 &&
+    assembler.size.height === 5
+  )
+    return 'air-filter';
+  if (assembler.name === 'Assembler 1' || assembler.name === 'Assembler 2') return 'assembler';
+  return undefined;
+}
 
 /** Give a synthetic flow problem the footprint and fluid ports of a real machine. */
 export function machineProblem(
@@ -118,14 +191,19 @@ export function machineProblem(
   options: Omit<AssemblerProblemOptions, 'assemblerName' | 'size' | 'fluidBoxes'>,
   name?: string,
 ): KernelProblem {
-  const choice = kernelMachineChoices.find(({ value }) => value === building)!;
-  const machine = data.machines[choice.machineId];
-  return assemblerProblem({
+  const choice = kernelMachineChoices.find(({ value }) => value === building);
+  const machineId = building.startsWith('machine:')
+    ? building.slice('machine:'.length)
+    : choice!.machineId;
+  const machine = data.machines[machineId];
+  const problem = assemblerProblem({
     ...options,
-    assemblerName: name ?? choice.label,
+    assemblerName: name ?? choice?.label ?? machine.human ?? machineId,
     size: machine.size,
     fluidBoxes: machine.fluidBoxes,
   });
+  problem.assemblers[0].machine = machineId;
+  return problem;
 }
 
 /** Fluid geometry of the `assembling-machine-2` prototype in the generated static data. */

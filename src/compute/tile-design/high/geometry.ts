@@ -25,7 +25,7 @@ export interface HighFrame {
   trunks: { x: number; resource: FluidId }[];
 }
 
-/** Up to seven columns: four side belts and three tunnels under the machine(s).
+/** Up to seven columns: four side belts and tunnels under the machine(s).
  * Fluid sides try an adjacent trunk, one ordinary-reach belt, or two side belts. */
 export function* highFrames(
   input: TileDesignInput,
@@ -42,7 +42,7 @@ export function* highFrames(
     const size = swapped
       ? { width: machine.size.height, height: machine.size.width }
       : machine.size;
-    if (size.width !== 3) continue;
+    if (size.width < 2 || size.width > 3) continue;
     const pitch = size.height * copies + 4;
     if (
       pitch > input.envelope.maxPitch ||
@@ -62,8 +62,8 @@ export function* highFrames(
           const port = orientFluidPort(source, size, orientation);
           if (
             (port.direction === 'west' || port.direction === 'east') &&
-            port.position.y > 0 &&
-            port.position.y < size.height - 1
+            port.position.y >= 0 &&
+            port.position.y < size.height
           )
             ports.push({ resource: access.resource, side: port.direction, row: port.position.y });
         }
@@ -106,9 +106,12 @@ function* routeHighFrames(
   function* choose(routes: Route[]): Generator<HighFrame> {
     if (routes.length < ports.length) {
       for (const route of ['adjacent', 'compact', 'double'] as const) {
+        // Touching short machines would give consecutive side tunnels a shared
+        // endpoint cell. Keep their fluid trunks adjacent instead.
         if (
           route !== 'adjacent' &&
-          (!input.envelope.primitives.includes('branch') ||
+          ((copies === 2 && size.height <= 2) ||
+            !input.envelope.primitives.includes('branch') ||
             !input.envelope.primitives.includes('underground') ||
             input.transport.undergroundBeltReach < 1 ||
             input.transport.undergroundPipeReach < (route === 'double' ? 1 : 0))
@@ -127,19 +130,19 @@ function* routeHighFrames(
     let tracks: HighTrack[] = [
       { x: -3, access: 'west-far', direction: 'north', profile: 'surface' },
       { x: -2, access: 'west-near', direction: 'north', profile: 'surface' },
-      ...[0, 1, 2].map((x): HighTrack => ({
+      ...Array.from({ length: size.width }, (_, x): HighTrack => ({
         x,
         access: 'end',
         direction: 'north',
         profile: 'underground',
         tunnels: [{ top: 0, bottom: pitch - 1 }],
       })),
-      { x: 4, access: 'east-near', direction: 'north', profile: 'surface' },
-      { x: 5, access: 'east-far', direction: 'north', profile: 'surface' },
+      { x: size.width + 1, access: 'east-near', direction: 'north', profile: 'surface' },
+      { x: size.width + 2, access: 'east-far', direction: 'north', profile: 'surface' },
     ];
     for (const [index, port] of ports.entries()) {
       const route = routes[index];
-      const x = port.side === 'west' ? -1 : 3;
+      const x = port.side === 'west' ? -1 : size.width;
       const sign = port.side === 'west' ? -1 : 1;
       const outerX = x + sign * (route === 'double' ? 2 : 1);
       const trunkX = route === 'adjacent' ? x : outerX + sign;

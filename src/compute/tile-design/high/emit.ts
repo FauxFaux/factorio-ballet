@@ -133,7 +133,7 @@ export function emitHighTile(
       );
       const sites = (rows: number[]) =>
         rows.map((offset) => ({
-          base: { x: side === 'west' ? -1 : 3, y: y + offset },
+          base: { x: side === 'west' ? -1 : frame.size.width, y: y + offset },
           face: side,
         }));
       if (near) inserters(near, sites(nearRows), copy);

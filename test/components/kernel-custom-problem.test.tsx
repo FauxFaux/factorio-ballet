@@ -10,6 +10,7 @@ import { KernelCustomProblem } from '../../src/components/kernel-custom-problem.
 import { resourceIconStyle } from '../../src/components/icon.tsx';
 import { field } from '../../src/ts.ts';
 import { defaultDataset } from '../with-bobang.ts';
+import { kernelBuildingChoices } from '../../src/compute/kernel-problems.ts';
 
 const throughput = {
   beltItemsPerSecond: 15,
@@ -44,6 +45,69 @@ function CustomProblemExample({
 
 describe('KernelCustomProblem', () => {
   afterEach(cleanup);
+
+  it('shows one choice for electronics upgrades while exporting the selected tier and actual geometry', async () => {
+    const user = userEvent.setup();
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText } });
+    render(
+      <CustomProblemExample
+        currentThroughput={{
+          beltItemsPerSecond: 75,
+          inserterItemsPerSecond: 37.5,
+          longInserterItemsPerSecond: 18.75,
+        }}
+        initial={{
+          building: 'machine:bob-electronics-machine-3',
+          flows: {
+            solidInputs: [16.8, 14, 2.8],
+            fluidInputs: [28],
+            solidOutputs: [30.8],
+            fluidOutputs: [],
+          },
+        }}
+      />,
+    );
+    const select = screen.getByRole<HTMLSelectElement>('combobox', { name: 'Building' });
+    const group = kernelBuildingChoices(defaultDataset.data).find(({ machineIds }) =>
+      machineIds.includes('bob-electronics-machine-3'),
+    )!;
+    expect(select.value).toBe(group.value);
+    expect(
+      [...select.options].filter(({ title }) => title.includes('bob-electronics-machine')),
+    ).toHaveLength(1);
+    expect(select.options.length).toBe(kernelBuildingChoices(defaultDataset.data).length);
+    expect(screen.getByLabelText('Input fluids 1: 28/s')).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Copy JSON' }));
+    const exported = JSON.parse(writeText.mock.calls[0][0]);
+    expect(exported.assemblers[0]).toMatchObject({
+      machine: 'bob-electronics-machine-3',
+      size: { width: 2, height: 2 },
+    });
+    expect(exported.assemblers[0].fluidBoxes).toEqual(
+      defaultDataset.data.machines['bob-electronics-machine-3'].fluidBoxes,
+    );
+    expect(exported.throughput.longInserterItemsPerSecond).toBe(18.75);
+    expect(exported.building).toBe('machine:bob-electronics-machine-3');
+    expect(exported.highDesign.status).toBe('found');
+  });
+
+  it('shows a recoverable warning for a saved machine missing from the dataset', async () => {
+    render(
+      <CustomProblemExample
+        initial={{
+          building: 'machine:missing',
+          flows: { solidInputs: [], fluidInputs: [], solidOutputs: [], fluidOutputs: [] },
+        }}
+      />,
+    );
+    expect(screen.getByRole('alert').textContent).toContain('unavailable in this dataset: missing');
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Choose Assembler 2' }));
+    expect(screen.queryByRole('alert')).toBeNull();
+    expect(screen.getByRole<HTMLSelectElement>('combobox', { name: 'Building' }).value).toBe(
+      'assembler',
+    );
+  });
 
   it('exports the selected HIGH arrangement with its candidate and reach', async () => {
     const user = userEvent.setup();

@@ -1,10 +1,11 @@
 import { useDataset } from '../../dataset/context.tsx';
+import { useState } from 'preact/hooks';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
 import { kernelLayoutOptions } from '../../compute/kernel-layout-options.ts';
 import { MAX_MODULE_HEIGHT, recipeKernelProblem } from '../../compute/modules.ts';
-import type { KernelProblem } from '../../compute/kernel-problems.ts';
+import { kernelBuildingFor, type KernelProblem } from '../../compute/kernel-problems.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
@@ -189,10 +190,25 @@ function DebugDesignButton({
   problem: KernelProblem;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
+  const { data } = useDataset();
+  const [complained, setComplained] = useState(false);
+  const available = kernelBuildingFor(problem, data) !== undefined;
   return (
-    <button type="button" class="cell-debug-design" onClick={() => onDebugProblem(problem)}>
-      Debug design
-    </button>
+    <>
+      <button
+        type="button"
+        class="cell-debug-design"
+        onClick={() => {
+          if (available) onDebugProblem(problem);
+          else setComplained(true);
+        }}
+      >
+        Debug design
+      </button>
+      {complained && !available && (
+        <p role="alert">No matching machine is available in the design debugger for this recipe.</p>
+      )}
+    </>
   );
 }
 

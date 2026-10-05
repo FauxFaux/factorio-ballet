@@ -66,6 +66,53 @@ function fluid(
 }
 
 describe('solveHighTileDesign', () => {
+  it.each(['single', 'pair'] as const)(
+    'stacks real two-by-two corner-port geometry with the %s pattern',
+    (pattern) => {
+      const result = solveKernelTileDesign(
+        assemblerProblem({
+          solidInputs: [16.8, 14, 2.8],
+          solidOutputs: [30.8],
+          fluidInputs: [28],
+          size: { width: 2, height: 2 },
+          fluidBoxes: [
+            {
+              productionType: 'input',
+              connections: [
+                { position: { x: 0.5, y: -0.5 }, direction: 'north', flowDirection: 'input' },
+              ],
+            },
+          ],
+        }),
+        { beltItemsPerSecond: 75, inserterItemsPerSecond: 37.5, longInserterItemsPerSecond: 18.75 },
+        {
+          mode: 'high',
+          pattern,
+          repeatCount: pattern === 'single' ? 2 : 1,
+          undergroundBeltReach: 22,
+          moduleHeight: 100,
+        },
+      );
+      if (!('status' in result)) throw new Error(result.message);
+      const tile = found(result);
+      const machines = tile.candidate.column.entities.filter(
+        (entity) => entity.kind === 'assembler',
+      );
+      expect(machines).toHaveLength(pattern === 'single' ? 1 : 2);
+      expect(
+        machines.every((machine) => machine.size.width === 2 && machine.size.height === 2),
+      ).toBe(true);
+      expect(tile.validation.supportedCopies * machines.length).toBeGreaterThanOrEqual(2);
+      const repeated = [-1, 0, 1].flatMap((copy) =>
+        tile.candidate.column.entities.map((entity) => ({
+          ...entity,
+          position: { ...entity.position, y: entity.position.y + copy * tile.candidate.pitch },
+        })),
+      );
+      expect(entityPositionStatuses(repeated)).toEqual(repeated.map(() => 'valid'));
+    },
+  );
+
   it('uses the third middle belt for the 33.3/s inputs and 3.7/s output example', () => {
     const result = solveKernelTileDesign(
       assemblerProblem({ solidInputs: [33.3, 33.3], solidOutputs: [3.7] }),
@@ -116,7 +163,7 @@ describe('solveHighTileDesign', () => {
         fluidInputs: [28],
       }),
       { beltItemsPerSecond: 75, inserterItemsPerSecond: 37.5, longInserterItemsPerSecond: 18.8 },
-      { mode: 'high', repeatCount: 2, undergroundBeltReach: 22 },
+      { mode: 'high', pattern: 'single', repeatCount: 2, undergroundBeltReach: 22 },
     );
     if (!('status' in result)) throw new Error(result.message);
     const tile = found(result);
@@ -133,6 +180,43 @@ describe('solveHighTileDesign', () => {
     for (let x = 0; x < tile.candidate.width; x++)
       expect(entities.some((entity) => entity.position.x === x)).toBe(true);
   });
+
+  it.each(['single', 'auto'] as const)(
+    'splits the exported output across dedicated belts for three repeats in %s mode',
+    (pattern) => {
+      const kernel = assemblerProblem({
+        solidInputs: [16.799999999999997, 14, 2.8],
+        solidOutputs: [30.799999999999997],
+        fluidInputs: [28],
+      });
+      const result = solveKernelTileDesign(
+        kernel,
+        { beltItemsPerSecond: 75, inserterItemsPerSecond: 37.5, longInserterItemsPerSecond: 18.8 },
+        { mode: 'high', pattern, repeatCount: 3, undergroundBeltReach: 22 },
+      );
+      if (!('status' in result)) throw new Error(result.message);
+      const tile = found(result);
+      const outputs = tile.candidate.boundary.filter(({ laneFlows }) =>
+        Object.values(laneFlows ?? {}).some(({ side }) => side === 'output'),
+      );
+      expect(outputs.length).toBeGreaterThan(1);
+      const copies = Object.values(tile.candidate.machineCopies!)[0];
+      expect(
+        outputs
+          .flatMap(({ laneFlows }) => Object.values(laneFlows!))
+          .reduce((sum, { rate }) => sum + rate, 0),
+      ).toBeCloseTo(30.8 * copies);
+      for (const belt of outputs)
+        for (const { rate } of Object.values(belt.laneFlows!))
+          expect(rate * 3).toBeLessThanOrEqual(37.5 + 1e-9);
+      expect(tile.validation.supportedCopies).toBeGreaterThanOrEqual(3);
+      expect(tile.optimal).toBe(true);
+      const modules = modulesForTile('test', copies * 3, kernel, tile.candidate, 3);
+      expect(modules.reduce((sum, module) => sum + module.outputs['item:4'], 0)).toBeCloseTo(
+        30.8 * copies * 3,
+      );
+    },
+  );
 
   it.each(['single', 'pair'] as const)(
     'fits a compact fluid branch and an adjacent trunk in the %s pattern',
@@ -200,10 +284,12 @@ describe('solveHighTileDesign', () => {
       ['left', 10],
     ]);
     expect(result.validation.supportedCopies).toBe(1);
-    expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+    expect(found(solveHighTileDesign(input, { pattern: 'pair' })).candidate.boundary).toHaveLength(
+      2,
+    );
     input.machines[0].outputs.items[0].rate = 31;
     input.boundary.outputs.items[0].rate = 31;
-    expect(solveHighTileDesign(input).status).toBe('envelope-exhausted');
+    expect(found(solveHighTileDesign(input)).candidate.boundary.length).toBeGreaterThan(1);
   });
 
   it('counts each end output lane separately across paired repeats', () => {
@@ -222,7 +308,9 @@ describe('solveHighTileDesign', () => {
       2,
     );
     input.repeat.count = 3;
-    expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+    const split = found(solveHighTileDesign(input, { pattern: 'pair' }));
+    expect(split.candidate.boundary).toHaveLength(2);
+    expect(split.validation.supportedCopies).toBeGreaterThanOrEqual(3);
   });
   it.each([
     { pattern: 'single' as const, pitch: 7, copies: 1 },
@@ -356,6 +444,26 @@ describe('solveHighTileDesign', () => {
       );
     input.repeat.count = 4;
     expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+  });
+
+  it('filters split products and rejects output beyond all available lane capacity', () => {
+    const input = problem([], [35, 2]);
+    input.transport.inserters[0].capacity = 40;
+    const tile = found(solveHighTileDesign(input, { pattern: 'single' }));
+    const outputs = tile.candidate.transfers.filter(({ side }) => side === 'output');
+    for (const transfer of outputs) {
+      expect(tile.candidate.column.entities[transfer.inserterIndex]).toMatchObject({
+        kind: 'inserter',
+        filter: transfer.resource,
+      });
+    }
+    expect(
+      tile.candidate.boundary.filter(({ lanes }) => Object.values(lanes ?? {}).includes('item:1'))
+        .length,
+    ).toBeGreaterThan(1);
+    input.machines[0].outputs.items[0].rate = 200;
+    input.boundary.outputs.items[0].rate = 200;
+    expect(solveHighTileDesign(input).status).toBe('envelope-exhausted');
   });
 
   it('checks each assembler demand even when the pair total is correct', () => {

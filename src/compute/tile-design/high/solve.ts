@@ -13,7 +13,7 @@ export interface HighDesignOptions {
 
 /** A separate policy over the same normalized input and validated output contract.
  * This solver optimizes within the HIGH family, measuring cost per installed machine.
- * No item crosses multiple belts, and each belt has only one external flow role. */
+ * Outputs may span dedicated belts; each belt has only one resource and flow role. */
 export function solveHighTileDesign(
   input: TileDesignInput,
   { pattern = 'auto' }: HighDesignOptions = {},
@@ -40,18 +40,18 @@ export function solveHighTileDesign(
   if (machine.inputs.items.length + machine.outputs.items.length > 7)
     return failure(
       'unsupported',
-      'HIGH designs dedicate one belt per gross item flow, with at most seven belts.',
+      'HIGH designs need at least one belt per gross item flow, with at most seven belts.',
     );
   if (
-    !machine.orientations.some(
-      ({ rotation }) =>
-        (rotation === 'east' || rotation === 'west' ? machine.size.height : machine.size.width) ===
-        3,
+    !machine.orientations.some(({ rotation }) =>
+      [2, 3].includes(
+        rotation === 'east' || rotation === 'west' ? machine.size.height : machine.size.width,
+      ),
     )
   )
     return failure(
       'unsupported',
-      'HIGH designs require an allowed three-tile-wide machine orientation.',
+      'HIGH designs require an allowed two- or three-tile-wide machine orientation.',
     );
   let exhausted = false;
   const visit = () => {

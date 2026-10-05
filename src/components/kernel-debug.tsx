@@ -4,7 +4,7 @@ import { generateAssemblerDesign, isAssemblerDesignFailure } from '../compute/as
 import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
 import {
   allKernelProblems,
-  kernelMachineChoices,
+  kernelBuildingFor,
   type KernelProblem,
 } from '../compute/kernel-problems.ts';
 import { fmt } from '../ts.ts';
@@ -14,6 +14,7 @@ import type { KernelCustomState } from '../boot/url-handler.tsx';
 import type { State } from '../ts.ts';
 import { useMemo } from 'preact/hooks';
 import { useDataset } from '../dataset/context.tsx';
+import type { StaticData } from '../types.ts';
 
 export function KernelDebug({
   progress,
@@ -51,7 +52,7 @@ export function KernelDebug({
     [throughput, problems],
   );
   const useProblem = (problem: (typeof problems)[number]) => {
-    custom[1]((current) => kernelCustomStateFor(problem, current));
+    custom[1]((current) => kernelCustomStateFor(problem, current, data) ?? current);
   };
 
   return (
@@ -97,14 +98,12 @@ export function KernelDebug({
 export function kernelCustomStateFor(
   problem: KernelProblem,
   current: KernelCustomState | undefined,
-): KernelCustomState {
-  const assembler = problem.assemblers[0];
-  const machine = assembler && kernelMachineChoices.find(({ label }) => label === assembler.name);
-  const building = assembler?.name.startsWith('Air filter')
-    ? 'air-filter'
-    : (machine?.value ?? (assembler?.name.startsWith('Assembler') ? 'assembler' : undefined));
+  data: StaticData,
+): KernelCustomState | undefined {
+  const building = kernelBuildingFor(problem, data);
+  if (!building) return undefined;
   return {
-    building: building ?? current?.building ?? 'assembler',
+    building,
     flows: {
       solidInputs: Object.values(problem.inputs.solids),
       fluidInputs: Object.values(problem.inputs.fluids),

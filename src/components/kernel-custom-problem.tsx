@@ -1,5 +1,5 @@
 import type { ComponentChildren } from 'preact';
-import { useState } from 'preact/hooks';
+import { useMemo, useState } from 'preact/hooks';
 import { UndoIcon } from '@primer/octicons-react';
 import {
   generateAssemblerDesign,
@@ -14,6 +14,7 @@ import {
   airFilterProblem,
   assemblerProblem,
   kernelMachineChoices,
+  kernelBuildingChoices,
   machineProblem,
   type KernelProblem,
 } from '../compute/kernel-problems.ts';
@@ -50,7 +51,7 @@ const flowSides: { title: string; groups: FlowGroup[] }[] = [
 ];
 
 function withinRange(value: number, min: number, max: number) {
-  return Math.round(Math.min(max, Math.max(min, value)) * 10) / 10;
+  return Math.min(max, Math.max(min, value));
 }
 
 function resourceNamesFor(problem: KernelProblem): Record<FlowKind, string[]> {
@@ -80,7 +81,17 @@ export function KernelCustomProblem({
 }) {
   const { data } = useDataset();
   const [stored, setStored] = custom;
+  const [copied, setCopied] = useState(false);
+  const [highPattern, setHighPattern] = useState<NonNullable<HighDesignOptions['pattern']>>('auto');
   const { building, flows } = stored ?? defaultCustomState();
+  const buildingChoices = useMemo(() => kernelBuildingChoices(data), [data]);
+  const machineId = building.startsWith('machine:')
+    ? building.slice('machine:'.length)
+    : kernelMachineChoices.find(({ value }) => value === building)?.machineId;
+  const selectedBuilding =
+    buildingChoices.find(
+      (choice) => choice.value === building || (machineId && choice.machineIds.includes(machineId)),
+    )?.value ?? building;
   const repeatCount = stored?.repeatCount ?? 1;
   const rates = stored?.rates ?? {
     beltItemsPerSecond: withinRange(throughput.beltItemsPerSecond, 7.5, 75),
@@ -92,6 +103,19 @@ export function KernelCustomProblem({
   const setRates = (update: (current: AssemblerDesignThroughput) => AssemblerDesignThroughput) =>
     updateCustom((current) => ({ ...current, rates: update(current.rates ?? rates) }));
   const resetRates = () => updateCustom(({ rates: _rates, ...current }) => current);
+
+  if (machineId && !data.machines[machineId])
+    return (
+      <section class="kernel-custom" aria-label="Your problem">
+        <p role="alert">The selected machine is unavailable in this dataset: {machineId}.</p>
+        <button
+          type="button"
+          onClick={() => updateCustom((current) => ({ ...current, building: 'assembler' }))}
+        >
+          Choose Assembler 2
+        </button>
+      </section>
+    );
 
   const filter = airFilterProblem({ width: 5, height: 5 }).assemblers[0]!;
   const problemForFlows = (values: Flows) =>
@@ -107,8 +131,6 @@ export function KernelCustomProblem({
         : machineProblem(data, building, values);
   const problem = problemForFlows(flows);
   const design = generateAssemblerDesign(problem, rates);
-  const [copied, setCopied] = useState(false);
-  const [highPattern, setHighPattern] = useState<NonNullable<HighDesignOptions['pattern']>>('auto');
   const colours = resourceColoursFor(problem);
   const resourceNames = resourceNamesFor(problem);
 
@@ -188,7 +210,7 @@ export function KernelCustomProblem({
           <label class="kernel-custom-building">
             Building
             <select
-              value={building}
+              value={selectedBuilding}
               onChange={(event) => {
                 const building = event.currentTarget.value as KernelCustomState['building'];
                 updateCustom((current) => ({
@@ -197,10 +219,8 @@ export function KernelCustomProblem({
                 }));
               }}
             >
-              <option value="assembler">Assembler 2</option>
-              <option value="air-filter">5×5 air filter</option>
-              {kernelMachineChoices.map(({ value, label }) => (
-                <option value={value} key={value}>
+              {buildingChoices.map(({ value, label, machineIds }) => (
+                <option value={value} key={value} title={machineIds.join(', ')}>
                   {label}
                 </option>
               ))}
@@ -300,10 +320,10 @@ export function KernelCustomProblem({
                       {fluid ? (
                         <span
                           class="kernel-custom-fluid"
-                          aria-label={`${flowTitle} ${index + 1}: 200/s`}
+                          aria-label={`${flowTitle} ${index + 1}: ${fmt(rate)}/s`}
                         >
                           <ResourceIcon fluid color={colours[resourceNames[kind][index]!]} />
-                          <output>200/s</output>
+                          <output>{fmt(rate)}/s</output>
                         </span>
                       ) : (
                         <RateSlider

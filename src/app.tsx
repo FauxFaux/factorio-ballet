@@ -43,12 +43,16 @@ export function App({ uss }: { uss: State<UrlState> }) {
     [ds, us.mo, us.be, us.bt, progress],
   );
   const debugProblem = (problem: KernelProblem) =>
-    setUs((prev) => ({
-      ...prev,
-      kd: {},
-      rd: undefined,
-      kp: kernelCustomStateFor(problem, prev.kp),
-    }));
+    setUs((prev) => {
+      const kp = kernelCustomStateFor(problem, prev.kp, ds.data);
+      if (!kp) return prev;
+      return {
+        ...prev,
+        kd: {},
+        rd: undefined,
+        kp,
+      };
+    });
 
   /* The cell being worked on, if any: what a recipe added from the search joins, and what the
    * search's `@in`/`@out` queries mean. Nothing else in the app needs to know which cell that is. */

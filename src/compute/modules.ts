@@ -180,6 +180,7 @@ export function recipeKernelProblem(
     assemblers: [
       {
         name: recipe,
+        machine,
         size: machineData?.size,
         fluidBoxes: machineData?.fluidBoxes,
         fluidIngredients: data.recipes[recipe]?.ingredients.filter(({ resource }) =>
