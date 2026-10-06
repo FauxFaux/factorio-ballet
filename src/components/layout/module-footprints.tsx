@@ -203,6 +203,11 @@ export function ModuleFootprints({
   }, [hoveredModuleId, onModuleRotationsChange, onFrozenModulesChange]);
 
   const persistFrozenModules = () => {
+    physics.current = physics.current.map((placement) =>
+      pinned.current.has(placement.module.id)
+        ? { ...placement, x: Math.round(placement.x), y: Math.round(placement.y), vx: 0, vy: 0 }
+        : placement,
+    );
     onFrozenModulesChange?.(
       Object.fromEntries(
         physics.current

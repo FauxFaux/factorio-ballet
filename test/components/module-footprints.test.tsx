@@ -147,14 +147,15 @@ describe('ModuleFootprints', () => {
     const initialPath = path.getAttribute('d');
 
     fireEvent.pointerDown(a, { pointerId: 1, button: 0, clientX: 28, clientY: 74 });
-    fireEvent.pointerMove(svg, { pointerId: 1, clientX: 92, clientY: 122 });
-    expect(Number(aRect.getAttribute('x'))).toBe(initialA + 32);
-    expect(Number(aRect.getAttribute('y'))).toBe(initialY + 24);
+    fireEvent.pointerMove(svg, { pointerId: 1, clientX: 92.8, clientY: 123.2 });
+    expect(Number(aRect.getAttribute('x'))).toBeCloseTo(initialA + 32.4);
+    expect(Number(aRect.getAttribute('y'))).toBeCloseTo(initialY + 24.6);
     expect(path.getAttribute('d')).not.toBe(initialPath);
     expect(Number(bRect.getAttribute('x'))).toBe(initialB);
 
     fireEvent.pointerUp(svg, { pointerId: 1 });
-    expect(Number(aRect.getAttribute('x'))).toBe(initialA + 32);
+    expect(Number(aRect.getAttribute('x'))).toBe(Math.round(initialA + 32.4));
+    expect(Number(aRect.getAttribute('y'))).toBe(Math.round(initialY + 24.6));
   });
 
   it('freezes released modules across frames and unfreezes only the clicked module', () => {
@@ -194,8 +195,8 @@ describe('ModuleFootprints', () => {
         // Browsers also dispatch a click after releasing a drag.
         fireEvent.click(node);
       };
-      move(a, 1, 50, 50);
-      move(b, 2, 70, 50);
+      move(a, 1, 50.4, 49.6);
+      move(b, 2, 69.6, 50.4);
       expect(onFrozenModulesChange).toHaveBeenLastCalledWith({
         A: { x: 50, y: 50 },
         B: { x: 70, y: 50 },
