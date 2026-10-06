@@ -11,6 +11,7 @@ import { iconSprite } from '../icon.tsx';
 import { placementSize, portPoint, stepSpringLayout } from './spring-layout.ts';
 import { preLayoutModules } from './pre-layout.ts';
 import { ConnectionArrows } from './connection-arrow.tsx';
+import { connectionPath, modulePortAngle } from './connection-path.ts';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
@@ -250,12 +251,10 @@ export function ModuleFootprints({
   ) => {
     const placement = byId.get(id);
     if (!placement) return;
-    const outward = { right: 0, bottom: 90, left: 180, top: 270 }[port.edge];
-    const rotation = DIRECTIONS.indexOf(placement.rotation ?? 'north') * 90;
     arrows.set(`${id}|${portLabel(port)}|${side}|${resource}`, {
       owner: `module:${id}`,
       point: portPoint(placement, port),
-      angle: outward + rotation + (side === 'input' ? 180 : 0),
+      angle: modulePortAngle(port, placement.rotation, side),
       side,
       resource,
     });
@@ -277,11 +276,11 @@ export function ModuleFootprints({
       connection.resource,
     );
     const side = connection.side === 'input' ? 'output' : 'input';
-    const x = connection.side === 'input' ? stop.x + 8 : stop.x + (placement.x < stop.x ? -8 : -4);
+    const x = connection.side === 'input' ? stop.x + 8 : stop.x - 6;
     arrows.set(`${connection.stationId}|${x}|${connection.resource}`, {
       owner: `station:${connection.stationId}`,
-      point: { x, y: stop.y + (connection.side === 'input' ? 4.5 : 4) },
-      angle: connection.side === 'input' || placement.x >= stop.x ? 0 : 180,
+      point: { x, y: stop.y + (connection.side === 'input' ? 4.5 : 2) },
+      angle: 90,
       side,
       resource: connection.resource,
     });
@@ -334,19 +333,27 @@ export function ModuleFootprints({
           connection.stationIndex
         ];
         if (!placement || !stop) return null;
-        const stationX =
-          connection.side === 'input' ? stop.x + 8 : stop.x + (placement.x < stop.x ? -8 : -4);
-        const stationY = stop.y + (connection.side === 'input' ? 4.5 : 4);
+        const stationX = connection.side === 'input' ? stop.x + 8 : stop.x - 6;
+        const stationY = stop.y + (connection.side === 'input' ? 4.5 : 2);
         const modulePoint = portPoint(placement, connection.modulePort);
-        const start =
-          connection.side === 'input' ? [stationX, stationY] : [modulePoint.x, modulePoint.y];
-        const end =
-          connection.side === 'input' ? [modulePoint.x, modulePoint.y] : [stationX, stationY];
+        const start = connection.side === 'input' ? { x: stationX, y: stationY } : modulePoint;
+        const end = connection.side === 'input' ? modulePoint : { x: stationX, y: stationY };
+        const stationAngle = 90;
+        const moduleAngle = modulePortAngle(
+          connection.modulePort,
+          placement.rotation,
+          connection.side,
+        );
         return (
           <path
             key={`${connection.stationId}|${connection.moduleId}|${index}`}
             class={`cell-layout-module-connection is-station${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}${hoveredModuleId === connection.moduleId ? ' is-highlighted' : ''}`}
-            d={`M ${start[0]} ${start[1]} L ${end[0]} ${end[1]}`}
+            d={connectionPath(
+              start,
+              end,
+              connection.side === 'input' ? stationAngle : moduleAngle,
+              connection.side === 'input' ? moduleAngle : stationAngle,
+            )}
             data-layout-station-connection={connection.side}
             data-layout-station-id={connection.stationId}
             data-layout-resource={connection.resource}
@@ -367,12 +374,18 @@ export function ModuleFootprints({
         const index = pairCounts.get(pair) ?? 0;
         pairCounts.set(pair, index + 1);
         const bend = index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 ? 3 : -3);
-        const middleX = (start.x + end.x) / 2;
+
         return (
           <path
             key={`${pair}|${connection.resource}|${connectionIndex}`}
             class={`cell-layout-module-connection${connection.resource.startsWith('fluid:') ? ' is-fluid' : ''}${hoveredModuleId === connection.producerId || hoveredModuleId === connection.consumerId ? ' is-highlighted' : ''}`}
-            d={`M ${start.x} ${start.y} Q ${middleX} ${(start.y + end.y) / 2 + bend} ${end.x} ${end.y}`}
+            d={connectionPath(
+              start,
+              end,
+              modulePortAngle(connection.producerPort, producer.rotation, 'output'),
+              modulePortAngle(connection.consumerPort, consumer.rotation, 'input'),
+              bend,
+            )}
             data-layout-resource={connection.resource}
             data-layout-rate={connection.rate}
             data-layout-producer-port={portLabel(connection.producerPort)}

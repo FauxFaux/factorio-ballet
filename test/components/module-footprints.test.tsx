@@ -331,7 +331,9 @@ describe('ModuleFootprints', () => {
     );
     const path = container.querySelector('[data-layout-resource="item:iron-plate"]');
     expect(path?.getAttribute('data-layout-rate')).toBe('3');
-    expect(path?.getAttribute('d')).toMatch(/^M [\d.]+ [\d.]+ Q [\d.]+ [\d.]+ [\d.]+ [\d.]+$/);
+    expect(path?.getAttribute('d')).toMatch(
+      /^M [\d.]+ [\d.]+ C [-\d.]+ [-\d.]+ [-\d.]+ [\d.]+ [\d.]+ [\d.]+$/,
+    );
     expect(path?.getAttribute('data-layout-producer-port')).toBe('top:1:right');
     expect(path?.getAttribute('data-layout-consumer-port')).toBe('bottom:0:left');
     expect(container.querySelectorAll('[data-layout-module]')).toHaveLength(2);
@@ -365,12 +367,26 @@ describe('ModuleFootprints', () => {
         ]}
       />,
     );
+    const coordinates = (side: string) =>
+      container
+        .querySelector(`[data-layout-station-connection="${side}"]`)!
+        .getAttribute('d')!
+        .match(/-?\d+(?:\.\d+)?/g)!
+        .map(Number);
+    const input = coordinates('input');
+    expect(input.slice(0, 2)).toEqual([10, 54.5]);
+    expect(input[2]).toBe(10);
+    expect(input[3]).toBeGreaterThan(54.5);
+    const output = coordinates('output');
+    expect(output.slice(6)).toEqual([164, 42]);
+    expect(output[4]).toBe(164);
+    expect(output[5]).toBeLessThan(42);
+    const stationArrows = container.querySelectorAll('.cell-layout-connection-arrow');
     expect(
-      container.querySelector('[data-layout-station-connection="input"]')?.getAttribute('d'),
-    ).toMatch(/^M 10 54\.5 L [\d.]+ [\d.]+$/);
-    expect(
-      container.querySelector('[data-layout-station-connection="output"]')?.getAttribute('d'),
-    ).toMatch(/^M [\d.]+ [\d.]+ L 162 44$/);
+      [...stationArrows].filter((arrow) =>
+        arrow.querySelector('path')?.getAttribute('transform')?.includes('rotate(90)'),
+      ),
+    ).toHaveLength(2);
   });
 
   it('highlights connections attached to the hovered module', async () => {
