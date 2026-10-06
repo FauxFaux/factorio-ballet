@@ -1,10 +1,10 @@
 // @vitest-environment happy-dom
 
-import { cleanup, screen } from '@testing-library/preact';
+import { cleanup, fireEvent, screen } from '@testing-library/preact';
 import { render } from '../render-with-dataset.tsx';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'preact/hooks';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import { CellList } from '../../src/components/cell-list.tsx';
 import { CellLayoutSurface } from '../../src/components/layout/layout.tsx';
 import { newCell, type Cell } from '../../src/cell.ts';
@@ -14,10 +14,17 @@ import { useDataset } from '../../src/dataset/context.tsx';
 
 afterEach(cleanup);
 
-function CellListExample({ cell = newCell() }: { cell?: Cell }) {
+function CellListExample({
+  cell = newCell(),
+  onCell,
+}: {
+  cell?: Cell;
+  onCell?: (cell: Cell) => void;
+}) {
   const ds = useDataset();
   const cells = useState<Cell[]>([cell]);
   const active = useState(0);
+  onCell?.(cells[0][0]);
   return (
     <CellList
       cells={cells}
@@ -79,6 +86,51 @@ describe('CellList', () => {
 
     expect(screen.queryByRole('region', { name: 'Layout' })).toBeNull();
     expect(screen.getByRole('button', { name: '+ layout' })).toBeTruthy();
+  });
+
+  it('saves dragged positions in the cell and restores them when reopened', () => {
+    vi.stubGlobal('requestAnimationFrame', () => 1);
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    try {
+      const onCell = vi.fn();
+      const { container, unmount } = render(
+        <CellListExample cell={{ ...newCell('copper-cable'), layout: {} }} onCell={onCell} />,
+      );
+      const svg = container.querySelector('svg.cell-layout-modules')!;
+      vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({
+        left: 0,
+        top: 0,
+        width: 192,
+        height: 128,
+      } as DOMRect);
+      const node = container.querySelector('[data-layout-module]')!;
+      const id = node.getAttribute('data-layout-module')!;
+      const rect = node.querySelector('rect')!;
+      fireEvent.pointerDown(node, {
+        pointerId: 1,
+        button: 0,
+        clientX: Number(rect.getAttribute('x')),
+        clientY: Number(rect.getAttribute('y')),
+      });
+      fireEvent.pointerMove(svg, { pointerId: 1, clientX: 60, clientY: 50 });
+      fireEvent.pointerUp(node, { pointerId: 1 });
+      fireEvent.click(node);
+      const saved: Cell = onCell.mock.lastCall![0];
+      expect(saved.layout?.frozenModules).toEqual({ [id]: { x: 60, y: 50 } });
+      expect(Number(rect.getAttribute('x'))).toBe(60);
+      unmount();
+
+      const restored = render(
+        <CellListExample cell={JSON.parse(JSON.stringify(saved))} onCell={onCell} />,
+      );
+      const restoredNode = restored.container.querySelector('[data-layout-module]')!;
+      expect(Number(restoredNode.querySelector('rect')!.getAttribute('x'))).toBe(60);
+      fireEvent.click(restoredNode);
+      expect(onCell.mock.lastCall![0].layout?.frozenModules).toBeUndefined();
+      restored.unmount();
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it('places split proposals beside an existing layout', () => {

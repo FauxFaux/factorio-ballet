@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import type { Cell } from '../../src/cell.ts';
 import { createIdTables, packCells, unpackCells } from '../../src/boot/pack.ts';
+import { packEnvelope, parseEnvelope } from '../../src/boot/url-envelope.ts';
 import { defaultDataset } from '../with-bobang.ts';
 
 const recipe = Object.keys(defaultDataset.data.recipes)[0];
@@ -121,6 +122,26 @@ describe('packCells', () => {
       },
     ];
     expect(unpackCells(packCells(cells, ids), ids)).toEqual(cells);
+  });
+
+  it('round-trips frozen layout positions through the shareable URL envelope', () => {
+    const cells: Cell[] = [
+      {
+        entries: [{ recipe: 'copper-cable' }],
+        layout: {
+          frozenModules: {
+            'copper-cable:0': { x: 42.5, y: 60 },
+            'copper-cable:1': { x: 80, y: 20.25 },
+          },
+        },
+      },
+    ];
+    const envelope = parseEnvelope(
+      '#' + packEnvelope({ v: 1, cs: '', gp: 0, ci: 0, mo: {}, cl: packCells(cells, ids) }),
+    );
+    expect(envelope.kind).toBe('ok');
+    if (envelope.kind !== 'ok') throw new Error('URL envelope did not round-trip');
+    expect(unpackCells(envelope.packed.cl, ids)).toEqual(cells);
   });
 
   it('numbers the ids it knows', () => {

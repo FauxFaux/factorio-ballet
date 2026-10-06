@@ -192,6 +192,10 @@
   touch-action: none;
 }
 
+.cell-layout-modules [data-layout-module].is-pinned {
+  cursor: pointer;
+}
+
 .cell-layout-modules [data-layout-module].is-dragging {
   cursor: grabbing;
 }

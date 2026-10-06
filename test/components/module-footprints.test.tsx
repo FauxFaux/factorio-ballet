@@ -88,6 +88,101 @@ describe('ModuleFootprints', () => {
     expect(Number(aRect.getAttribute('x'))).toBe(initialA + 32);
   });
 
+  it('freezes released modules across frames and unfreezes only the clicked module', () => {
+    const frames: FrameRequestCallback[] = [];
+    let frameId = 0;
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frames.push(callback);
+      return ++frameId;
+    });
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    try {
+      const onFrozenModulesChange = vi.fn();
+      const { container, unmount } = render(
+        <ModuleFootprints
+          modules={[module('A'), module('B'), module('C')]}
+          onFrozenModulesChange={onFrozenModulesChange}
+        />,
+      );
+      const svg = container.querySelector('svg.cell-layout-modules')!;
+      vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({
+        left: 0,
+        top: 0,
+        width: 192,
+        height: 128,
+      } as DOMRect);
+      const a = container.querySelector('[data-layout-module="A"]')!;
+      const b = container.querySelector('[data-layout-module="B"]')!;
+      const position = (node: Element) => {
+        const rect = node.querySelector('rect')!;
+        return [Number(rect.getAttribute('x')), Number(rect.getAttribute('y'))];
+      };
+      const move = (node: Element, pointerId: number, x: number, y: number) => {
+        const [startX, startY] = position(node);
+        fireEvent.pointerDown(node, { pointerId, button: 0, clientX: startX, clientY: startY });
+        fireEvent.pointerMove(svg, { pointerId, clientX: x, clientY: y });
+        fireEvent.pointerUp(node, { pointerId });
+        // Browsers also dispatch a click after releasing a drag.
+        fireEvent.click(node);
+      };
+      move(a, 1, 50, 50);
+      move(b, 2, 70, 50);
+      expect(onFrozenModulesChange).toHaveBeenLastCalledWith({
+        A: { x: 50, y: 50 },
+        B: { x: 70, y: 50 },
+      });
+      const free = container.querySelector('[data-layout-module="C"]')!;
+      const initialFree = position(free);
+      for (let i = 0; i < 5; i++) act(() => frames.shift()!(i));
+      expect(position(a)).toEqual([50, 50]);
+      expect(position(b)).toEqual([70, 50]);
+      expect(position(free)).not.toEqual(initialFree);
+
+      // A small pointer wobble still counts as a click.
+      fireEvent.pointerDown(a, { pointerId: 3, button: 0, clientX: 50, clientY: 50 });
+      fireEvent.pointerMove(svg, { pointerId: 3, clientX: 51, clientY: 51 });
+      fireEvent.pointerUp(a, { pointerId: 3 });
+      fireEvent.click(a);
+      expect(onFrozenModulesChange).toHaveBeenLastCalledWith({ B: { x: 70, y: 50 } });
+      act(() => frames.shift()!(6));
+      expect(position(a)).not.toEqual([50, 50]);
+      expect(position(b)).toEqual([70, 50]);
+      unmount();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('restores shared frozen positions and responds to URL state changes', () => {
+    const modules = [module('A'), module('B')];
+    const frames: FrameRequestCallback[] = [];
+    let frameId = 0;
+    vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {
+      frames.push(callback);
+      return ++frameId;
+    });
+    vi.stubGlobal('cancelAnimationFrame', () => {});
+    try {
+      const { container, rerender, unmount } = render(
+        <ModuleFootprints modules={modules} frozenModules={{ A: { x: 50, y: 50 } }} />,
+      );
+      const rect = container.querySelector('[data-layout-module="A"] rect')!;
+      act(() => frames.shift()!(0));
+      expect(Number(rect.getAttribute('x'))).toBe(50);
+      expect(Number(rect.getAttribute('y'))).toBe(50);
+      rerender(<ModuleFootprints modules={modules} frozenModules={{ A: { x: 80, y: 30 } }} />);
+      act(() => frames.shift()!(1));
+      expect(Number(rect.getAttribute('x'))).toBe(80);
+      expect(Number(rect.getAttribute('y'))).toBe(30);
+      rerender(<ModuleFootprints modules={modules} frozenModules={{}} />);
+      act(() => frames.shift()!(2));
+      expect(Number(rect.getAttribute('x'))).not.toBe(80);
+      unmount();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
   it('starts at the pre-layout position and advances spring refinement on animation frames', () => {
     const frames: FrameRequestCallback[] = [];
     vi.stubGlobal('requestAnimationFrame', (callback: FrameRequestCallback) => {

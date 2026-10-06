@@ -4,6 +4,7 @@ import type {
   AttachedModuleConnection,
   AttachedStationConnection,
 } from '../../compute/module-port-connections.ts';
+import type { FrozenModulePositions } from '../../compute/layout.ts';
 import type { Position } from '../../bp/decode.ts';
 import { useDataset } from '../../dataset/context.tsx';
 import { iconSprite } from '../icon.tsx';
@@ -12,6 +13,7 @@ import { preLayoutModules } from './pre-layout.ts';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
+const NO_FROZEN_MODULES: FrozenModulePositions = {};
 const NO_STOPS: Position[] = [];
 
 function portLabel(port: { edge: string; x: number; y?: number; lane?: string }): string {
@@ -26,8 +28,12 @@ export function ModuleFootprints({
   inputStationStops = NO_STOPS,
   outputStationStops = NO_STOPS,
   zeroInputRegionRecipes,
+  frozenModules = NO_FROZEN_MODULES,
+  onFrozenModulesChange,
 }: {
   modules: FactoryModule[];
+  frozenModules?: FrozenModulePositions;
+  onFrozenModulesChange?: (positions: FrozenModulePositions) => void;
   connections?: AttachedModuleConnection[];
   stationConnections?: AttachedStationConnection[];
   inputStationStops?: Position[];
@@ -42,7 +48,14 @@ export function ModuleFootprints({
     moduleId: string;
     offsetX: number;
     offsetY: number;
+    startX: number;
+    startY: number;
+    moved: boolean;
   } | null>(null);
+  const savedPositions = useRef(frozenModules);
+  savedPositions.current = frozenModules;
+  const pinned = useRef(new Set<string>());
+  const suppressClick = useRef<string | null>(null);
   const wake = useRef<() => void>(() => {});
   const [placed, setPlaced] = useState(() =>
     preLayoutModules(
@@ -59,7 +72,14 @@ export function ModuleFootprints({
   const physics = useRef(placed);
   useEffect(() => {
     const links = { connections, stationConnections, inputStationStops, outputStationStops };
-    physics.current = preLayoutModules(modules, links, zeroInputRegionRecipes);
+    pinned.current.clear();
+    drag.current = null;
+    physics.current = preLayoutModules(modules, links, zeroInputRegionRecipes).map((placement) => {
+      const position = savedPositions.current[placement.module.id];
+      if (!position) return placement;
+      pinned.current.add(placement.module.id);
+      return { ...placement, ...position, vx: 0, vy: 0 };
+    });
     setPlaced(physics.current);
     let frame = 0;
     let steps = 0;
@@ -68,7 +88,9 @@ export function ModuleFootprints({
     };
     const tick = () => {
       frame = 0;
-      const next = stepSpringLayout(physics.current, links, drag.current?.moduleId);
+      const fixed = new Set(pinned.current);
+      if (drag.current) fixed.add(drag.current.moduleId);
+      const next = stepSpringLayout(physics.current, links, fixed);
       physics.current = next;
       setPlaced(next);
       steps++;
@@ -92,6 +114,28 @@ export function ModuleFootprints({
     zeroInputRegionRecipes,
   ]);
 
+  useEffect(() => {
+    pinned.current.clear();
+    physics.current = physics.current.map((placement) => {
+      const position = frozenModules[placement.module.id];
+      if (!position) return placement;
+      pinned.current.add(placement.module.id);
+      return { ...placement, ...position, vx: 0, vy: 0 };
+    });
+    setPlaced(physics.current);
+    wake.current();
+  }, [frozenModules]);
+
+  const persistFrozenModules = () => {
+    onFrozenModulesChange?.(
+      Object.fromEntries(
+        physics.current
+          .filter(({ module }) => pinned.current.has(module.id))
+          .map(({ module, x, y }) => [module.id, { x, y }]),
+      ),
+    );
+  };
+
   const pointerPosition = (clientX: number, clientY: number) => {
     const bounds = svgRef.current?.getBoundingClientRect();
     if (!bounds?.width || !bounds.height) return null;
@@ -102,7 +146,13 @@ export function ModuleFootprints({
   };
   const finishDrag = (pointerId: number) => {
     if (drag.current?.pointerId !== pointerId) return;
+    if (drag.current.moved) {
+      pinned.current.add(drag.current.moduleId);
+      suppressClick.current = drag.current.moduleId;
+      persistFrozenModules();
+    }
     drag.current = null;
+    setPlaced([...physics.current]);
     wake.current();
   };
   const byId = new Map(placed.map((placement) => [placement.module.id, placement]));
@@ -116,6 +166,10 @@ export function ModuleFootprints({
       onPointerMove={(event) => {
         const active = drag.current;
         if (!active || event.pointerId !== active.pointerId) return;
+        if (!active.moved) {
+          if (Math.hypot(event.clientX - active.startX, event.clientY - active.startY) < 3) return;
+          active.moved = true;
+        }
         const pointer = pointerPosition(event.clientX, event.clientY);
         if (!pointer) return;
         physics.current = physics.current.map((placement) =>
@@ -208,7 +262,24 @@ export function ModuleFootprints({
           <g
             key={module.id}
             data-layout-module={module.id}
-            class={drag.current?.moduleId === module.id ? 'is-dragging' : undefined}
+            class={
+              drag.current?.moduleId === module.id
+                ? 'is-dragging'
+                : pinned.current.has(module.id)
+                  ? 'is-pinned'
+                  : undefined
+            }
+            onClick={() => {
+              if (suppressClick.current === module.id) {
+                suppressClick.current = null;
+                return;
+              }
+              if (pinned.current.delete(module.id)) {
+                persistFrozenModules();
+                setPlaced([...physics.current]);
+                wake.current();
+              }
+            }}
             onMouseEnter={() => setHoveredModuleId(module.id)}
             onMouseLeave={() => setHoveredModuleId(null)}
             onPointerDown={(event) => {
@@ -217,11 +288,15 @@ export function ModuleFootprints({
               if (!pointer) return;
               const placement = physics.current.find((item) => item.module.id === module.id);
               if (!placement) return;
+              suppressClick.current = null;
               drag.current = {
                 pointerId: event.pointerId,
                 moduleId: module.id,
                 offsetX: pointer.x - placement.x,
                 offsetY: pointer.y - placement.y,
+                startX: event.clientX,
+                startY: event.clientY,
+                moved: false,
               };
               event.currentTarget.setPointerCapture?.(event.pointerId);
               event.preventDefault();

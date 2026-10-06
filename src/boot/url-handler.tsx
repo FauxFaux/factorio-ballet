@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { App } from '../app.tsx';
 import type { Cell } from '../cell.ts';
 import type { BeaconChoice, BeltChoice } from '../data';
@@ -140,15 +140,20 @@ export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: s
     initResult.kind === 'unpack-error' ? initResult : undefined,
   );
   const [us, setUs] = useState<UrlState>(initResult.kind === 'ok' ? initResult.us : defaultUs);
+  const synchronizedHash = useRef(window.location.hash);
 
   useEffect(() => {
     const onHashChange = () => {
+      // A local write already represents the live state. Reading it back would replace every
+      // object reference and restart consumers such as the spring-layout simulation.
+      if (window.location.hash === synchronizedHash.current) return;
       const envelope = parseEnvelope(window.location.hash);
       if (envelope.kind === 'ok' && (envelope.packed.dataset ?? legacyDatasetId) !== datasetId) {
         return;
       }
       const result = parseHash(window.location.hash, idTables);
       if (result.kind === 'ok') {
+        synchronizedHash.current = window.location.hash;
         setUnpackError(undefined);
         setUs(result.us);
       } else if (result.kind === 'unpack-error') {
@@ -161,7 +166,9 @@ export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: s
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      window.location.hash = packUs(us, idTables, datasetId);
+      const hash = `#${packUs(us, idTables, datasetId)}`;
+      synchronizedHash.current = hash;
+      window.location.hash = hash;
     }, 50);
     return () => clearTimeout(timeout);
   }, [us, idTables, datasetId]);

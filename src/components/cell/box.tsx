@@ -67,17 +67,17 @@ export function CellBox({
   const { data } = ds;
   const iface = useMemo(
     () => cellInterface(data, cell, { ds, progress, chosen }),
-    [ds, data, cell, progress, chosen],
+    [ds, data, cell.entries, cell.imports, cell.exports, progress, chosen],
   );
   const stackedStations = stackedRailStations(iface.inputs.length, iface.outputs.length);
   const solution = useMemo(
     () => solveCell(ds, data, cell, progress, chosen),
-    [ds, data, cell, progress, chosen],
+    [ds, data, cell.entries, cell.imports, cell.exports, progress, chosen],
   );
   const modules = useMemo(
     () =>
       cell.layout ? modulesForCell(data, cell.entries, solution, chosen.belt, progress, ds) : [],
-    [ds, data, cell.layout, cell.entries, solution, chosen.belt, progress],
+    [ds, data, Boolean(cell.layout), cell.entries, solution, chosen.belt, progress],
   );
   const moduleFlows = useMemo(
     () =>
@@ -381,6 +381,15 @@ export function CellBox({
         <div class="cell-layout-row">
           <CellLayoutSurface
             layout={cell.layout}
+            onFrozenModulesChange={(frozenModules) =>
+              setCell((previous) => ({
+                ...previous,
+                layout: {
+                  ...previous.layout,
+                  frozenModules: Object.keys(frozenModules).length ? frozenModules : undefined,
+                },
+              }))
+            }
             inputs={iface.inputs}
             outputs={iface.outputs}
             modules={modules}

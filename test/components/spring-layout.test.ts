@@ -160,11 +160,24 @@ describe('spring layout', () => {
         ...emptyLinks,
         connections: [link('item:iron', 60)],
       },
-      'A',
+      new Set(['A']),
     );
     expect(next[0]).toMatchObject({ x: 30, y: 26, vx: 0, vy: 0 });
     expect(next[1]!.x).toBeGreaterThan(placed[1]!.x);
     expect(next[1]!.x - next[0]!.x).toBeGreaterThanOrEqual(9);
+  });
+
+  it('keeps multiple pinned modules fixed while a free neighbor moves around them', () => {
+    const placed = initialSpringPlacements([module('A'), module('B'), module('C')]);
+    placed[0]!.x = 30;
+    placed[1]!.x = 32;
+    placed[2]!.x = 34;
+    placed[0]!.vx = 2;
+    placed[1]!.vy = 2;
+    const next = stepSpringLayout(placed, emptyLinks, new Set(['A', 'B']));
+    expect(next[0]).toMatchObject({ x: 30, y: 26, vx: 0, vy: 0 });
+    expect(next[1]).toMatchObject({ x: 32, y: 26, vx: 0, vy: 0 });
+    expect(next[2]!.x - next[1]!.x).toBeGreaterThanOrEqual(9);
   });
 
   it('keeps free modules out of the track margin and larger corner reservations', () => {
@@ -227,6 +240,6 @@ describe('spring layout', () => {
     const placed = initialSpringPlacements([module('A')]);
     placed[0]!.x = 1;
     placed[0]!.y = 1;
-    expect(stepSpringLayout(placed, emptyLinks, 'A')[0]).toMatchObject({ x: 1, y: 1 });
+    expect(stepSpringLayout(placed, emptyLinks, new Set(['A']))[0]).toMatchObject({ x: 1, y: 1 });
   });
 });

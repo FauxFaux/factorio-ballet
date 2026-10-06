@@ -104,7 +104,8 @@ function talaViewBox(result: LayoutResult, nodeNames: ReadonlyMap<string, string
 
 /** The initial, intentionally empty surface for a cell's factory layout. */
 export function CellLayoutSurface({
-  layout: _layout,
+  layout,
+  onFrozenModulesChange,
   inputs,
   outputs,
   modules = NO_MODULES,
@@ -114,6 +115,7 @@ export function CellLayoutSurface({
   zeroInputRegionRecipes,
 }: {
   layout: CellLayout;
+  onFrozenModulesChange?: (positions: NonNullable<CellLayout['frozenModules']>) => void;
   inputs: ResourceId[];
   outputs: ResourceId[];
   modules?: FactoryModule[];
@@ -204,6 +206,8 @@ export function CellLayoutSurface({
       <section class="cell-layout" aria-label="Layout">
         <RailBlueprintPreview blueprint={blueprint.blueprint} embedded />
         <ModuleFootprints
+          frozenModules={layout.frozenModules}
+          onFrozenModulesChange={onFrozenModulesChange}
           modules={modules}
           connections={connections}
           stationConnections={stationConnections}

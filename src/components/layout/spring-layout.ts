@@ -185,7 +185,7 @@ function strength(resource: string, rate: number): number {
 export function stepSpringLayout(
   placements: readonly SpringPlacement[],
   links: SpringLinks,
-  pinnedModuleId?: string,
+  pinnedModuleIds: ReadonlySet<string> = new Set(),
 ): SpringPlacement[] {
   const indexById = new Map(placements.map((placement, index) => [placement.module.id, index]));
   const forces = placements.map(() => ({ x: 0, y: 0 }));
@@ -242,7 +242,7 @@ export function stepSpringLayout(
   }
 
   const next = placements.map((placement, index) => {
-    if (placement.module.id === pinnedModuleId) return { ...placement, vx: 0, vy: 0 };
+    if (pinnedModuleIds.has(placement.module.id)) return { ...placement, vx: 0, vy: 0 };
     // A weak centre pull keeps disconnected modules in the working area.
     const point = center(placement);
     const vx = Math.max(
@@ -270,15 +270,15 @@ export function stepSpringLayout(
       if (overlapX <= 0 || overlapY <= 0) continue;
       if (overlapX < overlapY) {
         const sign = ac.x <= bc.x ? -1 : 1;
-        const firstPinned = first.module.id === pinnedModuleId;
-        const secondPinned = second.module.id === pinnedModuleId;
+        const firstPinned = pinnedModuleIds.has(first.module.id);
+        const secondPinned = pinnedModuleIds.has(second.module.id);
         first.x += firstPinned ? 0 : (sign * overlapX) / (secondPinned ? 1 : 2);
         second.x -= secondPinned ? 0 : (sign * overlapX) / (firstPinned ? 1 : 2);
         first.vx = second.vx = 0;
       } else {
         const sign = ac.y <= bc.y ? -1 : 1;
-        const firstPinned = first.module.id === pinnedModuleId;
-        const secondPinned = second.module.id === pinnedModuleId;
+        const firstPinned = pinnedModuleIds.has(first.module.id);
+        const secondPinned = pinnedModuleIds.has(second.module.id);
         first.y += firstPinned ? 0 : (sign * overlapY) / (secondPinned ? 1 : 2);
         second.y -= secondPinned ? 0 : (sign * overlapY) / (firstPinned ? 1 : 2);
         first.vy = second.vy = 0;
@@ -287,7 +287,7 @@ export function stepSpringLayout(
   }
   const obstacles = reservedAreas(links);
   for (const placement of next) {
-    if (placement.module.id !== pinnedModuleId) avoidReservedAreas(placement, obstacles);
+    if (!pinnedModuleIds.has(placement.module.id)) avoidReservedAreas(placement, obstacles);
   }
   return next;
 }
