@@ -9,6 +9,10 @@ This is the physical stack counterpart of the logical decomposition described in
 [`../SPLIT.md`](../SPLIT.md). It does not create independently solved child cells or change the
 recipe solution.
 
+The separate [joint fractional MILP experiment](PLACEMENT-MILP.md) uses HiGHS to choose workloads,
+connections, and abstract stack capacities together, with a soft extra-building penalty. It reports
+exclusive producer/consumer pairs and belt counts; it is not yet used by the application.
+
 ## Capacity and workload
 
 For every positive solved recipe, the installed building budget is `max(1, ceil(count - 1e-8))`.

@@ -25,6 +25,7 @@
     "@primer/octicons-react": "^19",
     "elkjs": "^0.12",
     "fflate": "^0.8",
+    "highs": "^1",
     "preact": "^10",
     "serialize-error": "^13",
     "ts-number-to-words": "^2",
