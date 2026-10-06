@@ -40,11 +40,11 @@ const candidate: TileDesignCandidate = {
 };
 
 describe('modulesForTile', () => {
-  it('balances 28 machines into two modules of 14 when the maximum is 23', () => {
+  it('packs a recipe preview into supported stacks before global planning', () => {
     const modules = modulesForTile('gear', 28, problem, candidate, 23);
     expect(modules.map(({ machineCount, size }) => ({ machineCount, size }))).toEqual([
-      { machineCount: 14, size: { width: 5, height: 42 } },
-      { machineCount: 14, size: { width: 5, height: 42 } },
+      { machineCount: 23, size: { width: 5, height: 69 } },
+      { machineCount: 5, size: { width: 5, height: 15 } },
     ]);
     expect(modules[0]?.ports).toEqual([
       {
@@ -53,8 +53,8 @@ describe('modulesForTile', () => {
         transport: 'belt',
         direction: 'north',
         lanes: {
-          left: { resource: 'item:iron', side: 'input', rate: 28 },
-          right: { resource: 'item:gear', side: 'output', rate: 14 },
+          left: { resource: 'item:iron', side: 'input', rate: 46 },
+          right: { resource: 'item:gear', side: 'output', rate: 23 },
         },
       },
       {
@@ -63,13 +63,13 @@ describe('modulesForTile', () => {
         transport: 'belt',
         direction: 'north',
         lanes: {
-          left: { resource: 'item:iron', side: 'input', rate: 28 },
-          right: { resource: 'item:gear', side: 'output', rate: 14 },
+          left: { resource: 'item:iron', side: 'input', rate: 46 },
+          right: { resource: 'item:gear', side: 'output', rate: 23 },
         },
       },
     ]);
-    expect(modules[0]?.inputs).toEqual({ 'item:iron': 28 });
-    expect(modules[0]?.outputs).toEqual({ 'item:gear': 14 });
+    expect(modules[0]?.inputs).toEqual({ 'item:iron': 46 });
+    expect(modules[0]?.outputs).toEqual({ 'item:gear': 23 });
   });
 
   it('records underground pipe and belt ends with fluid throughput', () => {

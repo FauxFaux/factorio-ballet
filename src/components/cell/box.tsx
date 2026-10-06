@@ -18,8 +18,8 @@ import type { State } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { useCellLayouts } from './recipe-layout.ts';
-import { modulesForCell } from '../../compute/modules.ts';
-import { allocateModuleFlows, connectStationFlows } from '../../compute/module-connections.ts';
+import { planCellPlacements } from '../../compute/placement-plan/search.ts';
+import { connectStationFlows } from '../../compute/module-connections.ts';
 import { assignModulePorts } from '../../compute/module-port-connections.ts';
 import { proposedSplits } from '../../compute/split.ts';
 import { useRowDrag } from './drag.ts';
@@ -76,14 +76,14 @@ export function CellBox({
     [ds, data, cell.entries, cell.imports, cell.exports, progress, chosen],
   );
   const layouts = useCellLayouts(ds, cell.entries, solution, chosen.belt, progress);
-  const modules = useMemo(
-    () => (cell.layout ? modulesForCell(layouts, chosen.belt.itemsPerSecond) : []),
+  const placementPlan = useMemo(
+    () => planCellPlacements(cell.layout ? layouts : [], chosen.belt.itemsPerSecond),
     [Boolean(cell.layout), layouts, chosen.belt.itemsPerSecond],
   );
+  const modules = placementPlan.modules;
   const moduleFlows = useMemo(
-    () =>
-      connectStationFlows(allocateModuleFlows(modules, iface.inPlay), iface.inputs, iface.outputs),
-    [modules, iface.inPlay, iface.inputs, iface.outputs],
+    () => connectStationFlows(placementPlan.flows, iface.inputs, iface.outputs),
+    [placementPlan, iface.inputs, iface.outputs],
   );
   const portFlows = useMemo(() => assignModulePorts(modules, moduleFlows), [modules, moduleFlows]);
   const zeroInputRegionRecipes = useMemo(() => {

@@ -2,7 +2,6 @@ import type { ResourceId, StaticData } from '../types.ts';
 import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
-import type { KernelLayoutOption } from './kernel-layout-options.ts';
 
 export const MAX_MODULE_HEIGHT = 100;
 
@@ -28,6 +27,8 @@ export interface FactoryModule {
   id: string;
   recipe: string;
   machineCount: number;
+  /** Fractional solved work assigned here; installed capacity may be larger. */
+  workload?: number;
   copies: number;
   size: { width: number; height: number };
   ports: ModulePort[];
@@ -88,11 +89,10 @@ export function estimatedModulesForRecipe(
         .map(({ rate, belts }) => Math.floor((belts * beltItemsPerSecond + RATE_EPSILON) / rate)),
     ),
   );
-  const moduleCount = Math.ceil(machineCount / stackLimit);
-  const installedCount = Math.ceil(machineCount);
+  const installedCount = Math.max(1, Math.ceil(machineCount - RATE_EPSILON));
+  const moduleCount = Math.ceil(installedCount / stackLimit);
   return Array.from({ length: moduleCount }, (_, index) => {
-    const copies =
-      Math.floor(installedCount / moduleCount) + (index < installedCount % moduleCount ? 1 : 0);
+    const copies = Math.min(stackLimit, installedCount - index * stackLimit);
     let x = 1;
     const ports: ModulePort[] = [];
     for (const { resource, rate, side, belts } of routes) {
@@ -128,25 +128,29 @@ export function estimatedModulesForRecipe(
         });
       }
     }
-    return {
-      id: `${recipe}:${index}`,
-      recipe,
-      machineCount: copies,
-      copies,
-      size: { width, height: pitch * copies },
-      ports,
-      inputs: Object.fromEntries(
-        Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
-          ([resource, rate]) => [resource, rate * copies],
+    return withModuleWorkload(
+      {
+        id: `${recipe}:${index}`,
+        recipe,
+        machineCount: copies,
+        workload: copies,
+        copies,
+        size: { width, height: pitch * copies },
+        ports,
+        inputs: Object.fromEntries(
+          Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
+            ([resource, rate]) => [resource, rate * copies],
+          ),
         ),
-      ),
-      outputs: Object.fromEntries(
-        Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
-          ([resource, rate]) => [resource, rate * copies],
+        outputs: Object.fromEntries(
+          Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
+            ([resource, rate]) => [resource, rate * copies],
+          ),
         ),
-      ),
-      estimated: true,
-    };
+        estimated: true,
+      },
+      Math.min(copies, machineCount - index * stackLimit),
+    );
   });
 }
 
@@ -292,7 +296,75 @@ function modulePorts(
   return [...endPorts, ...sidePorts];
 }
 
-/** Divide the required integer machines evenly across the fewest supported stacks. */
+/** Build one stack, preserving capacity separately from its solved workload. */
+export function moduleForTile(
+  recipe: string,
+  copies: number,
+  problem: KernelProblem,
+  candidate: TileDesignCandidate,
+  id: string,
+  workload = copies * Object.keys(candidate.machineIds).length,
+): FactoryModule {
+  const installedMachines = copies * Object.keys(candidate.machineIds).length;
+  const module: FactoryModule = {
+    id,
+    recipe,
+    machineCount: installedMachines,
+    workload: installedMachines,
+    copies,
+    size: { width: candidate.width, height: candidate.pitch * copies },
+    ports: modulePorts(candidate, problem, copies, Object.keys(candidate.machineIds).length),
+    inputs: Object.fromEntries(
+      Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
+        ([resource, rate]) => [resource, rate * installedMachines],
+      ),
+    ),
+    outputs: Object.fromEntries(
+      Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
+        ([resource, rate]) => [resource, rate * installedMachines],
+      ),
+    ),
+  };
+  return withModuleWorkload(module, workload);
+}
+
+/** Scale assigned rates and port budgets, never geometry or installed buildings. */
+export function withModuleWorkload(module: FactoryModule, workload: number): FactoryModule {
+  const previous = module.workload ?? module.machineCount;
+  const scale = previous > 0 ? workload / previous : 0;
+  const rates = (values: Record<ResourceId, number>) =>
+    Object.fromEntries(Object.entries(values).map(([resource, rate]) => [resource, rate * scale]));
+  return {
+    ...module,
+    workload,
+    inputs: rates(module.inputs),
+    outputs: rates(module.outputs),
+    ports: module.ports.map((port) => ({
+      ...port,
+      ...(port.lanes
+        ? {
+            lanes: Object.fromEntries(
+              Object.entries(port.lanes).map(([lane, flow]) => [
+                lane,
+                { ...flow, rate: flow.rate * scale },
+              ]),
+            ),
+          }
+        : {}),
+      ...(port.fluid
+        ? {
+            fluid: {
+              ...port.fluid,
+              inputRate: port.fluid.inputRate * scale,
+              outputRate: port.fluid.outputRate * scale,
+            },
+          }
+        : {}),
+    })),
+  };
+}
+
+/** Pack a single recipe's preview; cell layout uses the joint placement planner. */
 export function modulesForTile(
   recipe: string,
   machineCount: number,
@@ -304,59 +376,17 @@ export function modulesForTile(
   const stackLimit = Math.min(maxCopies, Math.floor(MAX_MODULE_HEIGHT / candidate.pitch));
   if (!Number.isFinite(machineCount) || machineCount <= 0 || machinesPerCopy < 1 || stackLimit < 1)
     return [];
-  const neededCopies = Math.ceil(machineCount / machinesPerCopy);
+  const neededCopies = Math.max(1, Math.ceil((machineCount - RATE_EPSILON) / machinesPerCopy));
   const moduleCount = Math.ceil(neededCopies / stackLimit);
   return Array.from({ length: moduleCount }, (_, index) => {
-    const copies =
-      Math.floor(neededCopies / moduleCount) + (index < neededCopies % moduleCount ? 1 : 0);
-    const installedMachines = copies * machinesPerCopy;
-    const inputs = Object.fromEntries(
-      Object.entries({ ...problem.inputs.solids, ...problem.inputs.fluids }).map(
-        ([resource, rate]) => [resource, rate * installedMachines],
-      ),
-    );
-    const outputs = Object.fromEntries(
-      Object.entries({ ...problem.outputs.solids, ...problem.outputs.fluids }).map(
-        ([resource, rate]) => [resource, rate * installedMachines],
-      ),
-    );
-    return {
-      id: `${recipe}:${index}`,
+    const copies = Math.min(stackLimit, neededCopies - index * stackLimit);
+    return moduleForTile(
       recipe,
-      machineCount: installedMachines,
       copies,
-      size: { width: candidate.width, height: candidate.pitch * copies },
-      ports: modulePorts(candidate, problem, copies, machinesPerCopy),
-      inputs,
-      outputs,
-    };
-  });
-}
-
-/** Pick the highest-capacity layout for each row, with estimates while search is pending. */
-export function modulesForCell(
-  layouts: readonly {
-    problem: KernelProblem;
-    options: KernelLayoutOption[];
-    machineCount: number | undefined;
-  }[],
-  beltItemsPerSecond: number,
-): FactoryModule[] {
-  return layouts.flatMap(({ problem, options, machineCount }) => {
-    if (machineCount === undefined) return [];
-    const biggest = options.reduce<KernelLayoutOption | undefined>(
-      (best, option) =>
-        !best || option.maxBuildingsPerColumn > best.maxBuildingsPerColumn ? option : best,
-      undefined,
-    );
-    return (
-      biggest?.columns ??
-      estimatedModulesForRecipe(
-        problem.assemblers[0].name,
-        machineCount,
-        problem,
-        beltItemsPerSecond,
-      )
+      problem,
+      candidate,
+      `${recipe}:${index}`,
+      Math.min(copies * machinesPerCopy, machineCount - index * stackLimit * machinesPerCopy),
     );
   });
 }

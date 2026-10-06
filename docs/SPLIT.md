@@ -2,7 +2,9 @@
 
 These rules turn a solved recipe graph into logical units before placing machines on a
 two-dimensional grid. They are working design rules, not an automatic splitter specification. The
-examples use [`cpu-15-1.cell.json`](../cpu-15-1.cell.json) and the transport kernels described in
+physical stack sizing and connection planner is documented in
+[`guides/PLACEMENT-PLAN.md`](guides/PLACEMENT-PLAN.md). The examples use
+[`cpu-15-1.cell.json`](../cpu-15-1.cell.json) and the transport kernels described in
 [`blueprints/ASSEMBLERS.md`](blueprints/ASSEMBLERS.md).
 
 A unit is a placement commitment: its machines and short internal routes should remain near one

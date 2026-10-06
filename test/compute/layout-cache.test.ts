@@ -5,7 +5,7 @@ import {
   type LayoutRequest,
 } from '../../src/dataset/layout-cache.ts';
 import { allocateKernelLayouts } from '../../src/compute/kernel-layout-options.ts';
-import { modulesForCell } from '../../src/compute/modules.ts';
+import { planCellPlacements } from '../../src/compute/placement-plan/search.ts';
 import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
 
 vi.mock('../../src/compute/tile-design/kernel-result.ts', () => ({
@@ -86,7 +86,10 @@ describe('LayoutCache', () => {
     const options = second.options.toSorted(
       (a, b) => a.maxBuildingsPerColumn - b.maxBuildingsPerColumn,
     );
-    const modules = modulesForCell([{ problem: request.problem, machineCount: 50, options }], 30);
+    const { modules } = planCellPlacements(
+      [{ problem: request.problem, machineCount: 50, options }],
+      30,
+    );
     expect(modules).toHaveLength(3);
     expect(modules.reduce((total, module) => total + module.machineCount, 0)).toBe(50);
   });
