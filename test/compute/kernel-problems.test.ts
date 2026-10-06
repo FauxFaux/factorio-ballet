@@ -12,6 +12,7 @@ import {
 import { normalizeTileDesignInput } from '../../src/compute/tile-design/problem.ts';
 import type { TileDesignOptions } from '../../src/compute/tile-design/types.ts';
 import { defaultDataset } from '../with-bobang.ts';
+import { spaceAge } from '../../src/dataset/catalogue/space-age.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);
@@ -124,6 +125,28 @@ describe('assemblerProblem', () => {
 });
 
 describe('kernelProblems', () => {
+  it('omits examples for machines unavailable in the Space Age dataset', async () => {
+    const { staticData } = await spaceAge();
+    const examples = kernelProblems(staticData);
+
+    expect(examples.solid).toHaveLength(7);
+    expect(examples.fluidInput).toHaveLength(4);
+    expect(examples.fluidOutput).toHaveLength(7);
+    expect(examples.fluidInputAndOutput).toHaveLength(5);
+    expect(examples.airFilter).toHaveLength(3);
+    expect(allKernelProblems(staticData)).toHaveLength(26);
+    expect(examples.fluidInputAndOutput[4]?.assemblers[0]).toMatchObject({
+      machine: 'chemical-plant',
+      size: staticData.machines['chemical-plant'].size,
+      fluidBoxes: staticData.machines['chemical-plant'].fluidBoxes,
+    });
+    for (const problem of allKernelProblems(staticData)) {
+      for (const assembler of problem.assemblers) {
+        if (assembler.machine) expect(staticData.machines[assembler.machine]).toBeDefined();
+      }
+    }
+  });
+
   it('groups all dataset machines by footprint and physical fluid connections', () => {
     const choices = kernelBuildingChoices(defaultDataset.data);
     const machineIds = choices.flatMap(({ machineIds }) => machineIds);

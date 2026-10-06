@@ -182,7 +182,13 @@ export function CellBox({
         >
           {cell.layout ? 'remove layout' : '+ layout'}
         </button>
-        <CellAsJson cell={cell} iface={iface} solution={solution} />
+        <CellAsJson
+          cell={cell}
+          iface={iface}
+          solution={solution}
+          belt={chosen.belt}
+          progress={progress}
+        />
         <button
           type="button"
           class="cell-btn cell-remove"

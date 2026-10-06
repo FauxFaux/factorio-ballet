@@ -30,8 +30,8 @@ describe('cellSolutionJson', () => {
     ).toEqual({
       inputs: [{ material: ore, rate: 8 }],
       recipes: [
-        { recipe: 'iron-plate', count: 4, inputs: [], outputs: [] },
-        { recipe: 'iron-gear-wheel', count: null, inputs: [], outputs: [] },
+        { recipe: 'iron-plate', count: 4, layoutOptions: [], inputs: [], outputs: [] },
+        { recipe: 'iron-gear-wheel', count: null, layoutOptions: [], inputs: [], outputs: [] },
       ],
       outputs: [{ material: plate, rate: 3 }],
     });
@@ -57,12 +57,14 @@ describe('cellSolutionJson', () => {
         {
           recipe: 'make-furnace',
           count: 1,
+          layoutOptions: [],
           inputs: [{ material: plate, rate: 2, ratio: 2 }],
           outputs: [],
         },
         {
           recipe: 'make-plate',
           count: 2,
+          layoutOptions: [],
           inputs: [],
           outputs: [{ material: plate, rate: 2, ratio: 0.5 }],
         },

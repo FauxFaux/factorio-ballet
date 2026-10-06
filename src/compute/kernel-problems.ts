@@ -260,6 +260,16 @@ export function airFilterProblem(size: MachineSize) {
 
 /** Examples shown in the standalone kernel workspace, grouped by their fluid boundary shape. */
 export function kernelProblems(data: StaticData) {
+  const machineExamples = (
+    building: (typeof kernelMachineChoices)[number]['value'],
+    options: Omit<AssemblerProblemOptions, 'assemblerName' | 'size' | 'fluidBoxes'>,
+    name: string,
+  ): KernelProblem[] => {
+    const choice = kernelMachineChoices.find(({ value }) => value === building);
+    if (!choice || !data.machines[choice.machineId]) return [];
+    return [machineProblem(data, building, options, name)];
+  };
+
   return {
     solid: [
       assemblerProblem({ solidInputs: [5], solidOutputs: [2] }),
@@ -269,14 +279,8 @@ export function kernelProblems(data: StaticData) {
       assemblerProblem({ solidInputs: [5, 5, 8], solidOutputs: [2] }),
       assemblerProblem({ solidInputs: [5, 5, 5], solidOutputs: [2, 2] }),
       assemblerProblem({ solidInputs: [30, 5], solidOutputs: [3] }),
-      machineProblem(
-        data,
-        'powderiser',
-        { solidInputs: [15], solidOutputs: [15] },
-        'Silicon powder',
-      ),
-      machineProblem(
-        data,
+      ...machineExamples('powderiser', { solidInputs: [15], solidOutputs: [15] }, 'Silicon powder'),
+      ...machineExamples(
         'powderiser',
         { solidInputs: [1, 1], solidOutputs: [1, 1] },
         '2×2 solid flows',
@@ -291,9 +295,8 @@ export function kernelProblems(data: StaticData) {
         fluidInputs: [FLUID_RATE],
         solidOutputs: [2, 2],
       }),
-      machineProblem(data, 'flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
-      machineProblem(
-        data,
+      ...machineExamples('flare-stack', { fluidInputs: [400] }, 'Oxygen flare'),
+      ...machineExamples(
         'casting-machine',
         { fluidInputs: [FLUID_RATE, FLUID_RATE], solidOutputs: [2] },
         'Mono-silicon',
@@ -330,8 +333,7 @@ export function kernelProblems(data: StaticData) {
         solidOutputs: [2],
         fluidOutputs: [FLUID_RATE],
       }),
-      machineProblem(
-        data,
+      ...machineExamples(
         'chemical-plant',
         { fluidInputs: [FLUID_RATE], fluidOutputs: [FLUID_RATE, FLUID_RATE] },
         'Air separation',

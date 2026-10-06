@@ -4,12 +4,13 @@ import { cleanup, render, screen, within } from '@testing-library/preact';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import cpuCell from '../../../docs/cells/cpu.json';
+import { cellSolutionJson } from '../../../src/components/cell/as-json.tsx';
 import { RecipeConnections } from '../../../src/components/cell/connections.tsx';
 import { DatasetProvider } from '../../../src/dataset/context.tsx';
 import { defaultDataset } from '../../with-bobang.ts';
 import { parseEnvelope } from '../../../src/boot/url-envelope.ts';
 import { createIdTables, unpackCells } from '../../../src/boot/pack.ts';
-import { entryMachine } from '../../../src/cell.ts';
+import { cellInterface, entryMachine } from '../../../src/cell.ts';
 import { resolveChosen } from '../../../src/data/index.ts';
 import { solveCell } from '../../../src/solve/index.ts';
 import { kernelCustomStateFor } from '../../../src/components/kernel-debug.tsx';
@@ -52,6 +53,20 @@ describe('RecipeConnections', () => {
       </DatasetProvider>,
     );
     const table = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const exported = cellSolutionJson(cell, cellInterface(ds.data, cell), solution, {
+      ds,
+      belt: chosen.belt,
+      progress,
+    }).recipes[0].layoutOptions;
+    const rows = within(table).getAllByRole('row').slice(1);
+    expect(exported).toHaveLength(rows.length);
+    exported.forEach((option, index) => {
+      const cells = within(rows[index]).getAllByRole('cell');
+      expect(cells[1].textContent).toBe(`${option.size.width}×${option.size.height}`);
+      expect(cells[4].textContent).toBe(String(option.capacity));
+      expect(Object.keys(option).sort()).toEqual(['capacity', 'size']);
+    });
+
     const single = within(table).getByRole('row', { name: /HIGH single ×2 / });
     expect(within(single).getAllByRole('cell')[3].textContent).toBe('1–2');
     expect(within(single).getAllByRole('cell')[4].textContent).toBe('2');

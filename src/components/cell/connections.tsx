@@ -3,10 +3,9 @@ import { useState } from 'preact/hooks';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
-import { kernelLayoutOptions } from '../../compute/kernel-layout-options.ts';
-import { MAX_MODULE_HEIGHT, recipeKernelProblem } from '../../compute/modules.ts';
+import { recipeLayouts } from './recipe-layout.ts';
+import { MAX_MODULE_HEIGHT } from '../../compute/modules.ts';
 import { kernelBuildingFor, type KernelProblem } from '../../compute/kernel-problems.ts';
-import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
 import { resourceIconStyle } from '../icon.tsx';
 import { ResourceIcon } from '../resource.tsx';
 import { FuelIcon } from '../fuel-icon.tsx';
@@ -104,24 +103,15 @@ function AssemblerDesignSummary({
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
   const { data } = useDataset();
-  // Solution input and output rates already describe one machine.
-  const problem = recipeKernelProblem(
+  const { problem, options, reason } = recipeLayouts(
     data,
     recipe,
     machine,
-    inputRates ?? new Map(),
-    outputRates ?? new Map(),
-  );
-  const throughput = {
-    beltItemsPerSecond: belt.itemsPerSecond,
-    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt),
-    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt, 2),
-  };
-  const { options, reason } = kernelLayoutOptions(
-    problem,
-    throughput,
-    machineCount ?? 0,
-    belt.undergroundLength - 1,
+    inputRates,
+    outputRates,
+    machineCount,
+    belt,
+    progress,
   );
 
   return (

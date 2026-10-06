@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 
-import { screen, within } from '@testing-library/preact';
+import { cleanup, screen, within } from '@testing-library/preact';
 import { render } from '../render-with-dataset.tsx';
 import { useState } from 'preact/hooks';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -20,6 +20,9 @@ import {
 import { fmt } from '../../src/ts.ts';
 import type { UrlState } from '../../src/boot/url-handler.tsx';
 import { defaultDataset } from '../with-bobang.ts';
+import { createDataset } from '../../src/dataset/index.ts';
+import { DatasetProvider } from '../../src/dataset/context.tsx';
+import { spaceAge } from '../../src/dataset/catalogue/space-age.ts';
 
 const problems = kernelProblems(defaultDataset.data);
 const allProblems = allKernelProblems(defaultDataset.data);
@@ -35,13 +38,51 @@ const kernelDesignState: UrlState = {
   kd: {},
 };
 
-function KernelDesignApp() {
-  return <App uss={useState(kernelDesignState)} />;
+function KernelDesignApp({ initial = kernelDesignState }: { initial?: UrlState }) {
+  return <App uss={useState(initial)} />;
 }
 
 describe('App', () => {
   afterEach(() => {
+    cleanup();
     vi.unstubAllGlobals();
+  });
+
+  it('opens a saved electromagnetic-plant problem in the Space Age dataset', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(() => new Promise(() => undefined)),
+    );
+    const dataset = createDataset('space-age-2.1.19', await spaceAge());
+    render(
+      <DatasetProvider value={dataset}>
+        <KernelDesignApp
+          initial={{
+            ...kernelDesignState,
+            gp: 80,
+            kp: {
+              building: 'machine:electromagnetic-plant',
+              flows: {
+                solidInputs: [7, 0.7],
+                fluidInputs: [1.75],
+                solidOutputs: [0.7],
+                fluidOutputs: [],
+              },
+            },
+          }}
+        />
+      </DatasetProvider>,
+    );
+
+    expect(screen.getByRole('heading', { name: 'Kernel design' })).toBeTruthy();
+    const result = screen.getByLabelText('Your problem result');
+    expect(within(result).getByRole('heading', { name: 'Electromagnetic plant' })).toBeTruthy();
+    expect(within(result).getByLabelText('7 item:1')).toBeTruthy();
+    expect(within(result).getByLabelText('1.8 fluid:1')).toBeTruthy();
+    expect(within(screen.getByLabelText('Kernel problems')).getAllByRole('article')).toHaveLength(
+      allKernelProblems(dataset.data).length,
+    );
+    expect(screen.queryByRole('alert')).toBeNull();
   });
 
   it('shows the kernel-design page when URL state enables it', () => {
