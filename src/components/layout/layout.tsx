@@ -23,6 +23,7 @@ import { stackedRailStations } from '../cell/rail-mode.ts';
 import { ModuleFootprints } from './module-footprints.tsx';
 import { talaGraph } from './tala-graph.ts';
 import { elkLayout } from './elk-layout.ts';
+import { ConnectionArrows } from './connection-arrow.tsx';
 
 const NO_MODULES: FactoryModule[] = [];
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
@@ -145,6 +146,17 @@ export function CellLayoutSurface({
     () => talaGraph(modules, connections, stationConnections, stationStops, outputStationStops),
     [modules, connections, stationConnections, stationStops, outputStationStops],
   );
+  const moduleIds = new Set(modules.map(({ id }) => id));
+  const edgeResources = [
+    ...connections.filter(
+      ({ producerId, consumerId }) => moduleIds.has(producerId) && moduleIds.has(consumerId),
+    ),
+    ...stationConnections.filter(
+      ({ moduleId, side, stationIndex }) =>
+        moduleIds.has(moduleId) &&
+        !!(side === 'input' ? stationStops : outputStationStops)[stationIndex],
+    ),
+  ].map(({ resource }) => resource);
   const nodeNames = new Map<string, string>();
   const nodeDescriptions = new Map<string, string>();
   modules.forEach((module, index) => {
@@ -207,6 +219,8 @@ export function CellLayoutSurface({
     <div class="cell-layout-panel">
       <section class="cell-layout" aria-label="Layout">
         <RailBlueprintPreview blueprint={blueprint.blueprint} embedded />
+        <InputStationFootprints stops={stationStops} resources={inputs} />
+        <OutputStationFootprints stops={outputStationStops} resources={outputs} />
         <ModuleFootprints
           moduleRotations={layout.moduleRotations}
           onModuleRotationsChange={onModuleRotationsChange}
@@ -219,8 +233,6 @@ export function CellLayoutSurface({
           outputStationStops={outputStationStops}
           zeroInputRegionRecipes={zeroInputRegionRecipes}
         />
-        <InputStationFootprints stops={stationStops} resources={inputs} />
-        <OutputStationFootprints stops={outputStationStops} resources={outputs} />
       </section>
       {modules.length > 0 && (
         <label class="cell-layout-algorithm">
@@ -276,6 +288,42 @@ export function CellLayoutSurface({
               </text>
             </g>
           ))}
+          <ConnectionArrows
+            scale={3}
+            arrows={output.edges.flatMap((edge) => {
+              const edgeIndex = Number(edge.id.replace('edge_', ''));
+              const resource = edgeResources[edgeIndex];
+              const graphEdge = graph.edges[edgeIndex];
+              if (!resource || !graphEdge) return [];
+              const start = edge.points[0];
+              const end = edge.points.at(-1);
+              const next = edge.points.find(
+                (point) => start && (point.x !== start.x || point.y !== start.y),
+              );
+              const previous = [...edge.points]
+                .reverse()
+                .find((point) => end && (point.x !== end.x || point.y !== end.y));
+              if (!start || !end || !next || !previous) return [];
+              return [
+                {
+                  id: `${edge.id}:out`,
+                  owner: graphEdge.source,
+                  point: start,
+                  angle: (Math.atan2(next.y - start.y, next.x - start.x) * 180) / Math.PI,
+                  side: 'output' as const,
+                  resource,
+                },
+                {
+                  id: `${edge.id}:in`,
+                  owner: graphEdge.target,
+                  point: end,
+                  angle: (Math.atan2(end.y - previous.y, end.x - previous.x) * 180) / Math.PI,
+                  side: 'input' as const,
+                  resource,
+                },
+              ];
+            })}
+          />
         </svg>
       )}
     </div>

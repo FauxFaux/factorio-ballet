@@ -10,6 +10,7 @@ import { useDataset } from '../../dataset/context.tsx';
 import { iconSprite } from '../icon.tsx';
 import { placementSize, portPoint, stepSpringLayout } from './spring-layout.ts';
 import { preLayoutModules } from './pre-layout.ts';
+import { ConnectionArrows } from './connection-arrow.tsx';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
@@ -231,6 +232,60 @@ export function ModuleFootprints({
   };
   const byId = new Map(placed.map((placement) => [placement.module.id, placement]));
   const pairCounts = new Map<string, number>();
+  const arrows = new Map<
+    string,
+    {
+      owner: string;
+      point: Position;
+      angle: number;
+      side: 'input' | 'output';
+      resource: AttachedModuleConnection['resource'];
+    }
+  >();
+  const addModuleArrow = (
+    id: string,
+    port: AttachedModuleConnection['producerPort'],
+    side: 'input' | 'output',
+    resource: AttachedModuleConnection['resource'],
+  ) => {
+    const placement = byId.get(id);
+    if (!placement) return;
+    const outward = { right: 0, bottom: 90, left: 180, top: 270 }[port.edge];
+    const rotation = DIRECTIONS.indexOf(placement.rotation ?? 'north') * 90;
+    arrows.set(`${id}|${portLabel(port)}|${side}|${resource}`, {
+      owner: `module:${id}`,
+      point: portPoint(placement, port),
+      angle: outward + rotation + (side === 'input' ? 180 : 0),
+      side,
+      resource,
+    });
+  };
+  for (const connection of connections) {
+    addModuleArrow(connection.producerId, connection.producerPort, 'output', connection.resource);
+    addModuleArrow(connection.consumerId, connection.consumerPort, 'input', connection.resource);
+  }
+  for (const connection of stationConnections) {
+    const placement = byId.get(connection.moduleId);
+    const stop = (connection.side === 'input' ? inputStationStops : outputStationStops)[
+      connection.stationIndex
+    ];
+    if (!placement || !stop) continue;
+    addModuleArrow(
+      connection.moduleId,
+      connection.modulePort,
+      connection.side,
+      connection.resource,
+    );
+    const side = connection.side === 'input' ? 'output' : 'input';
+    const x = connection.side === 'input' ? stop.x + 8 : stop.x + (placement.x < stop.x ? -8 : -4);
+    arrows.set(`${connection.stationId}|${x}|${connection.resource}`, {
+      owner: `station:${connection.stationId}`,
+      point: { x, y: stop.y + (connection.side === 'input' ? 4.5 : 4) },
+      angle: connection.side === 'input' || placement.x >= stop.x ? 0 : 180,
+      side,
+      resource: connection.resource,
+    });
+  }
   return (
     <svg
       ref={svgRef}
@@ -338,6 +393,9 @@ export function ModuleFootprints({
           'recipe:recipe-unknown',
         );
         const countLabel = `${module.machineCount}×`;
+        const textWidth = countLabel.length * 1.25;
+        const labelWidth = textWidth + 0.4 + 3.3;
+        const stackedLabel = size.width < labelWidth + 1.2;
         return (
           <g
             key={module.id}
@@ -395,23 +453,32 @@ export function ModuleFootprints({
               width={size.width}
               height={size.height}
             />
-            <text class="cell-layout-module-label" x={x + 0.4} y={y + 4}>
-              {countLabel}
-            </text>
-            <svg
-              class="cell-layout-module-icon"
-              x={x + 0.7 + countLabel.length * 1.25}
-              y={y + 1.1}
-              width="3.3"
-              height="3.3"
-              viewBox={`${spriteX} ${spriteY} 32 32`}
-              aria-hidden="true"
-            >
-              <image href={url} width={sheetWidth} height={sheetHeight} />
-            </svg>
+            <g transform={`translate(${x + size.width / 2} ${y + size.height / 2})`}>
+              <text
+                class="cell-layout-module-label"
+                x={stackedLabel ? 0 : -labelWidth / 2 + textWidth / 2}
+                y={stackedLabel ? -1.85 : 0}
+                text-anchor="middle"
+                dominant-baseline="central"
+              >
+                {countLabel}
+              </text>
+              <svg
+                class="cell-layout-module-icon"
+                x={stackedLabel ? -1.65 : labelWidth / 2 - 3.3}
+                y={stackedLabel ? -0.4 : -1.65}
+                width="3.3"
+                height="3.3"
+                viewBox={`${spriteX} ${spriteY} 32 32`}
+                aria-hidden="true"
+              >
+                <image href={url} width={sheetWidth} height={sheetHeight} />
+              </svg>
+            </g>
           </g>
         );
       })}
+      <ConnectionArrows arrows={[...arrows].map(([id, arrow]) => ({ id, ...arrow }))} />
     </svg>
   );
 }

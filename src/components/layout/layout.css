@@ -287,3 +287,14 @@
     margin-left: auto;
   }
 }
+
+.cell-layout-connection-arrow {
+  pointer-events: visiblePainted;
+}
+
+.cell-layout-connection-arrow path {
+  fill: white;
+  stroke: #0f172a;
+  stroke-width: 0.18;
+  stroke-linejoin: round;
+}

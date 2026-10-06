@@ -10,6 +10,7 @@ import type {
   AttachedStationConnection,
 } from '../../src/compute/module-port-connections.ts';
 import { CellLayoutSurface } from '../../src/components/layout/layout.tsx';
+import { ModuleFootprints } from '../../src/components/layout/module-footprints.tsx';
 import { talaGraph } from '../../src/components/layout/tala-graph.ts';
 
 const { layout, elkLayout } = vi.hoisted(() => ({
@@ -107,6 +108,34 @@ describe('TALA layout bridge', () => {
         { id: 'edge_1', source: 'input_0', target: 'module_0' },
         { id: 'edge_2', source: 'module_1', target: 'output_0' },
       ],
+    });
+  });
+
+  it('draws resource arrows into and out of rotated module ports and deduplicates shared endpoints', async () => {
+    const connection: AttachedModuleConnection = {
+      producerId: module.id,
+      consumerId: 'other',
+      resource: 'item:copper-cable',
+      rate: 1,
+      producerPort: { edge: 'top', x: 0, transport: 'belt' },
+      consumerPort: { edge: 'bottom', x: 0, transport: 'belt' },
+    };
+    const { container } = render(
+      <ModuleFootprints
+        modules={[module, { ...module, id: 'other' }]}
+        connections={[connection, { ...connection, rate: 2 }]}
+        moduleRotations={{ [module.id]: 'east' }}
+      />,
+    );
+    await waitFor(() => {
+      const arrows = container.querySelectorAll('.cell-layout-connection-arrow');
+      expect(arrows).toHaveLength(2);
+      expect(arrows[0]?.getAttribute('data-flow-direction')).toBe('output');
+      expect(arrows[0]?.getAttribute('data-resource')).toBe('item:copper-cable');
+      expect(arrows[0]?.querySelector('path')?.getAttribute('transform')).toContain('rotate(360)');
+      expect(arrows[1]?.getAttribute('data-flow-direction')).toBe('input');
+      expect(arrows[1]?.querySelector('path')?.getAttribute('transform')).toContain('rotate(270)');
+      expect(arrows[1]?.querySelector('title')?.textContent).toBe('In: Copper wire');
     });
   });
 
