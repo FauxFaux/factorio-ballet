@@ -14,6 +14,8 @@ import { cellInterface, entryMachine } from '../../../src/cell.ts';
 import { resolveChosen } from '../../../src/data/index.ts';
 import { solveCell } from '../../../src/solve/index.ts';
 import { kernelCustomStateFor } from '../../../src/components/kernel-debug.tsx';
+import { kernelLayoutOptions } from '../../../src/compute/kernel-layout-options.ts';
+import { recipeLayoutRequest } from '../../../src/components/cell/recipe-layout.ts';
 import { machineProblem, type KernelProblem } from '../../../src/compute/kernel-problems.ts';
 
 afterEach(cleanup);
@@ -52,12 +54,33 @@ describe('RecipeConnections', () => {
         />
       </DatasetProvider>,
     );
-    const table = screen.getByRole('table', { name: 'Found kernel layouts' });
-    const exported = cellSolutionJson(cell, cellInterface(ds.data, cell), solution, {
+    const table = await screen.findByRole(
+      'table',
+      { name: 'Found kernel layouts' },
+      { timeout: 10000 },
+    );
+    const request = recipeLayoutRequest(
       ds,
-      belt: chosen.belt,
+      entry.recipe,
+      machine,
+      solution.inputRates[0],
+      solution.outputRates[0],
+      chosen.belt,
       progress,
-    }).recipes[0].layoutOptions;
+    );
+    const exported = cellSolutionJson(cell, cellInterface(ds.data, cell), solution, [
+      {
+        problem: request.problem,
+        machineCount: solution.counts[0],
+        pending: false,
+        ...kernelLayoutOptions(
+          request.problem,
+          request.throughput,
+          solution.counts[0]!,
+          request.undergroundBeltReach,
+        ),
+      },
+    ]).recipes[0].layoutOptions;
     const rows = within(table).getAllByRole('row').slice(1);
     expect(exported).toHaveLength(rows.length);
     exported.forEach((option, index) => {
@@ -135,7 +158,11 @@ describe('RecipeConnections', () => {
       </DatasetProvider>,
     );
 
-    const table = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const table = await screen.findByRole(
+      'table',
+      { name: 'Found kernel layouts' },
+      { timeout: 10000 },
+    );
     expect(within(table).getByRole('columnheader', { name: 'Buildings/column' })).toBeTruthy();
     expect(within(table).getAllByRole('row').length).toBeGreaterThan(1);
     expect(within(table).getAllByRole('rowheader', { name: 'General' }).length).toBeGreaterThan(0);
@@ -146,7 +173,7 @@ describe('RecipeConnections', () => {
       assemblers: [{ name: 'angels-liquid-molten-silicon' }],
     });
   });
-  it('displays both regular and HIGH results requiring two repeats', () => {
+  it('displays both regular and HIGH results requiring two repeats', async () => {
     render(
       <DatasetProvider value={defaultDataset}>
         <RecipeConnections
@@ -181,7 +208,11 @@ describe('RecipeConnections', () => {
         />
       </DatasetProvider>,
     );
-    const table = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const table = await screen.findByRole(
+      'table',
+      { name: 'Found kernel layouts' },
+      { timeout: 10000 },
+    );
     expect(screen.getByText('½/m')).toBeTruthy();
     expect(screen.getByTitle('0.3 belts per machine (display rounded up)')).toBeTruthy();
     expect(screen.getAllByLabelText(/belts per machine, rounded up/)).toHaveLength(1);

@@ -17,6 +17,7 @@ import { noteFor, solveCell } from '../../solve/index.ts';
 import type { State } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
+import { useCellLayouts } from './recipe-layout.ts';
 import { modulesForCell } from '../../compute/modules.ts';
 import { allocateModuleFlows, connectStationFlows } from '../../compute/module-connections.ts';
 import { assignModulePorts } from '../../compute/module-port-connections.ts';
@@ -74,10 +75,10 @@ export function CellBox({
     () => solveCell(ds, data, cell, progress, chosen),
     [ds, data, cell.entries, cell.imports, cell.exports, progress, chosen],
   );
+  const layouts = useCellLayouts(ds, cell.entries, solution, chosen.belt, progress);
   const modules = useMemo(
-    () =>
-      cell.layout ? modulesForCell(data, cell.entries, solution, chosen.belt, progress, ds) : [],
-    [ds, data, Boolean(cell.layout), cell.entries, solution, chosen.belt, progress],
+    () => (cell.layout ? modulesForCell(layouts, chosen.belt.itemsPerSecond) : []),
+    [Boolean(cell.layout), layouts, chosen.belt.itemsPerSecond],
   );
   const moduleFlows = useMemo(
     () =>
@@ -182,13 +183,7 @@ export function CellBox({
         >
           {cell.layout ? 'remove layout' : '+ layout'}
         </button>
-        <CellAsJson
-          cell={cell}
-          iface={iface}
-          solution={solution}
-          belt={chosen.belt}
-          progress={progress}
-        />
+        <CellAsJson cell={cell} iface={iface} solution={solution} layouts={layouts} />
         <button
           type="button"
           class="cell-btn cell-remove"

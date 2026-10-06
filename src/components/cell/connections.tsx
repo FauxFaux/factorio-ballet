@@ -3,7 +3,7 @@ import { useState } from 'preact/hooks';
 import { decimalPlacesForSignificantFigures, fmt } from '../../ts.ts';
 import { recipeName, resourceName } from '../../data/index.ts';
 import type { Belt, MachineId, ResourceId } from '../../types.ts';
-import { recipeLayouts } from './recipe-layout.ts';
+import { useRecipeLayouts } from './recipe-layout.ts';
 import { MAX_MODULE_HEIGHT } from '../../compute/modules.ts';
 import { kernelBuildingFor, type KernelProblem } from '../../compute/kernel-problems.ts';
 import { resourceIconStyle } from '../icon.tsx';
@@ -103,7 +103,7 @@ function AssemblerDesignSummary({
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
   const ds = useDataset();
-  const { problem, options, reason } = recipeLayouts(
+  const { problem, options, reason, pending } = useRecipeLayouts(
     ds,
     recipe,
     machine,
@@ -116,7 +116,9 @@ function AssemblerDesignSummary({
 
   return (
     <div class="cell-tile-design">
-      {options.length === 0 ? (
+      {pending ? (
+        <p role="status">Calculating layouts…</p>
+      ) : options.length === 0 ? (
         <p>Tile design: {reason}</p>
       ) : (
         <div class="cell-layout-options">

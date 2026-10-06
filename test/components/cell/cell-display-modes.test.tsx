@@ -50,7 +50,7 @@ describe('cell display modes', () => {
     expect(flame.closest('button')?.getAttribute('aria-label')).toBe('Show recipes for Coke');
   });
 
-  it('uses per-machine rates for the silicon-powder 2×2 kernel', () => {
+  it('uses per-machine rates for the silicon-powder 2×2 kernel', async () => {
     render(
       <RecipeConnections
         connections={{ inputs: [], outputs: [] }}
@@ -66,10 +66,12 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByRole('table', { name: 'Found kernel layouts' })).toBeTruthy();
+    expect(
+      await screen.findByRole('table', { name: 'Found kernel layouts' }, { timeout: 10000 }),
+    ).toBeTruthy();
   });
 
-  it('summarizes the 2×2 oxygen flare with no output', () => {
+  it('summarizes the 2×2 oxygen flare with no output', async () => {
     render(
       <RecipeConnections
         connections={{ inputs: [], outputs: [] }}
@@ -85,12 +87,16 @@ describe('cell display modes', () => {
       />,
     );
 
-    const summary = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const summary = await screen.findByRole(
+      'table',
+      { name: 'Found kernel layouts' },
+      { timeout: 10000 },
+    );
     const row = within(summary).getByRole('rowheader', { name: 'General' }).closest('tr')!;
     expect(within(row).getAllByRole('cell')[2].textContent).toBe('1');
   });
 
-  it('summarizes air separation with two fluid outputs', () => {
+  it('summarizes air separation with two fluid outputs', async () => {
     render(
       <RecipeConnections
         connections={{ inputs: [], outputs: [] }}
@@ -111,7 +117,9 @@ describe('cell display modes', () => {
       />,
     );
 
-    expect(screen.getByRole('table', { name: 'Found kernel layouts' })).toBeTruthy();
+    expect(
+      await screen.findByRole('table', { name: 'Found kernel layouts' }, { timeout: 10000 }),
+    ).toBeTruthy();
   });
 
   it('folds recipe rows into icons whose controls live in their expanders', async () => {
@@ -178,7 +186,11 @@ describe('cell display modes', () => {
 
     await user.click(screen.getByRole('button', { name: 'Show recipe connections' }));
 
-    const summary = screen.getByRole('table', { name: 'Found kernel layouts' });
+    const summary = await screen.findByRole(
+      'table',
+      { name: 'Found kernel layouts' },
+      { timeout: 10000 },
+    );
     expect(within(summary).getByRole('columnheader', { name: 'Kernel (tiles)' })).toBeTruthy();
     expect(within(summary).getAllByText(/\d+×\d+/).length).toBeGreaterThan(0);
     expect(within(summary).getByRole('columnheader', { name: 'Buildings/column' })).toBeTruthy();

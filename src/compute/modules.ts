@@ -1,13 +1,8 @@
-import type { CellEntry } from '../cell.ts';
-import { entryMachine } from '../cell.ts';
-import { inserterItemsPerSecondForBeltAtProgress } from '../data/inserter-throughput.ts';
-import type { Solution } from '../solve/index.ts';
-import type { Belt, ResourceId, StaticData } from '../types.ts';
+import type { ResourceId, StaticData } from '../types.ts';
 import type { DesignDirection, DesignEntity } from './design.ts';
 import type { TileDesignCandidate, TileBoundaryTrack } from './design-validation/types.ts';
 import type { KernelFlows, KernelProblem } from './kernel-problems.ts';
-import { solveKernelTileDesign } from './tile-design/kernel-result.ts';
-import type { Dataset } from '../dataset/index.ts';
+import type { KernelLayoutOption } from './kernel-layout-options.ts';
 
 export const MAX_MODULE_HEIGHT = 100;
 
@@ -338,40 +333,30 @@ export function modulesForTile(
   });
 }
 
-/** Derive every recipe module from the current solved cell. */
+/** Pick the highest-capacity layout for each row, with estimates while search is pending. */
 export function modulesForCell(
-  data: StaticData,
-  entries: CellEntry[],
-  solution: Solution,
-  belt: Belt,
-  progress: number,
-  ds: Dataset,
+  layouts: readonly {
+    problem: KernelProblem;
+    options: KernelLayoutOption[];
+    machineCount: number | undefined;
+  }[],
+  beltItemsPerSecond: number,
 ): FactoryModule[] {
-  return entries.flatMap((entry, index) => {
-    const recipe = data.recipes[entry.recipe];
-    const count = solution.counts[index];
-    if (!recipe || count === undefined || count <= 0) return [];
-    const machine = entryMachine(entry, recipe, progress, ds);
-    const problem = recipeKernelProblem(
-      data,
-      entry.recipe,
-      machine,
-      solution.inputRates[index] ?? new Map(),
-      solution.outputRates[index] ?? new Map(),
+  return layouts.flatMap(({ problem, options, machineCount }) => {
+    if (machineCount === undefined) return [];
+    const biggest = options.reduce<KernelLayoutOption | undefined>(
+      (best, option) =>
+        !best || option.maxBuildingsPerColumn > best.maxBuildingsPerColumn ? option : best,
+      undefined,
     );
-    const result = solveKernelTileDesign(problem, {
-      beltItemsPerSecond: belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt),
-      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt, 2),
-    });
-    return 'status' in result && result.status === 'found'
-      ? modulesForTile(
-          entry.recipe,
-          count,
-          problem,
-          result.candidate,
-          result.validation.supportedCopies,
-        )
-      : estimatedModulesForRecipe(entry.recipe, count, problem, belt.itemsPerSecond);
+    return (
+      biggest?.columns ??
+      estimatedModulesForRecipe(
+        problem.assemblers[0].name,
+        machineCount,
+        problem,
+        beltItemsPerSecond,
+      )
+    );
   });
 }

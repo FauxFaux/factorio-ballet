@@ -23,20 +23,24 @@ export interface KernelLayoutOption {
   columns: FactoryModule[];
 }
 
-/** Find natural stacks for a fixed building demand, retaining each successful capacity option. */
-export function kernelLayoutOptions(
+export type KernelLayoutCandidate = Omit<KernelLayoutOption, 'columns'>;
+
+export interface KernelLayoutSearch {
+  options: KernelLayoutCandidate[];
+  reason: string;
+}
+
+/** Each step runs one bounded solve; callers can yield to the UI between steps. */
+export function* searchKernelLayouts(
   problem: KernelProblem,
   throughput: AssemblerDesignThroughput,
-  machineCount: number,
   undergroundBeltReach: number,
-): { options: KernelLayoutOption[]; reason: string } {
-  const options: KernelLayoutOption[] = [];
+): Generator<void, KernelLayoutSearch> {
+  const options: KernelLayoutCandidate[] = [];
   let reason = 'no solution';
-  if (!Number.isFinite(machineCount) || machineCount <= 0) return { options, reason };
   for (const family of layoutFamilies) {
     const seen = new Set<string>();
-    // Try intermediate capacities even when the initial design supports more than
-    // one repeat. A failed larger request must not hide a successful 2× option.
+    // A failed larger request must not hide a successful intermediate capacity.
     for (let repeatCount = 1; repeatCount <= MAX_MODULE_HEIGHT; repeatCount *= 2) {
       const result = solveKernelTileDesign(problem, throughput, {
         ...family.options,
@@ -47,37 +51,66 @@ export function kernelLayoutOptions(
       if ('success' in result || result.status !== 'found') {
         if (family.name === 'General' && repeatCount === 1)
           reason = 'success' in result ? result.message : result.reason;
-        continue;
+      } else {
+        const buildingsPerRepeat = Object.keys(result.candidate.machineIds).length;
+        const maxCopies = Math.min(
+          result.validation.supportedCopies,
+          Math.floor(MAX_MODULE_HEIGHT / result.candidate.pitch),
+        );
+        const key = JSON.stringify([result.candidate, maxCopies]);
+        if (buildingsPerRepeat > 0 && maxCopies > 0 && !seen.has(key)) {
+          seen.add(key);
+          options.push({
+            name: family.name,
+            result,
+            requestedCopies: repeatCount,
+            buildingsPerRepeat,
+            maxBuildingsPerColumn: maxCopies * buildingsPerRepeat,
+          });
+        }
       }
-      const buildingsPerRepeat = Object.keys(result.candidate.machineIds).length;
-      const maxCopies = Math.min(
-        result.validation.supportedCopies,
-        Math.floor(MAX_MODULE_HEIGHT / result.candidate.pitch),
-      );
-      const columns = modulesForTile(
-        problem.assemblers[0].name,
-        machineCount,
-        problem,
-        result.candidate,
-        maxCopies,
-      );
-      if (columns.length === 0) continue;
-      const key = JSON.stringify([result.candidate, maxCopies]);
-      if (seen.has(key)) continue;
-      seen.add(key);
-      options.push({
-        name: family.name,
-        result,
-        requestedCopies: repeatCount,
-        buildingsPerRepeat,
-        maxBuildingsPerColumn: maxCopies * buildingsPerRepeat,
-        columns,
-      });
+      yield;
     }
   }
+  return { options, reason };
+}
+
+/** Allocate columns without repeating the count-independent search. */
+export function allocateKernelLayouts(
+  problem: KernelProblem,
+  search: KernelLayoutSearch,
+  machineCount: number,
+): { options: KernelLayoutOption[]; reason: string } {
+  if (!Number.isFinite(machineCount) || machineCount <= 0)
+    return { options: [], reason: 'no solution' };
+  const options = search.options.map((option) => ({
+    ...option,
+    columns: modulesForTile(
+      problem.assemblers[0].name,
+      machineCount,
+      problem,
+      option.result.candidate,
+      option.maxBuildingsPerColumn / option.buildingsPerRepeat,
+    ),
+  }));
   options.sort(
     (a, b) =>
       a.columns.length - b.columns.length || b.maxBuildingsPerColumn - a.maxBuildingsPerColumn,
   );
-  return { options, reason };
+  return { options, reason: search.reason };
+}
+
+/** Synchronous adapter for offline consumers. Interactive consumers use the async cache. */
+export function kernelLayoutOptions(
+  problem: KernelProblem,
+  throughput: AssemblerDesignThroughput,
+  machineCount: number,
+  undergroundBeltReach: number,
+): { options: KernelLayoutOption[]; reason: string } {
+  if (!Number.isFinite(machineCount) || machineCount <= 0)
+    return { options: [], reason: 'no solution' };
+  const search = searchKernelLayouts(problem, throughput, undergroundBeltReach);
+  let step = search.next();
+  while (!step.done) step = search.next();
+  return allocateKernelLayouts(problem, step.value, machineCount);
 }

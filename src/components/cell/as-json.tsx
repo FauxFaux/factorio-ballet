@@ -1,20 +1,12 @@
 import './as-json.css';
 import { useMenu } from '../menu.ts';
-import { entryMachine, type Cell, type CellInterface } from '../../cell.ts';
+import type { Cell, CellInterface } from '../../cell.ts';
 import type { Solution } from '../../solve/index.ts';
-import type { Belt, ResourceId } from '../../types.ts';
+import type { ResourceId } from '../../types.ts';
 import { recipeConnections } from './connection-calc.ts';
 import type { ConnectionFlow } from './connection-calc.ts';
 
-import type { Dataset } from '../../dataset/index.ts';
-import { useDataset } from '../../dataset/context.tsx';
-import { recipeLayouts } from './recipe-layout.ts';
-
-interface LayoutContext {
-  ds: Dataset;
-  belt: Belt;
-  progress: number;
-}
+import type { RecipeLayoutAnswer } from './recipe-layout.ts';
 
 interface LayoutOption {
   /** Kernel width and vertical repeat pitch, in tiles. */
@@ -49,7 +41,7 @@ export function cellSolutionJson(
   cell: Cell,
   iface: CellInterface,
   solution: Solution,
-  layout?: LayoutContext,
+  layouts?: readonly RecipeLayoutAnswer[],
 ): { inputs: MaterialRate[]; recipes: RecipeCount[]; outputs: MaterialRate[] } {
   const rates = (materials: ResourceId[], direction: 1 | -1) =>
     materials.map((material) => ({
@@ -62,7 +54,10 @@ export function cellSolutionJson(
     recipes: cell.entries.map((entry, index) => ({
       recipe: entry.recipe,
       count: solution.counts[index] ?? null,
-      layoutOptions: layout ? layoutOptionsJson(cell, solution, index, layout) : [],
+      layoutOptions: (layouts?.[index]?.options ?? []).map(({ result, maxBuildingsPerColumn }) => ({
+        size: { width: result.candidate.width, height: result.candidate.pitch },
+        capacity: maxBuildingsPerColumn,
+      })),
       ...connectionJson(
         index,
         solution,
@@ -71,32 +66,6 @@ export function cellSolutionJson(
     })),
     outputs: rates(iface.outputs, 1),
   };
-}
-
-function layoutOptionsJson(
-  cell: Cell,
-  solution: Solution,
-  index: number,
-  context: LayoutContext,
-): LayoutOption[] {
-  if (solution.counts[index] === undefined) return [];
-  const { ds, belt, progress } = context;
-  const entry = cell.entries[index]!;
-  const recipe = ds.data.recipes[entry.recipe];
-  const { options } = recipeLayouts(
-    ds,
-    entry.recipe,
-    recipe ? entryMachine(entry, recipe, progress, ds) : undefined,
-    solution.inputRates[index],
-    solution.outputRates[index],
-    solution.counts[index],
-    belt,
-    progress,
-  );
-  return options.map(({ result, maxBuildingsPerColumn }) => ({
-    size: { width: result.candidate.width, height: result.candidate.pitch },
-    capacity: maxBuildingsPerColumn,
-  }));
 }
 
 /** The rate and machine-ratio columns from a recipe's expanded connections table. */
@@ -129,19 +98,17 @@ export function CellAsJson({
   cell,
   iface,
   solution,
-  belt,
-  progress,
+  layouts,
 }: {
   cell: Cell;
   iface: CellInterface;
   solution: Solution;
-  belt: Belt;
-  progress: number;
+  layouts: readonly RecipeLayoutAnswer[];
 }) {
   const { open, setOpen, box } = useMenu();
-  const ds = useDataset();
+  const pending = layouts.some((layout) => layout.pending);
   const json = open
-    ? JSON.stringify(cellSolutionJson(cell, iface, solution, { ds, belt, progress }), null, 2)
+    ? JSON.stringify(cellSolutionJson(cell, iface, solution, layouts), null, 2)
     : '';
 
   return (
@@ -158,7 +125,11 @@ export function CellAsJson({
       </button>
       {open ? (
         <div class="cell-as-json-menu" role="dialog" aria-label="Cell solution JSON">
-          <textarea readOnly value={json} rows={20} cols={60} />
+          {pending ? (
+            <p role="status">Calculating layouts…</p>
+          ) : (
+            <textarea readOnly value={json} rows={20} cols={60} />
+          )}
         </div>
       ) : null}
     </div>
