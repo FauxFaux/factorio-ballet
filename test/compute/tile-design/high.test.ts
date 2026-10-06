@@ -57,7 +57,10 @@ function fluid(
     positions: [
       {
         direction: side,
-        position: { x: side === 'west' ? -1 : 1, y: row - (machine.size.height - 1) / 2 },
+        position: {
+          x: ((side === 'west' ? -1 : 1) * (machine.size.width - 1)) / 2,
+          y: row - (machine.size.height - 1) / 2,
+        },
       },
     ],
   };
@@ -153,6 +156,117 @@ describe('solveHighTileDesign', () => {
     expect(validateTileDesign(input, corrupted).issues.map(({ code }) => code)).toContain(
       'transfer-lane',
     );
+  });
+
+  it.each(['single', 'pair', 'auto'] as const)(
+    'solves the exported four-by-four electromagnetic plant with the %s pattern',
+    (pattern) => {
+      const kernel = assemblerProblem({
+        assemblerName: 'Electromagnetic plant',
+        solidInputs: [7, 0.7],
+        solidOutputs: [0.7],
+        fluidInputs: [1.75],
+        size: { width: 4, height: 4 },
+        fluidBoxes: [
+          {
+            productionType: 'input',
+            connections: [
+              { position: { x: -1.5, y: 0.5 }, direction: 'west', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'input',
+            connections: [
+              { position: { x: 1.5, y: -0.5 }, direction: 'east', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: 0.5, y: 1.5 }, direction: 'south', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: -0.5, y: -1.5 }, direction: 'north', flowDirection: 'input-output' },
+            ],
+          },
+        ],
+      });
+      kernel.assemblers[0].machine = 'electromagnetic-plant';
+      const result = solveKernelTileDesign(
+        kernel,
+        {
+          beltItemsPerSecond: 60,
+          inserterItemsPerSecond: 17.377499999999998,
+          longInserterItemsPerSecond: 8.688749999999999,
+        },
+        { mode: 'high', pattern, repeatCount: 1, undergroundBeltReach: 10 },
+      );
+      if (!('status' in result)) throw new Error(result.message);
+      const tile = found(result);
+      if (pattern !== 'auto') expect(tile.optimal).toBe(true);
+      const copies = pattern === 'single' ? 1 : 2;
+      expect(tile.candidate.pitch).toBe(4 * copies + 4);
+      const entities = tile.candidate.column.entities;
+      const machines = entities.filter((entity) => entity.kind === 'assembler');
+      expect(machines).toHaveLength(copies);
+      expect(machines.every(({ size }) => size.width === 4 && size.height === 4)).toBe(true);
+      expect(tile.candidate.boundary.filter(({ kind }) => kind === 'pipe')).toHaveLength(1);
+      const repeated = [-1, 0, 1].flatMap((copy) =>
+        entities.map((entity) => ({
+          ...entity,
+          position: { ...entity.position, y: entity.position.y + copy * tile.candidate.pitch },
+        })),
+      );
+      expect(entityPositionStatuses(repeated)).toEqual(repeated.map(() => 'valid'));
+      const modules = modulesForTile('plant', copies, kernel, tile.candidate, 1);
+      expect(modules.reduce((sum, module) => sum + module.inputs['fluid:1'], 0)).toBeCloseTo(
+        1.75 * copies,
+      );
+      expect(modules.reduce((sum, module) => sum + module.outputs['item:3'], 0)).toBeCloseTo(
+        0.7 * copies,
+      );
+    },
+  );
+
+  it.each([4, 5])('uses all end columns on a %s-tile-wide machine', (width) => {
+    const input = problem(Array(width).fill(2), []);
+    input.machines[0].size.width = width;
+    input.envelope.maxWidth = width;
+    input.envelope.maxStates = 1000;
+    const tile = found(solveHighTileDesign(input, { pattern: 'pair' }));
+    expect(tile.candidate.width).toBe(width);
+    expect(tile.candidate.boundary).toHaveLength(width);
+    expect(new Set(tile.candidate.boundary.map(({ x }) => x)).size).toBe(width);
+  });
+
+  it('supports eight gross item flows and enforces larger-machine tunnel reach', () => {
+    const input = problem(Array(7).fill(2), [2], 4);
+    input.machines[0].size.width = 4;
+    input.transport.undergroundBeltReach = 10;
+    const pair = found(solveHighTileDesign(input, { pattern: 'pair' }));
+    expect(pair.candidate.boundary).toHaveLength(8);
+    expect(pair.candidate.pitch).toBe(12);
+    input.transport.undergroundBeltReach = 9;
+    expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
+    input.transport.undergroundBeltReach = 6;
+    expect(found(solveHighTileDesign(input, { pattern: 'single' })).candidate.pitch).toBe(8);
+    input.transport.undergroundBeltReach = 5;
+    expect(solveHighTileDesign(input, { pattern: 'single' }).status).toBe('envelope-exhausted');
+  });
+
+  it('keeps belt identities distinct beyond the numeric bitmask range', () => {
+    const input = problem([2, 2], []);
+    input.machines[0].size.width = 31;
+    input.transport.inserters = [{ id: 'ordinary', reach: 1, capacity: 8 }];
+    input.envelope.primitives = ['surface'];
+    input.envelope.maxWidth = 36;
+    const tile = found(solveHighTileDesign(input, { pattern: 'single' }));
+    expect(tile.candidate.boundary.filter(({ kind }) => kind === 'belt')).toHaveLength(2);
+    expect(tile.candidate.width).toBe(35);
+    expect(tile.optimal).toBe(true);
   });
 
   it('removes the empty column in the exported fluid assembler problem', () => {
@@ -564,7 +678,7 @@ describe('solveHighTileDesign', () => {
     const input = problem(Array(8).fill(1), [2]);
     expect(solveHighTileDesign(input).status).toBe('unsupported');
     const wide = problem([2], [2]);
-    wide.machines[0].size.width = 5;
+    wide.machines[0].size.width = 1;
     expect(found(solveTileDesignWithMode(wide, 'auto')).diagnostics.scope).not.toContain('high/');
     const invalid = problem();
     invalid.transport.beltLaneCapacity = 0;

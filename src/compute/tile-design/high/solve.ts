@@ -37,21 +37,18 @@ export function solveHighTileDesign(
   if (input.transport.inserters.some(({ reach }) => reach !== 1 && reach !== 2))
     return failure('unsupported', 'Only one- and two-tile inserter reach is supported.');
   const machine = input.machines[0];
-  if (machine.inputs.items.length + machine.outputs.items.length > 7)
+  const widths = machine.orientations.map(({ rotation }) =>
+    rotation === 'east' || rotation === 'west' ? machine.size.height : machine.size.width,
+  );
+  if (!widths.some((width) => width >= 2))
     return failure(
       'unsupported',
-      'HIGH designs need at least one belt per gross item flow, with at most seven belts.',
+      'HIGH designs require an allowed machine orientation at least two tiles wide.',
     );
-  if (
-    !machine.orientations.some(({ rotation }) =>
-      [2, 3].includes(
-        rotation === 'east' || rotation === 'west' ? machine.size.height : machine.size.width,
-      ),
-    )
-  )
+  if (machine.inputs.items.length + machine.outputs.items.length > Math.max(...widths) + 4)
     return failure(
       'unsupported',
-      'HIGH designs require an allowed two- or three-tile-wide machine orientation.',
+      'HIGH designs need at least one belt per gross item flow, with one end belt per machine column and four side belts.',
     );
   let exhausted = false;
   const visit = () => {

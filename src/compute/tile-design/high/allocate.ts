@@ -20,7 +20,7 @@ interface Allocation {
 }
 
 /** Assign each input to one belt and each output to one or more dedicated belts.
- * Memoized matching tracks seven belt bits and two shared edge budgets.
+ * Memoized matching tracks occupied belts and two shared edge budgets.
  * Both input lanes may carry the same item, supplied as a balanced split upstream.
  * Side outputs use one far lane; end outputs use the lane targeted by each site. */
 export function allocateHighBelts(
@@ -41,7 +41,7 @@ export function allocateHighBelts(
       (a, b) =>
         a.side.localeCompare(b.side) || b.rate - a.rate || a.resource.localeCompare(b.resource),
     );
-  if (demands.length > 7) return;
+  if (demands.length > frame.tracks.length) return;
   const capacities = new Map(
     [1, 2].map((reach) => [
       reach,
@@ -101,12 +101,12 @@ export function allocateHighBelts(
   if (domains.some((domain, index) => demands[index].side === 'input' && !domain.length)) return;
   const sideCapacity = (side: 'west' | 'east') => frame.sideRows[side].length;
   const memo = new Map<string, Allocation | undefined>();
-  function match(index: number, mask: number, west: number, east: number): Allocation | undefined {
+  function match(index: number, mask: bigint, west: number, east: number): Allocation | undefined {
     const key = `${index}:${mask}:${west}:${east}`;
     if (memo.has(key)) return memo.get(key);
     if (!visit()) return;
     if (index === demands.length) {
-      const tracks = frame.tracks.filter((_track, index) => mask & (1 << index));
+      const tracks = frame.tracks.filter((_track, index) => mask & (1n << BigInt(index)));
       const { width } = highBounds(frame, tracks);
       if (width > input.envelope.maxWidth) return;
       const belts = tracks.reduce(
@@ -128,7 +128,7 @@ export function allocateHighBelts(
     const demand = demands[index];
     function consider(
       assignments: HighAssignment[],
-      nextMask: number,
+      nextMask: bigint,
       nextWest: number,
       nextEast: number,
     ) {
@@ -148,11 +148,11 @@ export function allocateHighBelts(
     }
     if (demand.side === 'input') {
       for (const { index: trackIndex, assignment } of domains[index]) {
-        if (mask & (1 << trackIndex)) continue;
+        if (mask & (1n << BigInt(trackIndex))) continue;
         const nextWest = west + (assignment.track.access.startsWith('west') ? assignment.sites : 0);
         const nextEast = east + (assignment.track.access.startsWith('east') ? assignment.sites : 0);
         if (nextWest > sideCapacity('west') || nextEast > sideCapacity('east')) continue;
-        consider([assignment], mask | (1 << trackIndex), nextWest, nextEast);
+        consider([assignment], mask | (1n << BigInt(trackIndex)), nextWest, nextEast);
       }
     } else {
       // Enumerate capacity covers. Each site's contribution is bounded by its
@@ -161,7 +161,7 @@ export function allocateHighBelts(
         start: number,
         assignments: HighAssignment[],
         total: number,
-        nextMask: number,
+        nextMask: bigint,
         nextWest: number,
         nextEast: number,
       ) {
@@ -183,7 +183,7 @@ export function allocateHighBelts(
           return;
         }
         for (let trackIndex = start; trackIndex < frame.tracks.length; trackIndex++) {
-          if (nextMask & (1 << trackIndex)) continue;
+          if (nextMask & (1n << BigInt(trackIndex))) continue;
           const track = frame.tracks[trackIndex];
           const reach = track.access.endsWith('far') ? 2 : 1;
           const capacity = capacities.get(reach)!;
@@ -212,7 +212,7 @@ export function allocateHighBelts(
               trackIndex + 1,
               [...assignments, assignment],
               total + rate,
-              nextMask | (1 << trackIndex),
+              nextMask | (1n << BigInt(trackIndex)),
               nextWest + (side === 'west' ? sites : 0),
               nextEast + (side === 'east' ? sites : 0),
             );
@@ -224,7 +224,7 @@ export function allocateHighBelts(
     memo.set(key, best);
     return best;
   }
-  return match(0, 0, 0, 0);
+  return match(0, 0n, 0, 0);
 }
 
 export function compareHighScores(a: Allocation['score'], b: Allocation['score']): number {

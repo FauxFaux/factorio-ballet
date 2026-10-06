@@ -25,7 +25,7 @@ export interface HighFrame {
   trunks: { x: number; resource: FluidId }[];
 }
 
-/** Up to seven columns: four side belts and tunnels under the machine(s).
+/** Four side belts plus one end tunnel per machine column.
  * Fluid sides try an adjacent trunk, one ordinary-reach belt, or two side belts. */
 export function* highFrames(
   input: TileDesignInput,
@@ -42,7 +42,7 @@ export function* highFrames(
     const size = swapped
       ? { width: machine.size.height, height: machine.size.width }
       : machine.size;
-    if (size.width < 2 || size.width > 3) continue;
+    if (size.width < 2 || size.width > input.envelope.maxWidth) continue;
     const pitch = size.height * copies + 4;
     if (
       pitch > input.envelope.maxPitch ||
