@@ -20,6 +20,75 @@ function module(id: string): FactoryModule {
 }
 
 describe('ModuleFootprints', () => {
+  it('rotates hovered modules clockwise with either key and preserves rotation on click', async () => {
+    const user = userEvent.setup();
+    const onModuleRotationsChange = vi.fn();
+    const modules = [module('A')];
+    const { container, rerender } = render(
+      <ModuleFootprints
+        modules={modules}
+        frozenModules={{ A: { x: 50, y: 50 } }}
+        onModuleRotationsChange={onModuleRotationsChange}
+      />,
+    );
+    const node = container.querySelector('[data-layout-module="A"]')!;
+    const rect = node.querySelector('rect')!;
+    await user.keyboard('r');
+    expect(onModuleRotationsChange).not.toHaveBeenCalled();
+    await user.hover(node);
+    for (const [key, direction, width, height] of [
+      ['r', 'east', '12', '4'],
+      ['p', 'south', '4', '12'],
+      ['r', 'west', '12', '4'],
+      ['p', 'north', '4', '12'],
+    ]) {
+      await user.keyboard(key!);
+      expect(node.getAttribute('data-layout-rotation')).toBe(direction);
+      expect(rect.getAttribute('width')).toBe(width);
+      expect(rect.getAttribute('height')).toBe(height);
+      expect(onModuleRotationsChange).toHaveBeenLastCalledWith({ A: direction });
+    }
+    await user.keyboard('r');
+    await user.click(node);
+    expect(node.getAttribute('data-layout-rotation')).toBe('east');
+    rerender(<ModuleFootprints modules={modules} moduleRotations={{ A: 'west' }} />);
+    expect(node.getAttribute('data-layout-rotation')).toBe('west');
+    await user.unhover(node);
+    await user.keyboard('p');
+    expect(node.getAttribute('data-layout-rotation')).toBe('west');
+  });
+
+  it('rotates around the latest cursor position and persists the shifted pin', () => {
+    const onFrozenModulesChange = vi.fn();
+    const { container } = render(
+      <ModuleFootprints
+        modules={[module('A')]}
+        frozenModules={{ A: { x: 50, y: 50 } }}
+        onFrozenModulesChange={onFrozenModulesChange}
+      />,
+    );
+    const svg = container.querySelector('svg.cell-layout-modules')!;
+    vi.spyOn(svg, 'getBoundingClientRect').mockReturnValue({
+      left: 10,
+      top: 20,
+      width: 384,
+      height: 256,
+    } as DOMRect);
+    const node = container.querySelector('[data-layout-module="A"]')!;
+    const rect = node.querySelector('rect')!;
+    // The cursor is at tile (51, 53), one tile right and three down inside the module.
+    fireEvent.mouseEnter(node, { clientX: 110, clientY: 120 });
+    fireEvent.pointerMove(svg, { clientX: 112, clientY: 126 });
+    fireEvent.keyDown(window, { key: 'r' });
+    expect(Number(rect.getAttribute('x'))).toBe(42);
+    expect(Number(rect.getAttribute('y'))).toBe(52);
+    expect(onFrozenModulesChange).toHaveBeenLastCalledWith({ A: { x: 42, y: 52 } });
+    // Four turns around the same point return to the original position.
+    for (let i = 0; i < 3; i++) fireEvent.keyDown(window, { key: 'p' });
+    expect(Number(rect.getAttribute('x'))).toBe(50);
+    expect(Number(rect.getAttribute('y'))).toBe(50);
+  });
+
   it('draws estimated modules with a warning color and keeps their connections', () => {
     const estimated = { ...module('A'), estimated: true };
     const { container } = render(

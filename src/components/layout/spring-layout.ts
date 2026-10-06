@@ -1,3 +1,4 @@
+import type { DesignDirection } from '../../compute/design.ts';
 import type { Position } from '../../bp/decode.ts';
 import type { FactoryModule } from '../../compute/modules.ts';
 import type {
@@ -8,11 +9,20 @@ import type {
 import { INPUT_STATION_BOUNDS, OUTPUT_STATION_BOUNDS } from './station-footprint.tsx';
 
 export interface SpringPlacement {
+  rotation?: DesignDirection;
   module: FactoryModule;
   x: number;
   y: number;
   vx: number;
   vy: number;
+}
+
+/** Dimensions of a module after its compass rotation. */
+export function placementSize(placement: { module: FactoryModule; rotation?: DesignDirection }) {
+  const { width, height } = placement.module.size;
+  return placement.rotation === 'east' || placement.rotation === 'west'
+    ? { width: height, height: width }
+    : { width, height };
 }
 
 export interface SpringLinks {
@@ -89,8 +99,8 @@ function reservedAreas(links: SpringLinks): Obstacle[] {
 }
 
 function avoidReservedAreas(placement: SpringPlacement, obstacles: readonly Obstacle[]): void {
-  const width = placement.module.size.width;
-  const height = placement.module.size.height;
+  const width = placementSize(placement).width;
+  const height = placementSize(placement).height;
   const x = Math.max(TRACK_MARGIN, Math.min(BRICK_WIDTH - TRACK_MARGIN - width, placement.x));
   const y = Math.max(TRACK_MARGIN, Math.min(BRICK_HEIGHT - TRACK_MARGIN - height, placement.y));
   if (x !== placement.x) placement.vx = 0;
@@ -140,24 +150,29 @@ function avoidReservedAreas(placement: SpringPlacement, obstacles: readonly Obst
 
 /** The endpoint used by both the visible link and its alignment force. */
 export function portPoint(
-  placement: { module: FactoryModule; x: number; y: number },
+  placement: { module: FactoryModule; x: number; y: number; rotation?: DesignDirection },
   port: ModulePortReference,
 ): Position {
   const leftOffset = port.direction === 'south' ? 0.75 : 0.25;
   const laneOffset =
     port.lane === 'left' ? leftOffset : port.lane === 'right' ? 1 - leftOffset : 0.5;
-  return {
-    x:
-      port.edge === 'left'
-        ? placement.x
-        : port.edge === 'right'
-          ? placement.x + placement.module.size.width
-          : placement.x + port.x + laneOffset,
-    y:
-      port.edge === 'left' || port.edge === 'right'
-        ? placement.y + (port.y ?? 0) + 0.5
-        : placement.y + (port.edge === 'top' ? 0 : placement.module.size.height),
-  };
+  const { width, height } = placement.module.size;
+  const x = port.edge === 'left' ? 0 : port.edge === 'right' ? width : port.x + laneOffset;
+  const y =
+    port.edge === 'left' || port.edge === 'right'
+      ? (port.y ?? 0) + 0.5
+      : port.edge === 'top'
+        ? 0
+        : height;
+  const point =
+    placement.rotation === 'east'
+      ? { x: height - y, y: x }
+      : placement.rotation === 'south'
+        ? { x: width - x, y: height - y }
+        : placement.rotation === 'west'
+          ? { x: y, y: width - x }
+          : { x, y };
+  return { x: placement.x + point.x, y: placement.y + point.y };
 }
 
 /** Seed new modules in a readable row; retain positions and momentum for existing IDs. */
@@ -190,8 +205,8 @@ export function stepSpringLayout(
   const indexById = new Map(placements.map((placement, index) => [placement.module.id, index]));
   const forces = placements.map(() => ({ x: 0, y: 0 }));
   const center = (placement: SpringPlacement) => ({
-    x: placement.x + placement.module.size.width / 2,
-    y: placement.y + placement.module.size.height / 2,
+    x: placement.x + placementSize(placement).width / 2,
+    y: placement.y + placementSize(placement).height / 2,
   });
   for (const link of links.connections) {
     const from = indexById.get(link.producerId);
@@ -207,8 +222,8 @@ export function stepSpringLayout(
     const portB = portPoint(b, link.consumerPort);
     const portDx = portB.x - portA.x;
     const portDy = portB.y - portA.y;
-    const restX = (a.module.size.width + b.module.size.width) / 2 + GAP + 4;
-    const restY = (a.module.size.height + b.module.size.height) / 2 + GAP + 4;
+    const restX = (placementSize(a).width + placementSize(b).width) / 2 + GAP + 4;
+    const restY = (placementSize(a).height + placementSize(b).height) / 2 + GAP + 4;
     // Each link can run horizontally or vertically. Penalize sideways port offset so the
     // chosen spring makes its visible line straight without snapping either module to a grid.
     const horizontalCost = (Math.abs(dx) - restX) ** 2 + ALIGNMENT * portDy ** 2;
@@ -235,7 +250,7 @@ export function stepSpringLayout(
     const anchorX = stop.x + (link.side === 'input' ? 8 : module.x < stop.x ? -8 : -4);
     const anchorY = stop.y + (link.side === 'input' ? 4.5 : 4);
     const port = portPoint(module, link.modulePort);
-    const restX = module.module.size.width / 2 + 12;
+    const restX = placementSize(module).width / 2 + 12;
     const k = strength(link.resource, link.rate) * STATION_STRENGTH;
     forces[index]!.x += k * (anchorX + (link.side === 'input' ? restX : -restX) - point.x);
     forces[index]!.y += k * ALIGNMENT * (anchorY - port.y);
@@ -264,9 +279,13 @@ export function stepSpringLayout(
       const ac = center(first);
       const bc = center(second);
       const overlapX =
-        (first.module.size.width + second.module.size.width) / 2 + GAP - Math.abs(ac.x - bc.x);
+        (placementSize(first).width + placementSize(second).width) / 2 +
+        GAP -
+        Math.abs(ac.x - bc.x);
       const overlapY =
-        (first.module.size.height + second.module.size.height) / 2 + GAP - Math.abs(ac.y - bc.y);
+        (placementSize(first).height + placementSize(second).height) / 2 +
+        GAP -
+        Math.abs(ac.y - bc.y);
       if (overlapX <= 0 || overlapY <= 0) continue;
       if (overlapX < overlapY) {
         const sign = ac.x <= bc.x ? -1 : 1;

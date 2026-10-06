@@ -4,16 +4,18 @@ import type {
   AttachedModuleConnection,
   AttachedStationConnection,
 } from '../../compute/module-port-connections.ts';
-import type { FrozenModulePositions } from '../../compute/layout.ts';
+import type { CellLayout, FrozenModulePositions } from '../../compute/layout.ts';
 import type { Position } from '../../bp/decode.ts';
 import { useDataset } from '../../dataset/context.tsx';
 import { iconSprite } from '../icon.tsx';
-import { portPoint, stepSpringLayout } from './spring-layout.ts';
+import { placementSize, portPoint, stepSpringLayout } from './spring-layout.ts';
 import { preLayoutModules } from './pre-layout.ts';
 
 const NO_CONNECTIONS: AttachedModuleConnection[] = [];
 const NO_STATION_CONNECTIONS: AttachedStationConnection[] = [];
 const NO_FROZEN_MODULES: FrozenModulePositions = {};
+const NO_ROTATIONS: NonNullable<CellLayout['moduleRotations']> = {};
+const DIRECTIONS = ['north', 'east', 'south', 'west'] as const;
 const NO_STOPS: Position[] = [];
 
 function portLabel(port: { edge: string; x: number; y?: number; lane?: string }): string {
@@ -30,7 +32,11 @@ export function ModuleFootprints({
   zeroInputRegionRecipes,
   frozenModules = NO_FROZEN_MODULES,
   onFrozenModulesChange,
+  moduleRotations = NO_ROTATIONS,
+  onModuleRotationsChange,
 }: {
+  moduleRotations?: CellLayout['moduleRotations'];
+  onModuleRotationsChange?: (rotations: NonNullable<CellLayout['moduleRotations']>) => void;
   modules: FactoryModule[];
   frozenModules?: FrozenModulePositions;
   onFrozenModulesChange?: (positions: FrozenModulePositions) => void;
@@ -42,6 +48,7 @@ export function ModuleFootprints({
 }) {
   const { data, iconMap } = useDataset();
   const [hoveredModuleId, setHoveredModuleId] = useState<string | null>(null);
+  const cursor = useRef<{ clientX: number; clientY: number } | null>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const drag = useRef<{
     pointerId: number;
@@ -52,6 +59,7 @@ export function ModuleFootprints({
     startY: number;
     moved: boolean;
   } | null>(null);
+  const rotations = useRef(moduleRotations);
   const savedPositions = useRef(frozenModules);
   savedPositions.current = frozenModules;
   const pinned = useRef(new Set<string>());
@@ -76,6 +84,7 @@ export function ModuleFootprints({
     drag.current = null;
     physics.current = preLayoutModules(modules, links, zeroInputRegionRecipes).map((placement) => {
       const position = savedPositions.current[placement.module.id];
+      placement = { ...placement, rotation: rotations.current[placement.module.id] ?? 'north' };
       if (!position) return placement;
       pinned.current.add(placement.module.id);
       return { ...placement, ...position, vx: 0, vy: 0 };
@@ -126,6 +135,71 @@ export function ModuleFootprints({
     wake.current();
   }, [frozenModules]);
 
+  useEffect(() => {
+    rotations.current = moduleRotations;
+    physics.current = physics.current.map((placement) => ({
+      ...placement,
+      rotation: moduleRotations[placement.module.id] ?? 'north',
+    }));
+    setPlaced(physics.current);
+    wake.current();
+  }, [moduleRotations]);
+
+  useEffect(() => {
+    const rotate = (event: KeyboardEvent) => {
+      if (
+        !hoveredModuleId ||
+        event.ctrlKey ||
+        event.metaKey ||
+        event.altKey ||
+        !['p', 'r'].includes(event.key.toLowerCase())
+      )
+        return;
+      const target = event.target;
+      if (
+        target instanceof HTMLElement &&
+        (target.isContentEditable || target.closest('input, textarea, select'))
+      )
+        return;
+      const placement = physics.current.find(({ module }) => module.id === hoveredModuleId);
+      if (!placement) return;
+      event.preventDefault();
+      const rotation = DIRECTIONS[(DIRECTIONS.indexOf(placement.rotation ?? 'north') + 1) % 4]!;
+      const next = { ...rotations.current, [hoveredModuleId]: rotation };
+      rotations.current = next;
+      const pointer = cursor.current
+        ? pointerPosition(cursor.current.clientX, cursor.current.clientY)
+        : null;
+      const size = placementSize(placement);
+      const pivot = pointer ?? {
+        x: placement.x + size.width / 2,
+        y: placement.y + size.height / 2,
+      };
+      // Rotate the cursor's local point clockwise, then translate it back to the cursor.
+      const offsetX = size.height - (pivot.y - placement.y);
+      const offsetY = pivot.x - placement.x;
+      const rotated = {
+        ...placement,
+        rotation,
+        x: pivot.x - offsetX,
+        y: pivot.y - offsetY,
+        vx: 0,
+        vy: 0,
+      };
+      physics.current = physics.current.map((item) => (item === placement ? rotated : item));
+      if (drag.current?.moduleId === hoveredModuleId) {
+        drag.current.offsetX = offsetX;
+        drag.current.offsetY = offsetY;
+      }
+      if (pinned.current.has(hoveredModuleId)) persistFrozenModules();
+      setPlaced(physics.current);
+      onModuleRotationsChange?.(next);
+      wake.current();
+    };
+    window.addEventListener('keydown', rotate);
+    return () => window.removeEventListener('keydown', rotate);
+  }, [hoveredModuleId, onModuleRotationsChange, onFrozenModulesChange]);
+
   const persistFrozenModules = () => {
     onFrozenModulesChange?.(
       Object.fromEntries(
@@ -163,7 +237,11 @@ export function ModuleFootprints({
       class="cell-layout-modules"
       viewBox="0 0 192 128"
       aria-label={`${modules.length} factory modules`}
+      onMouseMove={(event) => {
+        cursor.current = { clientX: event.clientX, clientY: event.clientY };
+      }}
       onPointerMove={(event) => {
+        cursor.current = { clientX: event.clientX, clientY: event.clientY };
         const active = drag.current;
         if (!active || event.pointerId !== active.pointerId) return;
         if (!active.moved) {
@@ -178,11 +256,11 @@ export function ModuleFootprints({
                 ...placement,
                 x: Math.max(
                   0,
-                  Math.min(192 - placement.module.size.width, pointer.x - active.offsetX),
+                  Math.min(192 - placementSize(placement).width, pointer.x - active.offsetX),
                 ),
                 y: Math.max(
                   0,
-                  Math.min(128 - placement.module.size.height, pointer.y - active.offsetY),
+                  Math.min(128 - placementSize(placement).height, pointer.y - active.offsetY),
                 ),
                 vx: 0,
                 vy: 0,
@@ -249,7 +327,9 @@ export function ModuleFootprints({
           </path>
         );
       })}
-      {placed.map(({ module, x, y }) => {
+      {placed.map((placement) => {
+        const { module, x, y, rotation } = placement;
+        const size = placementSize(placement);
         const product = data.recipes[module.recipe]?.products[0]?.resource;
         const [url, spriteX, spriteY, sheetWidth, sheetHeight] = iconSprite(
           iconMap,
@@ -262,6 +342,7 @@ export function ModuleFootprints({
           <g
             key={module.id}
             data-layout-module={module.id}
+            data-layout-rotation={rotation ?? 'north'}
             class={
               drag.current?.moduleId === module.id
                 ? 'is-dragging'
@@ -280,7 +361,10 @@ export function ModuleFootprints({
                 wake.current();
               }
             }}
-            onMouseEnter={() => setHoveredModuleId(module.id)}
+            onMouseEnter={(event) => {
+              cursor.current = { clientX: event.clientX, clientY: event.clientY };
+              setHoveredModuleId(module.id);
+            }}
             onMouseLeave={() => setHoveredModuleId(null)}
             onPointerDown={(event) => {
               if (event.button !== 0 || drag.current) return;
@@ -308,8 +392,8 @@ export function ModuleFootprints({
               class={`cell-layout-module${module.estimated ? ' is-estimated' : ''}`}
               x={x}
               y={y}
-              width={module.size.width}
-              height={module.size.height}
+              width={size.width}
+              height={size.height}
             />
             <text class="cell-layout-module-label" x={x + 0.4} y={y + 4}>
               {countLabel}

@@ -382,6 +382,12 @@ export function CellBox({
         <div class="cell-layout-row">
           <CellLayoutSurface
             layout={cell.layout}
+            onModuleRotationsChange={(moduleRotations) =>
+              setCell((previous) => ({
+                ...previous,
+                layout: { ...previous.layout, moduleRotations },
+              }))
+            }
             onFrozenModulesChange={(frozenModules) =>
               setCell((previous) => ({
                 ...previous,

@@ -3,6 +3,7 @@ import type { FactoryModule } from '../../src/compute/modules.ts';
 import type { AttachedModuleConnection } from '../../src/compute/module-port-connections.ts';
 import {
   initialSpringPlacements,
+  portPoint,
   stepSpringLayout,
   type SpringLinks,
 } from '../../src/components/layout/spring-layout.ts';
@@ -43,6 +44,15 @@ function link(
 }
 
 describe('spring layout', () => {
+  it('rotates connection endpoints with the footprint through all compass directions', () => {
+    const placement = { module: module('A'), x: 50, y: 30 };
+    const port = { edge: 'top' as const, x: 1, lane: 'left' as const, transport: 'belt' as const };
+    expect(portPoint(placement, port)).toEqual({ x: 51.25, y: 30 });
+    expect(portPoint({ ...placement, rotation: 'east' }, port)).toEqual({ x: 62, y: 31.25 });
+    expect(portPoint({ ...placement, rotation: 'south' }, port)).toEqual({ x: 52.75, y: 42 });
+    expect(portPoint({ ...placement, rotation: 'west' }, port)).toEqual({ x: 50, y: 32.75 });
+  });
+
   it('retains existing positions when the module list changes', () => {
     const initial = initialSpringPlacements([module('A')]);
     initial[0]!.x = 42.5;

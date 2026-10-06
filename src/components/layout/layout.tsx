@@ -106,6 +106,7 @@ function talaViewBox(result: LayoutResult, nodeNames: ReadonlyMap<string, string
 export function CellLayoutSurface({
   layout,
   onFrozenModulesChange,
+  onModuleRotationsChange,
   inputs,
   outputs,
   modules = NO_MODULES,
@@ -116,6 +117,7 @@ export function CellLayoutSurface({
 }: {
   layout: CellLayout;
   onFrozenModulesChange?: (positions: NonNullable<CellLayout['frozenModules']>) => void;
+  onModuleRotationsChange?: (rotations: NonNullable<CellLayout['moduleRotations']>) => void;
   inputs: ResourceId[];
   outputs: ResourceId[];
   modules?: FactoryModule[];
@@ -206,6 +208,8 @@ export function CellLayoutSurface({
       <section class="cell-layout" aria-label="Layout">
         <RailBlueprintPreview blueprint={blueprint.blueprint} embedded />
         <ModuleFootprints
+          moduleRotations={layout.moduleRotations}
+          onModuleRotationsChange={onModuleRotationsChange}
           frozenModules={layout.frozenModules}
           onFrozenModulesChange={onFrozenModulesChange}
           modules={modules}

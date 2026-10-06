@@ -124,11 +124,12 @@ describe('packCells', () => {
     expect(unpackCells(packCells(cells, ids), ids)).toEqual(cells);
   });
 
-  it('round-trips frozen layout positions through the shareable URL envelope', () => {
+  it('round-trips frozen layout positions and rotations through the shareable URL envelope', () => {
     const cells: Cell[] = [
       {
         entries: [{ recipe: 'copper-cable' }],
         layout: {
+          moduleRotations: { 'copper-cable:0': 'east', 'copper-cable:1': 'west' },
           frozenModules: {
             'copper-cable:0': { x: 42.5, y: 60 },
             'copper-cable:1': { x: 80, y: 20.25 },
