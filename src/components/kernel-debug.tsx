@@ -25,20 +25,21 @@ export function KernelDebug({
   chosen: Chosen;
   custom: State<KernelCustomState | undefined>;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
+  const { data } = ds;
   const problems = useMemo(() => allKernelProblems(data), [data]);
   const throughput = useMemo(
     () => ({
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, chosen.belt),
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, chosen.belt),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        data,
+        ds,
         progress,
         chosen.belt,
         2,
       ),
     }),
-    [progress, chosen.belt],
+    [ds, progress, chosen.belt],
   );
   const sortedProblems = useMemo(
     () =>

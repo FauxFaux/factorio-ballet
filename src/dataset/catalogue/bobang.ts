@@ -1,3 +1,4 @@
+import { bobsInserterPerformance } from '../../data/inserter-performance.ts';
 import type { StaticDataPacked } from '../../types.ts';
 import { decodeStaticData } from '../../data/decode-impl.ts';
 import icons0Url from '../../assets/dataset/bobang/icons-0.avif';
@@ -32,7 +33,7 @@ export async function bobAngs(): Promise<DatasetInput> {
 
   setTimeout(preloadImages, 0);
 
-  return { staticData, iconMap };
+  return { staticData, iconMap, inserterPerformance: bobsInserterPerformance };
 }
 
 function preloadImages() {

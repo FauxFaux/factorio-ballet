@@ -361,8 +361,8 @@ export function modulesForCell(
     );
     const result = solveKernelTileDesign(problem, {
       beltItemsPerSecond: belt.itemsPerSecond,
-      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt),
-      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt, 2),
+      inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt),
+      longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt, 2),
     });
     return 'status' in result && result.status === 'found'
       ? modulesForTile(

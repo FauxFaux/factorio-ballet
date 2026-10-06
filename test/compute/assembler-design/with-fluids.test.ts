@@ -93,12 +93,12 @@ describe('generateAssemblerDesign', () => {
     const design = generateAssemblerDesign(problem, {
       beltItemsPerSecond: 75,
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        defaultDataset.data,
+        defaultDataset,
         1,
         defaultDataset.data.belts['bob-ultimate-transport-belt'],
       ),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        defaultDataset.data,
+        defaultDataset,
         1,
         defaultDataset.data.belts['bob-ultimate-transport-belt'],
         2,

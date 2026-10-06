@@ -103,12 +103,12 @@ describe('App', () => {
     const throughput = {
       beltItemsPerSecond: chosen.belt.itemsPerSecond,
       inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        defaultDataset.data,
+        defaultDataset,
         progress,
         chosen.belt,
       ),
       longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
-        defaultDataset.data,
+        defaultDataset,
         progress,
         chosen.belt,
         2,

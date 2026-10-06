@@ -1,11 +1,12 @@
-import type { StaticData, Belt, MachineId, ResourceId } from '../../types.ts';
+import type { Belt, MachineId, ResourceId } from '../../types.ts';
 import { recipeKernelProblem } from '../../compute/modules.ts';
 import { kernelLayoutOptions } from '../../compute/kernel-layout-options.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../../data/inserter-throughput.ts';
+import type { Dataset } from '../../dataset/index.ts';
 
 /** Shared layout calculation for the connections table and cell JSON export. */
 export function recipeLayouts(
-  data: StaticData,
+  ds: Dataset,
   recipe: string,
   machine: MachineId | undefined,
   inputRates: Map<ResourceId, number> | undefined,
@@ -15,7 +16,7 @@ export function recipeLayouts(
   progress: number,
 ) {
   const problem = recipeKernelProblem(
-    data,
+    ds.data,
     recipe,
     machine,
     inputRates ?? new Map(),
@@ -23,8 +24,8 @@ export function recipeLayouts(
   );
   const throughput = {
     beltItemsPerSecond: belt.itemsPerSecond,
-    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt),
-    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, progress, belt, 2),
+    inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt),
+    longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(ds, progress, belt, 2),
   };
   const layouts = kernelLayoutOptions(
     problem,

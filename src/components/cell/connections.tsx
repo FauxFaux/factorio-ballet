@@ -102,9 +102,9 @@ function AssemblerDesignSummary({
   progress: number;
   onDebugProblem: (problem: KernelProblem) => void;
 }) {
-  const { data } = useDataset();
+  const ds = useDataset();
   const { problem, options, reason } = recipeLayouts(
-    data,
+    ds,
     recipe,
     machine,
     inputRates,

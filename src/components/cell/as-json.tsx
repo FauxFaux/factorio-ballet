@@ -84,7 +84,7 @@ function layoutOptionsJson(
   const entry = cell.entries[index]!;
   const recipe = ds.data.recipes[entry.recipe];
   const { options } = recipeLayouts(
-    ds.data,
+    ds,
     entry.recipe,
     recipe ? entryMachine(entry, recipe, progress, ds) : undefined,
     solution.inputRates[index],

@@ -27,8 +27,13 @@ describe('processing electronics kernel options', () => {
       problem,
       {
         beltItemsPerSecond: belt.itemsPerSecond,
-        inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, 1, belt),
-        longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(data, 1, belt, 2),
+        inserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(defaultDataset, 1, belt),
+        longInserterItemsPerSecond: inserterItemsPerSecondForBeltAtProgress(
+          defaultDataset,
+          1,
+          belt,
+          2,
+        ),
       },
       17,
       belt.undergroundLength - 1,

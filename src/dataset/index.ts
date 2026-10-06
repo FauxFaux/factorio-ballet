@@ -15,6 +15,8 @@ import {
 } from './precompute.ts';
 import { type IconMap } from '../data/icon-map.ts';
 import type { DatasetInput } from './types.ts';
+import type { InserterPerformance } from '../data/inserter-performance.ts';
+import { upstreamInserterPerformance } from '../data/inserter-performance-upstream.ts';
 
 /** Identifies one exact generated data artifact and its prototype ordering. */
 export type DatasetId = string;
@@ -31,6 +33,7 @@ export interface Dataset {
   readonly beltTiers: readonly BeltMatch[];
   readonly soleProducerByResource: ReadonlyMap<ResourceId, string>;
   readonly suggestionPlans: SuggestionPlanIndex;
+  readonly inserterPerformance: InserterPerformance;
   readonly iconMap: IconMap;
 }
 
@@ -48,6 +51,7 @@ export function createDataset(id: DatasetId, dsBuilder: DatasetInput): Dataset {
     beltTiers: buildBeltTiers(data),
     soleProducerByResource: buildSoleProducerIndex(data),
     suggestionPlans: buildSuggestionPlanIndex(data),
+    inserterPerformance: dsBuilder.inserterPerformance ?? upstreamInserterPerformance,
     iconMap,
   };
 }

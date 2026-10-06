@@ -1,3 +1,4 @@
+import { upstreamInserterPerformance } from '../../data/inserter-performance-upstream.ts';
 import type { StaticDataPacked } from '../../types.ts';
 import { decodeStaticData } from '../../data/decode-impl.ts';
 import { iconsFromSheet, preloadImage } from '../../data/icon-map.ts';
@@ -17,6 +18,7 @@ export async function spaceAge(): Promise<DatasetInput> {
 
   if (typeof Image !== 'undefined') void preloadImage(iconsUrl);
   return {
+    inserterPerformance: upstreamInserterPerformance,
     staticData: decodeStaticData(packed),
     iconMap: iconsFromSheet(iconsUrl, iconsJson.default, 896, 864),
   };
