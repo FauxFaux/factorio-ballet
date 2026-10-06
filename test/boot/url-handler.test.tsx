@@ -58,6 +58,65 @@ function liveState(): UrlState {
 }
 
 describe('URL handler', () => {
+  it('lets navigation cancel an edit before deferred effect cleanup', async () => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, '', `/${planHash()}`);
+    render(<UrlHandler data={defaultDataset.data} datasetId={defaultDataset.id} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Freeze module' }));
+    const destination = planHash('iron');
+
+    act(() => {
+      window.history.replaceState({}, '', `/${destination}`);
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+      vi.advanceTimersByTime(50);
+      expect(window.location.hash).toBe(destination);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(500);
+    });
+    expect(window.location.hash).toBe(destination);
+    expect(liveState().cs).toBe('iron');
+    expect(liveState().cl[0].layout?.frozenModules).toBeUndefined();
+  });
+
+  it('does not overwrite navigation while its hashchange event is still queued', async () => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, '', `/${planHash()}`);
+    render(<UrlHandler data={defaultDataset.data} datasetId={defaultDataset.id} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Freeze module' }));
+    const destination = planHash('iron');
+    window.history.replaceState({}, '', `/${destination}`);
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(50);
+    });
+    expect(window.location.hash).toBe(destination);
+    act(() => {
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+    });
+    expect(liveState().cs).toBe('iron');
+  });
+
+  it.each([
+    '',
+    '#unknown',
+    '#yju7invalid',
+    `#${packEnvelope({ dataset: 'another-dataset', v: 1, cs: '', gp: 0, ci: 0, mo: {}, cl: [] })}`,
+  ])('preserves navigation to %s instead of writing the pending edit', async (destination) => {
+    vi.useFakeTimers();
+    window.history.replaceState({}, '', `/${planHash()}`);
+    render(<UrlHandler data={defaultDataset.data} datasetId={defaultDataset.id} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Freeze module' }));
+    act(() => {
+      window.history.replaceState({}, '', `/${destination}`);
+      window.dispatchEvent(new HashChangeEvent('hashchange'));
+      vi.advanceTimersByTime(50);
+    });
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(500);
+    });
+    expect(window.location.hash).toBe(destination);
+  });
+
   it('keeps live state references when its own URL write triggers hashchange', async () => {
     vi.useFakeTimers();
     window.history.replaceState({}, '', `/${planHash()}`);

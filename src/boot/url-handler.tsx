@@ -141,12 +141,21 @@ export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: s
   );
   const [us, setUs] = useState<UrlState>(initResult.kind === 'ok' ? initResult.us : defaultUs);
   const synchronizedHash = useRef(window.location.hash);
+  const restoredUs = useRef(initResult.kind === 'ok' && window.location.hash ? us : undefined);
+  const navigationGeneration = useRef(0);
+  const pendingWrite = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const generation = navigationGeneration.current;
+  const sourceHash = synchronizedHash.current;
 
   useEffect(() => {
     const onHashChange = () => {
       // A local write already represents the live state. Reading it back would replace every
       // object reference and restart consumers such as the spring-layout simulation.
       if (window.location.hash === synchronizedHash.current) return;
+      // Navigation takes precedence immediately, even while effect cleanup is waiting for paint
+      // or DatasetBoot is preparing to unmount us for another dataset or an invalid URL.
+      clearTimeout(pendingWrite.current);
+      navigationGeneration.current += 1;
       const envelope = parseEnvelope(window.location.hash);
       if (envelope.kind === 'ok' && (envelope.packed.dataset ?? legacyDatasetId) !== datasetId) {
         return;
@@ -154,6 +163,7 @@ export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: s
       const result = parseHash(window.location.hash, idTables);
       if (result.kind === 'ok') {
         synchronizedHash.current = window.location.hash;
+        restoredUs.current = result.us;
         setUnpackError(undefined);
         setUs(result.us);
       } else if (result.kind === 'unpack-error') {
@@ -165,13 +175,19 @@ export function UrlHandler({ data, datasetId }: { data: StaticData; datasetId: s
   }, [idTables, datasetId]);
 
   useEffect(() => {
+    // Loading history is a read, not an edit. In particular, do not canonicalize old links into
+    // new history entries when the user presses Back.
+    if (us === restoredUs.current || initResult.kind !== 'ok' || unpackError) return;
     const timeout = setTimeout(() => {
+      if (navigationGeneration.current !== generation || window.location.hash !== sourceHash)
+        return;
       const hash = `#${packUs(us, idTables, datasetId)}`;
       synchronizedHash.current = hash;
       window.location.hash = hash;
     }, 50);
+    pendingWrite.current = timeout;
     return () => clearTimeout(timeout);
-  }, [us, idTables, datasetId]);
+  }, [us, idTables, datasetId, generation, sourceHash, initResult, unpackError]);
 
   if (initResult.kind === 'version-error') {
     return (
