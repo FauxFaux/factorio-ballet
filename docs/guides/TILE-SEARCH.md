@@ -102,17 +102,17 @@ separate.
 `solveHighTileDesign` in `src/compute/tile-design/high/solve.ts` is an additional solver over the
 same `TileDesignInput` and `TileDesignCandidate` contracts. It implements subsets of the two
 patterns in [ASSEMBLERS-HIGH.md](../blueprints/ASSEMBLERS-HIGH.md), with horizontal underground
-fluid branches replacing east/west inserter sites. It dedicates one belt to each gross item input
-and one or more belts to each output, with at most `w + 4` belts for an oriented machine width `w`.
-Each machine column adds an end belt; four side belts are available before fluid routing removes
-access. A catalyst needs separate input and output belts.
+fluid branches replacing east/west inserter sites. It dedicates one or more belts to each gross item
+input and output, with at most `w + 4` belts for an oriented machine width `w`. Each machine column
+adds an end belt; four side belts are available before fluid routing removes access. A catalyst
+needs separate input and output belts.
 
 The pattern supports allowed orientations of a `w×h` machine at least two tiles wide, within the
 width and pitch envelope. A single has pitch `h + 4`; a touching pair has pitch `2h + 4`. Only used
 belts and required inserters are emitted. The central `w` belts tunnel underneath the whole repeat
 unit and have two ordinary input sites per machine in a single, or one in a pair. The four side
 belts divide the available edge cells between ordinary near-belt and long far-belt inserters. Inputs
-may occupy either one lane or both lanes of their single belt. When both lanes are used, the
+may occupy either one lane or both lanes of each dedicated belt. When both lanes are used, the
 certificate advertises equal rates and requires the module router to supply that split. Side outputs
 use one far lane on a dedicated belt. End belts can also carry outputs: the north end targets the
 right lane, and the south end targets the left lane of the northbound belt. A touching pair puts
@@ -129,8 +129,8 @@ near-belt column. With two side belts, the near belt passes over the pipe tunnel
 tunnels under the outer pipe endpoint. Touching pairs of machines at most two tiles high use
 adjacent fluid trunks because their side belt tunnels would share endpoint cells. Distinct fluids
 have isolated trunks. North/south fluid branches, multiple fluid trunks on the same side, shared
-belts for different items, and splitting an input across different belts remain outside this policy.
-Outputs may span multiple dedicated belts when lane or inserter capacity requires it.
+belts for different items remain outside this policy. Inputs and outputs may span multiple dedicated
+belts when lane or inserter capacity requires it.
 
 Code responsibilities are intentionally small:
 
@@ -143,15 +143,16 @@ Code responsibilities are intentionally small:
 | `solver.ts`        | Explicit `search`, `high`, or `auto` policy selection                                    |
 | `result.ts`        | Shared result/diagnostic types, re-exported by `search.ts` for existing callers          |
 
-Matching assigns each input to one of the available belt bits and enumerates output capacity covers
-over the remaining belts. State includes occupied belt bits and the number of inserter cells
-consumed on each side. Output covers reserve sites within those shared budgets and split production
-in proportion to each selected belt's lane and inserter capacity. Each split then uses only the
-sites required for its actual rate. Local capacity determines the required number of sites before
-matching. This avoids enumerating resource lane subsets, fractional max-flow graphs, and discrete
-inserter configurations. Near and far belts share one edge budget, so neither can claim cells needed
-by the other. Emission assigns the near belt its required rows first and the far belt the remaining
-rows, reversing the row preference in the lower half of a pair.
+Matching enumerates capacity covers for each input and output over the available belt bits. State
+includes occupied belt bits and the number of inserter cells consumed on each side. Capacity covers
+reserve sites within those shared budgets and split production in proportion to each selected belt's
+lane and inserter capacity. Each split then uses only the sites required for its actual rate. A
+relaxed capacity bound reserves at least one belt for every remaining flow and rejects states whose
+minimum required belt counts exceed the unused belts. Local capacity determines the required number
+of sites before matching. This avoids enumerating resource lane subsets, fractional max-flow graphs,
+and discrete inserter configurations. Near and far belts share one edge budget, so neither can claim
+cells needed by the other. Emission assigns the near belt its required rows first and the far belt
+the remaining rows, reversing the row preference in the lower half of a pair.
 
 `pattern: 'single' | 'pair' | 'auto'` chooses which HIGH arrangements to try. Selection minimizes
 rectangle area per machine, then transport entities per machine. Comparing per machine allows the

@@ -295,6 +295,76 @@ describe('solveHighTileDesign', () => {
       expect(entities.some((entity) => entity.position.x === x)).toBe(true);
   });
 
+  it.each(['single', 'pair', 'auto'] as const)(
+    'splits the exported electromagnetic plant input across belts for three repeats in %s mode',
+    (pattern) => {
+      const kernel = assemblerProblem({
+        assemblerName: 'Electromagnetic plant',
+        solidInputs: [7, 21],
+        solidOutputs: [14],
+        size: { width: 4, height: 4 },
+        fluidBoxes: [
+          {
+            productionType: 'input',
+            connections: [
+              { position: { x: -1.5, y: 0.5 }, direction: 'west', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'input',
+            connections: [
+              { position: { x: 1.5, y: -0.5 }, direction: 'east', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: 0.5, y: 1.5 }, direction: 'south', flowDirection: 'input-output' },
+            ],
+          },
+          {
+            productionType: 'output',
+            connections: [
+              { position: { x: -0.5, y: -1.5 }, direction: 'north', flowDirection: 'input-output' },
+            ],
+          },
+        ],
+      });
+      kernel.assemblers[0].machine = 'electromagnetic-plant';
+      const result = solveKernelTileDesign(
+        kernel,
+        {
+          beltItemsPerSecond: 60,
+          inserterItemsPerSecond: 17.377499999999998,
+          longInserterItemsPerSecond: 8.688749999999999,
+        },
+        { mode: 'high', pattern, repeatCount: 3, undergroundBeltReach: 10 },
+      );
+      if (!('status' in result)) throw new Error(result.message);
+      const tile = found(result);
+      const supplies = tile.candidate.boundary.filter(({ lanes }) =>
+        Object.values(lanes ?? {}).includes('item:2'),
+      );
+      expect(supplies.length).toBeGreaterThan(1);
+      const copies = Object.values(tile.candidate.machineCopies!)[0];
+      expect(
+        supplies
+          .flatMap(({ laneFlows }) => Object.values(laneFlows!))
+          .reduce((sum, { rate }) => sum + rate, 0),
+      ).toBeCloseTo(21 * copies);
+      for (const belt of tile.candidate.boundary.filter(({ kind }) => kind === 'belt')) {
+        expect(new Set(Object.values(belt.lanes!)).size).toBe(1);
+        for (const { rate } of Object.values(belt.laneFlows!))
+          expect(rate * 3).toBeLessThanOrEqual(30 + 1e-9);
+      }
+      expect(tile.validation.supportedCopies).toBeGreaterThanOrEqual(3);
+      const modules = modulesForTile('plant', copies * 3, kernel, tile.candidate, 3);
+      expect(modules.reduce((sum, module) => sum + module.inputs['item:2'], 0)).toBeCloseTo(
+        21 * copies * 3,
+      );
+    },
+  );
+
   it.each(['single', 'auto'] as const)(
     'splits the exported output across dedicated belts for three repeats in %s mode',
     (pattern) => {
@@ -361,14 +431,14 @@ describe('solveHighTileDesign', () => {
     },
   );
 
-  it('keeps all three opposite-side inserter sites with an adjacent fluid trunk', () => {
+  it('uses compact split inputs beside an adjacent fluid trunk', () => {
     const input = problem([24], [2]);
     fluid(input, 'east', 'fluid:water');
     input.envelope.maxWidth = 6;
     // An adjacent surface trunk does not require a fluid branch or a pipe tunnel.
     input.envelope.primitives = ['surface', 'underground'];
     const tile = found(solveHighTileDesign(input, { pattern: 'single' }));
-    expect(tile.candidate.width).toBe(6);
+    expect(tile.candidate.width).toBe(4);
     expect(
       tile.candidate.column.entities.some((entity) => entity.kind === 'underground-pipe'),
     ).toBe(false);
@@ -520,8 +590,9 @@ describe('solveHighTileDesign', () => {
     expect(solveHighTileDesign(input, { pattern: 'pair' }).status).toBe('envelope-exhausted');
   });
 
-  it('removes unused belts and uses both lanes of one input belt without splitting across belts', () => {
+  it('removes unused belts and uses both lanes when one input belt is cheapest', () => {
     const input = problem([20], [2]);
+    input.transport.inserters[0].capacity = 12;
     const result = found(solveHighTileDesign(input, { pattern: 'single' }));
     const belts = result.candidate.boundary.filter(({ kind }) => kind === 'belt');
     expect(belts).toHaveLength(2);
@@ -532,7 +603,32 @@ describe('solveHighTileDesign', () => {
       right: { side: 'input', rate: 10 },
     });
     expect(result.validation.supportedCopies).toBe(1);
-    expect(solveHighTileDesign(problem([31], [2])).status).toBe('envelope-exhausted');
+    expect(found(solveHighTileDesign(problem([31], [2]))).validation.valid).toBe(true);
+    expect(solveHighTileDesign(problem([200], [2])).status).toBe('envelope-exhausted');
+  });
+
+  it('shares side sites when an input needs both near and far belts', () => {
+    const input = problem([25], [], 4);
+    input.transport.beltLaneCapacity = 10;
+    input.transport.inserters[0].capacity = 20;
+    input.transport.undergroundBeltReach = 4;
+    fluid(input, 'west', 'fluid:water');
+    input.envelope.primitives = ['surface', 'underground'];
+    const tile = found(solveHighTileDesign(input, { pattern: 'single' }));
+    const supplies = tile.candidate.boundary.filter(({ kind }) => kind === 'belt');
+    expect(supplies).toHaveLength(2);
+    expect(tile.candidate.column.entities.filter(({ kind }) => kind === 'inserter')).toHaveLength(
+      3,
+    );
+    expect(
+      tile.candidate.column.entities.filter(
+        (entity) => entity.kind === 'inserter' && entity.reach === 2,
+      ),
+    ).toHaveLength(2);
+    expect(tile.candidate.transfers.reduce((sum, { rate }) => sum + rate, 0)).toBeCloseTo(25);
+    input.machines[0].inputs.items[0].rate = 33;
+    input.boundary.inputs.items[0].rate = 33;
+    expect(solveHighTileDesign(input, { pattern: 'single' }).status).toBe('envelope-exhausted');
   });
 
   it('checks the single and pair tunnel distances against the selected tier', () => {

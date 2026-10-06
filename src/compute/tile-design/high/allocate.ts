@@ -19,7 +19,7 @@ interface Allocation {
   score: { area: number; transportEntities: number };
 }
 
-/** Assign each input to one belt and each output to one or more dedicated belts.
+/** Assign each item flow to one or more dedicated belts.
  * Memoized matching tracks occupied belts and two shared edge budgets.
  * Both input lanes may carry the same item, supplied as a balanced split upstream.
  * Side outputs use one far lane; end outputs use the lane targeted by each site. */
@@ -92,18 +92,53 @@ export function allocateHighBelts(
     );
     return { demand, track, lanes, copyLaneRates, sites, reach, capacity };
   }
-  const domains = demands.map((demand) =>
-    frame.tracks.flatMap((track, index) => {
-      const assignment = assignmentFor(demand, track);
-      return assignment ? [{ index, assignment }] : [];
-    }),
-  );
-  if (domains.some((domain, index) => demands[index].side === 'input' && !domain.length)) return;
   const sideCapacity = (side: 'west' | 'east') => frame.sideRows[side].length;
+  const trackCapacity = (demand: SolidDemand, track: HighTrack, sites: number) => {
+    if (
+      track.tunnels?.some(
+        ({ top, bottom }) => bottom - top - 1 > input.transport.undergroundBeltReach,
+      ) ||
+      (track.tunnels?.length && !input.envelope.primitives.includes('underground'))
+    )
+      return 0;
+    const capacity = capacities.get(track.access.endsWith('far') ? 2 : 1)!;
+    return Math.min(
+      sites * capacity,
+      demand.side === 'input'
+        ? 2 * laneCapacity
+        : track.access === 'end'
+          ? sites * Math.min(capacity, laneCapacity * frame.copies)
+          : laneCapacity,
+    );
+  };
   const memo = new Map<string, Allocation | undefined>();
   function match(index: number, mask: bigint, west: number, east: number): Allocation | undefined {
     const key = `${index}:${mask}:${west}:${east}`;
     if (memo.has(key)) return memo.get(key);
+    // A relaxed bound gives every remaining flow the best unused belts,
+    // independently. Their minimum belt counts must still fit together.
+    let requiredBelts = 0;
+    const unused = frame.tracks.filter((_, trackIndex) => !(mask & (1n << BigInt(trackIndex))));
+    for (const demand of demands.slice(index)) {
+      const rates = unused
+        .map((track) => {
+          const sites = track.access.startsWith('west')
+            ? sideCapacity('west') - west
+            : track.access.startsWith('east')
+              ? sideCapacity('east') - east
+              : frame.copies === 1
+                ? 2
+                : 1;
+          return trackCapacity(demand, track, sites);
+        })
+        .sort((a, b) => b - a);
+      let total = 0;
+      let belts = 0;
+      while (belts < rates.length && total + RATE_EPSILON < demand.rate) total += rates[belts++];
+      if (total + RATE_EPSILON < demand.rate) return;
+      requiredBelts += belts;
+    }
+    if (requiredBelts > unused.length) return;
     if (!visit()) return;
     if (index === demands.length) {
       const tracks = frame.tracks.filter((_track, index) => mask & (1n << BigInt(index)));
@@ -146,81 +181,82 @@ export function allocateHighBelts(
       if (!best || compareHighScores(allocation.score, best.score) < -RATE_EPSILON)
         best = allocation;
     }
-    if (demand.side === 'input') {
-      for (const { index: trackIndex, assignment } of domains[index]) {
-        if (mask & (1n << BigInt(trackIndex))) continue;
-        const nextWest = west + (assignment.track.access.startsWith('west') ? assignment.sites : 0);
-        const nextEast = east + (assignment.track.access.startsWith('east') ? assignment.sites : 0);
-        if (nextWest > sideCapacity('west') || nextEast > sideCapacity('east')) continue;
-        consider([assignment], mask | (1n << BigInt(trackIndex)), nextWest, nextEast);
-      }
-    } else {
-      // Enumerate capacity covers. Each site's contribution is bounded by its
-      // actual target lane; proportional splitting then fills a feasible cover.
-      function cover(
-        start: number,
-        assignments: HighAssignment[],
-        total: number,
-        nextMask: bigint,
-        nextWest: number,
-        nextEast: number,
-      ) {
-        if (!visit()) return;
-        if (total + RATE_EPSILON >= demand.rate) {
-          const split = assignments.map((assignment) =>
-            assignmentFor(
-              { ...demand, rate: (demand.rate * assignment.demand.rate) / total },
-              assignment.track,
-            )!,
+    // Enumerate capacity covers. Each site's contribution is bounded by its
+    // available lanes; proportional splitting then fills a feasible cover.
+    function cover(
+      start: number,
+      assignments: HighAssignment[],
+      total: number,
+      nextMask: bigint,
+      nextWest: number,
+      nextEast: number,
+    ) {
+      const available = frame.tracks.filter(
+        (_, trackIndex) => !(nextMask & (1n << BigInt(trackIndex))),
+      );
+      // Every remaining flow still needs its own belt, including this one
+      // until the cover is complete. Avoid splits that strand later demands.
+      if (available.length < demands.length - index - (total + RATE_EPSILON >= demand.rate ? 1 : 0))
+        return;
+      if (total + RATE_EPSILON >= demand.rate) {
+        const split = assignments.map((assignment) =>
+          assignmentFor(
+            { ...demand, rate: (demand.rate * assignment.demand.rate) / total },
+            assignment.track,
+          )!,
+        );
+        const used = (side: 'west' | 'east') =>
+          split.reduce(
+            (sum, assignment) =>
+              sum + (assignment.track.access.startsWith(side) ? assignment.sites : 0),
+            0,
           );
-          const used = (side: 'west' | 'east') =>
-            split.reduce(
-              (sum, assignment) =>
-                sum + (assignment.track.access.startsWith(side) ? assignment.sites : 0),
-              0,
-            );
-          consider(split, nextMask, west + used('west'), east + used('east'));
-          return;
-        }
-        for (let trackIndex = start; trackIndex < frame.tracks.length; trackIndex++) {
-          if (nextMask & (1n << BigInt(trackIndex))) continue;
-          const track = frame.tracks[trackIndex];
-          const reach = track.access.endsWith('far') ? 2 : 1;
-          const capacity = capacities.get(reach)!;
-          const side = track.access.startsWith('west')
-            ? 'west'
-            : track.access.startsWith('east')
-              ? 'east'
-              : undefined;
-          const freeSites = side
-            ? sideCapacity(side) - (side === 'west' ? nextWest : nextEast)
+        consider(split, nextMask, west + used('west'), east + used('east'));
+        return;
+      }
+      const remainingCapacity = frame.tracks.slice(start).reduce((sum, track, offset) => {
+        if (nextMask & (1n << BigInt(start + offset))) return sum;
+        const sites = track.access.startsWith('west')
+          ? sideCapacity('west') - nextWest
+          : track.access.startsWith('east')
+            ? sideCapacity('east') - nextEast
             : frame.copies === 1
               ? 2
               : 1;
-          for (let sites = 1; sites <= freeSites; sites++) {
-            const rate = Math.min(
-              demand.rate,
-              sites * capacity,
-              track.access === 'end'
-                ? sites * Math.min(capacity, laneCapacity * frame.copies)
-                : laneCapacity,
-            );
-            if (rate <= RATE_EPSILON) continue;
-            const assignment = assignmentFor({ ...demand, rate }, track);
-            if (!assignment || assignment.sites !== sites) continue;
-            cover(
-              trackIndex + 1,
-              [...assignments, assignment],
-              total + rate,
-              nextMask | (1n << BigInt(trackIndex)),
-              nextWest + (side === 'west' ? sites : 0),
-              nextEast + (side === 'east' ? sites : 0),
-            );
-          }
+        return sum + trackCapacity(demand, track, sites);
+      }, 0);
+      if (total + remainingCapacity + RATE_EPSILON < demand.rate) return;
+      if (!visit()) return;
+      for (let trackIndex = start; trackIndex < frame.tracks.length; trackIndex++) {
+        if (nextMask & (1n << BigInt(trackIndex))) continue;
+        const track = frame.tracks[trackIndex];
+        const side = track.access.startsWith('west')
+          ? 'west'
+          : track.access.startsWith('east')
+            ? 'east'
+            : undefined;
+        const freeSites = side
+          ? sideCapacity(side) - (side === 'west' ? nextWest : nextEast)
+          : frame.copies === 1
+            ? 2
+            : 1;
+        for (let sites = 1; sites <= freeSites; sites++) {
+          const rate = Math.min(demand.rate, trackCapacity(demand, track, sites));
+          if (rate <= RATE_EPSILON) continue;
+          const assignment = assignmentFor({ ...demand, rate }, track);
+          if (!assignment || assignment.sites !== sites) continue;
+          cover(
+            trackIndex + 1,
+            [...assignments, assignment],
+            total + rate,
+            nextMask | (1n << BigInt(trackIndex)),
+            nextWest + (side === 'west' ? sites : 0),
+            nextEast + (side === 'east' ? sites : 0),
+          );
         }
       }
-      cover(0, [], 0, mask, west, east);
     }
+    cover(0, [], 0, mask, west, east);
     memo.set(key, best);
     return best;
   }

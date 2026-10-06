@@ -13,7 +13,7 @@ export interface HighDesignOptions {
 
 /** A separate policy over the same normalized input and validated output contract.
  * This solver optimizes within the HIGH family, measuring cost per installed machine.
- * Outputs may span dedicated belts; each belt has only one resource and flow role. */
+ * Item flows may span dedicated belts; each belt has only one resource and flow role. */
 export function solveHighTileDesign(
   input: TileDesignInput,
   { pattern = 'auto' }: HighDesignOptions = {},
