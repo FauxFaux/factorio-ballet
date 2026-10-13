@@ -73,7 +73,7 @@ interface MaterialFactor {
 /** Enumerate whole-cell combinations of independent shortlists. The score separates by material,
  * so unchanged material networks are evaluated once, not once per full-cell combination.
  * Ports/geometry are built once per recipe candidate; only winning flows are retained. */
-export function planCellPlacements(
+export function searchCellPlacements(
   demands: readonly PlacementDemand[],
   beltCapacity: number,
   options: PlacementPlanOptions = {},

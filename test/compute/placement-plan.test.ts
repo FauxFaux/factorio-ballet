@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { planCellPlacements, placementPlanScore } from '../../src/compute/placement-plan/search.ts';
+import {
+  searchCellPlacements as planCellPlacements,
+  placementPlanScore,
+} from '../../src/compute/placement-plan/search.ts';
 import { powerSplits, recipeCandidates } from '../../src/compute/placement-plan/candidates.ts';
 import { placementRecipes } from '../../src/compute/placement-plan/recipes.ts';
 import { searchModuleFlows } from '../../src/compute/placement-plan/flow-search.ts';

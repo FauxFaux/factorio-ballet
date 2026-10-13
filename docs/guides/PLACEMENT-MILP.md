@@ -12,8 +12,11 @@ retains every candidate's workloads, installed capacity, material flows, score c
 pairs, bounds, and timing. The runner tries fixed integer baselines and six MILP configurations. It
 also rescores every result with the same default weights and 60-item/s belts.
 
-Implementation: [`../../scripts/placement-milp.ts`](../../scripts/placement-milp.ts). This is a
-command-line experiment; the application still uses its existing placement planner.
+Implementation:
+[`../../src/compute/placement-plan/milp.ts`](../../src/compute/placement-plan/milp.ts). This is a
+shared model used by the application through `src/compute/placement-plan/index.ts`, with actual
+supported integer repeats and real ports. The command-line experiment still accepts abstract
+envelopes. See [PLACEMENT-PLAN.md](PLACEMENT-PLAN.md) for the worker, budgets, and fallback policy.
 
 ## Model
 
@@ -118,16 +121,18 @@ proved its objective optimal. Timings and budget-limited results can vary by mac
 
 The model searches workloads jointly, without per-recipe partition shortlists. Its bounds cover only
 the available slots, advertised capacity envelopes, and objective. Extra slots broaden that space
-and can increase solve time substantially. Positive workloads and connections have a small `1e-4`
-lower bound to exclude zero-flow support and reward artifacts; numerical tolerances still apply. The
-default stopping tolerance is 0.01 absolute score units. Diagnostics expose both the solver's raw
-gap and a gap recomputed after removing the baseline building cost.
+and can increase solve time substantially. Positive workloads and connections have a small
+`min(1e-4, workloadOrFlowUpperBound * 1e-4)` lower bound to exclude zero-flow support and reward
+artifacts; numerical tolerances still apply. The default stopping tolerance is 0.01 absolute score
+units. Diagnostics expose both the solver's raw gap and a gap recomputed after removing the baseline
+building cost.
 
 The supplied summary omits repeat steps, ports, lane constraints, and entities. The experiment
 therefore cannot certify these candidates as buildable kernels. It treats envelopes of equal or
 greater capacity and smaller area as dominant because orientation and routing are not scored.
-Application integration needs actual supported integer repeats and port capacities before it can
-replace [`PLACEMENT-PLAN.md`](PLACEMENT-PLAN.md)'s geometry and station connection path.
+Application integration instead enumerates exact supported integer repeats, charges their real
+footprints, reconstructs the selected templates with fractional port budgets, and retains the
+selected flows for [`PLACEMENT-PLAN.md`](PLACEMENT-PLAN.md)'s station and port assignment path.
 
 Regression coverage checks whole-cell and per-stack conservation, integer capacity, useful soft
 building-budget trades, gross cycles, forbidden self-supply, whole-interface exclusivity, and belt

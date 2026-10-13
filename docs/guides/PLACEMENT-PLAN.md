@@ -1,17 +1,80 @@
 # Splitting and connecting physical placements
 
-`src/compute/placement-plan/search.ts` plans a whole solved cell before 2D placement. It replaces
-independent equal stack splitting followed by arbitrary overflow allocation. `CellBox` passes the
-plan's modules and its retained flow assignments to station connection and port assignment; it must
-not allocate the internal flows again after selecting the split.
+`src/compute/placement-plan/index.ts` is the default whole-cell module maker. It uses HiGHS to
+choose fractional workloads, supported stack capacities, and material connections jointly before 2D
+placement. `CellBox` passes its modules and retained flow assignments to station connection and port
+assignment; it must not allocate internal flows again after selecting the split.
 
 This is the physical stack counterpart of the logical decomposition described in
 [`../SPLIT.md`](../SPLIT.md). It does not create independently solved child cells or change the
 recipe solution.
 
-The separate [joint fractional MILP experiment](PLACEMENT-MILP.md) uses HiGHS to choose workloads,
-connections, and abstract stack capacities together, with a soft extra-building penalty. It reports
-exclusive producer/consumer pairs and belt counts; it is not yet used by the application.
+The [joint fractional MILP notes](PLACEMENT-MILP.md) record the original experiment and its scoring.
+The command-line runner still accepts abstract footprint envelopes. Application planning uses the
+same solver with exact supported integer stack sizes and real kernel ports instead.
+
+## Default joint planner
+
+`milp.ts` keeps workload and material-rate variables continuous. Each recipe's workloads sum to its
+solved count; integer capacity never increases demand or production. Every active stack chooses an
+exact size from `recipes.ts`'s validated repeat templates, including the advertised repeat step,
+supported-copy limit, and maximum physical height. A pair repeat remains whole. Unsupported kernels
+are explicitly estimated; an estimated singleton remainder costs 100 when validated alternatives
+exist, so one extra building can be preferable to unvalidated geometry.
+
+The original installed baseline is the sum of each positive recipe's `ceil(count - 1e-8)`. Extra
+buildings are allowed, with a default allowance of six across the cell and a penalty of 30 each.
+Validated physical geometry, ports, and repeat counts follow installed capacity; assigned
+ingredient, product, and port rates follow fractional workload.
+
+Each recipe gets enough optional slots for its largest supported stack plus one extra slot by
+default. The score charges placements, material connections, belt trunks, fluid pipes, boundary
+branches, per-material producer branches and consumer merges, and footprint area. Exclusive-output
+pairs, exclusive-input pairs, and mutually exclusive pairs receive the rewards described in
+`PLACEMENT-MILP.md`. Exclusivity covers every material on the relevant interface, including imports
+and byproduct exports; it is not awarded for just one dedicated ingredient.
+
+The model conserves gross rates, forbids self-supply within a stack, and fixes outside rates to the
+cell's net imports and exports. The application supplies its declared boundary resource sets, so an
+undeclared internal imbalance cannot become an allowed station connection. Cycles retain their gross
+flows. After solving, the planner reconstructs the chosen templates, verifies emitted module flow
+conservation, and retains the solver's chosen material assignments.
+
+The default solve budget is one second, with an absolute objective tolerance of 0.01. A supported
+baseline partition and its sparse flow assignment seed the model when they fit its slots. A
+budget-limited feasible incumbent is still a usable plan. If no feasible incumbent exists, numerical
+conservation fails, or the model exceeds 128 slots or 2,000 potential internal edges, the planner
+retains the baseline and reports the reason. Baseline unresolved remainders remain explicit and can
+only attach to declared stations.
+
+Diagnostics identify HiGHS versus baseline planning, solve status, elapsed solver time, score lower
+bound, remaining score gap, and fallback reason. These bounds cover the selected slot space and
+topology/footprint objective; they do not prove an optimal routed 2D layout. Distance, crossings,
+and physical corridor feasibility remain later layout responsibilities.
+
+## Asynchronous application integration
+
+`components/cell/placement-plan.ts` uses a dedicated module worker with a Vite-emitted HiGHS Wasm
+asset. The runtime loads only for an open physical layout after kernel searches finish. Solving
+never blocks the UI thread. A supported baseline is available immediately during loading/search.
+Completed plans are cached by request value, including rates, counts, kernels, belt capacity, and
+declared boundaries. Changing inputs or closing/unmounting a layout terminates obsolete work; stale
+replies cannot replace the current plan. Worker errors preserve the baseline.
+
+`test/compute/placement-milp.test.ts` runs the default planner against actual Space Age kernel
+options and verifies fractional workload conservation, supported geometry, station connections, and
+complete port attachment. It also checks pair-only odd remainders under soft and strict building
+budgets, unresolved cells, estimated geometry, undeclared boundaries, and recipe ordering.
+`test/placement-plan-hook.test.tsx` checks worker cancellation, stale replies, value caching,
+deferred kernel readiness, and loading failures. The shared model's conservation and exclusivity
+tests remain in `test/scripts/placement-milp.test.ts`.
+
+## Legacy shortlist planner reference
+
+`search.ts` exports `searchCellPlacements` for comparison and regression coverage. The following
+sections describe that previous planner, including its old diagnostics, constraints, and measured
+timings. They do not describe the default HiGHS planner. The browser benchmark runner now calls the
+default planner; the historical measurements below have not been repeated for HiGHS.
 
 ## Capacity and workload
 

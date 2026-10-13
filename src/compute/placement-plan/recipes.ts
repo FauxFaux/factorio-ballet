@@ -20,6 +20,8 @@ export interface RecipePlacements {
   installed: number;
   problem: KernelProblem;
   minimum: number;
+  /** Supported exact integer capacities, including explicitly estimated remainders. */
+  templates: readonly FactoryModule[];
   /** Cheapest supported physical partition for each integer building total. */
   partition: (installed: number) => number[] | undefined;
   build: (installed: number, workload: number, index: number) => FactoryModule | undefined;
@@ -29,12 +31,14 @@ export interface RecipePlacements {
 export function placementRecipes(
   demands: readonly PlacementDemand[],
   beltCapacity: number,
+  extraBuildings = 0,
 ): RecipePlacements[] {
   return demands
-    .flatMap(({ problem, options, machineCount }) => {
+    .flatMap(({ problem, options: suppliedOptions, machineCount }) => {
       if (machineCount === undefined || !Number.isFinite(machineCount) || machineCount <= 0)
         return [];
       const recipe = problem.assemblers[0]?.name ?? '';
+      const options = suppliedOptions.filter((option) => option.result.validation.valid);
       const installed = Math.max(1, Math.ceil(machineCount - EPSILON));
       const templates = new Map<number, FactoryModule>();
       const estimate = estimatedModulesForRecipe(recipe, installed, problem, beltCapacity);
@@ -43,7 +47,7 @@ export function placementRecipes(
       // Such a remainder stays explicitly estimated until a single-machine kernel exists.
       const fallbackLimit = options.length ? 1 : estimateLimit;
       const maximum = Math.min(
-        installed,
+        installed + extraBuildings,
         Math.max(fallbackLimit, ...options.map((option) => option.maxBuildingsPerColumn)),
       );
       for (let count = 1; count <= maximum; count++) {
@@ -51,6 +55,7 @@ export function placementRecipes(
           const step = option.buildingsPerRepeat;
           const capacity = Math.min(
             option.maxBuildingsPerColumn,
+            option.result.validation.supportedCopies * step,
             Math.floor(MAX_MODULE_HEIGHT / option.result.candidate.pitch) * step,
           );
           return step > 0 && count % step === 0 && count <= capacity
@@ -105,6 +110,7 @@ export function placementRecipes(
           installed,
           problem,
           minimum: lengths[installed],
+          templates: [...templates.values()],
           partition,
           build: (count: number, workload: number, index: number) => {
             const template = templates.get(count);

@@ -5,7 +5,7 @@ import {
   type LayoutRequest,
 } from '../../src/dataset/layout-cache.ts';
 import { allocateKernelLayouts } from '../../src/compute/kernel-layout-options.ts';
-import { planCellPlacements } from '../../src/compute/placement-plan/search.ts';
+import { searchCellPlacements as planCellPlacements } from '../../src/compute/placement-plan/search.ts';
 import { solveKernelTileDesign } from '../../src/compute/tile-design/kernel-result.ts';
 
 vi.mock('../../src/compute/tile-design/kernel-result.ts', () => ({

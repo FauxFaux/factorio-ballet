@@ -3,12 +3,15 @@ import { createDataset } from '../src/dataset/index.ts';
 import { inserterItemsPerSecondForBeltAtProgress } from '../src/data/inserter-throughput.ts';
 import { recipeKernelProblem } from '../src/compute/modules.ts';
 import { kernelLayoutOptions } from '../src/compute/kernel-layout-options.ts';
-import { planCellPlacements } from '../src/compute/placement-plan/search.ts';
+import { planCellPlacements } from '../src/compute/placement-plan/index.ts';
+import loadHighs from 'highs';
+import wasmUrl from 'highs/runtime?url';
 import type { PlacementDemand } from '../src/compute/placement-plan/recipes.ts';
 import type { ResourceId } from '../src/types.ts';
 
 /** Loaded by the browser benchmark through Vite; actual kernels are searched before timing. */
 export async function runPlacementBenchmarks() {
+  const highs = await loadHighs({ locateFile: () => wasmUrl });
   const ds = createDataset('space-age-2.1.19', await spaceAge());
   const belt = ds.data.belts['turbo-transport-belt'];
   const throughput = {
@@ -96,12 +99,12 @@ export async function runPlacementBenchmarks() {
     ['250-building-chain', synthetic(true)],
     ['250-building-shared-import', synthetic(false)],
   ] as const) {
-    planCellPlacements(demands, belt.itemsPerSecond);
+    planCellPlacements(highs, demands, belt.itemsPerSecond);
     const times = [];
-    let plan = planCellPlacements(demands, belt.itemsPerSecond);
+    let plan = planCellPlacements(highs, demands, belt.itemsPerSecond);
     for (let trial = 0; trial < 5; trial++) {
       const start = performance.now();
-      plan = planCellPlacements(demands, belt.itemsPerSecond);
+      plan = planCellPlacements(highs, demands, belt.itemsPerSecond);
       times.push(performance.now() - start);
     }
     times.sort((a, b) => a - b);

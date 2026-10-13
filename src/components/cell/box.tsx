@@ -18,7 +18,7 @@ import type { State } from '../../ts.ts';
 import type { ResourceId } from '../../types.ts';
 import type { KernelProblem } from '../../compute/kernel-problems.ts';
 import { useCellLayouts } from './recipe-layout.ts';
-import { planCellPlacements } from '../../compute/placement-plan/search.ts';
+import { useCellPlacementPlan } from './placement-plan.ts';
 import { connectStationFlows } from '../../compute/module-connections.ts';
 import { assignModulePorts } from '../../compute/module-port-connections.ts';
 import { proposedSplits } from '../../compute/split.ts';
@@ -76,9 +76,11 @@ export function CellBox({
     [ds, data, cell.entries, cell.imports, cell.exports, progress, chosen],
   );
   const layouts = useCellLayouts(ds, cell.entries, solution, chosen.belt, progress);
-  const placementPlan = useMemo(
-    () => planCellPlacements(cell.layout ? layouts : [], chosen.belt.itemsPerSecond),
-    [Boolean(cell.layout), layouts, chosen.belt.itemsPerSecond],
+  const placementPlan = useCellPlacementPlan(
+    layouts,
+    Boolean(cell.layout),
+    chosen.belt.itemsPerSecond,
+    { inputs: iface.inputs, outputs: iface.outputs },
   );
   const modules = placementPlan.modules;
   const moduleFlows = useMemo(
