@@ -71,9 +71,9 @@ describe('Bob inserter geometry', () => {
 });
 
 describe('Bob CP-SAT layout', () => {
-  it('packs every machine and real transport into a minimum perimeter rectangle', async () => {
+  it('finds compact validated transport without claiming global optimality', async () => {
     const result = await solveBobLayout(problem, bounds);
-    expect(result.status).toBe('optimal');
+    expect(result.status).toBe('feasible');
     expect(result.layout!.width + result.layout!.height).toBe(8);
     expect(result.layout!.inserters).toHaveLength(2);
     expect(validateBobLayout(problem, result.layout!)).toEqual([]);
@@ -105,6 +105,9 @@ describe('Bob CP-SAT layout', () => {
     expect(result.layout!.nodes.filter((n) => n.kind === 'source')).toHaveLength(2);
     expect(result.layout!.nodes.filter((n) => n.kind === 'sink')).toHaveLength(2);
     expect(validateBobLayout(mixed, result.layout!)).toEqual([]);
+    const tooFew = await solveBobLayout(mixed, { ...bounds, maxInserters: 3 });
+    expect(tooFew.status).toBe('infeasible');
+    expect(tooFew.message).toContain('at least 4 inserters');
   }, 20_000);
 
   it('preserves separate input and output obligations for returned catalysts', async () => {

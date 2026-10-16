@@ -42,33 +42,75 @@ can share one fixed pickup/drop pair, sharing its total capacity. There is no si
 inventory contents or startup seeds for cyclic/catalyst production; this is a steady-state flow
 model with unbounded chest storage. Power poles and beacons do not occupy space in this experiment.
 
-## CP-SAT model
+## Placement and transport refinement
 
-`buildBobModel` in `src/compute/bobs/bobs-solver.ts` exposes the model and named variables for
-inspection and further experiments. It jointly chooses entity positions, the bounding rectangle,
-optional relay chests, optional inserter bases, their endpoints, and per-resource rates.
-`addNoOverlap2D` packs their optional intervals. An allowed-assignment table enumerates legal arm
-offsets and their capacities. Endpoint-selection literals constrain pickup/drop points to lie inside
-their chosen assemblers/chests. No two endpoints of an inserter may name the same entity.
+The application calls `solveBobLayout` in `src/compute/bobs/staged-solver.ts`. It separates machine
+placement from transport rather than searching every arm's coordinates and flows jointly:
 
-Each assembler has separate gross incoming and outgoing flow equations for every resource. Each
-relay chest conserves every resource separately. Source/sink rates equal the cell's net boundary
-demand. Flow capacities are shared across resources per inserter. Flows are integers in units of
+1. `placement.ts` packs assemblers and mandatory boundary chests with `addNoOverlap2D`, minimizing
+   width + height, then reserved inserter/chest count. A throughput lower bound reserves enough
+   total area for a minimum number of inserter bases. This is an area allowance, not a guarantee
+   that the free tiles are accessible.
+2. `transport.ts` fixes those rectangles and enumerates concrete inserter base/source/destination
+   candidates on free tiles. It first tries direct connections, then relay budgets of one, two,
+   four, and so on up to the configured maximum. One-chest searches omit impossible chest-to-chest
+   connections, avoiding the much larger relay-chain model for simple routes. All tiles outside
+   assemblers and boundary chests are eligible inserter/relay positions. A tile can hold at most one
+   inserter or chest. Relay chests conserve each resource and have no degree limit.
+3. A transport candidate's capacity is the maximum over its legal endpoint pairs. Because arms and
+   endpoints consume no extra space, exact endpoints can be selected after flows are known. We keep
+   the capacity/reach Pareto frontier, then select the shortest endpoint pair that carries the
+   assigned load. The transport objective minimizes inserter plus chest count, followed by a soft
+   preference for short reach. Its reach score uses each candidate's minimum possible reach; it does
+   not prove that the emitted layout has globally minimum arm lengths.
+4. A failed transport search ranks ports by capacity deficits and scarcity of candidate bases. Up to
+   two new ports are promoted into the next placement model, which places their actual inserter
+   bases, endpoints, and sufficient capacity together with the machines. Reservation slots are
+   optional and share flow constraints: one physical inserter can satisfy promoted ports at both
+   ends and carry multiple resources. A promoted port may need multiple parallel inserters. Optional
+   reserved relays let those inserters connect indirectly. The transport pass uses these arms and
+   relays as hints, allowing reuse, rewiring, or removal instead of locking in duplicate arms or an
+   unhelpful relay topology. The completed transport replaces the reservation list; it is not
+   appended to it. If the reservations cannot be packed, the newest promotions are relaxed.
+5. Failed machine/chest arrangements are excluded from later placement attempts. The solver first
+   retries the same perimeter with promoted connections, then increases its minimum perimeter after
+   two failed placements. At fixed maximum bounds it continues rearranging within those bounds.
+
+Each assembler has separate gross incoming and outgoing flow equations for every resource, so
+returned catalysts cannot disappear by netting their rates. Boundary flows equal the cell's net item
+demand. Multiple resources share each inserter's total capacity. Flows are integers in units of
 0.001 items/s, with capacities rounded down. Tiny rounding differences on balanced internal edges
-are reconciled at a producer. The independent validator checks emitted geometry, arm lengths,
-capacity, boundary chests, gross machine rates, and chest flow conservation with that documented
-rounding tolerance.
+are reconciled at a producer. The independent validator checks every completed layout's geometry,
+boundary chests, reach, capacity, gross machine rates, and relay conservation.
 
-The objective minimizes width + height (half the perimeter), then the number of inserters plus relay
-chests. Area is displayed but is not an objective. Chest and inserter ordering breaks permutation
-symmetry. There is no fixed assembler grid, routing tree, or chest degree limit.
+Every successful placement solve publishes a snapshot immediately, before transport runs. The
+surface keeps these snapshots as selectable attempts, updates their transport outcome, and draws red
+dashed tiles around the ports implicated in a failure. Capacity-deficient ports have a local
+capacity bound; routing conflicts and timeout regions are explicitly candidate bottlenecks, not
+minimal unsatisfiable cores. Earlier failed placements remain available after a later success,
+search failure, or Stop. A new search starts a fresh attempt history. History and results are
+transient and are not included in the URL.
 
-The default search is bounded by 32×32 tiles, at most eight relay chests, at most 64 inserters, and
-ten seconds; smaller problems get smaller entity budgets. The controls can raise those bounds to
-128×128, 32 relay chests, 128 inserters, and 120 seconds. The initial adapter caps problems at 24
-assemblers. Feasible results may be suboptimal; an `optimal` result is optimal only within the
-chosen bounds and model. A timeout with no incumbent says feasibility is unknown. An infeasible
-result proves only that no layout fits the selected bounds.
+The default bounds remain 32×32 tiles, at most eight relay chests, at most 64 inserters, and ten
+seconds; smaller problems have smaller entity budgets. Controls allow 128×128, 32 relay chests, 128
+inserters, and 120 seconds. There are at most 24 assemblers. The wall-clock budget is shared across
+placement, candidate enumeration, and transport. Refinements continue until a valid layout is found,
+Stop is pressed, or the time budget expires; there is no limit on the number of refinement rounds.
+Individual placement solves receive at most one second and transport solves at most 1.5 seconds; the
+remaining shared budget can shorten those slices. Candidate enumeration yields periodically and
+checks cancellation and the deadline.
+
+This is a heuristic for compact feasible layouts. Completed item layouts report `feasible`, even
+when each individual SAT solve proved its own optimum. Fluid-only packing can still report
+`optimal`. Only an initial packing impossibility or an unconditional inserter-throughput lower bound
+reports `infeasible`. Failure of the refinement search reports `unknown`; it is not proof that the
+original problem has no solution.
+
+`buildBobModel` in `src/compute/bobs/bobs-solver.ts` retains the original joint model for inspection
+and experiments. The application does not use it to solve layouts. `buildBobPlacement` and
+`buildBobTransport` expose the two new models for focused experiments. `buildBobTransport` defaults
+to fixed reservation geometry for experiments; the application passes the `hints` reservation mode
+described above.
 
 ## Browser hosting
 
@@ -90,6 +132,8 @@ Serve emitted `.wasm` files with `application/wasm`. Missing isolation produces 
 package emits assets for its other solver runtimes as well, but those are not loaded by the Bob
 search. The Bob solver module is excluded from page preloading.
 
-Run `npx vitest run test/compute/bobs.test.ts test/components/bobs-layout.test.tsx` for the real
-WASM solver and asynchronous surface regressions. The branching fixture pins entities and arms
-through `buildBobModel` to check that a shared chest with three interacting inserters is feasible.
+Run
+`npx vitest run test/compute/bobs.test.ts test/compute/bobs-staged.test.ts test/components/bobs-layout.test.tsx`
+for the real WASM solver and asynchronous surface regressions. The branching fixture pins entities
+and arms through `buildBobModel` to check that a shared chest with three interacting inserters is
+feasible.

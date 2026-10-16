@@ -8,9 +8,31 @@
 
 .bobs-layout-description,
 .bobs-layout-status,
+.bobs-layout-attempt-status,
 .bobs-layout-legend {
   font-size: 0.8rem;
   overflow-wrap: anywhere;
+}
+
+.bobs-layout-attempts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  list-style: none;
+  padding: 0;
+}
+
+.bobs-layout-attempts button[aria-pressed="true"] {
+  outline: 2px solid var(--border);
+  outline-offset: 1px;
+}
+
+.bobs-layout-conflict {
+  fill: #ef444455;
+  stroke: #fb7185;
+  stroke-width: 0.055;
+  stroke-dasharray: 0.14 0.08;
+  pointer-events: none;
 }
 
 .bobs-layout-controls {

@@ -5,6 +5,7 @@ export type Rates = Partial<Record<ResourceId, number>>;
 
 export interface BobMachine {
   id: string;
+  recipe?: string;
   label: string;
   size: MachineSize;
   inputs: Rates;
@@ -55,6 +56,31 @@ export interface BobResult {
   status: 'optimal' | 'feasible' | 'infeasible' | 'unknown';
   layout?: BobLayout;
   message: string;
+  attempts?: BobAttempt[];
+}
+
+export interface BobPort {
+  node: string;
+  resource: ResourceId;
+  side: 'input' | 'output';
+  rate: number;
+}
+
+export interface BobConflict {
+  kind: 'space' | 'capacity' | 'routing' | 'timeout';
+  message: string;
+  tiles: Point[];
+  ports: BobPort[];
+}
+
+/** A placement snapshot survives subsequent transport failures and retries. */
+export interface BobAttempt {
+  id: number;
+  layout: BobLayout;
+  stage: 'placement' | 'conflict' | 'solved';
+  message: string;
+  conflicts: BobConflict[];
+  promoted: BobPort[];
 }
 
 /** Integer CP-SAT flows resolve one thousandth of an item per second. */

@@ -1,10 +1,7 @@
 import {
   CpModel,
-  CpSat,
-  CpSolverStatus,
   sum as linearSum,
   LinearExpr,
-  setCloudNoticeEnabled,
   type BoolVar,
   type IntVar,
   type IntervalVar,
@@ -13,14 +10,13 @@ import { bobSwings } from './geometry.ts';
 import {
   defaultBobOptions,
   RATE_SCALE,
-  type BobLayout,
   type BobOptions,
   type BobProblem,
-  type BobResult,
   type Rates,
 } from './types.ts';
 import type { ResourceId } from '../../types.ts';
-import { validateBobLayout } from './validate.ts';
+import { checkBobInput } from './input.ts';
+export { solveBobLayout } from './staged-solver.ts';
 import { itemOnlyBobProblem } from './item-problem.ts';
 
 type Rect = { x: IntVar; y: IntVar; width: IntVar; height: IntVar; present: BoolVar };
@@ -31,7 +27,7 @@ const sum = (values: Iterable<IntVar>) => LinearExpr.from(linearSum(values));
 export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions> = {}) {
   problem = itemOnlyBobProblem(problem);
   const options = { ...defaultBobOptions(problem), ...settings };
-  checkInput(problem, options);
+  checkBobInput(problem, options);
   const { maxWidth, maxHeight, maxChests, maxInserters } = options;
   const model = new CpModel();
   const width = model.newIntVar(1, maxWidth, 'width');
@@ -270,124 +266,8 @@ export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions>
   return { model, options, width, height, definitions, nodes, slots, resources };
 }
 
-/** Bounded joint packing and multi-commodity transport; no fixed assembler grid or route tree. */
-export async function solveBobLayout(
-  problem: BobProblem,
-  settings: Partial<BobOptions> = {},
-  signal?: AbortSignal,
-): Promise<BobResult> {
-  const { model, options, width, height, definitions, nodes, slots, resources } = buildBobModel(
-    problem,
-    settings,
-  );
-  const { maxWidth, maxHeight, maxChests, maxInserters } = options;
-  setCloudNoticeEnabled(false);
-  const result = await CpSat.solve(model, {
-    numWorkers: 1,
-    maxTimeInSeconds: options.maxTimeInSeconds,
-    signal,
-  });
-  const isStatus = (status: keyof typeof CpSolverStatus) =>
-    result.status === status || result.status === CpSolverStatus[status];
-  const scope = `${maxWidth}×${maxHeight}, ≤${maxChests} relay chests, ≤${maxInserters} inserters`;
-  if (!result.hasSolution) {
-    if (isStatus('MODEL_INVALID'))
-      throw new Error(`Invalid CP-SAT model: ${result.response?.solutionInfo ?? ''}`);
-    return {
-      status: isStatus('INFEASIBLE') ? 'infeasible' : 'unknown',
-      message: isStatus('INFEASIBLE')
-        ? `No layout fits these search bounds (${scope}).`
-        : `No solution found within ${options.maxTimeInSeconds}s (${scope}); feasibility is unknown.`,
-    };
-  }
-  const value = (v: IntVar) => Number(result.value(v));
-  const layout: BobLayout = {
-    width: value(width),
-    height: value(height),
-    nodes: nodes.flatMap((node, n) =>
-      result.booleanValue(node.present)
-        ? [
-            {
-              id: definitions[n].id,
-              label: definitions[n].label,
-              kind: definitions[n].kind,
-              resource: definitions[n].resource,
-              position: { x: value(node.x), y: value(node.y) },
-              size: { width: value(node.width), height: value(node.height) },
-            },
-          ]
-        : [],
-    ),
-    inserters: slots.flatMap((slot) =>
-      result.booleanValue(slot.base.present)
-        ? [
-            {
-              position: { x: value(slot.base.x), y: value(slot.base.y) },
-              pickup: { x: value(slot.px), y: value(slot.py) },
-              dropoff: { x: value(slot.dx), y: value(slot.dy) },
-              from: definitions[slot.from.findIndex((s) => result.booleanValue(s))].id,
-              to: definitions[slot.to.findIndex((s) => result.booleanValue(s))].id,
-              capacity: value(slot.capacity) / RATE_SCALE,
-              rates: Object.fromEntries(
-                resources.flatMap((r, i) =>
-                  value(slot.rates[i]) ? [[r, value(slot.rates[i]) / RATE_SCALE]] : [],
-                ),
-              ),
-            },
-          ]
-        : [],
-    ),
-  };
-  const errors = validateBobLayout(problem, layout);
-  if (errors.length) throw new Error(`Layout validation failed: ${errors.join('; ')}`);
-  const optimal = isStatus('OPTIMAL');
-  return {
-    status: optimal ? 'optimal' : 'feasible',
-    layout,
-    message: `${optimal ? 'Optimal within search bounds' : 'Feasible; optimality not proven'} (${scope}).`,
-  };
-}
-
 function quantize(rates: Rates): Rates {
   return Object.fromEntries(
     Object.entries(rates).map(([r, rate]) => [r, Math.round(rate! * RATE_SCALE)]),
   );
-}
-
-function checkInput(problem: BobProblem, options: BobOptions) {
-  if (!problem.machines.length) throw new Error('Add a recipe to place assemblers.');
-  if (problem.machines.length > 24)
-    throw new Error('This experimental search supports at most 24 assemblers.');
-  if (
-    new Set(problem.machines.map((m) => m.id)).size !== problem.machines.length ||
-    problem.machines.some((m) => /^(source|sink|chest):/.test(m.id))
-  ) {
-    throw new Error('Machine IDs must be unique and must not use reserved chest IDs.');
-  }
-  for (const m of problem.machines) {
-    if (![m.size.width, m.size.height].every((n) => Number.isInteger(n) && n > 0))
-      throw new Error('Machine footprints must use positive whole tiles.');
-    for (const [resource, rate] of [...Object.entries(m.inputs), ...Object.entries(m.outputs)]) {
-      if (!resource.startsWith('item:'))
-        throw new Error('Inserter transport requires item resources.');
-      if (!Number.isFinite(rate) || rate! < 0 || rate! > 1e6)
-        throw new Error('Item rates must be finite, nonnegative and at most 1,000,000/s.');
-    }
-  }
-  if (
-    ![options.maxWidth, options.maxHeight].every((n) => Number.isInteger(n) && n > 0 && n <= 128) ||
-    !Number.isInteger(options.maxChests) ||
-    options.maxChests < 0 ||
-    options.maxChests > 32 ||
-    !Number.isInteger(options.maxInserters) ||
-    options.maxInserters < 0 ||
-    options.maxInserters > 128 ||
-    !Number.isFinite(options.maxTimeInSeconds) ||
-    options.maxTimeInSeconds <= 0 ||
-    options.maxTimeInSeconds > 120
-  ) {
-    throw new Error(
-      'Use bounds of 1–128 tiles, 0–32 relay chests, 0–128 inserters and 0–120 seconds.',
-    );
-  }
 }

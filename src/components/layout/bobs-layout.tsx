@@ -1,19 +1,18 @@
 import './bobs-layout.css';
-import { useEffect, useId, useMemo, useRef, useState } from 'preact/hooks';
+import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import type { Cell } from '../../cell.ts';
 import type { Solution } from '../../solve/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { useDataset } from '../../dataset/context.tsx';
-import { resourceName } from '../../data/index.ts';
+import { BobLayoutDrawing } from './bobs-layout-drawing.tsx';
 import { bobProblem } from '../../compute/bobs/problem.ts';
 import {
   defaultBobOptions,
   type BobOptions,
   type BobProblem,
   type BobResult,
+  type BobAttempt,
 } from '../../compute/bobs/types.ts';
-
-const inserterColors = ['#fcd34d', '#67e8f9', '#f9a8d4', '#bef264', '#c4b5fd', '#fdba74'];
 
 const fields: { key: keyof BobOptions; label: string; min: number; max: number }[] = [
   { key: 'maxWidth', label: 'Max width', min: 1, max: 128 },
@@ -57,12 +56,16 @@ export function BobsLayoutSurface({
     result?: BobResult;
     error?: string;
     running?: boolean;
+    attempts?: BobAttempt[];
   }>();
   const stateKey = `${problemKey}:${run}`;
   const current = state?.key === stateKey ? state : undefined;
-  const layout = current?.result?.layout;
-  const markerId = useId();
-  const gridId = useId();
+  const [selectedAttempt, setSelectedAttempt] = useState<{ key: string; id: number }>();
+  const visibleAttempt =
+    current?.attempts?.find(
+      (a) => selectedAttempt?.key === stateKey && a.id === selectedAttempt.id,
+    ) ?? current?.attempts?.at(-1);
+  const layout = visibleAttempt?.layout ?? current?.result?.layout;
   useEffect(() => {
     const snapshot = JSON.parse(problemKey) as { problem?: BobProblem; error?: string };
     if (!snapshot.problem) return;
@@ -78,19 +81,32 @@ export function BobsLayoutSurface({
             'Local solving needs cross-origin isolation. Serve with Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp.',
           );
         }
-        return solveBobLayout(snapshot.problem!, optionsRef.current, abort.signal);
+        return solveBobLayout(snapshot.problem!, optionsRef.current, abort.signal, (attempt) => {
+          if (!active) return;
+          setState((previous) => {
+            const attempts = previous?.key === stateKey ? [...(previous.attempts ?? [])] : [];
+            attempts[attempt.id - 1] = attempt;
+            return { key: stateKey, running: true, attempts };
+          });
+        });
       })
       .then((result) => {
-        if (active) setState({ key: stateKey, result });
+        if (active)
+          setState((previous) => ({
+            key: stateKey,
+            result,
+            attempts: result?.attempts ?? previous?.attempts,
+          }));
       })
       .catch((error: unknown) => {
         if (active)
-          setState({
+          setState((previous) => ({
             key: stateKey,
+            attempts: previous?.attempts,
             error: abort.signal.aborted
               ? 'Search stopped.'
               : String(error instanceof Error ? error.message : error),
-          });
+          }));
       });
     return () => {
       active = false;
@@ -102,8 +118,8 @@ export function BobsLayoutSurface({
     <section class="bobs-layout" aria-label="Bob layout">
       <p class="bobs-layout-description">
         Bob’s inserters · reach ≤3 Manhattan tiles · 2160°/s · extension 6 tiles/s · hand 24. One
-        boundary chest per external item. Fluid connections assumed correct. Minimize perimeter,
-        then inserters and relay chests.
+        boundary chest per external item. Fluid connections assumed correct. Place assemblers, then
+        connect items; retry with difficult inserters reserved. Compact layouts are heuristic.
       </p>
       <form
         class="bobs-layout-controls"
@@ -142,112 +158,61 @@ export function BobsLayoutSurface({
           current?.error ??
           (current?.running ? 'Searching for a compact layout…' : current?.result?.message)}
       </p>
+      {!!current?.attempts?.length && (
+        <ol class="bobs-layout-attempts" aria-label="Placement attempts">
+          {current.attempts.map((attempt) => (
+            <li key={attempt.id}>
+              <button
+                type="button"
+                class="cell-btn"
+                aria-pressed={visibleAttempt?.id === attempt.id}
+                onClick={() => setSelectedAttempt({ key: stateKey, id: attempt.id })}
+              >
+                Attempt {attempt.id}:{' '}
+                {attempt.stage === 'solved'
+                  ? 'Connected'
+                  : attempt.stage === 'conflict'
+                    ? 'Conflict'
+                    : current.running
+                      ? 'Connecting'
+                      : 'Unconnected'}
+                {' · '}
+                {attempt.layout.width}×{attempt.layout.height}
+              </button>
+            </li>
+          ))}
+        </ol>
+      )}
       {layout && (
         <>
+          <BobLayoutDrawing
+            layout={layout}
+            problem={request.problem!}
+            conflicts={visibleAttempt?.conflicts}
+          />
+          {visibleAttempt && (
+            <div class="bobs-layout-attempt-status">
+              <p>{visibleAttempt.message}</p>
+              {visibleAttempt.stage !== 'solved' && visibleAttempt.layout.inserters.length > 0 && (
+                <p>Shown inserters are placement hints; transport is incomplete.</p>
+              )}
+              {visibleAttempt.conflicts.length > 0 && (
+                <ul>
+                  {visibleAttempt.conflicts.map((conflict, i) => (
+                    <li key={i}>{conflict.message}</li>
+                  ))}
+                </ul>
+              )}
+              {visibleAttempt.promoted.length > 0 && (
+                <p>{visibleAttempt.promoted.length} difficult ports reserved during placement.</p>
+              )}
+            </div>
+          )}
           <p class="bobs-layout-status">
             {layout.width}×{layout.height} tiles · perimeter {2 * (layout.width + layout.height)} ·{' '}
             {layout.width * layout.height} tiles² · {layout.inserters.length} inserters ·{' '}
             {layout.nodes.filter((n) => n.kind === 'chest').length} relay chests
           </p>
-          <svg
-            class="bobs-layout-canvas"
-            role="img"
-            aria-label="Bob assembler layout"
-            viewBox={`-0.3 -0.3 ${layout.width + 0.6} ${layout.height + 0.6}`}
-          >
-            <defs>
-              <pattern id={gridId} width="1" height="1" patternUnits="userSpaceOnUse">
-                <path d="M 1 0 H 0 V 1" class="bobs-layout-grid" />
-              </pattern>
-              {inserterColors.map((color, i) => (
-                <marker
-                  key={color}
-                  id={`${markerId}-${i}`}
-                  viewBox="-2 -2 14 14"
-                  refX="8"
-                  refY="5"
-                  markerWidth="4.2"
-                  markerHeight="4.2"
-                  orient="auto-start-reverse"
-                >
-                  <path class="bobs-layout-arrowhead" d="M 0 0 L 10 5 L 0 10 z" fill={color} />
-                </marker>
-              ))}
-            </defs>
-            <rect width={layout.width} height={layout.height} fill={`url(#${gridId})`} />
-            {layout.nodes.map((node) => (
-              <g key={node.id}>
-                <title>
-                  {node.resource
-                    ? `${node.kind === 'source' ? 'Source' : 'Sink'}: ${resourceName(ds.data, node.resource)}`
-                    : node.label}
-                </title>
-                <rect
-                  class={`bobs-layout-node is-${node.kind}`}
-                  x={node.position.x + 0.06}
-                  y={node.position.y + 0.06}
-                  width={node.size.width - 0.12}
-                  height={node.size.height - 0.12}
-                />
-                <text
-                  class="bobs-layout-label"
-                  x={node.position.x + node.size.width / 2}
-                  y={node.position.y + node.size.height / 2}
-                >
-                  {node.kind === 'assembler'
-                    ? problemLabel(request.problem!, node.id)
-                    : node.kind === 'source'
-                      ? 'IN'
-                      : node.kind === 'sink'
-                        ? 'OUT'
-                        : 'C'}
-                </text>
-              </g>
-            ))}
-            {layout.inserters.map((inserter, i) => {
-              const pivot = { x: inserter.position.x + 0.5, y: inserter.position.y + 0.5 };
-              const pickup = { x: inserter.pickup.x + 0.5, y: inserter.pickup.y + 0.5 };
-              const dropoff = { x: inserter.dropoff.x + 0.5, y: inserter.dropoff.y + 0.5 };
-              const pickupLength = Math.hypot(pickup.x - pivot.x, pickup.y - pivot.y);
-              const dropoffLength = Math.hypot(dropoff.x - pivot.x, dropoff.y - pivot.y);
-              // Round a substantial part of each arm, leaving straight ends for the arrowhead.
-              const bend = Math.min(0.9, pickupLength / 2, dropoffLength / 2);
-              const entryRatio = pickupLength > 0 ? bend / pickupLength : 0;
-              const exitRatio = dropoffLength > 0 ? bend / dropoffLength : 0;
-              const entry = {
-                x: pivot.x + (pickup.x - pivot.x) * entryRatio,
-                y: pivot.y + (pickup.y - pivot.y) * entryRatio,
-              };
-              const exit = {
-                x: pivot.x + (dropoff.x - pivot.x) * exitRatio,
-                y: pivot.y + (dropoff.y - pivot.y) * exitRatio,
-              };
-              const path = `M ${pickup.x} ${pickup.y} L ${entry.x} ${entry.y} Q ${pivot.x} ${pivot.y} ${exit.x} ${exit.y} L ${dropoff.x} ${dropoff.y}`;
-              return (
-                <g key={i} style={{ color: inserterColors[i % inserterColors.length] }}>
-                  <title>
-                    {Object.entries(inserter.rates)
-                      .map(([r, rate]) => `${resourceName(ds.data, r as ResourceId)}: ${rate}/s`)
-                      .join(', ')}
-                    ; capacity {inserter.capacity.toFixed(1)}/s
-                  </title>
-                  <path class="bobs-layout-arm-border" d={path} />
-                  <path
-                    class="bobs-layout-arm"
-                    d={path}
-                    marker-end={`url(#${markerId}-${i % inserterColors.length})`}
-                  />
-                  <rect
-                    class="bobs-layout-inserter"
-                    x={inserter.position.x + 0.44}
-                    y={inserter.position.y + 0.44}
-                    width="0.12"
-                    height="0.12"
-                  />
-                </g>
-              );
-            })}
-          </svg>
           <ol class="bobs-layout-legend">
             {request.problem?.machines.map((machine, i) => (
               <li key={machine.id}>
@@ -259,8 +224,4 @@ export function BobsLayoutSurface({
       )}
     </section>
   );
-}
-
-function problemLabel(problem: BobProblem, id: string): number {
-  return problem.machines.findIndex((machine) => machine.id === id) + 1;
 }

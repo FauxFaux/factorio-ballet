@@ -40,6 +40,7 @@ export function bobProblem(
         );
       machines.push({
         id: `${row}:${copy}`,
+        recipe: entry.recipe,
         label: `${recipeName(ds.data, entry.recipe)} ${copy + 1}`,
         size: machine.size,
         inputs: scaled(solution.inputRates[row]),

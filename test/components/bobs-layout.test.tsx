@@ -8,7 +8,7 @@ import { BobsLayoutSurface } from '../../src/components/layout/bobs-layout.tsx';
 import { defaultDataset } from '../with-bobang.ts';
 import { solveCell } from '../../src/solve/index.ts';
 import { noChoice } from '../../src/data/index.ts';
-import type { BobResult } from '../../src/compute/bobs/types.ts';
+import type { BobAttempt, BobResult } from '../../src/compute/bobs/types.ts';
 import type { Cell } from '../../src/cell.ts';
 
 const { solve } = vi.hoisted(() => ({ solve: vi.fn() }));
@@ -57,6 +57,87 @@ afterEach(() => {
 });
 
 describe('Bob layout surface', () => {
+  it('shows live placements and keeps conflict regions selectable after success', async () => {
+    const user = userEvent.setup();
+    const failed: BobAttempt = {
+      id: 1,
+      layout: result.layout!,
+      stage: 'conflict',
+      promoted: [],
+      message: 'No transport fits the first placement.',
+      conflicts: [
+        {
+          kind: 'space',
+          message: 'No free inserter tile near copper wire.',
+          tiles: [{ x: 1, y: 3 }],
+          ports: [],
+        },
+      ],
+    };
+    const pending: BobAttempt = {
+      id: 2,
+      layout: { ...result.layout!, width: 4 },
+      stage: 'placement',
+      promoted: [],
+      conflicts: [],
+      message: 'Connecting second placement…',
+    };
+    const solved: BobAttempt = { ...pending, stage: 'solved', message: 'Transport validated.' };
+    let finish: (r: BobResult) => void = () => {};
+    solve.mockImplementationOnce((_problem, _options, _signal, notify: (a: BobAttempt) => void) => {
+      notify(failed);
+      notify(pending);
+      return new Promise<BobResult>((resolve) => {
+        finish = resolve;
+      });
+    });
+    render(surface());
+    const first = await screen.findByRole('button', { name: /Attempt 1: Conflict/ });
+    expect(
+      screen.getByRole('button', { name: /Attempt 2: Connecting/ }).getAttribute('aria-pressed'),
+    ).toBe('true');
+    await user.click(first);
+    expect(
+      screen.getByRole('img', { name: /Inserter conflict region: No free inserter/ }),
+    ).toBeTruthy();
+    finish({
+      status: 'feasible',
+      message: 'Found a layout.',
+      layout: solved.layout,
+      attempts: [failed, solved],
+    });
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Found a layout.'));
+    expect(first.getAttribute('aria-pressed')).toBe('true');
+    expect(screen.getByRole('img', { name: /Inserter conflict region/ })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: /Attempt 2: Connected/ }));
+    expect(screen.queryByRole('img', { name: /Inserter conflict region/ })).toBeNull();
+  });
+
+  it('retains the last placement after stopping transport', async () => {
+    const user = userEvent.setup();
+    solve.mockImplementationOnce(
+      (_problem, _options, signal: AbortSignal, notify: (a: BobAttempt) => void) => {
+        notify({
+          id: 1,
+          layout: result.layout!,
+          stage: 'placement',
+          promoted: [],
+          conflicts: [],
+          message: 'Transport pending.',
+        });
+        return new Promise((_resolve, reject) =>
+          signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError'))),
+        );
+      },
+    );
+    render(surface());
+    expect(await screen.findByRole('img', { name: 'Bob assembler layout' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Stop' }));
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Search stopped.'));
+    expect(screen.getByRole('button', { name: /Attempt 1/ })).toBeTruthy();
+    expect(screen.getByRole('img', { name: 'Bob assembler layout' })).toBeTruthy();
+  });
+
   it('solves the cell and reruns with the selected bounds', async () => {
     const user = userEvent.setup();
     render(surface());
@@ -93,12 +174,13 @@ describe('Bob layout surface', () => {
 
   it('discards obsolete answers after the cell changes', async () => {
     let finish: (answer: BobResult) => void = () => {};
-    solve.mockImplementationOnce(
-      () =>
-        new Promise<BobResult>((resolve) => {
-          finish = resolve;
-        }),
-    );
+    let notifyOld: (attempt: BobAttempt) => void = () => {};
+    solve.mockImplementationOnce((_problem, _options, _signal, notify: (a: BobAttempt) => void) => {
+      notifyOld = notify;
+      return new Promise<BobResult>((resolve) => {
+        finish = resolve;
+      });
+    });
     solve.mockResolvedValueOnce({ status: 'unknown', message: 'Second search timed out.' });
     const view = render(surface());
     await waitFor(() => expect(solve).toHaveBeenCalledTimes(1));
@@ -107,9 +189,18 @@ describe('Bob layout surface', () => {
       expect(screen.getByRole('status').textContent).toBe('Second search timed out.'),
     );
     finish(result);
+    notifyOld({
+      id: 1,
+      layout: result.layout!,
+      stage: 'placement',
+      conflicts: [],
+      promoted: [],
+      message: 'Obsolete placement.',
+    });
     await waitFor(() =>
       expect(screen.queryByRole('img', { name: 'Bob assembler layout' })).toBeNull(),
     );
+    expect(screen.queryByRole('list', { name: 'Placement attempts' })).toBeNull();
   });
 
   it('explains missing browser isolation without starting the solver', async () => {
