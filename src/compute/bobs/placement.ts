@@ -7,7 +7,7 @@ import {
   type CpResult,
   type BoolVar,
 } from 'or-tools-wasm/cp-sat';
-import { bobSwings } from './geometry.ts';
+import { bobCapacity, bobSwings } from './geometry.ts';
 import { MAX_BOB_CAPACITY, portKey, type BobTransportData } from './problem-data.ts';
 import {
   RATE_SCALE,
@@ -18,6 +18,12 @@ import {
 } from './types.ts';
 
 const total = (values: Iterable<IntVar>) => LinearExpr.from(sum(values));
+const endpointOffsets = [
+  ...new Map(
+    bobSwings().map((s) => [`${s.pickup.x},${s.pickup.y}`, [s.pickup.x, s.pickup.y]]),
+  ).values(),
+];
+const minimumArmCapacity = Math.min(...bobSwings().map((s) => Math.floor(s.capacity * RATE_SCALE)));
 
 /** Pack machines and boundary chests; only promoted ports introduce arm geometry. */
 export function buildBobPlacement(
@@ -26,6 +32,7 @@ export function buildBobPlacement(
   promoted: BobPort[],
   previous: BobLayout[],
   minimumPerimeter = 0,
+  expandParallelSlots = true,
 ) {
   const model = new CpModel();
   const width = model.newIntVar(1, options.maxWidth, 'width');
@@ -152,118 +159,171 @@ export function buildBobPlacement(
       );
   });
   const arms = anchors.flatMap((port, p) => {
-    const count = Math.ceil((port.rate * RATE_SCALE) / MAX_BOB_CAPACITY);
-    const slots = Array.from({ length: count }, (_, a) => {
-      const id = `reserved-arm:${p}:${a}`;
-      const base = rectangle(
-        {
-          id,
-          label: id,
-          kind: 'chest',
-          size: { width: 1, height: 1 },
-          position: { x: 0, y: 0 },
-        },
-        true,
-      );
-      const offsets = ['px', 'py', 'dx', 'dy'].map((s) => model.newIntVar(-3, 3, `${id}:${s}`));
-      const capacity = model.newIntVar(0, MAX_BOB_CAPACITY, `${id}:capacity`);
-      model.addAllowedAssignments(
-        [...offsets, capacity],
-        [
-          [0, 0, 0, 0, 0],
-          ...bobSwings().map((s) => [
-            s.pickup.x,
-            s.pickup.y,
-            s.dropoff.x,
-            s.dropoff.y,
-            Math.floor(s.capacity * RATE_SCALE),
-          ]),
-        ],
-      );
-      model.add(capacity.eq(0)).onlyEnforceIf(base.present.not());
-      model.add(capacity.ge(1)).onlyEnforceIf(base.present);
-      const px = base.x.plus(offsets[0]);
-      const py = base.y.plus(offsets[1]);
-      const dx = base.x.plus(offsets[2]);
-      const dy = base.y.plus(offsets[3]);
-      const own = nodes.find((n) => n.definition.id === port.node)!;
-      const contains = (node: typeof own, ex: typeof px, ey: typeof py, selected: BoolVar) => {
-        model.add(ex.ge(node.x)).onlyEnforceIf(selected);
-        model.add(ey.ge(node.y)).onlyEnforceIf(selected);
-        model.add(ex.lt(node.right)).onlyEnforceIf(selected);
-        model.add(ey.lt(node.bottom)).onlyEnforceIf(selected);
-      };
-      contains(own, port.side === 'input' ? dx : px, port.side === 'input' ? dy : py, base.present);
-      const ownRates = (port.side === 'input' ? data.inputs : data.outputs).get(port.node) ?? {};
-      const rates = new Map(
-        resources.map((resource) => [
-          resource,
-          model.newIntVar(
-            0,
-            Math.min(MAX_BOB_CAPACITY, ownRates[resource] ?? 0),
-            `${id}:flow:${resource}`,
+    const demand =
+      (port.side === 'input' ? data.inputs : data.outputs).get(port.node)?.[port.resource] ?? 0;
+    // Arms serving other nodes on this same side cannot also serve this port.
+    const otherArms = [...(port.side === 'input' ? data.inputs : data.outputs)]
+      .filter(([id]) => id !== port.node)
+      .reduce(
+        (count, [, rates]) =>
+          count +
+          Math.ceil(
+            Object.values(rates).reduce<number>((sum, rate) => sum + rate!, 0) / MAX_BOB_CAPACITY,
           ),
-        ]),
+        0,
       );
-      model.add(total(rates.values()).le(capacity));
-      model.add(rates.get(port.resource)!.ge(base.present));
-      for (const [resource, flow] of rates) addFlow(port.node, port.side, resource, flow);
-      const partners = [
-        ...nodes.filter(
-          (n) =>
-            n !== own &&
-            ((port.side === 'input' ? data.outputs : data.inputs).get(n.definition.id)?.[
-              port.resource
-            ] ?? 0) > 0,
-        ),
-        ...relays,
-      ];
-      const selected = partners.map((node, n) => {
-        const chosen = model.newBoolVar(`${id}:partner:${n}`);
-        model.addImplication(chosen, node.present);
-        contains(node, port.side === 'input' ? px : dx, port.side === 'input' ? py : dy, chosen);
-        for (const [resource, flow] of rates) {
-          const limit =
-            node.definition.kind === 'chest'
-              ? MAX_BOB_CAPACITY
-              : ((port.side === 'input' ? data.outputs : data.inputs).get(node.definition.id)?.[
-                  resource
-                ] ?? 0);
-          model.add(flow.le(limit)).onlyEnforceIf(chosen);
-          if (!limit) continue;
-          const transferred = model.newIntVar(
-            0,
-            Math.min(MAX_BOB_CAPACITY, limit),
-            `${id}:${n}:flow:${resource}`,
+    const armBudget = Math.max(0, options.maxInserters - otherArms);
+    const partnerRates = port.side === 'input' ? data.outputs : data.inputs;
+    const directPartners = nodes.filter(
+      (n) =>
+        n.definition.id !== port.node &&
+        (partnerRates.get(n.definition.id)?.[port.resource] ?? 0) > 0,
+    );
+    // Separate partner banks avoid permutations of otherwise interchangeable
+    // arms. A throughput lower bound alone cannot cover fan-in or fan-out.
+    const banks =
+      directPartners.length <= 1
+        ? [{ partners: [...directPartners, ...relays], demand }]
+        : directPartners.map((partner) => ({
+            partners: [partner],
+            demand: Math.min(demand, partnerRates.get(partner.definition.id)![port.resource]!),
+          }));
+    if (directPartners.length > 1 && relays.length) banks.push({ partners: relays, demand });
+    return banks.flatMap((bank, b) => {
+      // Allow parallel arms even when geometry forces the slowest legal swing.
+      const count = Math.min(
+        armBudget,
+        bank.demand,
+        Math.ceil(bank.demand / (expandParallelSlots ? minimumArmCapacity : MAX_BOB_CAPACITY)),
+      );
+      const slots = Array.from({ length: count }, (_, a) => {
+        const id = `reserved-arm:${p}:${b}:${a}`;
+        const base = rectangle(
+          {
+            id,
+            label: id,
+            kind: 'chest',
+            size: { width: 1, height: 1 },
+            position: { x: 0, y: 0 },
+          },
+          true,
+        );
+        const ownRates = (port.side === 'input' ? data.inputs : data.outputs).get(port.node) ?? {};
+        const capacityLimit = Math.min(
+          MAX_BOB_CAPACITY,
+          resources.reduce((sum, r) => sum + (ownRates[r] ?? 0), 0),
+        );
+        const offsets = ['px', 'py', 'dx', 'dy'].map((s) => model.newIntVar(-3, 3, `${id}:${s}`));
+        const capacity = model.newIntVar(0, capacityLimit, `${id}:capacity`);
+        if (capacityLimit <= minimumArmCapacity) {
+          // Every legal swing can carry this load. Independent endpoint tables
+          // avoid expanding 552 equivalent capacity rows for each optional arm.
+          for (const pair of [offsets.slice(0, 2), offsets.slice(2)]) {
+            model.addAllowedAssignments(
+              [...pair, base.present],
+              [[0, 0, 0], ...endpointOffsets.map((point) => [...point, 1])],
+            );
+          }
+          model.addForbiddenAssignments(
+            offsets,
+            endpointOffsets.map((point) => [...point, ...point]),
           );
-          model.add(transferred.eq(flow)).onlyEnforceIf(chosen);
-          model.add(transferred.eq(0)).onlyEnforceIf(chosen.not());
-          addFlow(
-            node.definition.id,
-            port.side === 'input' ? 'output' : 'input',
-            resource,
-            transferred,
+          model.add(capacity.eq(base.present.times(capacityLimit)));
+        } else {
+          model.addAllowedAssignments(
+            [...offsets, capacity],
+            [
+              [0, 0, 0, 0, 0],
+              ...bobSwings().map((s) => [
+                s.pickup.x,
+                s.pickup.y,
+                s.dropoff.x,
+                s.dropoff.y,
+                Math.min(capacityLimit, Math.floor(s.capacity * RATE_SCALE)),
+              ]),
+            ],
           );
         }
-        return chosen;
+        model.add(capacity.eq(0)).onlyEnforceIf(base.present.not());
+        model.add(capacity.ge(1)).onlyEnforceIf(base.present);
+        const px = base.x.plus(offsets[0]);
+        const py = base.y.plus(offsets[1]);
+        const dx = base.x.plus(offsets[2]);
+        const dy = base.y.plus(offsets[3]);
+        const own = nodes.find((n) => n.definition.id === port.node)!;
+        const contains = (node: typeof own, ex: typeof px, ey: typeof py, selected: BoolVar) => {
+          model.add(ex.ge(node.x)).onlyEnforceIf(selected);
+          model.add(ey.ge(node.y)).onlyEnforceIf(selected);
+          model.add(ex.lt(node.right)).onlyEnforceIf(selected);
+          model.add(ey.lt(node.bottom)).onlyEnforceIf(selected);
+        };
+        contains(
+          own,
+          port.side === 'input' ? dx : px,
+          port.side === 'input' ? dy : py,
+          base.present,
+        );
+        const rates = new Map(
+          resources.map((resource) => [
+            resource,
+            model.newIntVar(
+              0,
+              Math.min(MAX_BOB_CAPACITY, ownRates[resource] ?? 0),
+              `${id}:flow:${resource}`,
+            ),
+          ]),
+        );
+        model.add(total(rates.values()).le(capacity));
+        model.add(rates.get(port.resource)!.ge(base.present));
+        for (const [resource, flow] of rates) addFlow(port.node, port.side, resource, flow);
+        const partners = bank.partners;
+        const selected = partners.map((node, n) => {
+          const chosen = model.newBoolVar(`${id}:partner:${n}`);
+          model.addImplication(chosen, node.present);
+          contains(node, port.side === 'input' ? px : dx, port.side === 'input' ? py : dy, chosen);
+          for (const [resource, flow] of rates) {
+            const limit =
+              node.definition.kind === 'chest'
+                ? MAX_BOB_CAPACITY
+                : ((port.side === 'input' ? data.outputs : data.inputs).get(node.definition.id)?.[
+                    resource
+                  ] ?? 0);
+            model.add(flow.le(limit)).onlyEnforceIf(chosen);
+            if (!limit) continue;
+            const transferred = model.newIntVar(
+              0,
+              Math.min(MAX_BOB_CAPACITY, limit),
+              `${id}:${n}:flow:${resource}`,
+            );
+            model.add(transferred.eq(flow)).onlyEnforceIf(chosen);
+            model.add(transferred.eq(0)).onlyEnforceIf(chosen.not());
+            addFlow(
+              node.definition.id,
+              port.side === 'input' ? 'output' : 'input',
+              resource,
+              transferred,
+            );
+          }
+          return chosen;
+        });
+        model.add(total(selected).eq(base.present));
+        return { base, offsets, capacity, partners, selected, port, rates };
       });
-      model.add(total(selected).eq(base.present));
-      return { base, offsets, capacity, partners, selected, port, rates };
+      slots.forEach((slot, i) => {
+        if (!i) return;
+        const previous = slots[i - 1];
+        model.addImplication(slot.base.present, previous.base.present);
+        model
+          .add(
+            previous.base.x
+              .times(options.maxHeight)
+              .plus(previous.base.y)
+              .lt(slot.base.x.times(options.maxHeight).plus(slot.base.y)),
+          )
+          .onlyEnforceIf(slot.base.present);
+      });
+      return slots;
     });
-    slots.forEach((slot, i) => {
-      if (!i) return;
-      const previous = slots[i - 1];
-      model.addImplication(slot.base.present, previous.base.present);
-      model
-        .add(
-          previous.base.x
-            .times(options.maxHeight)
-            .plus(previous.base.y)
-            .lt(slot.base.x.times(options.maxHeight).plus(slot.base.y)),
-        )
-        .onlyEnforceIf(slot.base.present);
-    });
-    return slots;
   });
   for (const node of data.nodes)
     for (const side of ['input', 'output'] as const)
@@ -332,7 +392,13 @@ export function buildBobPlacement(
             },
             from: arm.port.side === 'input' ? partner : arm.port.node,
             to: arm.port.side === 'input' ? arm.port.node : partner,
-            capacity: value(arm.capacity) / RATE_SCALE,
+            capacity:
+              Math.floor(
+                bobCapacity(
+                  { x: value(arm.offsets[0]), y: value(arm.offsets[1]) },
+                  { x: value(arm.offsets[2]), y: value(arm.offsets[3]) },
+                ) * RATE_SCALE,
+              ) / RATE_SCALE,
             rates: Object.fromEntries(
               [...arm.rates].flatMap(([r, v]) => (value(v) ? [[r, value(v) / RATE_SCALE]] : [])),
             ),

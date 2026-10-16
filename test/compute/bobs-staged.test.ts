@@ -132,6 +132,133 @@ describe('Bob placement refinement', () => {
 });
 
 describe('Bob promoted inserter sharing', () => {
+  it('uses parallel arms when legal endpoint geometry cannot attain the global maximum capacity', async () => {
+    const paired: BobProblem = {
+      machines: [
+        {
+          id: 'producer',
+          label: 'Producer',
+          size: { width: 1, height: 1 },
+          inputs: {},
+          outputs: { 'item:iron': 200 },
+        },
+        {
+          id: 'consumer',
+          label: 'Consumer',
+          size: { width: 1, height: 1 },
+          inputs: { 'item:iron': 200 },
+          outputs: {},
+        },
+      ],
+      inputs: [],
+      outputs: [],
+    };
+    const data = bobTransportData(paired);
+    const placement = buildBobPlacement(
+      data,
+      {
+        ...defaultBobOptions(paired),
+        maxWidth: 5,
+        maxHeight: 1,
+        maxChests: 0,
+        maxInserters: 3,
+      },
+      data.ports,
+      [],
+    );
+    const selected = await CpSat.solve(placement.model, { numWorkers: 1, maxTimeInSeconds: 2 });
+    expect(selected.hasSolution).toBe(true);
+    const connected = placement.read(selected);
+    expect(connected.inserters).toHaveLength(3);
+    expect(validateBobLayout(paired, connected)).toEqual([]);
+    const refined = await solveBobLayout(paired, {
+      maxWidth: 5,
+      maxHeight: 1,
+      maxChests: 0,
+      maxInserters: 3,
+      maxTimeInSeconds: 3,
+    });
+    expect(refined.status).toBe('feasible');
+    expect(refined.layout!.inserters).toHaveLength(3);
+    expect(validateBobLayout(paired, refined.layout!)).toEqual([]);
+  });
+
+  it.each(['input', 'output'] as const)(
+    'splits a promoted %s port across partners whose individual rates are too small',
+    async (side) => {
+      const paired: BobProblem = {
+        machines: [
+          {
+            id: 'shared',
+            label: 'Shared',
+            size: { width: 1, height: 1 },
+            inputs: side === 'input' ? { 'item:iron': 4.5 } : {},
+            outputs: side === 'output' ? { 'item:iron': 4.5 } : {},
+          },
+          ...[3, 1.5].map((rate, i) => ({
+            id: `partner:${i}`,
+            label: `Partner ${i}`,
+            size: { width: 1, height: 1 },
+            inputs: side === 'output' ? { 'item:iron': rate } : {},
+            outputs: side === 'input' ? { 'item:iron': rate } : {},
+          })),
+        ],
+        inputs: [],
+        outputs: [],
+      };
+      const data = bobTransportData(paired);
+      const placement = buildBobPlacement(
+        data,
+        {
+          ...defaultBobOptions(paired),
+          maxWidth: 5,
+          maxHeight: 1,
+          maxChests: 0,
+          maxInserters: 2,
+        },
+        data.ports.filter((p) => p.node === 'shared'),
+        [],
+      );
+      const selected = await CpSat.solve(placement.model, { numWorkers: 1, maxTimeInSeconds: 2 });
+      expect(selected.hasSolution).toBe(true);
+      const connected = placement.read(selected);
+      expect(connected.inserters).toHaveLength(2);
+      expect(validateBobLayout(paired, connected)).toEqual([]);
+    },
+  );
+
+  it('reserves separate deliveries from a promoted boundary source to every consumer', async () => {
+    const supplied: BobProblem = {
+      machines: [1, 2, 3].map((rate, i) => ({
+        id: `consumer:${i}`,
+        label: `Consumer ${i}`,
+        size: { width: 1, height: 1 },
+        inputs: { 'item:iron': rate },
+        outputs: {},
+      })),
+      inputs: ['item:iron'],
+      outputs: [],
+    };
+    const data = bobTransportData(supplied);
+    const placement = buildBobPlacement(
+      data,
+      {
+        ...defaultBobOptions(supplied),
+        maxWidth: 4,
+        maxHeight: 2,
+        maxChests: 0,
+        maxInserters: 3,
+      },
+      data.ports.filter((p) => p.node === 'source:item:iron'),
+      [],
+    );
+    const selected = await CpSat.solve(placement.model, { numWorkers: 1, maxTimeInSeconds: 2 });
+    expect(selected.hasSolution).toBe(true);
+    const connected = placement.read(selected);
+    expect(connected.inserters).toHaveLength(3);
+    expect(validateBobLayout(supplied, connected)).toEqual([]);
+  });
+
   it.each([false, true])(
     'shares an inserter across both promoted ends, with multiple resources: %s',
     async (multiple) => {
