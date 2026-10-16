@@ -13,6 +13,8 @@ import {
   type BobResult,
 } from '../../compute/bobs/types.ts';
 
+const inserterColors = ['#fcd34d', '#67e8f9', '#f9a8d4', '#bef264', '#c4b5fd', '#fdba74'];
+
 const fields: { key: keyof BobOptions; label: string; min: number; max: number }[] = [
   { key: 'maxWidth', label: 'Max width', min: 1, max: 128 },
   { key: 'maxHeight', label: 'Max height', min: 1, max: 128 },
@@ -157,17 +159,20 @@ export function BobsLayoutSurface({
               <pattern id={gridId} width="1" height="1" patternUnits="userSpaceOnUse">
                 <path d="M 1 0 H 0 V 1" class="bobs-layout-grid" />
               </pattern>
-              <marker
-                id={markerId}
-                viewBox="0 0 10 10"
-                refX="8"
-                refY="5"
-                markerWidth="3"
-                markerHeight="3"
-                orient="auto-start-reverse"
-              >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor" />
-              </marker>
+              {inserterColors.map((color, i) => (
+                <marker
+                  key={color}
+                  id={`${markerId}-${i}`}
+                  viewBox="-2 -2 14 14"
+                  refX="8"
+                  refY="5"
+                  markerWidth="4.2"
+                  markerHeight="4.2"
+                  orient="auto-start-reverse"
+                >
+                  <path class="bobs-layout-arrowhead" d="M 0 0 L 10 5 L 0 10 z" fill={color} />
+                </marker>
+              ))}
             </defs>
             <rect width={layout.width} height={layout.height} fill={`url(#${gridId})`} />
             {layout.nodes.map((node) => (
@@ -199,28 +204,49 @@ export function BobsLayoutSurface({
                 </text>
               </g>
             ))}
-            {layout.inserters.map((inserter, i) => (
-              <g key={i}>
-                <title>
-                  {Object.entries(inserter.rates)
-                    .map(([r, rate]) => `${resourceName(ds.data, r as ResourceId)}: ${rate}/s`)
-                    .join(', ')}
-                  ; capacity {inserter.capacity.toFixed(1)}/s
-                </title>
-                <path
-                  class="bobs-layout-arm"
-                  d={`M ${inserter.pickup.x + 0.5} ${inserter.pickup.y + 0.5} L ${inserter.position.x + 0.5} ${inserter.position.y + 0.5} L ${inserter.dropoff.x + 0.5} ${inserter.dropoff.y + 0.5}`}
-                  marker-end={`url(#${markerId})`}
-                />
-                <rect
-                  class="bobs-layout-inserter"
-                  x={inserter.position.x + 0.25}
-                  y={inserter.position.y + 0.25}
-                  width="0.5"
-                  height="0.5"
-                />
-              </g>
-            ))}
+            {layout.inserters.map((inserter, i) => {
+              const pivot = { x: inserter.position.x + 0.5, y: inserter.position.y + 0.5 };
+              const pickup = { x: inserter.pickup.x + 0.5, y: inserter.pickup.y + 0.5 };
+              const dropoff = { x: inserter.dropoff.x + 0.5, y: inserter.dropoff.y + 0.5 };
+              const pickupLength = Math.hypot(pickup.x - pivot.x, pickup.y - pivot.y);
+              const dropoffLength = Math.hypot(dropoff.x - pivot.x, dropoff.y - pivot.y);
+              // Round a substantial part of each arm, leaving straight ends for the arrowhead.
+              const bend = Math.min(0.9, pickupLength / 2, dropoffLength / 2);
+              const entryRatio = pickupLength > 0 ? bend / pickupLength : 0;
+              const exitRatio = dropoffLength > 0 ? bend / dropoffLength : 0;
+              const entry = {
+                x: pivot.x + (pickup.x - pivot.x) * entryRatio,
+                y: pivot.y + (pickup.y - pivot.y) * entryRatio,
+              };
+              const exit = {
+                x: pivot.x + (dropoff.x - pivot.x) * exitRatio,
+                y: pivot.y + (dropoff.y - pivot.y) * exitRatio,
+              };
+              const path = `M ${pickup.x} ${pickup.y} L ${entry.x} ${entry.y} Q ${pivot.x} ${pivot.y} ${exit.x} ${exit.y} L ${dropoff.x} ${dropoff.y}`;
+              return (
+                <g key={i} style={{ color: inserterColors[i % inserterColors.length] }}>
+                  <title>
+                    {Object.entries(inserter.rates)
+                      .map(([r, rate]) => `${resourceName(ds.data, r as ResourceId)}: ${rate}/s`)
+                      .join(', ')}
+                    ; capacity {inserter.capacity.toFixed(1)}/s
+                  </title>
+                  <path class="bobs-layout-arm-border" d={path} />
+                  <path
+                    class="bobs-layout-arm"
+                    d={path}
+                    marker-end={`url(#${markerId}-${i % inserterColors.length})`}
+                  />
+                  <rect
+                    class="bobs-layout-inserter"
+                    x={inserter.position.x + 0.44}
+                    y={inserter.position.y + 0.44}
+                    width="0.12"
+                    height="0.12"
+                  />
+                </g>
+              );
+            })}
           </svg>
           <ol class="bobs-layout-legend">
             {request.problem?.machines.map((machine, i) => (
