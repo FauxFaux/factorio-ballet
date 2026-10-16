@@ -31,6 +31,7 @@ import { CellRow } from './row.tsx';
 import { CellSide } from './side.tsx';
 import { CellDesign } from '../design/columns.tsx';
 import { CellLayoutSurface } from '../layout/layout.tsx';
+import { BobsLayoutSurface } from '../layout/bobs-layout.tsx';
 import { CellAsJson } from './as-json.tsx';
 import { SplitProposals } from './split-proposals.tsx';
 import { FoldIcon, UnfoldIcon } from '@primer/octicons-react';
@@ -177,13 +178,35 @@ export function CellBox({
         </button>
         <button
           type="button"
-          class={cell.layout ? 'cell-btn cell-layout-remove' : 'cell-btn'}
-          title={cell.layout ? 'Remove this cell’s layout' : 'Start a blank layout for this cell'}
+          class={cell.layout && !cell.layout.type ? 'cell-btn cell-layout-remove' : 'cell-btn'}
+          title={
+            cell.layout && !cell.layout.type
+              ? 'Remove this cell’s layout'
+              : 'Start a blank layout for this cell'
+          }
           onClick={() =>
-            setCell(cell.layout ? (previous) => ({ ...previous, layout: undefined }) : withLayout)
+            setCell(
+              cell.layout && !cell.layout.type
+                ? (previous) => ({ ...previous, layout: undefined })
+                : (previous) => withLayout(previous),
+            )
           }
         >
-          {cell.layout ? 'remove layout' : '+ layout'}
+          {cell.layout && !cell.layout.type ? 'remove layout' : '+ layout'}
+        </button>
+        <button
+          type="button"
+          class="cell-btn"
+          title="Place assemblers with Bob’s inserters"
+          onClick={() =>
+            setCell(
+              cell.layout?.type === 'bobs'
+                ? (previous) => ({ ...previous, layout: undefined })
+                : (previous) => withLayout(previous, 'bobs'),
+            )
+          }
+        >
+          {cell.layout?.type === 'bobs' ? 'remove bob layout' : '+ bob layout'}
         </button>
         <CellAsJson cell={cell} iface={iface} solution={solution} layouts={layouts} />
         <button
@@ -380,7 +403,15 @@ export function CellBox({
           }
         />
       ) : null}
-      {cell.layout ? (
+      {cell.layout?.type === 'bobs' ? (
+        <BobsLayoutSurface
+          cell={cell}
+          solution={solution}
+          progress={progress}
+          inputs={iface.inputs}
+          outputs={iface.outputs}
+        />
+      ) : cell.layout ? (
         <div class="cell-layout-row">
           <CellLayoutSurface
             layout={cell.layout}

@@ -236,8 +236,8 @@ export function withDesign(cell: Cell): Cell {
 }
 
 /** Adds this cell's empty factory-layout surface. */
-export function withLayout(cell: Cell): Cell {
-  return cell.layout ? cell : { ...cell, layout: newCellLayout() };
+export function withLayout(cell: Cell, type?: CellLayout['type']): Cell {
+  return cell.layout && cell.layout.type === type ? cell : { ...cell, layout: newCellLayout(type) };
 }
 
 export function withEntry(cell: Cell, index: number, entry: CellEntry): Cell {

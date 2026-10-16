@@ -6,11 +6,13 @@ export type FrozenModulePositions = Record<string, Position>;
 
 /** Persisted state for a cell's high-level factory-layout surface. */
 export interface CellLayout {
+  /** Absent selects the original rail/module layout. */
+  type?: 'bobs';
   frozenModules?: FrozenModulePositions;
   moduleRotations?: Record<string, DesignDirection>;
 }
 
 /** Start an empty layout surface for a cell. */
-export function newCellLayout(): CellLayout {
-  return {};
+export function newCellLayout(type?: CellLayout['type']): CellLayout {
+  return type ? { type } : {};
 }

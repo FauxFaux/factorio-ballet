@@ -145,6 +145,16 @@ describe('packCells', () => {
     expect(unpackCells(envelope.packed.cl, ids)).toEqual(cells);
   });
 
+  it('round-trips the Bob layout type', () => {
+    const cells: Cell[] = [{ entries: [{ recipe: 'copper-cable' }], layout: { type: 'bobs' } }];
+    const envelope = parseEnvelope(
+      '#' + packEnvelope({ v: 1, cs: '', gp: 0, ci: 0, mo: {}, cl: packCells(cells, ids) }),
+    );
+    expect(envelope.kind).toBe('ok');
+    if (envelope.kind !== 'ok') throw new Error('URL envelope did not round-trip');
+    expect(unpackCells(envelope.packed.cl, ids)).toEqual(cells);
+  });
+
   it('numbers the ids it knows', () => {
     const packed = packCells([{ entries: [{ recipe: 'copper-cable', machine }] }], ids);
     expect(packed[0].entries[0]).toEqual({

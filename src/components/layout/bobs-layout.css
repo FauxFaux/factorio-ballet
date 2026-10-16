@@ -1,0 +1,89 @@
+.bobs-layout {
+  min-width: 0;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+}
+
+.bobs-layout-description,
+.bobs-layout-status,
+.bobs-layout-legend {
+  font-size: 0.8rem;
+  overflow-wrap: anywhere;
+}
+
+.bobs-layout-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.5rem;
+}
+
+.bobs-layout-controls label {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.75rem;
+}
+
+.bobs-layout-controls input {
+  box-sizing: border-box;
+  width: 5rem;
+  max-width: 100%;
+}
+
+.bobs-layout-canvas {
+  display: block;
+  width: 100%;
+  max-height: 36rem;
+  background: #0f172a;
+  color: #fcd34d;
+}
+
+.bobs-layout-grid {
+  fill: none;
+  stroke: #334155;
+  stroke-width: 0.025;
+}
+
+.bobs-layout-node {
+  fill: #1e40af;
+  stroke: #93c5fd;
+  stroke-width: 0.04;
+}
+
+.bobs-layout-node.is-source {
+  fill: #166534;
+}
+.bobs-layout-node.is-sink {
+  fill: #9f1239;
+}
+.bobs-layout-node.is-chest {
+  fill: #854d0e;
+}
+
+.bobs-layout-label {
+  fill: #fff;
+  font-size: 0.35px;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+.bobs-layout-arm {
+  fill: none;
+  stroke: #fcd34d;
+  stroke-width: 0.06;
+  opacity: 0.8;
+}
+
+.bobs-layout-inserter {
+  fill: #fbbf24;
+}
+
+.bobs-layout-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  list-style: none;
+  padding: 0;
+}

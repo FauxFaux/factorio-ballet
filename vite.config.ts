@@ -9,10 +9,16 @@ import { readFile } from 'node:fs/promises';
 export default defineConfig(({ mode }) => ({
   // relative, so a build can be served from any path: we deploy to /snapshot-<sha>/
   base: './',
+  server: { headers: isolationHeaders },
+  preview: { headers: isolationHeaders },
+  worker: { format: 'es' },
+  optimizeDeps: { exclude: ['or-tools-wasm'] },
   plugins: [
     preact(),
     preload({
-      shouldPreload: ({ fileName }) => !fileName.startsWith('assets/factoriolab-bobang-hash-'),
+      shouldPreload: ({ fileName }) =>
+        !fileName.startsWith('assets/factoriolab-bobang-hash-') &&
+        !fileName.startsWith('assets/bobs-solver-'),
     }),
     injectIcons(),
     copyKnownVersions(),
@@ -22,6 +28,11 @@ export default defineConfig(({ mode }) => ({
     include: ['test/**/*.test.{ts,tsx}'],
   },
 }));
+
+const isolationHeaders = {
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Embedder-Policy': 'require-corp',
+};
 
 function copyKnownVersions(): Plugin {
   return {

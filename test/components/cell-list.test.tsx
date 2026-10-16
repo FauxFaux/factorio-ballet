@@ -50,6 +50,28 @@ const splitProposalEntries: Cell['entries'] = [
 ].map((recipe, index) => ({ recipe, count: index === 0 ? 15 : undefined }));
 
 describe('CellList', () => {
+  it('adds and removes a Bob layout and persists its type', async () => {
+    const user = userEvent.setup();
+    const onCell = vi.fn();
+    render(<CellListExample onCell={onCell} />);
+    await user.click(screen.getByRole('button', { name: '+ bob layout' }));
+    expect(screen.getByRole('region', { name: 'Bob layout' })).toBeTruthy();
+    expect(onCell.mock.lastCall![0].layout).toEqual({ type: 'bobs' });
+    expect(screen.getByRole('button', { name: '+ layout' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'remove bob layout' }));
+    expect(screen.queryByRole('region', { name: 'Bob layout' })).toBeNull();
+    expect(onCell.mock.lastCall![0].layout).toBeUndefined();
+  });
+
+  it('can switch from a Bob layout back to a rail layout', async () => {
+    const user = userEvent.setup();
+    render(<CellListExample cell={{ entries: [], layout: { type: 'bobs' } }} />);
+    await user.click(screen.getByRole('button', { name: '+ layout' }));
+    expect(screen.getByRole('region', { name: 'Layout' })).toBeTruthy();
+    expect(screen.queryByRole('region', { name: 'Bob layout' })).toBeNull();
+    expect(screen.getByRole('button', { name: '+ bob layout' })).toBeTruthy();
+  });
+
   it('adds a blank design with numbered placeholder columns', async () => {
     const user = userEvent.setup();
     render(<CellListExample />);
