@@ -99,37 +99,60 @@ export function buildBobPairedPlacement(
   const balanceWeight = options.balanceWeight ?? defaultBobPairOptions.balanceWeight;
   if (!Number.isSafeInteger(balanceWeight) || balanceWeight < 0)
     throw new Error('Balance weight must be a nonnegative whole number.');
+  const minBoundaryHeight = options.minBoundaryHeight ?? defaultBobPairOptions.minBoundaryHeight;
+  if (!Number.isSafeInteger(minBoundaryHeight) || minBoundaryHeight < 1)
+    throw new Error('Minimum I/O height must be a positive whole number.');
   const definitions = bobTransportData(itemOnlyBobProblem(problem)).nodes;
   const model = new CpModel();
   const width = model.newIntVar(1, options.maxWidth, 'width');
   const height = model.newIntVar(1, options.maxHeight, 'height');
   const horizontal: IntervalVar[] = [],
     vertical: IntervalVar[] = [];
-  const rectangle = (id: string, w: number, h: number) => {
+  const rectangle = (id: string, w: number, h: number, tallBoundary = false) => {
     const x = model.newIntVar(0, Math.max(2, options.maxWidth - 1), `${id}:x`);
     const y = model.newIntVar(0, Math.max(2, options.maxHeight - 1), `${id}:y`);
-    const rw = model.newIntVar(Math.min(w, h), Math.max(w, h), `${id}:w`);
-    const rh = model.newIntVar(Math.min(w, h), Math.max(w, h), `${id}:h`);
-    model.addAllowedAssignments(
-      [rw, rh],
-      [
-        [w, h],
-        [h, w],
-      ],
+    const rw = model.newIntVar(
+      tallBoundary ? 1 : Math.min(w, h),
+      tallBoundary ? 1 : Math.max(w, h),
+      `${id}:w`,
     );
+    const rh = model.newIntVar(
+      tallBoundary ? minBoundaryHeight : Math.min(w, h),
+      tallBoundary ? Math.max(minBoundaryHeight, options.maxHeight) : Math.max(w, h),
+      `${id}:h`,
+    );
+    if (!tallBoundary)
+      model.addAllowedAssignments(
+        [rw, rh],
+        [
+          [w, h],
+          [h, w],
+        ],
+      );
     const right = model.newIntVar(1, options.maxWidth + Math.max(w, h), `${id}:right`);
-    const bottom = model.newIntVar(1, options.maxHeight + Math.max(w, h), `${id}:bottom`);
+    const bottom = model.newIntVar(
+      1,
+      options.maxHeight + Math.max(w, h, minBoundaryHeight),
+      `${id}:bottom`,
+    );
     model.add(right.eq(x.plus(rw)));
     model.add(bottom.eq(y.plus(rh)));
     model.add(right.le(width));
     model.add(bottom.le(height));
     horizontal.push(model.newIntervalVar(x, w === h ? w : rw, right, `${id}:horizontal`));
-    vertical.push(model.newIntervalVar(y, w === h ? h : rh, bottom, `${id}:vertical`));
+    vertical.push(
+      model.newIntervalVar(y, tallBoundary || w !== h ? rh : h, bottom, `${id}:vertical`),
+    );
     return { x, y, w: rw, h: rh, right, bottom };
   };
   const nodes = definitions.map((d) => ({
     definition: d,
-    ...rectangle(d.id, d.size.width, d.size.height),
+    ...rectangle(
+      d.id,
+      d.size.width,
+      d.size.height,
+      minBoundaryHeight > 1 && d.kind !== 'assembler',
+    ),
   }));
   for (const n of nodes.filter((n) => n.definition.kind !== 'assembler')) {
     if (boundaryEdges === 'left-right') {
@@ -176,6 +199,7 @@ export function buildBobPairedPlacement(
       options.maxWidth,
       options.maxHeight,
       boundaryEdges === 'left-right',
+      minBoundaryHeight === 1 || !nodes.some((n) => n.definition.kind !== 'assembler'),
     );
   }
   model.minimize(
@@ -285,7 +309,9 @@ export async function solveBobPairedLayout(
         'Relaxed placement retained. Base annealing did not find legal inserters for these fixed pairings; no placement retries were run.',
     };
   }
-  const errors = validateBobLayout(problem, layout);
+  const errors = validateBobLayout(problem, layout, {
+    minBoundaryHeight: options.minBoundaryHeight,
+  });
   if (errors.length) throw new Error(`Paired layout validation failed: ${errors.join('; ')}`);
   publish(layout, 'solved', 'Fixed pairings legalized and independently validated.');
   return {

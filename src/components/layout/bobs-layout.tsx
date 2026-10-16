@@ -192,6 +192,7 @@ export function BobsLayoutSurface({
         {mode === 'paired' &&
           (
             [
+              { key: 'minBoundaryHeight', label: 'Min I/O height' },
               { key: 'balanceWeight', label: 'Balance weight' },
               { key: 'pairingSeconds', label: 'Pairing seconds' },
               { key: 'annealingSeconds', label: 'Annealing seconds' },
@@ -201,7 +202,14 @@ export function BobsLayoutSurface({
               },
             ] as const
           ).map(({ key, label }) => (
-            <label key={key}>
+            <label
+              key={key}
+              title={
+                key === 'minBoundaryHeight'
+                  ? '1 keeps single-tile chests; 2 or more allows vertical 1×N I/O regions up to Max height.'
+                  : undefined
+              }
+            >
               {label}
               <input
                 type="number"

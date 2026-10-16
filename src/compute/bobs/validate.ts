@@ -11,9 +11,14 @@ import { isItem, type ResourceId } from '../../types.ts';
 import { itemOnlyBobProblem } from './item-problem.ts';
 
 /** Reconstruct geometry and gross item flows independently of the CP-SAT variables. */
-export function validateBobLayout(problem: BobProblem, layout: BobLayout): string[] {
+export function validateBobLayout(
+  problem: BobProblem,
+  layout: BobLayout,
+  options: { minBoundaryHeight?: number } = {},
+): string[] {
   problem = itemOnlyBobProblem(problem);
   const errors: string[] = [];
+  const minBoundaryHeight = options.minBoundaryHeight ?? 1;
   const tolerance = (problem.machines.length + 1) / RATE_SCALE + 1e-8;
   const nodes = new Map(layout.nodes.map((n) => [n.id, n]));
   const occupied = new Set<string>();
@@ -54,14 +59,19 @@ export function validateBobLayout(problem: BobProblem, layout: BobLayout): strin
   if (nodes.size !== layout.nodes.length) errors.push('Duplicate entity IDs');
   for (const node of layout.nodes) {
     occupy(node.position, node.size.width, node.size.height);
-    if (node.kind !== 'assembler' && (node.size.width !== 1 || node.size.height !== 1))
+    const boundaryRegion =
+      (node.kind === 'source' || node.kind === 'sink') && minBoundaryHeight > 1;
+    if (boundaryRegion) {
+      if (node.size.width !== 1 || node.size.height < minBoundaryHeight)
+        errors.push('Boundary region must be one tile wide and meet the minimum I/O height');
+    } else if (node.kind !== 'assembler' && (node.size.width !== 1 || node.size.height !== 1))
       errors.push('Chest must occupy one tile');
     if (node.kind === 'source' || node.kind === 'sink') {
       if (
         node.position.x !== 0 &&
         node.position.y !== 0 &&
-        node.position.x + 1 !== layout.width &&
-        node.position.y + 1 !== layout.height
+        node.position.x + node.size.width !== layout.width &&
+        node.position.y + node.size.height !== layout.height
       )
         errors.push(`${node.id} is not on a boundary`);
     }

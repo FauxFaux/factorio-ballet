@@ -84,6 +84,7 @@ describe('Bob layout surface', () => {
       'Annealing seconds',
       'Pairing items/s',
       'Balance weight',
+      'Min I/O height',
     ]) {
       expect(screen.getByRole('spinbutton', { name: label })).toBeTruthy();
     }
@@ -98,8 +99,11 @@ describe('Bob layout surface', () => {
       boundaryEdges: 'left-right',
       breakSymmetry: true,
       balanceWeight: 1,
+      minBoundaryHeight: 1,
     });
     expect(solve).toHaveBeenCalledTimes(1);
+    await user.clear(screen.getByRole('spinbutton', { name: 'Min I/O height' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Min I/O height' }), '2');
     await user.clear(screen.getByRole('spinbutton', { name: 'Balance weight' }));
     await user.type(screen.getByRole('spinbutton', { name: 'Balance weight' }), '3');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Boundary chests' }), 'any');
@@ -112,6 +116,7 @@ describe('Bob layout surface', () => {
       boundaryEdges: 'any',
       breakSymmetry: false,
       balanceWeight: 3,
+      minBoundaryHeight: 2,
     });
   });
 

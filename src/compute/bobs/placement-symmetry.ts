@@ -24,6 +24,7 @@ export function addBobPlacementSymmetry(
   maxWidth: number,
   maxHeight: number,
   leftToRight: boolean,
+  allowTranspose = true,
 ) {
   const always = model.newBoolVar('symmetry:always');
   model.add(always.eq(1));
@@ -41,6 +42,7 @@ export function addBobPlacementSymmetry(
   model.addBoolOr([fitsWidth.not(), fitsHeight.not(), transposeFits]);
   const original = [width, height, ...rectangles.flatMap((r) => [r.x, r.y, r.w, r.h])];
   for (const transpose of [false, true]) {
+    if (transpose && !allowTranspose) continue;
     for (const flipX of [false, true]) {
       for (const flipY of [false, true]) {
         if (!transpose && !flipX && !flipY) continue;

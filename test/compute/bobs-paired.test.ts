@@ -116,6 +116,119 @@ describe('Bob fixed pairings', () => {
     }
   });
 
+  it('supports one-tile-wide boundary regions with a variable minimum height', async () => {
+    const problem: BobProblem = {
+      ...simple,
+      machines: [{ ...simple.machines[0], inputs: {}, outputs: {} }],
+    };
+    for (const minBoundaryHeight of [1, 2, 3]) {
+      const built = buildBobPairedPlacement(problem, [], { ...options, minBoundaryHeight });
+      if (minBoundaryHeight === 2) {
+        // A minimum of two must also admit three, rather than forcing exactly two.
+        for (const node of built.nodes.filter((n) => n.definition.kind !== 'assembler'))
+          built.model.add(node.h.eq(3));
+      }
+      const result = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+      expect(result.hasSolution).toBe(true);
+      const layout = built.read(result);
+      for (const node of layout.nodes.filter((n) => n.kind !== 'assembler')) {
+        expect(node.size.width).toBe(1);
+        expect(node.size.height).toBeGreaterThanOrEqual(minBoundaryHeight);
+        if (minBoundaryHeight === 1) expect(node.size.height).toBe(1);
+        if (minBoundaryHeight === 2) expect(node.size.height).toBe(3);
+        expect(node.position.x).toBe(node.kind === 'source' ? 0 : layout.width - 1);
+      }
+      expect(validateBobLayout(problem, layout, { minBoundaryHeight })).toEqual([]);
+    }
+    const impossible = buildBobPairedPlacement(problem, [], {
+      ...options,
+      minBoundaryHeight: 3,
+      maxHeight: 2,
+    });
+    expect(
+      (await CpSat.solve(impossible.model, { maxTimeInSeconds: 2, numWorkers: 1 })).hasSolution,
+    ).toBe(false);
+  });
+
+  it('can grow an I/O region to shorten connections and legalize arms along its full height', async () => {
+    const problem: BobProblem = {
+      machines: ['a', 'b'].map((id) => ({
+        id,
+        label: id,
+        size: { width: 1, height: 1 },
+        inputs: { 'item:iron': 1 },
+        outputs: {},
+      })),
+      inputs: ['item:iron'],
+      outputs: [],
+    };
+    const pairs = problem.machines.map((m) => ({
+      from: 'source:item:iron',
+      to: m.id,
+      rates: { 'item:iron': 1 },
+    }));
+    const built = buildBobPairedPlacement(problem, pairs, {
+      ...options,
+      maxWidth: 3,
+      maxHeight: 7,
+      minBoundaryHeight: 2,
+    });
+    for (let i = 0; i < 2; i++) {
+      built.model.add(built.nodes[i].x.eq(2));
+      built.model.add(built.nodes[i].y.eq(i * 6));
+      built.model.add(built.arms[i].base.x.eq(1));
+      built.model.add(built.arms[i].base.y.eq(i * 6));
+    }
+    const result = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+    expect(result.hasSolution).toBe(true);
+    const relaxed = built.read(result);
+    expect(relaxed.nodes.find((n) => n.kind === 'source')!.size).toEqual({ width: 1, height: 7 });
+    expect(relaxed.inserters[1].pickup).toEqual({ x: 0, y: 6 });
+    const legalized = await annealBobBases(relaxed, 1);
+    expect(legalized).toBeDefined();
+    expect(validateBobLayout(problem, legalized!, { minBoundaryHeight: 2 })).toEqual([]);
+  });
+
+  it('validates the whole boundary-region footprint and its bottom boundary', () => {
+    const problem: BobProblem = {
+      ...simple,
+      machines: [{ ...simple.machines[0], size: { width: 1, height: 1 }, inputs: {}, outputs: {} }],
+    };
+    const layout = {
+      width: 3,
+      height: 4,
+      inserters: [],
+      nodes: bobTransportData(problem).nodes.map((n) => ({
+        ...n,
+        size: n.kind === 'assembler' ? { width: 1, height: 1 } : { width: 1, height: 2 },
+        position:
+          n.kind === 'assembler'
+            ? { x: 0, y: 0 }
+            : n.kind === 'source'
+              ? { x: 1, y: 2 }
+              : { x: 2, y: 0 },
+      })),
+    };
+    expect(validateBobLayout(problem, layout, { minBoundaryHeight: 2 })).toEqual([]);
+    expect(validateBobLayout(problem, layout)).toContain('Chest must occupy one tile');
+    expect(
+      validateBobLayout(problem, layout, { minBoundaryHeight: 3 }).some((e) =>
+        e.includes('minimum I/O height'),
+      ),
+    ).toBe(true);
+    layout.nodes[0].position = { x: 1, y: 3 };
+    expect(validateBobLayout(problem, layout, { minBoundaryHeight: 2 })).toContain(
+      'Overlap at 1,3',
+    );
+  });
+
+  it('rejects invalid minimum I/O heights', () => {
+    for (const minBoundaryHeight of [0, -1, 1.5, NaN, Infinity])
+      expect(() => buildBobPairedPlacement(simple, [], { ...options, minBoundaryHeight })).toThrow(
+        'Minimum I/O height',
+      );
+  });
+
   it('prefers equal reaches on a fixed connection without lengthening their sum', async () => {
     const problem: BobProblem = {
       machines: [

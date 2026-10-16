@@ -23,7 +23,13 @@ function transform(world: World, transpose: boolean, flipX: boolean, flipY: bool
     }),
   };
 }
-async function allowed(world: World, maxWidth: number, maxHeight: number, leftToRight = false) {
+async function allowed(
+  world: World,
+  maxWidth: number,
+  maxHeight: number,
+  leftToRight = false,
+  allowTranspose = true,
+) {
   const model = new CpModel();
   const constant = (n: number, name: string) => model.newIntVar(n, n, name);
   const width = constant(world.width, 'width'),
@@ -36,7 +42,16 @@ async function allowed(world: World, maxWidth: number, maxHeight: number, leftTo
     right: constant(r.x + r.w, `${i}:right`),
     bottom: constant(r.y + r.h, `${i}:bottom`),
   }));
-  addBobPlacementSymmetry(model, width, height, rectangles, maxWidth, maxHeight, leftToRight);
+  addBobPlacementSymmetry(
+    model,
+    width,
+    height,
+    rectangles,
+    maxWidth,
+    maxHeight,
+    leftToRight,
+    allowTranspose,
+  );
   return (await CpSat.solve(model, { maxTimeInSeconds: 1, numWorkers: 1 })).hasSolution;
 }
 setCloudNoticeEnabled(false);
@@ -57,6 +72,22 @@ describe('Bob placement symmetry', () => {
     for (const x of [false, true])
       for (const y of [false, true])
         accepted.push(await allowed(transform(original, false, x, y), 5, 4));
+    expect(accepted.filter(Boolean)).toHaveLength(1);
+  });
+
+  it('keeps a representative with vertical I/O regions even when a transpose would sort earlier', async () => {
+    const world: World = {
+      width: 6,
+      height: 3,
+      rectangles: [
+        { x: 0, y: 0, w: 1, h: 3 },
+        { x: 4, y: 0, w: 1, h: 2 },
+      ],
+    };
+    const accepted: boolean[] = [];
+    for (const x of [false, true])
+      for (const y of [false, true])
+        accepted.push(await allowed(transform(world, false, x, y), 8, 8, false, false));
     expect(accepted.filter(Boolean)).toHaveLength(1);
   });
 

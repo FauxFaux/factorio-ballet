@@ -15,11 +15,12 @@ Fluid pipes and boundary connections consume no space; fluid-only machines are s
 ## Geometry and capacity
 
 All coordinates identify integer grid cells; pickup/drop points are their centres. Assemblers occupy
-their dataset footprints and may rotate 90°. Chests and inserter bases each occupy one tile. Every
-external item input has one source chest, and every external item output has one sink chest. All
-those chests touch the solved rectangle's boundary. Optional relay chests may hold multiple
-resources and have any number of incoming/outgoing inserters. Arms may cross other entities; only
-their bases consume space.
+their dataset footprints and may rotate 90°. By default, chests and inserter bases each occupy one
+tile; fixed-pair mode can instead use vertical I/O regions as described below. Every external item
+input has one source chest, and every external item output has one sink chest. All those chests
+touch the solved rectangle's boundary. Optional relay chests may hold multiple resources and have
+any number of incoming/outgoing inserters. Arms may cross other entities; only their bases consume
+space.
 
 Pickup and drop offsets each have Manhattan distance at most three from the inserter. The arm can
 extend or retract at 0.1 tiles per tick (6 tiles/s at 60 ticks/s) while rotating at 2160°/s. The
@@ -100,6 +101,25 @@ coordinates. This remains an integer distance surrogate without swing tables; ac
 impact depends on the instance. Manhattan balance does not guarantee equal Euclidean arm lengths,
 low angular travel, legal reach, or adequate throughput. Inserter legalization is unchanged.
 
+### Variable-height inputs and outputs
+
+**Min I/O height** defaults to one, preserving the original 1×1 boundary chests. Set it to two (or a
+larger positive whole number) to model each input/output as a vertical 1×N region whose height is
+chosen independently by the placement solver, from the selected minimum through **Max height**.
+Width stays one and these regions cannot rotate. A minimum larger than the layout height bound
+yields no placement, rather than being clamped. There is no separate height cap.
+
+These are abstract shared-storage boundary regions: every tile is available as an inserter endpoint,
+while the pairing model still sees one source/sink and its original rate per external resource. They
+do not model transport between separate ordinary chests. Taller regions can reduce distance scores,
+but their full footprint must fit without overlapping machines, bases or other regions. The drawing,
+exact footprint distances, base legalization and independent validator all use the selected height.
+Relay chests remain 1×1. The existing boundary-edge control still applies.
+
+Symmetry removal excludes transposes/quarter-turns when tall regions are enabled and present, even
+with **Any edge**, since those transformations would turn a required vertical region horizontal.
+Axis reflections remain valid subject to the chosen edge rules.
+
 ### Placement restrictions and symmetry
 
 Two controls in fixed-pair mode simplify placement; both are enabled by default:
@@ -111,11 +131,12 @@ Two controls in fixed-pair mode simplify placement; both are enabled by default:
   geometry among its feasible whole-world transformations. The ordering compares board dimensions,
   then each machine/chest rectangle and each paired base in stable order. Endpoint choices do not
   participate. With any-edge boundaries it considers all eight rotations/reflections, including
-  quarter-turns only when the swapped dimensions fit the selected bounds. With left/right flow it
-  removes only top/bottom reflection, since the other transformations change the prescribed edges.
-  This preserves an equivalent geometry and objective value; it does not pin a particular machine to
-  a corner. The explicit constraints prune symmetric solutions, without promising a speedup for
-  every instance. The solver may also perform its own internal symmetry processing.
+  quarter-turns only when the swapped dimensions fit the selected bounds and I/O shape rules. With
+  left/right flow it removes only top/bottom reflection, since the other transformations change the
+  prescribed edges. This preserves an equivalent geometry and objective value; it does not pin a
+  particular machine to a corner. The explicit constraints prune symmetric solutions, without
+  promising a speedup for every instance. The solver may also perform its own internal symmetry
+  processing.
 
 These controls affect only fixed-pair placement. The pair topology and inserter legalization are
 unchanged. They introduce no search limits. They do not remove permutations of identical machines:
