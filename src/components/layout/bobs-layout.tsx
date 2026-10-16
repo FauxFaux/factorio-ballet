@@ -127,7 +127,7 @@ export function BobsLayoutSurface({
         boundary chest per external item. Fluid connections assumed correct. Compact layouts are
         heuristic.
         {mode === 'paired'
-          ? ' Choose rate-balanced pairings once, minimize base distance, then anneal bases with machines fixed. No placement retries or relay chests.'
+          ? ' Choose rate-balanced pairings once, minimize base distance and arm imbalance, then anneal bases with machines fixed. No placement retries or relay chests.'
           : ' Place assemblers, then connect items; retry with difficult inserters reserved.'}
       </p>
       <form
@@ -192,6 +192,7 @@ export function BobsLayoutSurface({
         {mode === 'paired' &&
           (
             [
+              { key: 'balanceWeight', label: 'Balance weight' },
               { key: 'pairingSeconds', label: 'Pairing seconds' },
               { key: 'annealingSeconds', label: 'Annealing seconds' },
               {

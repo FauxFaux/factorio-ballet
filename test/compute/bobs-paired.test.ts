@@ -116,6 +116,68 @@ describe('Bob fixed pairings', () => {
     }
   });
 
+  it('prefers equal reaches on a fixed connection without lengthening their sum', async () => {
+    const problem: BobProblem = {
+      machines: [
+        {
+          id: 'a',
+          label: 'A',
+          size: { width: 5, height: 1 },
+          inputs: {},
+          outputs: { 'item:x': 1 },
+        },
+        {
+          id: 'b',
+          label: 'B',
+          size: { width: 5, height: 1 },
+          inputs: { 'item:x': 1 },
+          outputs: {},
+        },
+      ],
+      inputs: [],
+      outputs: [],
+    };
+    const pair = { from: 'a', to: 'b', rates: { 'item:x': 1 } };
+    const solve = async (balanceWeight: number, baseX?: number) => {
+      const built = buildBobPairedPlacement(problem, [pair], {
+        ...options,
+        maxWidth: 15,
+        maxHeight: 1,
+        breakSymmetry: false,
+        balanceWeight,
+      });
+      built.nodes.forEach((node, i) => {
+        built.model.add(node.x.eq(i * 10));
+        built.model.add(node.y.eq(0));
+      });
+      if (baseX !== undefined) built.model.add(built.arms[0].base.x.eq(baseX));
+      const result = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+      expect(result.hasSolution).toBe(true);
+      return { layout: built.read(result), score: result.objectiveValue! };
+    };
+    const balanced = await solve(1);
+    expect(balanced.layout.inserters[0].position).toEqual({ x: 7, y: 0 });
+    const unbalanced = await solve(1, 5);
+    expect(balanced.score).toBeLessThan(unbalanced.score);
+    const disabledBalanced = await solve(0, 7);
+    const disabledUnbalanced = await solve(0, 5);
+    expect(disabledBalanced.score).toBe(disabledUnbalanced.score);
+    // Even a strong balance reward must not fake equal reaches by selecting
+    // a deeper endpoint inside a machine instead of its nearest footprint tile.
+    const strong = await solve(10, 5);
+    expect(strong.layout.inserters[0].pickup).toEqual({ x: 4, y: 0 });
+    expect(strong.layout.inserters[0].dropoff).toEqual({ x: 10, y: 0 });
+    expect(strong.score).toBeGreaterThan(unbalanced.score);
+  });
+
+  it('rejects invalid balance weights', () => {
+    for (const balanceWeight of [-1, 0.5, NaN, Infinity]) {
+      expect(() => buildBobPairedPlacement(simple, [], { ...options, balanceWeight })).toThrow(
+        'Balance weight',
+      );
+    }
+  });
+
   it('allocates parallel bases using the exposed pairing capacity', async () => {
     const built = buildBobPairings(simple, { ...options, pairingCapacity: 0.5, maxInserters: 4 });
     const solved = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });

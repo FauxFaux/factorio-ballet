@@ -83,6 +83,7 @@ describe('Bob layout surface', () => {
       'Placement seconds',
       'Annealing seconds',
       'Pairing items/s',
+      'Balance weight',
     ]) {
       expect(screen.getByRole('spinbutton', { name: label })).toBeTruthy();
     }
@@ -96,8 +97,11 @@ describe('Bob layout surface', () => {
       pairingCapacity: 144,
       boundaryEdges: 'left-right',
       breakSymmetry: true,
+      balanceWeight: 1,
     });
     expect(solve).toHaveBeenCalledTimes(1);
+    await user.clear(screen.getByRole('spinbutton', { name: 'Balance weight' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Balance weight' }), '3');
     await user.selectOptions(screen.getByRole('combobox', { name: 'Boundary chests' }), 'any');
     await user.click(
       screen.getByRole('checkbox', { name: 'Remove equivalent rotations and reflections' }),
@@ -107,6 +111,7 @@ describe('Bob layout surface', () => {
     expect(solvePaired.mock.calls[1][1]).toMatchObject({
       boundaryEdges: 'any',
       breakSymmetry: false,
+      balanceWeight: 3,
     });
   });
 

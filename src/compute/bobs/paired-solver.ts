@@ -96,6 +96,9 @@ export function buildBobPairedPlacement(
 ) {
   const boundaryEdges = options.boundaryEdges ?? defaultBobPairOptions.boundaryEdges;
   const breakSymmetry = options.breakSymmetry ?? defaultBobPairOptions.breakSymmetry;
+  const balanceWeight = options.balanceWeight ?? defaultBobPairOptions.balanceWeight;
+  if (!Number.isSafeInteger(balanceWeight) || balanceWeight < 0)
+    throw new Error('Balance weight must be a nonnegative whole number.');
   const definitions = bobTransportData(itemOnlyBobProblem(problem)).nodes;
   const model = new CpModel();
   const width = model.newIntVar(1, options.maxWidth, 'width');
@@ -142,23 +145,25 @@ export function buildBobPairedPlacement(
     );
   }
   const distances: IntVar[] = [];
+  const imbalances: IntVar[] = [];
   const arms = pairs.map((pair, i) => {
     const base = rectangle(`base:${i}`, 1, 1);
     const endpoints = [pair.from, pair.to].map((id, end) => {
       const node = nodes.find((n) => n.definition.id === id)!;
-      const x = model.newIntVar(0, Math.max(2, options.maxWidth - 1), `${i}:${end}:x`);
-      const y = model.newIntVar(0, Math.max(2, options.maxHeight - 1), `${i}:${end}:y`);
-      model.add(x.ge(node.x));
-      model.add(x.lt(node.right));
-      model.add(y.ge(node.y));
-      model.add(y.lt(node.bottom));
       const dx = model.newIntVar(0, options.maxWidth, `${i}:${end}:dx`);
       const dy = model.newIntVar(0, options.maxHeight, `${i}:${end}:dy`);
-      model.addAbsEquality(dx, x.minus(base.x));
-      model.addAbsEquality(dy, y.minus(base.y));
+      // Exact distance to the footprint, so balance cannot be improved by
+      // artificially moving a pickup/drop point farther into a machine.
+      model.addMaxEquality(dx, [node.x.minus(base.x), base.x.minus(node.right).plus(1), 0]);
+      model.addMaxEquality(dy, [node.y.minus(base.y), base.y.minus(node.bottom).plus(1), 0]);
       distances.push(dx, dy);
-      return { x, y };
+      return { node, distance: dx.plus(dy) };
     });
+    if (balanceWeight > 0) {
+      const imbalance = model.newIntVar(0, options.maxWidth + options.maxHeight, `${i}:imbalance`);
+      model.addAbsEquality(imbalance, endpoints[0].distance.minus(endpoints[1].distance));
+      imbalances.push(imbalance);
+    }
     return { pair, base, endpoints };
   });
   model.addNoOverlap2D(horizontal, vertical);
@@ -175,6 +180,7 @@ export function buildBobPairedPlacement(
   }
   model.minimize(
     total(distances)
+      .plus(total(imbalances).times(balanceWeight))
       .times(options.maxWidth + options.maxHeight + 1)
       .plus(width)
       .plus(height),
@@ -182,6 +188,10 @@ export function buildBobPairedPlacement(
   const read = (result: CpResult): BobLayout => {
     const value = (v: IntVar) => Number(result.value(v));
     const point = (p: { x: IntVar; y: IntVar }) => ({ x: value(p.x), y: value(p.y) });
+    const nearest = (base: (typeof arms)[number]['base'], node: (typeof nodes)[number]) => ({
+      x: Math.max(value(node.x), Math.min(value(base.x), value(node.right) - 1)),
+      y: Math.max(value(node.y), Math.min(value(base.y), value(node.bottom) - 1)),
+    });
     return {
       width: value(width),
       height: value(height),
@@ -194,13 +204,13 @@ export function buildBobPairedPlacement(
       inserters: arms.map((a) => ({
         ...a.pair,
         position: point(a.base),
-        pickup: point(a.endpoints[0]),
-        dropoff: point(a.endpoints[1]),
+        pickup: nearest(a.base, a.endpoints[0].node),
+        dropoff: nearest(a.base, a.endpoints[1].node),
         capacity: 0,
       })),
     };
   };
-  return { model, read };
+  return { model, read, nodes, arms };
 }
 
 export async function solveBobPairedLayout(
@@ -257,7 +267,7 @@ export async function solveBobPairedLayout(
   publish(
     relaxed,
     'placement',
-    `${pairs.length} fixed pairings placed using minimum base-to-footprint Manhattan distance. Reach and capacity require base legalization.`,
+    `${pairs.length} fixed pairings placed using base-to-footprint Manhattan distance and balance weight ${options.balanceWeight}. Reach and capacity require base legalization.`,
   );
   const layout = await annealBobBases(relaxed, options.annealingSeconds, signal);
   if (!layout) {
