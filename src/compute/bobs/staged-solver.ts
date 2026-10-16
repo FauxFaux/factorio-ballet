@@ -28,7 +28,7 @@ export async function solveBobLayout(
   signal?.throwIfAborted();
   problem = itemOnlyBobProblem(problem);
   const options = { ...defaultBobOptions(problem), ...settings };
-  checkBobInput(problem, options);
+  checkBobInput(problem);
   const deadline = performance.now() + options.maxTimeInSeconds * 1000;
   const remaining = () => Math.max(0, (deadline - performance.now()) / 1000);
   const data = bobTransportData(problem);

@@ -28,7 +28,7 @@ const sum = (values: Iterable<IntVar>) => LinearExpr.from(linearSum(values));
 export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions> = {}) {
   problem = itemOnlyBobProblem(problem);
   const options = { ...defaultBobOptions(problem), ...settings };
-  checkBobInput(problem, options);
+  checkBobInput(problem);
   const { maxWidth, maxHeight, maxChests, maxInserters } = options;
   const model = new CpModel();
   const width = model.newIntVar(1, maxWidth, 'width');

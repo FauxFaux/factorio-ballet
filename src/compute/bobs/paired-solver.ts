@@ -190,18 +190,7 @@ export async function solveBobPairedLayout(
   signal?.throwIfAborted();
   problem = itemOnlyBobProblem(problem);
   const options = { ...defaultBobOptions(problem), ...defaultBobPairOptions, ...settings };
-  checkBobInput(problem, options, Infinity);
-  if (
-    ![options.pairingSeconds, options.annealingSeconds].every(
-      (n) => Number.isFinite(n) && n > 0 && n <= 120,
-    ) ||
-    !Number.isFinite(options.pairingCapacity) ||
-    options.pairingCapacity < 0.001 ||
-    options.pairingCapacity > 703.012
-  )
-    throw new Error(
-      'Use phase budgets of 0–120 seconds and pairing capacity of 0.001–703.012 items/s.',
-    );
+  checkBobInput(problem, Infinity);
   setCloudNoticeEnabled(false);
   const topology = buildBobPairings(problem, options);
   const paired = await CpSat.solve(topology.model, {

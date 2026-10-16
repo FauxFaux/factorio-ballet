@@ -15,12 +15,12 @@ import {
   type BobAttempt,
 } from '../../compute/bobs/types.ts';
 
-const fields: { key: keyof BobOptions; label: string; min: number; max: number }[] = [
-  { key: 'maxWidth', label: 'Max width', min: 1, max: 128 },
-  { key: 'maxHeight', label: 'Max height', min: 1, max: 128 },
-  { key: 'maxChests', label: 'Relay chests', min: 0, max: 32 },
-  { key: 'maxInserters', label: 'Inserters', min: 0, max: 128 },
-  { key: 'maxTimeInSeconds', label: 'Seconds', min: 1, max: 120 },
+const fields: { key: keyof BobOptions; label: string }[] = [
+  { key: 'maxWidth', label: 'Max width' },
+  { key: 'maxHeight', label: 'Max height' },
+  { key: 'maxChests', label: 'Relay chests' },
+  { key: 'maxInserters', label: 'Inserters' },
+  { key: 'maxTimeInSeconds', label: 'Seconds' },
 ];
 
 export function BobsLayoutSurface({
@@ -132,6 +132,7 @@ export function BobsLayoutSurface({
       </p>
       <form
         class="bobs-layout-controls"
+        noValidate
         onSubmit={(event) => {
           event.preventDefault();
           setRun((r) => r + 1);
@@ -146,15 +147,12 @@ export function BobsLayoutSurface({
         </label>
         {fields
           .filter((f) => mode !== 'paired' || f.key !== 'maxChests')
-          .map(({ key, label, min, max }) => (
+          .map(({ key, label }) => (
             <label key={key}>
               {mode === 'paired' && key === 'maxTimeInSeconds' ? 'Placement seconds' : label}
               <input
                 type="number"
-                min={min}
-                max={max}
-                step="1"
-                required
+                step="any"
                 value={options[key]}
                 onInput={(event) =>
                   setOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
@@ -165,25 +163,19 @@ export function BobsLayoutSurface({
         {mode === 'paired' &&
           (
             [
-              { key: 'pairingSeconds', label: 'Pairing seconds', min: 1, max: 120, step: 1 },
-              { key: 'annealingSeconds', label: 'Annealing seconds', min: 1, max: 120, step: 1 },
+              { key: 'pairingSeconds', label: 'Pairing seconds' },
+              { key: 'annealingSeconds', label: 'Annealing seconds' },
               {
                 key: 'pairingCapacity',
                 label: 'Pairing items/s',
-                min: 0.001,
-                max: 703.012,
-                step: 'any',
               },
             ] as const
-          ).map(({ key, label, min, max, step }) => (
+          ).map(({ key, label }) => (
             <label key={key}>
               {label}
               <input
                 type="number"
-                required
-                min={min}
-                max={max}
-                step={step}
+                step="any"
                 value={pairOptions[key]}
                 onInput={(event) =>
                   setPairOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
