@@ -46,6 +46,8 @@ export interface BobInserter {
 }
 
 export interface BobLayout {
+  /** Base positions and endpoints are only a distance-scored sketch. */
+  transport?: 'relaxed';
   width: number;
   height: number;
   nodes: BobNode[];

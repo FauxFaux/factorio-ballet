@@ -1,3 +1,4 @@
+import { bobSolverWorkers } from './solver-workers.ts';
 import { CpSat, CpSolverStatus, setCloudNoticeEnabled, type CpResult } from 'or-tools-wasm/cp-sat';
 import { buildBobPlacement } from './placement.ts';
 import { buildBobTransport, BobTransportTimeout } from './transport.ts';
@@ -64,7 +65,7 @@ export async function solveBobLayout(
     );
     if (remaining() <= 0.005) return unknown();
     const packed = await CpSat.solve(placement.model, {
-      numWorkers: 1,
+      numWorkers: bobSolverWorkers(),
       maxTimeInSeconds: Math.min(1, remaining() / 3),
       signal,
     });
@@ -149,7 +150,7 @@ export async function solveBobLayout(
         break;
       }
       const selected = await CpSat.solve(transport.model, {
-        numWorkers: 1,
+        numWorkers: bobSolverWorkers(),
         maxTimeInSeconds: Math.min(1.5, remaining() / (relayBudget ? 1.5 : 3)),
         signal,
       });

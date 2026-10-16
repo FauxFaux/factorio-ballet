@@ -17,6 +17,7 @@ import {
 import type { ResourceId } from '../../types.ts';
 import { checkBobInput } from './input.ts';
 export { solveBobLayout } from './staged-solver.ts';
+export { solveBobPairedLayout } from './paired-solver.ts';
 import { itemOnlyBobProblem } from './item-problem.ts';
 
 type Rect = { x: IntVar; y: IntVar; width: IntVar; height: IntVar; present: BoolVar };

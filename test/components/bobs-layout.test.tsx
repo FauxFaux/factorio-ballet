@@ -11,8 +11,11 @@ import { noChoice } from '../../src/data/index.ts';
 import type { BobAttempt, BobResult } from '../../src/compute/bobs/types.ts';
 import type { Cell } from '../../src/cell.ts';
 
-const { solve } = vi.hoisted(() => ({ solve: vi.fn() }));
-vi.mock('../../src/compute/bobs/bobs-solver.ts', () => ({ solveBobLayout: solve }));
+const { solve, solvePaired } = vi.hoisted(() => ({ solve: vi.fn(), solvePaired: vi.fn() }));
+vi.mock('../../src/compute/bobs/bobs-solver.ts', () => ({
+  solveBobLayout: solve,
+  solveBobPairedLayout: solvePaired,
+}));
 
 const result: BobResult = {
   status: 'optimal',
@@ -49,6 +52,8 @@ function surface(count = 1) {
 beforeEach(() => {
   vi.stubGlobal('crossOriginIsolated', true);
   solve.mockReset();
+  solvePaired.mockReset();
+  solvePaired.mockResolvedValue(result);
   solve.mockResolvedValue(result);
 });
 afterEach(() => {
@@ -57,6 +62,32 @@ afterEach(() => {
 });
 
 describe('Bob layout surface', () => {
+  it('exposes fixed pairing budgets and runs the selected solver', async () => {
+    const user = userEvent.setup();
+    render(surface());
+    await waitFor(() => expect(solve).toHaveBeenCalledTimes(1));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Solve mode' }), 'paired');
+    expect(screen.queryByRole('spinbutton', { name: 'Relay chests' })).toBeNull();
+    for (const label of [
+      'Pairing seconds',
+      'Placement seconds',
+      'Annealing seconds',
+      'Pairing items/s',
+    ]) {
+      expect(screen.getByRole('spinbutton', { name: label })).toBeTruthy();
+    }
+    await user.clear(screen.getByRole('spinbutton', { name: 'Pairing seconds' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Pairing seconds' }), '7');
+    await user.click(screen.getByRole('button', { name: 'Solve' }));
+    await waitFor(() => expect(solvePaired).toHaveBeenCalledTimes(1));
+    expect(solvePaired.mock.calls[0][1]).toMatchObject({
+      pairingSeconds: 7,
+      annealingSeconds: 5,
+      pairingCapacity: 144,
+    });
+    expect(solve).toHaveBeenCalledTimes(1);
+  });
+
   it('shows live placements and keeps conflict regions selectable after success', async () => {
     const user = userEvent.setup();
     const failed: BobAttempt = {

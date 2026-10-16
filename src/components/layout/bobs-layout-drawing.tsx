@@ -142,12 +142,19 @@ export function BobLayoutDrawing({
         };
         const path = `M ${pickup.x} ${pickup.y} L ${entry.x} ${entry.y} Q ${pivot.x} ${pivot.y} ${exit.x} ${exit.y} L ${dropoff.x} ${dropoff.y}`;
         return (
-          <g key={i} style={{ color: inserterColors[i % inserterColors.length] }}>
+          <g
+            key={i}
+            style={{ color: inserterColors[i % inserterColors.length] }}
+            stroke-dasharray={layout.transport === 'relaxed' ? '0.15 0.1' : undefined}
+          >
             <title>
               {Object.entries(inserter.rates)
                 .map(([r, rate]) => `${resourceName(ds.data, r as ResourceId)}: ${rate}/s`)
                 .join(', ')}
-              ; capacity {inserter.capacity.toFixed(1)}/s
+              ;{' '}
+              {layout.transport === 'relaxed'
+                ? 'intended pairing; reach and capacity unvalidated'
+                : `capacity ${inserter.capacity.toFixed(1)}/s`}
             </title>
             <path class="bobs-layout-arm-border" d={path} />
             <path

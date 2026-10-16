@@ -14,6 +14,7 @@ export function bobProblem(
   progress: number,
   inputs: ResourceId[],
   outputs: ResourceId[],
+  maxMachines = 24,
 ): BobProblem {
   if (!cell.entries.length) throw new Error('Add a recipe to place assemblers.');
   if (!solution.complete)
@@ -27,9 +28,9 @@ export function bobProblem(
     if (!machine || count === undefined || !Number.isFinite(count) || count < 0) {
       throw new Error(`Select a valid machine and count for ${entry.recipe}.`);
     }
-    if (machines.length + Math.ceil(count - 1e-9) > 24) {
+    if (machines.length + Math.ceil(count - 1e-9) > maxMachines) {
       throw new Error(
-        'This experimental search supports at most 24 assemblers. Reduce the cell’s scale.',
+        `This experimental search supports at most ${maxMachines} assemblers. Reduce the cell’s scale.`,
       );
     }
     for (let copy = 0; copy < Math.ceil(count - 1e-9); copy++) {

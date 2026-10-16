@@ -42,10 +42,53 @@ can share one fixed pickup/drop pair, sharing its total capacity. There is no si
 inventory contents or startup seeds for cyclic/catalyst production; this is a steady-state flow
 model with unbounded chest storage. Power poles and beacons do not occupy space in this experiment.
 
+## Fixed pairings + base annealing
+
+The **Solve mode** selector adds a one-shot alternative to placement refinement. It runs
+`solveBobPairedLayout` in `src/compute/bobs/paired-solver.ts`:
+
+1. **Pairing:** solve gross item balances without geometry, minimizing the number of direct
+   inserters. Each connection selects a source and destination machine or boundary chest, and
+   carries fixed resource rates. Fan-in, fan-out, cycles and shared-resource arms are allowed;
+   self-insertion is excluded. Parallel arms split loads above **Pairing items/s** (default 144).
+   This is a topology assumption, not a claim about actual inserter capacity. The topology solve
+   uses **Pairing seconds** (default five) and the visible **Inserters** bound. A timed-out solve
+   may supply a feasible topology whose arm count is not proven minimal.
+2. **Placement:** fix those pairs and pack machines, boundary chests and one distinct base tile per
+   arm. Minimize the sum of Manhattan distances from each base to the closest tile in each of its
+   two connected footprints; break equal-distance ties using width + height. Machines can rotate,
+   chests touch the boundary, and all occupied tiles are disjoint. There are no endpoint tables,
+   real reach constraints or capacity equations in this placement solve. It uses **Placement
+   seconds** (default ten), **Max width** and **Max height**. Its incumbent may be suboptimal.
+3. **Base annealing:** keep the machine/chest rectangles and pair flows fixed. Enumerate every free
+   base tile with a legal pickup/drop pair carrying that arm's load. Keep the fastest swing for each
+   base. Start each arm at the candidate nearest its relaxed base, then use simulated annealing to
+   remove base collisions. Temperature cools from one toward zero over the remaining time budget;
+   uphill collision moves allow escape from local minima. **Annealing seconds** (default five)
+   includes candidate enumeration. The pass yields for cancellation throughout and stops as soon as
+   a collision-free assignment is found. Completed layouts go through the same independent geometry,
+   reach, capacity and gross-rate validator as refinement results.
+
+The relaxed placement is published before annealing. It remains selectable after success, failure,
+or Stop, with dashed pairing arrows and explicit unvalidated-base labels. Failure reports `unknown`,
+retaining the sketch without claiming a physical solution. There is one topology solve, one
+placement solve and one annealing pass: no promotions, topology retries, placement exclusions,
+relay-chest search or feedback loop. Relay controls are hidden for this direct-only mode. Each time
+control allows up to 120 seconds; the three phase budgets are separate, so total search time may
+reach their sum, plus model construction. There are no iteration or candidate-count caps. This mode
+has no assembler-count cap; the older refinement mode still checks its existing 24-machine bound.
+
+Distance is a cheap surrogate, not a swing-time objective: close pairs can still require impossible
+inserters, and a fixed topology can miss a better spatial arrangement with different pairings.
+Successful results report `feasible`, never global optimality. Lowering pairing capacity allocates
+more parallel arms in advance, at the cost of extra base space. Increasing it may produce pairs that
+cannot carry their assigned loads at the resulting geometry.
+
 ## Placement and transport refinement
 
-The application calls `solveBobLayout` in `src/compute/bobs/staged-solver.ts`. It separates machine
-placement from transport rather than searching every arm's coordinates and flows jointly:
+The default placement refinement mode calls `solveBobLayout` in `src/compute/bobs/staged-solver.ts`.
+It separates machine placement from transport rather than searching every arm's coordinates and
+flows jointly:
 
 1. `placement.ts` packs assemblers and mandatory boundary chests with `addNoOverlap2D`, minimizing
    width + height, then reserved inserter/chest count. A throughput lower bound reserves enough
@@ -121,7 +164,7 @@ described above.
 
 The solver is dynamically imported and uses the package's worker executor to keep the page
 responsive. Removing the layout, changing the cell, rerunning, or pressing Stop aborts the previous
-job. Search settings/results are transient; only the layout type is persisted.
+job. Solve mode and search settings/results are transient; only the layout type is persisted.
 
 The [or-tools-wasm browser runtime](https://github.com/Axelwickm/or-tools-wasm#browser-requirements)
 requires cross-origin isolation, even with one solver worker. Vite development and preview are
@@ -138,7 +181,7 @@ package emits assets for its other solver runtimes as well, but those are not lo
 search. The Bob solver module is excluded from page preloading.
 
 Run
-`npx vitest run test/compute/bobs.test.ts test/compute/bobs-staged.test.ts test/components/bobs-layout.test.tsx`
+`npx vitest run test/compute/bobs.test.ts test/compute/bobs-staged.test.ts test/compute/bobs-paired.test.ts test/components/bobs-layout.test.tsx`
 for the real WASM solver and asynchronous surface regressions. The branching fixture pins entities
 and arms through `buildBobModel` to check that a shared chest with three interacting inserters is
 feasible.

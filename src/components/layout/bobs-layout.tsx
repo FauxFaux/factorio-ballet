@@ -5,6 +5,7 @@ import type { Solution } from '../../solve/index.ts';
 import type { ResourceId } from '../../types.ts';
 import { useDataset } from '../../dataset/context.tsx';
 import { BobLayoutDrawing } from './bobs-layout-drawing.tsx';
+import { defaultBobPairOptions, type BobPairOptions } from '../../compute/bobs/paired-options.ts';
 import { bobProblem } from '../../compute/bobs/problem.ts';
 import {
   defaultBobOptions,
@@ -38,7 +39,7 @@ export function BobsLayoutSurface({
   const ds = useDataset();
   const request = useMemo(() => {
     try {
-      return { problem: bobProblem(ds, cell, solution, progress, inputs, outputs) };
+      return { problem: bobProblem(ds, cell, solution, progress, inputs, outputs, Infinity) };
     } catch (error) {
       return { error: String(error instanceof Error ? error.message : error) };
     }
@@ -47,8 +48,12 @@ export function BobsLayoutSurface({
   const [options, setOptions] = useState<BobOptions>(() =>
     defaultBobOptions(request.problem ?? { machines: [], inputs: [], outputs: [] }),
   );
-  const optionsRef = useRef(options);
-  optionsRef.current = options;
+  const [mode, setMode] = useState('refinement');
+  const [pairOptions, setPairOptions] = useState(defaultBobPairOptions);
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
+  const optionsRef = useRef<BobPairOptions>({ ...options, ...pairOptions });
+  optionsRef.current = { ...options, ...pairOptions };
   const [run, setRun] = useState(0);
   const controller = useRef<AbortController>();
   const [state, setState] = useState<{
@@ -74,14 +79,15 @@ export function BobsLayoutSurface({
     let active = true;
     setState({ key: stateKey, running: true });
     void import('../../compute/bobs/bobs-solver.ts')
-      .then(({ solveBobLayout }) => {
+      .then(({ solveBobLayout, solveBobPairedLayout }) => {
         if (!active) return;
         if (typeof window !== 'undefined' && !globalThis.crossOriginIsolated) {
           throw new Error(
             'Local solving needs cross-origin isolation. Serve with Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp.',
           );
         }
-        return solveBobLayout(snapshot.problem!, optionsRef.current, abort.signal, (attempt) => {
+        const solve = modeRef.current === 'paired' ? solveBobPairedLayout : solveBobLayout;
+        return solve(snapshot.problem!, optionsRef.current, abort.signal, (attempt) => {
           if (!active) return;
           setState((previous) => {
             const attempts = previous?.key === stateKey ? [...(previous.attempts ?? [])] : [];
@@ -118,8 +124,11 @@ export function BobsLayoutSurface({
     <section class="bobs-layout" aria-label="Bob layout">
       <p class="bobs-layout-description">
         Bob’s inserters · reach ≤3 Manhattan tiles · 2160°/s · extension 6 tiles/s · hand 24. One
-        boundary chest per external item. Fluid connections assumed correct. Place assemblers, then
-        connect items; retry with difficult inserters reserved. Compact layouts are heuristic.
+        boundary chest per external item. Fluid connections assumed correct. Compact layouts are
+        heuristic.
+        {mode === 'paired'
+          ? ' Choose rate-balanced pairings once, minimize base distance, then anneal bases with machines fixed. No placement retries or relay chests.'
+          : ' Place assemblers, then connect items; retry with difficult inserters reserved.'}
       </p>
       <form
         class="bobs-layout-controls"
@@ -128,22 +137,60 @@ export function BobsLayoutSurface({
           setRun((r) => r + 1);
         }}
       >
-        {fields.map(({ key, label, min, max }) => (
-          <label key={key}>
-            {label}
-            <input
-              type="number"
-              min={min}
-              max={max}
-              step="1"
-              required
-              value={options[key]}
-              onInput={(event) =>
-                setOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
-              }
-            />
-          </label>
-        ))}
+        <label>
+          Solve mode
+          <select value={mode} onChange={(event) => setMode(event.currentTarget.value)}>
+            <option value="refinement">Placement refinement</option>
+            <option value="paired">Fixed pairings + base annealing</option>
+          </select>
+        </label>
+        {fields
+          .filter((f) => mode !== 'paired' || f.key !== 'maxChests')
+          .map(({ key, label, min, max }) => (
+            <label key={key}>
+              {mode === 'paired' && key === 'maxTimeInSeconds' ? 'Placement seconds' : label}
+              <input
+                type="number"
+                min={min}
+                max={max}
+                step="1"
+                required
+                value={options[key]}
+                onInput={(event) =>
+                  setOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
+                }
+              />
+            </label>
+          ))}
+        {mode === 'paired' &&
+          (
+            [
+              { key: 'pairingSeconds', label: 'Pairing seconds', min: 1, max: 120, step: 1 },
+              { key: 'annealingSeconds', label: 'Annealing seconds', min: 1, max: 120, step: 1 },
+              {
+                key: 'pairingCapacity',
+                label: 'Pairing items/s',
+                min: 0.001,
+                max: 703.012,
+                step: 'any',
+              },
+            ] as const
+          ).map(({ key, label, min, max, step }) => (
+            <label key={key}>
+              {label}
+              <input
+                type="number"
+                required
+                min={min}
+                max={max}
+                step={step}
+                value={pairOptions[key]}
+                onInput={(event) =>
+                  setPairOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
+                }
+              />
+            </label>
+          ))}
         <button class="cell-btn" type="submit" disabled={!request.problem}>
           Solve
         </button>
@@ -193,8 +240,15 @@ export function BobsLayoutSurface({
           {visibleAttempt && (
             <div class="bobs-layout-attempt-status">
               <p>{visibleAttempt.message}</p>
-              {visibleAttempt.stage !== 'solved' && visibleAttempt.layout.inserters.length > 0 && (
-                <p>Shown inserters are placement hints; transport is incomplete.</p>
+              {visibleAttempt.layout.transport === 'relaxed' ? (
+                <p>
+                  Relaxed pairing sketch: arrows show intended connections, not legal inserters.
+                </p>
+              ) : (
+                visibleAttempt.stage !== 'solved' &&
+                visibleAttempt.layout.inserters.length > 0 && (
+                  <p>Shown inserters are placement hints; transport is incomplete.</p>
+                )
               )}
               {visibleAttempt.conflicts.length > 0 && (
                 <ul>
@@ -210,7 +264,8 @@ export function BobsLayoutSurface({
           )}
           <p class="bobs-layout-status">
             {layout.width}×{layout.height} tiles · perimeter {2 * (layout.width + layout.height)} ·{' '}
-            {layout.width * layout.height} tiles² · {layout.inserters.length} inserters ·{' '}
+            {layout.width * layout.height} tiles² · {layout.inserters.length}{' '}
+            {layout.transport === 'relaxed' ? 'paired bases (unvalidated)' : 'inserters'} ·{' '}
             {layout.nodes.filter((n) => n.kind === 'chest').length} relay chests
           </p>
           <ol class="bobs-layout-legend">

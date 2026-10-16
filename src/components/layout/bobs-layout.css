@@ -43,9 +43,15 @@
 }
 
 .bobs-layout-controls label {
+  max-width: 100%;
   display: grid;
   gap: 0.2rem;
   font-size: 0.75rem;
+}
+
+.bobs-layout-controls select {
+  min-width: 0;
+  max-width: 100%;
 }
 
 .bobs-layout-controls input {
