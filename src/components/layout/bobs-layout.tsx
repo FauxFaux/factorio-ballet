@@ -160,6 +160,35 @@ export function BobsLayoutSurface({
               />
             </label>
           ))}
+        {mode === 'paired' && (
+          <>
+            <label>
+              Boundary chests
+              <select
+                value={pairOptions.boundaryEdges}
+                onChange={(event) =>
+                  setPairOptions((o) => ({
+                    ...o,
+                    boundaryEdges: event.currentTarget.value as BobPairOptions['boundaryEdges'],
+                  }))
+                }
+              >
+                <option value="any">Any edge</option>
+                <option value="left-right">Inputs left / outputs right</option>
+              </select>
+            </label>
+            <label>
+              Remove equivalent rotations and reflections
+              <input
+                type="checkbox"
+                checked={pairOptions.breakSymmetry}
+                onChange={(event) =>
+                  setPairOptions((o) => ({ ...o, breakSymmetry: event.currentTarget.checked }))
+                }
+              />
+            </label>
+          </>
+        )}
         {mode === 'paired' &&
           (
             [

@@ -68,6 +68,16 @@ describe('Bob layout surface', () => {
     await waitFor(() => expect(solve).toHaveBeenCalledTimes(1));
     await user.selectOptions(screen.getByRole('combobox', { name: 'Solve mode' }), 'paired');
     expect(screen.queryByRole('spinbutton', { name: 'Relay chests' })).toBeNull();
+    expect(
+      (screen.getByRole('combobox', { name: 'Boundary chests' }) as HTMLSelectElement).value,
+    ).toBe('left-right');
+    expect(
+      (
+        screen.getByRole('checkbox', {
+          name: 'Remove equivalent rotations and reflections',
+        }) as HTMLInputElement
+      ).checked,
+    ).toBe(true);
     for (const label of [
       'Pairing seconds',
       'Placement seconds',
@@ -84,8 +94,20 @@ describe('Bob layout surface', () => {
       pairingSeconds: 7,
       annealingSeconds: 5,
       pairingCapacity: 144,
+      boundaryEdges: 'left-right',
+      breakSymmetry: true,
     });
     expect(solve).toHaveBeenCalledTimes(1);
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Boundary chests' }), 'any');
+    await user.click(
+      screen.getByRole('checkbox', { name: 'Remove equivalent rotations and reflections' }),
+    );
+    await user.click(screen.getByRole('button', { name: 'Solve' }));
+    await waitFor(() => expect(solvePaired).toHaveBeenCalledTimes(2));
+    expect(solvePaired.mock.calls[1][1]).toMatchObject({
+      boundaryEdges: 'any',
+      breakSymmetry: false,
+    });
   });
 
   it('shows live placements and keeps conflict regions selectable after success', async () => {

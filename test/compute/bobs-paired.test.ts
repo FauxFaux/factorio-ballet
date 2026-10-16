@@ -73,6 +73,49 @@ describe('Bob fixed pairings', () => {
       ).toBeGreaterThanOrEqual(2);
   });
 
+  it('puts inputs left and outputs right by default while retaining the any-edge option', async () => {
+    const pairs = [
+      { from: 'source:item:iron', to: 'a', rates: { 'item:iron': 1 } },
+      { from: 'a', to: 'sink:item:gear', rates: { 'item:gear': 1 } },
+    ];
+    const built = buildBobPairedPlacement(simple, pairs, options);
+    const solved = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+    expect(solved.hasSolution).toBe(true);
+    const layout = built.read(solved);
+    expect(layout.nodes.find((n) => n.kind === 'source')!.position.x).toBe(0);
+    const sink = layout.nodes.find((n) => n.kind === 'sink')!;
+    expect(sink.position.x + sink.size.width).toBe(layout.width);
+    // Four source chests cannot share a left edge only three tiles tall.
+    const crowded: BobProblem = {
+      machines: [
+        {
+          id: 'a',
+          label: 'A',
+          size: { width: 3, height: 3 },
+          inputs: { 'item:a': 1, 'item:b': 1, 'item:c': 1, 'item:d': 1 },
+          outputs: {},
+        },
+      ],
+      inputs: ['item:a', 'item:b', 'item:c', 'item:d'],
+      outputs: [],
+    };
+    const deliveries = crowded.inputs.map((resource) => ({
+      from: `source:${resource}`,
+      to: 'a',
+      rates: { [resource]: 1 },
+    }));
+    for (const boundaryEdges of ['any', 'left-right'] as const) {
+      const narrow = buildBobPairedPlacement(crowded, deliveries, {
+        ...options,
+        maxWidth: 7,
+        maxHeight: 3,
+        boundaryEdges,
+      });
+      const answer = await CpSat.solve(narrow.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+      expect(answer.hasSolution).toBe(boundaryEdges === 'any');
+    }
+  });
+
   it('allocates parallel bases using the exposed pairing capacity', async () => {
     const built = buildBobPairings(simple, { ...options, pairingCapacity: 0.5, maxInserters: 4 });
     const solved = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });

@@ -57,9 +57,10 @@ The **Solve mode** selector adds a one-shot alternative to placement refinement.
 2. **Placement:** fix those pairs and pack machines, boundary chests and one distinct base tile per
    arm. Minimize the sum of Manhattan distances from each base to the closest tile in each of its
    two connected footprints; break equal-distance ties using width + height. Machines can rotate,
-   chests touch the boundary, and all occupied tiles are disjoint. There are no endpoint tables,
-   real reach constraints or capacity equations in this placement solve. It uses **Placement
-   seconds** (default ten), **Max width** and **Max height**. Its incumbent may be suboptimal.
+   chests follow the selected boundary edges, and all occupied tiles are disjoint. There are no
+   endpoint tables, real reach constraints or capacity equations in this placement solve. It uses
+   **Placement seconds** (default ten), **Max width** and **Max height**. Its incumbent may be
+   suboptimal.
 3. **Base annealing:** keep the machine/chest rectangles and pair flows fixed. Enumerate every free
    base tile with a legal pickup/drop pair carrying that arm's load. Keep the fastest swing for each
    base. Start each arm at the candidate nearest its relaxed base, then use simulated annealing to
@@ -77,6 +78,32 @@ relay-chest search or feedback loop. Relay controls are hidden for this direct-o
 control allows up to 120 seconds; the three phase budgets are separate, so total search time may
 reach their sum, plus model construction. There are no iteration or candidate-count caps. This mode
 has no assembler-count cap; the older refinement mode still checks its existing 24-machine bound.
+
+### Placement restrictions and symmetry
+
+Two controls in fixed-pair mode simplify placement; both are enabled by default:
+
+- **Boundary chests → Inputs left / outputs right** fixes source chests at `x = 0` and sink chests
+  against the right edge. **Any edge** restores the original boundary rule. This is a real
+  restriction: some compact arrangements need top/bottom access and may no longer fit.
+- **Remove equivalent rotations and reflections** chooses the lexicographically smallest labelled
+  geometry among its feasible whole-world transformations. The ordering compares board dimensions,
+  then each machine/chest rectangle and each paired base in stable order. Endpoint choices do not
+  participate. With any-edge boundaries it considers all eight rotations/reflections, including
+  quarter-turns only when the swapped dimensions fit the selected bounds. With left/right flow it
+  removes only top/bottom reflection, since the other transformations change the prescribed edges.
+  This preserves an equivalent geometry and objective value; it does not pin a particular machine to
+  a corner. The explicit constraints prune symmetric solutions, without promising a speedup for
+  every instance. The solver may also perform its own internal symmetry processing.
+
+These controls affect only fixed-pair placement. The pair topology and inserter legalization are
+unchanged. They introduce no search limits. They do not remove permutations of identical machines:
+matching recipe names alone is insufficient once the pairing graph assigns different neighbours.
+
+Other possible restrictions include fixed chest ordering, fixed machine orientation, row/grid
+alignment, and left-to-right ordering of successive production stages. Those are not implemented
+here; unlike whole-world symmetry removal, they can exclude better layouts (and stage ordering must
+account for cycles).
 
 Distance is a cheap surrogate, not a swing-time objective: close pairs can still require impossible
 inserters, and a fixed topology can miss a better spatial arrangement with different pairings.

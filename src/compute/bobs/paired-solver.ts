@@ -9,6 +9,7 @@ import {
   type CpResult,
   type IntervalVar,
 } from 'or-tools-wasm/cp-sat';
+import { addBobPlacementSymmetry } from './placement-symmetry.ts';
 import { bobTransportData } from './problem-data.ts';
 import { annealBobBases } from './base-annealing.ts';
 import { checkBobInput } from './input.ts';
@@ -25,7 +26,11 @@ import {
   type BobResult,
 } from './types.ts';
 
-import { defaultBobPairOptions, type BobPairOptions } from './paired-options.ts';
+import {
+  defaultBobPairOptions,
+  type BobPairOptions,
+  type BobPlacementOptions,
+} from './paired-options.ts';
 const total = (values: IntVar[]) => LinearExpr.from(sum(values));
 export type BobPair = Pick<BobInserter, 'from' | 'to' | 'rates'>;
 
@@ -87,8 +92,10 @@ export function buildBobPairings(problem: BobProblem, options: BobPairOptions) {
 export function buildBobPairedPlacement(
   problem: BobProblem,
   pairs: BobPair[],
-  options: BobOptions,
+  options: BobOptions & Partial<BobPlacementOptions>,
 ) {
+  const boundaryEdges = options.boundaryEdges ?? defaultBobPairOptions.boundaryEdges;
+  const breakSymmetry = options.breakSymmetry ?? defaultBobPairOptions.breakSymmetry;
   const definitions = bobTransportData(itemOnlyBobProblem(problem)).nodes;
   const model = new CpModel();
   const width = model.newIntVar(1, options.maxWidth, 'width');
@@ -122,6 +129,10 @@ export function buildBobPairedPlacement(
     ...rectangle(d.id, d.size.width, d.size.height),
   }));
   for (const n of nodes.filter((n) => n.definition.kind !== 'assembler')) {
+    if (boundaryEdges === 'left-right') {
+      model.add(n.definition.kind === 'source' ? n.x.eq(0) : n.right.eq(width));
+      continue;
+    }
     const sides = Array.from({ length: 4 }, (_, i) =>
       model.newBoolVar(`${n.definition.id}:side:${i}`),
     );
@@ -151,6 +162,17 @@ export function buildBobPairedPlacement(
     return { pair, base, endpoints };
   });
   model.addNoOverlap2D(horizontal, vertical);
+  if (breakSymmetry) {
+    addBobPlacementSymmetry(
+      model,
+      width,
+      height,
+      [...nodes, ...arms.map((a) => a.base)],
+      options.maxWidth,
+      options.maxHeight,
+      boundaryEdges === 'left-right',
+    );
+  }
   model.minimize(
     total(distances)
       .times(options.maxWidth + options.maxHeight + 1)
