@@ -194,6 +194,8 @@ export function BobsLayoutSurface({
             [
               { key: 'minBoundaryHeight', label: 'Min I/O height' },
               { key: 'balanceWeight', label: 'Balance weight' },
+              { key: 'overreachWeight', label: 'Overreach weight' },
+              { key: 'overreachDoublings', label: 'Reach doubling tiles' },
               { key: 'pairingSeconds', label: 'Pairing seconds' },
               { key: 'annealingSeconds', label: 'Annealing seconds' },
               {
@@ -207,7 +209,11 @@ export function BobsLayoutSurface({
               title={
                 key === 'minBoundaryHeight'
                   ? '1 keeps single-tile chests; 2 or more allows vertical 1×N I/O regions up to Max height.'
-                  : undefined
+                  : key === 'overreachWeight'
+                    ? 'Penalty for each pickup/drop reach over 3 Manhattan tiles. 0 disables it.'
+                    : key === 'overreachDoublings'
+                      ? 'Number of overreach tiles with exponential growth, followed by a steep linear continuation. No reach cutoff.'
+                      : undefined
               }
             >
               {label}

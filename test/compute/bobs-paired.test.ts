@@ -5,6 +5,7 @@ import {
   buildBobPairedPlacement,
   solveBobPairedLayout,
 } from '../../src/compute/bobs/paired-solver.ts';
+import { bobReachPenalty } from '../../src/compute/bobs/reach-penalty.ts';
 import { annealBobBases } from '../../src/compute/bobs/base-annealing.ts';
 import { defaultBobPairOptions } from '../../src/compute/bobs/paired-options.ts';
 import { defaultBobOptions, type BobProblem } from '../../src/compute/bobs/types.ts';
@@ -258,6 +259,7 @@ describe('Bob fixed pairings', () => {
         maxHeight: 1,
         breakSymmetry: false,
         balanceWeight,
+        overreachWeight: 0,
       });
       built.nodes.forEach((node, i) => {
         built.model.add(node.x.eq(i * 10));
@@ -281,6 +283,88 @@ describe('Bob fixed pairings', () => {
     expect(strong.layout.inserters[0].pickup).toEqual({ x: 4, y: 0 });
     expect(strong.layout.inserters[0].dropoff).toEqual({ x: 10, y: 0 });
     expect(strong.score).toBeGreaterThan(unbalanced.score);
+  });
+
+  it('prefers legal reaches over a smaller perimeter and retains overreach as a soft constraint', async () => {
+    const problem: BobProblem = {
+      machines: [
+        {
+          id: 'a',
+          label: 'A',
+          size: { width: 1, height: 1 },
+          inputs: {},
+          outputs: { 'item:x': 1 },
+        },
+        {
+          id: 'b',
+          label: 'B',
+          size: { width: 1, height: 1 },
+          inputs: { 'item:x': 1 },
+          outputs: {},
+        },
+        { id: 'c', label: 'C', size: { width: 1, height: 1 }, inputs: {}, outputs: {} },
+      ],
+      inputs: [],
+      outputs: [],
+    };
+    const solve = async (overreachWeight: number, compactOnly = false) => {
+      const built = buildBobPairedPlacement(
+        problem,
+        [{ from: 'a', to: 'b', rates: { 'item:x': 1 } }],
+        {
+          ...options,
+          maxWidth: 7,
+          maxHeight: 6,
+          balanceWeight: 0,
+          breakSymmetry: false,
+          overreachWeight,
+        },
+      );
+      const coordinates = [
+        ...built.nodes.flatMap((n) => [n.x, n.y]),
+        built.arms[0].base.x,
+        built.arms[0].base.y,
+      ];
+      const compact = [0, 0, 6, 0, 2, 0, 1, 0]; // reaches 1 and 5; 7×1
+      const roomy = [0, 0, 3, 3, 0, 5, 1, 2]; // reaches 3 and 3; 4×6
+      built.model.addAllowedAssignments(coordinates, compactOnly ? [compact] : [compact, roomy]);
+      const answer = await CpSat.solve(built.model, { maxTimeInSeconds: 2, numWorkers: 1 });
+      expect(answer.hasSolution).toBe(true);
+      return built.read(answer);
+    };
+    const old = await solve(0),
+      preferred = await solve(defaultBobPairOptions.overreachWeight);
+    expect([old.width, old.height]).toEqual([7, 1]);
+    expect([preferred.width, preferred.height]).toEqual([4, 6]);
+    const forced = await solve(defaultBobPairOptions.overreachWeight, true);
+    expect([forced.width, forced.height]).toEqual([7, 1]);
+  });
+
+  it('doubles overreach costs then continues increasing without a distance cutoff', () => {
+    expect([1, 2, 3, 4, 5, 6, 7].map((d) => bobReachPenalty(d, 12))).toEqual([
+      0, 0, 0, 1, 3, 7, 15,
+    ]);
+    expect([5, 6, 7, 8, 9].map((d) => bobReachPenalty(d, 2))).toEqual([3, 7, 11, 15, 19]);
+    expect(bobReachPenalty(3, 10000)).toBe(0);
+    expect(bobReachPenalty(5, 10000)).toBe(3);
+  });
+
+  it('rejects invalid or overflowing reach weights without silently limiting reach', () => {
+    for (const overreachWeight of [-1, 0.5, NaN, Infinity])
+      expect(() => buildBobPairedPlacement(simple, [], { ...options, overreachWeight })).toThrow(
+        'Overreach weight',
+      );
+    for (const overreachDoublings of [0, -1, 1.5, NaN, Infinity])
+      expect(() => buildBobPairedPlacement(simple, [], { ...options, overreachDoublings })).toThrow(
+        'Reach doubling tiles',
+      );
+    expect(() =>
+      buildBobPairedPlacement(
+        simple,
+        [{ from: 'source:item:iron', to: 'a', rates: { 'item:iron': 1 } }],
+        { ...options, overreachWeight: Number.MAX_SAFE_INTEGER },
+      ),
+    ).toThrow('safe integer precision');
   });
 
   it('rejects invalid balance weights', () => {

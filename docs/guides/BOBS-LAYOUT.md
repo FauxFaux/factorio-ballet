@@ -56,11 +56,11 @@ The **Solve mode** selector adds a one-shot alternative to placement refinement.
    uses **Pairing seconds** (default five) and the visible **Inserters** bound. A timed-out solve
    may supply a feasible topology whose arm count is not proven minimal.
 2. **Placement:** fix those pairs and pack machines, boundary chests and one distinct base tile per
-   arm. Minimize total Manhattan reach plus a weighted imbalance penalty between each arm’s pickup
-   and drop reaches; break equal-score ties using width + height. Machines can rotate, chests follow
-   the selected boundary edges, and all occupied tiles are disjoint. There are no endpoint tables,
-   real reach constraints or capacity equations in this placement solve. It uses **Placement
-   seconds** (default ten), **Max width** and **Max height**. Its incumbent may be suboptimal.
+   arm. Minimize total Manhattan reach plus weighted imbalance and exponential overreach costs;
+   break equal-score ties using width + height. Machines can rotate, chests follow the selected
+   boundary edges, and all occupied tiles are disjoint. There are no endpoint tables, real reach
+   constraints or capacity equations in this placement solve. It uses **Placement seconds** (default
+   ten), **Max width** and **Max height**. Its incumbent may be suboptimal.
 3. **Base annealing:** keep the machine/chest rectangles and pair flows fixed. Enumerate every free
    base tile with a legal pickup/drop pair carrying that arm's load. Keep the fastest swing for each
    base. Start each arm at the candidate nearest its relaxed base, then use simulated annealing to
@@ -81,19 +81,37 @@ has no assembler-count cap; the older refinement mode still checks its existing 
 
 ### Balanced arm scoring
 
-**Balance weight** defaults to one; zero restores distance-only scoring. It accepts nonnegative
+**Balance weight** defaults to one; zero disables the imbalance penalty. It accepts nonnegative
 whole numbers, with no additional search cap. For each arm, `a` and `b` are the exact minimum
 Manhattan distances from its base to each connected footprint:
 
 ```
 arm score = a + b + balanceWeight × abs(a - b)
+            + overreachWeight × (reachPenalty(a) + reachPenalty(b))
 placement score = sum(arm scores) × (maxWidth + maxHeight + 1) + width + height
 ```
 
-At the default weight, reaches `(2,2)` score four while `(1,3)` score six. A larger weight permits
-more total reach in exchange for better balance. Perimeter only breaks equal combined scores. Exact
-point-to-rectangle distances prevent the model from manufacturing balance by selecting a farther
-tile inside a machine; displayed relaxed endpoints use those nearest tiles too.
+At the default balance weight, reaches `(2,2)` score four while `(1,3)` score six. A larger weight
+permits more total reach in exchange for better balance. Perimeter only breaks equal combined
+scores. Exact point-to-rectangle distances prevent the model from manufacturing balance by selecting
+a farther tile inside a machine; displayed relaxed endpoints use those nearest tiles too.
+
+**Overreach weight** defaults to 16; zero disables the overreach cost. Each endpoint reach of three
+or fewer Manhattan tiles has zero extra cost. For excess `e = max(0, reach - 3)`, the unweighted
+penalty is `2^e - 1` through **Reach doubling tiles** (default 12). Thus reaches 4, 5, 6 and 7 add
+16, 48, 112 and 240 points at the default weight. Both pickup and drop are penalized separately, so
+a short pickup cannot hide an unreachable drop. The penalty is added before the perimeter
+tie-breaker and can favor a larger layout with shorter, usable arms.
+
+Beyond the selected number `k` of exponential overreach tiles, the unweighted cost continues as
+`(2^k - 1) + (e - k) × 2^k`. It keeps increasing rather than saturating or imposing a reach limit.
+This continuation keeps CP-SAT integer coefficients manageable; both the weight and doubling count
+are exposed in the interface. They accept whole numbers (weight nonnegative, doubling count
+positive). Settings whose conservative objective bound exceeds JavaScript’s safe integer precision
+are rejected visibly with guidance to reduce weights, doubling tiles or layout bounds; they are
+never silently clipped. A small allowed-value table per endpoint links distance to its penalty; no
+inserter swing geometry is added. Longer reaches remain possible when no better arrangement is
+found, and legalization can still fail.
 
 Balance adds one integer variable and one absolute-value constraint per arm when enabled. Exact
 footprint distances use two maximum constraints per endpoint instead of freely chosen endpoint

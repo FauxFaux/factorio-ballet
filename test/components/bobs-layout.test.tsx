@@ -84,6 +84,8 @@ describe('Bob layout surface', () => {
       'Annealing seconds',
       'Pairing items/s',
       'Balance weight',
+      'Overreach weight',
+      'Reach doubling tiles',
       'Min I/O height',
     ]) {
       expect(screen.getByRole('spinbutton', { name: label })).toBeTruthy();
@@ -99,9 +101,15 @@ describe('Bob layout surface', () => {
       boundaryEdges: 'left-right',
       breakSymmetry: true,
       balanceWeight: 1,
+      overreachWeight: 16,
+      overreachDoublings: 12,
       minBoundaryHeight: 1,
     });
     expect(solve).toHaveBeenCalledTimes(1);
+    await user.clear(screen.getByRole('spinbutton', { name: 'Overreach weight' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Overreach weight' }), '32');
+    await user.clear(screen.getByRole('spinbutton', { name: 'Reach doubling tiles' }));
+    await user.type(screen.getByRole('spinbutton', { name: 'Reach doubling tiles' }), '8');
     await user.clear(screen.getByRole('spinbutton', { name: 'Min I/O height' }));
     await user.type(screen.getByRole('spinbutton', { name: 'Min I/O height' }), '2');
     await user.clear(screen.getByRole('spinbutton', { name: 'Balance weight' }));
@@ -116,6 +124,8 @@ describe('Bob layout surface', () => {
       boundaryEdges: 'any',
       breakSymmetry: false,
       balanceWeight: 3,
+      overreachWeight: 32,
+      overreachDoublings: 8,
       minBoundaryHeight: 2,
     });
   });

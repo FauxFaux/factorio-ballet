@@ -124,6 +124,12 @@ export function BobLayoutDrawing({
         </g>
       ))}
       {layout.inserters.map((inserter, i) => {
+        const exceedsReach = [inserter.pickup, inserter.dropoff].some(
+          (endpoint) =>
+            Math.abs(endpoint.x - inserter.position.x) +
+              Math.abs(endpoint.y - inserter.position.y) >
+            3,
+        );
         const pivot = { x: inserter.position.x + 0.5, y: inserter.position.y + 0.5 };
         const { pickup, dropoff } = inserterEndpoints[i];
         const pickupLength = Math.hypot(pickup.x - pivot.x, pickup.y - pivot.y);
@@ -145,7 +151,9 @@ export function BobLayoutDrawing({
           <g
             key={i}
             style={{ color: inserterColors[i % inserterColors.length] }}
-            stroke-dasharray={layout.transport === 'relaxed' ? '0.15 0.1' : undefined}
+            stroke-dasharray={
+              layout.transport === 'relaxed' && exceedsReach ? '0.15 0.1' : undefined
+            }
           >
             <title>
               {Object.entries(inserter.rates)

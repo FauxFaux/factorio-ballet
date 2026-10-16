@@ -9,6 +9,7 @@ import {
   type CpResult,
   type IntervalVar,
 } from 'or-tools-wasm/cp-sat';
+import { bobReachPenalty } from './reach-penalty.ts';
 import { addBobPlacementSymmetry } from './placement-symmetry.ts';
 import { bobTransportData } from './problem-data.ts';
 import { annealBobBases } from './base-annealing.ts';
@@ -88,7 +89,7 @@ export function buildBobPairings(problem: BobProblem, options: BobPairOptions) {
   return { model, read, data };
 }
 
-/** Fixed edges, free machine rectangles and bases; no reach or swing tables. */
+/** Fixed edges, free machine rectangles and bases; soft reach costs without swing geometry. */
 export function buildBobPairedPlacement(
   problem: BobProblem,
   pairs: BobPair[],
@@ -102,6 +103,24 @@ export function buildBobPairedPlacement(
   const minBoundaryHeight = options.minBoundaryHeight ?? defaultBobPairOptions.minBoundaryHeight;
   if (!Number.isSafeInteger(minBoundaryHeight) || minBoundaryHeight < 1)
     throw new Error('Minimum I/O height must be a positive whole number.');
+  const overreachWeight = options.overreachWeight ?? defaultBobPairOptions.overreachWeight;
+  const overreachDoublings = options.overreachDoublings ?? defaultBobPairOptions.overreachDoublings;
+  if (!Number.isSafeInteger(overreachWeight) || overreachWeight < 0)
+    throw new Error('Overreach weight must be a nonnegative whole number.');
+  if (!Number.isSafeInteger(overreachDoublings) || overreachDoublings < 1)
+    throw new Error('Reach doubling tiles must be a positive whole number.');
+  const maxReach = options.maxWidth + options.maxHeight - 2;
+  const maxPenalty = overreachWeight > 0 ? bobReachPenalty(maxReach, overreachDoublings) : 0;
+  const maxScore =
+    (2 * pairs.length * (maxReach + maxPenalty * overreachWeight) +
+      pairs.length * maxReach * balanceWeight) *
+      (options.maxWidth + options.maxHeight + 1) +
+    options.maxWidth +
+    options.maxHeight;
+  if (!Number.isSafeInteger(maxScore))
+    throw new Error(
+      'Scoring exceeds safe integer precision. Reduce the reach doubling tiles, scoring weights, or layout bounds.',
+    );
   const definitions = bobTransportData(itemOnlyBobProblem(problem)).nodes;
   const model = new CpModel();
   const width = model.newIntVar(1, options.maxWidth, 'width');
@@ -169,6 +188,14 @@ export function buildBobPairedPlacement(
   }
   const distances: IntVar[] = [];
   const imbalances: IntVar[] = [];
+  const overreachPenalties: IntVar[] = [];
+  const reachTable =
+    overreachWeight > 0
+      ? Array.from({ length: maxReach + 1 }, (_, reach) => [
+          reach,
+          bobReachPenalty(reach, overreachDoublings),
+        ])
+      : [];
   const arms = pairs.map((pair, i) => {
     const base = rectangle(`base:${i}`, 1, 1);
     const endpoints = [pair.from, pair.to].map((id, end) => {
@@ -180,7 +207,15 @@ export function buildBobPairedPlacement(
       model.addMaxEquality(dx, [node.x.minus(base.x), base.x.minus(node.right).plus(1), 0]);
       model.addMaxEquality(dy, [node.y.minus(base.y), base.y.minus(node.bottom).plus(1), 0]);
       distances.push(dx, dy);
-      return { node, distance: dx.plus(dy) };
+      const distance = dx.plus(dy);
+      if (overreachWeight > 0) {
+        const reach = model.newIntVar(0, maxReach, `${i}:${end}:reach`);
+        model.add(reach.eq(distance));
+        const penalty = model.newIntVar(0, maxPenalty, `${i}:${end}:overreach`);
+        model.addAllowedAssignments([reach, penalty], reachTable);
+        overreachPenalties.push(penalty);
+      }
+      return { node, distance };
     });
     if (balanceWeight > 0) {
       const imbalance = model.newIntVar(0, options.maxWidth + options.maxHeight, `${i}:imbalance`);
@@ -205,6 +240,7 @@ export function buildBobPairedPlacement(
   model.minimize(
     total(distances)
       .plus(total(imbalances).times(balanceWeight))
+      .plus(total(overreachPenalties).times(overreachWeight))
       .times(options.maxWidth + options.maxHeight + 1)
       .plus(width)
       .plus(height),
@@ -291,7 +327,7 @@ export async function solveBobPairedLayout(
   publish(
     relaxed,
     'placement',
-    `${pairs.length} fixed pairings placed using base-to-footprint Manhattan distance and balance weight ${options.balanceWeight}. Reach and capacity require base legalization.`,
+    `${pairs.length} fixed pairings placed using base-to-footprint Manhattan distance with balance weight ${options.balanceWeight} and overreach weight ${options.overreachWeight}. Reach and capacity require base legalization.`,
   );
   const layout = await annealBobBases(relaxed, options.annealingSeconds, signal);
   if (!layout) {
