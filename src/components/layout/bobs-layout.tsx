@@ -7,6 +7,7 @@ import { useDataset } from '../../dataset/context.tsx';
 import { BobLayoutDrawing } from './bobs-layout-drawing.tsx';
 import { defaultBobPairOptions, type BobPairOptions } from '../../compute/bobs/paired-options.ts';
 import { bobProblem } from '../../compute/bobs/problem.ts';
+import { defaultClassicOptions } from '../../compute/bobs/classic-options.ts';
 import {
   defaultBobOptions,
   type BobOptions,
@@ -50,10 +51,13 @@ export function BobsLayoutSurface({
   );
   const [mode, setMode] = useState('refinement');
   const [pairOptions, setPairOptions] = useState(defaultBobPairOptions);
+  const [classicOptions, setClassicOptions] = useState(defaultClassicOptions);
   const modeRef = useRef(mode);
   modeRef.current = mode;
   const optionsRef = useRef<BobPairOptions>({ ...options, ...pairOptions });
   optionsRef.current = { ...options, ...pairOptions };
+  const classicOptionsRef = useRef({ ...options, ...classicOptions });
+  classicOptionsRef.current = { ...options, ...classicOptions };
   const [run, setRun] = useState(0);
   const controller = useRef<AbortController>();
   const [state, setState] = useState<{
@@ -79,15 +83,22 @@ export function BobsLayoutSurface({
     let active = true;
     setState({ key: stateKey, running: true });
     void import('../../compute/bobs/bobs-solver.ts')
-      .then(({ solveBobLayout, solveBobPairedLayout }) => {
+      .then(({ solveBobLayout, solveBobPairedLayout, solveClassicLayout }) => {
         if (!active) return;
         if (typeof window !== 'undefined' && !globalThis.crossOriginIsolated) {
           throw new Error(
             'Local solving needs cross-origin isolation. Serve with Cross-Origin-Opener-Policy: same-origin and Cross-Origin-Embedder-Policy: require-corp.',
           );
         }
-        const solve = modeRef.current === 'paired' ? solveBobPairedLayout : solveBobLayout;
-        return solve(snapshot.problem!, optionsRef.current, abort.signal, (attempt) => {
+        const solve =
+          modeRef.current === 'classic'
+            ? solveClassicLayout
+            : modeRef.current === 'paired'
+              ? solveBobPairedLayout
+              : solveBobLayout;
+        const settings =
+          modeRef.current === 'classic' ? classicOptionsRef.current : optionsRef.current;
+        return solve(snapshot.problem!, settings, abort.signal, (attempt) => {
           if (!active) return;
           setState((previous) => {
             const attempts = previous?.key === stateKey ? [...(previous.attempts ?? [])] : [];
@@ -123,12 +134,15 @@ export function BobsLayoutSurface({
   return (
     <section class="bobs-layout" aria-label="Bob layout">
       <p class="bobs-layout-description">
-        Bob’s inserters · reach ≤3 Manhattan tiles · 2160°/s · extension 6 tiles/s · hand 24. One
-        boundary chest per external item. Fluid connections assumed correct. Compact layouts are
-        heuristic.
-        {mode === 'paired'
-          ? ' Choose rate-balanced pairings once, minimize base distance and arm imbalance, then anneal bases with machines fixed. No placement retries or relay chests.'
-          : ' Place assemblers, then connect items; retry with difficult inserters reserved.'}
+        {mode === 'classic'
+          ? 'Classic inserters · short (1 tile) or long (2 tiles), straight and opposite in four rotations · 144 items/s each (2160°/s, hand 24). One joint CP-SAT search minimizes perimeter, then inserter and relay chest count, within the selected bounds.'
+          : 'Bob’s inserters · reach ≤3 Manhattan tiles · 2160°/s · extension 6 tiles/s · hand 24. Compact layouts are heuristic.'}{' '}
+        One boundary chest per external item. Fluid connections assumed correct.
+        {mode === 'classic'
+          ? ''
+          : mode === 'paired'
+            ? ' Choose rate-balanced pairings once, minimize base distance and arm imbalance, then anneal bases with machines fixed. No placement retries or relay chests.'
+            : ' Place assemblers, then connect items; retry with difficult inserters reserved.'}
       </p>
       <form
         class="bobs-layout-controls"
@@ -143,6 +157,7 @@ export function BobsLayoutSurface({
           <select value={mode} onChange={(event) => setMode(event.currentTarget.value)}>
             <option value="refinement">Placement refinement</option>
             <option value="paired">Fixed pairings + base annealing</option>
+            <option value="classic">Classic · full CP-SAT</option>
           </select>
         </label>
         {fields
@@ -153,13 +168,26 @@ export function BobsLayoutSurface({
               <input
                 type="number"
                 step="any"
-                value={options[key]}
+                defaultValue={options[key]}
                 onInput={(event) =>
                   setOptions((o) => ({ ...o, [key]: event.currentTarget.valueAsNumber }))
                 }
               />
             </label>
           ))}
+        {mode === 'classic' && (
+          <label>
+            Solver workers
+            <input
+              type="number"
+              step="any"
+              defaultValue={classicOptions.numWorkers}
+              onInput={(event) =>
+                setClassicOptions({ numWorkers: event.currentTarget.valueAsNumber })
+              }
+            />
+          </label>
+        )}
         {mode === 'paired' && (
           <>
             <label>

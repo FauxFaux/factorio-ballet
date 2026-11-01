@@ -43,6 +43,39 @@ can share one fixed pickup/drop pair, sharing its total capacity. There is no si
 inventory contents or startup seeds for cyclic/catalyst production; this is a steady-state flow
 model with unbounded chest storage. Power poles and beacons do not occupy space in this experiment.
 
+## Classic · full CP-SAT
+
+The **Solve mode** selector also offers **Classic · full CP-SAT**. `solveClassicLayout` runs the
+original joint model once, through `buildClassicModel` in `src/compute/bobs/bobs-solver.ts`, with
+exactly eight active inserter geometries: `[pick, body, place]` and
+`[pick, anything, body, anything, place]`, each in the four directed cardinal rotations. Pickup and
+drop are opposite, with equal reach of one or two tiles. The skipped tiles of a long arm may contain
+any entity; only the base occupies space. Bends, diagonals, mixed lengths, and reach three are
+excluded. Timing otherwise stays as above: 2160°/s and hand 24, giving both lengths 144 items/s.
+
+Machine rectangles and rotations, boundary chests on any edge, optional relay chests, inserter bases
+and endpoints, topology, and gross item flows are all solved together. All optional relays and
+inserters within the selected budgets are available in that single model, including relay chains,
+fan-in, fan-out, parallel arms, and shared-resource arms. The model minimizes width + height, then
+the combined number of inserters and relay chests. Integer flows retain the 0.001 items/s resolution
+and rounding reconciliation used by the Bob model. Fluids remain assumed connected.
+
+The visible parameters are **Max width**, **Max height**, **Relay chests**, **Inserters**,
+**Seconds**, and **Solver workers**. Seconds and workers pass directly to CP-SAT; the time budget
+covers its single solve, in addition to model construction. Worker count defaults to one fewer than
+the available logical processors, with at least one; zero requests CP-SAT's automatic selection.
+There are no input maxima, hidden assembler/rate caps, phase slices, candidate limits, fixed
+pairings, or placement retries. The entered bounds are used directly. Identical optional chests and
+inserter slots are ordered by base position to remove permutations while retaining equivalent
+solutions. Other CP-SAT parameters use the library defaults.
+
+Completed layouts are independently validated for both classic geometry and the shared physical and
+flow constraints. `optimal` means the joint objective was proven optimal within the selected bounds;
+`feasible` retains a validated incumbent without that proof. Only CP-SAT's `INFEASIBLE` proves that
+no classic layout fits the selected geometry/entity bounds. A timeout without an incumbent reports
+`unknown`. Stop and changes to the cell abort the solve through the usual worker executor. A
+completed layout is retained as a selectable attempt.
+
 ## Fixed pairings + base annealing
 
 The **Solve mode** selector adds a one-shot alternative to placement refinement. It runs
@@ -241,11 +274,11 @@ when each individual SAT solve proved its own optimum. Fluid-only packing can st
 reports `infeasible`. Failure of the refinement search reports `unknown`; it is not proof that the
 original problem has no solution.
 
-`buildBobModel` in `src/compute/bobs/bobs-solver.ts` retains the original joint model for inspection
-and experiments. The application does not use it to solve layouts. `buildBobPlacement` and
-`buildBobTransport` expose the two new models for focused experiments. `buildBobTransport` defaults
-to fixed reservation geometry for experiments; the application passes the `hints` reservation mode
-described above.
+`buildBobModel` in `src/compute/bobs/bobs-solver.ts` retains the original unrestricted Bob joint
+model for inspection and experiments. The application uses its classic variant described above.
+`buildBobPlacement` and `buildBobTransport` expose the two new models for focused experiments.
+`buildBobTransport` defaults to fixed reservation geometry for experiments; the application passes
+the `hints` reservation mode described above.
 
 ## Browser hosting
 

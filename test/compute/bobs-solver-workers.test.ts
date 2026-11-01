@@ -9,7 +9,7 @@ describe('bobSolverWorkers', () => {
     [2, 1],
     [8, 7],
     [16, 15],
-    [32, 16],
+    [32, 31],
   ])('uses %i logical processors to select %i workers', (hardwareConcurrency, workers) => {
     vi.stubGlobal('navigator', { hardwareConcurrency });
     expect(bobSolverWorkers()).toBe(workers);

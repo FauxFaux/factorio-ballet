@@ -1,6 +1,6 @@
 import type { BobProblem } from './types.ts';
 
-export function checkBobInput(problem: BobProblem, maxMachines = 24) {
+export function checkBobInput(problem: BobProblem, maxMachines = 24, maxRate = 1e6) {
   if (!problem.machines.length) throw new Error('Add a recipe to place assemblers.');
   if (problem.machines.length > maxMachines)
     throw new Error(`This experimental search supports at most ${maxMachines} assemblers.`);
@@ -16,8 +16,9 @@ export function checkBobInput(problem: BobProblem, maxMachines = 24) {
     for (const [resource, rate] of [...Object.entries(m.inputs), ...Object.entries(m.outputs)]) {
       if (!resource.startsWith('item:'))
         throw new Error('Inserter transport requires item resources.');
-      if (!Number.isFinite(rate) || rate! < 0 || rate! > 1e6)
-        throw new Error('Item rates must be finite, nonnegative and at most 1,000,000/s.');
+      if (!Number.isFinite(rate) || rate! < 0)
+        throw new Error('Item rates must be finite and nonnegative.');
+      if (rate! > maxRate) throw new Error(`Item rates must be at most ${maxRate}/s.`);
     }
   }
 }

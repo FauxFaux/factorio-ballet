@@ -5,14 +5,23 @@ import {
   type BoolVar,
   type IntVar,
   type IntervalVar,
+  CpSat,
+  CpSolverStatus,
+  setCloudNoticeEnabled,
+  type CpResult,
 } from 'or-tools-wasm/cp-sat';
-import { bobSwings } from './geometry.ts';
+import { bobSwings, classicSwings } from './geometry.ts';
+import { defaultClassicOptions, type ClassicOptions } from './classic-options.ts';
+import { validateBobLayout } from './validate.ts';
 import {
   defaultBobOptions,
   RATE_SCALE,
   type BobOptions,
   type BobProblem,
   type Rates,
+  type BobLayout,
+  type BobResult,
+  type BobAttempt,
 } from './types.ts';
 import type { ResourceId } from '../../types.ts';
 import { checkBobInput } from './input.ts';
@@ -26,9 +35,17 @@ const sum = (values: Iterable<IntVar>) => LinearExpr.from(linearSum(values));
 
 /** Exposed for inspecting or adding experimental constraints before a solve. */
 export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions> = {}) {
+  return buildJointModel(problem, settings, false);
+}
+
+export function buildClassicModel(problem: BobProblem, settings: Partial<BobOptions> = {}) {
+  return buildJointModel(problem, settings, true);
+}
+
+function buildJointModel(problem: BobProblem, settings: Partial<BobOptions>, classic: boolean) {
   problem = itemOnlyBobProblem(problem);
   const options = { ...defaultBobOptions(problem), ...settings };
-  checkBobInput(problem);
+  checkBobInput(problem, classic ? Infinity : 24, classic ? Infinity : 1e6);
   const { maxWidth, maxHeight, maxChests, maxInserters } = options;
   const model = new CpModel();
   const width = model.newIntVar(1, maxWidth, 'width');
@@ -157,7 +174,7 @@ export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions>
   });
   const incoming = nodes.map(() => resources.map(() => [] as IntVar[]));
   const outgoing = nodes.map(() => resources.map(() => [] as IntVar[]));
-  const swings = bobSwings();
+  const swings = classic ? classicSwings() : bobSwings();
   const maxCapacity = Math.floor(Math.max(...swings.map((s) => s.capacity)) * RATE_SCALE);
   const slots = Array.from({ length: maxInserters }, (_, index) => {
     const base = rect(`inserter:${index}`, 1, 1, true);
@@ -264,7 +281,91 @@ export function buildBobModel(problem: BobProblem, settings: Partial<BobOptions>
       .times(maxChests + maxInserters + 1)
       .plus(entityCount),
   );
-  return { model, options, width, height, definitions, nodes, slots, resources };
+  const read = (result: CpResult): BobLayout => {
+    const value = (v: IntVar) => Number(result.value(v));
+    const point = (p: { x: IntVar; y: IntVar }) => ({ x: value(p.x), y: value(p.y) });
+    return {
+      width: value(width),
+      height: value(height),
+      nodes: nodes.flatMap((node, i) =>
+        value(node.present)
+          ? [
+              {
+                ...definitions[i],
+                position: point(node),
+                size: { width: value(node.width), height: value(node.height) },
+              },
+            ]
+          : [],
+      ),
+      inserters: slots
+        .filter((s) => value(s.base.present))
+        .map((s) => ({
+          position: point(s.base),
+          pickup: { x: value(s.px), y: value(s.py) },
+          dropoff: { x: value(s.dx), y: value(s.dy) },
+          from: definitions[s.from.findIndex((v) => value(v))].id,
+          to: definitions[s.to.findIndex((v) => value(v))].id,
+          rates: Object.fromEntries(
+            resources.flatMap((r, i) =>
+              value(s.rates[i]) ? [[r, value(s.rates[i]) / RATE_SCALE]] : [],
+            ),
+          ),
+          capacity: value(s.capacity) / RATE_SCALE,
+        })),
+    };
+  };
+  return { model, options, width, height, definitions, nodes, slots, resources, read };
+}
+
+/** One joint solve over every placement, topology and classic inserter within the user's bounds. */
+export async function solveClassicLayout(
+  problem: BobProblem,
+  settings: Partial<ClassicOptions> = {},
+  signal?: AbortSignal,
+  onAttempt?: (attempt: BobAttempt) => void,
+): Promise<BobResult> {
+  signal?.throwIfAborted();
+  const options = { ...defaultBobOptions(problem), ...defaultClassicOptions(), ...settings };
+  const built = buildClassicModel(problem, options);
+  signal?.throwIfAborted();
+  setCloudNoticeEnabled(false);
+  const result = await CpSat.solve(built.model, {
+    numWorkers: options.numWorkers,
+    maxTimeInSeconds: options.maxTimeInSeconds,
+    signal,
+  });
+  signal?.throwIfAborted();
+  const isStatus = (status: keyof typeof CpSolverStatus) =>
+    result.status === status || result.status === CpSolverStatus[status];
+  if (isStatus('MODEL_INVALID'))
+    throw new Error(`Invalid classic model: ${result.response?.solutionInfo ?? ''}`);
+  if (!result.hasSolution) {
+    const infeasible = isStatus('INFEASIBLE');
+    return {
+      status: infeasible ? 'infeasible' : 'unknown',
+      message: infeasible
+        ? 'No classic layout exists within the selected width, height, relay chest and inserter bounds.'
+        : 'No classic layout found within the selected time budget; feasibility is unknown.',
+    };
+  }
+  const layout = built.read(result);
+  const errors = validateBobLayout(problem, layout, { classic: true });
+  if (errors.length) throw new Error(`Classic layout validation failed: ${errors.join('; ')}`);
+  const optimal = isStatus('OPTIMAL');
+  const message = optimal
+    ? 'Optimal classic layout within the selected bounds: minimum perimeter, then inserter and relay chest count.'
+    : 'Feasible classic layout found and validated; optimality is not proven.';
+  const attempt: BobAttempt = {
+    id: 1,
+    layout,
+    stage: 'solved',
+    message,
+    conflicts: [],
+    promoted: [],
+  };
+  onAttempt?.(attempt);
+  return { status: optimal ? 'optimal' : 'feasible', layout, message, attempts: [attempt] };
 }
 
 function quantize(rates: Rates): Rates {

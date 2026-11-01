@@ -11,10 +11,15 @@ import { noChoice } from '../../src/data/index.ts';
 import type { BobAttempt, BobResult } from '../../src/compute/bobs/types.ts';
 import type { Cell } from '../../src/cell.ts';
 
-const { solve, solvePaired } = vi.hoisted(() => ({ solve: vi.fn(), solvePaired: vi.fn() }));
+const { solve, solvePaired, solveClassic } = vi.hoisted(() => ({
+  solve: vi.fn(),
+  solvePaired: vi.fn(),
+  solveClassic: vi.fn(),
+}));
 vi.mock('../../src/compute/bobs/bobs-solver.ts', () => ({
   solveBobLayout: solve,
   solveBobPairedLayout: solvePaired,
+  solveClassicLayout: solveClassic,
 }));
 
 const result: BobResult = {
@@ -53,6 +58,8 @@ beforeEach(() => {
   vi.stubGlobal('crossOriginIsolated', true);
   solve.mockReset();
   solvePaired.mockReset();
+  solveClassic.mockReset();
+  solveClassic.mockResolvedValue(result);
   solvePaired.mockResolvedValue(result);
   solve.mockResolvedValue(result);
 });
@@ -62,6 +69,60 @@ afterEach(() => {
 });
 
 describe('Bob layout surface', () => {
+  it('runs classic with all entered search parameters and no input bounds', async () => {
+    const user = userEvent.setup();
+    render(surface(25));
+    await waitFor(() => expect(solve).toHaveBeenCalledTimes(1));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Solve mode' }), 'classic');
+    const entries = [
+      ['Max width', '256'],
+      ['Max height', '129'],
+      ['Relay chests', '40'],
+      ['Inserters', '200'],
+      ['Seconds', '300.5'],
+      ['Solver workers', '3'],
+    ];
+    for (const [name, value] of entries) {
+      const input = screen.getByRole('spinbutton', { name });
+      expect(input.hasAttribute('min')).toBe(false);
+      expect(input.hasAttribute('max')).toBe(false);
+      await user.clear(input);
+      await user.type(input, value);
+    }
+    expect(screen.queryByRole('combobox', { name: 'Boundary chests' })).toBeNull();
+    expect(screen.queryByRole('spinbutton', { name: 'Pairing seconds' })).toBeNull();
+    await user.click(screen.getByRole('button', { name: 'Solve' }));
+    await waitFor(() => expect(solveClassic).toHaveBeenCalledTimes(1));
+    expect(solveClassic.mock.calls[0][0].machines).toHaveLength(25);
+    expect(solveClassic.mock.calls[0][1]).toEqual({
+      maxWidth: 256,
+      maxHeight: 129,
+      maxChests: 40,
+      maxInserters: 200,
+      maxTimeInSeconds: 300.5,
+      numWorkers: 3,
+    });
+    expect(screen.getByRole('status').textContent).toBe(result.message);
+  });
+
+  it('aborts the classic solver with Stop', async () => {
+    const user = userEvent.setup();
+    solveClassic.mockImplementation(
+      (_problem, _options, signal: AbortSignal) =>
+        new Promise((_resolve, reject) =>
+          signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError'))),
+        ),
+    );
+    render(surface());
+    await waitFor(() => expect(solve).toHaveBeenCalledTimes(1));
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Solve mode' }), 'classic');
+    await user.click(screen.getByRole('button', { name: 'Solve' }));
+    await waitFor(() => expect(solveClassic).toHaveBeenCalledTimes(1));
+    await user.click(screen.getByRole('button', { name: 'Stop' }));
+    expect(solveClassic.mock.calls[0][2].aborted).toBe(true);
+    await waitFor(() => expect(screen.getByRole('status').textContent).toBe('Search stopped.'));
+  });
+
   it('exposes fixed pairing budgets and runs the selected solver', async () => {
     const user = userEvent.setup();
     render(surface());

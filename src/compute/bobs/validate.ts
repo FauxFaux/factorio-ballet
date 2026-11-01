@@ -14,7 +14,7 @@ import { itemOnlyBobProblem } from './item-problem.ts';
 export function validateBobLayout(
   problem: BobProblem,
   layout: BobLayout,
-  options: { minBoundaryHeight?: number } = {},
+  options: { minBoundaryHeight?: number; classic?: boolean } = {},
 ): string[] {
   problem = itemOnlyBobProblem(problem);
   const errors: string[] = [];
@@ -114,10 +114,25 @@ export function validateBobLayout(
       )
     )
       errors.push('Endpoints must be tile centres');
-    const capacity = bobCapacity(
-      { x: inserter.pickup.x - inserter.position.x, y: inserter.pickup.y - inserter.position.y },
-      { x: inserter.dropoff.x - inserter.position.x, y: inserter.dropoff.y - inserter.position.y },
-    );
+    const pickup = {
+      x: inserter.pickup.x - inserter.position.x,
+      y: inserter.pickup.y - inserter.position.y,
+    };
+    const dropoff = {
+      x: inserter.dropoff.x - inserter.position.x,
+      y: inserter.dropoff.y - inserter.position.y,
+    };
+    if (
+      options.classic &&
+      !(
+        (((Math.abs(pickup.x) === 1 || Math.abs(pickup.x) === 2) && pickup.y === 0) ||
+          ((Math.abs(pickup.y) === 1 || Math.abs(pickup.y) === 2) && pickup.x === 0)) &&
+        dropoff.x === -pickup.x &&
+        dropoff.y === -pickup.y
+      )
+    )
+      errors.push('Classic inserters must be straight, with equal reach of one or two tiles');
+    const capacity = bobCapacity(pickup, dropoff);
     const rates = Object.values(inserter.rates) as number[];
     if (
       !capacity ||

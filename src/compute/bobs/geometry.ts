@@ -45,6 +45,28 @@ export function bobSwings(): readonly BobSwing[] {
   return swings;
 }
 
+/** Short and long straight inserters, in all four directed cardinal orientations. */
+export function classicSwings(): readonly BobSwing[] {
+  return classic;
+}
+
+const classic: readonly BobSwing[] = [1, 2].flatMap((reach) =>
+  [
+    { x: reach, y: 0 },
+    { x: -reach, y: 0 },
+    { x: 0, y: reach },
+    { x: 0, y: -reach },
+  ].map((pickup) => {
+    const dropoff = { x: 0 - pickup.x, y: 0 - pickup.y };
+    return {
+      pickup,
+      dropoff,
+      cycleSeconds: bobCycleSeconds(pickup, dropoff),
+      capacity: bobCapacity(pickup, dropoff),
+    };
+  }),
+);
+
 function computeSwings(): BobSwing[] {
   const points: Point[] = [];
   for (let x = -3; x <= 3; x++) {
