@@ -510,3 +510,18 @@ you place that swaps itself for a `mining-drill` on a hidden `angels-sea-pump-re
 Drop either test and that one pump emits its 1500 water/s twice. The completeness check for all this
 is the existing "recipe categories with no machine" line — a synthetic recipe is only emitted when a
 machine can run it, so a category turning up there means the two halves have drifted apart.
+
+## Krastorio 2 (`k2`)
+
+The `k2` dataset was exported from `~/ins/factorio/2.1.21` with Krastorio2 2.1.3 and the install's
+enabled mods (including elevated rails, Bob's inserters, and RampantFixed). Run Factorio separately
+with `--dump-data`, `--dump-prototype-locale`, and `--dump-icon-sprites`; combining them only
+performs the first export. Then run
+`APP=~/ins/factorio/2.1.21 OUTPUT_DIR=src/assets/dataset/k2 node scripts/ingest-data.ts`. Generate
+sprites using the raw-types tool above, copy `icons.json`, and encode `icons.png` with
+`avifenc -s 0 -q 50 --qalpha 20` as `icons.avif`. The sheet is 1056×1056.
+
+This export has 520 regular plus 10 synthetic recipes, 36 machines, and 446 resources. Known ingest
+diagnostics: `kr-vehicle-fuel` has no live item fuel; coke liquefaction omits the catalyst share for
+its 25 light oil; 33 recipes/resources have no progression route. These are preserved as exported,
+without dataset-specific corrections.

@@ -1,0 +1,322 @@
+Automation core
+Military
+Automation
+Steam power
+Stone wall
+Iron pickaxe
+Laboratory
+Crusher
+Light armor
+Automation tech card
+Stone processing
+Gun turret
+Electronics
+Electric mining drill
+Logistics
+Repair pack
+Greenhouse
+Long inserters 1
+Near inserters
+Welcome to the jungle
+Lamp
+Steel processing
+Logistic tech card
+Shelter
+Physical projectile damage 1
+Weapon shooting speed 1
+Heavy armor
+Steel axe
+Fast inserter
+Larger containers
+Sentinel
+Military 2
+Automation 2
+Landfill
+Advanced material processing
+Circuit network
+Engine
+Toolbelt
+Gate
+Fluid chemistry
+Electric energy distribution 1
+Stronger explosives 1
+Lab research speed 1
+Fluid handling
+Logistics 2
+Physical projectile damage 2
+Weapon shooting speed 2
+More inserters 1
+Oil gathering
+Steel fluid handling
+Oil processing
+Flare stack
+Silicon processing
+Flammables
+Lab research speed 2
+Concrete
+Steel fluid tanks
+Railway
+Fuel
+Sulfur processing
+Plastics
+Explosives
+Gas power station
+Solar energy
+Battery
+Automated rail transportation
+Fluid wagon
+Automobilism
+Cliff explosives
+Advanced circuit
+Electric energy accumulators
+Military tech card
+Modules
+Modular armor
+Efficiency module
+Productivity module
+Speed module
+Chemical tech card
+Mining productivity 1
+Bulk inserter
+Personal battery
+Portable solar panel
+Belt immunity equipment
+Nightvision equipment
+Inserter capacity bonus 1
+Inserter capacity bonus 2
+Mineral water gathering
+Rare metal mining
+Rare metal processing
+Long inserters 2
+Advanced combinators
+Portable generator
+Advanced oil processing
+Efficiency module 2
+Productivity module 2
+Speed module 2
+Electric energy distribution 2
+Braking force 1
+Uranium mining
+Uranium processing
+Lubricant
+Electric engine
+Atmospheric condensation
+Radar
+Laser
+Reinforced plates
+Advanced material processing 2
+Robotics
+Lab research speed 3
+Inserter capacity bonus 3
+Advanced lab
+Worker robot speed 1
+Braking force 2
+Research server
+Processing unit
+Electric mining drill MK2
+Construction robotics
+Rocket fuel
+Worker robot speed 2
+Personal roboport
+Worker robot cargo size 1
+Low density structure
+Logistic robotics
+Mining productivity 2
+Advanced chemistry
+Exoskeleton equipment
+Nuclear power
+Power armor
+Biofuel
+Larger logistic containers
+Lab research speed 4
+Ore enrichment
+Lithium processing
+Personal battery MK2
+Lithium-sulfur battery
+Tesla coil
+Production tech card
+Better robot battery
+Utility tech card
+Elevated rail
+Coal liquefaction
+Inserter capacity bonus 4
+Braking force 3
+Nuclear fuel reprocessing
+Worker robot speed 3
+Logistics 3
+Productivity module 3
+Efficiency module 3
+Speed module 3
+Worker robot cargo size 2
+More inserters 2
+Automation 3
+Quarry mineral extraction
+Advanced radar
+Advanced additional electric engine
+Advanced exoskeleton
+Personal roboport MK2
+Logistic system
+Kovarex enrichment process
+Effect transmission
+Nuclear locomotive
+Lab research speed 5
+Inserter capacity bonus 5
+Braking force 4
+Advanced fuel
+Worker robot speed 4
+Portable superior solar panels
+Superior night vision
+Advanced solar panel
+Personal battery MK3
+Inserter capacity bonus 6
+Braking force 5
+Mining productivity 3
+Worker robot cargo size 3
+Logistics 4
+AI core
+Larger containers for logistic system
+Lab research speed 6
+Worker robot speed 5
+Braking force 6
+Inserter capacity bonus 7
+Rocket silo
+Quantum computer
+Braking force 7
+Fusion energy
+Singularity lab
+Optimization tech card
+Mining productivity
+Matter tech card
+Worker robot speed 6
+Energy control unit
+Imersium processing
+Energy storage
+Advanced tech card
+Mining productivity
+Worker robot speed
+Matter processing
+Coal conversion
+Copper conversion
+Iron conversion
+Minerals conversion
+Oil conversion
+Rare metals conversion
+Stone conversion
+Uranium conversion
+Water conversion
+Flamethrower
+Laser shooting speed 1
+Defender
+Land mines
+Military 3
+Energy weapons damage 1
+Rocketry
+Refined flammables 1
+Energy shield equipment
+Laser shooting speed 2
+Laser turret
+Bioprocessing
+Advanced pickaxe
+Follower robot count 1
+Stronger explosives 2
+Electric energy distribution 3
+Electric mining drill MK3
+Physical projectile damage 3
+Weapon shooting speed 3
+Energy weapons damage 2
+Explosive rocketry
+Refined flammables 2
+Heavy armored vehicle
+Laser shooting speed 3
+Portable fission reactor
+Personal laser defense MK1
+Follower robot count 2
+Distractor
+Advanced roboports
+Superior inserters
+Superior exoskeleton
+Advanced chemical plant
+Advanced furnace
+Advanced assembling machine
+Superior robot battery
+Air purification
+Energy shield MK2 equipment
+Military 4
+Energy shield MK3
+Stronger explosives 3
+Laser shooting speed 4
+Discharge defense
+Energy weapons damage 3
+Portable fusion reactor
+Logistics 5
+Refined flammables 3
+Physical projectile damage 4
+Weapon shooting speed 4
+Follower robot count 3
+Laser shooting speed 5
+Power armor MK2
+Energy shield MK4
+Stronger explosives 4
+Railgun turret
+Energy weapons damage 4
+Uranium ammo
+Singularity tech card
+Mining productivity
+Worker robot speed
+Refined flammables 4
+Laser shooting speed 6
+Destroyer
+Physical projectile damage 5
+Weapon shooting speed 5
+Power armor MK3
+Stronger explosives 5
+Personal laser defense MK2
+Energy weapons damage 5
+Refined flammables 5
+Laser shooting speed 7
+Artillery
+Artillery shell range
+Artillery shell shooting speed
+Artillery shell range
+Artillery shell shooting speed
+Military 5
+Physical projectile damage 6
+Weapon shooting speed 6
+Physical projectile damage
+Physical projectile damage
+Tank
+Stronger explosives 6
+Stronger explosives
+Stronger explosives
+Follower robot count 4
+Energy weapons damage 6
+Follower robot count 5
+Energy weapons damage
+Follower robot count
+Energy weapons damage
+Refined flammables 6
+Refined flammables
+Refined flammables
+Artillery shell range
+Artillery shell shooting speed
+Physical projectile damage
+Laser artillery turret
+Personal laser defense MK3
+Stronger explosives
+Follower robot count
+Energy weapons damage
+Refined flammables
+Atomic bomb
+Spidertron
+Anti-biter virus capsule
+Rocket turret
+Matter cube
+Planetary teleporter
+Personal laser defense MK4
+Power armor MK4
+Singularity beacon
+Antimatter reactor
+Portable antimatter reactor
+Intergalactic transceiver
+Antimatter ammo
+Krastorio 2 logo

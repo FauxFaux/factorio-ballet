@@ -1,0 +1,5838 @@
+{
+  "provenance": {
+    "dataset": "Factorio 2.1.21 / Krastorio2 2.1.3 (enabled mods: docs/guides/INGEST.md)",
+    "rawSha256": "7ba414bbfb9b918c953ac7db18077c94a9cd7fbfd3905415aba9675b6da77447",
+    "staticSha256": "ba3bf83c4eb099d99149f6660be847aafe723dfef90be73ec5d451ab30e2a475",
+    "recipesSha256": "89fccbf79d05126466f95be0f99e9f2c745b213124ad1561866fc451f67fc90d"
+  },
+  "boundaries": {
+    "raw": [
+      "item:iron-ore",
+      "item:copper-ore",
+      "item:stone",
+      "item:coal",
+      "item:wood",
+      "item:kr-biomass",
+      "fluid:water",
+      "fluid:crude-oil"
+    ],
+    "plates": [
+      "item:iron-plate",
+      "item:copper-plate",
+      "item:stone",
+      "item:coal",
+      "item:wood",
+      "item:kr-biomass",
+      "fluid:water",
+      "fluid:crude-oil",
+      "item:iron-ore",
+      "item:copper-ore"
+    ]
+  },
+  "technologies": {
+    "steam-power": {
+      "human": "Steam power",
+      "prerequisites": ["kr-automation-core"],
+      "science": {
+        "kr-basic-tech-card": 10
+      },
+      "complexity": 0.053550675905917,
+      "unlocks": ["pipe", "pipe-to-ground", "offshore-pump", "boiler", "steam-engine"]
+    },
+    "electronics": {
+      "human": "Electronics",
+      "prerequisites": ["automation", "automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "complexity": 0.08202610446928328,
+      "unlocks": ["electronic-circuit"]
+    },
+    "automation-science-pack": {
+      "human": "Automation tech card",
+      "prerequisites": ["kr-laboratory"],
+      "science": {
+        "kr-basic-tech-card": 50
+      },
+      "complexity": 0.07617408059374949,
+      "unlocks": ["automation-science-pack", "kr-blank-tech-card"]
+    },
+    "electric-mining-drill": {
+      "human": "Electric mining drill",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "complexity": 0.08361178901471053,
+      "unlocks": ["electric-mining-drill"]
+    },
+    "repair-pack": {
+      "human": "Repair pack",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 25,
+        "automation-science-pack": 25
+      },
+      "complexity": 0.08506626910671375,
+      "unlocks": ["repair-pack"]
+    },
+    "radar": {
+      "human": "Radar",
+      "prerequisites": ["chemical-science-pack", "kr-sentinel"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.31314373569906245,
+      "unlocks": ["radar"]
+    },
+    "physical-projectile-damage-1": {
+      "human": "Physical projectile damage 1",
+      "prerequisites": ["military", "automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.09948430027476435,
+      "unlocks": []
+    },
+    "physical-projectile-damage-2": {
+      "human": "Physical projectile damage 2",
+      "prerequisites": ["physical-projectile-damage-1", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.19095558459239081,
+      "unlocks": []
+    },
+    "weapon-shooting-speed-1": {
+      "human": "Weapon shooting speed 1",
+      "prerequisites": ["military", "automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.09948430027476435,
+      "unlocks": []
+    },
+    "weapon-shooting-speed-2": {
+      "human": "Weapon shooting speed 2",
+      "prerequisites": ["weapon-shooting-speed-1", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.19095558459239081,
+      "unlocks": []
+    },
+    "stronger-explosives-1": {
+      "human": "Stronger explosives 1",
+      "prerequisites": ["military-2"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.18201934362805167,
+      "unlocks": []
+    },
+    "physical-projectile-damage-3": {
+      "human": "Physical projectile damage 3",
+      "prerequisites": ["physical-projectile-damage-2", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "military-science-pack": 300
+      },
+      "complexity": 0.7425895059490124,
+      "unlocks": []
+    },
+    "physical-projectile-damage-4": {
+      "human": "Physical projectile damage 4",
+      "prerequisites": ["physical-projectile-damage-3"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "military-science-pack": 400
+      },
+      "complexity": 0.7574927868561148,
+      "unlocks": []
+    },
+    "physical-projectile-damage-5": {
+      "human": "Physical projectile damage 5",
+      "prerequisites": ["physical-projectile-damage-4", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "military-science-pack": 500
+      },
+      "complexity": 0.7669732973520633,
+      "unlocks": []
+    },
+    "physical-projectile-damage-6": {
+      "human": "Physical projectile damage 6",
+      "prerequisites": ["physical-projectile-damage-5", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "military-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.7741050996529197,
+      "unlocks": []
+    },
+    "physical-projectile-damage-7": {
+      "human": "Physical projectile damage",
+      "prerequisites": ["physical-projectile-damage-6", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7741051039613183,
+      "unlocks": [],
+      "formula": "((L-6)^2)*3000"
+    },
+    "stronger-explosives-2": {
+      "human": "Stronger explosives 2",
+      "prerequisites": ["stronger-explosives-1", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.7354577041509966,
+      "unlocks": []
+    },
+    "stronger-explosives-3": {
+      "human": "Stronger explosives 3",
+      "prerequisites": ["stronger-explosives-2", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "military-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.7515745136089913,
+      "unlocks": []
+    },
+    "stronger-explosives-4": {
+      "human": "Stronger explosives 4",
+      "prerequisites": ["stronger-explosives-3", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "military-science-pack": 400,
+        "chemical-science-pack": 400,
+        "utility-science-pack": 400
+      },
+      "complexity": 0.7619132041197675,
+      "unlocks": []
+    },
+    "stronger-explosives-5": {
+      "human": "Stronger explosives 5",
+      "prerequisites": ["stronger-explosives-4"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "military-science-pack": 500,
+        "chemical-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.7696846835270449,
+      "unlocks": []
+    },
+    "stronger-explosives-6": {
+      "human": "Stronger explosives 6",
+      "prerequisites": ["stronger-explosives-5"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "military-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.7759583061419415,
+      "unlocks": []
+    },
+    "stronger-explosives-7": {
+      "human": "Stronger explosives",
+      "prerequisites": ["stronger-explosives-6", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7759583100195001,
+      "unlocks": [],
+      "formula": "((L-6)^2)*3000"
+    },
+    "refined-flammables-1": {
+      "human": "Refined flammables 1",
+      "prerequisites": ["flamethrower"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.730397610247624,
+      "unlocks": []
+    },
+    "refined-flammables-2": {
+      "human": "Refined flammables 2",
+      "prerequisites": ["refined-flammables-1"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.7453008911547254,
+      "unlocks": []
+    },
+    "refined-flammables-3": {
+      "human": "Refined flammables 3",
+      "prerequisites": ["refined-flammables-2", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "military-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.7561892878413737,
+      "unlocks": []
+    },
+    "refined-flammables-4": {
+      "human": "Refined flammables 4",
+      "prerequisites": ["refined-flammables-3", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "military-science-pack": 400,
+        "chemical-science-pack": 400,
+        "utility-science-pack": 400
+      },
+      "complexity": 0.7646245892295737,
+      "unlocks": []
+    },
+    "refined-flammables-5": {
+      "human": "Refined flammables 5",
+      "prerequisites": ["refined-flammables-4"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "military-science-pack": 500,
+        "chemical-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.7714749583243761,
+      "unlocks": []
+    },
+    "refined-flammables-6": {
+      "human": "Refined flammables 6",
+      "prerequisites": ["refined-flammables-5"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "military-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.7772303677373577,
+      "unlocks": []
+    },
+    "refined-flammables-7": {
+      "human": "Refined flammables",
+      "prerequisites": ["refined-flammables-6", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7772303713443889,
+      "unlocks": [],
+      "formula": "((L-6)^2)*3000"
+    },
+    "laser-weapons-damage-1": {
+      "human": "Energy weapons damage 1",
+      "prerequisites": ["laser", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.7232658084515734,
+      "unlocks": []
+    },
+    "laser-weapons-damage-2": {
+      "human": "Energy weapons damage 2",
+      "prerequisites": ["laser-weapons-damage-1"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "military-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.7425895059501025,
+      "unlocks": []
+    },
+    "laser-weapons-damage-3": {
+      "human": "Energy weapons damage 3",
+      "prerequisites": ["laser-weapons-damage-2"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "military-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.7547814016512733,
+      "unlocks": []
+    },
+    "laser-weapons-damage-4": {
+      "human": "Energy weapons damage 4",
+      "prerequisites": ["laser-weapons-damage-3"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "military-science-pack": 400,
+        "chemical-science-pack": 400
+      },
+      "complexity": 0.7637664093107729,
+      "unlocks": []
+    },
+    "laser-weapons-damage-5": {
+      "human": "Energy weapons damage 5",
+      "prerequisites": ["laser-weapons-damage-4", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "military-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.7708982116116256,
+      "unlocks": []
+    },
+    "laser-weapons-damage-6": {
+      "human": "Energy weapons damage 6",
+      "prerequisites": ["laser-weapons-damage-5"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "military-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.776816485145617,
+      "unlocks": []
+    },
+    "laser-weapons-damage-7": {
+      "human": "Energy weapons damage",
+      "prerequisites": ["laser-weapons-damage-6", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7768164888385299,
+      "unlocks": [],
+      "formula": "((L-6)^2)*3000"
+    },
+    "weapon-shooting-speed-3": {
+      "human": "Weapon shooting speed 3",
+      "prerequisites": ["weapon-shooting-speed-2", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "military-science-pack": 300
+      },
+      "complexity": 0.7425895059490124,
+      "unlocks": []
+    },
+    "weapon-shooting-speed-4": {
+      "human": "Weapon shooting speed 4",
+      "prerequisites": ["weapon-shooting-speed-3"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "military-science-pack": 400
+      },
+      "complexity": 0.7574927868561148,
+      "unlocks": []
+    },
+    "weapon-shooting-speed-5": {
+      "human": "Weapon shooting speed 5",
+      "prerequisites": ["weapon-shooting-speed-4", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "military-science-pack": 500
+      },
+      "complexity": 0.7669732973520633,
+      "unlocks": []
+    },
+    "weapon-shooting-speed-6": {
+      "human": "Weapon shooting speed 6",
+      "prerequisites": ["weapon-shooting-speed-5", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "military-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.7741050996529197,
+      "unlocks": []
+    },
+    "laser-shooting-speed-1": {
+      "human": "Laser shooting speed 1",
+      "prerequisites": ["laser", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "military-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.7110739127514997,
+      "unlocks": []
+    },
+    "laser-shooting-speed-2": {
+      "human": "Laser shooting speed 2",
+      "prerequisites": ["laser-shooting-speed-1"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.7303976102491514,
+      "unlocks": []
+    },
+    "laser-shooting-speed-3": {
+      "human": "Laser shooting speed 3",
+      "prerequisites": ["laser-shooting-speed-2"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.7453008911557535,
+      "unlocks": []
+    },
+    "laser-shooting-speed-4": {
+      "human": "Laser shooting speed 4",
+      "prerequisites": ["laser-shooting-speed-3"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.7532509422296233,
+      "unlocks": []
+    },
+    "laser-shooting-speed-5": {
+      "human": "Laser shooting speed 5",
+      "prerequisites": ["laser-shooting-speed-4", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "military-science-pack": 200,
+        "utility-science-pack": 200
+      },
+      "complexity": 0.7587063158109513,
+      "unlocks": []
+    },
+    "laser-shooting-speed-6": {
+      "human": "Laser shooting speed 6",
+      "prerequisites": ["laser-shooting-speed-5"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "military-science-pack": 350,
+        "utility-science-pack": 350
+      },
+      "complexity": 0.7654428386850769,
+      "unlocks": []
+    },
+    "laser-shooting-speed-7": {
+      "human": "Laser shooting speed 7",
+      "prerequisites": ["laser-shooting-speed-6"],
+      "science": {
+        "automation-science-pack": 450,
+        "logistic-science-pack": 450,
+        "chemical-science-pack": 450,
+        "military-science-pack": 450,
+        "utility-science-pack": 450
+      },
+      "complexity": 0.7714749584217455,
+      "unlocks": []
+    },
+    "artillery-shell-range-1": {
+      "human": "Artillery shell range",
+      "prerequisites": ["artillery", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7730997348524555,
+      "unlocks": [],
+      "formula": "L^2*3500"
+    },
+    "artillery-shell-speed-1": {
+      "human": "Artillery shell shooting speed",
+      "prerequisites": ["artillery", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7730997348524555,
+      "unlocks": [],
+      "formula": "L^2*3500"
+    },
+    "follower-robot-count-1": {
+      "human": "Follower robot count 1",
+      "prerequisites": ["defender"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.7354577041509964,
+      "unlocks": []
+    },
+    "follower-robot-count-2": {
+      "human": "Follower robot count 2",
+      "prerequisites": ["follower-robot-count-1"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.747649599852385,
+      "unlocks": []
+    },
+    "follower-robot-count-3": {
+      "human": "Follower robot count 3",
+      "prerequisites": ["follower-robot-count-2", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "military-science-pack": 300
+      },
+      "complexity": 0.7574927868563949,
+      "unlocks": []
+    },
+    "follower-robot-count-4": {
+      "human": "Follower robot count 4",
+      "prerequisites": ["follower-robot-count-3", "destroyer"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "chemical-science-pack": 400,
+        "military-science-pack": 400,
+        "utility-science-pack": 400
+      },
+      "complexity": 0.7768164851454925,
+      "unlocks": []
+    },
+    "follower-robot-count-5": {
+      "human": "Follower robot count 5",
+      "prerequisites": ["follower-robot-count-4", "space-science-pack"],
+      "science": {},
+      "complexity": 0.7768164888384055,
+      "unlocks": [],
+      "formula": "((L-6)^2)*5000"
+    },
+    "bulk-inserter": {
+      "human": "Bulk inserter",
+      "prerequisites": ["fast-inserter", "logistics-2", "advanced-circuit"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "complexity": 0.22184287641461534,
+      "unlocks": ["bulk-inserter"]
+    },
+    "inserter-capacity-bonus-1": {
+      "human": "Inserter capacity bonus 1",
+      "prerequisites": ["bulk-inserter"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.2246221130653873,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-2": {
+      "human": "Inserter capacity bonus 2",
+      "prerequisites": ["inserter-capacity-bonus-1"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "complexity": 0.22757352705679254,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-3": {
+      "human": "Inserter capacity bonus 3",
+      "prerequisites": ["inserter-capacity-bonus-2", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.31710472687275515,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-4": {
+      "human": "Inserter capacity bonus 4",
+      "prerequisites": ["inserter-capacity-bonus-3", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "production-science-pack": 250
+      },
+      "complexity": 0.44253003726380347,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-5": {
+      "human": "Inserter capacity bonus 5",
+      "prerequisites": ["inserter-capacity-bonus-4"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.4563524995442829,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-6": {
+      "human": "Inserter capacity bonus 6",
+      "prerequisites": ["inserter-capacity-bonus-5"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "chemical-science-pack": 400,
+        "production-science-pack": 400
+      },
+      "complexity": 0.46594963892839125,
+      "unlocks": []
+    },
+    "inserter-capacity-bonus-7": {
+      "human": "Inserter capacity bonus 7",
+      "prerequisites": ["inserter-capacity-bonus-6", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 600,
+        "logistic-science-pack": 600,
+        "chemical-science-pack": 600,
+        "production-science-pack": 600,
+        "utility-science-pack": 600
+      },
+      "complexity": 0.48400308998288105,
+      "unlocks": []
+    },
+    "automation": {
+      "human": "Automation",
+      "prerequisites": ["kr-automation-core"],
+      "science": {
+        "kr-basic-tech-card": 10
+      },
+      "complexity": 0.053550675905917,
+      "unlocks": ["assembling-machine-1"]
+    },
+    "automation-2": {
+      "human": "Automation 2",
+      "prerequisites": ["steel-processing", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 40,
+        "logistic-science-pack": 40
+      },
+      "complexity": 0.1630869418422841,
+      "unlocks": ["assembling-machine-2"]
+    },
+    "logistic-science-pack": {
+      "human": "Logistic tech card",
+      "prerequisites": ["automation-science-pack", "electronics"],
+      "science": {
+        "kr-basic-tech-card": 75,
+        "automation-science-pack": 75
+      },
+      "complexity": 0.09753516561112043,
+      "unlocks": ["logistic-science-pack"]
+    },
+    "steel-processing": {
+      "human": "Steel processing",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 50,
+        "automation-science-pack": 50
+      },
+      "complexity": 0.09094461228607711,
+      "unlocks": ["steel-plate", "steel-chest", "kr-coke", "kr-steel-beam", "kr-steel-gear-wheel"]
+    },
+    "steel-axe": {
+      "human": "Steel axe",
+      "prerequisites": ["steel-processing", "kr-iron-pickaxe"],
+      "science": {
+        "kr-basic-tech-card": 50,
+        "automation-science-pack": 50
+      },
+      "complexity": 0.10038343234396715,
+      "unlocks": []
+    },
+    "military": {
+      "human": "Military",
+      "prerequisites": [],
+      "science": {
+        "kr-basic-tech-card": 10
+      },
+      "complexity": 0.04217702948051689,
+      "unlocks": ["submachine-gun", "shotgun", "shotgun-shell", "slowdown-capsule"]
+    },
+    "military-2": {
+      "human": "Military 2",
+      "prerequisites": ["military", "steel-processing", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 20,
+        "logistic-science-pack": 20
+      },
+      "complexity": 0.15150611410610126,
+      "unlocks": ["piercing-rounds-magazine", "grenade"]
+    },
+    "fast-inserter": {
+      "human": "Fast inserter",
+      "prerequisites": ["electronics", "logistics", "steel-processing"],
+      "science": {
+        "kr-basic-tech-card": 30,
+        "automation-science-pack": 30
+      },
+      "complexity": 0.10067321134403502,
+      "unlocks": ["fast-inserter"]
+    },
+    "logistics": {
+      "human": "Logistics",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "complexity": 0.08361178901471053,
+      "unlocks": ["underground-belt", "splitter", "inserter", "long-handed-inserter", "kr-loader"]
+    },
+    "railway": {
+      "human": "Railway",
+      "prerequisites": ["logistics-2", "engine"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "complexity": 0.201925677508499,
+      "unlocks": ["rail", "locomotive", "cargo-wagon", "iron-stick"]
+    },
+    "automated-rail-transportation": {
+      "human": "Automated rail transportation",
+      "prerequisites": ["railway"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.20941901698980256,
+      "unlocks": ["train-stop", "rail-signal", "rail-chain-signal"]
+    },
+    "automobilism": {
+      "human": "Automobilism",
+      "prerequisites": ["logistics-2", "kr-fuel"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.2122742806230324,
+      "unlocks": ["car"]
+    },
+    "lamp": {
+      "human": "Lamp",
+      "prerequisites": ["automation-science-pack", "kr-stone-processing"],
+      "science": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "complexity": 0.09094461228607711,
+      "unlocks": ["small-lamp"]
+    },
+    "solar-energy": {
+      "human": "Solar energy",
+      "prerequisites": ["kr-silicon-processing"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "complexity": 0.2075357257311634,
+      "unlocks": ["solar-panel"]
+    },
+    "heavy-armor": {
+      "human": "Heavy armor",
+      "prerequisites": ["steel-processing", "kr-light-armor"],
+      "science": {
+        "kr-basic-tech-card": 30,
+        "automation-science-pack": 30
+      },
+      "complexity": 0.1000887991991737,
+      "unlocks": ["heavy-armor"]
+    },
+    "gun-turret": {
+      "human": "Gun turret",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "complexity": 0.08028317600635695,
+      "unlocks": ["gun-turret"]
+    },
+    "research-speed-1": {
+      "human": "Lab research speed 1",
+      "prerequisites": ["automation-2"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.1846963933593758,
+      "unlocks": []
+    },
+    "research-speed-2": {
+      "human": "Lab research speed 2",
+      "prerequisites": ["research-speed-1"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.20020167229343366,
+      "unlocks": []
+    },
+    "electric-energy-distribution-1": {
+      "human": "Electric energy distribution 1",
+      "prerequisites": ["steel-processing", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 120,
+        "logistic-science-pack": 120
+      },
+      "complexity": 0.18201370624860294,
+      "unlocks": ["medium-electric-pole", "big-electric-pole", "iron-stick"]
+    },
+    "advanced-material-processing": {
+      "human": "Advanced material processing",
+      "prerequisites": ["steel-processing", "logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "complexity": 0.17386674759275805,
+      "unlocks": ["steel-furnace"]
+    },
+    "concrete": {
+      "human": "Concrete",
+      "prerequisites": ["advanced-material-processing", "automation-2"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "complexity": 0.20144476661770266,
+      "unlocks": [
+        "concrete",
+        "hazard-concrete",
+        "refined-concrete",
+        "refined-hazard-concrete",
+        "iron-stick"
+      ]
+    },
+    "engine": {
+      "human": "Engine",
+      "prerequisites": ["logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.17877928184281122,
+      "unlocks": ["engine-unit"]
+    },
+    "landfill": {
+      "human": "Landfill",
+      "prerequisites": ["logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.16676001565131882,
+      "unlocks": ["landfill", "kr-landfill-with-sand"]
+    },
+    "logistics-2": {
+      "human": "Logistics 2",
+      "prerequisites": ["logistics", "logistic-science-pack", "steel-processing"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.19093182963281324,
+      "unlocks": ["fast-transport-belt", "fast-underground-belt", "fast-splitter", "kr-fast-loader"]
+    },
+    "toolbelt": {
+      "human": "Toolbelt",
+      "prerequisites": ["logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.17877928184281122,
+      "unlocks": []
+    },
+    "stone-wall": {
+      "human": "Stone wall",
+      "prerequisites": ["military"],
+      "science": {
+        "kr-basic-tech-card": 10
+      },
+      "complexity": 0.053550675905917,
+      "unlocks": ["stone-wall"]
+    },
+    "gate": {
+      "human": "Gate",
+      "prerequisites": ["stone-wall", "logistic-science-pack", "steel-processing"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.17886041292515692,
+      "unlocks": ["gate"]
+    },
+    "chemical-science-pack": {
+      "human": "Chemical tech card",
+      "prerequisites": ["advanced-circuit", "sulfur-processing"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "complexity": 0.21984606758700284,
+      "unlocks": ["chemical-science-pack"]
+    },
+    "military-science-pack": {
+      "human": "Military tech card",
+      "prerequisites": ["military-2", "stone-wall", "advanced-circuit"],
+      "science": {
+        "automation-science-pack": 30,
+        "logistic-science-pack": 30
+      },
+      "complexity": 0.2166171309354708,
+      "unlocks": ["military-science-pack", "kr-biter-research-data"]
+    },
+    "production-science-pack": {
+      "human": "Production tech card",
+      "prerequisites": [
+        "productivity-module",
+        "advanced-material-processing-2",
+        "railway",
+        "kr-advanced-lab",
+        "kr-research-server",
+        "uranium-processing"
+      ],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.3453138076993789,
+      "unlocks": ["production-science-pack"]
+    },
+    "utility-science-pack": {
+      "human": "Utility tech card",
+      "prerequisites": [
+        "robotics",
+        "processing-unit",
+        "low-density-structure",
+        "kr-advanced-lab",
+        "kr-research-server",
+        "rocket-fuel"
+      ],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.35602549997494304,
+      "unlocks": ["utility-science-pack"]
+    },
+    "space-science-pack": {
+      "human": "Optimization tech card",
+      "prerequisites": ["kr-singularity-lab"],
+      "science": {},
+      "complexity": 0.5063618824847849,
+      "unlocks": ["space-science-pack"],
+      "trigger": {
+        "type": "send-item-to-orbit",
+        "item": "satellite"
+      }
+    },
+    "military-3": {
+      "human": "Military 3",
+      "prerequisites": ["chemical-science-pack", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.723265808450264,
+      "unlocks": ["poison-capsule", "piercing-shotgun-shell"]
+    },
+    "military-4": {
+      "human": "Military 4",
+      "prerequisites": ["military-3", "utility-science-pack", "explosives"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "military-science-pack": 350,
+        "utility-science-pack": 350
+      },
+      "complexity": 0.7497213089220723,
+      "unlocks": ["cluster-grenade", "combat-shotgun"]
+    },
+    "uranium-ammo": {
+      "human": "Uranium ammo",
+      "prerequisites": ["uranium-processing", "military-4", "tank"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "military-science-pack": 300,
+        "utility-science-pack": 300
+      },
+      "complexity": 0.7637664102908726,
+      "unlocks": [
+        "uranium-rounds-magazine",
+        "uranium-cannon-shell",
+        "explosive-uranium-cannon-shell"
+      ]
+    },
+    "atomic-bomb": {
+      "human": "Atomic bomb",
+      "prerequisites": ["kovarex-enrichment-process", "rocketry", "kr-military-5"],
+      "science": {
+        "automation-science-pack": 1500,
+        "logistic-science-pack": 1500,
+        "chemical-science-pack": 1500,
+        "military-science-pack": 1500,
+        "production-science-pack": 1500,
+        "utility-science-pack": 1500
+      },
+      "complexity": 0.7851357390838098,
+      "unlocks": ["atomic-bomb", "kr-nuclear-artillery-shell"]
+    },
+    "automation-3": {
+      "human": "Automation 3",
+      "prerequisites": ["speed-module", "production-science-pack", "electric-engine"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "production-science-pack": 350
+      },
+      "complexity": 0.44842128264999764,
+      "unlocks": ["assembling-machine-3"]
+    },
+    "explosives": {
+      "human": "Explosives",
+      "prerequisites": ["sulfur-processing"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.20700184990363132,
+      "unlocks": ["explosives"]
+    },
+    "cliff-explosives": {
+      "human": "Cliff explosives",
+      "prerequisites": ["explosives", "military-2"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.21338966904454285,
+      "unlocks": ["cliff-explosives"]
+    },
+    "flammables": {
+      "human": "Flammables",
+      "prerequisites": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.1980753998016794,
+      "unlocks": []
+    },
+    "land-mine": {
+      "human": "Land mines",
+      "prerequisites": ["explosives", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.7232658084496105,
+      "unlocks": ["land-mine"]
+    },
+    "flamethrower": {
+      "human": "Flamethrower",
+      "prerequisites": ["flammables", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "military-science-pack": 50
+      },
+      "complexity": 0.7110739127482251,
+      "unlocks": ["flamethrower", "flamethrower-ammo", "flamethrower-turret"]
+    },
+    "advanced-circuit": {
+      "human": "Advanced circuit",
+      "prerequisites": ["plastics", "kr-silicon-processing"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.21557199848501687,
+      "unlocks": ["advanced-circuit", "kr-electronic-components"]
+    },
+    "processing-unit": {
+      "human": "Processing unit",
+      "prerequisites": ["kr-rare-metal-processing"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.3229493431331353,
+      "unlocks": ["processing-unit"]
+    },
+    "fluid-wagon": {
+      "human": "Fluid wagon",
+      "prerequisites": ["railway", "fluid-handling"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.2108829629666346,
+      "unlocks": ["fluid-wagon"]
+    },
+    "braking-force-1": {
+      "human": "Braking force 1",
+      "prerequisites": ["railway", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.30108481624274674,
+      "unlocks": []
+    },
+    "braking-force-2": {
+      "human": "Braking force 2",
+      "prerequisites": ["braking-force-1"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.3202616945165671,
+      "unlocks": []
+    },
+    "braking-force-3": {
+      "human": "Braking force 3",
+      "prerequisites": ["braking-force-2", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "production-science-pack": 250
+      },
+      "complexity": 0.4425327996669086,
+      "unlocks": []
+    },
+    "braking-force-4": {
+      "human": "Braking force 4",
+      "prerequisites": ["braking-force-3"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "production-science-pack": 350
+      },
+      "complexity": 0.45788092392550683,
+      "unlocks": []
+    },
+    "braking-force-5": {
+      "human": "Braking force 5",
+      "prerequisites": ["braking-force-4"],
+      "science": {
+        "automation-science-pack": 450,
+        "logistic-science-pack": 450,
+        "chemical-science-pack": 450,
+        "production-science-pack": 450
+      },
+      "complexity": 0.46770857370930996,
+      "unlocks": []
+    },
+    "braking-force-6": {
+      "human": "Braking force 6",
+      "prerequisites": ["braking-force-5", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 550,
+        "logistic-science-pack": 550,
+        "chemical-science-pack": 550,
+        "production-science-pack": 550,
+        "utility-science-pack": 550
+      },
+      "complexity": 0.48372383344337566,
+      "unlocks": []
+    },
+    "braking-force-7": {
+      "human": "Braking force 7",
+      "prerequisites": ["braking-force-6"],
+      "science": {
+        "automation-science-pack": 650,
+        "logistic-science-pack": 650,
+        "chemical-science-pack": 650,
+        "production-science-pack": 650,
+        "utility-science-pack": 650
+      },
+      "complexity": 0.4931166273914569,
+      "unlocks": []
+    },
+    "tank": {
+      "human": "Heavy armored vehicle",
+      "prerequisites": ["automobilism", "military-3", "explosives"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "military-science-pack": 250
+      },
+      "complexity": 0.7453008911553802,
+      "unlocks": ["tank", "cannon-shell", "explosive-cannon-shell"]
+    },
+    "logistics-3": {
+      "human": "Logistics 3",
+      "prerequisites": ["production-science-pack", "lubricant"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.44571706976604053,
+      "unlocks": [
+        "express-transport-belt",
+        "express-underground-belt",
+        "express-splitter",
+        "kr-express-loader"
+      ]
+    },
+    "laser": {
+      "human": "Laser",
+      "prerequisites": ["battery", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.31315623255969194,
+      "unlocks": []
+    },
+    "rocketry": {
+      "human": "Rocketry",
+      "prerequisites": ["explosives", "flammables", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 120,
+        "logistic-science-pack": 120,
+        "military-science-pack": 120
+      },
+      "complexity": 0.7264726964914123,
+      "unlocks": ["rocket-launcher", "rocket"]
+    },
+    "explosive-rocketry": {
+      "human": "Explosive rocketry",
+      "prerequisites": ["rocketry", "military-3"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.7437246860965807,
+      "unlocks": ["explosive-rocket"]
+    },
+    "modular-armor": {
+      "human": "Modular armor",
+      "prerequisites": ["heavy-armor", "advanced-circuit", "military-2"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.21798849388684305,
+      "unlocks": ["modular-armor"]
+    },
+    "power-armor": {
+      "human": "Power armor",
+      "prerequisites": ["modular-armor", "electric-engine", "processing-unit"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.3357353478880642,
+      "unlocks": ["power-armor"]
+    },
+    "power-armor-mk2": {
+      "human": "Power armor MK2",
+      "prerequisites": ["power-armor", "military-4", "speed-module-2", "efficiency-module-2"],
+      "science": {
+        "automation-science-pack": 400,
+        "logistic-science-pack": 400,
+        "chemical-science-pack": 400,
+        "military-science-pack": 400,
+        "utility-science-pack": 400
+      },
+      "complexity": 0.7609078347232372,
+      "unlocks": ["power-armor-mk2"]
+    },
+    "laser-turret": {
+      "human": "Laser turret",
+      "prerequisites": ["laser", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150,
+        "military-science-pack": 150,
+        "chemical-science-pack": 150
+      },
+      "complexity": 0.7303976102491514,
+      "unlocks": ["laser-turret"]
+    },
+    "robotics": {
+      "human": "Robotics",
+      "prerequisites": ["electric-engine", "battery"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "complexity": 0.31706114961988463,
+      "unlocks": ["flying-robot-frame"]
+    },
+    "rocket-fuel": {
+      "human": "Rocket fuel",
+      "prerequisites": ["flammables", "advanced-oil-processing", "kr-fuel"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.3241673952720954,
+      "unlocks": [
+        "rocket-fuel",
+        "kr-rocket-fuel-with-ammonia",
+        "kr-rocket-fuel-with-hydrogen-chloride"
+      ]
+    },
+    "low-density-structure": {
+      "human": "Low density structure",
+      "prerequisites": ["advanced-material-processing", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.32921046199824716,
+      "unlocks": ["low-density-structure"]
+    },
+    "rocket-silo": {
+      "human": "Rocket silo",
+      "prerequisites": [
+        "electric-energy-accumulators",
+        "solar-energy",
+        "utility-science-pack",
+        "speed-module-3",
+        "productivity-module-3",
+        "radar"
+      ],
+      "science": {
+        "automation-science-pack": 1000,
+        "logistic-science-pack": 1000,
+        "chemical-science-pack": 1000,
+        "production-science-pack": 1000,
+        "utility-science-pack": 1000
+      },
+      "complexity": 0.48855910182218565,
+      "unlocks": ["rocket-silo", "rocket-part", "cargo-landing-pad", "satellite"]
+    },
+    "research-speed-3": {
+      "human": "Lab research speed 3",
+      "prerequisites": ["research-speed-2", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.31707120947542183,
+      "unlocks": []
+    },
+    "research-speed-4": {
+      "human": "Lab research speed 4",
+      "prerequisites": ["research-speed-3"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.33633477531466016,
+      "unlocks": []
+    },
+    "research-speed-5": {
+      "human": "Lab research speed 5",
+      "prerequisites": ["research-speed-4", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.4546938909232746,
+      "unlocks": []
+    },
+    "research-speed-6": {
+      "human": "Lab research speed 6",
+      "prerequisites": ["research-speed-5", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.4783169992248571,
+      "unlocks": []
+    },
+    "electric-energy-distribution-2": {
+      "human": "Electric energy distribution 2",
+      "prerequisites": ["electric-energy-distribution-1", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.30105898277779375,
+      "unlocks": ["substation"]
+    },
+    "electric-energy-accumulators": {
+      "human": "Electric energy accumulators",
+      "prerequisites": ["electric-energy-distribution-1", "battery"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "complexity": 0.21566878656954241,
+      "unlocks": ["accumulator"]
+    },
+    "advanced-material-processing-2": {
+      "human": "Advanced material processing 2",
+      "prerequisites": ["advanced-material-processing", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.3170561175337027,
+      "unlocks": ["electric-furnace"]
+    },
+    "effect-transmission": {
+      "human": "Effect transmission",
+      "prerequisites": ["processing-unit", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.45468268244772747,
+      "unlocks": ["beacon"]
+    },
+    "lubricant": {
+      "human": "Lubricant",
+      "prerequisites": ["advanced-oil-processing"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.3049290589346499,
+      "unlocks": ["lubricant"]
+    },
+    "electric-engine": {
+      "human": "Electric engine",
+      "prerequisites": ["lubricant"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.31080744010100503,
+      "unlocks": ["electric-engine-unit", "kr-additional-engine-equipment"]
+    },
+    "battery": {
+      "human": "Battery",
+      "prerequisites": ["sulfur-processing"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "complexity": 0.20867027827641918,
+      "unlocks": ["battery"]
+    },
+    "construction-robotics": {
+      "human": "Construction robotics",
+      "prerequisites": ["robotics"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.3229565416285896,
+      "unlocks": ["roboport", "passive-provider-chest", "storage-chest", "construction-robot"]
+    },
+    "logistic-robotics": {
+      "human": "Logistic robotics",
+      "prerequisites": ["robotics"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.3292129835985407,
+      "unlocks": ["roboport", "passive-provider-chest", "storage-chest", "logistic-robot"]
+    },
+    "logistic-system": {
+      "human": "Logistic system",
+      "prerequisites": ["utility-science-pack", "logistic-robotics"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.45322894582816975,
+      "unlocks": ["active-provider-chest", "requester-chest", "buffer-chest"]
+    },
+    "worker-robots-speed-1": {
+      "human": "Worker robot speed 1",
+      "prerequisites": ["robotics"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.3202546938899779,
+      "unlocks": []
+    },
+    "worker-robots-speed-2": {
+      "human": "Worker robot speed 2",
+      "prerequisites": ["worker-robots-speed-1"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.3252980938305622,
+      "unlocks": []
+    },
+    "worker-robots-speed-3": {
+      "human": "Worker robot speed 3",
+      "prerequisites": ["worker-robots-speed-2", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150,
+        "chemical-science-pack": 150,
+        "utility-science-pack": 150
+      },
+      "complexity": 0.4442905535697179,
+      "unlocks": []
+    },
+    "worker-robots-speed-4": {
+      "human": "Worker robot speed 4",
+      "prerequisites": ["worker-robots-speed-3"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.46146489081555725,
+      "unlocks": []
+    },
+    "worker-robots-speed-5": {
+      "human": "Worker robot speed 5",
+      "prerequisites": ["worker-robots-speed-4", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.48034390334867255,
+      "unlocks": []
+    },
+    "worker-robots-speed-6": {
+      "human": "Worker robot speed 6",
+      "prerequisites": ["worker-robots-speed-5", "space-science-pack"],
+      "science": {},
+      "complexity": 0.5099683730270064,
+      "unlocks": [],
+      "formula": "((L-5)^2)*5000"
+    },
+    "worker-robots-storage-1": {
+      "human": "Worker robot cargo size 1",
+      "prerequisites": ["robotics"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.32736423354812894,
+      "unlocks": []
+    },
+    "worker-robots-storage-2": {
+      "human": "Worker robot cargo size 2",
+      "prerequisites": ["worker-robots-storage-1", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.4457322252958985,
+      "unlocks": []
+    },
+    "worker-robots-storage-3": {
+      "human": "Worker robot cargo size 3",
+      "prerequisites": ["worker-robots-storage-2", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 450,
+        "logistic-science-pack": 450,
+        "chemical-science-pack": 450,
+        "production-science-pack": 450,
+        "utility-science-pack": 450
+      },
+      "complexity": 0.4748662165557942,
+      "unlocks": []
+    },
+    "energy-shield-equipment": {
+      "human": "Energy shield equipment",
+      "prerequisites": ["solar-panel-equipment", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150,
+        "military-science-pack": 150
+      },
+      "complexity": 0.7303976102476257,
+      "unlocks": ["energy-shield-equipment"]
+    },
+    "night-vision-equipment": {
+      "human": "Nightvision equipment",
+      "prerequisites": ["solar-panel-equipment"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.22423322776918753,
+      "unlocks": ["night-vision-equipment"]
+    },
+    "belt-immunity-equipment": {
+      "human": "Belt immunity equipment",
+      "prerequisites": ["solar-panel-equipment"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.22423322776918753,
+      "unlocks": ["belt-immunity-equipment"]
+    },
+    "energy-shield-mk2-equipment": {
+      "human": "Energy shield MK2 equipment",
+      "prerequisites": [
+        "energy-shield-equipment",
+        "military-3",
+        "low-density-structure",
+        "power-armor"
+      ],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.7497213077492458,
+      "unlocks": ["energy-shield-mk2-equipment"]
+    },
+    "battery-equipment": {
+      "human": "Personal battery",
+      "prerequisites": ["battery", "modular-armor"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.22356357588692333,
+      "unlocks": [
+        "battery-equipment",
+        "kr-big-battery-equipment",
+        "kr-small-portable-generator-equipment"
+      ]
+    },
+    "battery-mk2-equipment": {
+      "human": "Personal battery MK2",
+      "prerequisites": ["battery-equipment", "power-armor"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.33800888310023447,
+      "unlocks": ["battery-mk2-equipment", "kr-big-battery-mk2-equipment"]
+    },
+    "solar-panel-equipment": {
+      "human": "Portable solar panel",
+      "prerequisites": ["modular-armor", "solar-energy"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.22356357588692333,
+      "unlocks": ["solar-panel-equipment", "kr-big-solar-panel-equipment"]
+    },
+    "personal-laser-defense-equipment": {
+      "human": "Personal laser defense MK1",
+      "prerequisites": [
+        "laser-turret",
+        "military-3",
+        "low-density-structure",
+        "power-armor",
+        "solar-panel-equipment"
+      ],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.7453008911580442,
+      "unlocks": ["personal-laser-defense-equipment"]
+    },
+    "discharge-defense-equipment": {
+      "human": "Discharge defense",
+      "prerequisites": ["laser-turret", "military-3", "power-armor", "solar-panel-equipment"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "military-science-pack": 300
+      },
+      "complexity": 0.7532509422304862,
+      "unlocks": ["discharge-defense-equipment"]
+    },
+    "fission-reactor-equipment": {
+      "human": "Portable fission reactor",
+      "prerequisites": ["power-armor", "military-science-pack", "nuclear-power"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "military-science-pack": 350
+      },
+      "complexity": 0.7453008911578568,
+      "unlocks": ["fission-reactor-equipment"]
+    },
+    "exoskeleton-equipment": {
+      "human": "Exoskeleton equipment",
+      "prerequisites": ["processing-unit", "electric-engine", "solar-panel-equipment"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.33167541920190524,
+      "unlocks": ["exoskeleton-equipment"]
+    },
+    "personal-roboport-equipment": {
+      "human": "Personal roboport",
+      "prerequisites": ["construction-robotics", "solar-panel-equipment"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.32531784221782667,
+      "unlocks": ["personal-roboport-equipment", "kr-vehicle-roboport-equipment"]
+    },
+    "personal-roboport-mk2-equipment": {
+      "human": "Personal roboport MK2",
+      "prerequisites": ["personal-roboport-equipment", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.45322591694078357,
+      "unlocks": ["personal-roboport-mk2-equipment"]
+    },
+    "fluid-handling": {
+      "human": "Fluid handling",
+      "prerequisites": ["engine", "steam-power"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.1858576939118317,
+      "unlocks": [
+        "storage-tank",
+        "pump",
+        "barrel",
+        "water-barrel",
+        "empty-water-barrel",
+        "sulfuric-acid-barrel",
+        "empty-sulfuric-acid-barrel",
+        "crude-oil-barrel",
+        "empty-crude-oil-barrel",
+        "heavy-oil-barrel",
+        "empty-heavy-oil-barrel",
+        "light-oil-barrel",
+        "empty-light-oil-barrel",
+        "petroleum-gas-barrel",
+        "empty-petroleum-gas-barrel",
+        "lubricant-barrel",
+        "empty-lubricant-barrel",
+        "kr-ammonia-barrel",
+        "empty-kr-ammonia-barrel",
+        "kr-biomethanol-barrel",
+        "empty-kr-biomethanol-barrel",
+        "kr-chlorine-barrel",
+        "empty-kr-chlorine-barrel",
+        "kr-dirty-water-barrel",
+        "empty-kr-dirty-water-barrel",
+        "kr-heavy-water-barrel",
+        "empty-kr-heavy-water-barrel",
+        "kr-hydrogen-barrel",
+        "empty-kr-hydrogen-barrel",
+        "kr-hydrogen-chloride-barrel",
+        "empty-kr-hydrogen-chloride-barrel",
+        "kr-mineral-water-barrel",
+        "empty-kr-mineral-water-barrel",
+        "kr-nitric-acid-barrel",
+        "empty-kr-nitric-acid-barrel",
+        "kr-nitrogen-barrel",
+        "empty-kr-nitrogen-barrel",
+        "kr-oxygen-barrel",
+        "empty-kr-oxygen-barrel"
+      ]
+    },
+    "oil-gathering": {
+      "human": "Oil gathering",
+      "prerequisites": ["fluid-handling"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.1947944209848362,
+      "unlocks": ["pumpjack"]
+    },
+    "oil-processing": {
+      "human": "Oil processing",
+      "prerequisites": ["oil-gathering", "kr-fluids-chemistry"],
+      "science": {},
+      "complexity": 0.19489771759485186,
+      "unlocks": ["oil-refinery", "basic-oil-processing", "solid-fuel-from-petroleum-gas"],
+      "trigger": {
+        "type": "mine-entity",
+        "entities": ["crude-oil"]
+      }
+    },
+    "advanced-oil-processing": {
+      "human": "Advanced oil processing",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "complexity": 0.29603678245149495,
+      "unlocks": [
+        "advanced-oil-processing",
+        "heavy-oil-cracking",
+        "light-oil-cracking",
+        "solid-fuel-from-heavy-oil",
+        "solid-fuel-from-light-oil"
+      ]
+    },
+    "coal-liquefaction": {
+      "human": "Coal liquefaction",
+      "prerequisites": ["advanced-oil-processing", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150,
+        "chemical-science-pack": 150,
+        "production-science-pack": 150
+      },
+      "complexity": 0.4335846093266218,
+      "unlocks": ["coal-liquefaction", "kr-coal-filtration", "kr-coke-liquefaction"]
+    },
+    "sulfur-processing": {
+      "human": "Sulfur processing",
+      "prerequisites": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "complexity": 0.20309891808339983,
+      "unlocks": ["sulfuric-acid", "sulfur"]
+    },
+    "plastics": {
+      "human": "Plastics",
+      "prerequisites": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "complexity": 0.20515841718311525,
+      "unlocks": ["plastic-bar"]
+    },
+    "modules": {
+      "human": "Modules",
+      "prerequisites": ["advanced-circuit"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.21760064837170123,
+      "unlocks": []
+    },
+    "speed-module": {
+      "human": "Speed module",
+      "prerequisites": ["modules"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.21853348559346344,
+      "unlocks": ["speed-module"]
+    },
+    "speed-module-2": {
+      "human": "Speed module 2",
+      "prerequisites": ["speed-module", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "complexity": 0.2960700038736467,
+      "unlocks": ["speed-module-2"]
+    },
+    "speed-module-3": {
+      "human": "Speed module 3",
+      "prerequisites": ["speed-module-2", "production-science-pack", "processing-unit"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.4457310560012847,
+      "unlocks": ["speed-module-3"]
+    },
+    "productivity-module": {
+      "human": "Productivity module",
+      "prerequisites": ["modules"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.21853348559346344,
+      "unlocks": ["productivity-module"]
+    },
+    "productivity-module-2": {
+      "human": "Productivity module 2",
+      "prerequisites": ["productivity-module", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "complexity": 0.2960700038736467,
+      "unlocks": ["productivity-module-2"]
+    },
+    "productivity-module-3": {
+      "human": "Productivity module 3",
+      "prerequisites": ["productivity-module-2", "production-science-pack", "processing-unit"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.44573105376973216,
+      "unlocks": ["productivity-module-3"]
+    },
+    "efficiency-module": {
+      "human": "Efficiency module",
+      "prerequisites": ["modules"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "complexity": 0.21853348559346344,
+      "unlocks": ["efficiency-module"]
+    },
+    "efficiency-module-2": {
+      "human": "Efficiency module 2",
+      "prerequisites": ["efficiency-module", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "complexity": 0.2960700038736467,
+      "unlocks": ["efficiency-module-2"]
+    },
+    "efficiency-module-3": {
+      "human": "Efficiency module 3",
+      "prerequisites": ["efficiency-module-2", "production-science-pack", "processing-unit"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300,
+        "production-science-pack": 300
+      },
+      "complexity": 0.4457310560012847,
+      "unlocks": ["efficiency-module-3"]
+    },
+    "defender": {
+      "human": "Defender",
+      "prerequisites": ["military-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "military-science-pack": 100
+      },
+      "complexity": 0.7232658084496091,
+      "unlocks": ["defender-capsule"]
+    },
+    "distractor": {
+      "human": "Distractor",
+      "prerequisites": ["defender", "military-3", "laser"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "military-science-pack": 200
+      },
+      "complexity": 0.747649599853203,
+      "unlocks": ["distractor-capsule"]
+    },
+    "destroyer": {
+      "human": "Destroyer",
+      "prerequisites": ["military-4", "distractor", "speed-module"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "military-science-pack": 350,
+        "utility-science-pack": 350
+      },
+      "complexity": 0.7654428388903309,
+      "unlocks": ["destroyer-capsule"]
+    },
+    "uranium-mining": {
+      "human": "Uranium mining",
+      "prerequisites": ["chemical-science-pack", "concrete"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "complexity": 0.30109310729868105,
+      "unlocks": []
+    },
+    "uranium-processing": {
+      "human": "Uranium processing",
+      "prerequisites": ["uranium-mining"],
+      "science": {},
+      "complexity": 0.30109310729868105,
+      "unlocks": ["centrifuge", "uranium-processing"],
+      "trigger": {
+        "type": "mine-entity",
+        "entities": ["uranium-ore"]
+      }
+    },
+    "nuclear-power": {
+      "human": "Nuclear power",
+      "prerequisites": ["uranium-processing", "kr-rare-metal-processing"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.333823027270462,
+      "unlocks": [
+        "nuclear-reactor",
+        "heat-exchanger",
+        "heat-pipe",
+        "steam-turbine",
+        "uranium-fuel-cell"
+      ]
+    },
+    "kovarex-enrichment-process": {
+      "human": "Kovarex enrichment process",
+      "prerequisites": ["production-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.4546728762158289,
+      "unlocks": ["kovarex-enrichment-process"]
+    },
+    "nuclear-fuel-reprocessing": {
+      "human": "Nuclear fuel reprocessing",
+      "prerequisites": ["nuclear-power", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "production-science-pack": 250
+      },
+      "complexity": 0.44254676570725376,
+      "unlocks": ["nuclear-fuel-reprocessing"]
+    },
+    "mining-productivity-1": {
+      "human": "Mining productivity 1",
+      "prerequisites": ["advanced-circuit"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "complexity": 0.2202626950107934,
+      "unlocks": []
+    },
+    "mining-productivity-2": {
+      "human": "Mining productivity 2",
+      "prerequisites": ["mining-productivity-1", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.32921634517003245,
+      "unlocks": []
+    },
+    "mining-productivity-3": {
+      "human": "Mining productivity 3",
+      "prerequisites": ["mining-productivity-2", "production-science-pack", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.4730131700236101,
+      "unlocks": []
+    },
+    "mining-productivity-4": {
+      "human": "Mining productivity",
+      "prerequisites": ["mining-productivity-3", "space-science-pack"],
+      "science": {},
+      "complexity": 0.5088190591953085,
+      "unlocks": [],
+      "formula": "(L^2)*200"
+    },
+    "artillery": {
+      "human": "Artillery",
+      "prerequisites": ["military-4", "tank", "concrete", "radar"],
+      "science": {
+        "automation-science-pack": 1000,
+        "logistic-science-pack": 1000,
+        "chemical-science-pack": 1000,
+        "military-science-pack": 1000,
+        "utility-science-pack": 1000
+      },
+      "complexity": 0.7730997302906993,
+      "unlocks": ["artillery-wagon", "artillery-turret", "artillery-shell"]
+    },
+    "spidertron": {
+      "human": "Spidertron",
+      "prerequisites": [
+        "military-4",
+        "exoskeleton-equipment",
+        "rocketry",
+        "efficiency-module-3",
+        "radar",
+        "kr-ai-core",
+        "kr-fusion-reactor-equipment"
+      ],
+      "science": {
+        "automation-science-pack": 2500,
+        "logistic-science-pack": 2500,
+        "military-science-pack": 2500,
+        "chemical-science-pack": 2500,
+        "production-science-pack": 2500,
+        "utility-science-pack": 2500
+      },
+      "complexity": 0.7866357275527096,
+      "unlocks": ["spidertron"]
+    },
+    "circuit-network": {
+      "human": "Circuit network",
+      "prerequisites": ["logistic-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.17877928184281122,
+      "unlocks": [
+        "arithmetic-combinator",
+        "decider-combinator",
+        "constant-combinator",
+        "power-switch",
+        "programmable-speaker",
+        "display-panel",
+        "iron-stick"
+      ]
+    },
+    "advanced-combinators": {
+      "human": "Advanced combinators",
+      "prerequisites": ["circuit-network", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.2890532160272966,
+      "unlocks": ["selector-combinator"]
+    },
+    "bob-long-inserters-1": {
+      "human": "Long inserters 1",
+      "prerequisites": ["logistics"],
+      "science": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "complexity": 0.0888228639950442,
+      "unlocks": []
+    },
+    "bob-long-inserters-2": {
+      "human": "Long inserters 2",
+      "prerequisites": ["bob-long-inserters-1", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.28902031416582025,
+      "unlocks": []
+    },
+    "bob-near-inserters": {
+      "human": "Near inserters",
+      "prerequisites": ["logistics"],
+      "science": {
+        "kr-basic-tech-card": 25,
+        "automation-science-pack": 25
+      },
+      "complexity": 0.08991571154062071,
+      "unlocks": []
+    },
+    "bob-more-inserters-1": {
+      "human": "More inserters 1",
+      "prerequisites": ["logistics-2"],
+      "science": {
+        "automation-science-pack": 25,
+        "logistic-science-pack": 25
+      },
+      "complexity": 0.19298858940107746,
+      "unlocks": []
+    },
+    "bob-more-inserters-2": {
+      "human": "More inserters 2",
+      "prerequisites": ["bob-more-inserters-1", "logistics-3", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50,
+        "production-science-pack": 50
+      },
+      "complexity": 0.44841928225447486,
+      "unlocks": []
+    },
+    "elevated-rail": {
+      "human": "Elevated rail",
+      "prerequisites": ["production-science-pack"],
+      "science": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100,
+        "production-science-pack": 100
+      },
+      "complexity": 0.42650393505528716,
+      "unlocks": ["rail-support", "rail-ramp"]
+    },
+    "electric-energy-distribution-3": {
+      "human": "Electric energy distribution 3",
+      "prerequisites": ["electric-energy-distribution-2", "kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 300,
+        "utility-science-pack": 300,
+        "kr-advanced-tech-card": 300
+      },
+      "complexity": 0.7389614448012036,
+      "unlocks": ["kr-superior-substation"]
+    },
+    "kr-advanced-chemical-plant": {
+      "human": "Advanced chemical plant",
+      "prerequisites": ["kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479347507615863,
+      "unlocks": ["kr-advanced-chemical-plant", "kr-electronic-components-with-lithium"]
+    },
+    "kr-advanced-furnace": {
+      "human": "Advanced furnace",
+      "prerequisites": ["kr-energy-control-unit", "kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479429298674305,
+      "unlocks": ["kr-advanced-furnace"]
+    },
+    "kr-advanced-roboports": {
+      "human": "Advanced roboports",
+      "prerequisites": ["kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479230625839265,
+      "unlocks": ["kr-small-roboport", "kr-big-roboport"]
+    },
+    "kr-advanced-tank": {
+      "human": "Tank",
+      "prerequisites": ["tank", "kr-advanced-tech-card", "kr-railgun-turret"],
+      "science": {
+        "production-science-pack": 750,
+        "utility-science-pack": 750,
+        "kr-matter-tech-card": 750,
+        "kr-advanced-tech-card": 750
+      },
+      "complexity": 0.7741967239495182,
+      "unlocks": ["kr-advanced-tank"]
+    },
+    "kr-automation": {
+      "human": "Advanced assembling machine",
+      "prerequisites": [
+        "automation-3",
+        "kr-energy-control-unit",
+        "kr-advanced-tech-card",
+        "kr-enriched-ores"
+      ],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479429305731314,
+      "unlocks": [
+        "kr-advanced-assembling-machine",
+        "kr-copper-cable-from-copper-ore",
+        "kr-copper-cable-from-enriched-copper",
+        "kr-iron-stick-from-iron-ore",
+        "kr-iron-stick-from-enriched-iron",
+        "kr-iron-gear-wheel-from-iron-ore",
+        "kr-iron-gear-wheel-from-enriched-iron",
+        "kr-iron-beam-from-iron-ore",
+        "kr-iron-beam-from-enriched-iron",
+        "kr-easy-steel-gear-wheel",
+        "kr-easy-steel-beam",
+        "kr-easy-imersium-gear-wheel",
+        "kr-easy-imersium-beam",
+        "kr-easy-electronic-components"
+      ]
+    },
+    "kr-biter-virus": {
+      "human": "Anti-biter virus capsule",
+      "prerequisites": ["kr-advanced-tech-card", "kr-military-5"],
+      "science": {
+        "production-science-pack": 3000,
+        "utility-science-pack": 3000,
+        "kr-matter-tech-card": 3000,
+        "kr-advanced-tech-card": 3000
+      },
+      "complexity": 0.7889461667043222,
+      "unlocks": ["kr-biter-virus"]
+    },
+    "kr-electric-mining-drill-mk3": {
+      "human": "Electric mining drill MK3",
+      "prerequisites": ["kr-advanced-tech-card", "kr-electric-mining-drill-mk2"],
+      "science": {
+        "production-science-pack": 300,
+        "utility-science-pack": 300,
+        "kr-advanced-tech-card": 300
+      },
+      "complexity": 0.7389614448017398,
+      "unlocks": ["kr-electric-mining-drill-mk3"]
+    },
+    "kr-energy-shield-mk4-equipment": {
+      "human": "Energy shield MK4",
+      "prerequisites": ["kr-energy-shield-mk3-equipment", "kr-advanced-tech-card"],
+      "science": {
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.76104158037907,
+      "unlocks": ["kr-energy-shield-mk4-equipment"]
+    },
+    "kr-laser-artillery-turret": {
+      "human": "Laser artillery turret",
+      "prerequisites": [
+        "kr-military-5",
+        "kr-advanced-tech-card",
+        "kr-railgun-turret",
+        "kr-energy-control-unit"
+      ],
+      "science": {
+        "production-science-pack": 750,
+        "utility-science-pack": 750,
+        "kr-advanced-tech-card": 750
+      },
+      "complexity": 0.7822444949140615,
+      "unlocks": ["kr-laser-artillery-turret"]
+    },
+    "kr-logistic-5": {
+      "human": "Logistics 5",
+      "prerequisites": ["kr-logistic-4", "kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 750,
+        "utility-science-pack": 750,
+        "kr-advanced-tech-card": 750
+      },
+      "complexity": 0.7550431600822294,
+      "unlocks": [
+        "kr-superior-splitter",
+        "kr-superior-transport-belt",
+        "kr-superior-underground-belt",
+        "kr-superior-loader"
+      ]
+    },
+    "kr-personal-laser-defense-mk3-equipment": {
+      "human": "Personal laser defense MK3",
+      "prerequisites": [
+        "kr-advanced-tech-card",
+        "kr-personal-laser-defense-mk2-equipment",
+        "kr-military-5"
+      ],
+      "science": {
+        "utility-science-pack": 450,
+        "space-science-pack": 450,
+        "kr-advanced-tech-card": 450
+      },
+      "complexity": 0.7822858811225095,
+      "unlocks": ["kr-personal-laser-defense-mk3-equipment"]
+    },
+    "kr-power-armor-mk3": {
+      "human": "Power armor MK3",
+      "prerequisites": [
+        "efficiency-module-3",
+        "kr-advanced-tech-card",
+        "kr-energy-control-unit",
+        "power-armor-mk2"
+      ],
+      "science": {
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.767785029012677,
+      "unlocks": ["kr-power-armor-mk3"]
+    },
+    "kr-rocket-turret": {
+      "human": "Rocket turret",
+      "prerequisites": ["kr-advanced-tech-card", "kr-railgun-turret", "atomic-bomb"],
+      "science": {
+        "production-science-pack": 750,
+        "utility-science-pack": 750,
+        "kr-advanced-tech-card": 750
+      },
+      "complexity": 0.7901396184715591,
+      "unlocks": ["kr-rocket-turret", "kr-explosive-turret-rocket", "kr-nuclear-turret-rocket"]
+    },
+    "kr-singularity-tech-card": {
+      "human": "Singularity tech card",
+      "prerequisites": ["kr-advanced-tech-card", "kr-matter-processing"],
+      "science": {
+        "production-science-pack": 1250,
+        "utility-science-pack": 1250,
+        "space-science-pack": 1250,
+        "kr-matter-tech-card": 1250,
+        "kr-advanced-tech-card": 1250
+      },
+      "complexity": 0.7640526712739066,
+      "unlocks": ["kr-singularity-tech-card"]
+    },
+    "kr-superior-exoskeleton-equipment": {
+      "human": "Superior exoskeleton",
+      "prerequisites": ["kr-advanced-exoskeleton-equipment", "kr-advanced-tech-card"],
+      "science": {
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479326061170164,
+      "unlocks": ["kr-superior-exoskeleton-equipment"]
+    },
+    "kr-superior-inserters": {
+      "human": "Superior inserters",
+      "prerequisites": ["bulk-inserter", "kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-advanced-tech-card": 500
+      },
+      "complexity": 0.7479230625839268,
+      "unlocks": ["kr-superior-inserter", "kr-superior-long-inserter"]
+    },
+    "kr-fluids-chemistry": {
+      "human": "Fluid chemistry",
+      "prerequisites": ["steam-power", "steel-processing", "kr-stone-processing", "engine"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.1790416010755903,
+      "unlocks": ["kr-electrolysis-plant", "chemical-plant", "kr-water-electrolysis"]
+    },
+    "kr-sentinel": {
+      "human": "Sentinel",
+      "prerequisites": ["lamp"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.10429665504792784,
+      "unlocks": ["kr-sentinel"]
+    },
+    "kr-shelter": {
+      "human": "Shelter",
+      "prerequisites": ["automation-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.09885828446920987,
+      "unlocks": ["kr-shelter"]
+    },
+    "kr-automation-core": {
+      "human": "Automation core",
+      "prerequisites": [],
+      "science": {
+        "kr-basic-tech-card": 10
+      },
+      "complexity": 0.04217702948051689,
+      "unlocks": ["kr-automation-core"]
+    },
+    "kr-crusher": {
+      "human": "Crusher",
+      "prerequisites": ["kr-automation-core"],
+      "science": {
+        "kr-basic-tech-card": 30
+      },
+      "complexity": 0.06531871525507688,
+      "unlocks": ["kr-crusher"]
+    },
+    "kr-decorations": {
+      "human": "Welcome to the jungle",
+      "prerequisites": ["kr-greenhouse"],
+      "science": {
+        "kr-basic-tech-card": 30
+      },
+      "complexity": 0.09043768418978278,
+      "unlocks": [
+        "tree-01",
+        "tree-02",
+        "tree-02-red",
+        "tree-03",
+        "tree-04",
+        "tree-05",
+        "tree-06",
+        "tree-06-brown",
+        "tree-07",
+        "tree-08",
+        "tree-08-brown",
+        "tree-08-red",
+        "tree-09",
+        "tree-09-brown",
+        "tree-09-red",
+        "dry-tree",
+        "dead-tree-desert",
+        "dead-grey-trunk",
+        "dead-dry-hairy-tree",
+        "dry-hairy-tree",
+        "huge-rock",
+        "big-rock",
+        "big-sand-rock"
+      ]
+    },
+    "kr-laboratory": {
+      "human": "Laboratory",
+      "prerequisites": ["kr-automation-core"],
+      "science": {
+        "kr-basic-tech-card": 15
+      },
+      "complexity": 0.05730727079424745,
+      "unlocks": ["lab"]
+    },
+    "kr-greenhouse": {
+      "human": "Greenhouse",
+      "prerequisites": ["kr-stone-processing", "steam-power"],
+      "science": {
+        "kr-basic-tech-card": 40
+      },
+      "complexity": 0.08704466544316437,
+      "unlocks": ["kr-greenhouse", "wood"]
+    },
+    "kr-iron-pickaxe": {
+      "human": "Iron pickaxe",
+      "prerequisites": [],
+      "science": {
+        "kr-basic-tech-card": 25
+      },
+      "complexity": 0.05730727079424745,
+      "unlocks": []
+    },
+    "kr-stone-processing": {
+      "human": "Stone processing",
+      "prerequisites": ["kr-crusher"],
+      "science": {
+        "kr-basic-tech-card": 50
+      },
+      "complexity": 0.0793423534993677,
+      "unlocks": ["kr-sand", "kr-glass"]
+    },
+    "kr-light-armor": {
+      "human": "Light armor",
+      "prerequisites": ["military"],
+      "science": {
+        "kr-basic-tech-card": 50
+      },
+      "complexity": 0.07230693105190644,
+      "unlocks": ["light-armor"]
+    },
+    "kr-advanced-chemistry": {
+      "human": "Advanced chemistry",
+      "prerequisites": [
+        "kr-atmosphere-condensation",
+        "kr-mineral-water-gathering",
+        "kr-rare-metal-processing"
+      ],
+      "science": {
+        "automation-science-pack": 275,
+        "logistic-science-pack": 275,
+        "chemical-science-pack": 275
+      },
+      "complexity": 0.3308811797677406,
+      "unlocks": [
+        "kr-water",
+        "kr-water-separation",
+        "kr-ammonia",
+        "kr-nitric-acid",
+        "kr-hydrogen-chloride",
+        "kr-biomethanol"
+      ]
+    },
+    "kr-advanced-lab": {
+      "human": "Advanced lab",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "kr-basic-tech-card": 300,
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.3202463652508847,
+      "unlocks": ["kr-advanced-lab"]
+    },
+    "kr-air-purification": {
+      "human": "Air purification",
+      "prerequisites": ["kr-advanced-chemistry", "kr-bio-processing"],
+      "science": {
+        "automation-science-pack": 275,
+        "logistic-science-pack": 275,
+        "military-science-pack": 275,
+        "chemical-science-pack": 275
+      },
+      "complexity": 0.7487159376921569,
+      "unlocks": [
+        "kr-air-purifier",
+        "kr-pollution-filter",
+        "kr-air-cleaning",
+        "kr-restore-used-pollution-filter"
+      ]
+    },
+    "kr-atmosphere-condensation": {
+      "human": "Atmospheric condensation",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 175,
+        "logistic-science-pack": 175,
+        "chemical-science-pack": 175
+      },
+      "complexity": 0.31080744010100503,
+      "unlocks": [
+        "kr-atmospheric-condenser",
+        "kr-hydrogen",
+        "kr-oxygen",
+        "kr-nitrogen",
+        "kr-water-from-atmosphere"
+      ]
+    },
+    "kr-bio-fuel": {
+      "human": "Biofuel",
+      "prerequisites": ["kr-fuel", "kr-advanced-chemistry"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.33633086134553236,
+      "unlocks": ["kr-biofuel"]
+    },
+    "kr-bio-processing": {
+      "human": "Bioprocessing",
+      "prerequisites": ["kr-advanced-chemistry", "kr-greenhouse", "military-science-pack"],
+      "science": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150,
+        "military-science-pack": 150,
+        "chemical-science-pack": 150
+      },
+      "complexity": 0.7303976102506773,
+      "unlocks": [
+        "kr-bio-lab",
+        "kr-biomass",
+        "kr-first-aid-kit",
+        "kr-fertilizer",
+        "kr-wood-with-fertilizer"
+      ]
+    },
+    "kr-electric-mining-drill-mk2": {
+      "human": "Electric mining drill MK2",
+      "prerequisites": ["electric-mining-drill", "kr-rare-metal-processing"],
+      "science": {
+        "automation-science-pack": 300,
+        "logistic-science-pack": 300,
+        "chemical-science-pack": 300
+      },
+      "complexity": 0.3229493506039183,
+      "unlocks": ["kr-electric-mining-drill-mk2"]
+    },
+    "kr-enriched-ores": {
+      "human": "Ore enrichment",
+      "prerequisites": ["kr-advanced-chemistry"],
+      "science": {
+        "automation-science-pack": 275,
+        "logistic-science-pack": 275,
+        "chemical-science-pack": 275
+      },
+      "complexity": 0.33800234775904864,
+      "unlocks": [
+        "kr-enriched-iron",
+        "kr-enriched-copper",
+        "kr-enriched-rare-metals",
+        "kr-iron-plate-from-enriched-iron",
+        "kr-copper-plate-from-enriched-copper",
+        "kr-rare-metals-from-enriched-rare-metals",
+        "kr-filter-iron-ore-from-dirty-water",
+        "kr-filter-copper-ore-from-dirty-water",
+        "kr-filter-rare-metal-ore-from-dirty-water"
+      ]
+    },
+    "kr-lithium-processing": {
+      "human": "Lithium processing",
+      "prerequisites": ["kr-advanced-chemistry"],
+      "science": {
+        "automation-science-pack": 275,
+        "logistic-science-pack": 275,
+        "chemical-science-pack": 275
+      },
+      "complexity": 0.33800234775904864,
+      "unlocks": ["kr-lithium", "kr-lithium-chloride"]
+    },
+    "kr-lithium-sulfur-battery": {
+      "human": "Lithium-sulfur battery",
+      "prerequisites": ["kr-lithium-processing"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.3418161845114189,
+      "unlocks": ["kr-lithium-sulfur-battery"]
+    },
+    "kr-fusion-reactor-equipment": {
+      "human": "Portable fusion reactor",
+      "prerequisites": ["fission-reactor-equipment", "kr-fusion-energy"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "military-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.7547814087791272,
+      "unlocks": ["kr-fusion-reactor-equipment"]
+    },
+    "kr-mineral-water-gathering": {
+      "human": "Mineral water gathering",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.28902021133131717,
+      "unlocks": []
+    },
+    "kr-portable-generator-equipment": {
+      "human": "Portable generator",
+      "prerequisites": ["battery-equipment", "chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.28912576242606547,
+      "unlocks": ["kr-portable-generator-equipment"]
+    },
+    "kr-rare-metal-mining": {
+      "human": "Rare metal mining",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "complexity": 0.28902021133131717,
+      "unlocks": []
+    },
+    "kr-rare-metal-processing": {
+      "human": "Rare metal processing",
+      "prerequisites": ["kr-rare-metal-mining"],
+      "science": {},
+      "complexity": 0.28902021133131717,
+      "unlocks": ["kr-rare-metals"],
+      "trigger": {
+        "type": "mine-entity",
+        "entities": ["kr-rare-metal-ore"]
+      }
+    },
+    "kr-reinforced-plates": {
+      "human": "Reinforced plates",
+      "prerequisites": ["chemical-science-pack", "concrete"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200
+      },
+      "complexity": 0.3131708846001469,
+      "unlocks": ["kr-black-reinforced-plate", "kr-white-reinforced-plate"]
+    },
+    "kr-research-server": {
+      "human": "Research server",
+      "prerequisites": ["chemical-science-pack"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350
+      },
+      "complexity": 0.3229493431331353,
+      "unlocks": ["kr-research-server"]
+    },
+    "kr-robot-battery": {
+      "human": "Better robot battery",
+      "prerequisites": ["kr-lithium-sulfur-battery", "robotics"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.351468729361442,
+      "unlocks": []
+    },
+    "kr-tesla-coil": {
+      "human": "Tesla coil",
+      "prerequisites": ["battery-equipment", "power-armor"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500
+      },
+      "complexity": 0.34495303295162455,
+      "unlocks": ["kr-tesla-coil", "kr-energy-absorber-equipment"]
+    },
+    "kr-fluid-excess-handling": {
+      "human": "Flare stack",
+      "prerequisites": ["kr-fluids-chemistry"],
+      "science": {
+        "kr-basic-tech-card": 150,
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "complexity": 0.19493832616316756,
+      "unlocks": [
+        "kr-flare-stack",
+        "kr-burn-water",
+        "kr-burn-steam",
+        "kr-burn-sulfuric-acid",
+        "kr-burn-crude-oil",
+        "kr-burn-heavy-oil",
+        "kr-burn-light-oil",
+        "kr-burn-petroleum-gas",
+        "kr-burn-lubricant",
+        "kr-burn-kr-ammonia",
+        "kr-burn-kr-biomethanol",
+        "kr-burn-kr-chlorine",
+        "kr-burn-kr-dirty-water",
+        "kr-burn-kr-heavy-water",
+        "kr-burn-kr-hydrogen",
+        "kr-burn-kr-hydrogen-chloride",
+        "kr-burn-kr-mineral-water",
+        "kr-burn-kr-nitric-acid",
+        "kr-burn-kr-nitrogen",
+        "kr-burn-kr-oxygen"
+      ]
+    },
+    "kr-fuel": {
+      "human": "Fuel",
+      "prerequisites": ["oil-processing"],
+      "science": {
+        "kr-basic-tech-card": 125,
+        "automation-science-pack": 125,
+        "logistic-science-pack": 125
+      },
+      "complexity": 0.20199370613437997,
+      "unlocks": ["kr-fuel-refinery", "kr-fuel-from-light-oil", "kr-fuel-from-solid-fuel"]
+    },
+    "kr-gas-power-station": {
+      "human": "Gas power station",
+      "prerequisites": ["oil-processing"],
+      "science": {
+        "kr-basic-tech-card": 250,
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "complexity": 0.20703586602663934,
+      "unlocks": ["kr-gas-power-station"]
+    },
+    "kr-silicon-processing": {
+      "human": "Silicon processing",
+      "prerequisites": ["kr-fluids-chemistry", "automation-2"],
+      "science": {
+        "kr-basic-tech-card": 125,
+        "automation-science-pack": 125,
+        "logistic-science-pack": 125
+      },
+      "complexity": 0.1959446576564304,
+      "unlocks": ["kr-filtration-plant", "kr-silicon", "kr-quartz"]
+    },
+    "kr-steel-fluid-handling": {
+      "human": "Steel fluid handling",
+      "prerequisites": ["steel-processing", "fluid-handling"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "complexity": 0.19484886323291703,
+      "unlocks": ["kr-steel-pipe", "kr-steel-pipe-to-ground", "kr-steel-pump"]
+    },
+    "kr-steel-fluid-tanks": {
+      "human": "Steel fluid tanks",
+      "prerequisites": ["kr-steel-fluid-handling"],
+      "science": {
+        "kr-basic-tech-card": 120,
+        "automation-science-pack": 120,
+        "logistic-science-pack": 120
+      },
+      "complexity": 0.20172551467791947,
+      "unlocks": ["kr-big-storage-tank", "kr-huge-storage-tank"]
+    },
+    "kr-advanced-pickaxe": {
+      "human": "Advanced pickaxe",
+      "prerequisites": ["steel-axe", "kr-advanced-tech-card"],
+      "science": {
+        "production-science-pack": 200,
+        "utility-science-pack": 200,
+        "kr-advanced-tech-card": 200,
+        "kr-matter-tech-card": 200
+      },
+      "complexity": 0.7318704899761659,
+      "unlocks": []
+    },
+    "kr-advanced-tech-card": {
+      "human": "Advanced tech card",
+      "prerequisites": ["kr-imersium-processing", "kr-lithium-sulfur-battery"],
+      "science": {
+        "production-science-pack": 1000,
+        "utility-science-pack": 1000,
+        "kr-matter-tech-card": 1000
+      },
+      "complexity": 0.6385780095999206,
+      "unlocks": ["kr-advanced-tech-card"]
+    },
+    "kr-energy-control-unit": {
+      "human": "Energy control unit",
+      "prerequisites": ["kr-lithium-sulfur-battery", "kr-matter-tech-card"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6130191417305786,
+      "unlocks": ["kr-energy-control-unit"]
+    },
+    "kr-energy-storage": {
+      "human": "Energy storage",
+      "prerequisites": ["kr-energy-control-unit"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6251859695223514,
+      "unlocks": ["kr-energy-storage"]
+    },
+    "kr-imersium-processing": {
+      "human": "Imersium processing",
+      "prerequisites": ["kr-matter-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "kr-matter-tech-card": 500
+      },
+      "complexity": 0.619277727242845,
+      "unlocks": ["kr-imersium-plate", "kr-imersium-gear-wheel", "kr-imersium-beam"]
+    },
+    "kr-matter-coal-processing": {
+      "human": "Coal conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": ["kr-coal-to-matter", "kr-matter-to-coal"]
+    },
+    "kr-matter-copper-processing": {
+      "human": "Copper conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": ["kr-copper-ore-to-matter", "kr-matter-to-copper-ore", "kr-matter-to-copper-plate"]
+    },
+    "kr-matter-iron-processing": {
+      "human": "Iron conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-iron-ore-to-matter",
+        "kr-matter-to-iron-ore",
+        "kr-matter-to-iron-plate",
+        "kr-matter-to-steel-plate"
+      ]
+    },
+    "kr-matter-minerals-processing": {
+      "human": "Minerals conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-kr-imersite-powder-to-matter",
+        "kr-matter-to-kr-imersite-powder",
+        "kr-kr-imersite-to-matter"
+      ]
+    },
+    "kr-matter-oil-processing": {
+      "human": "Oil conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-crude-oil-to-matter",
+        "kr-matter-to-crude-oil",
+        "kr-matter-to-plastic-bar",
+        "kr-matter-to-sulfur"
+      ]
+    },
+    "kr-matter-processing": {
+      "human": "Matter processing",
+      "prerequisites": ["kr-imersium-processing", "kr-energy-control-unit"],
+      "science": {
+        "production-science-pack": 1000,
+        "utility-science-pack": 1000,
+        "kr-matter-tech-card": 1000
+      },
+      "complexity": 0.6422646067288348,
+      "unlocks": [
+        "kr-matter-plant",
+        "kr-matter-associator",
+        "kr-stabilizer-charging-station",
+        "kr-matter-stabilizer",
+        "kr-charged-matter-stabilizer",
+        "kr-kr-biomass-to-matter",
+        "kr-matter-to-kr-biomass",
+        "kr-wood-to-matter",
+        "kr-matter-to-wood"
+      ]
+    },
+    "kr-matter-rare-metals-processing": {
+      "human": "Rare metals conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-kr-rare-metal-ore-to-matter",
+        "kr-matter-to-kr-rare-metal-ore",
+        "kr-matter-to-kr-rare-metals"
+      ]
+    },
+    "kr-matter-stone-processing": {
+      "human": "Stone conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-stone-to-matter",
+        "kr-matter-to-stone",
+        "kr-kr-quartz-to-matter",
+        "kr-matter-to-kr-glass",
+        "kr-matter-to-kr-sand",
+        "kr-matter-to-kr-silicon"
+      ]
+    },
+    "kr-matter-uranium-processing": {
+      "human": "Uranium conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-uranium-238-to-matter",
+        "kr-matter-to-uranium-238",
+        "kr-uranium-ore-to-matter",
+        "kr-matter-to-uranium-ore"
+      ]
+    },
+    "kr-matter-water-processing": {
+      "human": "Water conversion",
+      "prerequisites": ["kr-matter-processing"],
+      "science": {
+        "production-science-pack": 350,
+        "utility-science-pack": 350,
+        "kr-matter-tech-card": 350
+      },
+      "complexity": 0.6453108040344779,
+      "unlocks": [
+        "kr-kr-mineral-water-to-matter",
+        "kr-matter-to-kr-mineral-water",
+        "kr-matter-to-water"
+      ]
+    },
+    "kr-robot-battery-plus": {
+      "human": "Superior robot battery",
+      "prerequisites": ["kr-robot-battery", "kr-advanced-roboports", "kr-energy-control-unit"],
+      "science": {
+        "production-science-pack": 1000,
+        "utility-science-pack": 1000,
+        "space-science-pack": 1000,
+        "kr-matter-tech-card": 1000
+      },
+      "complexity": 0.7479736584431818,
+      "unlocks": []
+    },
+    "kr-advanced-fuel": {
+      "human": "Advanced fuel",
+      "prerequisites": ["kr-quarry-minerals-extraction", "kr-fuel"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "production-science-pack": 250
+      },
+      "complexity": 0.4578978496135993,
+      "unlocks": ["kr-advanced-fuel"]
+    },
+    "kr-advanced-solar-panel": {
+      "human": "Advanced solar panel",
+      "prerequisites": ["solar-energy", "kr-quarry-minerals-extraction"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.4640086527902376,
+      "unlocks": ["kr-advanced-solar-panel"]
+    },
+    "kr-battery-mk3-equipment": {
+      "human": "Personal battery MK3",
+      "prerequisites": [
+        "kr-quarry-minerals-extraction",
+        "kr-lithium-sulfur-battery",
+        "battery-mk2-equipment"
+      ],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.4640214238651215,
+      "unlocks": ["kr-battery-mk3-equipment", "kr-big-battery-mk3-equipment"]
+    },
+    "kr-nuclear-locomotive": {
+      "human": "Nuclear locomotive",
+      "prerequisites": ["nuclear-power", "production-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500
+      },
+      "complexity": 0.45468828355516444,
+      "unlocks": ["kr-nuclear-locomotive"]
+    },
+    "kr-quarry-minerals-extraction": {
+      "human": "Quarry mineral extraction",
+      "prerequisites": [
+        "electric-engine",
+        "kr-advanced-chemistry",
+        "processing-unit",
+        "production-science-pack"
+      ],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "production-science-pack": 350
+      },
+      "complexity": 0.44845523645414437,
+      "unlocks": ["kr-quarry-drill", "kr-imersite-powder", "kr-imersite-crystal"]
+    },
+    "kr-antimatter-ammo": {
+      "human": "Antimatter ammo",
+      "prerequisites": ["kr-antimatter-reactor", "kr-laser-artillery-turret", "kr-rocket-turret"],
+      "science": {
+        "production-science-pack": 2500,
+        "utility-science-pack": 2500,
+        "space-science-pack": 2500,
+        "kr-matter-tech-card": 2500,
+        "kr-advanced-tech-card": 2500,
+        "kr-singularity-tech-card": 2500
+      },
+      "complexity": 0.9120474521223028,
+      "unlocks": [
+        "kr-antimatter-turret-rocket",
+        "kr-antimatter-artillery-shell",
+        "kr-antimatter-rocket",
+        "kr-antimatter-railgun-shell"
+      ]
+    },
+    "kr-antimatter-reactor": {
+      "human": "Antimatter reactor",
+      "prerequisites": ["kr-fusion-energy", "kr-singularity-tech-card"],
+      "science": {
+        "production-science-pack": 2000,
+        "utility-science-pack": 2000,
+        "space-science-pack": 2000,
+        "kr-matter-tech-card": 2000,
+        "kr-advanced-tech-card": 2000,
+        "kr-singularity-tech-card": 2000
+      },
+      "complexity": 0.8977691993562484,
+      "unlocks": [
+        "kr-antimatter-reactor",
+        "kr-empty-antimatter-fuel-cell",
+        "kr-charged-antimatter-fuel-cell"
+      ]
+    },
+    "kr-antimatter-reactor-equipment": {
+      "human": "Portable antimatter reactor",
+      "prerequisites": ["kr-fusion-reactor-equipment", "kr-antimatter-reactor"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500,
+        "kr-singularity-tech-card": 500
+      },
+      "complexity": 0.9016965041834132,
+      "unlocks": ["kr-antimatter-reactor-equipment"]
+    },
+    "kr-intergalactic-transceiver": {
+      "human": "Intergalactic transceiver",
+      "prerequisites": ["kr-singularity-tech-card"],
+      "science": {
+        "production-science-pack": 3000,
+        "utility-science-pack": 3000,
+        "space-science-pack": 3000,
+        "kr-matter-tech-card": 3000,
+        "kr-advanced-tech-card": 3000,
+        "kr-singularity-tech-card": 3000
+      },
+      "complexity": 0.9048980731799157,
+      "unlocks": ["kr-intergalactic-transceiver"]
+    },
+    "kr-logo": {
+      "human": "Krastorio 2 logo",
+      "prerequisites": ["kr-intergalactic-transceiver"],
+      "science": {
+        "production-science-pack": 666000,
+        "utility-science-pack": 666000,
+        "space-science-pack": 666000,
+        "kr-matter-tech-card": 666000,
+        "kr-advanced-tech-card": 666000,
+        "kr-singularity-tech-card": 666000
+      },
+      "complexity": 1,
+      "unlocks": ["kr-logo"]
+    },
+    "kr-matter-cube": {
+      "human": "Matter cube",
+      "prerequisites": ["kr-singularity-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500,
+        "kr-singularity-tech-card": 500
+      },
+      "complexity": 0.8734117377934253,
+      "unlocks": ["kr-kr-matter-cube-to-matter", "kr-matter-to-kr-matter-cube"]
+    },
+    "kr-personal-laser-defense-mk4-equipment": {
+      "human": "Personal laser defense MK4",
+      "prerequisites": ["kr-personal-laser-defense-mk3-equipment", "kr-singularity-tech-card"],
+      "science": {
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-advanced-tech-card": 500,
+        "kr-singularity-tech-card": 500
+      },
+      "complexity": 0.8735103376609067,
+      "unlocks": ["kr-personal-laser-defense-mk4-equipment"]
+    },
+    "kr-planetary-teleporter": {
+      "human": "Planetary teleporter",
+      "prerequisites": ["effect-transmission", "kr-singularity-tech-card"],
+      "science": {
+        "production-science-pack": 500,
+        "utility-science-pack": 500,
+        "space-science-pack": 500,
+        "kr-matter-tech-card": 500,
+        "kr-advanced-tech-card": 500,
+        "kr-singularity-tech-card": 500
+      },
+      "complexity": 0.8734117377942294,
+      "unlocks": ["kr-planetary-teleporter", "kr-gps-satellite"]
+    },
+    "kr-power-armor-mk4": {
+      "human": "Power armor MK4",
+      "prerequisites": ["kr-power-armor-mk3", "kr-singularity-tech-card"],
+      "science": {
+        "utility-science-pack": 750,
+        "space-science-pack": 750,
+        "kr-advanced-tech-card": 750,
+        "kr-singularity-tech-card": 750
+      },
+      "complexity": 0.8805607206775061,
+      "unlocks": ["kr-power-armor-mk4"]
+    },
+    "kr-singularity-beacon": {
+      "human": "Singularity beacon",
+      "prerequisites": ["effect-transmission", "kr-singularity-tech-card"],
+      "science": {
+        "production-science-pack": 1000,
+        "utility-science-pack": 1000,
+        "space-science-pack": 1000,
+        "kr-matter-tech-card": 1000,
+        "kr-advanced-tech-card": 1000,
+        "kr-singularity-tech-card": 1000
+      },
+      "complexity": 0.8855860846473668,
+      "unlocks": ["kr-singularity-beacon"]
+    },
+    "kr-advanced-additional-engine-equipment": {
+      "human": "Advanced additional electric engine",
+      "prerequisites": ["utility-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.4532213383418504,
+      "unlocks": ["kr-advanced-additional-engine-equipment"]
+    },
+    "kr-advanced-exoskeleton-equipment": {
+      "human": "Advanced exoskeleton",
+      "prerequisites": ["exoskeleton-equipment", "speed-module-2", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.4532251605813222,
+      "unlocks": ["kr-advanced-exoskeleton-equipment"]
+    },
+    "kr-ai-core": {
+      "human": "AI core",
+      "prerequisites": ["kr-quarry-minerals-extraction", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.47688535288123335,
+      "unlocks": ["kr-ai-core"]
+    },
+    "kr-advanced-radar": {
+      "human": "Advanced radar",
+      "prerequisites": ["radar", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200,
+        "chemical-science-pack": 200,
+        "utility-science-pack": 200
+      },
+      "complexity": 0.44932152735925307,
+      "unlocks": ["kr-advanced-radar"]
+    },
+    "kr-energy-shield-mk3-equipment": {
+      "human": "Energy shield MK3",
+      "prerequisites": [
+        "energy-shield-mk2-equipment",
+        "kr-lithium-sulfur-battery",
+        "utility-science-pack"
+      ],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "chemical-science-pack": 350,
+        "utility-science-pack": 350
+      },
+      "complexity": 0.7497213089240722,
+      "unlocks": ["kr-energy-shield-mk3-equipment"]
+    },
+    "kr-fusion-energy": {
+      "human": "Fusion energy",
+      "prerequisites": [
+        "kovarex-enrichment-process",
+        "kr-lithium-processing",
+        "nuclear-power",
+        "utility-science-pack"
+      ],
+      "science": {
+        "automation-science-pack": 1500,
+        "logistic-science-pack": 1500,
+        "chemical-science-pack": 1500,
+        "production-science-pack": 1500,
+        "utility-science-pack": 1500
+      },
+      "complexity": 0.4942694551131946,
+      "unlocks": [
+        "kr-fusion-reactor",
+        "kr-advanced-steam-turbine",
+        "kr-heavy-water",
+        "kr-tritium",
+        "kr-empty-dt-fuel-cell",
+        "kr-dt-fuel-cell"
+      ]
+    },
+    "kr-logistic-4": {
+      "human": "Logistics 4",
+      "prerequisites": ["logistics-3", "utility-science-pack"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.4763776181388719,
+      "unlocks": [
+        "kr-advanced-splitter",
+        "kr-advanced-transport-belt",
+        "kr-advanced-underground-belt",
+        "kr-advanced-loader"
+      ]
+    },
+    "kr-matter-tech-card": {
+      "human": "Matter tech card",
+      "prerequisites": ["kr-singularity-lab", "kr-lithium-processing"],
+      "science": {
+        "production-science-pack": 750,
+        "utility-science-pack": 750
+      },
+      "complexity": 0.5099283824583083,
+      "unlocks": ["kr-matter-research-data", "kr-matter-tech-card"]
+    },
+    "kr-military-5": {
+      "human": "Military 5",
+      "prerequisites": [
+        "military-4",
+        "kr-lithium-sulfur-battery",
+        "kr-quarry-minerals-extraction",
+        "personal-laser-defense-equipment",
+        "uranium-ammo"
+      ],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "military-science-pack": 500,
+        "chemical-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.7736095974692977,
+      "unlocks": [
+        "kr-impulse-rifle",
+        "kr-impulse-rifle-ammo",
+        "kr-imersite-rounds-magazine",
+        "kr-heavy-rocket-launcher",
+        "kr-heavy-rocket"
+      ]
+    },
+    "kr-personal-laser-defense-mk2-equipment": {
+      "human": "Personal laser defense MK2",
+      "prerequisites": ["personal-laser-defense-equipment", "power-armor-mk2"],
+      "science": {
+        "automation-science-pack": 350,
+        "logistic-science-pack": 350,
+        "military-science-pack": 350,
+        "chemical-science-pack": 350,
+        "utility-science-pack": 350
+      },
+      "complexity": 0.7703019115042867,
+      "unlocks": ["kr-personal-laser-defense-mk2-equipment"]
+    },
+    "kr-quantum-computer": {
+      "human": "Quantum computer",
+      "prerequisites": ["kr-ai-core"],
+      "science": {
+        "automation-science-pack": 750,
+        "logistic-science-pack": 750,
+        "chemical-science-pack": 750,
+        "production-science-pack": 750,
+        "utility-science-pack": 750
+      },
+      "complexity": 0.4907640911626367,
+      "unlocks": ["kr-quantum-computer"]
+    },
+    "kr-railgun-turret": {
+      "human": "Railgun turret",
+      "prerequisites": ["military-4", "gun-turret"],
+      "science": {
+        "military-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.7628642037192251,
+      "unlocks": ["kr-railgun-turret", "kr-basic-railgun-shell", "kr-explosive-railgun-shell"]
+    },
+    "kr-singularity-lab": {
+      "human": "Singularity lab",
+      "prerequisites": ["kr-quantum-computer", "rocket-silo"],
+      "science": {
+        "automation-science-pack": 750,
+        "logistic-science-pack": 750,
+        "chemical-science-pack": 750,
+        "production-science-pack": 750,
+        "utility-science-pack": 750
+      },
+      "complexity": 0.5063618824847849,
+      "unlocks": ["kr-singularity-lab"]
+    },
+    "kr-superior-night-vision-equipment": {
+      "human": "Superior night vision",
+      "prerequisites": [
+        "night-vision-equipment",
+        "kr-quarry-minerals-extraction",
+        "utility-science-pack"
+      ],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.4631708130784066,
+      "unlocks": ["kr-superior-night-vision-equipment"]
+    },
+    "kr-superior-solar-panel-equipment": {
+      "human": "Portable superior solar panels",
+      "prerequisites": [
+        "kr-quarry-minerals-extraction",
+        "solar-panel-equipment",
+        "utility-science-pack"
+      ],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250,
+        "utility-science-pack": 250
+      },
+      "complexity": 0.4631708122504602,
+      "unlocks": ["kr-superior-solar-panel-equipment", "kr-big-superior-solar-panel-equipment"]
+    },
+    "kr-containers": {
+      "human": "Larger containers",
+      "prerequisites": ["steel-processing"],
+      "science": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "complexity": 0.10429665504792784,
+      "unlocks": ["kr-strongbox", "kr-warehouse"]
+    },
+    "kr-logistic-containers-1": {
+      "human": "Larger logistic containers",
+      "prerequisites": ["kr-containers", "logistic-robotics"],
+      "science": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250,
+        "chemical-science-pack": 250
+      },
+      "complexity": 0.33633142864140286,
+      "unlocks": [
+        "kr-passive-provider-strongbox",
+        "kr-storage-strongbox",
+        "kr-passive-provider-warehouse",
+        "kr-storage-warehouse"
+      ]
+    },
+    "kr-logistic-containers-2": {
+      "human": "Larger containers for logistic system",
+      "prerequisites": ["kr-containers", "logistic-system"],
+      "science": {
+        "automation-science-pack": 500,
+        "logistic-science-pack": 500,
+        "chemical-science-pack": 500,
+        "production-science-pack": 500,
+        "utility-science-pack": 500
+      },
+      "complexity": 0.47793386709309676,
+      "unlocks": [
+        "kr-active-provider-strongbox",
+        "kr-buffer-strongbox",
+        "kr-requester-strongbox",
+        "kr-active-provider-warehouse",
+        "kr-buffer-warehouse",
+        "kr-requester-warehouse"
+      ]
+    },
+    "mining-productivity-11": {
+      "human": "Mining productivity",
+      "prerequisites": ["mining-productivity-4", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.6385794436342288,
+      "unlocks": [],
+      "formula": "(L^2)*200"
+    },
+    "mining-productivity-16": {
+      "human": "Mining productivity",
+      "prerequisites": ["mining-productivity-11", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7640526724180579,
+      "unlocks": [],
+      "formula": "(L^2)*200"
+    },
+    "worker-robots-speed-7": {
+      "human": "Worker robot speed",
+      "prerequisites": ["worker-robots-speed-6", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.6385801862821948,
+      "unlocks": [],
+      "formula": "((L-6)^2)*5000"
+    },
+    "worker-robots-speed-9": {
+      "human": "Worker robot speed",
+      "prerequisites": ["worker-robots-speed-7", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7640526730106197,
+      "unlocks": [],
+      "formula": "((L-8)^2)*5000"
+    },
+    "follower-robot-count-6": {
+      "human": "Follower robot count",
+      "prerequisites": ["follower-robot-count-5", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7768232758813958,
+      "unlocks": [],
+      "formula": "((L-5)^2)*5000"
+    },
+    "follower-robot-count-9": {
+      "human": "Follower robot count",
+      "prerequisites": ["follower-robot-count-6", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7837597062620123,
+      "unlocks": [],
+      "formula": "((L-8)^2)*5000"
+    },
+    "physical-projectile-damage-11": {
+      "human": "Physical projectile damage",
+      "prerequisites": ["physical-projectile-damage-7", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7741130219234228,
+      "unlocks": [],
+      "formula": "((L-10)^2)*3000"
+    },
+    "physical-projectile-damage-16": {
+      "human": "Physical projectile damage",
+      "prerequisites": ["physical-projectile-damage-11", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7819793506404765,
+      "unlocks": [],
+      "formula": "((L-15)^2)*3000"
+    },
+    "stronger-explosives-11": {
+      "human": "Stronger explosives",
+      "prerequisites": ["stronger-explosives-7", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7759654363456913,
+      "unlocks": [],
+      "formula": "((L-10)^2)*3000"
+    },
+    "stronger-explosives-16": {
+      "human": "Stronger explosives",
+      "prerequisites": ["stronger-explosives-11", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7831860467987204,
+      "unlocks": [],
+      "formula": "((L-15)^2)*3000"
+    },
+    "refined-flammables-11": {
+      "human": "Refined flammables",
+      "prerequisites": ["refined-flammables-7", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.777237000578844,
+      "unlocks": [],
+      "formula": "((L-10)^2)*3000"
+    },
+    "refined-flammables-16": {
+      "human": "Refined flammables",
+      "prerequisites": ["refined-flammables-11", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7840396694187344,
+      "unlocks": [],
+      "formula": "((L-15)^2)*3000"
+    },
+    "laser-weapons-damage-11": {
+      "human": "Energy weapons damage",
+      "prerequisites": ["laser-weapons-damage-7", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7768232758815202,
+      "unlocks": [],
+      "formula": "((L-10)^2)*3000"
+    },
+    "laser-weapons-damage-16": {
+      "human": "Energy weapons damage",
+      "prerequisites": ["laser-weapons-damage-11", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.783759706262096,
+      "unlocks": [],
+      "formula": "((L-15)^2)*3000"
+    },
+    "artillery-shell-range-3": {
+      "human": "Artillery shell range",
+      "prerequisites": ["artillery-shell-range-1", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7731081184656032,
+      "unlocks": [],
+      "formula": "((L-2)^2)*3500"
+    },
+    "artillery-shell-range-5": {
+      "human": "Artillery shell range",
+      "prerequisites": ["artillery-shell-range-3", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7813434686217638,
+      "unlocks": [],
+      "formula": "((L-4)^2)*3500"
+    },
+    "artillery-shell-speed-3": {
+      "human": "Artillery shell shooting speed",
+      "prerequisites": ["artillery-shell-speed-1", "kr-advanced-tech-card"],
+      "science": {},
+      "complexity": 0.7731081184656032,
+      "unlocks": [],
+      "formula": "((L-2)^2)*3500"
+    },
+    "artillery-shell-speed-5": {
+      "human": "Artillery shell shooting speed",
+      "prerequisites": ["artillery-shell-speed-3", "kr-singularity-tech-card"],
+      "science": {},
+      "complexity": 0.7813434686217638,
+      "unlocks": [],
+      "formula": "((L-4)^2)*3500"
+    }
+  },
+  "buildings": {
+    "wooden-chest": {
+      "human": "Wooden chest",
+      "entity": "wooden-chest",
+      "type": "container",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "stone-furnace": {
+      "human": "Stone furnace",
+      "entity": "stone-furnace",
+      "type": "assembling-machine",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "burner-mining-drill": {
+      "human": "Burner mining drill",
+      "entity": "burner-mining-drill",
+      "type": "mining-drill",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "electric-mining-drill": {
+      "human": "Electric mining drill",
+      "entity": "electric-mining-drill",
+      "type": "mining-drill",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "burner-inserter": {
+      "human": "Burner inserter",
+      "entity": "burner-inserter",
+      "type": "inserter",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "inserter": {
+      "human": "Inserter",
+      "entity": "inserter",
+      "type": "inserter",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "fast-inserter": {
+      "human": "Fast inserter",
+      "entity": "fast-inserter",
+      "type": "inserter",
+      "complexity": 0.10067321134403502,
+      "placeCount": 1
+    },
+    "long-handed-inserter": {
+      "human": "Long-handed inserter",
+      "entity": "long-handed-inserter",
+      "type": "inserter",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "offshore-pump": {
+      "human": "Offshore pump",
+      "entity": "offshore-pump",
+      "type": "offshore-pump",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "pipe": {
+      "human": "Pipe",
+      "entity": "pipe",
+      "type": "pipe",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "boiler": {
+      "human": "Boiler",
+      "entity": "boiler",
+      "type": "boiler",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "steam-engine": {
+      "human": "Steam engine",
+      "entity": "steam-engine",
+      "type": "generator",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "small-electric-pole": {
+      "human": "Small electric pole",
+      "entity": "small-electric-pole",
+      "type": "electric-pole",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "radar": {
+      "human": "Radar",
+      "entity": "radar",
+      "type": "radar",
+      "complexity": 0.31314373569906245,
+      "placeCount": 1
+    },
+    "small-lamp": {
+      "human": "Lamp",
+      "entity": "small-lamp",
+      "type": "lamp",
+      "complexity": 0.09094461228607711,
+      "placeCount": 1
+    },
+    "pipe-to-ground": {
+      "human": "Pipe to ground",
+      "entity": "pipe-to-ground",
+      "type": "pipe-to-ground",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "assembling-machine-1": {
+      "human": "Assembling machine 1",
+      "entity": "assembling-machine-1",
+      "type": "assembling-machine",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "assembling-machine-2": {
+      "human": "Assembling machine 2",
+      "entity": "assembling-machine-2",
+      "type": "assembling-machine",
+      "complexity": 0.1630869418422841,
+      "placeCount": 1
+    },
+    "stone-wall": {
+      "human": "Wall",
+      "entity": "stone-wall",
+      "type": "wall",
+      "complexity": 0.053550675905917,
+      "placeCount": 1
+    },
+    "lab": {
+      "human": "Lab",
+      "entity": "lab",
+      "type": "lab",
+      "complexity": 0.05730727079424745,
+      "placeCount": 1
+    },
+    "electric-furnace": {
+      "human": "Electric furnace",
+      "entity": "electric-furnace",
+      "type": "assembling-machine",
+      "complexity": 0.3170561175337027,
+      "placeCount": 1
+    },
+    "iron-chest": {
+      "human": "Iron chest",
+      "entity": "iron-chest",
+      "type": "container",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "big-electric-pole": {
+      "human": "Big electric pole",
+      "entity": "big-electric-pole",
+      "type": "electric-pole",
+      "complexity": 0.18201370624860294,
+      "placeCount": 1
+    },
+    "medium-electric-pole": {
+      "human": "Medium electric pole",
+      "entity": "medium-electric-pole",
+      "type": "electric-pole",
+      "complexity": 0.18201370624860294,
+      "placeCount": 1
+    },
+    "steel-furnace": {
+      "human": "Steel furnace",
+      "entity": "steel-furnace",
+      "type": "assembling-machine",
+      "complexity": 0.17386674759275805,
+      "placeCount": 1
+    },
+    "gate": {
+      "human": "Gate",
+      "entity": "gate",
+      "type": "gate",
+      "complexity": 0.17886041292515692,
+      "placeCount": 1
+    },
+    "steel-chest": {
+      "human": "Steel chest",
+      "entity": "steel-chest",
+      "type": "container",
+      "complexity": 0.09094461228607711,
+      "placeCount": 1
+    },
+    "solar-panel": {
+      "human": "Solar panel",
+      "entity": "solar-panel",
+      "type": "solar-panel",
+      "complexity": 0.2075357257311634,
+      "placeCount": 1
+    },
+    "train-stop": {
+      "human": "Train stop",
+      "entity": "train-stop",
+      "type": "train-stop",
+      "complexity": 0.20941901698980256,
+      "placeCount": 1
+    },
+    "rail-signal": {
+      "human": "Rail signal",
+      "entity": "rail-signal",
+      "type": "rail-signal",
+      "complexity": 0.20941901698980256,
+      "placeCount": 1
+    },
+    "rail-chain-signal": {
+      "human": "Rail chain signal",
+      "entity": "rail-chain-signal",
+      "type": "rail-chain-signal",
+      "complexity": 0.20941901698980256,
+      "placeCount": 1
+    },
+    "accumulator": {
+      "human": "Accumulator",
+      "entity": "accumulator",
+      "type": "accumulator",
+      "complexity": 0.21566878656954241,
+      "placeCount": 1
+    },
+    "transport-belt": {
+      "human": "Transport belt",
+      "entity": "transport-belt",
+      "type": "transport-belt",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "fast-transport-belt": {
+      "human": "Fast transport belt",
+      "entity": "fast-transport-belt",
+      "type": "transport-belt",
+      "complexity": 0.19093182963281324,
+      "placeCount": 1
+    },
+    "bulk-inserter": {
+      "human": "Bulk inserter",
+      "entity": "bulk-inserter",
+      "type": "inserter",
+      "complexity": 0.22184287641461534,
+      "placeCount": 1
+    },
+    "underground-belt": {
+      "human": "Underground belt",
+      "entity": "underground-belt",
+      "type": "underground-belt",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "fast-underground-belt": {
+      "human": "Fast underground belt",
+      "entity": "fast-underground-belt",
+      "type": "underground-belt",
+      "complexity": 0.19093182963281324,
+      "placeCount": 1
+    },
+    "splitter": {
+      "human": "Splitter",
+      "entity": "splitter",
+      "type": "splitter",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "fast-splitter": {
+      "human": "Fast splitter",
+      "entity": "fast-splitter",
+      "type": "splitter",
+      "complexity": 0.19093182963281324,
+      "placeCount": 1
+    },
+    "substation": {
+      "human": "Substation",
+      "entity": "substation",
+      "type": "electric-pole",
+      "complexity": 0.30105898277779375,
+      "placeCount": 1
+    },
+    "storage-tank": {
+      "human": "Storage tank",
+      "entity": "storage-tank",
+      "type": "storage-tank",
+      "complexity": 0.1858576939118317,
+      "placeCount": 1
+    },
+    "pump": {
+      "human": "Pump",
+      "entity": "pump",
+      "type": "pump",
+      "complexity": 0.1858576939118317,
+      "placeCount": 1
+    },
+    "pumpjack": {
+      "human": "Pumpjack",
+      "entity": "pumpjack",
+      "type": "mining-drill",
+      "complexity": 0.1947944209848362,
+      "placeCount": 1
+    },
+    "oil-refinery": {
+      "human": "Oil refinery",
+      "entity": "oil-refinery",
+      "type": "assembling-machine",
+      "complexity": 0.19489771759485186,
+      "placeCount": 1
+    },
+    "chemical-plant": {
+      "human": "Chemical plant",
+      "entity": "chemical-plant",
+      "type": "assembling-machine",
+      "complexity": 0.1790416010755903,
+      "placeCount": 1
+    },
+    "centrifuge": {
+      "human": "Centrifuge",
+      "entity": "centrifuge",
+      "type": "assembling-machine",
+      "complexity": 0.30109310729868105,
+      "placeCount": 1
+    },
+    "gun-turret": {
+      "human": "Gun turret",
+      "entity": "gun-turret",
+      "type": "ammo-turret",
+      "complexity": 0.08028317600635695,
+      "placeCount": 1
+    },
+    "flamethrower-turret": {
+      "human": "Flamethrower turret",
+      "entity": "flamethrower-turret",
+      "type": "fluid-turret",
+      "complexity": 0.7110739127482251,
+      "placeCount": 1
+    },
+    "arithmetic-combinator": {
+      "human": "Arithmetic combinator",
+      "entity": "arithmetic-combinator",
+      "type": "arithmetic-combinator",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "decider-combinator": {
+      "human": "Decider combinator",
+      "entity": "decider-combinator",
+      "type": "decider-combinator",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "constant-combinator": {
+      "human": "Constant combinator",
+      "entity": "constant-combinator",
+      "type": "constant-combinator",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "selector-combinator": {
+      "human": "Selector combinator",
+      "entity": "selector-combinator",
+      "type": "selector-combinator",
+      "complexity": 0.2890532160272966,
+      "placeCount": 1
+    },
+    "power-switch": {
+      "human": "Power switch",
+      "entity": "power-switch",
+      "type": "power-switch",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "programmable-speaker": {
+      "human": "Programmable speaker",
+      "entity": "programmable-speaker",
+      "type": "programmable-speaker",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "display-panel": {
+      "human": "Display panel",
+      "entity": "display-panel",
+      "type": "display-panel",
+      "complexity": 0.17877928184281122,
+      "placeCount": 1
+    },
+    "kr-atmospheric-condenser": {
+      "human": "Atmospheric condenser",
+      "entity": "kr-atmospheric-condenser",
+      "type": "assembling-machine",
+      "complexity": 0.31080744010100503,
+      "placeCount": 1
+    },
+    "kr-big-storage-tank": {
+      "human": "Big storage tank",
+      "entity": "kr-big-storage-tank",
+      "type": "storage-tank",
+      "complexity": 0.20172551467791947,
+      "placeCount": 1
+    },
+    "kr-crusher": {
+      "human": "Crusher",
+      "entity": "kr-crusher",
+      "type": "furnace",
+      "complexity": 0.06531871525507688,
+      "placeCount": 1
+    },
+    "kr-electrolysis-plant": {
+      "human": "Electrolysis plant",
+      "entity": "kr-electrolysis-plant",
+      "type": "assembling-machine",
+      "complexity": 0.1790416010755903,
+      "placeCount": 1
+    },
+    "kr-fast-loader": {
+      "human": "Fast loader",
+      "entity": "kr-fast-loader",
+      "type": "loader-1x1",
+      "complexity": 0.19093182963281324,
+      "placeCount": 1
+    },
+    "kr-filtration-plant": {
+      "human": "Filtration plant",
+      "entity": "kr-filtration-plant",
+      "type": "assembling-machine",
+      "complexity": 0.1959446576564304,
+      "placeCount": 1
+    },
+    "kr-flare-stack": {
+      "human": "Flare stack",
+      "entity": "kr-flare-stack",
+      "type": "furnace",
+      "complexity": 0.19493832616316756,
+      "placeCount": 1
+    },
+    "kr-fuel-refinery": {
+      "human": "Fuel refinery",
+      "entity": "kr-fuel-refinery",
+      "type": "assembling-machine",
+      "complexity": 0.20199370613437997,
+      "placeCount": 1
+    },
+    "kr-gas-power-station": {
+      "human": "Gas power station",
+      "entity": "kr-gas-power-station",
+      "type": "generator",
+      "complexity": 0.20703586602663934,
+      "placeCount": 1
+    },
+    "kr-greenhouse": {
+      "human": "Greenhouse",
+      "entity": "kr-greenhouse",
+      "type": "assembling-machine",
+      "complexity": 0.08704466544316437,
+      "placeCount": 1
+    },
+    "kr-huge-storage-tank": {
+      "human": "Huge storage tank",
+      "entity": "kr-huge-storage-tank",
+      "type": "storage-tank",
+      "complexity": 0.20172551467791947,
+      "placeCount": 1
+    },
+    "kr-loader": {
+      "human": "Loader",
+      "entity": "kr-loader",
+      "type": "loader-1x1",
+      "complexity": 0.08361178901471053,
+      "placeCount": 1
+    },
+    "kr-sentinel": {
+      "human": "Sentinel",
+      "entity": "kr-sentinel",
+      "type": "radar",
+      "complexity": 0.10429665504792784,
+      "placeCount": 1
+    },
+    "kr-shelter": {
+      "human": "Shelter",
+      "entity": "kr-shelter-container",
+      "type": "container",
+      "complexity": 0.09885828446920987,
+      "placeCount": 1
+    },
+    "kr-steel-pipe": {
+      "human": "Steel pipe",
+      "entity": "kr-steel-pipe",
+      "type": "pipe",
+      "complexity": 0.19484886323291703,
+      "placeCount": 1
+    },
+    "kr-steel-pipe-to-ground": {
+      "human": "Steel underground pipe",
+      "entity": "kr-steel-pipe-to-ground",
+      "type": "pipe-to-ground",
+      "complexity": 0.19484886323291703,
+      "placeCount": 1
+    },
+    "kr-steel-pump": {
+      "human": "Steel pump",
+      "entity": "kr-steel-pump",
+      "type": "pump",
+      "complexity": 0.19484886323291703,
+      "placeCount": 1
+    },
+    "kr-strongbox": {
+      "human": "Strongbox",
+      "entity": "kr-strongbox",
+      "type": "container",
+      "complexity": 0.10429665504792784,
+      "placeCount": 1
+    },
+    "kr-warehouse": {
+      "human": "Warehouse",
+      "entity": "kr-warehouse",
+      "type": "container",
+      "complexity": 0.10429665504792784,
+      "placeCount": 1
+    },
+    "kr-wind-turbine": {
+      "human": "Wind turbine",
+      "entity": "kr-wind-turbine",
+      "type": "solar-panel",
+      "complexity": 0,
+      "placeCount": 1
+    },
+    "car": {
+      "human": "Car",
+      "entity": "car",
+      "type": "car",
+      "complexity": 0.2122742806230324,
+      "placeCount": 1
+    },
+    "locomotive": {
+      "human": "Locomotive",
+      "entity": "locomotive",
+      "type": "locomotive",
+      "complexity": 0.201925677508499,
+      "placeCount": 1
+    },
+    "cargo-wagon": {
+      "human": "Cargo wagon",
+      "entity": "cargo-wagon",
+      "type": "cargo-wagon",
+      "complexity": 0.201925677508499,
+      "placeCount": 1
+    },
+    "fluid-wagon": {
+      "human": "Fluid wagon",
+      "entity": "fluid-wagon",
+      "type": "fluid-wagon",
+      "complexity": 0.2108829629666346,
+      "placeCount": 1
+    },
+    "rail": {
+      "human": "Rail",
+      "entity": "straight-rail",
+      "type": "straight-rail",
+      "complexity": 0.201925677508499,
+      "placeCount": 1
+    }
+  },
+  "recipes": {
+    "wooden-chest": {
+      "product": "item:wooden-chest",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:wood": 2
+      }
+    },
+    "stone-furnace": {
+      "product": "item:stone-furnace",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:stone": 5
+      }
+    },
+    "burner-mining-drill": {
+      "product": "item:burner-mining-drill",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 3,
+        "item:iron-plate": 3,
+        "item:stone-furnace": 1
+      }
+    },
+    "iron-gear-wheel": {
+      "product": "item:iron-gear-wheel",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 1
+      }
+    },
+    "iron-plate": {
+      "product": "item:iron-plate",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-ore": 2
+      },
+      "machine": "stone-furnace"
+    },
+    "electric-mining-drill": {
+      "product": "item:electric-mining-drill",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 5,
+        "item:kr-automation-core": 2,
+        "item:kr-iron-beam": 2
+      },
+      "technology": "electric-mining-drill"
+    },
+    "kr-automation-core": {
+      "product": "item:kr-automation-core",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-plate": 6,
+        "item:iron-gear-wheel": 4,
+        "item:iron-stick": 4
+      },
+      "technology": "kr-automation-core"
+    },
+    "iron-stick": {
+      "product": "item:iron-stick",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 1
+      }
+    },
+    "copper-plate": {
+      "product": "item:copper-plate",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-ore": 2
+      },
+      "machine": "stone-furnace"
+    },
+    "kr-iron-beam": {
+      "product": "item:kr-iron-beam",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 2
+      }
+    },
+    "burner-inserter": {
+      "product": "item:burner-inserter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 1,
+        "item:kr-inserter-parts": 1
+      }
+    },
+    "kr-inserter-parts": {
+      "product": "item:kr-inserter-parts",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 2,
+        "item:iron-stick": 2
+      }
+    },
+    "inserter": {
+      "product": "item:inserter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-automation-core": 1,
+        "item:kr-inserter-parts": 1
+      },
+      "technology": "logistics"
+    },
+    "fast-inserter": {
+      "product": "item:fast-inserter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 2,
+        "item:kr-inserter-parts": 1,
+        "item:steel-plate": 1
+      },
+      "technology": "fast-inserter"
+    },
+    "electronic-circuit": {
+      "product": "item:electronic-circuit",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 4,
+        "item:iron-plate": 1,
+        "item:wood": 1
+      },
+      "technology": "electronics"
+    },
+    "copper-cable": {
+      "product": "item:copper-cable",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-plate": 1
+      }
+    },
+    "steel-plate": {
+      "product": "item:steel-plate",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 10,
+        "item:kr-coke": 2
+      },
+      "technology": "steel-processing",
+      "machine": "stone-furnace"
+    },
+    "kr-coke": {
+      "product": "item:kr-coke",
+      "yield": 6,
+      "expectedYield": false,
+      "ingredients": {
+        "item:coal": 6,
+        "item:wood": 6
+      },
+      "technology": "steel-processing",
+      "machine": "stone-furnace"
+    },
+    "long-handed-inserter": {
+      "product": "item:long-handed-inserter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-stick": 2,
+        "item:kr-automation-core": 1,
+        "item:kr-inserter-parts": 1
+      },
+      "technology": "logistics"
+    },
+    "offshore-pump": {
+      "product": "item:offshore-pump",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 2,
+        "item:pipe": 3
+      },
+      "technology": "steam-power"
+    },
+    "pipe": {
+      "product": "item:pipe",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 1
+      },
+      "technology": "steam-power"
+    },
+    "boiler": {
+      "product": "item:boiler",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:pipe": 4,
+        "item:stone-furnace": 1
+      },
+      "technology": "steam-power"
+    },
+    "steam-engine": {
+      "product": "item:steam-engine",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 8,
+        "item:iron-plate": 10,
+        "item:pipe": 5
+      },
+      "technology": "steam-power"
+    },
+    "small-electric-pole": {
+      "product": "item:small-electric-pole",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 1,
+        "item:wood": 1
+      }
+    },
+    "radar": {
+      "product": "item:radar",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 5,
+        "item:iron-gear-wheel": 5,
+        "item:iron-plate": 10
+      },
+      "technology": "radar"
+    },
+    "small-lamp": {
+      "product": "item:small-lamp",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 3,
+        "item:iron-plate": 1,
+        "item:kr-glass": 1
+      },
+      "technology": "lamp"
+    },
+    "kr-glass": {
+      "product": "item:kr-glass",
+      "yield": 8,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-sand": 16
+      },
+      "technology": "kr-stone-processing",
+      "machine": "stone-furnace"
+    },
+    "kr-sand": {
+      "product": "item:kr-sand",
+      "yield": 7.5,
+      "expectedYield": true,
+      "ingredients": {
+        "item:stone": 3
+      },
+      "technology": "kr-stone-processing",
+      "machine": "kr-crusher"
+    },
+    "kr-crusher": {
+      "product": "item:kr-crusher",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 6,
+        "item:iron-gear-wheel": 20,
+        "item:kr-automation-core": 2,
+        "item:kr-iron-beam": 10
+      },
+      "technology": "kr-crusher"
+    },
+    "pipe-to-ground": {
+      "product": "item:pipe-to-ground",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 5,
+        "item:pipe": 10
+      },
+      "technology": "steam-power"
+    },
+    "assembling-machine-1": {
+      "product": "item:assembling-machine-1",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 5,
+        "item:kr-automation-core": 2,
+        "item:kr-iron-beam": 4
+      },
+      "technology": "automation"
+    },
+    "assembling-machine-2": {
+      "product": "item:assembling-machine-2",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:assembling-machine-1": 1,
+        "item:electronic-circuit": 3,
+        "item:iron-gear-wheel": 5,
+        "item:steel-plate": 2
+      },
+      "technology": "automation-2"
+    },
+    "stone-wall": {
+      "product": "item:stone-wall",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:stone-brick": 5
+      },
+      "technology": "stone-wall"
+    },
+    "stone-brick": {
+      "product": "item:stone-brick",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:stone": 2
+      },
+      "machine": "stone-furnace"
+    },
+    "lab": {
+      "product": "item:lab",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 10,
+        "item:copper-plate": 10,
+        "item:kr-iron-beam": 10
+      },
+      "technology": "kr-laboratory"
+    },
+    "electric-furnace": {
+      "product": "item:electric-furnace",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:advanced-circuit": 5,
+        "item:steel-plate": 10,
+        "item:stone-brick": 10
+      },
+      "technology": "advanced-material-processing-2"
+    },
+    "advanced-circuit": {
+      "product": "item:advanced-circuit",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 4,
+        "item:electronic-circuit": 4,
+        "item:kr-electronic-components": 2
+      },
+      "technology": "advanced-circuit"
+    },
+    "kr-electronic-components": {
+      "product": "item:kr-electronic-components",
+      "yield": 4,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-glass": 2,
+        "item:kr-silicon": 2,
+        "item:plastic-bar": 2
+      },
+      "technology": "advanced-circuit"
+    },
+    "kr-silicon": {
+      "product": "item:kr-silicon",
+      "yield": 9,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-quartz": 18
+      },
+      "technology": "kr-silicon-processing",
+      "machine": "stone-furnace"
+    },
+    "kr-quartz": {
+      "product": "item:kr-quartz",
+      "yield": 6,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:water": 10,
+        "item:kr-sand": 10
+      },
+      "technology": "kr-silicon-processing",
+      "machine": "kr-filtration-plant"
+    },
+    "kr-filtration-plant": {
+      "product": "item:kr-filtration-plant",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:engine-unit": 4,
+        "item:kr-automation-core": 3,
+        "item:kr-glass": 10,
+        "item:kr-steel-beam": 10
+      },
+      "technology": "kr-silicon-processing"
+    },
+    "kr-steel-beam": {
+      "product": "item:kr-steel-beam",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:steel-plate": 2
+      },
+      "technology": "steel-processing"
+    },
+    "engine-unit": {
+      "product": "item:engine-unit",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 1,
+        "item:iron-plate": 1,
+        "item:pipe": 2
+      },
+      "technology": "engine",
+      "machine": "assembling-machine-1"
+    },
+    "plastic-bar": {
+      "product": "item:plastic-bar",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:petroleum-gas": 20,
+        "item:coal": 1
+      },
+      "technology": "plastics",
+      "machine": "chemical-plant"
+    },
+    "basic-oil-processing": {
+      "product": "fluid:petroleum-gas",
+      "yield": 45,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:crude-oil": 100
+      },
+      "technology": "oil-processing",
+      "machine": "oil-refinery"
+    },
+    "oil-refinery": {
+      "product": "item:oil-refinery",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 10,
+        "item:kr-steel-beam": 4,
+        "item:kr-steel-gear-wheel": 10,
+        "item:pipe": 10,
+        "item:stone-brick": 10
+      },
+      "technology": "oil-processing"
+    },
+    "kr-steel-gear-wheel": {
+      "product": "item:kr-steel-gear-wheel",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:steel-plate": 1
+      },
+      "technology": "steel-processing"
+    },
+    "chemical-plant": {
+      "product": "item:chemical-plant",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 5,
+        "item:kr-automation-core": 3,
+        "item:pipe": 5,
+        "item:steel-plate": 5
+      },
+      "technology": "kr-fluids-chemistry"
+    },
+    "iron-chest": {
+      "product": "item:iron-chest",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 8
+      }
+    },
+    "big-electric-pole": {
+      "product": "item:big-electric-pole",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 8,
+        "item:iron-stick": 8,
+        "item:kr-steel-beam": 4
+      },
+      "technology": "electric-energy-distribution-1"
+    },
+    "medium-electric-pole": {
+      "product": "item:medium-electric-pole",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 4,
+        "item:iron-stick": 4,
+        "item:kr-iron-beam": 2
+      },
+      "technology": "electric-energy-distribution-1"
+    },
+    "steel-furnace": {
+      "product": "item:steel-furnace",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:steel-plate": 6,
+        "item:stone-brick": 10
+      },
+      "technology": "advanced-material-processing"
+    },
+    "gate": {
+      "product": "item:gate",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 2,
+        "item:steel-plate": 2,
+        "item:stone-wall": 1
+      },
+      "technology": "gate"
+    },
+    "steel-chest": {
+      "product": "item:steel-chest",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:steel-plate": 8
+      },
+      "technology": "steel-processing"
+    },
+    "solar-panel": {
+      "product": "item:solar-panel",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 10,
+        "item:kr-glass": 10,
+        "item:kr-iron-beam": 4,
+        "item:kr-silicon": 5,
+        "item:steel-plate": 5
+      },
+      "technology": "solar-energy"
+    },
+    "train-stop": {
+      "product": "item:train-stop",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 5,
+        "item:iron-plate": 6,
+        "item:iron-stick": 6,
+        "item:steel-plate": 3
+      },
+      "technology": "automated-rail-transportation"
+    },
+    "rail-signal": {
+      "product": "item:rail-signal",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 1,
+        "item:iron-plate": 5
+      },
+      "technology": "automated-rail-transportation"
+    },
+    "rail-chain-signal": {
+      "product": "item:rail-chain-signal",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 1,
+        "item:iron-plate": 5
+      },
+      "technology": "automated-rail-transportation"
+    },
+    "accumulator": {
+      "product": "item:accumulator",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:battery": 5,
+        "item:iron-plate": 2
+      },
+      "technology": "electric-energy-accumulators"
+    },
+    "battery": {
+      "product": "item:battery",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:sulfuric-acid": 20,
+        "item:copper-plate": 1,
+        "item:iron-plate": 1
+      },
+      "technology": "battery",
+      "machine": "chemical-plant"
+    },
+    "sulfuric-acid": {
+      "product": "fluid:sulfuric-acid",
+      "yield": 50,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:water": 100,
+        "item:iron-plate": 1,
+        "item:sulfur": 5
+      },
+      "technology": "sulfur-processing",
+      "machine": "chemical-plant"
+    },
+    "sulfur": {
+      "product": "item:sulfur",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:petroleum-gas": 30,
+        "fluid:water": 30
+      },
+      "technology": "sulfur-processing",
+      "machine": "chemical-plant"
+    },
+    "transport-belt": {
+      "product": "item:transport-belt",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 1,
+        "item:iron-plate": 1
+      }
+    },
+    "fast-transport-belt": {
+      "product": "item:fast-transport-belt",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 4,
+        "item:transport-belt": 1
+      },
+      "technology": "logistics-2"
+    },
+    "bulk-inserter": {
+      "product": "item:bulk-inserter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:advanced-circuit": 2,
+        "item:kr-inserter-parts": 1,
+        "item:kr-steel-gear-wheel": 2,
+        "item:steel-plate": 1
+      },
+      "technology": "bulk-inserter"
+    },
+    "underground-belt": {
+      "product": "item:underground-belt",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-iron-beam": 2,
+        "item:transport-belt": 5
+      },
+      "technology": "logistics"
+    },
+    "fast-underground-belt": {
+      "product": "item:fast-underground-belt",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:fast-transport-belt": 10,
+        "item:underground-belt": 2
+      },
+      "technology": "logistics-2"
+    },
+    "splitter": {
+      "product": "item:splitter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 5,
+        "item:kr-automation-core": 3,
+        "item:transport-belt": 4
+      },
+      "technology": "logistics"
+    },
+    "fast-splitter": {
+      "product": "item:fast-splitter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 2,
+        "item:iron-gear-wheel": 4,
+        "item:splitter": 1
+      },
+      "technology": "logistics-2"
+    },
+    "substation": {
+      "product": "item:substation",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:advanced-circuit": 5,
+        "item:copper-cable": 16,
+        "item:kr-steel-beam": 8
+      },
+      "technology": "electric-energy-distribution-2"
+    },
+    "storage-tank": {
+      "product": "item:storage-tank",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 10,
+        "item:kr-iron-beam": 5
+      },
+      "technology": "fluid-handling"
+    },
+    "pump": {
+      "product": "item:pump",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:engine-unit": 1,
+        "item:pipe": 1,
+        "item:steel-plate": 1
+      },
+      "technology": "fluid-handling"
+    },
+    "pumpjack": {
+      "product": "item:pumpjack",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 5,
+        "item:kr-steel-beam": 4,
+        "item:kr-steel-gear-wheel": 10,
+        "item:pipe": 10
+      },
+      "technology": "oil-gathering"
+    },
+    "centrifuge": {
+      "product": "item:centrifuge",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:advanced-circuit": 100,
+        "item:concrete": 100,
+        "item:iron-gear-wheel": 100,
+        "item:steel-plate": 50
+      },
+      "technology": "uranium-processing"
+    },
+    "concrete": {
+      "product": "item:concrete",
+      "yield": 10,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:water": 100,
+        "item:iron-ore": 1,
+        "item:stone-brick": 5
+      },
+      "technology": "concrete",
+      "machine": "assembling-machine-2"
+    },
+    "gun-turret": {
+      "product": "item:gun-turret",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 4,
+        "item:kr-automation-core": 3,
+        "item:kr-iron-beam": 5
+      },
+      "technology": "gun-turret"
+    },
+    "flamethrower-turret": {
+      "product": "item:flamethrower-turret",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:engine-unit": 5,
+        "item:iron-gear-wheel": 15,
+        "item:pipe": 10,
+        "item:steel-plate": 20
+      },
+      "technology": "flamethrower"
+    },
+    "arithmetic-combinator": {
+      "product": "item:arithmetic-combinator",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:electronic-circuit": 5
+      },
+      "technology": "circuit-network"
+    },
+    "decider-combinator": {
+      "product": "item:decider-combinator",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:electronic-circuit": 5
+      },
+      "technology": "circuit-network"
+    },
+    "constant-combinator": {
+      "product": "item:constant-combinator",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:electronic-circuit": 2
+      },
+      "technology": "circuit-network"
+    },
+    "selector-combinator": {
+      "product": "item:selector-combinator",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:advanced-circuit": 2,
+        "item:decider-combinator": 5
+      },
+      "technology": "advanced-combinators"
+    },
+    "power-switch": {
+      "product": "item:power-switch",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:electronic-circuit": 2,
+        "item:iron-plate": 5
+      },
+      "technology": "circuit-network"
+    },
+    "programmable-speaker": {
+      "product": "item:programmable-speaker",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:electronic-circuit": 4,
+        "item:iron-plate": 3,
+        "item:iron-stick": 4
+      },
+      "technology": "circuit-network"
+    },
+    "display-panel": {
+      "product": "item:display-panel",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 1,
+        "item:iron-plate": 1
+      },
+      "technology": "circuit-network"
+    },
+    "kr-atmospheric-condenser": {
+      "product": "item:kr-atmospheric-condenser",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 4,
+        "item:engine-unit": 2,
+        "item:kr-steel-beam": 10,
+        "item:kr-steel-gear-wheel": 10
+      },
+      "technology": "kr-atmosphere-condensation"
+    },
+    "kr-big-storage-tank": {
+      "product": "item:kr-big-storage-tank",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-beam": 10,
+        "item:kr-steel-pipe": 4,
+        "item:steel-plate": 20
+      },
+      "technology": "kr-steel-fluid-tanks"
+    },
+    "kr-steel-pipe": {
+      "product": "item:kr-steel-pipe",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:steel-plate": 1
+      },
+      "technology": "kr-steel-fluid-handling"
+    },
+    "kr-electrolysis-plant": {
+      "product": "item:kr-electrolysis-plant",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-plate": 10,
+        "item:kr-automation-core": 3,
+        "item:kr-glass": 10,
+        "item:kr-steel-beam": 10
+      },
+      "technology": "kr-fluids-chemistry"
+    },
+    "kr-fast-loader": {
+      "product": "item:kr-fast-loader",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:fast-transport-belt": 1,
+        "item:iron-gear-wheel": 10,
+        "item:kr-loader": 2
+      },
+      "technology": "logistics-2"
+    },
+    "kr-loader": {
+      "product": "item:kr-loader",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 10,
+        "item:kr-iron-beam": 2,
+        "item:transport-belt": 1
+      },
+      "technology": "logistics"
+    },
+    "kr-flare-stack": {
+      "product": "item:kr-flare-stack",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 3,
+        "item:kr-steel-beam": 10,
+        "item:steel-plate": 20
+      },
+      "technology": "kr-fluid-excess-handling"
+    },
+    "kr-fuel-refinery": {
+      "product": "item:kr-fuel-refinery",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 5,
+        "item:iron-gear-wheel": 5,
+        "item:pipe": 5,
+        "item:steel-plate": 5
+      },
+      "technology": "kr-fuel"
+    },
+    "kr-gas-power-station": {
+      "product": "item:kr-gas-power-station",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 4,
+        "item:engine-unit": 20,
+        "item:kr-steel-beam": 10,
+        "item:pipe": 4
+      },
+      "technology": "kr-gas-power-station"
+    },
+    "kr-greenhouse": {
+      "product": "item:kr-greenhouse",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-automation-core": 2,
+        "item:kr-glass": 20,
+        "item:kr-iron-beam": 10,
+        "item:wood": 20
+      },
+      "technology": "kr-greenhouse"
+    },
+    "kr-huge-storage-tank": {
+      "product": "item:kr-huge-storage-tank",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-beam": 20,
+        "item:kr-steel-pipe": 12,
+        "item:steel-plate": 60
+      },
+      "technology": "kr-steel-fluid-tanks"
+    },
+    "kr-sentinel": {
+      "product": "item:kr-sentinel",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 1,
+        "item:iron-plate": 2,
+        "item:kr-automation-core": 1,
+        "item:kr-glass": 1
+      },
+      "technology": "kr-sentinel"
+    },
+    "kr-shelter": {
+      "product": "item:kr-shelter",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:coal": 50,
+        "item:copper-cable": 10,
+        "item:iron-plate": 25,
+        "item:kr-iron-beam": 25
+      },
+      "technology": "kr-shelter"
+    },
+    "kr-steel-pipe-to-ground": {
+      "product": "item:kr-steel-pipe-to-ground",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-pipe": 15,
+        "item:steel-plate": 5
+      },
+      "technology": "kr-steel-fluid-handling"
+    },
+    "kr-steel-pump": {
+      "product": "item:kr-steel-pump",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:engine-unit": 1,
+        "item:kr-steel-beam": 1,
+        "item:kr-steel-gear-wheel": 4,
+        "item:kr-steel-pipe": 1
+      },
+      "technology": "kr-steel-fluid-handling"
+    },
+    "kr-strongbox": {
+      "product": "item:kr-strongbox",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-beam": 2,
+        "item:steel-chest": 4
+      },
+      "technology": "kr-containers"
+    },
+    "kr-warehouse": {
+      "product": "item:kr-warehouse",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-beam": 10,
+        "item:kr-strongbox": 4
+      },
+      "technology": "kr-containers"
+    },
+    "kr-wind-turbine": {
+      "product": "item:kr-wind-turbine",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 6,
+        "item:iron-gear-wheel": 6,
+        "item:iron-plate": 6,
+        "item:kr-iron-beam": 2
+      }
+    },
+    "car": {
+      "product": "item:car",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:engine-unit": 8,
+        "item:iron-plate": 20,
+        "item:steel-plate": 5
+      },
+      "technology": "automobilism"
+    },
+    "locomotive": {
+      "product": "item:locomotive",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 10,
+        "item:engine-unit": 20,
+        "item:steel-plate": 80
+      },
+      "technology": "railway"
+    },
+    "cargo-wagon": {
+      "product": "item:cargo-wagon",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 10,
+        "item:iron-plate": 20,
+        "item:kr-steel-beam": 10
+      },
+      "technology": "railway"
+    },
+    "fluid-wagon": {
+      "product": "item:fluid-wagon",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-gear-wheel": 10,
+        "item:pipe": 8,
+        "item:steel-plate": 16,
+        "item:storage-tank": 1
+      },
+      "technology": "fluid-wagon"
+    },
+    "rail": {
+      "product": "item:rail",
+      "yield": 2,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-steel-beam": 1,
+        "item:stone": 2
+      },
+      "technology": "railway"
+    },
+    "kr-basic-tech-card": {
+      "product": "item:kr-basic-tech-card",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 5,
+        "item:wood": 5
+      }
+    },
+    "automation-science-pack": {
+      "product": "item:automation-science-pack",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-automation-core": 1,
+        "item:kr-blank-tech-card": 5
+      },
+      "technology": "automation-science-pack"
+    },
+    "kr-blank-tech-card": {
+      "product": "item:kr-blank-tech-card",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:copper-cable": 2,
+        "item:iron-plate": 2
+      },
+      "technology": "automation-science-pack"
+    },
+    "logistic-science-pack": {
+      "product": "item:logistic-science-pack",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:electronic-circuit": 5,
+        "item:iron-gear-wheel": 5,
+        "item:kr-blank-tech-card": 5
+      },
+      "technology": "logistic-science-pack"
+    },
+    "military-science-pack": {
+      "product": "item:military-science-pack",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-biter-research-data": 1,
+        "item:kr-blank-tech-card": 5,
+        "item:kr-electronic-components": 5
+      },
+      "technology": "military-science-pack"
+    },
+    "kr-biter-research-data": {
+      "product": "item:kr-biter-research-data",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "item:kr-biomass": 10,
+        "item:kr-coke": 5,
+        "item:steel-plate": 5
+      },
+      "technology": "military-science-pack"
+    },
+    "chemical-science-pack": {
+      "product": "item:chemical-science-pack",
+      "yield": 5,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:sulfuric-acid": 50,
+        "item:advanced-circuit": 5,
+        "item:kr-blank-tech-card": 5,
+        "item:kr-glass": 15
+      },
+      "technology": "chemical-science-pack",
+      "machine": "assembling-machine-2"
+    },
+    "wood": {
+      "product": "item:wood",
+      "yield": 40,
+      "expectedYield": false,
+      "ingredients": {
+        "fluid:water": 200
+      },
+      "technology": "kr-greenhouse",
+      "machine": "kr-greenhouse"
+    },
+    "firearm-magazine": {
+      "product": "item:firearm-magazine",
+      "yield": 1,
+      "expectedYield": false,
+      "ingredients": {
+        "item:iron-plate": 4
+      }
+    }
+  },
+  "routes": {
+    "item:wooden-chest": "wooden-chest",
+    "item:stone-furnace": "stone-furnace",
+    "item:iron-plate": "iron-plate",
+    "item:iron-gear-wheel": "iron-gear-wheel",
+    "item:burner-mining-drill": "burner-mining-drill",
+    "item:iron-stick": "iron-stick",
+    "item:copper-plate": "copper-plate",
+    "item:kr-automation-core": "kr-automation-core",
+    "item:kr-iron-beam": "kr-iron-beam",
+    "item:electric-mining-drill": "electric-mining-drill",
+    "item:kr-inserter-parts": "kr-inserter-parts",
+    "item:burner-inserter": "burner-inserter",
+    "item:inserter": "inserter",
+    "item:copper-cable": "copper-cable",
+    "item:electronic-circuit": "electronic-circuit",
+    "item:kr-coke": "kr-coke",
+    "item:steel-plate": "steel-plate",
+    "item:fast-inserter": "fast-inserter",
+    "item:long-handed-inserter": "long-handed-inserter",
+    "item:pipe": "pipe",
+    "item:offshore-pump": "offshore-pump",
+    "item:boiler": "boiler",
+    "item:steam-engine": "steam-engine",
+    "item:small-electric-pole": "small-electric-pole",
+    "item:radar": "radar",
+    "item:kr-crusher": "kr-crusher",
+    "item:kr-sand": "kr-sand",
+    "item:kr-glass": "kr-glass",
+    "item:small-lamp": "small-lamp",
+    "item:pipe-to-ground": "pipe-to-ground",
+    "item:assembling-machine-1": "assembling-machine-1",
+    "item:assembling-machine-2": "assembling-machine-2",
+    "item:stone-brick": "stone-brick",
+    "item:stone-wall": "stone-wall",
+    "item:lab": "lab",
+    "item:kr-steel-beam": "kr-steel-beam",
+    "item:engine-unit": "engine-unit",
+    "item:kr-filtration-plant": "kr-filtration-plant",
+    "item:kr-quartz": "kr-quartz",
+    "item:kr-silicon": "kr-silicon",
+    "item:kr-steel-gear-wheel": "kr-steel-gear-wheel",
+    "item:oil-refinery": "oil-refinery",
+    "fluid:petroleum-gas": "basic-oil-processing",
+    "item:chemical-plant": "chemical-plant",
+    "item:plastic-bar": "plastic-bar",
+    "item:kr-electronic-components": "kr-electronic-components",
+    "item:advanced-circuit": "advanced-circuit",
+    "item:electric-furnace": "electric-furnace",
+    "item:iron-chest": "iron-chest",
+    "item:big-electric-pole": "big-electric-pole",
+    "item:medium-electric-pole": "medium-electric-pole",
+    "item:steel-furnace": "steel-furnace",
+    "item:gate": "gate",
+    "item:steel-chest": "steel-chest",
+    "item:solar-panel": "solar-panel",
+    "item:train-stop": "train-stop",
+    "item:rail-signal": "rail-signal",
+    "item:rail-chain-signal": "rail-chain-signal",
+    "item:sulfur": "sulfur",
+    "fluid:sulfuric-acid": "sulfuric-acid",
+    "item:battery": "battery",
+    "item:accumulator": "accumulator",
+    "item:transport-belt": "transport-belt",
+    "item:fast-transport-belt": "fast-transport-belt",
+    "item:bulk-inserter": "bulk-inserter",
+    "item:underground-belt": "underground-belt",
+    "item:fast-underground-belt": "fast-underground-belt",
+    "item:splitter": "splitter",
+    "item:fast-splitter": "fast-splitter",
+    "item:substation": "substation",
+    "item:storage-tank": "storage-tank",
+    "item:pump": "pump",
+    "item:pumpjack": "pumpjack",
+    "item:concrete": "concrete",
+    "item:centrifuge": "centrifuge",
+    "item:gun-turret": "gun-turret",
+    "item:flamethrower-turret": "flamethrower-turret",
+    "item:arithmetic-combinator": "arithmetic-combinator",
+    "item:decider-combinator": "decider-combinator",
+    "item:constant-combinator": "constant-combinator",
+    "item:selector-combinator": "selector-combinator",
+    "item:power-switch": "power-switch",
+    "item:programmable-speaker": "programmable-speaker",
+    "item:display-panel": "display-panel",
+    "item:kr-atmospheric-condenser": "kr-atmospheric-condenser",
+    "item:kr-steel-pipe": "kr-steel-pipe",
+    "item:kr-big-storage-tank": "kr-big-storage-tank",
+    "item:kr-electrolysis-plant": "kr-electrolysis-plant",
+    "item:kr-loader": "kr-loader",
+    "item:kr-fast-loader": "kr-fast-loader",
+    "item:kr-flare-stack": "kr-flare-stack",
+    "item:kr-fuel-refinery": "kr-fuel-refinery",
+    "item:kr-gas-power-station": "kr-gas-power-station",
+    "item:kr-greenhouse": "kr-greenhouse",
+    "item:kr-huge-storage-tank": "kr-huge-storage-tank",
+    "item:kr-sentinel": "kr-sentinel",
+    "item:kr-shelter": "kr-shelter",
+    "item:kr-steel-pipe-to-ground": "kr-steel-pipe-to-ground",
+    "item:kr-steel-pump": "kr-steel-pump",
+    "item:kr-strongbox": "kr-strongbox",
+    "item:kr-warehouse": "kr-warehouse",
+    "item:kr-wind-turbine": "kr-wind-turbine",
+    "item:car": "car",
+    "item:locomotive": "locomotive",
+    "item:cargo-wagon": "cargo-wagon",
+    "item:fluid-wagon": "fluid-wagon",
+    "item:rail": "rail",
+    "item:kr-basic-tech-card": "kr-basic-tech-card",
+    "item:kr-blank-tech-card": "kr-blank-tech-card",
+    "item:automation-science-pack": "automation-science-pack",
+    "item:logistic-science-pack": "logistic-science-pack",
+    "item:kr-biter-research-data": "kr-biter-research-data",
+    "item:military-science-pack": "military-science-pack",
+    "item:chemical-science-pack": "chemical-science-pack"
+  }
+}

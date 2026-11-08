@@ -1,0 +1,2692 @@
+{
+  "provenance": {
+    "dataset": "Factorio 2.1.21 / Krastorio2 2.1.3 (enabled mods: docs/guides/INGEST.md)",
+    "rawSha256": "7ba414bbfb9b918c953ac7db18077c94a9cd7fbfd3905415aba9675b6da77447",
+    "staticSha256": "ba3bf83c4eb099d99149f6660be847aafe723dfef90be73ec5d451ab30e2a475",
+    "recipesSha256": "89fccbf79d05126466f95be0f99e9f2c745b213124ad1561866fc451f67fc90d",
+    "blueprintHashes": {
+      "m1": "43ca5671a096c4187dadac4a0f07a233ddfaba181f4b3a9744c89c26728bd002",
+      "m2": "eb79e9e6b80df83a1a194e0d7c3510903b766709828a9e06819196bc1779cf52"
+    }
+  },
+  "accounting": "Expected material equivalents, no productivity or fuel; reuse prior building inventory; research from required prerequisite closure, not all earlier complexity entries.",
+  "blueprints": {
+    "m1": {
+      "buildings": {
+        "assembling-machine-1": 6,
+        "assembling-machine-2": 2,
+        "boiler": 14,
+        "burner-inserter": 228,
+        "fast-inserter": 5,
+        "gun-turret": 20,
+        "inserter": 54,
+        "iron-chest": 1,
+        "kr-crusher": 1,
+        "kr-filtration-plant": 1,
+        "kr-greenhouse": 14,
+        "kr-sentinel": 1,
+        "kr-wind-turbine": 19,
+        "offshore-pump": 2,
+        "pipe": 11,
+        "pipe-to-ground": 8,
+        "small-electric-pole": 80,
+        "splitter": 14,
+        "steam-engine": 28,
+        "stone-furnace": 108,
+        "stone-wall": 39,
+        "transport-belt": 910,
+        "underground-belt": 78,
+        "wooden-chest": 7
+      },
+      "recipes": [
+        "firearm-magazine",
+        "iron-plate",
+        "kr-coke",
+        "kr-glass",
+        "kr-quartz",
+        "kr-silicon",
+        "kr-steel-beam",
+        "steel-furnace",
+        "steel-plate",
+        "stone-brick",
+        "stone-wall",
+        "wood"
+      ],
+      "technologies": []
+    },
+    "m2": {
+      "buildings": {
+        "assembling-machine-1": 40,
+        "assembling-machine-2": 18,
+        "big-electric-pole": 5,
+        "boiler": 14,
+        "burner-inserter": 372,
+        "electric-mining-drill": 127,
+        "fast-inserter": 10,
+        "gun-turret": 133,
+        "inserter": 331,
+        "iron-chest": 3,
+        "kr-crusher": 1,
+        "kr-filtration-plant": 1,
+        "kr-greenhouse": 14,
+        "kr-sentinel": 8,
+        "kr-wind-turbine": 19,
+        "lab": 33,
+        "long-handed-inserter": 3,
+        "offshore-pump": 2,
+        "pipe": 11,
+        "pipe-to-ground": 8,
+        "small-electric-pole": 367,
+        "splitter": 48,
+        "steam-engine": 28,
+        "steel-furnace": 24,
+        "stone-furnace": 158,
+        "stone-wall": 1888,
+        "transport-belt": 2877,
+        "underground-belt": 157,
+        "wooden-chest": 20
+      },
+      "recipes": [
+        "assembling-machine-1",
+        "automation-science-pack",
+        "copper-cable",
+        "copper-plate",
+        "electronic-circuit",
+        "engine-unit",
+        "firearm-magazine",
+        "gun-turret",
+        "inserter",
+        "iron-gear-wheel",
+        "iron-plate",
+        "iron-stick",
+        "kr-automation-core",
+        "kr-basic-tech-card",
+        "kr-blank-tech-card",
+        "kr-coke",
+        "kr-glass",
+        "kr-inserter-parts",
+        "kr-iron-beam",
+        "kr-quartz",
+        "kr-silicon",
+        "kr-steel-beam",
+        "logistic-science-pack",
+        "military-science-pack",
+        "pipe",
+        "pipe-to-ground",
+        "steel-furnace",
+        "steel-plate",
+        "stone-brick",
+        "stone-wall",
+        "transport-belt",
+        "wood"
+      ],
+      "technologies": []
+    }
+  },
+  "scenarios": {
+    "empty-to-m1": {
+      "added": {
+        "item:assembling-machine-1": 6,
+        "item:assembling-machine-2": 2,
+        "item:boiler": 14,
+        "item:burner-inserter": 228,
+        "item:fast-inserter": 5,
+        "item:gun-turret": 20,
+        "item:inserter": 54,
+        "item:iron-chest": 1,
+        "item:kr-crusher": 1,
+        "item:kr-filtration-plant": 1,
+        "item:kr-greenhouse": 14,
+        "item:kr-sentinel": 1,
+        "item:kr-wind-turbine": 19,
+        "item:offshore-pump": 2,
+        "item:pipe": 11,
+        "item:pipe-to-ground": 8,
+        "item:small-electric-pole": 80,
+        "item:splitter": 14,
+        "item:steam-engine": 28,
+        "item:stone-furnace": 108,
+        "item:stone-wall": 39,
+        "item:transport-belt": 910,
+        "item:underground-belt": 78,
+        "item:wooden-chest": 7
+      },
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "automation",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "electronics",
+        "logistic-science-pack",
+        "automation-2",
+        "steam-power",
+        "logistics",
+        "fast-inserter",
+        "gun-turret",
+        "kr-crusher",
+        "kr-stone-processing",
+        "engine",
+        "kr-fluids-chemistry",
+        "kr-silicon-processing",
+        "kr-greenhouse",
+        "lamp",
+        "kr-sentinel",
+        "military",
+        "stone-wall",
+        "advanced-material-processing"
+      ],
+      "triggers": [],
+      "science": {
+        "automation-science-pack": 745,
+        "kr-basic-tech-card": 765,
+        "logistic-science-pack": 340
+      },
+      "construction": {
+        "item:coal": 11.6,
+        "item:copper-plate": 734.5,
+        "item:iron-plate": 4985,
+        "item:stone": 1232.8,
+        "item:wood": 393.6
+      },
+      "research": {
+        "item:copper-plate": 1386.5,
+        "item:iron-plate": 1391,
+        "item:wood": 935
+      },
+      "total": {
+        "item:coal": 11.6,
+        "item:copper-plate": 2121,
+        "item:iron-plate": 6376,
+        "item:stone": 1232.8,
+        "item:wood": 1328.6
+      },
+      "expectedYieldRecipes": ["kr-sand"],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "kr-greenhouse",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": []
+    },
+    "empty-to-m2": {
+      "added": {
+        "item:assembling-machine-1": 40,
+        "item:assembling-machine-2": 18,
+        "item:big-electric-pole": 5,
+        "item:boiler": 14,
+        "item:burner-inserter": 372,
+        "item:electric-mining-drill": 127,
+        "item:fast-inserter": 10,
+        "item:gun-turret": 133,
+        "item:inserter": 331,
+        "item:iron-chest": 3,
+        "item:kr-crusher": 1,
+        "item:kr-filtration-plant": 1,
+        "item:kr-greenhouse": 14,
+        "item:kr-sentinel": 8,
+        "item:kr-wind-turbine": 19,
+        "item:lab": 33,
+        "item:long-handed-inserter": 3,
+        "item:offshore-pump": 2,
+        "item:pipe": 11,
+        "item:pipe-to-ground": 8,
+        "item:small-electric-pole": 367,
+        "item:splitter": 48,
+        "item:steam-engine": 28,
+        "item:steel-furnace": 24,
+        "item:stone-furnace": 158,
+        "item:stone-wall": 1888,
+        "item:transport-belt": 2877,
+        "item:underground-belt": 157,
+        "item:wooden-chest": 20
+      },
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "automation",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "electronics",
+        "logistic-science-pack",
+        "automation-2",
+        "electric-energy-distribution-1",
+        "steam-power",
+        "electric-mining-drill",
+        "logistics",
+        "fast-inserter",
+        "gun-turret",
+        "kr-crusher",
+        "kr-stone-processing",
+        "engine",
+        "kr-fluids-chemistry",
+        "kr-silicon-processing",
+        "kr-greenhouse",
+        "lamp",
+        "kr-sentinel",
+        "advanced-material-processing",
+        "military",
+        "stone-wall",
+        "military-2",
+        "fluid-handling",
+        "oil-gathering",
+        "oil-processing",
+        "plastics",
+        "advanced-circuit",
+        "military-science-pack"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 1485,
+        "kr-basic-tech-card": 785,
+        "logistic-science-pack": 1060
+      },
+      "construction": {
+        "item:coal": 100,
+        "item:copper-plate": 4700.5,
+        "item:iron-plate": 16929.5,
+        "item:stone": 20458.4,
+        "item:wood": 824
+      },
+      "research": {
+        "item:copper-plate": 2852.5,
+        "item:iron-plate": 3499,
+        "item:wood": 1315
+      },
+      "total": {
+        "item:coal": 100,
+        "item:copper-plate": 7553,
+        "item:iron-plate": 20428.5,
+        "item:stone": 20458.4,
+        "item:wood": 2139
+      },
+      "expectedYieldRecipes": ["kr-sand"],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "kr-greenhouse",
+        "oil-refinery",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": ["chemical-plant", "oil-refinery"]
+    },
+    "m1-to-m2": {
+      "added": {
+        "item:assembling-machine-1": 34,
+        "item:assembling-machine-2": 16,
+        "item:big-electric-pole": 5,
+        "item:burner-inserter": 144,
+        "item:electric-mining-drill": 127,
+        "item:fast-inserter": 5,
+        "item:gun-turret": 113,
+        "item:inserter": 277,
+        "item:iron-chest": 2,
+        "item:kr-sentinel": 7,
+        "item:lab": 33,
+        "item:long-handed-inserter": 3,
+        "item:small-electric-pole": 287,
+        "item:splitter": 34,
+        "item:steel-furnace": 24,
+        "item:stone-furnace": 50,
+        "item:stone-wall": 1849,
+        "item:transport-belt": 1967,
+        "item:underground-belt": 79,
+        "item:wooden-chest": 13
+      },
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "electric-energy-distribution-1",
+        "electric-mining-drill",
+        "military-2",
+        "fluid-handling",
+        "oil-gathering",
+        "oil-processing",
+        "plastics",
+        "advanced-circuit",
+        "military-science-pack"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 740,
+        "kr-basic-tech-card": 20,
+        "logistic-science-pack": 720
+      },
+      "construction": {
+        "item:coal": 88.4,
+        "item:copper-plate": 3966,
+        "item:iron-plate": 11944.5,
+        "item:stone": 19225.6,
+        "item:wood": 430.4
+      },
+      "research": {
+        "item:copper-plate": 1466,
+        "item:iron-plate": 2108,
+        "item:wood": 380
+      },
+      "total": {
+        "item:coal": 88.4,
+        "item:copper-plate": 5432,
+        "item:iron-plate": 14052.5,
+        "item:stone": 19225.6,
+        "item:wood": 810.4
+      },
+      "expectedYieldRecipes": ["kr-sand"],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "kr-greenhouse",
+        "oil-refinery",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": ["chemical-plant", "oil-refinery"]
+    },
+    "chemical-ready": {
+      "added": {},
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 1275,
+        "kr-basic-tech-card": 535,
+        "logistic-science-pack": 1040
+      },
+      "construction": {},
+      "research": {
+        "item:copper-plate": 2535.5,
+        "item:iron-plate": 3251,
+        "item:wood": 1055
+      },
+      "total": {
+        "item:copper-plate": 2535.5,
+        "item:iron-plate": 3251,
+        "item:wood": 1055
+      },
+      "expectedYieldRecipes": [],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "all-red-green": {
+      "added": {},
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "automation",
+        "kr-laboratory",
+        "automation-science-pack",
+        "electronics",
+        "electric-mining-drill",
+        "repair-pack",
+        "military",
+        "physical-projectile-damage-1",
+        "logistic-science-pack",
+        "physical-projectile-damage-2",
+        "weapon-shooting-speed-1",
+        "weapon-shooting-speed-2",
+        "steel-processing",
+        "military-2",
+        "stronger-explosives-1",
+        "logistics",
+        "fast-inserter",
+        "logistics-2",
+        "engine",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "bulk-inserter",
+        "inserter-capacity-bonus-1",
+        "inserter-capacity-bonus-2",
+        "kr-iron-pickaxe",
+        "steel-axe",
+        "railway",
+        "automated-rail-transportation",
+        "kr-fuel",
+        "automobilism",
+        "lamp",
+        "solar-energy",
+        "kr-light-armor",
+        "heavy-armor",
+        "gun-turret",
+        "research-speed-1",
+        "research-speed-2",
+        "electric-energy-distribution-1",
+        "advanced-material-processing",
+        "concrete",
+        "landfill",
+        "toolbelt",
+        "stone-wall",
+        "gate",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "military-science-pack",
+        "explosives",
+        "cliff-explosives",
+        "flammables",
+        "fluid-wagon",
+        "modular-armor",
+        "battery",
+        "electric-energy-accumulators",
+        "solar-panel-equipment",
+        "night-vision-equipment",
+        "belt-immunity-equipment",
+        "battery-equipment",
+        "modules",
+        "speed-module",
+        "productivity-module",
+        "efficiency-module",
+        "mining-productivity-1",
+        "circuit-network",
+        "bob-long-inserters-1",
+        "bob-near-inserters",
+        "bob-more-inserters-1",
+        "kr-sentinel",
+        "kr-shelter",
+        "kr-greenhouse",
+        "kr-decorations",
+        "kr-fluid-excess-handling",
+        "kr-gas-power-station",
+        "kr-steel-fluid-handling",
+        "kr-steel-fluid-tanks",
+        "kr-containers"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 7555,
+        "kr-basic-tech-card": 2185,
+        "logistic-science-pack": 6580
+      },
+      "construction": {},
+      "research": {
+        "item:copper-plate": 15032.5,
+        "item:iron-plate": 20057,
+        "item:wood": 5475
+      },
+      "total": {
+        "item:copper-plate": 15032.5,
+        "item:iron-plate": 20057,
+        "item:wood": 5475
+      },
+      "expectedYieldRecipes": [],
+      "requiredCraftingMachines": ["stone-furnace"],
+      "uncountedCraftingMachines": ["stone-furnace"]
+    },
+    "electric-furnace": {
+      "added": {
+        "item:electric-furnace": 1
+      },
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "advanced-material-processing",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "advanced-material-processing-2"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 1600,
+        "chemical-science-pack": 250,
+        "kr-basic-tech-card": 535,
+        "logistic-science-pack": 1365
+      },
+      "construction": {
+        "fluid:crude-oil": 55.55555555555556,
+        "fluid:water": 8.333333333333334,
+        "item:coal": 5.25,
+        "item:copper-plate": 15,
+        "item:iron-plate": 25,
+        "item:stone": 25.333333333333336,
+        "item:wood": 9
+      },
+      "research": {
+        "fluid:crude-oil": 11111.111111111111,
+        "fluid:water": 9166.666666666668,
+        "item:coal": 62.5,
+        "item:copper-plate": 3985.5,
+        "item:iron-plate": 4593.5,
+        "item:stone": 866.6666666666665,
+        "item:wood": 1467.5
+      },
+      "total": {
+        "fluid:crude-oil": 11166.666666666668,
+        "fluid:water": 9175,
+        "item:coal": 67.75,
+        "item:copper-plate": 4000.5,
+        "item:iron-plate": 4618.5,
+        "item:stone": 892,
+        "item:wood": 1476.5
+      },
+      "expectedYieldRecipes": ["kr-sand"],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "flamethrower-turret": {
+      "added": {
+        "item:flamethrower-turret": 1
+      },
+      "removed": {},
+      "reusedAsIngredients": {},
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "flammables",
+        "military",
+        "military-2",
+        "stone-wall",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "military-science-pack",
+        "flamethrower"
+      ],
+      "triggers": ["oil-processing"],
+      "science": {
+        "automation-science-pack": 1200,
+        "kr-basic-tech-card": 555,
+        "logistic-science-pack": 965,
+        "military-science-pack": 50
+      },
+      "construction": {
+        "item:coal": 8,
+        "item:iron-plate": 85,
+        "item:wood": 8
+      },
+      "research": {
+        "fluid:crude-oil": 555.5555555555555,
+        "fluid:water": 83.33333333333334,
+        "item:coal": 26.5,
+        "item:copper-plate": 2405.5,
+        "item:iron-plate": 3073.5,
+        "item:kr-biomass": 20,
+        "item:stone": 53.333333333333336,
+        "item:wood": 1051.5
+      },
+      "total": {
+        "fluid:crude-oil": 555.5555555555555,
+        "fluid:water": 83.33333333333334,
+        "item:coal": 34.5,
+        "item:copper-plate": 2405.5,
+        "item:iron-plate": 3158.5,
+        "item:kr-biomass": 20,
+        "item:stone": 53.333333333333336,
+        "item:wood": 1059.5
+      },
+      "expectedYieldRecipes": ["kr-sand"],
+      "requiredCraftingMachines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ],
+      "uncountedCraftingMachines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    }
+  },
+  "unitCosts": {
+    "accumulator": {
+      "plates": {
+        "fluid:crude-oil": 333.33333333333337,
+        "fluid:water": 350,
+        "item:copper-plate": 5,
+        "item:iron-plate": 9
+      },
+      "raw": {
+        "fluid:crude-oil": 333.33333333333337,
+        "fluid:water": 350,
+        "item:copper-ore": 10,
+        "item:iron-ore": 18
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "electric-energy-distribution-1",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "sulfur-processing",
+        "battery",
+        "electric-energy-accumulators"
+      ],
+      "machines": ["chemical-plant", "oil-refinery", "stone-furnace"]
+    },
+    "arithmetic-combinator": {
+      "plates": {
+        "item:copper-plate": 7.5,
+        "item:iron-plate": 2.5,
+        "item:wood": 2.5
+      },
+      "raw": {
+        "item:copper-ore": 15,
+        "item:iron-ore": 5,
+        "item:wood": 2.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "assembling-machine-1": {
+      "plates": {
+        "item:copper-plate": 6,
+        "item:iron-plate": 19
+      },
+      "raw": {
+        "item:copper-ore": 12,
+        "item:iron-ore": 38
+      },
+      "technologies": ["kr-automation-core", "automation"],
+      "machines": ["stone-furnace"]
+    },
+    "assembling-machine-2": {
+      "plates": {
+        "item:coal": 0.8,
+        "item:copper-plate": 9,
+        "item:iron-plate": 29.5,
+        "item:wood": 2.3
+      },
+      "raw": {
+        "item:coal": 0.8,
+        "item:copper-ore": 18,
+        "item:iron-ore": 59,
+        "item:wood": 2.3
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "automation-2"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "big-electric-pole": {
+      "plates": {
+        "item:coal": 3.2,
+        "item:copper-plate": 4,
+        "item:iron-plate": 20,
+        "item:wood": 3.2
+      },
+      "raw": {
+        "item:coal": 3.2,
+        "item:copper-ore": 8,
+        "item:iron-ore": 40,
+        "item:wood": 3.2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "electric-energy-distribution-1"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "boiler": {
+      "plates": {
+        "item:iron-plate": 4,
+        "item:stone": 5
+      },
+      "raw": {
+        "item:iron-ore": 8,
+        "item:stone": 5
+      },
+      "technologies": ["kr-automation-core", "steam-power"],
+      "machines": ["stone-furnace"]
+    },
+    "bulk-inserter": {
+      "plates": {
+        "fluid:crude-oil": 22.22222222222222,
+        "fluid:water": 3.333333333333333,
+        "item:coal": 1.7,
+        "item:copper-plate": 6,
+        "item:iron-plate": 11,
+        "item:stone": 2.133333333333333,
+        "item:wood": 3.2
+      },
+      "raw": {
+        "fluid:crude-oil": 22.22222222222222,
+        "fluid:water": 3.333333333333333,
+        "item:coal": 1.7,
+        "item:copper-ore": 12,
+        "item:iron-ore": 22,
+        "item:stone": 2.133333333333333,
+        "item:wood": 3.2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "automation",
+        "kr-laboratory",
+        "automation-science-pack",
+        "electronics",
+        "logistics",
+        "steel-processing",
+        "fast-inserter",
+        "logistic-science-pack",
+        "logistics-2",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "bulk-inserter"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "burner-inserter": {
+      "plates": {
+        "item:iron-plate": 4
+      },
+      "raw": {
+        "item:iron-ore": 8
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "burner-mining-drill": {
+      "plates": {
+        "item:iron-plate": 6,
+        "item:stone": 5
+      },
+      "raw": {
+        "item:iron-ore": 12,
+        "item:stone": 5
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "car": {
+      "plates": {
+        "item:coal": 2,
+        "item:iron-plate": 62,
+        "item:wood": 2
+      },
+      "raw": {
+        "item:coal": 2,
+        "item:iron-ore": 124,
+        "item:wood": 2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "kr-fuel",
+        "automobilism"
+      ],
+      "machines": ["assembling-machine-1", "stone-furnace"]
+    },
+    "cargo-wagon": {
+      "plates": {
+        "item:coal": 8,
+        "item:iron-plate": 70,
+        "item:wood": 8
+      },
+      "raw": {
+        "item:coal": 8,
+        "item:iron-ore": 140,
+        "item:wood": 8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "centrifuge": {
+      "plates": {
+        "fluid:crude-oil": 1111.111111111111,
+        "fluid:water": 1166.6666666666667,
+        "item:coal": 45,
+        "item:copper-plate": 300,
+        "item:iron-ore": 10,
+        "item:iron-plate": 300,
+        "item:stone": 206.66666666666669,
+        "item:wood": 120
+      },
+      "raw": {
+        "fluid:crude-oil": 1111.111111111111,
+        "fluid:water": 1166.6666666666667,
+        "item:coal": 45,
+        "item:copper-ore": 600,
+        "item:iron-ore": 610,
+        "item:stone": 206.66666666666669,
+        "item:wood": 120
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "advanced-material-processing",
+        "concrete",
+        "uranium-mining",
+        "uranium-processing"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "chemical-plant": {
+      "plates": {
+        "item:coal": 2,
+        "item:copper-plate": 9,
+        "item:iron-plate": 29,
+        "item:wood": 2
+      },
+      "raw": {
+        "item:coal": 2,
+        "item:copper-ore": 18,
+        "item:iron-ore": 58,
+        "item:wood": 2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "kr-fluids-chemistry"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "constant-combinator": {
+      "plates": {
+        "item:copper-plate": 4.5,
+        "item:iron-plate": 1,
+        "item:wood": 1
+      },
+      "raw": {
+        "item:copper-ore": 9,
+        "item:iron-ore": 2,
+        "item:wood": 1
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "decider-combinator": {
+      "plates": {
+        "item:copper-plate": 7.5,
+        "item:iron-plate": 2.5,
+        "item:wood": 2.5
+      },
+      "raw": {
+        "item:copper-ore": 15,
+        "item:iron-ore": 5,
+        "item:wood": 2.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "display-panel": {
+      "plates": {
+        "item:copper-plate": 1,
+        "item:iron-plate": 1.5,
+        "item:wood": 0.5
+      },
+      "raw": {
+        "item:copper-ore": 2,
+        "item:iron-ore": 3,
+        "item:wood": 0.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "electric-furnace": {
+      "plates": {
+        "fluid:crude-oil": 55.55555555555556,
+        "fluid:water": 8.333333333333334,
+        "item:coal": 5.25,
+        "item:copper-plate": 15,
+        "item:iron-plate": 25,
+        "item:stone": 25.333333333333336,
+        "item:wood": 9
+      },
+      "raw": {
+        "fluid:crude-oil": 55.55555555555556,
+        "fluid:water": 8.333333333333334,
+        "item:coal": 5.25,
+        "item:copper-ore": 30,
+        "item:iron-ore": 50,
+        "item:stone": 25.333333333333336,
+        "item:wood": 9
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "advanced-material-processing",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "advanced-material-processing-2"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "electric-mining-drill": {
+      "plates": {
+        "item:copper-plate": 6,
+        "item:iron-plate": 15
+      },
+      "raw": {
+        "item:copper-ore": 12,
+        "item:iron-ore": 30
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "electric-mining-drill"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "fast-inserter": {
+      "plates": {
+        "item:coal": 0.4,
+        "item:copper-plate": 2,
+        "item:iron-plate": 6,
+        "item:wood": 1.4
+      },
+      "raw": {
+        "item:coal": 0.4,
+        "item:copper-ore": 4,
+        "item:iron-ore": 12,
+        "item:wood": 1.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "automation",
+        "kr-laboratory",
+        "automation-science-pack",
+        "electronics",
+        "logistics",
+        "steel-processing",
+        "fast-inserter"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "fast-splitter": {
+      "plates": {
+        "item:copper-plate": 11,
+        "item:iron-plate": 23,
+        "item:wood": 1
+      },
+      "raw": {
+        "item:copper-ore": 22,
+        "item:iron-ore": 46,
+        "item:wood": 1
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "fast-transport-belt": {
+      "plates": {
+        "item:iron-plate": 5
+      },
+      "raw": {
+        "item:iron-ore": 10
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "fast-underground-belt": {
+      "plates": {
+        "item:iron-plate": 29.5
+      },
+      "raw": {
+        "item:iron-ore": 59
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "flamethrower-turret": {
+      "plates": {
+        "item:coal": 8,
+        "item:iron-plate": 85,
+        "item:wood": 8
+      },
+      "raw": {
+        "item:coal": 8,
+        "item:iron-ore": 170,
+        "item:wood": 8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "flammables",
+        "military",
+        "military-2",
+        "stone-wall",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "military-science-pack",
+        "flamethrower"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "fluid-wagon": {
+      "plates": {
+        "item:coal": 6.4,
+        "item:iron-plate": 70,
+        "item:wood": 6.4
+      },
+      "raw": {
+        "item:coal": 6.4,
+        "item:iron-ore": 140,
+        "item:wood": 6.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway",
+        "steam-power",
+        "fluid-handling",
+        "fluid-wagon"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "gate": {
+      "plates": {
+        "item:coal": 0.8,
+        "item:copper-plate": 2,
+        "item:iron-plate": 5,
+        "item:stone": 10,
+        "item:wood": 1.8
+      },
+      "raw": {
+        "item:coal": 0.8,
+        "item:copper-ore": 4,
+        "item:iron-ore": 10,
+        "item:stone": 10,
+        "item:wood": 1.8
+      },
+      "technologies": [
+        "military",
+        "stone-wall",
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "gate"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "gun-turret": {
+      "plates": {
+        "item:copper-plate": 9,
+        "item:iron-plate": 23
+      },
+      "raw": {
+        "item:copper-ore": 18,
+        "item:iron-ore": 46
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "gun-turret"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "inserter": {
+      "plates": {
+        "item:copper-plate": 3,
+        "item:iron-plate": 6
+      },
+      "raw": {
+        "item:copper-ore": 6,
+        "item:iron-ore": 12
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "iron-chest": {
+      "plates": {
+        "item:iron-plate": 8
+      },
+      "raw": {
+        "item:iron-ore": 16
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "kr-atmospheric-condenser": {
+      "plates": {
+        "item:coal": 12,
+        "item:copper-plate": 4,
+        "item:iron-plate": 70,
+        "item:wood": 14
+      },
+      "raw": {
+        "item:coal": 12,
+        "item:copper-ore": 8,
+        "item:iron-ore": 140,
+        "item:wood": 14
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "kr-atmosphere-condensation"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "kr-big-storage-tank": {
+      "plates": {
+        "item:coal": 17.6,
+        "item:iron-plate": 88,
+        "item:wood": 17.6
+      },
+      "raw": {
+        "item:coal": 17.6,
+        "item:iron-ore": 176,
+        "item:wood": 17.6
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "kr-steel-fluid-handling",
+        "kr-steel-fluid-tanks"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-crusher": {
+      "plates": {
+        "item:copper-plate": 9,
+        "item:iron-plate": 46
+      },
+      "raw": {
+        "item:copper-ore": 18,
+        "item:iron-ore": 92
+      },
+      "technologies": ["kr-automation-core", "kr-crusher"],
+      "machines": ["stone-furnace"]
+    },
+    "kr-electrolysis-plant": {
+      "plates": {
+        "item:coal": 8,
+        "item:copper-plate": 19,
+        "item:iron-plate": 49,
+        "item:stone": 8,
+        "item:wood": 8
+      },
+      "raw": {
+        "item:coal": 8,
+        "item:copper-ore": 38,
+        "item:iron-ore": 98,
+        "item:stone": 8,
+        "item:wood": 8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "kr-fluids-chemistry"
+      ],
+      "machines": ["kr-crusher", "stone-furnace"]
+    },
+    "kr-fast-loader": {
+      "plates": {
+        "item:iron-plate": 45
+      },
+      "raw": {
+        "item:iron-ore": 90
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-filtration-plant": {
+      "plates": {
+        "item:coal": 8,
+        "item:copper-plate": 9,
+        "item:iron-plate": 65,
+        "item:stone": 8,
+        "item:wood": 8
+      },
+      "raw": {
+        "item:coal": 8,
+        "item:copper-ore": 18,
+        "item:iron-ore": 130,
+        "item:stone": 8,
+        "item:wood": 8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "kr-fluids-chemistry",
+        "automation-2",
+        "kr-silicon-processing"
+      ],
+      "machines": ["assembling-machine-1", "kr-crusher", "stone-furnace"]
+    },
+    "kr-flare-stack": {
+      "plates": {
+        "item:coal": 16,
+        "item:copper-plate": 3,
+        "item:iron-plate": 81.5,
+        "item:wood": 17.5
+      },
+      "raw": {
+        "item:coal": 16,
+        "item:copper-ore": 6,
+        "item:iron-ore": 163,
+        "item:wood": 17.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "kr-fluids-chemistry",
+        "kr-fluid-excess-handling"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-fuel-refinery": {
+      "plates": {
+        "item:coal": 2,
+        "item:copper-plate": 5,
+        "item:iron-plate": 22.5,
+        "item:wood": 4.5
+      },
+      "raw": {
+        "item:coal": 2,
+        "item:copper-ore": 10,
+        "item:iron-ore": 45,
+        "item:wood": 4.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "kr-fuel"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-gas-power-station": {
+      "plates": {
+        "item:coal": 8,
+        "item:copper-plate": 4,
+        "item:iron-plate": 126,
+        "item:wood": 10
+      },
+      "raw": {
+        "item:coal": 8,
+        "item:copper-ore": 8,
+        "item:iron-ore": 252,
+        "item:wood": 10
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "kr-gas-power-station"
+      ],
+      "machines": ["assembling-machine-1", "stone-furnace"]
+    },
+    "kr-greenhouse": {
+      "plates": {
+        "item:copper-plate": 6,
+        "item:iron-plate": 26,
+        "item:stone": 16,
+        "item:wood": 20
+      },
+      "raw": {
+        "item:copper-ore": 12,
+        "item:iron-ore": 52,
+        "item:stone": 16,
+        "item:wood": 20
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-crusher",
+        "kr-stone-processing",
+        "steam-power",
+        "kr-greenhouse"
+      ],
+      "machines": ["kr-crusher", "stone-furnace"]
+    },
+    "kr-huge-storage-tank": {
+      "plates": {
+        "item:coal": 44.8,
+        "item:iron-plate": 224,
+        "item:wood": 44.8
+      },
+      "raw": {
+        "item:coal": 44.8,
+        "item:iron-ore": 448,
+        "item:wood": 44.8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "kr-steel-fluid-handling",
+        "kr-steel-fluid-tanks"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-loader": {
+      "plates": {
+        "item:iron-plate": 15
+      },
+      "raw": {
+        "item:iron-ore": 30
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-sentinel": {
+      "plates": {
+        "item:copper-plate": 3.5,
+        "item:iron-plate": 5,
+        "item:stone": 0.8
+      },
+      "raw": {
+        "item:copper-ore": 7,
+        "item:iron-ore": 10,
+        "item:stone": 0.8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "kr-crusher",
+        "kr-stone-processing",
+        "lamp",
+        "kr-sentinel"
+      ],
+      "machines": ["kr-crusher", "stone-furnace"]
+    },
+    "kr-shelter": {
+      "plates": {
+        "item:coal": 50,
+        "item:copper-plate": 5,
+        "item:iron-plate": 75
+      },
+      "raw": {
+        "item:coal": 50,
+        "item:copper-ore": 10,
+        "item:iron-ore": 150
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "kr-shelter"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-steel-pipe": {
+      "plates": {
+        "item:coal": 0.4,
+        "item:iron-plate": 2,
+        "item:wood": 0.4
+      },
+      "raw": {
+        "item:coal": 0.4,
+        "item:iron-ore": 4,
+        "item:wood": 0.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "kr-steel-fluid-handling"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-steel-pipe-to-ground": {
+      "plates": {
+        "item:coal": 4,
+        "item:iron-plate": 20,
+        "item:wood": 4
+      },
+      "raw": {
+        "item:coal": 4,
+        "item:iron-ore": 40,
+        "item:wood": 4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "kr-steel-fluid-handling"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-steel-pump": {
+      "plates": {
+        "item:coal": 2.8,
+        "item:iron-plate": 18,
+        "item:wood": 2.8
+      },
+      "raw": {
+        "item:coal": 2.8,
+        "item:iron-ore": 36,
+        "item:wood": 2.8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "kr-steel-fluid-handling"
+      ],
+      "machines": ["assembling-machine-1", "stone-furnace"]
+    },
+    "kr-strongbox": {
+      "plates": {
+        "item:coal": 14.399999999999999,
+        "item:iron-plate": 72,
+        "item:wood": 14.399999999999999
+      },
+      "raw": {
+        "item:coal": 14.399999999999999,
+        "item:iron-ore": 144,
+        "item:wood": 14.399999999999999
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-containers"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-warehouse": {
+      "plates": {
+        "item:coal": 65.6,
+        "item:iron-plate": 328,
+        "item:wood": 65.6
+      },
+      "raw": {
+        "item:coal": 65.6,
+        "item:iron-ore": 656,
+        "item:wood": 65.6
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-containers"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "kr-wind-turbine": {
+      "plates": {
+        "item:copper-plate": 3,
+        "item:iron-plate": 16
+      },
+      "raw": {
+        "item:copper-ore": 6,
+        "item:iron-ore": 32
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "lab": {
+      "plates": {
+        "item:copper-plate": 15,
+        "item:iron-plate": 20
+      },
+      "raw": {
+        "item:copper-ore": 30,
+        "item:iron-ore": 40
+      },
+      "technologies": ["kr-automation-core", "kr-laboratory"],
+      "machines": ["stone-furnace"]
+    },
+    "locomotive": {
+      "plates": {
+        "item:coal": 32,
+        "item:copper-plate": 10,
+        "item:iron-plate": 245,
+        "item:wood": 37
+      },
+      "raw": {
+        "item:coal": 32,
+        "item:copper-ore": 20,
+        "item:iron-ore": 490,
+        "item:wood": 37
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway",
+        "steam-power"
+      ],
+      "machines": ["assembling-machine-1", "stone-furnace"]
+    },
+    "long-handed-inserter": {
+      "plates": {
+        "item:copper-plate": 3,
+        "item:iron-plate": 7
+      },
+      "raw": {
+        "item:copper-ore": 6,
+        "item:iron-ore": 14
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "medium-electric-pole": {
+      "plates": {
+        "item:copper-plate": 2,
+        "item:iron-plate": 6
+      },
+      "raw": {
+        "item:copper-ore": 4,
+        "item:iron-ore": 12
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "electric-energy-distribution-1"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "offshore-pump": {
+      "plates": {
+        "item:iron-plate": 5
+      },
+      "raw": {
+        "item:iron-ore": 10
+      },
+      "technologies": ["kr-automation-core", "steam-power"],
+      "machines": ["stone-furnace"]
+    },
+    "oil-refinery": {
+      "plates": {
+        "item:coal": 7.199999999999999,
+        "item:copper-plate": 10,
+        "item:iron-plate": 51,
+        "item:stone": 20,
+        "item:wood": 12.2
+      },
+      "raw": {
+        "item:coal": 7.199999999999999,
+        "item:copper-ore": 20,
+        "item:iron-ore": 102,
+        "item:stone": 20,
+        "item:wood": 12.2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "pipe": {
+      "plates": {
+        "item:iron-plate": 1
+      },
+      "raw": {
+        "item:iron-ore": 2
+      },
+      "technologies": ["kr-automation-core", "steam-power"],
+      "machines": ["stone-furnace"]
+    },
+    "pipe-to-ground": {
+      "plates": {
+        "item:iron-plate": 7.5
+      },
+      "raw": {
+        "item:iron-ore": 15
+      },
+      "technologies": ["kr-automation-core", "steam-power"],
+      "machines": ["stone-furnace"]
+    },
+    "power-switch": {
+      "plates": {
+        "item:copper-plate": 4.5,
+        "item:iron-plate": 6,
+        "item:wood": 1
+      },
+      "raw": {
+        "item:copper-ore": 9,
+        "item:iron-ore": 12,
+        "item:wood": 1
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "programmable-speaker": {
+      "plates": {
+        "item:copper-plate": 6.5,
+        "item:iron-plate": 7,
+        "item:wood": 2
+      },
+      "raw": {
+        "item:copper-ore": 13,
+        "item:iron-ore": 14,
+        "item:wood": 2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "pump": {
+      "plates": {
+        "item:coal": 0.4,
+        "item:iron-plate": 7,
+        "item:wood": 0.4
+      },
+      "raw": {
+        "item:coal": 0.4,
+        "item:iron-ore": 14,
+        "item:wood": 0.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "steel-processing"
+      ],
+      "machines": ["assembling-machine-1", "stone-furnace"]
+    },
+    "pumpjack": {
+      "plates": {
+        "item:coal": 7.199999999999999,
+        "item:copper-plate": 5,
+        "item:iron-plate": 48.5,
+        "item:wood": 9.7
+      },
+      "raw": {
+        "item:coal": 7.199999999999999,
+        "item:copper-ore": 10,
+        "item:iron-ore": 97,
+        "item:wood": 9.7
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "radar": {
+      "plates": {
+        "item:copper-plate": 5,
+        "item:iron-plate": 17.5,
+        "item:wood": 2.5
+      },
+      "raw": {
+        "item:copper-ore": 10,
+        "item:iron-ore": 35,
+        "item:wood": 2.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "lamp",
+        "kr-sentinel",
+        "radar"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "rail": {
+      "plates": {
+        "item:coal": 0.4,
+        "item:iron-plate": 2,
+        "item:stone": 1,
+        "item:wood": 0.4
+      },
+      "raw": {
+        "item:coal": 0.4,
+        "item:iron-ore": 4,
+        "item:stone": 1,
+        "item:wood": 0.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "rail-chain-signal": {
+      "plates": {
+        "item:copper-plate": 1,
+        "item:iron-plate": 5.5,
+        "item:wood": 0.5
+      },
+      "raw": {
+        "item:copper-ore": 2,
+        "item:iron-ore": 11,
+        "item:wood": 0.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway",
+        "automated-rail-transportation"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "rail-signal": {
+      "plates": {
+        "item:copper-plate": 1,
+        "item:iron-plate": 5.5,
+        "item:wood": 0.5
+      },
+      "raw": {
+        "item:copper-ore": 2,
+        "item:iron-ore": 11,
+        "item:wood": 0.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway",
+        "automated-rail-transportation"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "selector-combinator": {
+      "plates": {
+        "fluid:crude-oil": 22.22222222222222,
+        "fluid:water": 3.333333333333333,
+        "item:coal": 0.5,
+        "item:copper-plate": 43.5,
+        "item:iron-plate": 14.5,
+        "item:stone": 2.133333333333333,
+        "item:wood": 14.5
+      },
+      "raw": {
+        "fluid:crude-oil": 22.22222222222222,
+        "fluid:water": 3.333333333333333,
+        "item:coal": 0.5,
+        "item:copper-ore": 87,
+        "item:iron-ore": 29,
+        "item:stone": 2.133333333333333,
+        "item:wood": 14.5
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "circuit-network",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "advanced-combinators"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "small-electric-pole": {
+      "plates": {
+        "item:copper-plate": 0.5,
+        "item:wood": 1
+      },
+      "raw": {
+        "item:copper-ore": 1,
+        "item:wood": 1
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "small-lamp": {
+      "plates": {
+        "item:copper-plate": 1.5,
+        "item:iron-plate": 1,
+        "item:stone": 0.8
+      },
+      "raw": {
+        "item:copper-ore": 3,
+        "item:iron-ore": 2,
+        "item:stone": 0.8
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "kr-crusher",
+        "kr-stone-processing",
+        "lamp"
+      ],
+      "machines": ["kr-crusher", "stone-furnace"]
+    },
+    "solar-panel": {
+      "plates": {
+        "fluid:water": 16.666666666666668,
+        "item:coal": 2,
+        "item:copper-plate": 10,
+        "item:iron-plate": 23,
+        "item:stone": 14.666666666666668,
+        "item:wood": 7
+      },
+      "raw": {
+        "fluid:water": 16.666666666666668,
+        "item:coal": 2,
+        "item:copper-ore": 20,
+        "item:iron-ore": 46,
+        "item:stone": 14.666666666666668,
+        "item:wood": 7
+      },
+      "technologies": [
+        "kr-automation-core",
+        "steam-power",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "kr-crusher",
+        "kr-stone-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "kr-fluids-chemistry",
+        "automation-2",
+        "kr-silicon-processing",
+        "solar-energy"
+      ],
+      "machines": ["assembling-machine-1", "kr-crusher", "kr-filtration-plant", "stone-furnace"]
+    },
+    "splitter": {
+      "plates": {
+        "item:copper-plate": 9,
+        "item:iron-plate": 18
+      },
+      "raw": {
+        "item:copper-ore": 18,
+        "item:iron-ore": 36
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "steam-engine": {
+      "plates": {
+        "item:iron-plate": 23
+      },
+      "raw": {
+        "item:iron-ore": 46
+      },
+      "technologies": ["kr-automation-core", "steam-power"],
+      "machines": ["stone-furnace"]
+    },
+    "steel-chest": {
+      "plates": {
+        "item:coal": 3.2,
+        "item:iron-plate": 16,
+        "item:wood": 3.2
+      },
+      "raw": {
+        "item:coal": 3.2,
+        "item:iron-ore": 32,
+        "item:wood": 3.2
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "steel-furnace": {
+      "plates": {
+        "item:coal": 2.4,
+        "item:iron-plate": 12,
+        "item:stone": 20,
+        "item:wood": 2.4
+      },
+      "raw": {
+        "item:coal": 2.4,
+        "item:iron-ore": 24,
+        "item:stone": 20,
+        "item:wood": 2.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "advanced-material-processing"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "stone-furnace": {
+      "plates": {
+        "item:stone": 5
+      },
+      "raw": {
+        "item:stone": 5
+      },
+      "technologies": [],
+      "machines": []
+    },
+    "stone-wall": {
+      "plates": {
+        "item:stone": 10
+      },
+      "raw": {
+        "item:stone": 10
+      },
+      "technologies": ["military", "stone-wall"],
+      "machines": ["stone-furnace"]
+    },
+    "storage-tank": {
+      "plates": {
+        "item:iron-plate": 20
+      },
+      "raw": {
+        "item:iron-ore": 40
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "engine",
+        "steam-power",
+        "fluid-handling"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "substation": {
+      "plates": {
+        "fluid:crude-oil": 55.55555555555556,
+        "fluid:water": 8.333333333333334,
+        "item:coal": 7.65,
+        "item:copper-plate": 23,
+        "item:iron-plate": 37,
+        "item:stone": 5.333333333333334,
+        "item:wood": 11.4
+      },
+      "raw": {
+        "fluid:crude-oil": 55.55555555555556,
+        "fluid:water": 8.333333333333334,
+        "item:coal": 7.65,
+        "item:copper-ore": 46,
+        "item:iron-ore": 74,
+        "item:stone": 5.333333333333334,
+        "item:wood": 11.4
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "steel-processing",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "electric-energy-distribution-1",
+        "engine",
+        "steam-power",
+        "fluid-handling",
+        "oil-gathering",
+        "kr-crusher",
+        "kr-stone-processing",
+        "kr-fluids-chemistry",
+        "oil-processing",
+        "plastics",
+        "automation-2",
+        "kr-silicon-processing",
+        "advanced-circuit",
+        "sulfur-processing",
+        "chemical-science-pack",
+        "electric-energy-distribution-2"
+      ],
+      "machines": [
+        "assembling-machine-1",
+        "assembling-machine-2",
+        "chemical-plant",
+        "kr-crusher",
+        "kr-filtration-plant",
+        "oil-refinery",
+        "stone-furnace"
+      ]
+    },
+    "train-stop": {
+      "plates": {
+        "item:coal": 1.2,
+        "item:copper-plate": 5,
+        "item:iron-plate": 17.5,
+        "item:wood": 3.7
+      },
+      "raw": {
+        "item:coal": 1.2,
+        "item:copper-ore": 10,
+        "item:iron-ore": 35,
+        "item:wood": 3.7
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics",
+        "automation",
+        "electronics",
+        "logistic-science-pack",
+        "steel-processing",
+        "logistics-2",
+        "engine",
+        "railway",
+        "automated-rail-transportation"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "transport-belt": {
+      "plates": {
+        "item:iron-plate": 1
+      },
+      "raw": {
+        "item:iron-ore": 2
+      },
+      "technologies": [],
+      "machines": ["stone-furnace"]
+    },
+    "underground-belt": {
+      "plates": {
+        "item:iron-plate": 4.5
+      },
+      "raw": {
+        "item:iron-ore": 9
+      },
+      "technologies": [
+        "kr-automation-core",
+        "kr-laboratory",
+        "automation-science-pack",
+        "logistics"
+      ],
+      "machines": ["stone-furnace"]
+    },
+    "wooden-chest": {
+      "plates": {
+        "item:wood": 2
+      },
+      "raw": {
+        "item:wood": 2
+      },
+      "technologies": [],
+      "machines": []
+    }
+  }
+}

@@ -1,6 +1,7 @@
 import type { DatasetId } from './index.ts';
 import { bobAngs } from './catalogue/bobang.ts';
 import { spaceAge } from './catalogue/space-age.ts';
+import { k2 } from './catalogue/k2.ts';
 import type { DatasetInput } from './types.ts';
 
 interface DatasetCatalogueEntry {
@@ -10,6 +11,10 @@ interface DatasetCatalogueEntry {
 
 /** Keep this module free of dataset assets so the chooser can render before they load. */
 export const datasetCatalogue = {
+  k2: {
+    label: 'k2',
+    load: async () => k2(),
+  },
   'bobang-ju7': {
     label: "Bob's and Angel's",
     load: async () => bobAngs(),

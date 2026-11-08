@@ -1,0 +1,6040 @@
+{
+  "recipes": {
+    "speed-module": {
+      "h": "Speed module",
+      "i": [
+        { "r": 71, "a": 5 },
+        { "r": 303, "a": 10 }
+      ],
+      "p": [{ "r": 402, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2185
+    },
+    "speed-module-2": {
+      "h": "Speed module 2",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 71, "a": 5 },
+        { "r": 402, "a": 5 }
+      ],
+      "p": [{ "r": 403, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2961
+    },
+    "speed-module-3": {
+      "h": "Speed module 3",
+      "i": [
+        { "r": 136, "a": 5 },
+        { "r": 135, "a": 5 },
+        { "r": 403, "a": 5 }
+      ],
+      "p": [{ "r": 404, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "productivity-module": {
+      "h": "Productivity module",
+      "i": [
+        { "r": 71, "a": 5 },
+        { "r": 303, "a": 10 }
+      ],
+      "p": [{ "r": 408, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2185
+    },
+    "productivity-module-2": {
+      "h": "Productivity module 2",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 71, "a": 5 },
+        { "r": 408, "a": 5 }
+      ],
+      "p": [{ "r": 409, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2961
+    },
+    "productivity-module-3": {
+      "h": "Productivity module 3",
+      "i": [
+        { "r": 136, "a": 5 },
+        { "r": 135, "a": 5 },
+        { "r": 409, "a": 5 }
+      ],
+      "p": [{ "r": 410, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "efficiency-module": {
+      "h": "Efficiency module",
+      "i": [
+        { "r": 71, "a": 5 },
+        { "r": 303, "a": 10 }
+      ],
+      "p": [{ "r": 405, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2185
+    },
+    "efficiency-module-2": {
+      "h": "Efficiency module 2",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 71, "a": 5 },
+        { "r": 405, "a": 5 }
+      ],
+      "p": [{ "r": 406, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2961
+    },
+    "efficiency-module-3": {
+      "h": "Efficiency module 3",
+      "i": [
+        { "r": 136, "a": 5 },
+        { "r": 135, "a": 5 },
+        { "r": 406, "a": 5 }
+      ],
+      "p": [{ "r": 407, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "bulk-inserter": {
+      "h": "Bulk inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 135, "a": 2 },
+        { "r": 97, "a": 1 },
+        { "r": 309, "a": 2 }
+      ],
+      "p": [{ "r": 122, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2218
+    },
+    "basic-oil-processing": {
+      "h": "Basic oil processing",
+      "i": [{ "r": 429, "a": 100, "f": 2 }],
+      "p": [{ "r": 432, "a": { "f": 45 }, "p": 1, "f": 3 }],
+      "d": 5,
+      "c": ["oil-processing"],
+      "a": true,
+      "x": 0.1949
+    },
+    "advanced-oil-processing": {
+      "h": "Advanced oil processing",
+      "i": [
+        { "r": 426, "a": 50 },
+        { "r": 429, "a": 100 }
+      ],
+      "p": [
+        { "r": 430, "a": { "f": 25 }, "p": 1 },
+        { "r": 431, "a": { "f": 45 }, "p": 1 },
+        { "r": 432, "a": { "f": 55 }, "p": 1 }
+      ],
+      "d": 5,
+      "c": ["oil-processing"],
+      "a": true,
+      "x": 0.296
+    },
+    "coal-liquefaction": {
+      "h": "Coal liquefaction",
+      "i": [
+        { "r": 62, "a": 10 },
+        { "r": 430, "a": 25 },
+        { "r": 427, "a": 50 }
+      ],
+      "p": [
+        { "r": 430, "a": { "f": 90 }, "p": 1, "i": 25 },
+        { "r": 431, "a": { "f": 20 }, "p": 1 },
+        { "r": 432, "a": { "f": 10 }, "p": 1 }
+      ],
+      "d": 5,
+      "c": ["oil-processing"],
+      "a": true
+    },
+    "heavy-oil-cracking": {
+      "h": "Heavy oil cracking to light oil",
+      "i": [
+        { "r": 426, "a": 30 },
+        { "r": 430, "a": 40 }
+      ],
+      "p": [{ "r": 431, "a": { "f": 30 }, "p": 1 }],
+      "d": 2,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.296
+    },
+    "light-oil-cracking": {
+      "h": "Light oil cracking to petroleum gas",
+      "i": [
+        { "r": 426, "a": 30 },
+        { "r": 431, "a": 30 }
+      ],
+      "p": [{ "r": 432, "a": { "f": 20 }, "p": 1 }],
+      "d": 2,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.296
+    },
+    "sulfuric-acid": {
+      "h": "Sulfuric acid",
+      "i": [
+        { "r": 154, "a": 5 },
+        { "r": 66, "a": 1 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 428, "a": { "f": 50 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.2031
+    },
+    "plastic-bar": {
+      "h": "Plastic bar",
+      "i": [
+        { "r": 432, "a": 20 },
+        { "r": 62, "a": 1 }
+      ],
+      "p": [{ "r": 156, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.2052
+    },
+    "solid-fuel-from-light-oil": {
+      "h": "Solid fuel from light oil",
+      "i": [{ "r": 431, "a": 10 }],
+      "p": [{ "r": 100, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.296
+    },
+    "solid-fuel-from-petroleum-gas": {
+      "h": "Solid fuel from petroleum gas",
+      "i": [{ "r": 432, "a": 20 }],
+      "p": [{ "r": 100, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.1949
+    },
+    "solid-fuel-from-heavy-oil": {
+      "h": "Solid fuel from heavy oil",
+      "i": [{ "r": 430, "a": 20 }],
+      "p": [{ "r": 100, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.296
+    },
+    "sulfur": {
+      "h": "Sulfur",
+      "i": [
+        { "r": 426, "a": 30 },
+        { "r": 432, "a": 30 }
+      ],
+      "p": [{ "r": 154, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.2031
+    },
+    "lubricant": {
+      "h": "Lubricant",
+      "i": [{ "r": 430, "a": 10 }],
+      "p": [{ "r": 433, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.3049
+    },
+    "barrel": {
+      "h": "Barrel",
+      "i": [{ "r": 97, "a": 1 }],
+      "p": [{ "r": 155, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.1859
+    },
+    "night-vision-equipment": {
+      "h": "Nightvision",
+      "i": [
+        { "r": 135, "a": 2 },
+        { "r": 66, "a": 1 },
+        { "r": 156, "a": 1 },
+        { "r": 300, "a": 1 }
+      ],
+      "p": [{ "r": 182, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2242
+    },
+    "belt-immunity-equipment": {
+      "h": "Belt immunity equipment",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 97, "a": 10 }
+      ],
+      "p": [{ "r": 178, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2242
+    },
+    "energy-shield-equipment": {
+      "h": "Energy shield",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 97, "a": 10 }
+      ],
+      "p": [{ "r": 183, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7304
+    },
+    "energy-shield-mk2-equipment": {
+      "h": "Energy shield MK2",
+      "i": [
+        { "r": 136, "a": 5 },
+        { "r": 161, "a": 5 },
+        { "r": 183, "a": 5 }
+      ],
+      "p": [{ "r": 184, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7497
+    },
+    "battery-equipment": {
+      "h": "Personal battery",
+      "i": [
+        { "r": 159, "a": 2 },
+        { "r": 66, "a": 2 },
+        { "r": 71, "a": 1 }
+      ],
+      "p": [{ "r": 176, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2236
+    },
+    "battery-mk2-equipment": {
+      "h": "Personal battery MK2",
+      "i": [
+        { "r": 176, "a": 2 },
+        { "r": 97, "a": 2 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 177, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.338
+    },
+    "solar-panel-equipment": {
+      "h": "Portable solar panel",
+      "i": [
+        { "r": 108, "a": 1 },
+        { "r": 135, "a": 2 },
+        { "r": 97, "a": 5 },
+        { "r": 300, "a": 5 }
+      ],
+      "p": [{ "r": 174, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2236
+    },
+    "fission-reactor-equipment": {
+      "h": "Portable fission reactor",
+      "i": [
+        { "r": 67, "a": 50 },
+        { "r": 97, "a": 50 },
+        { "r": 135, "a": 50 }
+      ],
+      "p": [{ "r": 175, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7453
+    },
+    "personal-laser-defense-equipment": {
+      "h": "Personal laser defense",
+      "i": [
+        { "r": 161, "a": 5 },
+        { "r": 188, "a": 5 },
+        { "r": 303, "a": 50 }
+      ],
+      "p": [{ "r": 185, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7453
+    },
+    "discharge-defense-equipment": {
+      "h": "Discharge defense",
+      "i": [
+        { "r": 136, "a": 5 },
+        { "r": 97, "a": 20 },
+        { "r": 188, "a": 10 }
+      ],
+      "p": [{ "r": 186, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7533
+    },
+    "exoskeleton-equipment": {
+      "h": "Exoskeleton",
+      "i": [
+        { "r": 157, "a": 10 },
+        { "r": 135, "a": 10 },
+        { "r": 97, "a": 10 }
+      ],
+      "p": [{ "r": 179, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3317
+    },
+    "personal-roboport-equipment": {
+      "h": "Personal roboport",
+      "i": [
+        { "r": 159, "a": 45 },
+        { "r": 135, "a": 5 },
+        { "r": 70, "a": 20 }
+      ],
+      "p": [{ "r": 180, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3253
+    },
+    "personal-roboport-mk2-equipment": {
+      "h": "Personal roboport MK2",
+      "i": [
+        { "r": 180, "a": 5 },
+        { "r": 161, "a": 20 },
+        { "r": 136, "a": 20 }
+      ],
+      "p": [{ "r": 181, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "laser-turret": {
+      "h": "Laser turret",
+      "i": [
+        { "r": 71, "a": 20 },
+        { "r": 159, "a": 12 },
+        { "r": 301, "a": 5 },
+        { "r": 97, "a": 15 }
+      ],
+      "p": [{ "r": 188, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.7304
+    },
+    "flamethrower-turret": {
+      "h": "Flamethrower turret",
+      "i": [
+        { "r": 70, "a": 15 },
+        { "r": 81, "a": 10 },
+        { "r": 98, "a": 5 },
+        { "r": 97, "a": 20 }
+      ],
+      "p": [{ "r": 189, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7111
+    },
+    "artillery-turret": {
+      "h": "Artillery turret",
+      "i": [
+        { "r": 97, "a": 60 },
+        { "r": 112, "a": 60 },
+        { "r": 70, "a": 40 },
+        { "r": 135, "a": 20 }
+      ],
+      "p": [{ "r": 190, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.7731
+    },
+    "gun-turret": {
+      "h": "Gun turret",
+      "i": [
+        { "r": 308, "a": 5 },
+        { "r": 298, "a": 3 },
+        { "r": 70, "a": 4 }
+      ],
+      "p": [{ "r": 187, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0803
+    },
+    "wooden-chest": {
+      "h": "Wooden chest",
+      "i": [{ "r": 61, "a": 2 }],
+      "p": [{ "r": 72, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "display-panel": {
+      "h": "Display panel",
+      "i": [
+        { "r": 66, "a": 1 },
+        { "r": 71, "a": 1 }
+      ],
+      "p": [{ "r": 197, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "iron-stick": {
+      "h": "Iron stick",
+      "i": [{ "r": 66, "a": 1 }],
+      "p": [{ "r": 69, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "stone-furnace": {
+      "h": "Stone furnace",
+      "i": [{ "r": 63, "a": 5 }],
+      "p": [{ "r": 73, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "boiler": {
+      "h": "Boiler",
+      "i": [
+        { "r": 73, "a": 1 },
+        { "r": 81, "a": 4 }
+      ],
+      "p": [{ "r": 82, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "steam-engine": {
+      "h": "Steam engine",
+      "i": [
+        { "r": 70, "a": 8 },
+        { "r": 81, "a": 5 },
+        { "r": 66, "a": 10 }
+      ],
+      "p": [{ "r": 83, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "iron-gear-wheel": {
+      "h": "Iron gear wheel",
+      "i": [{ "r": 66, "a": 1 }],
+      "p": [{ "r": 70, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "electronic-circuit": {
+      "h": "Electronic circuit",
+      "i": [
+        { "r": 61, "a": 1 },
+        { "r": 66, "a": 1 },
+        { "r": 68, "a": 4 }
+      ],
+      "p": [{ "r": 71, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.082
+    },
+    "transport-belt": {
+      "h": "Transport belt",
+      "i": [
+        { "r": 66, "a": 1 },
+        { "r": 70, "a": 1 }
+      ],
+      "p": [{ "r": 119, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "electric-mining-drill": {
+      "h": "Electric mining drill",
+      "i": [
+        { "r": 298, "a": 2 },
+        { "r": 70, "a": 5 },
+        { "r": 308, "a": 2 }
+      ],
+      "p": [{ "r": 75, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "burner-mining-drill": {
+      "h": "Burner mining drill",
+      "i": [
+        { "r": 70, "a": 3 },
+        { "r": 73, "a": 1 },
+        { "r": 66, "a": 3 }
+      ],
+      "p": [{ "r": 74, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "inserter": {
+      "h": "Inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 298, "a": 1 }
+      ],
+      "p": [{ "r": 77, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "fast-inserter": {
+      "h": "Fast inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 71, "a": 2 },
+        { "r": 97, "a": 1 }
+      ],
+      "p": [{ "r": 78, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1007
+    },
+    "long-handed-inserter": {
+      "h": "Long-handed inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 298, "a": 1 },
+        { "r": 69, "a": 2 }
+      ],
+      "p": [{ "r": 79, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "burner-inserter": {
+      "h": "Burner inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 66, "a": 1 }
+      ],
+      "p": [{ "r": 76, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "pipe": {
+      "h": "Pipe",
+      "i": [{ "r": 66, "a": 1 }],
+      "p": [{ "r": 81, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "offshore-pump": {
+      "h": "Offshore pump",
+      "i": [
+        { "r": 81, "a": 3 },
+        { "r": 70, "a": 2 }
+      ],
+      "p": [{ "r": 80, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "copper-cable": {
+      "h": "Copper cable",
+      "i": [{ "r": 67, "a": 1 }],
+      "p": [{ "r": 68, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "small-electric-pole": {
+      "h": "Small electric pole",
+      "i": [
+        { "r": 61, "a": 1 },
+        { "r": 68, "a": 1 }
+      ],
+      "p": [{ "r": 84, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "submachine-gun": {
+      "h": "Submachine gun",
+      "i": [
+        { "r": 66, "a": 3 },
+        { "r": 67, "a": 2 },
+        { "r": 70, "a": 5 }
+      ],
+      "p": [{ "r": 55, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0422
+    },
+    "firearm-magazine": {
+      "h": "Firearm magazine",
+      "i": [{ "r": 66, "a": 4 }],
+      "p": [{ "r": 11, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "light-armor": {
+      "h": "Light armor",
+      "i": [{ "r": 66, "a": 40 }],
+      "p": [{ "r": 29, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.0723
+    },
+    "radar": {
+      "h": "Radar",
+      "i": [
+        { "r": 71, "a": 5 },
+        { "r": 70, "a": 5 },
+        { "r": 66, "a": 10 }
+      ],
+      "p": [{ "r": 85, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.3131
+    },
+    "small-lamp": {
+      "h": "Lamp",
+      "i": [
+        { "r": 300, "a": 1 },
+        { "r": 68, "a": 3 },
+        { "r": 66, "a": 1 }
+      ],
+      "p": [{ "r": 86, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0909
+    },
+    "pipe-to-ground": {
+      "h": "Pipe to ground",
+      "i": [
+        { "r": 81, "a": 10 },
+        { "r": 66, "a": 5 }
+      ],
+      "p": [{ "r": 87, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "assembling-machine-1": {
+      "h": "Assembling machine 1",
+      "i": [
+        { "r": 298, "a": 2 },
+        { "r": 70, "a": 5 },
+        { "r": 308, "a": 4 }
+      ],
+      "p": [{ "r": 88, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "repair-pack": {
+      "h": "Repair pack",
+      "i": [
+        { "r": 66, "a": 2 },
+        { "r": 67, "a": 2 },
+        { "r": 63, "a": 2 }
+      ],
+      "p": [{ "r": 413, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0851
+    },
+    "automation-science-pack": {
+      "h": "Automation tech card",
+      "i": [
+        { "r": 338, "a": 5 },
+        { "r": 298, "a": 1 }
+      ],
+      "p": [{ "r": 95, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0762
+    },
+    "logistic-science-pack": {
+      "h": "Logistic tech card",
+      "i": [
+        { "r": 338, "a": 5 },
+        { "r": 71, "a": 5 },
+        { "r": 70, "a": 5 }
+      ],
+      "p": [{ "r": 96, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0975
+    },
+    "lab": {
+      "h": "Lab",
+      "i": [
+        { "r": 308, "a": 10 },
+        { "r": 67, "a": 10 },
+        { "r": 68, "a": 10 }
+      ],
+      "p": [{ "r": 94, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.0573
+    },
+    "stone-wall": {
+      "h": "Wall",
+      "i": [{ "r": 60, "a": 5 }],
+      "p": [{ "r": 93, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0536
+    },
+    "assembling-machine-2": {
+      "h": "Assembling machine 2",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 71, "a": 3 },
+        { "r": 70, "a": 5 },
+        { "r": 88, "a": 1 }
+      ],
+      "p": [{ "r": 89, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1631
+    },
+    "splitter": {
+      "h": "Splitter",
+      "i": [
+        { "r": 298, "a": 3 },
+        { "r": 119, "a": 4 },
+        { "r": 70, "a": 5 }
+      ],
+      "p": [{ "r": 132, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "underground-belt": {
+      "h": "Underground belt",
+      "i": [
+        { "r": 119, "a": 5 },
+        { "r": 308, "a": 2 }
+      ],
+      "p": [{ "r": 129, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "car": {
+      "h": "Car",
+      "i": [
+        { "r": 98, "a": 8 },
+        { "r": 66, "a": 20 },
+        { "r": 97, "a": 5 }
+      ],
+      "p": [{ "r": 393, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.2123
+    },
+    "engine-unit": {
+      "h": "Engine unit",
+      "i": [
+        { "r": 66, "a": 1 },
+        { "r": 70, "a": 1 },
+        { "r": 81, "a": 2 }
+      ],
+      "p": [{ "r": 98, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["advanced-crafting"],
+      "a": true,
+      "x": 0.1788
+    },
+    "iron-chest": {
+      "h": "Iron chest",
+      "i": [{ "r": 66, "a": 8 }],
+      "p": [{ "r": 102, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "big-electric-pole": {
+      "h": "Big electric pole",
+      "i": [
+        { "r": 69, "a": 8 },
+        { "r": 68, "a": 8 },
+        { "r": 310, "a": 4 }
+      ],
+      "p": [{ "r": 103, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.182
+    },
+    "medium-electric-pole": {
+      "h": "Medium electric pole",
+      "i": [
+        { "r": 69, "a": 4 },
+        { "r": 68, "a": 4 },
+        { "r": 308, "a": 2 }
+      ],
+      "p": [{ "r": 104, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.182
+    },
+    "shotgun": {
+      "h": "Shotgun",
+      "i": [
+        { "r": 61, "a": 2 },
+        { "r": 66, "a": 3 },
+        { "r": 67, "a": 2 },
+        { "r": 70, "a": 3 }
+      ],
+      "p": [{ "r": 56, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0422
+    },
+    "shotgun-shell": {
+      "h": "Shotgun shells",
+      "i": [
+        { "r": 67, "a": 2 },
+        { "r": 66, "a": 2 }
+      ],
+      "p": [{ "r": 13, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.0422
+    },
+    "piercing-rounds-magazine": {
+      "h": "Piercing rounds magazine",
+      "i": [
+        { "r": 11, "a": 2 },
+        { "r": 97, "a": 1 },
+        { "r": 67, "a": 2 }
+      ],
+      "p": [{ "r": 12, "a": { "f": 2 }, "p": 1 }],
+      "d": 6,
+      "c": ["crafting"],
+      "x": 0.1515
+    },
+    "grenade": {
+      "h": "Grenade",
+      "i": [
+        { "r": 66, "a": 5 },
+        { "r": 62, "a": 10 }
+      ],
+      "p": [{ "r": 36, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.1515
+    },
+    "steel-furnace": {
+      "h": "Steel furnace",
+      "i": [
+        { "r": 97, "a": 6 },
+        { "r": 60, "a": 10 }
+      ],
+      "p": [{ "r": 105, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.1739
+    },
+    "gate": {
+      "h": "Gate",
+      "i": [
+        { "r": 93, "a": 1 },
+        { "r": 97, "a": 2 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 106, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1789
+    },
+    "heavy-armor": {
+      "h": "Heavy armor",
+      "i": [
+        { "r": 97, "a": 50 },
+        { "r": 29, "a": 1 }
+      ],
+      "p": [{ "r": 30, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.1001
+    },
+    "steel-chest": {
+      "h": "Steel chest",
+      "i": [{ "r": 97, "a": 8 }],
+      "p": [{ "r": 107, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.0909
+    },
+    "fast-underground-belt": {
+      "h": "Fast underground belt",
+      "i": [
+        { "r": 129, "a": 2 },
+        { "r": 120, "a": 10 }
+      ],
+      "p": [{ "r": 130, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1909
+    },
+    "fast-splitter": {
+      "h": "Fast splitter",
+      "i": [
+        { "r": 132, "a": 1 },
+        { "r": 70, "a": 4 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 133, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1909
+    },
+    "concrete": {
+      "h": "Concrete",
+      "i": [
+        { "r": 60, "a": 5 },
+        { "r": 64, "a": 1 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 112, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting-with-fluid"],
+      "x": 0.2014
+    },
+    "hazard-concrete": {
+      "h": "Hazard concrete",
+      "i": [{ "r": 112, "a": 10 }],
+      "p": [{ "r": 114, "a": { "f": 10 }, "p": 1 }],
+      "d": 0.25,
+      "c": ["crafting"],
+      "x": 0.2014
+    },
+    "refined-concrete": {
+      "h": "Refined concrete",
+      "i": [
+        { "r": 112, "a": 20 },
+        { "r": 426, "a": 100 },
+        { "r": 308, "a": 5 }
+      ],
+      "p": [{ "r": 113, "a": { "f": 10 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting-with-fluid"],
+      "x": 0.2014
+    },
+    "refined-hazard-concrete": {
+      "h": "Refined hazard concrete",
+      "i": [{ "r": 113, "a": 10 }],
+      "p": [{ "r": 115, "a": { "f": 10 }, "p": 1 }],
+      "d": 0.25,
+      "c": ["crafting"],
+      "x": 0.2014
+    },
+    "landfill": {
+      "h": "Landfill",
+      "i": [{ "r": 63, "a": 50 }],
+      "p": [{ "r": 116, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1668
+    },
+    "fast-transport-belt": {
+      "h": "Fast transport belt",
+      "i": [
+        { "r": 119, "a": 1 },
+        { "r": 70, "a": 4 }
+      ],
+      "p": [{ "r": 120, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1909
+    },
+    "solar-panel": {
+      "h": "Solar panel",
+      "i": [
+        { "r": 300, "a": 10 },
+        { "r": 97, "a": 5 },
+        { "r": 71, "a": 10 },
+        { "r": 308, "a": 4 },
+        { "r": 302, "a": 5 }
+      ],
+      "p": [{ "r": 108, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2075
+    },
+    "rail": {
+      "h": "Rail",
+      "i": [
+        { "r": 310, "a": 1 },
+        { "r": 63, "a": 2 }
+      ],
+      "p": [{ "r": 411, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2019
+    },
+    "locomotive": {
+      "h": "Locomotive",
+      "i": [
+        { "r": 98, "a": 20 },
+        { "r": 71, "a": 10 },
+        { "r": 97, "a": 80 }
+      ],
+      "p": [{ "r": 394, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.2019
+    },
+    "cargo-wagon": {
+      "h": "Cargo wagon",
+      "i": [
+        { "r": 70, "a": 10 },
+        { "r": 66, "a": 20 },
+        { "r": 310, "a": 10 }
+      ],
+      "p": [{ "r": 395, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.2019
+    },
+    "rail-signal": {
+      "h": "Rail signal",
+      "i": [
+        { "r": 71, "a": 1 },
+        { "r": 66, "a": 5 }
+      ],
+      "p": [{ "r": 110, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2094
+    },
+    "rail-chain-signal": {
+      "h": "Rail chain signal",
+      "i": [
+        { "r": 71, "a": 1 },
+        { "r": 66, "a": 5 }
+      ],
+      "p": [{ "r": 111, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2094
+    },
+    "train-stop": {
+      "h": "Train stop",
+      "i": [
+        { "r": 71, "a": 5 },
+        { "r": 66, "a": 6 },
+        { "r": 69, "a": 6 },
+        { "r": 97, "a": 3 }
+      ],
+      "p": [{ "r": 109, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2094
+    },
+    "copper-plate": {
+      "h": "Copper plate",
+      "i": [{ "r": 65, "a": 2 }],
+      "p": [{ "r": 67, "a": { "f": 1 }, "p": 1 }],
+      "d": 3.2,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0
+    },
+    "iron-plate": {
+      "h": "Iron plate",
+      "i": [{ "r": 64, "a": 2 }],
+      "p": [{ "r": 66, "a": { "f": 1 }, "p": 1 }],
+      "d": 3.2,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0
+    },
+    "stone-brick": {
+      "h": "Stone brick",
+      "i": [{ "r": 63, "a": 2 }],
+      "p": [{ "r": 60, "a": { "f": 1 }, "p": 1 }],
+      "d": 3.2,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0
+    },
+    "steel-plate": {
+      "h": "Steel plate",
+      "i": [
+        { "r": 66, "a": 10 },
+        { "r": 304, "a": 2 }
+      ],
+      "p": [{ "r": 97, "a": { "f": 5 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.0909
+    },
+    "arithmetic-combinator": {
+      "h": "Arithmetic combinator",
+      "i": [
+        { "r": 68, "a": 5 },
+        { "r": 71, "a": 5 }
+      ],
+      "p": [{ "r": 191, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "decider-combinator": {
+      "h": "Decider combinator",
+      "i": [
+        { "r": 68, "a": 5 },
+        { "r": 71, "a": 5 }
+      ],
+      "p": [{ "r": 192, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "constant-combinator": {
+      "h": "Constant combinator",
+      "i": [
+        { "r": 68, "a": 5 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 193, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "selector-combinator": {
+      "h": "Selector combinator",
+      "i": [
+        { "r": 135, "a": 2 },
+        { "r": 192, "a": 5 }
+      ],
+      "p": [{ "r": 194, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.2891
+    },
+    "power-switch": {
+      "h": "Power switch",
+      "i": [
+        { "r": 66, "a": 5 },
+        { "r": 68, "a": 5 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 195, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "programmable-speaker": {
+      "h": "Programmable speaker",
+      "i": [
+        { "r": 66, "a": 3 },
+        { "r": 69, "a": 4 },
+        { "r": 68, "a": 5 },
+        { "r": 71, "a": 4 }
+      ],
+      "p": [{ "r": 196, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1788
+    },
+    "poison-capsule": {
+      "h": "Poison capsule",
+      "i": [
+        { "r": 97, "a": 3 },
+        { "r": 71, "a": 3 },
+        { "r": 62, "a": 10 }
+      ],
+      "p": [{ "r": 39, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7233
+    },
+    "slowdown-capsule": {
+      "h": "Slowdown capsule",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 62, "a": 5 }
+      ],
+      "p": [{ "r": 40, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.0909
+    },
+    "cluster-grenade": {
+      "h": "Cluster grenade",
+      "i": [
+        { "r": 36, "a": 7 },
+        { "r": 158, "a": 5 },
+        { "r": 97, "a": 5 }
+      ],
+      "p": [{ "r": 38, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7497
+    },
+    "defender-capsule": {
+      "h": "Defender capsule",
+      "i": [
+        { "r": 12, "a": 3 },
+        { "r": 71, "a": 3 },
+        { "r": 70, "a": 3 }
+      ],
+      "p": [{ "r": 37, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7233
+    },
+    "distractor-capsule": {
+      "h": "Distractor capsule",
+      "i": [
+        { "r": 37, "a": 4 },
+        { "r": 135, "a": 3 }
+      ],
+      "p": [{ "r": 41, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.7476
+    },
+    "destroyer-capsule": {
+      "h": "Destroyer capsule",
+      "i": [
+        { "r": 41, "a": 4 },
+        { "r": 402, "a": 1 }
+      ],
+      "p": [{ "r": 42, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.7654
+    },
+    "cliff-explosives": {
+      "h": "Cliff explosives",
+      "i": [
+        { "r": 158, "a": 10 },
+        { "r": 36, "a": 1 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 43, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.2134
+    },
+    "uranium-rounds-magazine": {
+      "h": "Uranium rounds magazine",
+      "i": [
+        { "r": 12, "a": 1 },
+        { "r": 166, "a": 1 }
+      ],
+      "p": [{ "r": 0, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7638
+    },
+    "rocket": {
+      "h": "Rocket",
+      "i": [
+        { "r": 158, "a": 1 },
+        { "r": 66, "a": 2 }
+      ],
+      "p": [{ "r": 2, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["crafting"],
+      "x": 0.7265
+    },
+    "explosive-rocket": {
+      "h": "Explosive rocket",
+      "i": [
+        { "r": 2, "a": 1 },
+        { "r": 158, "a": 2 }
+      ],
+      "p": [{ "r": 3, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7437
+    },
+    "atomic-bomb": {
+      "h": "Atomic bomb",
+      "i": [
+        { "r": 136, "a": 10 },
+        { "r": 158, "a": 10 },
+        { "r": 17, "a": 1 },
+        { "r": 165, "a": 20 }
+      ],
+      "p": [{ "r": 4, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7851
+    },
+    "piercing-shotgun-shell": {
+      "h": "Piercing shotgun shells",
+      "i": [
+        { "r": 13, "a": 1 },
+        { "r": 97, "a": 3 }
+      ],
+      "p": [{ "r": 5, "a": { "f": 2 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7233
+    },
+    "cannon-shell": {
+      "h": "Cannon shell",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 156, "a": 2 },
+        { "r": 158, "a": 1 }
+      ],
+      "p": [{ "r": 6, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7453
+    },
+    "explosive-cannon-shell": {
+      "h": "Explosive cannon shell",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 156, "a": 2 },
+        { "r": 158, "a": 2 }
+      ],
+      "p": [{ "r": 7, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.7453
+    },
+    "uranium-cannon-shell": {
+      "h": "Uranium cannon shell",
+      "i": [
+        { "r": 6, "a": 1 },
+        { "r": 166, "a": 1 }
+      ],
+      "p": [{ "r": 8, "a": { "f": 1 }, "p": 1 }],
+      "d": 12,
+      "c": ["crafting"],
+      "x": 0.7638
+    },
+    "explosive-uranium-cannon-shell": {
+      "h": "Explosive uranium cannon shell",
+      "i": [
+        { "r": 7, "a": 1 },
+        { "r": 166, "a": 1 }
+      ],
+      "p": [{ "r": 9, "a": { "f": 1 }, "p": 1 }],
+      "d": 12,
+      "c": ["crafting"],
+      "x": 0.7638
+    },
+    "artillery-shell": {
+      "h": "Artillery shell",
+      "i": [
+        { "r": 7, "a": 4 },
+        { "r": 85, "a": 1 },
+        { "r": 158, "a": 8 }
+      ],
+      "p": [{ "r": 10, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.7731
+    },
+    "flamethrower-ammo": {
+      "h": "Flamethrower ammo",
+      "i": [
+        { "r": 66, "a": 5 },
+        { "r": 429, "a": 100 }
+      ],
+      "p": [{ "r": 1, "a": { "f": 1 }, "p": 1 }],
+      "d": 6,
+      "c": ["chemistry"],
+      "x": 0.7111
+    },
+    "express-transport-belt": {
+      "h": "Express transport belt",
+      "i": [
+        { "r": 120, "a": 1 },
+        { "r": 433, "a": 20 },
+        { "r": 309, "a": 4 }
+      ],
+      "p": [{ "r": 121, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting-with-fluid"],
+      "x": 0.4457
+    },
+    "assembling-machine-3": {
+      "h": "Assembling machine 3",
+      "i": [
+        { "r": 89, "a": 1 },
+        { "r": 402, "a": 2 },
+        { "r": 135, "a": 3 },
+        { "r": 309, "a": 5 }
+      ],
+      "p": [{ "r": 123, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.4484
+    },
+    "tank": {
+      "h": "Heavy armored vehicle",
+      "i": [
+        { "r": 135, "a": 10 },
+        { "r": 98, "a": 20 },
+        { "r": 97, "a": 60 },
+        { "r": 309, "a": 30 }
+      ],
+      "p": [{ "r": 398, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.7453
+    },
+    "spidertron": {
+      "h": "Spidertron",
+      "i": [
+        { "r": 179, "a": 4 },
+        { "r": 52, "a": 4 },
+        { "r": 136, "a": 16 },
+        { "r": 161, "a": 150 },
+        { "r": 85, "a": 2 },
+        { "r": 407, "a": 2 },
+        { "r": 323, "a": 1 },
+        { "r": 286, "a": 1 }
+      ],
+      "p": [{ "r": 399, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7866
+    },
+    "fluid-wagon": {
+      "h": "Fluid wagon",
+      "i": [
+        { "r": 70, "a": 10 },
+        { "r": 97, "a": 16 },
+        { "r": 81, "a": 8 },
+        { "r": 149, "a": 1 }
+      ],
+      "p": [{ "r": 396, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.2109
+    },
+    "artillery-wagon": {
+      "h": "Artillery wagon",
+      "i": [
+        { "r": 190, "a": 1 },
+        { "r": 395, "a": 1 },
+        { "r": 314, "a": 20 },
+        { "r": 97, "a": 20 },
+        { "r": 309, "a": 20 }
+      ],
+      "p": [{ "r": 397, "a": { "f": 1 }, "p": 1 }],
+      "d": 40,
+      "c": ["crafting"],
+      "x": 0.7731
+    },
+    "modular-armor": {
+      "h": "Modular armor",
+      "i": [
+        { "r": 135, "a": 30 },
+        { "r": 30, "a": 1 }
+      ],
+      "p": [{ "r": 26, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.218
+    },
+    "power-armor": {
+      "h": "Power armor",
+      "i": [
+        { "r": 136, "a": 40 },
+        { "r": 157, "a": 20 },
+        { "r": 26, "a": 1 }
+      ],
+      "p": [{ "r": 27, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.3357
+    },
+    "power-armor-mk2": {
+      "h": "Power armor MK2",
+      "i": [
+        { "r": 406, "a": 25 },
+        { "r": 403, "a": 25 },
+        { "r": 157, "a": 40 },
+        { "r": 161, "a": 30 },
+        { "r": 27, "a": 1 }
+      ],
+      "p": [{ "r": 28, "a": { "f": 1 }, "p": 1 }],
+      "d": 25,
+      "c": ["crafting"],
+      "x": 0.7609
+    },
+    "flamethrower": {
+      "h": "Flamethrower",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 70, "a": 10 }
+      ],
+      "p": [{ "r": 51, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7111
+    },
+    "land-mine": {
+      "h": "Land mine",
+      "i": [
+        { "r": 97, "a": 1 },
+        { "r": 158, "a": 2 }
+      ],
+      "p": [{ "r": 173, "a": { "f": 4 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.7233
+    },
+    "rocket-launcher": {
+      "h": "Rocket launcher",
+      "i": [
+        { "r": 66, "a": 5 },
+        { "r": 70, "a": 5 },
+        { "r": 71, "a": 5 }
+      ],
+      "p": [{ "r": 52, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7265
+    },
+    "combat-shotgun": {
+      "h": "Combat shotgun",
+      "i": [
+        { "r": 61, "a": 3 },
+        { "r": 97, "a": 4 },
+        { "r": 67, "a": 2 },
+        { "r": 70, "a": 3 }
+      ],
+      "p": [{ "r": 53, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7497
+    },
+    "chemical-science-pack": {
+      "h": "Chemical tech card",
+      "i": [
+        { "r": 338, "a": 5 },
+        { "r": 300, "a": 15 },
+        { "r": 135, "a": 5 },
+        { "r": 428, "a": 50 }
+      ],
+      "p": [{ "r": 124, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting-with-fluid"],
+      "a": true,
+      "x": 0.2198
+    },
+    "military-science-pack": {
+      "h": "Military tech card",
+      "i": [
+        { "r": 338, "a": 5 },
+        { "r": 339, "a": 1 },
+        { "r": 303, "a": 5 }
+      ],
+      "p": [{ "r": 125, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.6423
+    },
+    "production-science-pack": {
+      "h": "Production tech card",
+      "i": [
+        { "r": 338, "a": 10 },
+        { "r": 120, "a": 10 },
+        { "r": 408, "a": 5 },
+        { "r": 166, "a": 5 }
+      ],
+      "p": [{ "r": 126, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t2-tech-cards"],
+      "a": true,
+      "x": 0.3453
+    },
+    "utility-science-pack": {
+      "h": "Utility tech card",
+      "i": [
+        { "r": 338, "a": 10 },
+        { "r": 136, "a": 5 },
+        { "r": 101, "a": 5 },
+        { "r": 161, "a": 5 }
+      ],
+      "p": [{ "r": 127, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t2-tech-cards"],
+      "a": true,
+      "x": 0.356
+    },
+    "express-underground-belt": {
+      "h": "Express underground belt",
+      "i": [
+        { "r": 130, "a": 2 },
+        { "r": 121, "a": 20 }
+      ],
+      "p": [{ "r": 131, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "express-splitter": {
+      "h": "Express splitter",
+      "i": [
+        { "r": 133, "a": 1 },
+        { "r": 309, "a": 4 },
+        { "r": 303, "a": 4 }
+      ],
+      "p": [{ "r": 134, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "advanced-circuit": {
+      "h": "Advanced circuit",
+      "i": [
+        { "r": 71, "a": 4 },
+        { "r": 68, "a": 4 },
+        { "r": 303, "a": 2 }
+      ],
+      "p": [{ "r": 135, "a": { "f": 2 }, "p": 1 }],
+      "d": 4,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.2156
+    },
+    "processing-unit": {
+      "h": "Processing unit",
+      "i": [
+        { "r": 135, "a": 6 },
+        { "r": 428, "a": 10 },
+        { "r": 314, "a": 3 }
+      ],
+      "p": [{ "r": 136, "a": { "f": 2 }, "p": 1 }],
+      "d": 12,
+      "c": ["crafting-with-fluid"],
+      "a": true,
+      "x": 0.3229
+    },
+    "logistic-robot": {
+      "h": "Logistic robot",
+      "i": [
+        { "r": 160, "a": 1 },
+        { "r": 135, "a": 2 }
+      ],
+      "p": [{ "r": 137, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.3292
+    },
+    "construction-robot": {
+      "h": "Construction robot",
+      "i": [
+        { "r": 160, "a": 1 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 138, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.323
+    },
+    "passive-provider-chest": {
+      "h": "Passive provider chest",
+      "i": [
+        { "r": 107, "a": 1 },
+        { "r": 71, "a": 3 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 139, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.323
+    },
+    "active-provider-chest": {
+      "h": "Active provider chest",
+      "i": [
+        { "r": 107, "a": 1 },
+        { "r": 71, "a": 3 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 140, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "storage-chest": {
+      "h": "Storage chest",
+      "i": [
+        { "r": 107, "a": 1 },
+        { "r": 71, "a": 3 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 141, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.323
+    },
+    "buffer-chest": {
+      "h": "Buffer chest",
+      "i": [
+        { "r": 107, "a": 1 },
+        { "r": 71, "a": 3 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 142, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "requester-chest": {
+      "h": "Requester chest",
+      "i": [
+        { "r": 107, "a": 1 },
+        { "r": 71, "a": 3 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 143, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "rocket-silo": {
+      "h": "Rocket silo",
+      "i": [
+        { "r": 97, "a": 1000 },
+        { "r": 112, "a": 1000 },
+        { "r": 81, "a": 100 },
+        { "r": 136, "a": 200 },
+        { "r": 157, "a": 200 }
+      ],
+      "p": [{ "r": 144, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.4886
+    },
+    "cargo-landing-pad": {
+      "h": "Cargo landing pad",
+      "i": [
+        { "r": 112, "a": 200 },
+        { "r": 97, "a": 25 },
+        { "r": 136, "a": 10 }
+      ],
+      "p": [{ "r": 145, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.4886
+    },
+    "roboport": {
+      "h": "Roboport",
+      "i": [
+        { "r": 70, "a": 45 },
+        { "r": 135, "a": 45 },
+        { "r": 310, "a": 20 }
+      ],
+      "p": [{ "r": 146, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.323
+    },
+    "substation": {
+      "h": "Substation",
+      "i": [
+        { "r": 135, "a": 5 },
+        { "r": 68, "a": 16 },
+        { "r": 310, "a": 8 }
+      ],
+      "p": [{ "r": 147, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.3011
+    },
+    "accumulator": {
+      "h": "Accumulator",
+      "i": [
+        { "r": 66, "a": 2 },
+        { "r": 159, "a": 5 }
+      ],
+      "p": [{ "r": 117, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2157
+    },
+    "electric-furnace": {
+      "h": "Electric furnace",
+      "i": [
+        { "r": 97, "a": 10 },
+        { "r": 135, "a": 5 },
+        { "r": 60, "a": 10 }
+      ],
+      "p": [{ "r": 99, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.3171
+    },
+    "beacon": {
+      "h": "Beacon",
+      "i": [
+        { "r": 71, "a": 20 },
+        { "r": 135, "a": 20 },
+        { "r": 97, "a": 10 },
+        { "r": 68, "a": 10 }
+      ],
+      "p": [{ "r": 148, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.4547
+    },
+    "pumpjack": {
+      "h": "Pumpjack",
+      "i": [
+        { "r": 309, "a": 10 },
+        { "r": 71, "a": 5 },
+        { "r": 81, "a": 10 },
+        { "r": 310, "a": 4 }
+      ],
+      "p": [{ "r": 151, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.1948
+    },
+    "oil-refinery": {
+      "h": "Oil refinery",
+      "i": [
+        { "r": 309, "a": 10 },
+        { "r": 60, "a": 10 },
+        { "r": 71, "a": 10 },
+        { "r": 81, "a": 10 },
+        { "r": 310, "a": 4 }
+      ],
+      "p": [{ "r": 152, "a": { "f": 1 }, "p": 1 }],
+      "d": 8,
+      "c": ["crafting"],
+      "x": 0.1949
+    },
+    "electric-engine-unit": {
+      "h": "Electric engine unit",
+      "i": [
+        { "r": 98, "a": 1 },
+        { "r": 433, "a": 15 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 157, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting-with-fluid"],
+      "a": true,
+      "x": 0.3108
+    },
+    "flying-robot-frame": {
+      "h": "Flying robot frame",
+      "i": [
+        { "r": 157, "a": 1 },
+        { "r": 159, "a": 2 },
+        { "r": 97, "a": 1 },
+        { "r": 303, "a": 10 }
+      ],
+      "p": [{ "r": 160, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.3171
+    },
+    "explosives": {
+      "h": "Explosives",
+      "i": [
+        { "r": 154, "a": 1 },
+        { "r": 62, "a": 1 },
+        { "r": 426, "a": 10 }
+      ],
+      "p": [{ "r": 158, "a": { "f": 2 }, "p": 1 }],
+      "d": 4,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.207
+    },
+    "battery": {
+      "h": "Battery",
+      "i": [
+        { "r": 428, "a": 20 },
+        { "r": 66, "a": 1 },
+        { "r": 67, "a": 1 }
+      ],
+      "p": [{ "r": 159, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.2087
+    },
+    "storage-tank": {
+      "h": "Storage tank",
+      "i": [
+        { "r": 308, "a": 5 },
+        { "r": 66, "a": 10 }
+      ],
+      "p": [{ "r": 149, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.1859
+    },
+    "pump": {
+      "h": "Pump",
+      "i": [
+        { "r": 98, "a": 1 },
+        { "r": 97, "a": 1 },
+        { "r": 81, "a": 1 }
+      ],
+      "p": [{ "r": 150, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1859
+    },
+    "chemical-plant": {
+      "h": "Chemical plant",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 70, "a": 5 },
+        { "r": 298, "a": 3 },
+        { "r": 81, "a": 5 }
+      ],
+      "p": [{ "r": 153, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.179
+    },
+    "low-density-structure": {
+      "h": "Low density structure",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 156, "a": 5 },
+        { "r": 67, "a": 10 }
+      ],
+      "p": [{ "r": 161, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.3292
+    },
+    "rocket-fuel": {
+      "h": "Rocket fuel",
+      "i": [
+        { "r": 431, "a": 30 },
+        { "r": 66, "a": 1 },
+        { "r": 445, "a": 50 }
+      ],
+      "p": [{ "r": 101, "a": { "f": 1 }, "p": 1 }],
+      "d": 16,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.3242
+    },
+    "rocket-part": {
+      "h": "Rocket part",
+      "i": [
+        { "r": 136, "a": 10 },
+        { "r": 161, "a": 10 },
+        { "r": 101, "a": 10 }
+      ],
+      "p": [{ "r": 162, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["rocket-building"],
+      "a": true,
+      "x": 0.4886
+    },
+    "satellite": {
+      "h": "Satellite",
+      "i": [
+        { "r": 161, "a": 100 },
+        { "r": 108, "a": 100 },
+        { "r": 117, "a": 100 },
+        { "r": 85, "a": 5 },
+        { "r": 136, "a": 100 },
+        { "r": 101, "a": 50 }
+      ],
+      "p": [{ "r": 163, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.4886
+    },
+    "nuclear-reactor": {
+      "h": "Nuclear reactor",
+      "i": [
+        { "r": 112, "a": 500 },
+        { "r": 97, "a": 200 },
+        { "r": 135, "a": 200 },
+        { "r": 172, "a": 20 },
+        { "r": 314, "a": 200 }
+      ],
+      "p": [{ "r": 164, "a": { "f": 1 }, "p": 1 }],
+      "d": 120,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3338
+    },
+    "centrifuge": {
+      "h": "Centrifuge",
+      "i": [
+        { "r": 112, "a": 100 },
+        { "r": 97, "a": 50 },
+        { "r": 135, "a": 100 },
+        { "r": 70, "a": 100 }
+      ],
+      "p": [{ "r": 167, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["crafting"],
+      "x": 0.3011
+    },
+    "uranium-processing": {
+      "h": "Uranium processing",
+      "i": [{ "r": 118, "a": 10 }],
+      "p": [
+        { "r": 165, "a": { "f": 1 }, "p": 0.007000000000000001 },
+        { "r": 166, "a": { "f": 1 }, "p": 0.993 },
+        { "r": 64, "a": { "f": 1 }, "p": 0.25 },
+        { "r": 63, "a": { "f": 1 }, "p": 0.5 }
+      ],
+      "d": 12,
+      "c": ["centrifuging"],
+      "a": true,
+      "x": 0.3011
+    },
+    "kovarex-enrichment-process": {
+      "h": "Kovarex enrichment process",
+      "i": [
+        { "r": 165, "a": 30 },
+        { "r": 166, "a": 3 }
+      ],
+      "p": [
+        { "r": 165, "a": { "f": 31 }, "p": 1, "i": 30 },
+        { "r": 63, "a": { "f": 2 }, "p": 1 }
+      ],
+      "d": 60,
+      "c": ["centrifuging"],
+      "a": true,
+      "x": 0.4547
+    },
+    "nuclear-fuel-reprocessing": {
+      "h": "Nuclear fuel reprocessing",
+      "i": [{ "r": 169, "a": 1 }],
+      "p": [
+        { "r": 166, "a": { "f": 6 }, "p": 1 },
+        { "r": 63, "a": { "f": 4 }, "p": 1 },
+        { "r": 326, "a": { "f": 1 }, "p": 0.15 }
+      ],
+      "d": 60,
+      "c": ["centrifuging"],
+      "a": true
+    },
+    "uranium-fuel-cell": {
+      "h": "Uranium fuel cell",
+      "i": [
+        { "r": 165, "a": 2 },
+        { "r": 166, "a": 10 },
+        { "r": 97, "a": 1 }
+      ],
+      "p": [{ "r": 168, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.3338
+    },
+    "heat-exchanger": {
+      "h": "Heat exchanger",
+      "i": [
+        { "r": 97, "a": 10 },
+        { "r": 67, "a": 100 },
+        { "r": 81, "a": 10 }
+      ],
+      "p": [{ "r": 170, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.3338
+    },
+    "heat-pipe": {
+      "h": "Heat pipe",
+      "i": [
+        { "r": 301, "a": 10 },
+        { "r": 67, "a": 20 }
+      ],
+      "p": [{ "r": 172, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.3338
+    },
+    "steam-turbine": {
+      "h": "Steam turbine",
+      "i": [
+        { "r": 67, "a": 50 },
+        { "r": 70, "a": 14 },
+        { "r": 81, "a": 10 },
+        { "r": 83, "a": 2 }
+      ],
+      "p": [{ "r": 171, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3338
+    },
+    "rail-support": {
+      "h": "Rail support",
+      "i": [
+        { "r": 113, "a": 20 },
+        { "r": 97, "a": 10 }
+      ],
+      "p": [{ "r": 198, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4265
+    },
+    "rail-ramp": {
+      "h": "Rail ramp",
+      "i": [
+        { "r": 113, "a": 100 },
+        { "r": 411, "a": 8 },
+        { "r": 97, "a": 10 }
+      ],
+      "p": [{ "r": 412, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4265
+    },
+    "kr-power-armor-mk3": {
+      "h": "Power armor MK3",
+      "i": [
+        { "r": 28, "a": 1 },
+        { "r": 404, "a": 25 },
+        { "r": 407, "a": 25 },
+        { "r": 329, "a": 25 }
+      ],
+      "p": [{ "r": 31, "a": { "f": 1 }, "p": 1 }],
+      "d": 40,
+      "c": ["crafting"],
+      "x": 0.7678
+    },
+    "kr-power-armor-mk4": {
+      "h": "Power armor MK4",
+      "i": [
+        { "r": 31, "a": 1 },
+        { "r": 323, "a": 40 },
+        { "r": 311, "a": 40 },
+        { "r": 321, "a": 10 },
+        { "r": 443, "a": 50 }
+      ],
+      "p": [{ "r": 32, "a": { "f": 1 }, "p": 1 }],
+      "d": 40,
+      "c": ["crafting-with-fluid"],
+      "x": 0.8806
+    },
+    "kr-active-provider-strongbox": {
+      "h": "Active provider strongbox",
+      "i": [
+        { "r": 262, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 199, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-active-provider-warehouse": {
+      "h": "Active provider warehouse",
+      "i": [
+        { "r": 271, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 200, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-advanced-assembling-machine": {
+      "h": "Advanced assembling machine",
+      "i": [
+        { "r": 313, "a": 4 },
+        { "r": 123, "a": 2 },
+        { "r": 99, "a": 2 },
+        { "r": 323, "a": 2 }
+      ],
+      "p": [{ "r": 201, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-advanced-chemical-plant": {
+      "h": "Advanced chemical plant",
+      "i": [
+        { "r": 136, "a": 20 },
+        { "r": 313, "a": 20 },
+        { "r": 314, "a": 80 },
+        { "r": 303, "a": 40 },
+        { "r": 312, "a": 20 },
+        { "r": 257, "a": 10 }
+      ],
+      "p": [{ "r": 202, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-advanced-furnace": {
+      "h": "Advanced furnace",
+      "i": [
+        { "r": 313, "a": 20 },
+        { "r": 310, "a": 80 },
+        { "r": 314, "a": 80 },
+        { "r": 67, "a": 60 },
+        { "r": 303, "a": 20 },
+        { "r": 329, "a": 10 }
+      ],
+      "p": [{ "r": 203, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-advanced-lab": {
+      "h": "Advanced lab",
+      "i": [
+        { "r": 135, "a": 10 },
+        { "r": 310, "a": 5 },
+        { "r": 94, "a": 1 },
+        { "r": 68, "a": 10 }
+      ],
+      "p": [{ "r": 204, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3202
+    },
+    "kr-advanced-loader": {
+      "h": "Advanced loader",
+      "i": [
+        { "r": 210, "a": 1 },
+        { "r": 225, "a": 2 },
+        { "r": 314, "a": 10 }
+      ],
+      "p": [{ "r": 205, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4764
+    },
+    "kr-advanced-radar": {
+      "h": "Advanced radar",
+      "i": [
+        { "r": 85, "a": 1 },
+        { "r": 310, "a": 5 },
+        { "r": 135, "a": 5 },
+        { "r": 314, "a": 5 }
+      ],
+      "p": [{ "r": 206, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.4493
+    },
+    "kr-advanced-solar-panel": {
+      "h": "Advanced solar panel",
+      "i": [
+        { "r": 108, "a": 1 },
+        { "r": 321, "a": 5 },
+        { "r": 303, "a": 5 },
+        { "r": 443, "a": 25 }
+      ],
+      "p": [{ "r": 207, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting-with-fluid"],
+      "x": 0.464
+    },
+    "kr-advanced-splitter": {
+      "h": "Advanced splitter",
+      "i": [
+        { "r": 134, "a": 1 },
+        { "r": 309, "a": 4 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 208, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4764
+    },
+    "kr-advanced-steam-turbine": {
+      "h": "Advanced steam turbine",
+      "i": [
+        { "r": 171, "a": 2 },
+        { "r": 309, "a": 10 },
+        { "r": 310, "a": 10 },
+        { "r": 314, "a": 60 },
+        { "r": 157, "a": 10 }
+      ],
+      "p": [{ "r": 209, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.4943
+    },
+    "kr-advanced-transport-belt": {
+      "h": "Advanced transport belt",
+      "i": [
+        { "r": 121, "a": 1 },
+        { "r": 309, "a": 4 },
+        { "r": 314, "a": 1 }
+      ],
+      "p": [{ "r": 210, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.4764
+    },
+    "kr-advanced-underground-belt": {
+      "h": "Advanced underground belt",
+      "i": [
+        { "r": 131, "a": 2 },
+        { "r": 210, "a": 30 }
+      ],
+      "p": [{ "r": 211, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4764
+    },
+    "kr-air-purifier": {
+      "h": "Air purifier",
+      "i": [
+        { "r": 310, "a": 4 },
+        { "r": 135, "a": 4 },
+        { "r": 156, "a": 20 },
+        { "r": 98, "a": 1 }
+      ],
+      "p": [{ "r": 212, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.7487
+    },
+    "kr-antimatter-reactor": {
+      "h": "Antimatter reactor",
+      "i": [
+        { "r": 323, "a": 50 },
+        { "r": 329, "a": 50 },
+        { "r": 313, "a": 100 },
+        { "r": 311, "a": 350 },
+        { "r": 314, "a": 350 },
+        { "r": 97, "a": 350 }
+      ],
+      "p": [{ "r": 213, "a": { "f": 1 }, "p": 1 }],
+      "d": 300,
+      "c": ["crafting"],
+      "x": 0.8978
+    },
+    "kr-atmospheric-condenser": {
+      "h": "Atmospheric condenser",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 309, "a": 10 },
+        { "r": 71, "a": 4 },
+        { "r": 98, "a": 2 }
+      ],
+      "p": [{ "r": 214, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3108
+    },
+    "kr-big-roboport": {
+      "h": "Big roboport",
+      "i": [
+        { "r": 97, "a": 20 },
+        { "r": 313, "a": 20 },
+        { "r": 312, "a": 20 },
+        { "r": 314, "a": 80 },
+        { "r": 323, "a": 10 },
+        { "r": 146, "a": 1 }
+      ],
+      "p": [{ "r": 215, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-big-storage-tank": {
+      "h": "Big storage tank",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 97, "a": 20 },
+        { "r": 257, "a": 4 }
+      ],
+      "p": [{ "r": 216, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.2017
+    },
+    "kr-bio-lab": {
+      "h": "Bio lab",
+      "i": [
+        { "r": 296, "a": 50 },
+        { "r": 308, "a": 10 },
+        { "r": 300, "a": 20 },
+        { "r": 71, "a": 2 }
+      ],
+      "p": [{ "r": 217, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7304
+    },
+    "kr-buffer-strongbox": {
+      "h": "Buffer strongbox",
+      "i": [
+        { "r": 262, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 218, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-buffer-warehouse": {
+      "h": "Buffer warehouse",
+      "i": [
+        { "r": 271, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 219, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-crusher": {
+      "h": "Crusher",
+      "i": [
+        { "r": 308, "a": 10 },
+        { "r": 70, "a": 20 },
+        { "r": 68, "a": 6 },
+        { "r": 298, "a": 2 }
+      ],
+      "p": [{ "r": 220, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0653
+    },
+    "kr-electric-mining-drill-mk2": {
+      "h": "Electric mining drill MK2",
+      "i": [
+        { "r": 75, "a": 1 },
+        { "r": 309, "a": 5 },
+        { "r": 314, "a": 4 }
+      ],
+      "p": [{ "r": 221, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.3229
+    },
+    "kr-electric-mining-drill-mk3": {
+      "h": "Electric mining drill MK3",
+      "i": [
+        { "r": 221, "a": 1 },
+        { "r": 312, "a": 5 },
+        { "r": 321, "a": 4 }
+      ],
+      "p": [{ "r": 222, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.739
+    },
+    "kr-electrolysis-plant": {
+      "h": "Electrolysis plant",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 298, "a": 3 },
+        { "r": 67, "a": 10 },
+        { "r": 300, "a": 10 }
+      ],
+      "p": [{ "r": 223, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.179
+    },
+    "kr-energy-storage": {
+      "h": "Energy storage",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 136, "a": 10 },
+        { "r": 314, "a": 50 },
+        { "r": 329, "a": 50 }
+      ],
+      "p": [{ "r": 224, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.6252
+    },
+    "kr-express-loader": {
+      "h": "Express loader",
+      "i": [
+        { "r": 121, "a": 1 },
+        { "r": 226, "a": 2 },
+        { "r": 309, "a": 10 }
+      ],
+      "p": [{ "r": 225, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.4457
+    },
+    "kr-fast-loader": {
+      "h": "Fast loader",
+      "i": [
+        { "r": 120, "a": 1 },
+        { "r": 236, "a": 2 },
+        { "r": 70, "a": 10 }
+      ],
+      "p": [{ "r": 226, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1909
+    },
+    "kr-filtration-plant": {
+      "h": "Filtration plant",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 298, "a": 3 },
+        { "r": 300, "a": 10 },
+        { "r": 98, "a": 4 }
+      ],
+      "p": [{ "r": 227, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.1959
+    },
+    "kr-flare-stack": {
+      "h": "Flare stack",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 97, "a": 20 },
+        { "r": 71, "a": 3 }
+      ],
+      "p": [{ "r": 228, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.1949
+    },
+    "kr-fuel-refinery": {
+      "h": "Fuel refinery",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 70, "a": 5 },
+        { "r": 71, "a": 5 },
+        { "r": 81, "a": 5 }
+      ],
+      "p": [{ "r": 229, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.202
+    },
+    "kr-fusion-reactor": {
+      "h": "Fusion reactor",
+      "i": [
+        { "r": 112, "a": 500 },
+        { "r": 67, "a": 500 },
+        { "r": 97, "a": 500 },
+        { "r": 310, "a": 350 },
+        { "r": 314, "a": 350 },
+        { "r": 136, "a": 100 }
+      ],
+      "p": [{ "r": 230, "a": { "f": 1 }, "p": 1 }],
+      "d": 200,
+      "c": ["crafting"],
+      "x": 0.4943
+    },
+    "kr-gas-power-station": {
+      "h": "Gas power station",
+      "i": [
+        { "r": 310, "a": 10 },
+        { "r": 98, "a": 20 },
+        { "r": 71, "a": 4 },
+        { "r": 81, "a": 4 }
+      ],
+      "p": [{ "r": 231, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.207
+    },
+    "kr-greenhouse": {
+      "h": "Greenhouse",
+      "i": [
+        { "r": 61, "a": 20 },
+        { "r": 308, "a": 10 },
+        { "r": 300, "a": 20 },
+        { "r": 298, "a": 2 }
+      ],
+      "p": [{ "r": 232, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.087
+    },
+    "kr-huge-storage-tank": {
+      "h": "Huge storage tank",
+      "i": [
+        { "r": 310, "a": 20 },
+        { "r": 97, "a": 60 },
+        { "r": 257, "a": 12 }
+      ],
+      "p": [{ "r": 233, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2017
+    },
+    "kr-intergalactic-transceiver": {
+      "h": "Intergalactic transceiver",
+      "i": [
+        { "r": 313, "a": 500 },
+        { "r": 311, "a": 500 },
+        { "r": 314, "a": 1000 },
+        { "r": 329, "a": 500 },
+        { "r": 323, "a": 300 },
+        { "r": 112, "a": 750 }
+      ],
+      "p": [{ "r": 234, "a": { "f": 1 }, "p": 1 }],
+      "d": 600,
+      "c": ["crafting"],
+      "x": 0.9049
+    },
+    "kr-laser-artillery-turret": {
+      "h": "Laser artillery turret",
+      "i": [
+        { "r": 329, "a": 6 },
+        { "r": 310, "a": 10 },
+        { "r": 314, "a": 20 },
+        { "r": 323, "a": 10 },
+        { "r": 161, "a": 10 }
+      ],
+      "p": [{ "r": 235, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7822
+    },
+    "kr-loader": {
+      "h": "Loader",
+      "i": [
+        { "r": 119, "a": 1 },
+        { "r": 70, "a": 10 },
+        { "r": 308, "a": 2 }
+      ],
+      "p": [{ "r": 236, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.0836
+    },
+    "kr-logo": {
+      "h": "Krastorio 2 logo",
+      "i": [
+        { "r": 69, "a": 5000 },
+        { "r": 47, "a": 1 }
+      ],
+      "p": [{ "r": 237, "a": { "f": 1 }, "p": 1 }],
+      "d": 666,
+      "c": ["crafting"],
+      "x": 1
+    },
+    "kr-matter-associator": {
+      "h": "Matter associator",
+      "i": [
+        { "r": 313, "a": 4 },
+        { "r": 257, "a": 4 },
+        { "r": 329, "a": 10 },
+        { "r": 323, "a": 3 }
+      ],
+      "p": [{ "r": 238, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.6423
+    },
+    "kr-matter-plant": {
+      "h": "Matter plant",
+      "i": [
+        { "r": 313, "a": 10 },
+        { "r": 257, "a": 10 },
+        { "r": 329, "a": 10 },
+        { "r": 323, "a": 5 }
+      ],
+      "p": [{ "r": 239, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.6423
+    },
+    "kr-passive-provider-strongbox": {
+      "h": "Passive provider strongbox",
+      "i": [
+        { "r": 262, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 240, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.3363
+    },
+    "kr-passive-provider-warehouse": {
+      "h": "Passive provider warehouse",
+      "i": [
+        { "r": 271, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 241, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.3363
+    },
+    "kr-planetary-teleporter": {
+      "h": "Planetary teleporter",
+      "i": [
+        { "r": 313, "a": 10 },
+        { "r": 321, "a": 4 },
+        { "r": 329, "a": 8 },
+        { "r": 337, "a": 1 }
+      ],
+      "p": [{ "r": 242, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.8734
+    },
+    "kr-quantum-computer": {
+      "h": "Quantum computer",
+      "i": [
+        { "r": 310, "a": 20 },
+        { "r": 67, "a": 20 },
+        { "r": 314, "a": 50 },
+        { "r": 323, "a": 50 },
+        { "r": 303, "a": 100 },
+        { "r": 136, "a": 100 }
+      ],
+      "p": [{ "r": 243, "a": { "f": 1 }, "p": 1 }],
+      "d": 120,
+      "c": ["crafting"],
+      "x": 0.4908
+    },
+    "kr-quarry-drill": {
+      "h": "Quarry drill",
+      "i": [
+        { "r": 310, "a": 50 },
+        { "r": 97, "a": 50 },
+        { "r": 314, "a": 50 },
+        { "r": 157, "a": 100 },
+        { "r": 136, "a": 20 }
+      ],
+      "p": [{ "r": 244, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.4485
+    },
+    "kr-railgun-turret": {
+      "h": "Railgun turret",
+      "i": [
+        { "r": 187, "a": 4 },
+        { "r": 310, "a": 10 },
+        { "r": 136, "a": 10 },
+        { "r": 314, "a": 20 },
+        { "r": 161, "a": 10 }
+      ],
+      "p": [{ "r": 245, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7629
+    },
+    "kr-requester-strongbox": {
+      "h": "Requester strongbox",
+      "i": [
+        { "r": 262, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 246, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-requester-warehouse": {
+      "h": "Requester warehouse",
+      "i": [
+        { "r": 271, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 247, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.4779
+    },
+    "kr-research-server": {
+      "h": "Research server",
+      "i": [
+        { "r": 310, "a": 4 },
+        { "r": 135, "a": 5 },
+        { "r": 303, "a": 50 }
+      ],
+      "p": [{ "r": 248, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.3229
+    },
+    "kr-rocket-turret": {
+      "h": "Rocket turret",
+      "i": [
+        { "r": 52, "a": 6 },
+        { "r": 310, "a": 10 },
+        { "r": 314, "a": 20 },
+        { "r": 136, "a": 20 },
+        { "r": 161, "a": 10 }
+      ],
+      "p": [{ "r": 249, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7901
+    },
+    "kr-sentinel": {
+      "h": "Sentinel",
+      "i": [
+        { "r": 300, "a": 1 },
+        { "r": 66, "a": 2 },
+        { "r": 68, "a": 1 },
+        { "r": 298, "a": 1 }
+      ],
+      "p": [{ "r": 250, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.1043
+    },
+    "kr-shelter": {
+      "h": "Shelter",
+      "i": [
+        { "r": 308, "a": 25 },
+        { "r": 66, "a": 25 },
+        { "r": 68, "a": 10 },
+        { "r": 62, "a": 50 }
+      ],
+      "p": [{ "r": 251, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0989
+    },
+    "kr-singularity-beacon": {
+      "h": "Singularity beacon",
+      "i": [
+        { "r": 148, "a": 1 },
+        { "r": 323, "a": 10 },
+        { "r": 136, "a": 20 },
+        { "r": 329, "a": 10 }
+      ],
+      "p": [{ "r": 253, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.8856
+    },
+    "kr-singularity-lab": {
+      "h": "Singularity lab",
+      "i": [
+        { "r": 323, "a": 20 },
+        { "r": 204, "a": 5 },
+        { "r": 97, "a": 40 },
+        { "r": 157, "a": 30 },
+        { "r": 314, "a": 60 },
+        { "r": 136, "a": 100 }
+      ],
+      "p": [{ "r": 254, "a": { "f": 1 }, "p": 1 }],
+      "d": 120,
+      "c": ["crafting"],
+      "x": 0.5064
+    },
+    "kr-small-roboport": {
+      "h": "Small roboport",
+      "i": [
+        { "r": 313, "a": 3 },
+        { "r": 97, "a": 10 },
+        { "r": 314, "a": 20 },
+        { "r": 323, "a": 1 },
+        { "r": 303, "a": 5 }
+      ],
+      "p": [{ "r": 255, "a": { "f": 2 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-stabilizer-charging-station": {
+      "h": "Stabilizer charging station",
+      "i": [
+        { "r": 313, "a": 4 },
+        { "r": 329, "a": 20 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 256, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.6423
+    },
+    "kr-steel-pipe": {
+      "h": "Steel pipe",
+      "i": [{ "r": 97, "a": 1 }],
+      "p": [{ "r": 257, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1948
+    },
+    "kr-steel-pipe-to-ground": {
+      "h": "Steel underground pipe",
+      "i": [
+        { "r": 257, "a": 15 },
+        { "r": 97, "a": 5 }
+      ],
+      "p": [{ "r": 258, "a": { "f": 2 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.1948
+    },
+    "kr-steel-pump": {
+      "h": "Steel pump",
+      "i": [
+        { "r": 309, "a": 4 },
+        { "r": 98, "a": 1 },
+        { "r": 310, "a": 1 },
+        { "r": 257, "a": 1 }
+      ],
+      "p": [{ "r": 259, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1948
+    },
+    "kr-storage-strongbox": {
+      "h": "Storage strongbox",
+      "i": [
+        { "r": 262, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 260, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.3363
+    },
+    "kr-storage-warehouse": {
+      "h": "Storage warehouse",
+      "i": [
+        { "r": 271, "a": 1 },
+        { "r": 135, "a": 5 }
+      ],
+      "p": [{ "r": 261, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.3363
+    },
+    "kr-strongbox": {
+      "h": "Strongbox",
+      "i": [
+        { "r": 107, "a": 4 },
+        { "r": 310, "a": 2 }
+      ],
+      "p": [{ "r": 262, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.1043
+    },
+    "kr-superior-inserter": {
+      "h": "Superior inserter",
+      "i": [
+        { "r": 335, "a": 1 },
+        { "r": 311, "a": 1 },
+        { "r": 312, "a": 4 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 263, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-superior-loader": {
+      "h": "Superior loader",
+      "i": [
+        { "r": 268, "a": 1 },
+        { "r": 205, "a": 2 },
+        { "r": 312, "a": 10 }
+      ],
+      "p": [{ "r": 264, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.755
+    },
+    "kr-superior-long-inserter": {
+      "h": "Superior long inserter",
+      "i": [
+        { "r": 335, "a": 2 },
+        { "r": 311, "a": 2 },
+        { "r": 312, "a": 4 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 265, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-superior-splitter": {
+      "h": "Superior splitter",
+      "i": [
+        { "r": 208, "a": 1 },
+        { "r": 312, "a": 4 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 266, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.755
+    },
+    "kr-superior-substation": {
+      "h": "Superior substation",
+      "i": [
+        { "r": 313, "a": 3 },
+        { "r": 314, "a": 6 },
+        { "r": 147, "a": 1 },
+        { "r": 136, "a": 2 },
+        { "r": 86, "a": 2 }
+      ],
+      "p": [{ "r": 267, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.739
+    },
+    "kr-superior-transport-belt": {
+      "h": "Superior transport belt",
+      "i": [
+        { "r": 210, "a": 1 },
+        { "r": 312, "a": 4 },
+        { "r": 161, "a": 1 }
+      ],
+      "p": [{ "r": 268, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "x": 0.755
+    },
+    "kr-superior-underground-belt": {
+      "h": "Superior underground belt",
+      "i": [
+        { "r": 211, "a": 2 },
+        { "r": 268, "a": 40 }
+      ],
+      "p": [{ "r": 269, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "x": 0.755
+    },
+    "kr-tesla-coil": {
+      "h": "Tesla coil",
+      "i": [
+        { "r": 310, "a": 20 },
+        { "r": 71, "a": 20 },
+        { "r": 68, "a": 100 }
+      ],
+      "p": [{ "r": 270, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.345
+    },
+    "kr-warehouse": {
+      "h": "Warehouse",
+      "i": [
+        { "r": 262, "a": 4 },
+        { "r": 310, "a": 10 }
+      ],
+      "p": [{ "r": 271, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "x": 0.1043
+    },
+    "kr-wind-turbine": {
+      "h": "Wind turbine",
+      "i": [
+        { "r": 66, "a": 6 },
+        { "r": 308, "a": 2 },
+        { "r": 70, "a": 6 },
+        { "r": 68, "a": 6 }
+      ],
+      "p": [{ "r": 272, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0
+    },
+    "kr-additional-engine-equipment": {
+      "h": "Additional electric engine",
+      "i": [
+        { "r": 157, "a": 2 },
+        { "r": 71, "a": 5 },
+        { "r": 97, "a": 5 }
+      ],
+      "p": [{ "r": 273, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.3108
+    },
+    "kr-advanced-additional-engine-equipment": {
+      "h": "Advanced additional electric engine",
+      "i": [
+        { "r": 273, "a": 2 },
+        { "r": 97, "a": 5 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 274, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "kr-advanced-exoskeleton-equipment": {
+      "h": "Advanced exoskeleton",
+      "i": [
+        { "r": 179, "a": 1 },
+        { "r": 161, "a": 10 },
+        { "r": 136, "a": 10 },
+        { "r": 403, "a": 10 }
+      ],
+      "p": [{ "r": 275, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.4532
+    },
+    "kr-antimatter-reactor-equipment": {
+      "h": "Portable antimatter reactor",
+      "i": [
+        { "r": 329, "a": 25 },
+        { "r": 311, "a": 100 },
+        { "r": 323, "a": 25 }
+      ],
+      "p": [{ "r": 276, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.9017
+    },
+    "kr-battery-mk3-equipment": {
+      "h": "Personal battery MK3",
+      "i": [
+        { "r": 177, "a": 2 },
+        { "r": 322, "a": 4 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 277, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.464
+    },
+    "kr-big-battery-equipment": {
+      "h": "Big personal battery",
+      "i": [
+        { "r": 176, "a": 4 },
+        { "r": 66, "a": 4 },
+        { "r": 67, "a": 1 }
+      ],
+      "p": [{ "r": 278, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.2236
+    },
+    "kr-big-battery-mk2-equipment": {
+      "h": "Big personal battery MK2",
+      "i": [
+        { "r": 278, "a": 2 },
+        { "r": 97, "a": 4 },
+        { "r": 135, "a": 2 }
+      ],
+      "p": [{ "r": 279, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.338
+    },
+    "kr-big-battery-mk3-equipment": {
+      "h": "Big personal battery MK3",
+      "i": [
+        { "r": 279, "a": 2 },
+        { "r": 322, "a": 4 },
+        { "r": 136, "a": 2 }
+      ],
+      "p": [{ "r": 280, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.464
+    },
+    "kr-big-solar-panel-equipment": {
+      "h": "Big portable solar panel",
+      "i": [
+        { "r": 174, "a": 4 },
+        { "r": 303, "a": 10 }
+      ],
+      "p": [{ "r": 281, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2236
+    },
+    "kr-big-superior-solar-panel-equipment": {
+      "h": "Big portable imersite solar panel",
+      "i": [
+        { "r": 294, "a": 4 },
+        { "r": 303, "a": 40 }
+      ],
+      "p": [{ "r": 282, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.4632
+    },
+    "kr-energy-absorber-equipment": {
+      "h": "Energy absorber",
+      "i": [
+        { "r": 67, "a": 6 },
+        { "r": 68, "a": 12 },
+        { "r": 159, "a": 6 }
+      ],
+      "p": [{ "r": 283, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "x": 0.345
+    },
+    "kr-energy-shield-mk3-equipment": {
+      "h": "Energy shield MK3",
+      "i": [
+        { "r": 184, "a": 5 },
+        { "r": 303, "a": 20 },
+        { "r": 322, "a": 10 }
+      ],
+      "p": [{ "r": 284, "a": { "f": 1 }, "p": 1 }],
+      "d": 40,
+      "c": ["crafting"],
+      "x": 0.7497
+    },
+    "kr-energy-shield-mk4-equipment": {
+      "h": "Energy shield MK4",
+      "i": [
+        { "r": 284, "a": 5 },
+        { "r": 323, "a": 5 },
+        { "r": 311, "a": 10 }
+      ],
+      "p": [{ "r": 285, "a": { "f": 1 }, "p": 1 }],
+      "d": 80,
+      "c": ["crafting"],
+      "x": 0.761
+    },
+    "kr-fusion-reactor-equipment": {
+      "h": "Portable fusion reactor",
+      "i": [
+        { "r": 136, "a": 200 },
+        { "r": 161, "a": 50 }
+      ],
+      "p": [{ "r": 286, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.7548
+    },
+    "kr-personal-laser-defense-mk2-equipment": {
+      "h": "Personal laser defense MK2",
+      "i": [
+        { "r": 185, "a": 1 },
+        { "r": 322, "a": 5 },
+        { "r": 135, "a": 10 }
+      ],
+      "p": [{ "r": 287, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7703
+    },
+    "kr-personal-laser-defense-mk3-equipment": {
+      "h": "Personal laser defense MK3",
+      "i": [
+        { "r": 287, "a": 1 },
+        { "r": 136, "a": 10 },
+        { "r": 322, "a": 10 },
+        { "r": 311, "a": 5 }
+      ],
+      "p": [{ "r": 288, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7823
+    },
+    "kr-personal-laser-defense-mk4-equipment": {
+      "h": "Personal laser defense MK4",
+      "i": [
+        { "r": 288, "a": 1 },
+        { "r": 323, "a": 10 },
+        { "r": 322, "a": 20 },
+        { "r": 329, "a": 10 }
+      ],
+      "p": [{ "r": 289, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.8735
+    },
+    "kr-portable-generator-equipment": {
+      "h": "Portable generator",
+      "i": [
+        { "r": 308, "a": 2 },
+        { "r": 98, "a": 2 },
+        { "r": 291, "a": 2 }
+      ],
+      "p": [{ "r": 290, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.2891
+    },
+    "kr-small-portable-generator-equipment": {
+      "h": "Small portable generator",
+      "i": [
+        { "r": 98, "a": 1 },
+        { "r": 308, "a": 2 }
+      ],
+      "p": [{ "r": 291, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.2236
+    },
+    "kr-superior-exoskeleton-equipment": {
+      "h": "Superior exoskeleton",
+      "i": [
+        { "r": 275, "a": 1 },
+        { "r": 323, "a": 10 },
+        { "r": 311, "a": 10 },
+        { "r": 404, "a": 10 }
+      ],
+      "p": [{ "r": 292, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7479
+    },
+    "kr-superior-night-vision-equipment": {
+      "h": "Superior nightvision",
+      "i": [
+        { "r": 182, "a": 1 },
+        { "r": 161, "a": 10 },
+        { "r": 135, "a": 10 },
+        { "r": 321, "a": 5 },
+        { "r": 443, "a": 25 }
+      ],
+      "p": [{ "r": 293, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting-with-fluid"],
+      "x": 0.4632
+    },
+    "kr-superior-solar-panel-equipment": {
+      "h": "Portable superior solar panel",
+      "i": [
+        { "r": 174, "a": 1 },
+        { "r": 321, "a": 5 },
+        { "r": 443, "a": 25 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 294, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting-with-fluid"],
+      "x": 0.4632
+    },
+    "kr-vehicle-roboport-equipment": {
+      "h": "Vehicle roboport",
+      "i": [
+        { "r": 180, "a": 2 },
+        { "r": 97, "a": 4 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 295, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.3253
+    },
+    "kr-electronic-components-with-lithium": {
+      "h": "Electronic components with lithium",
+      "i": [
+        { "r": 302, "a": 3 },
+        { "r": 156, "a": 3 },
+        { "r": 300, "a": 3 },
+        { "r": 318, "a": 3 },
+        { "r": 443, "a": 20 }
+      ],
+      "p": [{ "r": 303, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-advanced-chemistry"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-air-cleaning": {
+      "h": "Air cleaning",
+      "i": [{ "r": 324, "a": 1 }],
+      "p": [{ "r": 325, "a": { "f": 1 }, "p": 0.9 }],
+      "d": 480,
+      "c": ["kr-air-purification"],
+      "x": 0.7487
+    },
+    "kr-hydrogen": {
+      "h": "Hydrogen",
+      "i": [],
+      "p": [{ "r": 439, "a": { "f": 30 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-atmosphere-condensation"],
+      "x": 0.3108
+    },
+    "kr-nitrogen": {
+      "h": "Nitrogen",
+      "i": [],
+      "p": [{ "r": 444, "a": { "f": 30 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-atmosphere-condensation"],
+      "x": 0.3108
+    },
+    "kr-oxygen": {
+      "h": "Oxygen",
+      "i": [],
+      "p": [{ "r": 445, "a": { "f": 30 }, "p": 1 }],
+      "d": 5,
+      "c": ["kr-atmosphere-condensation"],
+      "x": 0.3108
+    },
+    "kr-water-from-atmosphere": {
+      "h": "Water",
+      "i": [],
+      "p": [{ "r": 426, "a": { "f": 30 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-atmosphere-condensation"],
+      "x": 0.3108
+    },
+    "kr-biomass": {
+      "h": "Biomass",
+      "i": [
+        { "r": 432, "a": 50 },
+        { "r": 445, "a": 50 },
+        { "r": 296, "a": 2 }
+      ],
+      "p": [{ "r": 296, "a": { "f": 5 }, "p": 1 }],
+      "d": 60,
+      "c": ["kr-bioprocessing"],
+      "x": 0.7304
+    },
+    "kr-biter-virus": {
+      "h": "Anti-biter virus capsule",
+      "i": [
+        { "r": 39, "a": 1 },
+        { "r": 320, "a": 5 },
+        { "r": 443, "a": 50 },
+        { "r": 435, "a": 50 }
+      ],
+      "p": [{ "r": 46, "a": { "f": 1 }, "p": 1 }],
+      "d": 600,
+      "c": ["kr-bioprocessing"],
+      "x": 0.7889
+    },
+    "kr-pollution-filter": {
+      "h": "Pollution filter",
+      "i": [
+        { "r": 97, "a": 2 },
+        { "r": 156, "a": 2 },
+        { "r": 296, "a": 5 }
+      ],
+      "p": [{ "r": 324, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-bioprocessing"],
+      "a": true,
+      "x": 0.7487
+    },
+    "kr-restore-used-pollution-filter": {
+      "h": "Restore used pollution filter",
+      "i": [
+        { "r": 325, "a": 1 },
+        { "r": 296, "a": 5 },
+        { "r": 426, "a": 50, "f": 1 }
+      ],
+      "p": [
+        { "r": 324, "a": { "f": 1 }, "p": 1 },
+        { "r": 437, "a": { "f": 50 }, "p": 1 }
+      ],
+      "d": 10,
+      "c": ["kr-bioprocessing"],
+      "x": 0.7487
+    },
+    "kr-tritium": {
+      "h": "Tritium",
+      "i": [
+        { "r": 318, "a": 30 },
+        { "r": 314, "a": 5 },
+        { "r": 165, "a": 1 }
+      ],
+      "p": [{ "r": 326, "a": { "f": 5 }, "p": 1 }],
+      "d": 30,
+      "c": ["centrifuging"],
+      "a": true,
+      "x": 0.4943
+    },
+    "kr-ammonia": {
+      "h": "Ammonia",
+      "i": [
+        { "r": 439, "a": 50 },
+        { "r": 444, "a": 50 }
+      ],
+      "p": [{ "r": 434, "a": { "f": 50 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.3309
+    },
+    "kr-dt-fuel-cell": {
+      "h": "DT-fuel cell",
+      "i": [
+        { "r": 438, "a": 10 },
+        { "r": 326, "a": 1 },
+        { "r": 327, "a": 1 }
+      ],
+      "p": [{ "r": 328, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "x": 0.4943
+    },
+    "kr-enriched-copper": {
+      "h": "Enriched copper",
+      "i": [
+        { "r": 428, "a": 3 },
+        { "r": 426, "a": 25 },
+        { "r": 65, "a": 9 }
+      ],
+      "p": [
+        { "r": 316, "a": { "f": 6 }, "p": 1 },
+        { "r": 437, "a": { "f": 25 }, "p": 1, "i": 25 }
+      ],
+      "d": 3,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-enriched-iron": {
+      "h": "Enriched iron",
+      "i": [
+        { "r": 428, "a": 3 },
+        { "r": 426, "a": 25 },
+        { "r": 64, "a": 9 }
+      ],
+      "p": [
+        { "r": 315, "a": { "f": 6 }, "p": 1 },
+        { "r": 437, "a": { "f": 25 }, "p": 1, "i": 25 }
+      ],
+      "d": 3,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-enriched-rare-metals": {
+      "h": "Enriched rare metals",
+      "i": [
+        { "r": 440, "a": 10 },
+        { "r": 426, "a": 25 },
+        { "r": 347, "a": 9 }
+      ],
+      "p": [
+        { "r": 317, "a": { "f": 6 }, "p": 1 },
+        { "r": 437, "a": { "f": 25 }, "p": 1, "i": 25 }
+      ],
+      "d": 3,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-fertilizer": {
+      "h": "Fertilizer",
+      "i": [
+        { "r": 443, "a": 10 },
+        { "r": 296, "a": 2 }
+      ],
+      "p": [{ "r": 297, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.7304
+    },
+    "kr-hydrogen-chloride": {
+      "h": "Hydrogen chloride",
+      "i": [
+        { "r": 436, "a": 50 },
+        { "r": 439, "a": 50 }
+      ],
+      "p": [{ "r": 440, "a": { "f": 50 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.3309
+    },
+    "kr-imersite-crystal": {
+      "h": "Imersite crystal",
+      "i": [
+        { "r": 320, "a": 6 },
+        { "r": 443, "a": 10 },
+        { "r": 428, "a": 10 }
+      ],
+      "p": [{ "r": 321, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.4485
+    },
+    "kr-water": {
+      "h": "Water",
+      "i": [
+        { "r": 445, "a": 20 },
+        { "r": 439, "a": 30 }
+      ],
+      "p": [{ "r": 426, "a": { "f": 50 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "x": 0.3309
+    },
+    "kr-lithium-chloride": {
+      "h": "Lithium chloride",
+      "i": [
+        { "r": 442, "a": 50 },
+        { "r": 440, "a": 10 }
+      ],
+      "p": [{ "r": 319, "a": { "f": 5 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-lithium-sulfur-battery": {
+      "h": "Lithium-sulfur battery",
+      "i": [
+        { "r": 428, "a": 10 },
+        { "r": 318, "a": 1 },
+        { "r": 67, "a": 1 }
+      ],
+      "p": [{ "r": 322, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.3418
+    },
+    "kr-nitric-acid": {
+      "h": "Nitric acid",
+      "i": [
+        { "r": 434, "a": 50 },
+        { "r": 442, "a": 25 },
+        { "r": 314, "a": 1 }
+      ],
+      "p": [{ "r": 443, "a": { "f": 50 }, "p": 1 }],
+      "d": 5,
+      "c": ["chemistry"],
+      "a": true,
+      "x": 0.3309
+    },
+    "kr-antimatter-artillery-shell": {
+      "h": "Antimatter artillery shell",
+      "i": [
+        { "r": 311, "a": 1 },
+        { "r": 10, "a": 1 },
+        { "r": 334, "a": 1 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 15, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.912
+    },
+    "kr-antimatter-railgun-shell": {
+      "h": "Antimatter railgun shell",
+      "i": [
+        { "r": 311, "a": 1 },
+        { "r": 19, "a": 1 },
+        { "r": 334, "a": 1 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 21, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.912
+    },
+    "kr-antimatter-rocket": {
+      "h": "Antimatter rocket",
+      "i": [
+        { "r": 311, "a": 2 },
+        { "r": 17, "a": 1 },
+        { "r": 334, "a": 3 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 18, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.912
+    },
+    "kr-antimatter-turret-rocket": {
+      "h": "Antimatter turret rocket",
+      "i": [
+        { "r": 311, "a": 1 },
+        { "r": 22, "a": 1 },
+        { "r": 334, "a": 1 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 24, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.912
+    },
+    "kr-automation-core": {
+      "h": "Automation core",
+      "i": [
+        { "r": 70, "a": 4 },
+        { "r": 69, "a": 4 },
+        { "r": 67, "a": 6 }
+      ],
+      "p": [{ "r": 298, "a": { "f": 2 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0422
+    },
+    "kr-basic-railgun-shell": {
+      "h": "Railgun shell",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 135, "a": 1 }
+      ],
+      "p": [{ "r": 19, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7629
+    },
+    "kr-basic-tech-card": {
+      "h": "Basic tech card",
+      "i": [
+        { "r": 61, "a": 5 },
+        { "r": 68, "a": 5 }
+      ],
+      "p": [{ "r": 342, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "kr-biter-research-data": {
+      "h": "Biter research data",
+      "i": [
+        { "r": 296, "a": 10 },
+        { "r": 304, "a": 5 },
+        { "r": 97, "a": 5 }
+      ],
+      "p": [{ "r": 339, "a": { "f": 5 }, "p": 1 }],
+      "d": 40,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.6423
+    },
+    "kr-blank-tech-card": {
+      "h": "Blank tech card",
+      "i": [
+        { "r": 66, "a": 2 },
+        { "r": 68, "a": 2 }
+      ],
+      "p": [{ "r": 338, "a": { "f": 5 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0762
+    },
+    "kr-electronic-components": {
+      "h": "Electronic components",
+      "i": [
+        { "r": 302, "a": 2 },
+        { "r": 156, "a": 2 },
+        { "r": 300, "a": 2 }
+      ],
+      "p": [{ "r": 303, "a": { "f": 4 }, "p": 1 }],
+      "d": 4,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.2156
+    },
+    "kr-empty-dt-fuel-cell": {
+      "h": "Empty DT-fuel cell",
+      "i": [
+        { "r": 161, "a": 2 },
+        { "r": 314, "a": 1 }
+      ],
+      "p": [{ "r": 327, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.4943
+    },
+    "kr-energy-control-unit": {
+      "h": "Energy control unit",
+      "i": [
+        { "r": 161, "a": 6 },
+        { "r": 321, "a": 3 },
+        { "r": 303, "a": 9 },
+        { "r": 322, "a": 3 }
+      ],
+      "p": [{ "r": 329, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.613
+    },
+    "kr-explosive-railgun-shell": {
+      "h": "Explosive railgun shell",
+      "i": [
+        { "r": 19, "a": 1 },
+        { "r": 158, "a": 3 }
+      ],
+      "p": [{ "r": 20, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7629
+    },
+    "kr-explosive-turret-rocket": {
+      "h": "Explosive turret rocket",
+      "i": [
+        { "r": 101, "a": 10 },
+        { "r": 136, "a": 1 },
+        { "r": 97, "a": 5 },
+        { "r": 158, "a": 5 }
+      ],
+      "p": [{ "r": 22, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7901
+    },
+    "kr-first-aid-kit": {
+      "h": "First aid kit",
+      "i": [
+        { "r": 296, "a": 1 },
+        { "r": 61, "a": 1 },
+        { "r": 66, "a": 1 }
+      ],
+      "p": [{ "r": 48, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.7304
+    },
+    "kr-gps-satellite": {
+      "h": "GPS satellite",
+      "i": [
+        { "r": 163, "a": 1 },
+        { "r": 136, "a": 1 },
+        { "r": 323, "a": 4 }
+      ],
+      "p": [{ "r": 336, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.8734
+    },
+    "kr-heavy-rocket": {
+      "h": "Heavy rocket",
+      "i": [
+        { "r": 158, "a": 10 },
+        { "r": 97, "a": 5 },
+        { "r": 101, "a": 10 },
+        { "r": 156, "a": 5 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 17, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.7736
+    },
+    "kr-heavy-rocket-launcher": {
+      "h": "Heavy rocket launcher",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 161, "a": 5 },
+        { "r": 309, "a": 1 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 58, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.7736
+    },
+    "kr-imersite-rounds-magazine": {
+      "h": "Imersite rounds magazine",
+      "i": [
+        { "r": 321, "a": 2 },
+        { "r": 12, "a": 1 }
+      ],
+      "p": [{ "r": 14, "a": { "f": 1 }, "p": 1 }],
+      "d": 20,
+      "c": ["crafting"],
+      "x": 0.7736
+    },
+    "kr-imersium-beam": {
+      "h": "Imersium beam",
+      "i": [{ "r": 311, "a": 2 }],
+      "p": [{ "r": 313, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.6193
+    },
+    "kr-imersium-gear-wheel": {
+      "h": "Imersium gear wheel",
+      "i": [{ "r": 311, "a": 1 }],
+      "p": [{ "r": 312, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.6193
+    },
+    "kr-impulse-rifle": {
+      "h": "Impulse rifle",
+      "i": [
+        { "r": 97, "a": 5 },
+        { "r": 161, "a": 5 },
+        { "r": 321, "a": 1 },
+        { "r": 309, "a": 1 }
+      ],
+      "p": [{ "r": 59, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["crafting"],
+      "x": 0.7736
+    },
+    "kr-impulse-rifle-ammo": {
+      "h": "Impulse rifle ammo",
+      "i": [
+        { "r": 322, "a": 1 },
+        { "r": 321, "a": 3 },
+        { "r": 156, "a": 1 }
+      ],
+      "p": [{ "r": 16, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.7736
+    },
+    "kr-inserter-parts": {
+      "h": "Inserter parts",
+      "i": [
+        { "r": 69, "a": 2 },
+        { "r": 70, "a": 2 }
+      ],
+      "p": [{ "r": 335, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "kr-iron-beam": {
+      "h": "Iron beam",
+      "i": [{ "r": 66, "a": 2 }],
+      "p": [{ "r": 308, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0
+    },
+    "kr-matter-stabilizer": {
+      "h": "Matter stabilizer",
+      "i": [
+        { "r": 311, "a": 6 },
+        { "r": 329, "a": 3 },
+        { "r": 136, "a": 3 }
+      ],
+      "p": [{ "r": 330, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.6423
+    },
+    "kr-nuclear-artillery-shell": {
+      "h": "Nuclear artillery shell",
+      "i": [
+        { "r": 136, "a": 10 },
+        { "r": 97, "a": 10 },
+        { "r": 10, "a": 1 },
+        { "r": 165, "a": 10 }
+      ],
+      "p": [{ "r": 25, "a": { "f": 1 }, "p": 1 }],
+      "d": 15,
+      "c": ["crafting"],
+      "x": 0.7851
+    },
+    "kr-nuclear-turret-rocket": {
+      "h": "Nuclear turret rocket",
+      "i": [
+        { "r": 22, "a": 1 },
+        { "r": 97, "a": 5 },
+        { "r": 165, "a": 10 },
+        { "r": 136, "a": 1 }
+      ],
+      "p": [{ "r": 23, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "x": 0.7901
+    },
+    "kr-steel-beam": {
+      "h": "Steel beam",
+      "i": [{ "r": 97, "a": 2 }],
+      "p": [{ "r": 310, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0909
+    },
+    "kr-steel-gear-wheel": {
+      "h": "Steel gear wheel",
+      "i": [{ "r": 97, "a": 1 }],
+      "p": [{ "r": 309, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.0909
+    },
+    "kr-ai-core": {
+      "h": "AI core",
+      "i": [
+        { "r": 136, "a": 2 },
+        { "r": 321, "a": 2 },
+        { "r": 443, "a": 10 }
+      ],
+      "p": [{ "r": 323, "a": { "f": 2 }, "p": 1 }],
+      "d": 16,
+      "c": ["crafting-with-fluid"],
+      "a": true,
+      "x": 0.4769
+    },
+    "kr-empty-antimatter-fuel-cell": {
+      "h": "Empty antimatter fuel cell",
+      "i": [
+        { "r": 443, "a": 50 },
+        { "r": 329, "a": 10 },
+        { "r": 311, "a": 8 },
+        { "r": 330, "a": 2 }
+      ],
+      "p": [{ "r": 333, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting-with-fluid"],
+      "a": true,
+      "x": 0.8978
+    },
+    "kr-landfill-with-sand": {
+      "h": "Landfill with sand",
+      "i": [
+        { "r": 299, "a": 50 },
+        { "r": 426, "a": 50 }
+      ],
+      "p": [{ "r": 116, "a": { "f": 1 }, "p": 1 }],
+      "d": 0.5,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1668
+    },
+    "kr-crush-bulk-inserter": {
+      "h": "Crush Bulk inserter",
+      "i": [{ "r": 122, "a": 1 }],
+      "p": [
+        { "r": 335, "a": { "f": 1 }, "p": 1 },
+        { "r": 303, "a": { "f": 2 }, "p": 1 }
+      ],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.2218
+    },
+    "kr-crush-burner-inserter": {
+      "h": "Crush Burner inserter",
+      "i": [{ "r": 76, "a": 1 }],
+      "p": [{ "r": 335, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0
+    },
+    "kr-crush-fast-inserter": {
+      "h": "Crush Fast inserter",
+      "i": [{ "r": 78, "a": 1 }],
+      "p": [{ "r": 335, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.1007
+    },
+    "kr-crush-inserter": {
+      "h": "Crush Inserter",
+      "i": [{ "r": 77, "a": 1 }],
+      "p": [{ "r": 335, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.0836
+    },
+    "kr-crush-long-handed-inserter": {
+      "h": "Crush Long-handed inserter",
+      "i": [{ "r": 79, "a": 1 }],
+      "p": [{ "r": 335, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.0836
+    },
+    "kr-crush-kr-superior-inserter": {
+      "h": "Crush Superior inserter",
+      "i": [{ "r": 263, "a": 1 }],
+      "p": [
+        { "r": 335, "a": { "f": 1 }, "p": 1 },
+        { "r": 303, "a": { "f": 4 }, "p": 1 },
+        { "r": 320, "a": { "f": 3 }, "p": 1 }
+      ],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.7479
+    },
+    "kr-crush-kr-superior-long-inserter": {
+      "h": "Crush Superior long inserter",
+      "i": [{ "r": 265, "a": 1 }],
+      "p": [
+        { "r": 335, "a": { "f": 1 }, "p": 1 },
+        { "r": 303, "a": { "f": 4 }, "p": 1 },
+        { "r": 320, "a": { "f": 6 }, "p": 1 }
+      ],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.7479
+    },
+    "kr-crush-kr-imersite-crystal": {
+      "h": "Crush Imersite crystal",
+      "i": [{ "r": 321, "a": 1 }],
+      "p": [{ "r": 320, "a": { "f": 3 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "x": 0.4485
+    },
+    "kr-imersite-powder": {
+      "h": "Imersite powder",
+      "i": [{ "r": 346, "a": 3 }],
+      "p": [
+        { "r": 320, "a": { "f": 3 }, "p": 1 },
+        { "r": 299, "a": { "f": 3 }, "p": 1 }
+      ],
+      "d": 3,
+      "c": ["kr-crushing"],
+      "a": true,
+      "x": 0.4485
+    },
+    "kr-sand": {
+      "h": "Sand",
+      "i": [{ "r": 63, "a": 3 }],
+      "p": [{ "r": 299, "a": { "n": 7, "x": 8 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-crushing"],
+      "a": true,
+      "x": 0.0793
+    },
+    "kr-heavy-water": {
+      "h": "Heavy water",
+      "i": [{ "r": 426, "a": 500 }],
+      "p": [{ "r": 438, "a": { "f": 20 }, "p": 1 }],
+      "d": 120,
+      "c": ["kr-electrolysis"],
+      "a": true,
+      "x": 0.4943
+    },
+    "kr-water-electrolysis": {
+      "h": "Water electrolysis",
+      "i": [
+        { "r": 299, "a": 10 },
+        { "r": 426, "a": 40 }
+      ],
+      "p": [
+        { "r": 436, "a": { "f": 20 }, "p": 1 },
+        { "r": 439, "a": { "f": 30 }, "p": 1 }
+      ],
+      "d": 3,
+      "c": ["kr-electrolysis"],
+      "x": 0.179
+    },
+    "kr-water-separation": {
+      "h": "Water separation",
+      "i": [{ "r": 426, "a": 50 }],
+      "p": [
+        { "r": 445, "a": { "f": 20 }, "p": 1 },
+        { "r": 439, "a": { "f": 30 }, "p": 1 }
+      ],
+      "d": 3,
+      "c": ["kr-electrolysis"],
+      "x": 0.3309
+    },
+    "kr-lithium": {
+      "h": "Lithium",
+      "i": [
+        { "r": 319, "a": 5 },
+        { "r": 426, "a": 50 }
+      ],
+      "p": [
+        { "r": 436, "a": { "f": 10 }, "p": 1 },
+        { "r": 318, "a": { "f": 5 }, "p": 1 }
+      ],
+      "d": 25,
+      "c": ["kr-electrolysis"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-coal-filtration": {
+      "h": "Coal filtration",
+      "i": [{ "r": 430, "a": 80 }],
+      "p": [
+        { "r": 62, "a": { "f": 8 }, "p": 1 },
+        { "r": 426, "a": { "f": 40 }, "p": 1 }
+      ],
+      "d": 2,
+      "c": ["kr-fluid-filtration"],
+      "x": 0.4336
+    },
+    "kr-filter-iron-ore-from-dirty-water": {
+      "h": "Filter iron ore from dirty water",
+      "i": [{ "r": 437, "a": 100 }],
+      "p": [
+        { "r": 426, "a": { "f": 100 }, "p": 1 },
+        { "r": 63, "a": { "f": 1 }, "p": 0.3 },
+        { "r": 64, "a": { "f": 1 }, "p": 0.1 }
+      ],
+      "d": 2,
+      "c": ["kr-fluid-filtration"],
+      "x": 0.338
+    },
+    "kr-filter-copper-ore-from-dirty-water": {
+      "h": "Filter copper ore from dirty water",
+      "i": [{ "r": 437, "a": 100 }],
+      "p": [
+        { "r": 426, "a": { "f": 100 }, "p": 1 },
+        { "r": 63, "a": { "f": 1 }, "p": 0.3 },
+        { "r": 65, "a": { "f": 1 }, "p": 0.1 }
+      ],
+      "d": 2,
+      "c": ["kr-fluid-filtration"],
+      "x": 0.338
+    },
+    "kr-filter-rare-metal-ore-from-dirty-water": {
+      "h": "Filter rare metal ore from dirty water",
+      "i": [{ "r": 437, "a": 100 }],
+      "p": [
+        { "r": 426, "a": { "f": 100 }, "p": 1 },
+        { "r": 63, "a": { "f": 1 }, "p": 0.3 },
+        { "r": 347, "a": { "f": 1 }, "p": 0.05 }
+      ],
+      "d": 2,
+      "c": ["kr-fluid-filtration"],
+      "x": 0.338
+    },
+    "kr-quartz": {
+      "h": "Quartz",
+      "i": [
+        { "r": 299, "a": 10 },
+        { "r": 426, "a": 10 }
+      ],
+      "p": [{ "r": 301, "a": { "f": 6 }, "p": 1 }],
+      "d": 2.1,
+      "c": ["kr-fluid-filtration"],
+      "a": true,
+      "x": 0.1959
+    },
+    "kr-advanced-fuel": {
+      "h": "Advanced fuel",
+      "i": [
+        { "r": 305, "a": 10 },
+        { "r": 320, "a": 6 }
+      ],
+      "p": [{ "r": 307, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.4579
+    },
+    "kr-biofuel": {
+      "h": "Biofuel",
+      "i": [
+        { "r": 305, "a": 6 },
+        { "r": 435, "a": 50 }
+      ],
+      "p": [{ "r": 306, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.3363
+    },
+    "kr-biomethanol": {
+      "h": "Biomethanol",
+      "i": [
+        { "r": 61, "a": 5 },
+        { "r": 445, "a": 60 },
+        { "r": 427, "a": 120 }
+      ],
+      "p": [{ "r": 435, "a": { "f": 120 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-fuel-refinery"],
+      "a": true
+    },
+    "kr-fuel-from-light-oil": {
+      "h": "Fuel from light oil",
+      "i": [{ "r": 431, "a": 60 }],
+      "p": [{ "r": 305, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.296
+    },
+    "kr-fuel-from-solid-fuel": {
+      "h": "Fuel from solid fuel",
+      "i": [
+        { "r": 100, "a": 6 },
+        { "r": 439, "a": 50 }
+      ],
+      "p": [{ "r": 305, "a": { "f": 10 }, "p": 1 }],
+      "d": 10,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.202
+    },
+    "kr-rocket-fuel-with-ammonia": {
+      "h": "Rocket fuel with ammonia",
+      "i": [
+        { "r": 66, "a": 1 },
+        { "r": 434, "a": 50 },
+        { "r": 445, "a": 50 }
+      ],
+      "p": [{ "r": 101, "a": { "f": 1 }, "p": 1 }],
+      "d": 16,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.3309
+    },
+    "kr-rocket-fuel-with-hydrogen-chloride": {
+      "h": "Rocket fuel with hydrogen chloride",
+      "i": [
+        { "r": 66, "a": 1 },
+        { "r": 440, "a": 50 },
+        { "r": 445, "a": 50 }
+      ],
+      "p": [{ "r": 101, "a": { "f": 1 }, "p": 1 }],
+      "d": 16,
+      "c": ["kr-fuel-refinery"],
+      "a": true,
+      "x": 0.3309
+    },
+    "wood": {
+      "h": "Wood",
+      "i": [{ "r": 426, "a": 200 }],
+      "p": [{ "r": 61, "a": { "f": 40 }, "p": 1 }],
+      "d": 60,
+      "c": ["kr-growing"],
+      "x": 0.087
+    },
+    "kr-wood-with-fertilizer": {
+      "h": "Wood with fertilizer",
+      "i": [
+        { "r": 426, "a": 200 },
+        { "r": 297, "a": 1 }
+      ],
+      "p": [{ "r": 61, "a": { "f": 80 }, "p": 1 }],
+      "d": 60,
+      "c": ["kr-growing"],
+      "x": 0.7304
+    },
+    "kr-charged-antimatter-fuel-cell": {
+      "h": "Charged antimatter fuel cell",
+      "i": [
+        { "r": 441, "a": 1000 },
+        { "r": 333, "a": 1 }
+      ],
+      "p": [{ "r": 334, "a": { "f": 1 }, "p": 1 }],
+      "d": 5,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.8978
+    },
+    "kr-coke-liquefaction": {
+      "h": "Coke liquefaction",
+      "i": [
+        { "r": 304, "a": 10 },
+        { "r": 431, "a": 25 },
+        { "r": 427, "a": 50 }
+      ],
+      "p": [
+        { "r": 430, "a": { "f": 20 }, "p": 1 },
+        { "r": 431, "a": { "f": 90 }, "p": 1 },
+        { "r": 432, "a": { "f": 10 }, "p": 1 }
+      ],
+      "d": 5,
+      "c": ["oil-processing"],
+      "a": true
+    },
+    "kr-coke": {
+      "h": "Coke",
+      "i": [
+        { "r": 62, "a": 6 },
+        { "r": 61, "a": 6 }
+      ],
+      "p": [{ "r": 304, "a": { "f": 6 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.0909
+    },
+    "kr-copper-plate-from-enriched-copper": {
+      "h": "Copper plate from enriched copper",
+      "i": [{ "r": 316, "a": 5 }],
+      "p": [{ "r": 67, "a": { "f": 5 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-iron-plate-from-enriched-iron": {
+      "h": "Iron plate from enriched iron",
+      "i": [{ "r": 315, "a": 5 }],
+      "p": [{ "r": 66, "a": { "f": 5 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-glass": {
+      "h": "Glass",
+      "i": [{ "r": 299, "a": 16 }],
+      "p": [{ "r": 300, "a": { "f": 8 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.0793
+    },
+    "kr-imersium-plate": {
+      "h": "Imersium plate",
+      "i": [
+        { "r": 320, "a": 9 },
+        { "r": 314, "a": 6 }
+      ],
+      "p": [{ "r": 311, "a": { "f": 3 }, "p": 1 }],
+      "d": 32,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.6193
+    },
+    "kr-rare-metals": {
+      "h": "Rare metals",
+      "i": [{ "r": 347, "a": 10 }],
+      "p": [{ "r": 314, "a": { "f": 5 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.289
+    },
+    "kr-rare-metals-from-enriched-rare-metals": {
+      "h": "Rare metals from enriched rare metals",
+      "i": [{ "r": 317, "a": 5 }],
+      "p": [{ "r": 314, "a": { "f": 5 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.338
+    },
+    "kr-silicon": {
+      "h": "Silicon",
+      "i": [{ "r": 301, "a": 18 }],
+      "p": [{ "r": 302, "a": { "f": 9 }, "p": 1 }],
+      "d": 16,
+      "c": ["smelting"],
+      "a": true,
+      "x": 0.1959
+    },
+    "kr-charged-matter-stabilizer": {
+      "h": "Charged Matter stabilizer",
+      "i": [{ "r": 330, "a": 1 }],
+      "p": [{ "r": 331, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["kr-stabilizer-charging"],
+      "x": 0.6423
+    },
+    "kr-advanced-tech-card": {
+      "h": "Advanced tech card",
+      "i": [
+        { "r": 338, "a": 15 },
+        { "r": 312, "a": 20 },
+        { "r": 322, "a": 10 },
+        { "r": 157, "a": 5 }
+      ],
+      "p": [{ "r": 344, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t3-tech-cards"],
+      "a": true,
+      "x": 0.6386
+    },
+    "kr-matter-research-data": {
+      "h": "Matter research data",
+      "i": [
+        { "r": 321, "a": 5 },
+        { "r": 314, "a": 5 },
+        { "r": 318, "a": 5 },
+        { "r": 156, "a": 5 }
+      ],
+      "p": [{ "r": 340, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t3-tech-cards"],
+      "a": true,
+      "x": 0.5099
+    },
+    "kr-matter-tech-card": {
+      "h": "Matter tech card",
+      "i": [
+        { "r": 338, "a": 15 },
+        { "r": 340, "a": 5 },
+        { "r": 136, "a": 5 }
+      ],
+      "p": [{ "r": 343, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t3-tech-cards"],
+      "a": true,
+      "x": 0.5099
+    },
+    "kr-singularity-tech-card": {
+      "h": "Singularity tech card",
+      "i": [
+        { "r": 338, "a": 15 },
+        { "r": 331, "a": 5 },
+        { "r": 323, "a": 5 }
+      ],
+      "p": [{ "r": 345, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t3-tech-cards"],
+      "a": true,
+      "x": 0.7641
+    },
+    "space-science-pack": {
+      "h": "Optimization tech card",
+      "i": [
+        { "r": 338, "a": 10 },
+        { "r": 341, "a": 5 }
+      ],
+      "p": [{ "r": 128, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-t3-tech-cards"],
+      "a": true,
+      "x": 0.5064
+    },
+    "kr-black-reinforced-plate": {
+      "h": "Black reinforced plate",
+      "i": [
+        { "r": 113, "a": 20 },
+        { "r": 310, "a": 5 }
+      ],
+      "p": [{ "r": 348, "a": { "f": 10 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.3132
+    },
+    "kr-white-reinforced-plate": {
+      "h": "Light reinforced plate",
+      "i": [
+        { "r": 113, "a": 20 },
+        { "r": 310, "a": 5 }
+      ],
+      "p": [{ "r": 349, "a": { "f": 10 }, "p": 1 }],
+      "d": 5,
+      "c": ["crafting"],
+      "x": 0.3132
+    },
+    "kr-advanced-tank": {
+      "h": "Tank",
+      "i": [
+        { "r": 398, "a": 2 },
+        { "r": 311, "a": 50 },
+        { "r": 161, "a": 100 },
+        { "r": 312, "a": 50 },
+        { "r": 329, "a": 10 },
+        { "r": 314, "a": 50 }
+      ],
+      "p": [{ "r": 400, "a": { "f": 1 }, "p": 1 }],
+      "d": 200,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.7742
+    },
+    "kr-nuclear-locomotive": {
+      "h": "Nuclear locomotive",
+      "i": [
+        { "r": 394, "a": 1 },
+        { "r": 303, "a": 20 },
+        { "r": 309, "a": 20 },
+        { "r": 136, "a": 20 },
+        { "r": 314, "a": 80 }
+      ],
+      "p": [{ "r": 401, "a": { "f": 1 }, "p": 1 }],
+      "d": 60,
+      "c": ["crafting"],
+      "a": true,
+      "x": 0.4547
+    },
+    "water-barrel": {
+      "h": "Fill Water barrel",
+      "i": [
+        { "r": 426, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 352, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "empty-water-barrel": {
+      "h": "Empty Water barrel",
+      "i": [{ "r": 352, "a": 1 }],
+      "p": [
+        { "r": 426, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "sulfuric-acid-barrel": {
+      "h": "Fill Sulfuric acid barrel",
+      "i": [
+        { "r": 428, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 353, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.2031
+    },
+    "empty-sulfuric-acid-barrel": {
+      "h": "Empty Sulfuric acid barrel",
+      "i": [{ "r": 353, "a": 1 }],
+      "p": [
+        { "r": 428, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.2031
+    },
+    "crude-oil-barrel": {
+      "h": "Fill Crude oil barrel",
+      "i": [
+        { "r": 429, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 354, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "empty-crude-oil-barrel": {
+      "h": "Empty Crude oil barrel",
+      "i": [{ "r": 354, "a": 1 }],
+      "p": [
+        { "r": 429, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "heavy-oil-barrel": {
+      "h": "Fill Heavy oil barrel",
+      "i": [
+        { "r": 430, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 355, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.296
+    },
+    "empty-heavy-oil-barrel": {
+      "h": "Empty Heavy oil barrel",
+      "i": [{ "r": 355, "a": 1 }],
+      "p": [
+        { "r": 430, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.296
+    },
+    "light-oil-barrel": {
+      "h": "Fill Light oil barrel",
+      "i": [
+        { "r": 431, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 356, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.296
+    },
+    "empty-light-oil-barrel": {
+      "h": "Empty Light oil barrel",
+      "i": [{ "r": 356, "a": 1 }],
+      "p": [
+        { "r": 431, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.296
+    },
+    "petroleum-gas-barrel": {
+      "h": "Fill Petroleum gas barrel",
+      "i": [
+        { "r": 432, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 357, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1949
+    },
+    "empty-petroleum-gas-barrel": {
+      "h": "Empty Petroleum gas barrel",
+      "i": [{ "r": 357, "a": 1 }],
+      "p": [
+        { "r": 432, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1949
+    },
+    "lubricant-barrel": {
+      "h": "Fill Lubricant barrel",
+      "i": [
+        { "r": 433, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 358, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3049
+    },
+    "empty-lubricant-barrel": {
+      "h": "Empty Lubricant barrel",
+      "i": [{ "r": 358, "a": 1 }],
+      "p": [
+        { "r": 433, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3049
+    },
+    "kr-ammonia-barrel": {
+      "h": "Fill Ammonia barrel",
+      "i": [
+        { "r": 434, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 359, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "empty-kr-ammonia-barrel": {
+      "h": "Empty Ammonia barrel",
+      "i": [{ "r": 359, "a": 1 }],
+      "p": [
+        { "r": 434, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "kr-biomethanol-barrel": {
+      "h": "Fill Biomethanol barrel",
+      "i": [
+        { "r": 435, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 360, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "empty-kr-biomethanol-barrel": {
+      "h": "Empty Biomethanol barrel",
+      "i": [{ "r": 360, "a": 1 }],
+      "p": [
+        { "r": 435, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "kr-chlorine-barrel": {
+      "h": "Fill Chlorine barrel",
+      "i": [
+        { "r": 436, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 361, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "empty-kr-chlorine-barrel": {
+      "h": "Empty Chlorine barrel",
+      "i": [{ "r": 361, "a": 1 }],
+      "p": [
+        { "r": 436, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "kr-dirty-water-barrel": {
+      "h": "Fill Dirty water barrel",
+      "i": [
+        { "r": 437, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 362, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.338
+    },
+    "empty-kr-dirty-water-barrel": {
+      "h": "Empty Dirty water barrel",
+      "i": [{ "r": 362, "a": 1 }],
+      "p": [
+        { "r": 437, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.338
+    },
+    "kr-heavy-water-barrel": {
+      "h": "Fill Heavy water barrel",
+      "i": [
+        { "r": 438, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 363, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.4943
+    },
+    "empty-kr-heavy-water-barrel": {
+      "h": "Empty Heavy water barrel",
+      "i": [{ "r": 363, "a": 1 }],
+      "p": [
+        { "r": 438, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.4943
+    },
+    "kr-hydrogen-barrel": {
+      "h": "Fill Hydrogen barrel",
+      "i": [
+        { "r": 439, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 364, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "empty-kr-hydrogen-barrel": {
+      "h": "Empty Hydrogen barrel",
+      "i": [{ "r": 364, "a": 1 }],
+      "p": [
+        { "r": 439, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "kr-hydrogen-chloride-barrel": {
+      "h": "Fill Hydrogen chloride barrel",
+      "i": [
+        { "r": 440, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 365, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "empty-kr-hydrogen-chloride-barrel": {
+      "h": "Empty Hydrogen chloride barrel",
+      "i": [{ "r": 365, "a": 1 }],
+      "p": [
+        { "r": 440, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "kr-mineral-water-barrel": {
+      "h": "Fill Mineral water barrel",
+      "i": [
+        { "r": 442, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 366, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "empty-kr-mineral-water-barrel": {
+      "h": "Empty Mineral water barrel",
+      "i": [{ "r": 366, "a": 1 }],
+      "p": [
+        { "r": 442, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.1859
+    },
+    "kr-nitric-acid-barrel": {
+      "h": "Fill Nitric acid barrel",
+      "i": [
+        { "r": 443, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 367, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "empty-kr-nitric-acid-barrel": {
+      "h": "Empty Nitric acid barrel",
+      "i": [{ "r": 367, "a": 1 }],
+      "p": [
+        { "r": 443, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3309
+    },
+    "kr-nitrogen-barrel": {
+      "h": "Fill Nitrogen barrel",
+      "i": [
+        { "r": 444, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 368, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3108
+    },
+    "empty-kr-nitrogen-barrel": {
+      "h": "Empty Nitrogen barrel",
+      "i": [{ "r": 368, "a": 1 }],
+      "p": [
+        { "r": 444, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3108
+    },
+    "kr-oxygen-barrel": {
+      "h": "Fill Oxygen barrel",
+      "i": [
+        { "r": 445, "a": 50 },
+        { "r": 155, "a": 1 }
+      ],
+      "p": [{ "r": 369, "a": { "f": 1 }, "p": 1, "i": 1 }],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3108
+    },
+    "empty-kr-oxygen-barrel": {
+      "h": "Empty Oxygen barrel",
+      "i": [{ "r": 369, "a": 1 }],
+      "p": [
+        { "r": 445, "a": { "f": 50 }, "p": 1, "i": 50 },
+        { "r": 155, "a": { "f": 1 }, "p": 1, "i": 1 }
+      ],
+      "d": 0.2,
+      "c": ["crafting-with-fluid"],
+      "x": 0.3108
+    },
+    "kr-burn-water": {
+      "h": "Burn Water",
+      "i": [{ "r": 426, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-steam": {
+      "h": "Burn Steam",
+      "i": [{ "r": 427, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"]
+    },
+    "kr-burn-sulfuric-acid": {
+      "h": "Burn Sulfuric acid",
+      "i": [{ "r": 428, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.2031
+    },
+    "kr-burn-crude-oil": {
+      "h": "Burn Crude oil",
+      "i": [{ "r": 429, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-heavy-oil": {
+      "h": "Burn Heavy oil",
+      "i": [{ "r": 430, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.296
+    },
+    "kr-burn-light-oil": {
+      "h": "Burn Light oil",
+      "i": [{ "r": 431, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.296
+    },
+    "kr-burn-petroleum-gas": {
+      "h": "Burn Petroleum gas",
+      "i": [{ "r": 432, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-lubricant": {
+      "h": "Burn Lubricant",
+      "i": [{ "r": 433, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3049
+    },
+    "kr-burn-kr-ammonia": {
+      "h": "Burn Ammonia",
+      "i": [{ "r": 434, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3309
+    },
+    "kr-burn-kr-biomethanol": {
+      "h": "Burn Biomethanol",
+      "i": [{ "r": 435, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3309
+    },
+    "kr-burn-kr-chlorine": {
+      "h": "Burn Chlorine",
+      "i": [{ "r": 436, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-kr-dirty-water": {
+      "h": "Burn Dirty water",
+      "i": [{ "r": 437, "a": 100 }],
+      "p": [{ "r": 63, "a": { "f": 1 }, "p": 0.3 }],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.338
+    },
+    "kr-burn-kr-heavy-water": {
+      "h": "Burn Heavy water",
+      "i": [{ "r": 438, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.4943
+    },
+    "kr-burn-kr-hydrogen": {
+      "h": "Burn Hydrogen",
+      "i": [{ "r": 439, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-kr-hydrogen-chloride": {
+      "h": "Burn Hydrogen chloride",
+      "i": [{ "r": 440, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3309
+    },
+    "kr-burn-kr-mineral-water": {
+      "h": "Burn Mineral water",
+      "i": [{ "r": 442, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.1949
+    },
+    "kr-burn-kr-nitric-acid": {
+      "h": "Burn Nitric acid",
+      "i": [{ "r": 443, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3309
+    },
+    "kr-burn-kr-nitrogen": {
+      "h": "Burn Nitrogen",
+      "i": [{ "r": 444, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3108
+    },
+    "kr-burn-kr-oxygen": {
+      "h": "Burn Oxygen",
+      "i": [{ "r": 445, "a": 100 }],
+      "p": [],
+      "d": 2,
+      "c": ["kr-fuel-burning"],
+      "x": 0.3108
+    },
+    "tree-01": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 370, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-02": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 371, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-02-red": {
+      "h": "Red tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 372, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-03": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 373, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-04": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 374, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-05": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 375, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-06": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 376, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-06-brown": {
+      "h": "Brown tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 377, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-07": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 378, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-08": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 379, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-08-brown": {
+      "h": "Brown tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 380, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-08-red": {
+      "h": "Red tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 381, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-09": {
+      "h": "Tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 382, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-09-brown": {
+      "h": "Brown tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 383, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "tree-09-red": {
+      "h": "Red tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 384, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "dry-tree": {
+      "h": "Dry tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 385, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "dead-tree-desert": {
+      "h": "Dead tree - desert",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 386, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "dead-grey-trunk": {
+      "h": "Dead grey trunk",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 387, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "dead-dry-hairy-tree": {
+      "h": "Dead dry hairy tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 388, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "dry-hairy-tree": {
+      "h": "Dry hairy tree",
+      "i": [
+        { "r": 61, "a": 40 },
+        { "r": 426, "a": 100 }
+      ],
+      "p": [{ "r": 389, "a": { "f": 1 }, "p": 1 }],
+      "d": 30,
+      "c": ["kr-growing"],
+      "x": 0.0904
+    },
+    "huge-rock": {
+      "h": "Huge rock",
+      "i": [
+        { "r": 62, "a": 50 },
+        { "r": 63, "a": 75 }
+      ],
+      "p": [{ "r": 390, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0904
+    },
+    "big-rock": {
+      "h": "Big rock",
+      "i": [
+        { "r": 62, "a": 50 },
+        { "r": 63, "a": 75 }
+      ],
+      "p": [{ "r": 391, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0904
+    },
+    "big-sand-rock": {
+      "h": "Big sand rock",
+      "i": [
+        { "r": 62, "a": 50 },
+        { "r": 63, "a": 75 }
+      ],
+      "p": [{ "r": 392, "a": { "f": 1 }, "p": 1 }],
+      "d": 10,
+      "c": ["crafting"],
+      "x": 0.0904
+    },
+    "kr-kr-biomass-to-matter": {
+      "h": "Convert Biomass into matter",
+      "i": [{ "r": 296, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6423
+    },
+    "kr-matter-to-kr-biomass": {
+      "h": "Get Biomass from matter",
+      "i": [{ "r": 441, "a": 5 }],
+      "p": [{ "r": 296, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6423
+    },
+    "kr-coal-to-matter": {
+      "h": "Convert Coal into matter",
+      "i": [{ "r": 62, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 3.5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-coal": {
+      "h": "Get Coal from matter",
+      "i": [{ "r": 441, "a": 3.5 }],
+      "p": [{ "r": 62, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-copper-ore-to-matter": {
+      "h": "Convert Copper ore into matter",
+      "i": [{ "r": 65, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-copper-ore": {
+      "h": "Get Copper ore from matter",
+      "i": [{ "r": 441, "a": 5 }],
+      "p": [{ "r": 65, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-crude-oil-to-matter": {
+      "h": "Convert Crude oil into matter",
+      "i": [{ "r": 429, "a": 100 }],
+      "p": [{ "r": 441, "a": { "f": 6 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-crude-oil": {
+      "h": "Get Crude oil from matter",
+      "i": [{ "r": 441, "a": 6 }],
+      "p": [{ "r": 429, "a": { "f": 100 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-kr-imersite-powder-to-matter": {
+      "h": "Convert Imersite powder into matter",
+      "i": [{ "r": 320, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 3.35 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-imersite-powder": {
+      "h": "Get Imersite powder from matter",
+      "i": [{ "r": 441, "a": 3.35 }],
+      "p": [{ "r": 320, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-iron-ore-to-matter": {
+      "h": "Convert Iron ore into matter",
+      "i": [{ "r": 64, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-iron-ore": {
+      "h": "Get Iron ore from matter",
+      "i": [{ "r": 441, "a": 5 }],
+      "p": [{ "r": 64, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-kr-mineral-water-to-matter": {
+      "h": "Convert Mineral water into matter",
+      "i": [{ "r": 442, "a": 100 }],
+      "p": [{ "r": 441, "a": { "f": 5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-mineral-water": {
+      "h": "Get Mineral water from matter",
+      "i": [{ "r": 441, "a": 5 }],
+      "p": [{ "r": 442, "a": { "f": 100 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-kr-rare-metal-ore-to-matter": {
+      "h": "Convert Rare metal ore into matter",
+      "i": [{ "r": 347, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 8 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-rare-metal-ore": {
+      "h": "Get Rare metal ore from matter",
+      "i": [{ "r": 441, "a": 8 }],
+      "p": [{ "r": 347, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-stone-to-matter": {
+      "h": "Convert Stone into matter",
+      "i": [{ "r": 63, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 3.5 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-stone": {
+      "h": "Get Stone from matter",
+      "i": [{ "r": 441, "a": 3.5 }],
+      "p": [{ "r": 63, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-uranium-238-to-matter": {
+      "h": "Convert Uranium-238 into matter",
+      "i": [{ "r": 166, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 47.1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-uranium-238": {
+      "h": "Get Uranium-238 from matter",
+      "i": [{ "r": 441, "a": 47.1 }],
+      "p": [{ "r": 166, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-uranium-ore-to-matter": {
+      "h": "Convert Uranium ore into matter",
+      "i": [{ "r": 118, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 8 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-uranium-ore": {
+      "h": "Get Uranium ore from matter",
+      "i": [{ "r": 441, "a": 8 }],
+      "p": [{ "r": 118, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-wood-to-matter": {
+      "h": "Convert Wood into matter",
+      "i": [{ "r": 61, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6423
+    },
+    "kr-matter-to-wood": {
+      "h": "Get Wood from matter",
+      "i": [{ "r": 441, "a": 2 }],
+      "p": [{ "r": 61, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6423
+    },
+    "kr-kr-imersite-to-matter": {
+      "h": "Convert Imersite into matter",
+      "i": [{ "r": 346, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-kr-matter-cube-to-matter": {
+      "h": "Convert Matter cube into matter",
+      "i": [{ "r": 332, "a": 1 }],
+      "p": [{ "r": 441, "a": { "f": 1000 }, "p": 1 }],
+      "d": 15,
+      "c": ["kr-matter-conversion"],
+      "x": 0.8734
+    },
+    "kr-kr-quartz-to-matter": {
+      "h": "Convert Quartz into matter",
+      "i": [{ "r": 301, "a": 10 }],
+      "p": [{ "r": 441, "a": { "f": 1.84 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-conversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-copper-plate": {
+      "h": "Get Copper plate from matter",
+      "i": [
+        { "r": 441, "a": 7.5 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 67, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-glass": {
+      "h": "Get Glass from matter",
+      "i": [
+        { "r": 441, "a": 3.5 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 300, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-iron-plate": {
+      "h": "Get Iron plate from matter",
+      "i": [
+        { "r": 441, "a": 7.5 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 66, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-plastic-bar": {
+      "h": "Get Plastic bar from matter",
+      "i": [
+        { "r": 441, "a": 6.6 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 156, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-matter-cube": {
+      "h": "Get Matter cube from matter",
+      "i": [
+        { "r": 441, "a": 1000 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 332, "a": { "f": 1 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 15,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.8734
+    },
+    "kr-matter-to-kr-rare-metals": {
+      "h": "Get Rare metals from matter",
+      "i": [
+        { "r": 441, "a": 14 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 314, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-sand": {
+      "h": "Get Sand from matter",
+      "i": [{ "r": 441, "a": 1.17 }],
+      "p": [{ "r": 299, "a": { "f": 10 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-kr-silicon": {
+      "h": "Get Silicon from matter",
+      "i": [
+        { "r": 441, "a": 4.67 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 302, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-steel-plate": {
+      "h": "Get Steel plate from matter",
+      "i": [
+        { "r": 441, "a": 17.2 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 97, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 2,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-sulfur": {
+      "h": "Get Sulfur from matter",
+      "i": [
+        { "r": 441, "a": 8 },
+        { "r": 331, "a": 1 }
+      ],
+      "p": [
+        { "r": 154, "a": { "f": 10 }, "p": 1 },
+        { "r": 330, "a": { "f": 1 }, "p": 0.99 }
+      ],
+      "d": 4,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-matter-to-water": {
+      "h": "Get Water from matter",
+      "i": [{ "r": 441, "a": 0.5 }],
+      "p": [{ "r": 426, "a": { "f": 100 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-matter-deconversion"],
+      "x": 0.6453
+    },
+    "kr-copper-cable-from-copper-ore": {
+      "h": "Copper cable from copper ore",
+      "i": [{ "r": 65, "a": 2 }],
+      "p": [{ "r": 68, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-copper-cable-from-enriched-copper": {
+      "h": "Copper cable from enriched copper",
+      "i": [{ "r": 316, "a": 1 }],
+      "p": [{ "r": 68, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-easy-electronic-components": {
+      "h": "Easy electronic components",
+      "i": [
+        { "r": 156, "a": 5 },
+        { "r": 63, "a": 12 },
+        { "r": 426, "a": 20 }
+      ],
+      "p": [{ "r": 303, "a": { "f": 6 }, "p": 1 }],
+      "d": 12,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-easy-imersium-beam": {
+      "h": "Easy imersium beam",
+      "i": [
+        { "r": 320, "a": 6 },
+        { "r": 314, "a": 4 }
+      ],
+      "p": [{ "r": 313, "a": { "f": 1 }, "p": 1 }],
+      "d": 12,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-easy-imersium-gear-wheel": {
+      "h": "Easy imersium gear wheel",
+      "i": [
+        { "r": 320, "a": 3 },
+        { "r": 314, "a": 2 }
+      ],
+      "p": [{ "r": 312, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-beam-from-iron-ore": {
+      "h": "Iron beam from iron ore",
+      "i": [{ "r": 64, "a": 4 }],
+      "p": [{ "r": 308, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-beam-from-enriched-iron": {
+      "h": "Iron beam from enriched iron",
+      "i": [{ "r": 315, "a": 2 }],
+      "p": [{ "r": 308, "a": { "f": 1 }, "p": 1 }],
+      "d": 4,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-gear-wheel-from-iron-ore": {
+      "h": "Iron gear wheel from iron ore",
+      "i": [{ "r": 64, "a": 2 }],
+      "p": [{ "r": 70, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-gear-wheel-from-enriched-iron": {
+      "h": "Iron gear wheel from enriched iron",
+      "i": [{ "r": 315, "a": 1 }],
+      "p": [{ "r": 70, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-stick-from-iron-ore": {
+      "h": "Iron stick from iron ore",
+      "i": [{ "r": 64, "a": 2 }],
+      "p": [{ "r": 69, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-iron-stick-from-enriched-iron": {
+      "h": "Iron stick from enriched iron",
+      "i": [{ "r": 315, "a": 1 }],
+      "p": [{ "r": 69, "a": { "f": 2 }, "p": 1 }],
+      "d": 1,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-easy-steel-beam": {
+      "h": "Easy steel beam",
+      "i": [
+        { "r": 66, "a": 20 },
+        { "r": 304, "a": 4 }
+      ],
+      "p": [{ "r": 310, "a": { "f": 5 }, "p": 1 }],
+      "d": 20,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "kr-easy-steel-gear-wheel": {
+      "h": "Easy steel gear wheel",
+      "i": [
+        { "r": 66, "a": 10 },
+        { "r": 304, "a": 1 }
+      ],
+      "p": [{ "r": 309, "a": { "f": 5 }, "p": 1 }],
+      "d": 5,
+      "c": ["kr-smelting-crafting"],
+      "a": true,
+      "x": 0.7479
+    },
+    "synthetic:pumping-water": {
+      "h": "Pumping Water",
+      "i": [],
+      "p": [{ "r": 426, "a": { "f": 60 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-pump:water"],
+      "s": true,
+      "x": 0.0536
+    },
+    "synthetic:mining-iron-ore": {
+      "h": "Mining Iron ore",
+      "i": [],
+      "p": [{ "r": 64, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0
+    },
+    "synthetic:mining-copper-ore": {
+      "h": "Mining Copper ore",
+      "i": [],
+      "p": [{ "r": 65, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0
+    },
+    "synthetic:mining-coal": {
+      "h": "Mining Coal",
+      "i": [],
+      "p": [{ "r": 62, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0
+    },
+    "synthetic:mining-stone": {
+      "h": "Mining Stone",
+      "i": [],
+      "p": [{ "r": 63, "a": { "f": 1 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0
+    },
+    "synthetic:mining-uranium-ore": {
+      "h": "Mining Uranium ore",
+      "i": [{ "r": 428, "a": 1 }],
+      "p": [{ "r": 118, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0.2031
+    },
+    "synthetic:mining-crude-oil": {
+      "h": "Mining Crude oil",
+      "i": [],
+      "p": [{ "r": 429, "a": { "n": 20, "x": 20 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-fluid"],
+      "s": true,
+      "x": 0.1948
+    },
+    "synthetic:mining-kr-imersite": {
+      "h": "Mining Imersite",
+      "i": [],
+      "p": [{ "r": 346, "a": { "f": 1 }, "p": 1 }],
+      "d": 2,
+      "c": ["synthetic-mine:kr-quarry"],
+      "s": true,
+      "x": 0.4485
+    },
+    "synthetic:mining-kr-mineral-water": {
+      "h": "Mining Mineral water",
+      "i": [],
+      "p": [{ "r": 442, "a": { "n": 20, "x": 20 }, "p": 1 }],
+      "d": 1,
+      "c": ["synthetic-mine:basic-fluid"],
+      "s": true,
+      "x": 0.1948
+    },
+    "synthetic:mining-kr-rare-metal-ore": {
+      "h": "Mining Rare metal ore",
+      "i": [{ "r": 436, "a": 2.5 }],
+      "p": [{ "r": 347, "a": { "f": 1 }, "p": 1 }],
+      "d": 3,
+      "c": ["synthetic-mine:basic-solid"],
+      "s": true,
+      "x": 0.179
+    }
+  }
+}
