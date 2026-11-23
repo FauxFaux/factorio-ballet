@@ -84,6 +84,14 @@ export async function extract(
       human: resolveLocale(id, locales, 'technology') ?? id,
       prerequisites: arr(tech.prerequisites ?? []),
       science,
+      ...(tech.unit
+        ? {
+            researchUnit: {
+              ...(tech.unit.count !== undefined ? { count: tech.unit.count } : {}),
+              time: tech.unit.time,
+            },
+          }
+        : {}),
       complexity: Math.log10(1 + (analysis.techCost.get(id) ?? 0)) / scale,
       unlocks: unlocked,
       ...(tech.research_trigger ? { trigger: tech.research_trigger } : {}),

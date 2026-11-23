@@ -1,5 +1,36 @@
 # K2 milestone costs
 
+The [building recipe list](k2-buildings.json) contains the construction inventories in this order:
+**ma1, ma2, ma-science, late game 1, late game 2**. The late game inventories come from the existing
+`m1.base64` and `m2.base64` files. Counts are independent totals of placing items in each blueprint,
+not additions to the preceding milestone. This file covers 30 building types, four science packs,
+and 56 recipes.
+
+`buildings` gives each building's base ingredients, recursive recipe craft counts, and total
+crafting work **per one building item**. `sciencePacks` gives the same costs and chains **per one
+science pack** for automation, chemical, logistic and military packs, including their blank tech
+cards and other intermediates. `recipes` contains each building, science pack and intermediate
+recipe's ingredients, output quantity, and time per craft. Follow ingredient ids to the matching
+recipe's `product`; stop at iron plates, copper plates, stone, biomass, or coal. All ids are bare
+item or recipe ids. Fluids and their upstream production are excluded. Wood is expanded through its
+water-only greenhouse recipe, so its material inputs are empty while its growth time remains. Coal
+remains an additional mined base ingredient for coke used in steel.
+
+Times are seconds at crafting speed 1. Summed recursive times measure crafting work across all
+recipes, including wood growth, rather than elapsed factory time. Costs use fractional crafts and
+expected yields (including sand's 7.5 average); research consumption, fuel, productivity, batch
+rounding, and extra production machinery are excluded. Base ingredients have no recipe entries.
+Military science consumes gathered biomass. Chemical science's sulfuric acid and the fluids used to
+produce plastic and quartz are excluded under the same fluid accounting rule.
+
+Regenerate this file from the checked-in K2 dataset and current blueprint files, without a game
+installation:
+
+```bash
+node scripts/k2-buildings.ts
+npm run format
+```
+
 The [generated catalogue](k2-catalogue.md) lists 80 early building items, their unlock technologies,
 per-item plate costs, optional branches, and the complete m1/m2 building inventory. It covers the
 existing complexity order through electric furnaces and adds flamethrower turrets explicitly.
@@ -122,6 +153,26 @@ catalogue gives the research costs without requiring unrelated armor, decoration
   omitting their costs.
 
 ## Reading the early tech tree
+
+[`k2-science-tree.json`](k2-science-tree.json) exports the localized name, direct dependencies and
+own card cost of 91 technologies: all 86 finite basic/automation/logistic technologies, including
+the chemical and military card unlocks and optional branches, plus the five additional technologies
+on the construction robotics branch. Costs are total cards per technology, excluding its
+prerequisites. Oil processing retains its mining trigger and has no card cost. Every dependency is
+included. Chemical-card research is included for the construction robotics branch.
+
+Each technology's `researchTime` gives its research unit count, seconds per unit and total
+lab-seconds at research speed 1, before lab speed or productivity bonuses and excluding
+prerequisites. These are base research times, not elapsed times for a particular lab setup. Trigger
+research has `researchTime: null`.
+
+The export also records [TEST-PLAY.md](TEST-PLAY.md)'s research milestones 1–9, with parenthesized
+requirements separate from goals: milestone 2 unlocks Logistics. “Circuit” in milestone 5 is
+Electronics, which unlocks electronic circuits and is required for logistic cards. Milestone 9
+reaches Construction robotics; its “flying robot frame” requirement is the Robotics technology that
+unlocks that recipe. Banned choices remain in the complete tree and are listed separately. These
+research milestones are distinct from the `m1`/`m2` blueprints. Regenerate with
+`node scripts/k2-science-tree.ts`, then `npm run format`.
 
 `k2-science.txt` and `scripts/complexity.ts` are useful rough ordering references. Their score is a
 weighted availability measure, not the sum of cards actually consumed. In this export the model does

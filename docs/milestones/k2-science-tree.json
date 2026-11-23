@@ -1,0 +1,1261 @@
+{
+  "provenance": {
+    "dataset": "Factorio 2.1.21 / Krastorio2 2.1.3 (enabled mods: docs/guides/INGEST.md)",
+    "rawSha256": "7ba414bbfb9b918c953ac7db18077c94a9cd7fbfd3905415aba9675b6da77447",
+    "staticSha256": "ba3bf83c4eb099d99149f6660be847aafe723dfef90be73ec5d451ab30e2a475",
+    "recipesSha256": "89fccbf79d05126466f95be0f99e9f2c745b213124ad1561866fc451f67fc90d",
+    "source": "docs/milestones/k2-data.json"
+  },
+  "scope": {
+    "description": "All finite basic/automation/logistic technologies, including optional branches and chemical/military card unlocks, plus the complete prerequisite branch for the nine research milestones through construction robotics.",
+    "researchPacks": [
+      "kr-basic-tech-card",
+      "automation-science-pack",
+      "logistic-science-pack",
+      "chemical-science-pack"
+    ],
+    "endpoints": ["chemical-science-pack", "military-science-pack", "construction-robotics"],
+    "costUnits": "Total tech cards consumed by this technology alone, excluding prerequisites; trigger research has no card cost and retains its trigger.",
+    "researchTimeUnits": "Seconds per research unit and total lab-seconds at research speed 1, before lab speed or productivity bonuses and excluding prerequisites; trigger research has null time."
+  },
+  "milestones": [
+    {
+      "milestone": 1,
+      "goals": ["automation", "military", "steam-power", "automation-science-pack"],
+      "requirements": ["kr-laboratory"]
+    },
+    {
+      "milestone": 2,
+      "goals": ["logistics"],
+      "requirements": []
+    },
+    {
+      "milestone": 3,
+      "goals": ["gun-turret", "electric-mining-drill"],
+      "requirements": []
+    },
+    {
+      "milestone": 4,
+      "goals": ["kr-greenhouse"],
+      "requirements": ["kr-crusher", "kr-stone-processing"]
+    },
+    {
+      "milestone": 5,
+      "goals": ["electronics", "logistic-science-pack"],
+      "requirements": []
+    },
+    {
+      "milestone": 6,
+      "goals": ["oil-processing"],
+      "requirements": [
+        "steel-processing",
+        "fluid-handling",
+        "engine",
+        "oil-gathering",
+        "kr-fluids-chemistry"
+      ]
+    },
+    {
+      "milestone": 7,
+      "goals": ["plastics", "sulfur-processing"],
+      "requirements": []
+    },
+    {
+      "milestone": 8,
+      "goals": ["chemical-science-pack"],
+      "requirements": ["automation-2", "kr-silicon-processing", "advanced-circuit"]
+    },
+    {
+      "milestone": 9,
+      "goals": ["construction-robotics"],
+      "requirements": [
+        "advanced-oil-processing",
+        "lubricant",
+        "electric-engine",
+        "battery",
+        "robotics"
+      ]
+    }
+  ],
+  "banned": ["kr-decorations", "kr-shelter"],
+  "technologies": {
+    "kr-automation-core": {
+      "name": "Automation core",
+      "dependencies": [],
+      "cost": {
+        "kr-basic-tech-card": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "kr-laboratory": {
+      "name": "Laboratory",
+      "dependencies": ["kr-automation-core"],
+      "cost": {
+        "kr-basic-tech-card": 15
+      },
+      "researchTime": {
+        "units": 15,
+        "secondsPerUnit": 10,
+        "totalSeconds": 150
+      }
+    },
+    "automation-science-pack": {
+      "name": "Automation tech card",
+      "dependencies": ["kr-laboratory"],
+      "cost": {
+        "kr-basic-tech-card": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "automation": {
+      "name": "Automation",
+      "dependencies": ["kr-automation-core"],
+      "cost": {
+        "kr-basic-tech-card": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "electronics": {
+      "name": "Electronics",
+      "dependencies": ["automation", "automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "logistic-science-pack": {
+      "name": "Logistic tech card",
+      "dependencies": ["automation-science-pack", "electronics"],
+      "cost": {
+        "kr-basic-tech-card": 75,
+        "automation-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 5,
+        "totalSeconds": 375
+      }
+    },
+    "engine": {
+      "name": "Engine",
+      "dependencies": ["logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 15,
+        "totalSeconds": 1500
+      }
+    },
+    "steam-power": {
+      "name": "Steam power",
+      "dependencies": ["kr-automation-core"],
+      "cost": {
+        "kr-basic-tech-card": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "fluid-handling": {
+      "name": "Fluid handling",
+      "dependencies": ["engine", "steam-power"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 15,
+        "totalSeconds": 750
+      }
+    },
+    "oil-gathering": {
+      "name": "Oil gathering",
+      "dependencies": ["fluid-handling"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "steel-processing": {
+      "name": "Steel processing",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 50,
+        "automation-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 5,
+        "totalSeconds": 250
+      }
+    },
+    "kr-crusher": {
+      "name": "Crusher",
+      "dependencies": ["kr-automation-core"],
+      "cost": {
+        "kr-basic-tech-card": 30
+      },
+      "researchTime": {
+        "units": 30,
+        "secondsPerUnit": 30,
+        "totalSeconds": 900
+      }
+    },
+    "kr-stone-processing": {
+      "name": "Stone processing",
+      "dependencies": ["kr-crusher"],
+      "cost": {
+        "kr-basic-tech-card": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "kr-fluids-chemistry": {
+      "name": "Fluid chemistry",
+      "dependencies": ["steam-power", "steel-processing", "kr-stone-processing", "engine"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 45,
+        "totalSeconds": 4500
+      }
+    },
+    "oil-processing": {
+      "name": "Oil processing",
+      "dependencies": ["oil-gathering", "kr-fluids-chemistry"],
+      "cost": {},
+      "researchTime": null,
+      "trigger": {
+        "type": "mine-entity",
+        "entities": ["crude-oil"]
+      }
+    },
+    "plastics": {
+      "name": "Plastics",
+      "dependencies": ["oil-processing"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "automation-2": {
+      "name": "Automation 2",
+      "dependencies": ["steel-processing", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 40,
+        "logistic-science-pack": 40
+      },
+      "researchTime": {
+        "units": 40,
+        "secondsPerUnit": 15,
+        "totalSeconds": 600
+      }
+    },
+    "kr-silicon-processing": {
+      "name": "Silicon processing",
+      "dependencies": ["kr-fluids-chemistry", "automation-2"],
+      "cost": {
+        "kr-basic-tech-card": 125,
+        "automation-science-pack": 125,
+        "logistic-science-pack": 125
+      },
+      "researchTime": {
+        "units": 125,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3750
+      }
+    },
+    "advanced-circuit": {
+      "name": "Advanced circuit",
+      "dependencies": ["plastics", "kr-silicon-processing"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 15,
+        "totalSeconds": 3000
+      }
+    },
+    "advanced-material-processing": {
+      "name": "Advanced material processing",
+      "dependencies": ["steel-processing", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 30,
+        "totalSeconds": 2250
+      }
+    },
+    "logistics": {
+      "name": "Logistics",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "researchTime": {
+        "units": 20,
+        "secondsPerUnit": 15,
+        "totalSeconds": 300
+      }
+    },
+    "logistics-2": {
+      "name": "Logistics 2",
+      "dependencies": ["logistics", "logistic-science-pack", "steel-processing"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "railway": {
+      "name": "Railway",
+      "dependencies": ["logistics-2", "engine"],
+      "cost": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 30,
+        "totalSeconds": 2250
+      }
+    },
+    "automated-rail-transportation": {
+      "name": "Automated rail transportation",
+      "dependencies": ["railway"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "kr-fuel": {
+      "name": "Fuel",
+      "dependencies": ["oil-processing"],
+      "cost": {
+        "kr-basic-tech-card": 125,
+        "automation-science-pack": 125,
+        "logistic-science-pack": 125
+      },
+      "researchTime": {
+        "units": 125,
+        "secondsPerUnit": 45,
+        "totalSeconds": 5625
+      }
+    },
+    "automobilism": {
+      "name": "Automobilism",
+      "dependencies": ["logistics-2", "kr-fuel"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "sulfur-processing": {
+      "name": "Sulfur processing",
+      "dependencies": ["oil-processing"],
+      "cost": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "researchTime": {
+        "units": 150,
+        "secondsPerUnit": 30,
+        "totalSeconds": 4500
+      }
+    },
+    "battery": {
+      "name": "Battery",
+      "dependencies": ["sulfur-processing"],
+      "cost": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "researchTime": {
+        "units": 150,
+        "secondsPerUnit": 30,
+        "totalSeconds": 4500
+      }
+    },
+    "military": {
+      "name": "Military",
+      "dependencies": [],
+      "cost": {
+        "kr-basic-tech-card": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 15,
+        "totalSeconds": 150
+      }
+    },
+    "kr-light-armor": {
+      "name": "Light armor",
+      "dependencies": ["military"],
+      "cost": {
+        "kr-basic-tech-card": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 20,
+        "totalSeconds": 1000
+      }
+    },
+    "heavy-armor": {
+      "name": "Heavy armor",
+      "dependencies": ["steel-processing", "kr-light-armor"],
+      "cost": {
+        "kr-basic-tech-card": 30,
+        "automation-science-pack": 30
+      },
+      "researchTime": {
+        "units": 30,
+        "secondsPerUnit": 30,
+        "totalSeconds": 900
+      }
+    },
+    "military-2": {
+      "name": "Military 2",
+      "dependencies": ["military", "steel-processing", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 20,
+        "logistic-science-pack": 20
+      },
+      "researchTime": {
+        "units": 20,
+        "secondsPerUnit": 15,
+        "totalSeconds": 300
+      }
+    },
+    "modular-armor": {
+      "name": "Modular armor",
+      "dependencies": ["heavy-armor", "advanced-circuit", "military-2"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "battery-equipment": {
+      "name": "Personal battery",
+      "dependencies": ["battery", "modular-armor"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 15,
+        "totalSeconds": 750
+      }
+    },
+    "solar-energy": {
+      "name": "Solar energy",
+      "dependencies": ["kr-silicon-processing"],
+      "cost": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "researchTime": {
+        "units": 250,
+        "secondsPerUnit": 30,
+        "totalSeconds": 7500
+      }
+    },
+    "solar-panel-equipment": {
+      "name": "Portable solar panel",
+      "dependencies": ["modular-armor", "solar-energy"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 15,
+        "totalSeconds": 1500
+      }
+    },
+    "belt-immunity-equipment": {
+      "name": "Belt immunity equipment",
+      "dependencies": ["solar-panel-equipment"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 15,
+        "totalSeconds": 750
+      }
+    },
+    "bob-long-inserters-1": {
+      "name": "Long inserters 1",
+      "dependencies": ["logistics"],
+      "cost": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "researchTime": {
+        "units": 20,
+        "secondsPerUnit": 15,
+        "totalSeconds": 300
+      }
+    },
+    "bob-more-inserters-1": {
+      "name": "More inserters 1",
+      "dependencies": ["logistics-2"],
+      "cost": {
+        "automation-science-pack": 25,
+        "logistic-science-pack": 25
+      },
+      "researchTime": {
+        "units": 25,
+        "secondsPerUnit": 15,
+        "totalSeconds": 375
+      }
+    },
+    "bob-near-inserters": {
+      "name": "Near inserters",
+      "dependencies": ["logistics"],
+      "cost": {
+        "kr-basic-tech-card": 25,
+        "automation-science-pack": 25
+      },
+      "researchTime": {
+        "units": 25,
+        "secondsPerUnit": 15,
+        "totalSeconds": 375
+      }
+    },
+    "fast-inserter": {
+      "name": "Fast inserter",
+      "dependencies": ["electronics", "logistics", "steel-processing"],
+      "cost": {
+        "kr-basic-tech-card": 30,
+        "automation-science-pack": 30
+      },
+      "researchTime": {
+        "units": 30,
+        "secondsPerUnit": 15,
+        "totalSeconds": 450
+      }
+    },
+    "bulk-inserter": {
+      "name": "Bulk inserter",
+      "dependencies": ["fast-inserter", "logistics-2", "advanced-circuit"],
+      "cost": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "researchTime": {
+        "units": 150,
+        "secondsPerUnit": 30,
+        "totalSeconds": 4500
+      }
+    },
+    "chemical-science-pack": {
+      "name": "Chemical tech card",
+      "dependencies": ["advanced-circuit", "sulfur-processing"],
+      "cost": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 10,
+        "totalSeconds": 750
+      }
+    },
+    "circuit-network": {
+      "name": "Circuit network",
+      "dependencies": ["logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 15,
+        "totalSeconds": 1500
+      }
+    },
+    "explosives": {
+      "name": "Explosives",
+      "dependencies": ["sulfur-processing"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 15,
+        "totalSeconds": 1500
+      }
+    },
+    "cliff-explosives": {
+      "name": "Cliff explosives",
+      "dependencies": ["explosives", "military-2"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 15,
+        "totalSeconds": 3000
+      }
+    },
+    "concrete": {
+      "name": "Concrete",
+      "dependencies": ["advanced-material-processing", "automation-2"],
+      "cost": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "researchTime": {
+        "units": 250,
+        "secondsPerUnit": 30,
+        "totalSeconds": 7500
+      }
+    },
+    "modules": {
+      "name": "Modules",
+      "dependencies": ["advanced-circuit"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "efficiency-module": {
+      "name": "Efficiency module",
+      "dependencies": ["modules"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "electric-energy-distribution-1": {
+      "name": "Electric energy distribution 1",
+      "dependencies": ["steel-processing", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 120,
+        "logistic-science-pack": 120
+      },
+      "researchTime": {
+        "units": 120,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3600
+      }
+    },
+    "electric-energy-accumulators": {
+      "name": "Electric energy accumulators",
+      "dependencies": ["electric-energy-distribution-1", "battery"],
+      "cost": {
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "researchTime": {
+        "units": 150,
+        "secondsPerUnit": 30,
+        "totalSeconds": 4500
+      }
+    },
+    "electric-mining-drill": {
+      "name": "Electric mining drill",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 20,
+        "automation-science-pack": 20
+      },
+      "researchTime": {
+        "units": 20,
+        "secondsPerUnit": 30,
+        "totalSeconds": 600
+      }
+    },
+    "flammables": {
+      "name": "Flammables",
+      "dependencies": ["oil-processing"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "fluid-wagon": {
+      "name": "Fluid wagon",
+      "dependencies": ["railway", "fluid-handling"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "stone-wall": {
+      "name": "Stone wall",
+      "dependencies": ["military"],
+      "cost": {
+        "kr-basic-tech-card": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "gate": {
+      "name": "Gate",
+      "dependencies": ["stone-wall", "logistic-science-pack", "steel-processing"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "gun-turret": {
+      "name": "Gun turret",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 10,
+        "totalSeconds": 100
+      }
+    },
+    "inserter-capacity-bonus-1": {
+      "name": "Inserter capacity bonus 1",
+      "dependencies": ["bulk-inserter"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "inserter-capacity-bonus-2": {
+      "name": "Inserter capacity bonus 2",
+      "dependencies": ["inserter-capacity-bonus-1"],
+      "cost": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "researchTime": {
+        "units": 250,
+        "secondsPerUnit": 30,
+        "totalSeconds": 7500
+      }
+    },
+    "kr-containers": {
+      "name": "Larger containers",
+      "dependencies": ["steel-processing"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "kr-greenhouse": {
+      "name": "Greenhouse",
+      "dependencies": ["kr-stone-processing", "steam-power"],
+      "cost": {
+        "kr-basic-tech-card": 40
+      },
+      "researchTime": {
+        "units": 40,
+        "secondsPerUnit": 45,
+        "totalSeconds": 1800
+      }
+    },
+    "kr-decorations": {
+      "name": "Welcome to the jungle",
+      "dependencies": ["kr-greenhouse"],
+      "cost": {
+        "kr-basic-tech-card": 30
+      },
+      "researchTime": {
+        "units": 30,
+        "secondsPerUnit": 30,
+        "totalSeconds": 900
+      }
+    },
+    "kr-fluid-excess-handling": {
+      "name": "Flare stack",
+      "dependencies": ["kr-fluids-chemistry"],
+      "cost": {
+        "kr-basic-tech-card": 150,
+        "automation-science-pack": 150,
+        "logistic-science-pack": 150
+      },
+      "researchTime": {
+        "units": 150,
+        "secondsPerUnit": 45,
+        "totalSeconds": 6750
+      }
+    },
+    "kr-gas-power-station": {
+      "name": "Gas power station",
+      "dependencies": ["oil-processing"],
+      "cost": {
+        "kr-basic-tech-card": 250,
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "researchTime": {
+        "units": 250,
+        "secondsPerUnit": 30,
+        "totalSeconds": 7500
+      }
+    },
+    "kr-iron-pickaxe": {
+      "name": "Iron pickaxe",
+      "dependencies": [],
+      "cost": {
+        "kr-basic-tech-card": 25
+      },
+      "researchTime": {
+        "units": 25,
+        "secondsPerUnit": 30,
+        "totalSeconds": 750
+      }
+    },
+    "lamp": {
+      "name": "Lamp",
+      "dependencies": ["automation-science-pack", "kr-stone-processing"],
+      "cost": {
+        "kr-basic-tech-card": 10,
+        "automation-science-pack": 10
+      },
+      "researchTime": {
+        "units": 10,
+        "secondsPerUnit": 15,
+        "totalSeconds": 150
+      }
+    },
+    "kr-sentinel": {
+      "name": "Sentinel",
+      "dependencies": ["lamp"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "kr-shelter": {
+      "name": "Shelter",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "kr-steel-fluid-handling": {
+      "name": "Steel fluid handling",
+      "dependencies": ["steel-processing", "fluid-handling"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "kr-steel-fluid-tanks": {
+      "name": "Steel fluid tanks",
+      "dependencies": ["kr-steel-fluid-handling"],
+      "cost": {
+        "kr-basic-tech-card": 120,
+        "automation-science-pack": 120,
+        "logistic-science-pack": 120
+      },
+      "researchTime": {
+        "units": 120,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3600
+      }
+    },
+    "landfill": {
+      "name": "Landfill",
+      "dependencies": ["logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "military-science-pack": {
+      "name": "Military tech card",
+      "dependencies": ["military-2", "stone-wall", "advanced-circuit"],
+      "cost": {
+        "automation-science-pack": 30,
+        "logistic-science-pack": 30
+      },
+      "researchTime": {
+        "units": 30,
+        "secondsPerUnit": 15,
+        "totalSeconds": 450
+      }
+    },
+    "mining-productivity-1": {
+      "name": "Mining productivity 1",
+      "dependencies": ["advanced-circuit"],
+      "cost": {
+        "automation-science-pack": 250,
+        "logistic-science-pack": 250
+      },
+      "researchTime": {
+        "units": 250,
+        "secondsPerUnit": 60,
+        "totalSeconds": 15000
+      }
+    },
+    "night-vision-equipment": {
+      "name": "Nightvision equipment",
+      "dependencies": ["solar-panel-equipment"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 15,
+        "totalSeconds": 750
+      }
+    },
+    "physical-projectile-damage-1": {
+      "name": "Physical projectile damage 1",
+      "dependencies": ["military", "automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "physical-projectile-damage-2": {
+      "name": "Physical projectile damage 2",
+      "dependencies": ["physical-projectile-damage-1", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "productivity-module": {
+      "name": "Productivity module",
+      "dependencies": ["modules"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "repair-pack": {
+      "name": "Repair pack",
+      "dependencies": ["automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 25,
+        "automation-science-pack": 25
+      },
+      "researchTime": {
+        "units": 25,
+        "secondsPerUnit": 10,
+        "totalSeconds": 250
+      }
+    },
+    "research-speed-1": {
+      "name": "Lab research speed 1",
+      "dependencies": ["automation-2"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "research-speed-2": {
+      "name": "Lab research speed 2",
+      "dependencies": ["research-speed-1"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "speed-module": {
+      "name": "Speed module",
+      "dependencies": ["modules"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "steel-axe": {
+      "name": "Steel axe",
+      "dependencies": ["steel-processing", "kr-iron-pickaxe"],
+      "cost": {
+        "kr-basic-tech-card": 50,
+        "automation-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "stronger-explosives-1": {
+      "name": "Stronger explosives 1",
+      "dependencies": ["military-2"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "toolbelt": {
+      "name": "Toolbelt",
+      "dependencies": ["logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "weapon-shooting-speed-1": {
+      "name": "Weapon shooting speed 1",
+      "dependencies": ["military", "automation-science-pack"],
+      "cost": {
+        "kr-basic-tech-card": 100,
+        "automation-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    },
+    "weapon-shooting-speed-2": {
+      "name": "Weapon shooting speed 2",
+      "dependencies": ["weapon-shooting-speed-1", "logistic-science-pack"],
+      "cost": {
+        "automation-science-pack": 200,
+        "logistic-science-pack": 200
+      },
+      "researchTime": {
+        "units": 200,
+        "secondsPerUnit": 30,
+        "totalSeconds": 6000
+      }
+    },
+    "advanced-oil-processing": {
+      "name": "Advanced oil processing",
+      "dependencies": ["chemical-science-pack"],
+      "cost": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 30,
+        "totalSeconds": 2250
+      }
+    },
+    "lubricant": {
+      "name": "Lubricant",
+      "dependencies": ["advanced-oil-processing"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "electric-engine": {
+      "name": "Electric engine",
+      "dependencies": ["lubricant"],
+      "cost": {
+        "automation-science-pack": 50,
+        "logistic-science-pack": 50,
+        "chemical-science-pack": 50
+      },
+      "researchTime": {
+        "units": 50,
+        "secondsPerUnit": 30,
+        "totalSeconds": 1500
+      }
+    },
+    "robotics": {
+      "name": "Robotics",
+      "dependencies": ["electric-engine", "battery"],
+      "cost": {
+        "automation-science-pack": 75,
+        "logistic-science-pack": 75,
+        "chemical-science-pack": 75
+      },
+      "researchTime": {
+        "units": 75,
+        "secondsPerUnit": 30,
+        "totalSeconds": 2250
+      }
+    },
+    "construction-robotics": {
+      "name": "Construction robotics",
+      "dependencies": ["robotics"],
+      "cost": {
+        "automation-science-pack": 100,
+        "logistic-science-pack": 100,
+        "chemical-science-pack": 100
+      },
+      "researchTime": {
+        "units": 100,
+        "secondsPerUnit": 30,
+        "totalSeconds": 3000
+      }
+    }
+  }
+}

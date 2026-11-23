@@ -6,6 +6,8 @@ export interface MilestoneTechnology {
   human: string;
   prerequisites: string[];
   science: Amounts;
+  /** Raw research unit count and seconds per unit, before lab speed or productivity bonuses. */
+  researchUnit?: { count?: number; time: number };
   complexity: number;
   unlocks: string[];
   trigger?: unknown;

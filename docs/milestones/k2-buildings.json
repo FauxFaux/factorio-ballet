@@ -1,0 +1,1264 @@
+{
+  "provenance": {
+    "dataset": "Factorio 2.1.21 / Krastorio2 2.1.3 (enabled mods: docs/guides/INGEST.md)",
+    "rawSha256": "7ba414bbfb9b918c953ac7db18077c94a9cd7fbfd3905415aba9675b6da77447",
+    "staticSha256": "ba3bf83c4eb099d99149f6660be847aafe723dfef90be73ec5d451ab30e2a475",
+    "recipesSha256": "89fccbf79d05126466f95be0f99e9f2c745b213124ad1561866fc451f67fc90d",
+    "sources": {
+      "snapshot": "docs/milestones/k2-data.json",
+      "static": "src/assets/dataset/k2/static.json",
+      "recipes": "src/assets/dataset/k2/recipes.json"
+    },
+    "snapshotSha256": "dd7203efa93ed920e21f433b85c1e602dc80b3eff71fa1acd307f1b0cad05bcb",
+    "blueprintHashes": {
+      "ma1": "6133e5d1ad12ab8c5eef4e3b52291ed61f1a5734f548807e3914314627bfc040",
+      "ma2": "9821b18e65387bc0729ff8de32471dcbabc9a0499f50e916dc05f2a50fd6dd58",
+      "ma-science": "ed63cc07a9c30a694438b8e58e4dbe3417df2b7382e4d39586439d009f850cf8",
+      "late-game-1": "43ca5671a096c4187dadac4a0f07a233ddfaba181f4b3a9744c89c26728bd002",
+      "late-game-2": "eb79e9e6b80df83a1a194e0d7c3510903b766709828a9e06819196bc1779cf52"
+    }
+  },
+  "accounting": {
+    "baseIngredients": ["iron-plate", "copper-plate", "stone", "kr-biomass", "coal"],
+    "fluids": "Ignored at every recipe depth; fluid production chains are excluded.",
+    "quantities": "Milestone counts are total placing items, independently of other milestones. Recipe ingredients and time are per craft; outputAmount is the yield per craft. Per-building and per-science-pack costs include every recursive craft, using fractional crafts and expected yields without batch rounding.",
+    "time": "Seconds at crafting speed 1, without productivity or fuel. Total time sums all recursive crafts, including greenhouse wood growth; it is crafting work, not elapsed factory time.",
+    "scope": "Construction inventories and crafting costs for one automation, chemical, logistic or military science pack. Research consumption, configured production recipes beyond these packs, machine fuel and extra production machinery are excluded. Wood uses the water-only greenhouse recipe; coal is an additional mined base ingredient."
+  },
+  "milestones": [
+    {
+      "id": "ma1",
+      "name": "ma1",
+      "source": "docs/blueprints/ma1.base64",
+      "buildingCount": 16,
+      "buildings": {
+        "burner-mining-drill": 6,
+        "small-electric-pole": 4,
+        "stone-furnace": 6
+      }
+    },
+    {
+      "id": "ma2",
+      "name": "ma2",
+      "source": "docs/blueprints/ma2.base64",
+      "buildingCount": 27,
+      "buildings": {
+        "assembling-machine-1": 2,
+        "burner-inserter": 4,
+        "burner-mining-drill": 9,
+        "kr-wind-turbine": 1,
+        "small-electric-pole": 4,
+        "stone-furnace": 7
+      }
+    },
+    {
+      "id": "ma-science",
+      "name": "ma-science",
+      "source": "docs/blueprints/ma-science.base64",
+      "buildingCount": 378,
+      "buildings": {
+        "assembling-machine-1": 33,
+        "inserter": 91,
+        "kr-greenhouse": 1,
+        "small-electric-pole": 36,
+        "splitter": 3,
+        "transport-belt": 200,
+        "underground-belt": 10,
+        "wooden-chest": 4
+      }
+    },
+    {
+      "id": "late-game-1",
+      "name": "late game 1",
+      "source": "docs/blueprints/m1.base64",
+      "buildingCount": 1651,
+      "buildings": {
+        "assembling-machine-1": 6,
+        "assembling-machine-2": 2,
+        "boiler": 14,
+        "burner-inserter": 228,
+        "fast-inserter": 5,
+        "gun-turret": 20,
+        "inserter": 54,
+        "iron-chest": 1,
+        "kr-crusher": 1,
+        "kr-filtration-plant": 1,
+        "kr-greenhouse": 14,
+        "kr-sentinel": 1,
+        "kr-wind-turbine": 19,
+        "offshore-pump": 2,
+        "pipe": 11,
+        "pipe-to-ground": 8,
+        "small-electric-pole": 80,
+        "splitter": 14,
+        "steam-engine": 28,
+        "stone-furnace": 108,
+        "stone-wall": 39,
+        "transport-belt": 910,
+        "underground-belt": 78,
+        "wooden-chest": 7
+      }
+    },
+    {
+      "id": "late-game-2",
+      "name": "late game 2",
+      "source": "docs/blueprints/m2.base64",
+      "buildingCount": 6720,
+      "buildings": {
+        "assembling-machine-1": 40,
+        "assembling-machine-2": 18,
+        "big-electric-pole": 5,
+        "boiler": 14,
+        "burner-inserter": 372,
+        "electric-mining-drill": 127,
+        "fast-inserter": 10,
+        "gun-turret": 133,
+        "inserter": 331,
+        "iron-chest": 3,
+        "kr-crusher": 1,
+        "kr-filtration-plant": 1,
+        "kr-greenhouse": 14,
+        "kr-sentinel": 8,
+        "kr-wind-turbine": 19,
+        "lab": 33,
+        "long-handed-inserter": 3,
+        "offshore-pump": 2,
+        "pipe": 11,
+        "pipe-to-ground": 8,
+        "small-electric-pole": 367,
+        "splitter": 48,
+        "steam-engine": 28,
+        "steel-furnace": 24,
+        "stone-furnace": 158,
+        "stone-wall": 1888,
+        "transport-belt": 2877,
+        "underground-belt": 157,
+        "wooden-chest": 20
+      }
+    }
+  ],
+  "buildings": {
+    "assembling-machine-1": {
+      "name": "Assembling machine 1",
+      "recipe": "assembling-machine-1",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 6,
+        "iron-plate": 19
+      },
+      "craftsPerBuilding": {
+        "assembling-machine-1": 1,
+        "iron-gear-wheel": 9,
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-iron-beam": 4
+      },
+      "totalCraftingTimePerBuildingSeconds": 16.5
+    },
+    "assembling-machine-2": {
+      "name": "Assembling machine 2",
+      "recipe": "assembling-machine-2",
+      "baseIngredientsPerBuilding": {
+        "coal": 0.8,
+        "copper-plate": 9,
+        "iron-plate": 29.5
+      },
+      "craftsPerBuilding": {
+        "assembling-machine-1": 1,
+        "assembling-machine-2": 1,
+        "copper-cable": 3,
+        "electronic-circuit": 1.5,
+        "iron-gear-wheel": 14,
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-coke": 0.13333333333333333,
+        "kr-iron-beam": 4,
+        "steel-plate": 0.4,
+        "wood": 0.057499999999999996
+      },
+      "totalCraftingTimePerBuildingSeconds": 37.483333333333334
+    },
+    "big-electric-pole": {
+      "name": "Big electric pole",
+      "recipe": "big-electric-pole",
+      "baseIngredientsPerBuilding": {
+        "coal": 3.2,
+        "copper-plate": 4,
+        "iron-plate": 20
+      },
+      "craftsPerBuilding": {
+        "big-electric-pole": 1,
+        "copper-cable": 4,
+        "iron-stick": 4,
+        "kr-coke": 0.5333333333333333,
+        "kr-steel-beam": 4,
+        "steel-plate": 1.6,
+        "wood": 0.08
+      },
+      "totalCraftingTimePerBuildingSeconds": 51.43333333333333
+    },
+    "boiler": {
+      "name": "Boiler",
+      "recipe": "boiler",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 4,
+        "stone": 5
+      },
+      "craftsPerBuilding": {
+        "boiler": 1,
+        "pipe": 4,
+        "stone-furnace": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 3
+    },
+    "burner-inserter": {
+      "name": "Burner inserter",
+      "recipe": "burner-inserter",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 4
+      },
+      "craftsPerBuilding": {
+        "burner-inserter": 1,
+        "iron-gear-wheel": 2,
+        "iron-stick": 1,
+        "kr-inserter-parts": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 3
+    },
+    "burner-mining-drill": {
+      "name": "Burner mining drill",
+      "recipe": "burner-mining-drill",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 6,
+        "stone": 5
+      },
+      "craftsPerBuilding": {
+        "burner-mining-drill": 1,
+        "iron-gear-wheel": 3,
+        "stone-furnace": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 4
+    },
+    "electric-mining-drill": {
+      "name": "Electric mining drill",
+      "recipe": "electric-mining-drill",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 6,
+        "iron-plate": 15
+      },
+      "craftsPerBuilding": {
+        "electric-mining-drill": 1,
+        "iron-gear-wheel": 9,
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-iron-beam": 2
+      },
+      "totalCraftingTimePerBuildingSeconds": 13.5
+    },
+    "fast-inserter": {
+      "name": "Fast inserter",
+      "recipe": "fast-inserter",
+      "baseIngredientsPerBuilding": {
+        "coal": 0.4,
+        "copper-plate": 2,
+        "iron-plate": 6
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 2,
+        "electronic-circuit": 1,
+        "fast-inserter": 1,
+        "iron-gear-wheel": 2,
+        "iron-stick": 1,
+        "kr-coke": 0.06666666666666667,
+        "kr-inserter-parts": 1,
+        "steel-plate": 0.2,
+        "wood": 0.034999999999999996
+      },
+      "totalCraftingTimePerBuildingSeconds": 12.366666666666665
+    },
+    "gun-turret": {
+      "name": "Gun turret",
+      "recipe": "gun-turret",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 9,
+        "iron-plate": 23
+      },
+      "craftsPerBuilding": {
+        "gun-turret": 1,
+        "iron-gear-wheel": 10,
+        "iron-stick": 3,
+        "kr-automation-core": 1.5,
+        "kr-iron-beam": 5
+      },
+      "totalCraftingTimePerBuildingSeconds": 29.5
+    },
+    "inserter": {
+      "name": "Inserter",
+      "recipe": "inserter",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 3,
+        "iron-plate": 6
+      },
+      "craftsPerBuilding": {
+        "inserter": 1,
+        "iron-gear-wheel": 4,
+        "iron-stick": 2,
+        "kr-automation-core": 0.5,
+        "kr-inserter-parts": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 5.5
+    },
+    "iron-chest": {
+      "name": "Iron chest",
+      "recipe": "iron-chest",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 8
+      },
+      "craftsPerBuilding": {
+        "iron-chest": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 0.5
+    },
+    "kr-crusher": {
+      "name": "Crusher",
+      "recipe": "kr-crusher",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 9,
+        "iron-plate": 46
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 3,
+        "iron-gear-wheel": 24,
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-crusher": 1,
+        "kr-iron-beam": 10
+      },
+      "totalCraftingTimePerBuildingSeconds": 46.5
+    },
+    "kr-filtration-plant": {
+      "name": "Filtration plant",
+      "recipe": "kr-filtration-plant",
+      "baseIngredientsPerBuilding": {
+        "coal": 8,
+        "copper-plate": 9,
+        "iron-plate": 65,
+        "stone": 8
+      },
+      "craftsPerBuilding": {
+        "engine-unit": 4,
+        "iron-gear-wheel": 10,
+        "iron-stick": 3,
+        "kr-automation-core": 1.5,
+        "kr-coke": 1.3333333333333333,
+        "kr-filtration-plant": 1,
+        "kr-glass": 1.25,
+        "kr-sand": 2.6666666666666665,
+        "kr-steel-beam": 10,
+        "pipe": 8,
+        "steel-plate": 4,
+        "wood": 0.2
+      },
+      "totalCraftingTimePerBuildingSeconds": 203.5
+    },
+    "kr-greenhouse": {
+      "name": "Greenhouse",
+      "recipe": "kr-greenhouse",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 6,
+        "iron-plate": 26,
+        "stone": 16
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 4,
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-glass": 2.5,
+        "kr-greenhouse": 1,
+        "kr-iron-beam": 10,
+        "kr-sand": 5.333333333333333,
+        "wood": 0.5
+      },
+      "totalCraftingTimePerBuildingSeconds": 110.33333333333333
+    },
+    "kr-sentinel": {
+      "name": "Sentinel",
+      "recipe": "kr-sentinel",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 3.5,
+        "iron-plate": 5,
+        "stone": 0.8
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 0.5,
+        "iron-gear-wheel": 2,
+        "iron-stick": 1,
+        "kr-automation-core": 0.5,
+        "kr-glass": 0.125,
+        "kr-sand": 0.26666666666666666,
+        "kr-sentinel": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 10.016666666666666
+    },
+    "kr-wind-turbine": {
+      "name": "Wind turbine",
+      "recipe": "kr-wind-turbine",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 3,
+        "iron-plate": 16
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 3,
+        "iron-gear-wheel": 6,
+        "kr-iron-beam": 2,
+        "kr-wind-turbine": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 13.5
+    },
+    "lab": {
+      "name": "Lab",
+      "recipe": "lab",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 15,
+        "iron-plate": 20
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 5,
+        "kr-iron-beam": 10,
+        "lab": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 24.5
+    },
+    "long-handed-inserter": {
+      "name": "Long-handed inserter",
+      "recipe": "long-handed-inserter",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 3,
+        "iron-plate": 7
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 4,
+        "iron-stick": 3,
+        "kr-automation-core": 0.5,
+        "kr-inserter-parts": 1,
+        "long-handed-inserter": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 6
+    },
+    "offshore-pump": {
+      "name": "Offshore pump",
+      "recipe": "offshore-pump",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 5
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 2,
+        "offshore-pump": 1,
+        "pipe": 3
+      },
+      "totalCraftingTimePerBuildingSeconds": 3
+    },
+    "pipe": {
+      "name": "Pipe",
+      "recipe": "pipe",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 1
+      },
+      "craftsPerBuilding": {
+        "pipe": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 0.5
+    },
+    "pipe-to-ground": {
+      "name": "Pipe to ground",
+      "recipe": "pipe-to-ground",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 7.5
+      },
+      "craftsPerBuilding": {
+        "pipe": 5,
+        "pipe-to-ground": 0.5
+      },
+      "totalCraftingTimePerBuildingSeconds": 2.75
+    },
+    "small-electric-pole": {
+      "name": "Small electric pole",
+      "recipe": "small-electric-pole",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 0.5
+      },
+      "craftsPerBuilding": {
+        "copper-cable": 0.5,
+        "small-electric-pole": 1,
+        "wood": 0.025
+      },
+      "totalCraftingTimePerBuildingSeconds": 2.25
+    },
+    "splitter": {
+      "name": "Splitter",
+      "recipe": "splitter",
+      "baseIngredientsPerBuilding": {
+        "copper-plate": 9,
+        "iron-plate": 18
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 13,
+        "iron-stick": 3,
+        "kr-automation-core": 1.5,
+        "splitter": 1,
+        "transport-belt": 2
+      },
+      "totalCraftingTimePerBuildingSeconds": 13
+    },
+    "steam-engine": {
+      "name": "Steam engine",
+      "recipe": "steam-engine",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 23
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 8,
+        "pipe": 5,
+        "steam-engine": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 11.5
+    },
+    "steel-furnace": {
+      "name": "Steel furnace",
+      "recipe": "steel-furnace",
+      "baseIngredientsPerBuilding": {
+        "coal": 2.4,
+        "iron-plate": 12,
+        "stone": 20
+      },
+      "craftsPerBuilding": {
+        "kr-coke": 0.39999999999999997,
+        "steel-furnace": 1,
+        "steel-plate": 1.2,
+        "stone-brick": 10,
+        "wood": 0.06
+      },
+      "totalCraftingTimePerBuildingSeconds": 64.19999999999999
+    },
+    "stone-furnace": {
+      "name": "Stone furnace",
+      "recipe": "stone-furnace",
+      "baseIngredientsPerBuilding": {
+        "stone": 5
+      },
+      "craftsPerBuilding": {
+        "stone-furnace": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 0.5
+    },
+    "stone-wall": {
+      "name": "Wall",
+      "recipe": "stone-wall",
+      "baseIngredientsPerBuilding": {
+        "stone": 10
+      },
+      "craftsPerBuilding": {
+        "stone-brick": 5,
+        "stone-wall": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 16.5
+    },
+    "transport-belt": {
+      "name": "Transport belt",
+      "recipe": "transport-belt",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 1
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 0.5,
+        "transport-belt": 0.5
+      },
+      "totalCraftingTimePerBuildingSeconds": 0.5
+    },
+    "underground-belt": {
+      "name": "Underground belt",
+      "recipe": "underground-belt",
+      "baseIngredientsPerBuilding": {
+        "iron-plate": 4.5
+      },
+      "craftsPerBuilding": {
+        "iron-gear-wheel": 1.25,
+        "kr-iron-beam": 1,
+        "transport-belt": 1.25,
+        "underground-belt": 0.5
+      },
+      "totalCraftingTimePerBuildingSeconds": 3.75
+    },
+    "wooden-chest": {
+      "name": "Wooden chest",
+      "recipe": "wooden-chest",
+      "baseIngredientsPerBuilding": {},
+      "craftsPerBuilding": {
+        "wood": 0.05,
+        "wooden-chest": 1
+      },
+      "totalCraftingTimePerBuildingSeconds": 3.5
+    }
+  },
+  "sciencePacks": {
+    "automation-science-pack": {
+      "name": "Automation tech card",
+      "recipe": "automation-science-pack",
+      "baseIngredientsPerPack": {
+        "copper-plate": 0.8,
+        "iron-plate": 1
+      },
+      "craftsPerPack": {
+        "automation-science-pack": 0.2,
+        "copper-cable": 0.2,
+        "iron-gear-wheel": 0.4,
+        "iron-stick": 0.2,
+        "kr-automation-core": 0.1,
+        "kr-blank-tech-card": 0.2
+      },
+      "totalCraftingTimePerPackSeconds": 5
+    },
+    "chemical-science-pack": {
+      "name": "Chemical tech card",
+      "recipe": "chemical-science-pack",
+      "baseIngredientsPerPack": {
+        "coal": 0.25,
+        "copper-plate": 3.2,
+        "iron-plate": 1.4,
+        "stone": 3.4666666666666663
+      },
+      "craftsPerPack": {
+        "advanced-circuit": 0.5,
+        "chemical-science-pack": 0.2,
+        "copper-cable": 3.2,
+        "electronic-circuit": 1,
+        "kr-blank-tech-card": 0.2,
+        "kr-electronic-components": 0.25,
+        "kr-glass": 0.4375,
+        "kr-quartz": 0.16666666666666666,
+        "kr-sand": 1.1555555555555554,
+        "kr-silicon": 0.05555555555555555,
+        "plastic-bar": 0.25,
+        "wood": 0.025
+      },
+      "totalCraftingTimePerPackSeconds": 22.144444444444446
+    },
+    "logistic-science-pack": {
+      "name": "Logistic tech card",
+      "recipe": "logistic-science-pack",
+      "baseIngredientsPerPack": {
+        "copper-plate": 1.2,
+        "iron-plate": 1.9
+      },
+      "craftsPerPack": {
+        "copper-cable": 1.2,
+        "electronic-circuit": 0.5,
+        "iron-gear-wheel": 1,
+        "kr-blank-tech-card": 0.2,
+        "logistic-science-pack": 0.2,
+        "wood": 0.0125
+      },
+      "totalCraftingTimePerPackSeconds": 7.25
+    },
+    "military-science-pack": {
+      "name": "Military tech card",
+      "recipe": "military-science-pack",
+      "baseIngredientsPerPack": {
+        "coal": 0.53,
+        "copper-plate": 0.2,
+        "iron-plate": 0.8,
+        "kr-biomass": 0.4,
+        "stone": 1.0666666666666664
+      },
+      "craftsPerPack": {
+        "copper-cable": 0.2,
+        "kr-biter-research-data": 0.04,
+        "kr-blank-tech-card": 0.2,
+        "kr-coke": 0.04666666666666667,
+        "kr-electronic-components": 0.25,
+        "kr-glass": 0.0625,
+        "kr-quartz": 0.16666666666666666,
+        "kr-sand": 0.3555555555555555,
+        "kr-silicon": 0.05555555555555555,
+        "military-science-pack": 0.2,
+        "plastic-bar": 0.25,
+        "steel-plate": 0.04,
+        "wood": 0.007000000000000001
+      },
+      "totalCraftingTimePerPackSeconds": 11.751111111111111
+    }
+  },
+  "recipes": {
+    "advanced-circuit": {
+      "product": "advanced-circuit",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 4,
+      "ingredients": {
+        "copper-cable": 4,
+        "electronic-circuit": 4,
+        "kr-electronic-components": 2
+      }
+    },
+    "assembling-machine-1": {
+      "product": "assembling-machine-1",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 1,
+      "ingredients": {
+        "iron-gear-wheel": 5,
+        "kr-automation-core": 2,
+        "kr-iron-beam": 4
+      }
+    },
+    "assembling-machine-2": {
+      "product": "assembling-machine-2",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "assembling-machine-1": 1,
+        "electronic-circuit": 3,
+        "iron-gear-wheel": 5,
+        "steel-plate": 2
+      }
+    },
+    "automation-science-pack": {
+      "product": "automation-science-pack",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 20,
+      "ingredients": {
+        "kr-automation-core": 1,
+        "kr-blank-tech-card": 5
+      }
+    },
+    "big-electric-pole": {
+      "product": "big-electric-pole",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "copper-cable": 8,
+        "iron-stick": 8,
+        "kr-steel-beam": 4
+      }
+    },
+    "boiler": {
+      "product": "boiler",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "pipe": 4,
+        "stone-furnace": 1
+      }
+    },
+    "burner-inserter": {
+      "product": "burner-inserter",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 1,
+        "kr-inserter-parts": 1
+      }
+    },
+    "burner-mining-drill": {
+      "product": "burner-mining-drill",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "iron-gear-wheel": 3,
+        "iron-plate": 3,
+        "stone-furnace": 1
+      }
+    },
+    "chemical-science-pack": {
+      "product": "chemical-science-pack",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 20,
+      "ingredients": {
+        "advanced-circuit": 5,
+        "kr-blank-tech-card": 5,
+        "kr-glass": 15
+      }
+    },
+    "copper-cable": {
+      "product": "copper-cable",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "copper-plate": 1
+      }
+    },
+    "electric-mining-drill": {
+      "product": "electric-mining-drill",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "iron-gear-wheel": 5,
+        "kr-automation-core": 2,
+        "kr-iron-beam": 2
+      }
+    },
+    "electronic-circuit": {
+      "product": "electronic-circuit",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "copper-cable": 4,
+        "iron-plate": 1,
+        "wood": 1
+      }
+    },
+    "engine-unit": {
+      "product": "engine-unit",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 10,
+      "ingredients": {
+        "iron-gear-wheel": 1,
+        "iron-plate": 1,
+        "pipe": 2
+      }
+    },
+    "fast-inserter": {
+      "product": "fast-inserter",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "electronic-circuit": 2,
+        "kr-inserter-parts": 1,
+        "steel-plate": 1
+      }
+    },
+    "gun-turret": {
+      "product": "gun-turret",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 10,
+      "ingredients": {
+        "iron-gear-wheel": 4,
+        "kr-automation-core": 3,
+        "kr-iron-beam": 5
+      }
+    },
+    "inserter": {
+      "product": "inserter",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "kr-automation-core": 1,
+        "kr-inserter-parts": 1
+      }
+    },
+    "iron-chest": {
+      "product": "iron-chest",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 8
+      }
+    },
+    "iron-gear-wheel": {
+      "product": "iron-gear-wheel",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 1
+      }
+    },
+    "iron-stick": {
+      "product": "iron-stick",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 1
+      }
+    },
+    "kr-automation-core": {
+      "product": "kr-automation-core",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "copper-plate": 6,
+        "iron-gear-wheel": 4,
+        "iron-stick": 4
+      }
+    },
+    "kr-biter-research-data": {
+      "product": "kr-biter-research-data",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 40,
+      "ingredients": {
+        "kr-biomass": 10,
+        "kr-coke": 5,
+        "steel-plate": 5
+      }
+    },
+    "kr-blank-tech-card": {
+      "product": "kr-blank-tech-card",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "copper-cable": 2,
+        "iron-plate": 2
+      }
+    },
+    "kr-coke": {
+      "product": "kr-coke",
+      "outputAmount": 6,
+      "expectedYield": false,
+      "timeSeconds": 16,
+      "ingredients": {
+        "coal": 6,
+        "wood": 6
+      }
+    },
+    "kr-crusher": {
+      "product": "kr-crusher",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 10,
+      "ingredients": {
+        "copper-cable": 6,
+        "iron-gear-wheel": 20,
+        "kr-automation-core": 2,
+        "kr-iron-beam": 10
+      }
+    },
+    "kr-electronic-components": {
+      "product": "kr-electronic-components",
+      "outputAmount": 4,
+      "expectedYield": false,
+      "timeSeconds": 4,
+      "ingredients": {
+        "kr-glass": 2,
+        "kr-silicon": 2,
+        "plastic-bar": 2
+      }
+    },
+    "kr-filtration-plant": {
+      "product": "kr-filtration-plant",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 10,
+      "ingredients": {
+        "engine-unit": 4,
+        "kr-automation-core": 3,
+        "kr-glass": 10,
+        "kr-steel-beam": 10
+      }
+    },
+    "kr-glass": {
+      "product": "kr-glass",
+      "outputAmount": 8,
+      "expectedYield": false,
+      "timeSeconds": 16,
+      "ingredients": {
+        "kr-sand": 16
+      }
+    },
+    "kr-greenhouse": {
+      "product": "kr-greenhouse",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 10,
+      "ingredients": {
+        "kr-automation-core": 2,
+        "kr-glass": 20,
+        "kr-iron-beam": 10,
+        "wood": 20
+      }
+    },
+    "kr-inserter-parts": {
+      "product": "kr-inserter-parts",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 1,
+      "ingredients": {
+        "iron-gear-wheel": 2,
+        "iron-stick": 2
+      }
+    },
+    "kr-iron-beam": {
+      "product": "kr-iron-beam",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "iron-plate": 2
+      }
+    },
+    "kr-quartz": {
+      "product": "kr-quartz",
+      "outputAmount": 6,
+      "expectedYield": false,
+      "timeSeconds": 2.1,
+      "ingredients": {
+        "kr-sand": 10
+      }
+    },
+    "kr-sand": {
+      "product": "kr-sand",
+      "outputAmount": 7.5,
+      "expectedYield": true,
+      "timeSeconds": 1,
+      "ingredients": {
+        "stone": 3
+      }
+    },
+    "kr-sentinel": {
+      "product": "kr-sentinel",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 5,
+      "ingredients": {
+        "copper-cable": 1,
+        "iron-plate": 2,
+        "kr-automation-core": 1,
+        "kr-glass": 1
+      }
+    },
+    "kr-silicon": {
+      "product": "kr-silicon",
+      "outputAmount": 9,
+      "expectedYield": false,
+      "timeSeconds": 16,
+      "ingredients": {
+        "kr-quartz": 18
+      }
+    },
+    "kr-steel-beam": {
+      "product": "kr-steel-beam",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "steel-plate": 2
+      }
+    },
+    "kr-wind-turbine": {
+      "product": "kr-wind-turbine",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 5,
+      "ingredients": {
+        "copper-cable": 6,
+        "iron-gear-wheel": 6,
+        "iron-plate": 6,
+        "kr-iron-beam": 2
+      }
+    },
+    "lab": {
+      "product": "lab",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 2,
+      "ingredients": {
+        "copper-cable": 10,
+        "copper-plate": 10,
+        "kr-iron-beam": 10
+      }
+    },
+    "logistic-science-pack": {
+      "product": "logistic-science-pack",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 20,
+      "ingredients": {
+        "electronic-circuit": 5,
+        "iron-gear-wheel": 5,
+        "kr-blank-tech-card": 5
+      }
+    },
+    "long-handed-inserter": {
+      "product": "long-handed-inserter",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-stick": 2,
+        "kr-automation-core": 1,
+        "kr-inserter-parts": 1
+      }
+    },
+    "military-science-pack": {
+      "product": "military-science-pack",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 20,
+      "ingredients": {
+        "kr-biter-research-data": 1,
+        "kr-blank-tech-card": 5,
+        "kr-electronic-components": 5
+      }
+    },
+    "offshore-pump": {
+      "product": "offshore-pump",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-gear-wheel": 2,
+        "pipe": 3
+      }
+    },
+    "pipe": {
+      "product": "pipe",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 1
+      }
+    },
+    "pipe-to-ground": {
+      "product": "pipe-to-ground",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-plate": 5,
+        "pipe": 10
+      }
+    },
+    "plastic-bar": {
+      "product": "plastic-bar",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 1,
+      "ingredients": {
+        "coal": 1
+      }
+    },
+    "small-electric-pole": {
+      "product": "small-electric-pole",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "copper-cable": 1,
+        "wood": 1
+      }
+    },
+    "splitter": {
+      "product": "splitter",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 1,
+      "ingredients": {
+        "iron-gear-wheel": 5,
+        "kr-automation-core": 3,
+        "transport-belt": 4
+      }
+    },
+    "steam-engine": {
+      "product": "steam-engine",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 5,
+      "ingredients": {
+        "iron-gear-wheel": 8,
+        "iron-plate": 10,
+        "pipe": 5
+      }
+    },
+    "steel-furnace": {
+      "product": "steel-furnace",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 3,
+      "ingredients": {
+        "steel-plate": 6,
+        "stone-brick": 10
+      }
+    },
+    "steel-plate": {
+      "product": "steel-plate",
+      "outputAmount": 5,
+      "expectedYield": false,
+      "timeSeconds": 16,
+      "ingredients": {
+        "iron-plate": 10,
+        "kr-coke": 2
+      }
+    },
+    "stone-brick": {
+      "product": "stone-brick",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 3.2,
+      "ingredients": {
+        "stone": 2
+      }
+    },
+    "stone-furnace": {
+      "product": "stone-furnace",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "stone": 5
+      }
+    },
+    "stone-wall": {
+      "product": "stone-wall",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "stone-brick": 5
+      }
+    },
+    "transport-belt": {
+      "product": "transport-belt",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "iron-gear-wheel": 1,
+        "iron-plate": 1
+      }
+    },
+    "underground-belt": {
+      "product": "underground-belt",
+      "outputAmount": 2,
+      "expectedYield": false,
+      "timeSeconds": 1,
+      "ingredients": {
+        "kr-iron-beam": 2,
+        "transport-belt": 5
+      }
+    },
+    "wood": {
+      "product": "wood",
+      "outputAmount": 40,
+      "expectedYield": false,
+      "timeSeconds": 60,
+      "ingredients": {}
+    },
+    "wooden-chest": {
+      "product": "wooden-chest",
+      "outputAmount": 1,
+      "expectedYield": false,
+      "timeSeconds": 0.5,
+      "ingredients": {
+        "wood": 2
+      }
+    }
+  }
+}
